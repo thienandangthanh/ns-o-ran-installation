@@ -14,9 +14,10 @@ This repo helps you install and run **ns-O-RAN**: ns-3 5G simulation talking to 
 
 ## Target environment
 
-- **VM**: `ssh oran-kvm`
-- **Repo in VM**: `~/ns-O-RAN-installation` (shared from host via virtiofs)
-- **VM OS**: Ubuntu 20.04.6, with Docker
+- **VM**: Ubuntu 20.04.6, with Docker (VirtualBox, VMware, or libvirt/KVM)
+- **Repo in VM**: `~/ns-O-RAN-installation`
+
+> **Note for Linux users**: If you're using libvirt/KVM with virtiofs, see `docs/linux-vm-setup-guide.md` for host setup instructions.
 
 ---
 
@@ -44,7 +45,7 @@ cd ~/ns-O-RAN-installation
 git submodule update --init --recursive
 ```
 
-If the repo is not there yet, clone it first then run the above. With virtiofs from the host, the tree is already at this path; you may only need to init and update submodules.
+If the repo is not there yet, clone it first then run the above.
 
 ### 2. Start the near-RT RIC (Docker)
 
