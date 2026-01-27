@@ -41,11 +41,12 @@ This repo helps you install and run **ns-O-RAN**: ns-3 5G simulation talking to 
 ### 1. Repo and submodules
 
 ```bash
+git clone git@github.com:thienandangthanh/ns-o-ran-installation.git ~/ns-O-RAN-installation
+
 cd ~/ns-O-RAN-installation
 git submodule update --init --recursive
+ln -s ../../oran-interface ./ns-3-mmwave-oran/contrib/oran-interface
 ```
-
-If the repo is not there yet, clone it first then run the above.
 
 ### 2. Start the near-RT RIC (Docker)
 
