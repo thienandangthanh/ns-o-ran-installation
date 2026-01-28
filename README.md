@@ -88,6 +88,40 @@ cd ~/ns-O-RAN-installation/colosseum-near-rt-ric/setup-scripts
 
 ---
 
+## Python `nsoran` package (ns-o-ran-gym)
+
+To use the Python environments from the `ns-o-ran-gym` submodule (e.g., `TrafficSteeringEnv` and the `traffic_steering.py` example), you need to build and install the `nsoran` package.
+
+```bash
+cd ~/ns-O-RAN-installation
+python3 -m pip install --user uv
+uv venv
+source .venv/bin/activate
+uv sync
+
+cd ns-o-ran-gym
+pip install --user hatch && hatch build
+
+cd ~/ns-O-RAN-installation
+uv pip install ./ns-o-ran-gym/dist/nsoran-0.0.2.tar.gz
+```
+
+Verify the install:
+
+```bash
+cd ~/ns-O-RAN-installation
+source .venv/bin/activate
+python3 - << 'EOF'
+import nsoran, sys
+print("nsoran OK")
+print(sys.version)
+EOF
+```
+
+Once this is done, follow `docs/run-ns-o-ran-gym-traffic-steering-example.md` to run the `traffic_steering.py` example.
+
+---
+
 ## Main config (setup-lib.sh)
 
 | Item | Value |
@@ -105,7 +139,10 @@ cd ~/ns-O-RAN-installation/colosseum-near-rt-ric/setup-scripts
 ## Reference material
 
 - **Tutorial**: "5G ns-3 with O-RAN near-RT RIC bronze" (see `converted/`).
-- **Papers**: Lacava et al. "ns-O-RAN: Simulating O-RAN 5G Systems in ns-3" (2023); "Programmable and Customized Intelligence for Traffic Steering in 5G Networks Using Open RAN Architectures" (2024). In `converted/`.
+- **Papers**:
+  - Lacava et al. "ns-O-RAN: Simulating O-RAN 5G Systems in ns-3" (2023)
+  - Lacava et al. "Programmable and Customized Intelligence for Traffic Steering in 5G Networks Using Open RAN Architectures" (2024).
+  - Bonati et al. "OpenRAN Gym: AI/ML Development, Data Collection, and Testing for O-RAN on PAWR Platforms" (2023)
 - **OpenRAN Gym**: https://openrangym.com/tutorials/ns-o-ran
 
 ---
@@ -126,5 +163,7 @@ cd ~/ns-O-RAN-installation/colosseum-near-rt-ric/setup-scripts
 | colosseum-near-rt-ric | wineslab/colosseum-near-rt-ric (branch ns-o-ran) | RIC Docker and scripts |
 | oran-e2sim | wineslab/ns-o-ran-e2-sim | E2 sim for ns-3 |
 | ns-3-mmwave-oran | wineslab/ns-o-ran-ns3-mmwave | ns-3 + mmWave + O-RAN E2 |
+| oran-interface | o-ran-sc/sim-ns3-o-ran-e2 | ns-3 module for multiple O-RAN E2 interface terminations |
+| ns-o-ran-gym | wineslab/ns-o-ran-gym | Gymnasium RL environment for ns-O-RAN |
 
 After `git clone`, run `git submodule update --init --recursive`. When pulling, update submodules if the expected commits changed.
