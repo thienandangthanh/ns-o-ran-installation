@@ -150,9 +150,10 @@ Once this is done, follow `docs/run-ns-o-ran-gym-traffic-steering-example.md` to
 ## Working on this repo (team and AI agents)
 
 1. **Read this README first** for context.
-2. **Agents**: Follow `CLAUDE.md` or `AGENTS.md`; use the workflows under `./.claude/rules/` and `./.opencode/`.
-3. **Docs**: Put important project docs in `docs/` and keep them updated.
-4. **Code**: Follow `./.claude/rules/development-rules.md` (e.g. YAGNI, KISS, DRY; file naming; tests before push).
+2. **Contributors**: See `docs/CONTRIBUTING.md` for code formatting, pre-commit hooks, and development workflow.
+3. **Agents**: Follow `CLAUDE.md` or `AGENTS.md`; use the workflows under `./.claude/rules/` and `./.opencode/`.
+4. **Docs**: Put important project docs in `docs/` and keep them updated.
+5. **Code**: Follow `./.claude/rules/development-rules.md` (e.g. YAGNI, KISS, DRY; file naming; tests before push).
 
 ---
 
