@@ -21,7 +21,7 @@ def _load_scenario_config(path: str) -> dict:
         return json.load(f)
 
 
-def _make_env(ns3_path: str, scenario_config: dict, run_dir: str, optimized: bool, verbose: bool, skip_configuration: bool):
+def _make_env(ns3_path: str, scenario_config: dict, run_dir: str, optimized: bool, verbose: bool):
     from environments.ts_env import TrafficSteeringEnv
 
     env = TrafficSteeringEnv(
@@ -30,7 +30,6 @@ def _make_env(ns3_path: str, scenario_config: dict, run_dir: str, optimized: boo
         output_folder=run_dir,
         optimized=optimized,
         verbose=verbose,
-        skip_configuration=skip_configuration,
     )
     env = gym.wrappers.FlattenObservation(env)
     return env
@@ -49,7 +48,6 @@ def main():
     parser.add_argument("--episodes", type=int, default=5)
     parser.add_argument("--optimized", action="store_true")
     parser.add_argument("--verbose_env", action="store_true")
-    parser.add_argument("--skip_configuration", action="store_true")
     parser.add_argument("--output_dir", default="output/ppo_ts_eval")
     args = parser.parse_args()
 
@@ -63,7 +61,6 @@ def main():
             run_dir=args.output_dir,
             optimized=args.optimized,
             verbose=args.verbose_env,
-            skip_configuration=args.skip_configuration,
         )
 
     vec_env = DummyVecEnv([env_fn])

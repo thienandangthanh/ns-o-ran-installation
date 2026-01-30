@@ -23,7 +23,7 @@ def _load_scenario_config(path: str) -> dict:
         return json.load(f)
 
 
-def _make_env(ns3_path: str, scenario_config: dict, run_dir: str, optimized: bool, verbose: bool, skip_configuration: bool):
+def _make_env(ns3_path: str, scenario_config: dict, run_dir: str, optimized: bool, verbose: bool):
     from environments.ts_env import TrafficSteeringEnv
 
     env = TrafficSteeringEnv(
@@ -32,7 +32,6 @@ def _make_env(ns3_path: str, scenario_config: dict, run_dir: str, optimized: boo
         output_folder=run_dir,
         optimized=optimized,
         verbose=verbose,
-        skip_configuration=skip_configuration,
     )
     env = gym.wrappers.FlattenObservation(env)
     return env
@@ -52,7 +51,6 @@ def main():
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--optimized", action="store_true")
     parser.add_argument("--verbose_env", action="store_true", help="Enable env debug logging")
-    parser.add_argument("--skip_configuration", action="store_true", help="Skip ns-3 configure step (build still happens)")
     parser.add_argument("--tensorboard", action="store_true", help="Enable tensorboard logging")
     args = parser.parse_args()
 
@@ -69,7 +67,6 @@ def main():
             run_dir=os.path.join(run_root, "env"),
             optimized=args.optimized,
             verbose=args.verbose_env,
-            skip_configuration=args.skip_configuration,
         )
         return Monitor(env, filename=os.path.join(run_root, "monitor.csv"))
 
@@ -100,7 +97,6 @@ def main():
                 "ns3_path": args.ns3_path,
                 "config": args.config,
                 "optimized": args.optimized,
-                "skip_configuration": args.skip_configuration,
                 "seed": args.seed,
                 "total_timesteps": args.total_timesteps,
                 "model_path": model_path,
