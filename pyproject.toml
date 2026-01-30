@@ -5,7 +5,9 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.8,<3.13"
 dependencies = [
+    "rich>=14.3.1",
     "stable-baselines3>=2.4.1",
     "tensorboard>=2.14.0",
     "torch>=2.5.1",
+    "tqdm>=4.67.1",
 ]
