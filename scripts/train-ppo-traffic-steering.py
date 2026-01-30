@@ -37,8 +37,49 @@ def _make_env(ns3_path: str, scenario_config: dict, run_dir: str, optimized: boo
 def main():
     _require_sb3()
     from stable_baselines3 import PPO
+    from stable_baselines3.common.callbacks import BaseCallback
     from stable_baselines3.common.monitor import Monitor
     from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
+
+    class TimestepTrackingCallback(BaseCallback):
+        """Callback to track actual timesteps and ensure training stops at limit."""
+
+        def __init__(self, total_timesteps_limit: int, verbose=0):
+            super().__init__(verbose)
+            self.total_timesteps_limit = total_timesteps_limit
+            self.last_logged = 0
+
+        def _on_step(self) -> bool:
+            # Get current timestep count from the model
+            # Note: self.num_timesteps is updated after each step
+            current_timesteps = self.num_timesteps
+
+            # Log progress every 50 timesteps (or at start)
+            if current_timesteps == 0 or current_timesteps - self.last_logged >= 50:
+                print(
+                    f"\n[Actual timesteps: {current_timesteps}/{self.total_timesteps_limit}]",
+                    flush=True,
+                )
+                self.last_logged = current_timesteps
+
+            # Stop training if we've reached or exceeded the limit
+            # SB3 may process slightly more timesteps due to batching, but we enforce the limit
+            if current_timesteps >= self.total_timesteps_limit:
+                print(
+                    f"\n[Training stopping] Reached {current_timesteps} timesteps (limit: {self.total_timesteps_limit})",  # noqa: E501
+                    flush=True,
+                )
+                return False  # Stop training
+
+            return True  # Continue training
+
+        def _on_training_end(self) -> None:
+            """Called when training ends."""
+            final_timesteps = self.num_timesteps
+            print(
+                f"\n[Training ended] Final timestep count: {final_timesteps}/{self.total_timesteps_limit}",  # noqa: E501
+                flush=True,
+            )
 
     parser = argparse.ArgumentParser(description="Train PPO on ns-o-ran-gym TrafficSteeringEnv")
     parser.add_argument("--ns3_path", required=True, help="Path to ns-3-mmwave-oran")
@@ -81,7 +122,17 @@ def main():
         tensorboard_log=tb_log,
     )
 
-    model.learn(total_timesteps=args.total_timesteps, progress_bar=True)
+    # Create callback to track timesteps and ensure training stops at limit
+    timestep_callback = TimestepTrackingCallback(total_timesteps_limit=args.total_timesteps)
+
+    print(f"Starting training with {args.total_timesteps} timestep limit...", flush=True)
+    print(
+        "Note: Progress bar shows iterations (batches of ~2048 timesteps), not individual timesteps.",  # noqa: E501
+        flush=True,
+    )
+    print("Actual timestep progress will be logged periodically.\n", flush=True)
+
+    model.learn(total_timesteps=args.total_timesteps, progress_bar=True, callback=timestep_callback)
 
     model_path = os.path.join(run_root, "model.zip")
     vecnorm_path = os.path.join(run_root, "vecnormalize.pkl")
