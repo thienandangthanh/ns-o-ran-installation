@@ -12,10 +12,7 @@ def _require_sb3():
         from stable_baselines3.common.monitor import Monitor  # noqa: F401
         from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize  # noqa: F401
     except Exception as e:  # pragma: no cover
-        raise RuntimeError(
-            "Missing RL deps. In the VM venv run:\n"
-            "  uv pip install stable-baselines3 torch tensorboard\n"
-        ) from e
+        raise RuntimeError("Missing RL deps. In the VM venv run:\n  uv sync\n") from e
 
 
 def _load_scenario_config(path: str) -> dict:
@@ -112,4 +109,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
