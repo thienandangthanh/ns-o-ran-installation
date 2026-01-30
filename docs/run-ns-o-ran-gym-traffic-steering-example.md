@@ -11,6 +11,20 @@ The flow follows the OpenRAN Gym paper: start the O-RAN control architecture (Co
 
 ---
 
+### Important: this example is Gym mode (file+semaphore control), not a near-RT RIC xApp
+
+`ns-o-ran-gym/examples/traffic_steering.py` is a **smoke-test/demo** that:
+- launches `scenario-one` locally via `NsOranEnv` (subprocess),
+- **samples random actions** from the environment action space,
+- writes actions to `ts_actions_for_ns3.csv`,
+- reads KPM-like outputs from ns-3 output files (e.g., `cu-*-cell-*.txt`, `du-cell-*.txt`) into SQLite.
+
+It does **not** subscribe to E2SM-KPM or send E2SM-RC control via E2AP as a real xApp would.
+
+If your goal is a **real RIC xApp loop**, keep this doc only as a quick sanity check that ns-3 + `nsoran` works, then follow the xApp workflow once it is added (see `docs/python-xapp-e2sm-kpm-rc.md`).
+
+---
+
 ### 1. Ensure RIC and ns-3 are ready on the VM
 
 SSH into the VM:
