@@ -77,9 +77,11 @@ def main():
         ep_ret = 0.0
         while not done:
             action, _ = model.predict(obs, deterministic=True)
-            obs, reward, terminated, truncated, _info = vec_env.step(action)
-            ep_ret += float(reward)
-            done = bool(terminated) or bool(truncated)
+            # VecEnv returns 4 values (old gym API): obs, reward, done, info
+            obs, reward, done, _info = vec_env.step(action)
+            # reward is an array from VecEnv, extract scalar with [0]
+            ep_ret += float(reward[0])
+            done = bool(done[0])
         episode_returns.append(ep_ret)
         print(f"episode={ep} return={ep_ret}")
 
