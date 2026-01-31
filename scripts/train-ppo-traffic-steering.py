@@ -10,7 +10,11 @@ def _require_sb3():
     try:
         from stable_baselines3 import PPO  # noqa: F401
         from stable_baselines3.common.monitor import Monitor  # noqa: F401
-        from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize  # noqa: F401
+        from stable_baselines3.common.vec_env import (  # noqa: F401
+            DummyVecEnv,
+            SubprocVecEnv,
+            VecNormalize,
+        )
     except Exception as e:  # pragma: no cover
         raise RuntimeError("Missing RL deps. In the VM venv run:\n  uv sync\n") from e
 
@@ -20,16 +24,122 @@ def _load_scenario_config(path: str) -> dict:
         return json.load(f)
 
 
-def _make_env(ns3_path: str, scenario_config: dict, run_dir: str, optimized: bool, verbose: bool):
-    from environments.ts_env import TrafficSteeringEnv
+def _configure_and_build_ns3(ns3_path: str, optimized: bool):
+    """Pre-configure and build ns-3 before creating parallel environments.
 
-    env = TrafficSteeringEnv(
+    This avoids multiple subprocesses trying to configure ns-3 simultaneously.
+    """
+    import subprocess
+
+    build_program = "./ns3" if os.path.exists(os.path.join(ns3_path, "ns3")) else "./waf"
+
+    # Configure
+    configuration_command = [
+        "python3",
+        build_program,
+        "configure",
+        "--enable-examples",
+        "--disable-gtk",
+        "--disable-werror",
+    ]
+
+    if optimized:
+        configuration_command += ["--build-profile=optimized", "--out=build/optimized"]
+
+    print(f"Configuring ns-3 at {ns3_path}...")
+    subprocess.run(
+        configuration_command,
+        cwd=ns3_path,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=True,
+    )
+
+    # Build
+    j_argument = ["-j", str(os.cpu_count())]
+    print(f"Building ns-3 with {os.cpu_count()} cores...")
+    subprocess.run(
+        ["python3", build_program] + j_argument + ["build"],
+        cwd=ns3_path,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=True,
+    )
+    print("ns-3 build complete.")
+
+
+def _make_env(
+    ns3_path: str,
+    scenario_config: dict,
+    run_dir: str,
+    optimized: bool,
+    verbose: bool,
+    skip_config: bool = False,
+):
+    import numpy as np
+    from environments.ts_env import TrafficSteeringEnv
+    from gymnasium import spaces
+    from nsoran.ns_env import NsOranEnv
+
+    # Create TrafficSteeringEnv, but we need to pass skip_configuration to parent
+    # Since TrafficSteeringEnv doesn't expose it, we'll manually initialize
+    env = TrafficSteeringEnv.__new__(TrafficSteeringEnv)
+
+    # Call parent __init__ with skip_configuration
+    NsOranEnv.__init__(
+        env,
         ns3_path=ns3_path,
+        scenario="scenario-one",
         scenario_configuration=scenario_config,
         output_folder=run_dir,
         optimized=optimized,
-        verbose=verbose,
+        skip_configuration=skip_config,
+        control_header=["timestamp", "ueId", "nrCellId"],
+        log_file="TsActions.txt",
+        control_file="ts_actions_for_ns3.csv",
     )
+
+    # Initialize TrafficSteeringEnv-specific attributes (from ts_env.py __init__)
+    env.columns_state = [
+        "RRU.PrbUsedDl",
+        "L3 serving SINR",
+        "DRB.MeanActiveUeDl",
+        "TB.TotNbrDlInitial.Qpsk",
+        "TB.TotNbrDlInitial.16Qam",
+        "TB.TotNbrDlInitial.64Qam",
+        "TB.TotNbrDlInitial",
+    ]
+    env.columns_reward = ["DRB.UEThpDl.UEID", "nrCellId"]
+
+    # Traffic steering specific constants
+    n_gnbs = 7  # scenario one has always 7 gnbs
+    n_actions_ue = 7  # each UE can connect to a gNB identified by ID (from 2 to 8), 0 is No Action
+
+    # Extract ues from processed scenario_configuration (parent extracts v[0])
+    ues = env.scenario_configuration["ues"]
+
+    # Set action and observation spaces (from TrafficSteeringEnv.__init__)
+    # obs_space size: (# ues_per_gnb * # n_gnbs, # observation_columns + timestamp = 1)
+    env.observation_space = spaces.Box(
+        shape=(ues * n_gnbs, len(env.columns_state) + 1), low=-np.inf, high=np.inf, dtype=np.float64
+    )
+    env.action_space = spaces.MultiDiscrete([n_actions_ue] * ues * n_gnbs)
+
+    # Initialize TrafficSteeringEnv-specific state variables
+    env.previous_df = None
+    env.previous_kpms = None
+    env.handovers_dict = dict()
+    env.verbose = verbose
+    if env.verbose:
+        import logging
+
+        logging.basicConfig(
+            filename="./reward_ts.log", level=logging.DEBUG, format="%(asctime)s - %(message)s"
+        )
+    env.time_factor = 0.001
+    env.Cf = 1.0
+    env.lambdaf = 0.1
+
     env = gym.wrappers.FlattenObservation(env)
     return env
 
@@ -39,7 +149,7 @@ def main():
     from stable_baselines3 import PPO
     from stable_baselines3.common.callbacks import BaseCallback
     from stable_baselines3.common.monitor import Monitor
-    from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
+    from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv, VecNormalize
 
     class TimestepTrackingCallback(BaseCallback):
         """Callback to track actual timesteps and ensure training stops at limit."""
@@ -90,25 +200,47 @@ def main():
     parser.add_argument("--optimized", action="store_true")
     parser.add_argument("--verbose_env", action="store_true", help="Enable env debug logging")
     parser.add_argument("--tensorboard", action="store_true", help="Enable tensorboard logging")
+    parser.add_argument(
+        "--n_envs", type=int, default=1, help="Number of parallel environments (default: 1)"
+    )
     args = parser.parse_args()
 
     scenario_config = _load_scenario_config(args.config)
+
+    # Pre-configure and build ns-3 BEFORE creating parallel environments
+    # This prevents multiple subprocesses from trying to configure simultaneously
+    print("Pre-configuring and building ns-3...")
+    _configure_and_build_ns3(args.ns3_path, args.optimized)
 
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     run_root = os.path.join(args.output_dir, f"run-{timestamp}-seed{args.seed}")
     os.makedirs(run_root, exist_ok=True)
 
-    def env_fn():
-        env = _make_env(
-            ns3_path=args.ns3_path,
-            scenario_config=scenario_config,
-            run_dir=os.path.join(run_root, "env"),
-            optimized=args.optimized,
-            verbose=args.verbose_env,
-        )
-        return Monitor(env, filename=os.path.join(run_root, "monitor.csv"))
+    def make_env(rank: int):
+        """Create a single environment with unique output directory."""
 
-    vec_env = DummyVecEnv([env_fn])
+        def _init():
+            # skip_config=True because we already configured in main process
+            env = _make_env(
+                ns3_path=args.ns3_path,
+                scenario_config=scenario_config,
+                run_dir=os.path.join(run_root, f"env_{rank}"),
+                optimized=args.optimized,
+                verbose=args.verbose_env,
+                skip_config=True,
+            )
+            return Monitor(env, filename=os.path.join(run_root, f"monitor_{rank}.csv"))
+
+        return _init
+
+    # Create vectorized environment with n_envs parallel workers
+    if args.n_envs > 1:
+        print(f"Creating {args.n_envs} parallel environments using SubprocVecEnv...")
+        vec_env = SubprocVecEnv([make_env(i) for i in range(args.n_envs)])
+    else:
+        print("Using single environment (DummyVecEnv)...")
+        vec_env = DummyVecEnv([make_env(0)])
+    
     vec_env = VecNormalize(vec_env, norm_obs=True, norm_reward=False, clip_obs=10.0)
     vec_env.seed(args.seed)
 
@@ -147,6 +279,7 @@ def main():
                 "optimized": args.optimized,
                 "seed": args.seed,
                 "total_timesteps": args.total_timesteps,
+                "n_envs": args.n_envs,
                 "model_path": model_path,
                 "vecnormalize_path": vecnorm_path,
             },

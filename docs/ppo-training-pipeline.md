@@ -40,6 +40,7 @@ python scripts/train-ppo-traffic-steering.py \
 - `--optimized`: Use optimized ns-3 build (faster, required for reasonable training times)
 - `--tensorboard`: Enable tensorboard logging for monitoring training progress
 - `--verbose_env`: Enable detailed environment logging (useful for debugging)
+- `--n_envs N`: Number of parallel environments (default: 1, recommended: 4-8 for multi-core systems)
 
 ### Evaluation script
 
@@ -106,6 +107,54 @@ The following integration points have been validated:
    ```bash
    tensorboard --logdir output/ppo_ts/run-*/tb
    ```
+
+### Parallel Training (Multi-Core Acceleration)
+
+**Problem:** By default, training uses only 1 CPU core, leaving other cores idle.
+
+**Solution:** Use the `--n_envs` flag to run multiple parallel environments:
+
+```bash
+python scripts/train-ppo-traffic-steering.py \
+  --ns3_path ~/ns-O-RAN-installation/ns-3-mmwave-oran \
+  --config ns-o-ran-gym/src/environments/scenario_configurations/ts_use_case_medium.json \
+  --output_dir output/ppo_ts_medium \
+  --total_timesteps 10000 \
+  --seed 0 \
+  --optimized \
+  --tensorboard \
+  --n_envs 8
+```
+
+**How it works:**
+- Each environment runs in its own subprocess (using `SubprocVecEnv`)
+- Each subprocess runs an independent ns-3 simulation
+- PPO collects experiences from all environments simultaneously
+- Effective speedup: ~N× faster (where N = number of environments)
+
+**Recommendations:**
+- **For 16 cores + 8GB RAM**: Use `--n_envs 4` to `--n_envs 8`
+  - Each ns-3 simulation uses ~500MB-1GB RAM
+  - Leave headroom for OS and PPO training
+- **Memory consideration**: `n_envs × (ns-3 RAM + output files)` must fit in available RAM
+- **CPU consideration**: Optimal `n_envs` ≈ `cpu_count - 2` (leave cores for OS)
+
+**Trade-offs:**
+- **Pros**: 
+  - Dramatic speedup (8 envs = ~8× faster training)
+  - Better exploration (diverse experiences from parallel envs)
+  - More efficient CPU utilization
+- **Cons**: 
+  - Higher RAM usage
+  - Each environment creates separate output directories
+  - Slightly more complex debugging (multiple simulation logs)
+
+**Expected performance improvement:**
+- Single env: 500 timesteps in ~22 minutes (from your test)
+- 8 parallel envs: 500 timesteps in ~3-4 minutes (estimated)
+- 8 parallel envs: 10,000 timesteps in ~60-80 minutes (estimated for medium preset)
+
+**Note:** This parallelization is at the **environment level** (multiple ns-3 simulations), not within ns-3 itself. ns-3 build already uses all cores (`-j` flag), but individual simulations are single-threaded.
 
 ### Troubleshooting
 
