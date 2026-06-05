@@ -30,7 +30,6 @@ This repo helps you install and run **ns-O-RAN**: ns-3 5G simulation talking to 
 | `oran-e2sim/` | E2 library used by ns-3 to talk to e2term |
 | `docs/` | Project docs and connectivity/status reports |
 | `converted/` | Tutorial and papers (HTML/PDF) |
-| `CLAUDE.md`, `AGENTS.md` | Rules for AI coding agents |
 
 `colosseum-near-rt-ric`, `ns-3-mmwave-oran`, and `oran-e2sim` are git submodules.
 
@@ -188,13 +187,11 @@ Once this is done, follow `docs/run-ns-o-ran-gym-traffic-steering-example.md` to
 
 ---
 
-## Working on this repo (team and AI agents)
+## Contributing
 
 1. **Read this README first** for context.
-2. **Contributors**: See `docs/CONTRIBUTING.md` for code formatting, pre-commit hooks, and development workflow.
-3. **Agents**: Follow `CLAUDE.md` or `AGENTS.md`; use the workflows under `./.claude/rules/` and `./.opencode/`.
-4. **Docs**: Put important project docs in `docs/` and keep them updated.
-5. **Code**: Follow `./.claude/rules/development-rules.md` (e.g. YAGNI, KISS, DRY; file naming; tests before push).
+2. See `docs/CONTRIBUTING.md` for code formatting, pre-commit hooks, and development workflow.
+3. Put important project docs in `docs/` and keep them updated.
 
 ---
 
