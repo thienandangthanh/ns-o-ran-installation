@@ -36,6 +36,47 @@ This repo helps you install and run **ns-O-RAN**: ns-3 5G simulation talking to 
 
 ---
 
+## Prerequisites
+
+Install these on the VM before cloning and building (based on the [OpenRAN Gym ns-O-RAN tutorial](https://openrangym.com/tutorials/ns-o-ran)).
+
+### Docker
+
+Docker is required to host the near-RT RIC on localhost. Follow the official guide for Ubuntu:
+
+- https://docs.docker.com/engine/install/ubuntu/#installation-methods
+
+> The Docker Engine installation steps are maintained by Docker and may change over time, so always follow the official guide above rather than a copy pinned here. After installing, add your user to the `docker` group (`sudo usermod -aG docker $USER`, then re-login) so you can run Docker without `sudo`.
+
+### Build dependencies (e2sim and ns-3)
+
+Update the package index, then install the build tools and libraries:
+
+```bash
+sudo apt-get update
+
+# Dependencies for oran-e2sim (E2 encode/decode, SCTP)
+sudo apt-get install -y build-essential git cmake libsctp-dev autoconf automake libtool bison flex libboost-all-dev
+
+# Dependencies for ns-3
+sudo apt-get install -y g++ python3
+```
+
+| Package | Needed by | Purpose |
+|---------|-----------|---------|
+| `build-essential` | e2sim, ns-3 | gcc/g++/make toolchain |
+| `git` | both | clone repo and submodules |
+| `cmake` | e2sim | build system |
+| `libsctp-dev` | e2sim | SCTP transport for E2 |
+| `autoconf`, `automake`, `libtool` | e2sim | autotools build |
+| `bison`, `flex` | e2sim | ASN.1 parser generation |
+| `libboost-all-dev` | e2sim | Boost libraries |
+| `g++`, `python3` | ns-3 | compiler and ns-3 (`./ns3`) tooling |
+
+> The build is driven through the bundled `./ns3` wrapper (see `e2term-ns3-build.sh`); you do not need to install ns-3 separately.
+
+---
+
 ## Quick start (on the VM)
 
 ### 1. Repo and submodules
@@ -67,7 +108,7 @@ cd ~/ns-O-RAN-installation/ns-3-mmwave-oran
 ./e2term-ns3-build.sh
 ```
 
-This builds `oran-e2sim` then ns-3. Use `./ns3` or `./waf` as in the ns-3 docs.
+This builds `oran-e2sim` then ns-3. Use `./ns3` as in the ns-3 docs.
 
 ### 4. Run ns-3 (scenario-zero) toward the RIC
 
