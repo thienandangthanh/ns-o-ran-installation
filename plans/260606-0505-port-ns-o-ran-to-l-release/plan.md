@@ -51,8 +51,8 @@ ActionDefinition `Format1`→`Formats 1-5`; `MeasurementLabel` 17→24; `ric_KPM
 |---|---|---|---|
 | 0 | Freeze working Bronze baseline (regression anchor) | [phase-00](phase-00-freeze-bronze-baseline.md) | ✅ DONE (full pub-sub golden pcap) |
 | 1 | Confirm L-release E2Term behavior (golden pcap) | [phase-01](phase-01-confirm-lrelease-e2term.md) | ✅ DONE (setup golden tshark-verified; indication deferred to P2/P5) |
-| 2 | Standalone L-release e2sim test (M1–M5, no ns-3) | [phase-02](phase-02-standalone-e2sim-test.md) | ◐ next |
-| 3 | Port E2 Setup procedure (A SCTP + B E2AP) | [phase-03](phase-03-port-e2-setup.md) | ☐ |
+| 2 | Standalone L-release e2sim test (M1–M5, no ns-3) | [phase-02](phase-02-standalone-e2sim-test.md) | ✅ DONE (M1–M3 green, golden-matched; vendored e2sim builds; harness done) · ⚠ M4/M5 subscriber-gated (Q4 escalated) |
+| 3 | Port E2 Setup procedure (A SCTP + B E2AP) | [phase-03](phase-03-port-e2-setup.md) | ◐ next |
 | 4 | Port E2SM-KPM RAN function definition (C) | [phase-04](phase-04-port-e2sm-kpm-ran-function.md) | ☐ |
 | 5 | Port subscription handling | [phase-05](phase-05-port-subscription-handling.md) | ☐ |
 | 6 | Port KPM indication messages (D metric mapping) | [phase-06](phase-06-port-kpm-indications.md) | ☐ |

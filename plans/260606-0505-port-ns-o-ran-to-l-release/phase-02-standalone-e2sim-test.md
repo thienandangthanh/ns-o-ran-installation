@@ -31,12 +31,12 @@
 6. Run harness M1–M5; compare to `golden-lrelease-e2.pcap`. Record results in notes.
 
 ## Todo List
-- [ ] build deps installed on `oran-kvm-2` (repo already mounted)
-- [ ] `e2-interface` remote added; `da6f82f2` integrated on `dev/l-release`
-- [ ] `libe2sim` builds + installs on `oran-kvm-2`
-- [ ] bundled KPM app runs against live E2Term
-- [ ] `scripts/l-release-validation/` M1–M5 + manifest
-- [ ] M1–M5 green vs golden pcap
+- [x] build deps installed on `oran-kvm-2` (repo already mounted) — libtool reinstalled; asn1c NOT needed (generated C committed)
+- [x] `e2-interface` remote added; `da6f82f2` integrated on `dev/l-release` — wholesale-vendored (tree-SHA exact match); **staged, uncommitted**
+- [x] `libe2sim` builds + installs on `oran-kvm-2` — `.deb` build + `dpkg -i`; self-built fresh
+- [x] bundled KPM app runs against live E2Term — `kpm_sim` (static-linked) → `192.168.122.78:32222` connects
+- [x] `scripts/l-release-validation/` M1–M5 + manifest — full harness authored (byte-fallback + retry)
+- [x] M1–M3 green vs golden pcap — **byte-identical structural diff**; M4/M5 subscriber-gated (Q4, escalated)
 
 ## Success Criteria
 Rebased e2sim base, built on `oran-kvm-2`, passes M1–M5 against the live L-release RIC; harness automates the assertions.
