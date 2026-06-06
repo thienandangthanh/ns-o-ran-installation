@@ -56,7 +56,7 @@ ActionDefinition `Format1`→`Formats 1-5`; `MeasurementLabel` 17→24; `ric_KPM
 | 4 | Port E2SM-KPM RAN function definition (C) | [phase-04](phase-04-port-e2sm-kpm-ran-function.md) | ✅ DONE (v3.00 descriptor 1600 B, round-trip + live M3 green) |
 | 5 | Port subscription handling | [phase-05](phase-05-port-subscription-handling.md) | ✅ DONE (M4 GREEN — real kpimon-go sub admitted; offline proof + live pcap) |
 | 6 | Port KPM indication messages (D metric mapping) | [phase-06](phase-06-port-kpm-indications.md) | ✅ DONE (M5 GREEN — dummy v3 indications decoded by kpimon-go; M6 real-ns-3 → P7) |
-| 7 | Reconnect ns-3 scenario-zero (end-to-end) | [phase-07](phase-07-reconnect-scenario-zero.md) | ◐ next (absorbs M6: first full ns-3 build + real KPM mapping) |
+| 7 | Reconnect ns-3 scenario-zero (end-to-end) | [phase-07](phase-07-reconnect-scenario-zero.md) | ◐ code-port DONE (M6 v3 model port + clean full ns-3 build + offline proof PASS); live M1–M6 run = next session |
 
 ## Validation milestones (harness `scripts/l-release-validation/`)
 M1 SCTP · M2 E2 Setup · M3 RAN function accepted · M4 subscription · M5 dummy KPM · M6 real ns-3 KPM.
