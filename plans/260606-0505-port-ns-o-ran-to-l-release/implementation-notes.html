@@ -91,6 +91,7 @@ Plan: <code>plans/260606-0505-port-ns-o-ran-to-l-release/</code> &middot; Branch
   <li><b>Facts pinned:</b> <code>baseline/lrelease-facts.md</code> (image 6.0.6, NodePort 32222, node IP, funcIDs, capture how-to).</li>
   <li><b>Revised assumption:</b> e2term 6.0.6 <b>accepts dummy <code>OID123</code></b> at E2 Setup &mdash; OID matters for the xApp <b>subscription</b> (Phase 5), not setup acceptance (Phase 3/4).</li>
   <li><b>Deferred:</b> subscription+indication golden (M4/M5) &mdash; no xApp deployed (<code>ricxapp</code> empty). Captured the setup golden now; indication golden when scp-kpimon/kpimon-go is onboarded (Phase 5) or via standalone sim (Phase 2).</li>
+  <li><b>tshark verified (2026-06-06):</b> golden pcap re-decoded locally with Wireshark 4.6.5. Both PDUs confirmed on the wire &mdash; request: TransactionID 1, gNB <code>b5c67788</code>, RANfunction <b>func 2/rev 2/OID123</b>, <code>E2nodeComponentConfigAddition-List</code>; response: <b>RANfunctionsAccepted func 2</b>. Gotcha: E2AP rides SCTP <b>PPID 70</b>; IP-fragmented request reads PPID 0 &rarr; force <code>-d 'sctp.ppi==0,e2ap' -d 'sctp.ppi==70,e2ap' --disable-protocol x2ap -o ip.defragment:TRUE</code> or tshark mis-labels it X2AP <code>HandoverCancel[Malformed]</code>. See <code>lrelease-facts.md</code>.</li>
 </ul>
 </div>
 
@@ -111,6 +112,7 @@ Plan: <code>plans/260606-0505-port-ns-o-ran-to-l-release/</code> &middot; Branch
 <tr><td>2026-06-06</td><td>Captured Bronze pcap on <code>brric</code> (1262 frames, 5 E2setupRequests, funcID 200+300/OID123/rev2). No response/indication (no subscriber). Phase 0 closed: accept setup-phase anchor.</td></tr>
 <tr><td>2026-06-06</td><td>Phase 1: bundled <code>kpm_sim</code> (func 2) &rarr; NodePort 32222 &rarr; CONNECTED (e2mgr). Golden L-release setup pcap (req+resp) + <code>lrelease-facts.md</code>. Found e2term 6.0.6, OID123 accepted, scp-kpimon subscribes func 0 (vs sim 2). Indication golden deferred (no xApp).</td></tr>
 <tr><td>2026-06-06</td><td>Q1+Q2 resolved (user): oran-kvm-2==oran-kvm-3; base adapter on upstream/l-release. Re-captured FULL Bronze pub-sub with sample xApp: 5 E2setup + 5 sub req/resp + ~787 indications (1470 DATA chunks). Phase 0 golden pcap now complete. Hand-off report written.</td></tr>
+<tr><td>2026-06-06</td><td>Phase 1 closed: tshark 4.6.5 independent verification of L-release setup golden &mdash; E2setupRequest+Response decoded verbatim (func 2 accepted, OID123, E2nodeComponentConfigAddition v3.01 IE). Facts + notes stamped. Phase-2 hand-off written. Next session: Phase 2 (standalone rebased e2sim, M1&ndash;M5).</td></tr>
 </table>
 
 </div>

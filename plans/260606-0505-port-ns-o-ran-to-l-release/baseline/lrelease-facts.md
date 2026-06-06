@@ -30,6 +30,16 @@ Captured 2026-06-06 on VM `oran-kvm-2` (SSH alias; real hostname `oran-kvm-3`). 
 2. **RAN-func-ID ambiguity (open):** bundled sim **registers func 2**; testbed `ric-scp-kpimon` **subscribes with `funcID = 0`** (`control/control.go:90` `sendRicSubRequest(1001,1001,0)`). Working assumption: ns-3 advertises **func 2** (mirror the reference sim); resolve empirically when a real subscription is driven in **Phase 5**.
 3. **No xApp deployed** (`ricxapp` ns empty) ⇒ no subscription/indication available yet. Like Bronze, the **E2 Setup golden is captured now**; the **subscription+indication golden (M4/M5) is deferred** until an xApp (scp-kpimon / kpimon-go) is onboarded.
 
+## tshark independent verification (2026-06-06, golden pcap re-decoded locally)
+Wireshark/tshark 4.6.5 on the pcap (E2AP rides SCTP PPID **70**; the IP-fragmented request reads PPID **0** on reassembly — force both: `-d 'sctp.ppi==0,e2ap' -d 'sctp.ppi==70,e2ap' --disable-protocol x2ap -o ip.defragment:TRUE`). Without the force, tshark mis-dissects the fragmented request as X2AP `HandoverCancel[Malformed]`.
+
+| PDU | Decoded contents (verbatim from tshark `-V`) |
+|---|---|
+| **E2setupRequest** (initiatingMessage / id-E2setup=1) | TransactionID **1**; GlobalE2node-ID **gNB**, gnb-ID `b5c67788` (29-bit, 3 LSB pad) = nbId in e2mgr; RANfunction-Item **ranFunctionID 2 / rev 2 / ranFunctionOID `OID123`**; **E2nodeComponentConfigAddition-List** (interfaceType `ng`) |
+| **E2setupResponse** (successfulOutcome / id-E2setup=1) | TransactionID **1**; **RANfunctionsAccepted → RANfunctionID 2 / rev 2** (func 2 accepted, not rejected); E2nodeComponentConfigAdditionAck-List (interfaceType `ng`) |
+
+⇒ Every claim above confirmed on the wire: E2AP v3.01 setup exchange, func 2 accepted, OID123 accepted at setup, `E2nodeComponentConfigAddition` present (the v2.0+/v3.01 marker absent in Bronze v01.00). **Golden is the trusted reference for Phases 3–4.**
+
 ## Capture how-to (reproducible)
 - L-release E2 SCTP to e2term pod rides **`cni0`** (pod `10.244.0.48`). Capture: `sudo tcpdump -i cni0 -s0 -U -w out.pcap 'sctp'`.
 - Run sim: `docker run -d -it --name oransim -e RAN_FUNC_ID=2 oransim:0.0.999` then `docker exec -i oransim sh -c 'kpm_sim 192.168.122.78 32222 >/app/logs/e2sim_output.txt 2>&1 &'`.

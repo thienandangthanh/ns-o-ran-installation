@@ -35,8 +35,8 @@
 - [x] E2Term NodePort (32222) + node IP (192.168.122.78) + ns (ricplt) + image (**ric-plt-e2:6.0.6**) recorded
 - [x] func-ID/OID recorded: bundled sim **func 2 / OID123**; scp-kpimon subscribes **func 0** (mismatch — see Q3)
 - [x] bundled KPM sim registers with live E2Term (e2mgr `CONNECTED` via NodePort 32222)
-- [~] `golden-lrelease-e2.pcap` = **E2 Setup req+resp** captured. **Subscription→indication DEFERRED** (no xApp deployed; see Q4)
-- [x] `lrelease-facts.md` written; `implementation-notes.html` updated
+- [x] `golden-lrelease-e2.pcap` = **E2 Setup req+resp** captured **& tshark-verified** (func 2 accepted, OID123, E2nodeComponentConfigAddition v3.01 IE). **Subscription→indication DEFERRED** (no xApp deployed; see Q4)
+- [x] `lrelease-facts.md` written (+ tshark verification table); `implementation-notes.html` updated
 
 **Deviation:** No xApp in `ricxapp` ns ⇒ no subscription/indication available. Captured the **E2 Setup golden** (v3.01 req+resp, the key reference for Phases 3–4). Indication golden (M4/M5) deferred to Phase 5 (onboard scp-kpimon/kpimon-go) or Phase 2 (standalone sim-driven). e2term 6.0.6 **accepts OID123** ⇒ OID is a subscription concern, not setup.
 
