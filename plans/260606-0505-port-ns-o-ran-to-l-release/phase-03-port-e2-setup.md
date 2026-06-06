@@ -6,7 +6,7 @@
 - Build: `oran-interface/CMakeLists.txt` (`find_external_library(e2sim)`), `ns3-mmwave-oran/e2term-ns3-build.sh`
 
 ## Overview
-- **Priority:** P0. **Status:** planned.
+- **Priority:** P0. **Status:** DONE — M2 GREEN.
 - Relink `oran-interface` onto the new e2sim base and make the ns-3-built E2 termination complete **E2 Setup (M2)** against the live L-release E2Term. Keep version specifics behind an **adapter boundary** in `oran-interface/model/`.
 
 ## Key Insights
@@ -34,12 +34,12 @@
 6. Log all struct renames/removals handled in `implementation-notes.html` (esp. `ric_KPM_Node_List` removal, `ric_Style_Type`).
 
 ## Todo List
-- [ ] `oran-interface` compiles+links on new e2sim base
-- [ ] v3.01 E2SetupRequest generated; GlobalE2node-ID correct
-- [ ] `--e2TermPort` plumbed (default 32222)
-- [ ] minimal E2-setup app runs on `oran-kvm-2`
-- [ ] **M2 E2 Setup** green vs golden pcap
-- [ ] adapter boundary documented in notes
+- [x] `oran-interface` compiles+links on new e2sim base (standalone app; `E2Termination::DoStart` adapter → Phase 6)
+- [x] v3.01 E2SetupRequest generated; GlobalE2node-ID correct (run_loop handles internally)
+- [x] `--e2TermPort` plumbed (default 32222 via `argv[2]`)
+- [x] minimal E2-setup app runs on `oran-kvm-2` (`/tmp/ns3-e2-phase3-build/e2-setup-minimal`)
+- [x] **M2 E2 Setup** green vs golden pcap (`captures/phase3-m2-ns3-setup.pcap`; all 4 assertions PASS)
+- [x] adapter boundary documented in notes (§3d adapter table in implementation-notes.html)
 
 ## Success Criteria
 ns-3-built E2 termination completes E2 Setup against the live L-release E2Term (M2), API surface unchanged for ns-3 callers.
