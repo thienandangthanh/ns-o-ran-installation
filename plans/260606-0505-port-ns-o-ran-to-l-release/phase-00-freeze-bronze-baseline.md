@@ -33,12 +33,14 @@
 8. Start `implementation-notes.html` with the baseline facts + decisions locked in plan.md.
 
 ## Todo List
-- [ ] Bronze RIC health confirmed on `oran-kvm`
-- [ ] commit-manifest + `baseline-bronze-260606` tag
-- [ ] `bronze-e2.pcap` captured (E2 Setup + KPM indication)
-- [ ] `bronze-e2term.log` saved
-- [ ] `dev/l-release` branches created on the 3 forks
-- [ ] `implementation-notes.html` initialized
+- [x] Bronze RIC health confirmed on `oran-kvm` (all 5 containers, SCTP 10.0.2.1:36422, e2term 10.0.2.10)
+- [x] commit-manifest + `baseline-bronze-260606` tag (HEAD 885a088)
+- [x] `bronze-e2.pcap` captured on bridge `brric` — **FULL pub-sub**: 5 E2setupRequest + 5 RICsubscriptionRequest→Response + ~787 RICindication (1470 SCTP DATA chunks)
+- [x] `bronze-e2term.log` saved + `bronze-e2setup-decoded.txt` (funcID 200+300, OID123, rev2)
+- [x] `dev/l-release` branches created on the 3 forks (at pinned commits)
+- [x] `implementation-notes.html` initialized
+
+**Full pub-sub method:** KPM indications require an active xApp subscription. Ran scenario-zero + sample xApp (`start-xapp-ns-o-ran.sh` → `sample-xapp-24` → `/home/sample-xapp/run_xapp.sh`, GNB_ID=ns-o-ran). Sequence: ns-3 → wait ~50s for gNB registration → xApp subscribes → indications flow. Captured E2 Setup + KPM indication flow as required. (First attempt captured setup-only — no subscriber; resolved per user guidance.)
 
 ## Success Criteria
 Golden Bronze pcap shows full E2 Setup + KPM indication flow; commits pinned/tagged; branches ready; notes file live.

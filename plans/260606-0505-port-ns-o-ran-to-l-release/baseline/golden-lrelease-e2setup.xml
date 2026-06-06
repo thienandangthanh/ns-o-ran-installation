@@ -1,0 +1,207 @@
+[kpm_callbacks.cpp:65] [INFO] Starting KPM simulator
+[encode_kpm.cpp:49] [INFO] short_name: ORAN-E2SM-KPM, func_desc: KPM Monitor, e2sm_odi: OID123
+[encode_kpm.cpp:72] [INFO] Initialize event trigger style list structure
+[encode_kpm.cpp:91] [INFO] Initialize report style structure
+[e2sim.cpp:65] [INFO] About to register E2SM RAN function description with ID 2
+[e2sim.cpp:43] [INFO] About to register callback for subscription for RAN function with ID 2
+[e2sim.cpp:104] [INFO] Start E2 Agent (E2 Simulator)
+[e2sim.cpp:125] [INFO] After reading input options
+[e2sim_sctp.cpp:180] [INFO] [SCTP] Binding client socket to source port 36422
+[e2sim_sctp.cpp:187] [INFO] [SCTP] Connecting to server at 192.168.122.78:32222 ...
+[e2sim_sctp.cpp:194] [INFO] [SCTP] Connection established
+[e2sim.cpp:133] [INFO] SCTP client has been started
+[e2sim.cpp:143] [INFO] Constructing a list of RAN functions based on registered information
+[e2sim.cpp:149] [INFO] Adding RAN function ID 2, description: h0ORAN-E2SM-KPM to the list
+[e2sim.cpp:161] [INFO] Generate E2AP v1 setup request for all registered RAN functions
+<E2AP-PDU>
+    <initiatingMessage>
+        <procedureCode>1</procedureCode>
+        <criticality><reject/></criticality>
+        <value>
+            <E2setupRequest>
+                <protocolIEs>
+                    <E2setupRequestIEs>
+                        <id>49</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <TransactionID>1</TransactionID>
+                        </value>
+                    </E2setupRequestIEs>
+                    <E2setupRequestIEs>
+                        <id>3</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <GlobalE2node-ID>
+                                <gNB>
+                                    <global-gNB-ID>
+                                        <plmn-id>37 34 37</plmn-id>
+                                        <gnb-id>
+                                            <gnb-ID>
+                                                10110101110001100111011110001
+                                            </gnb-ID>
+                                        </gnb-id>
+                                    </global-gNB-ID>
+                                </gNB>
+                            </GlobalE2node-ID>
+                        </value>
+                    </E2setupRequestIEs>
+                    <E2setupRequestIEs>
+                        <id>10</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RANfunctions-List>
+                                <ProtocolIE-SingleContainer>
+                                    <id>8</id>
+                                    <criticality><reject/></criticality>
+                                    <value>
+                                        <RANfunction-Item>
+                                            <ranFunctionID>2</ranFunctionID>
+                                            <ranFunctionDefinition>
+                                                68 30 4F 52 41 4E 2D 45 32 53 4D 2D 4B 50 4D 00 
+                                                00 05 4F 49 44 31 32 33 05 00 4B 50 4D 20 4D 6F 
+                                                6E 69 74 6F 72 01 01 00 01 01 07 00 50 65 72 69 
+                                                6F 64 69 63 20 52 65 70 6F 72 74 01 01 10 01 01 
+                                                09 00 45 32 20 4E 6F 64 65 20 4D 65 61 73 75 72 
+                                                65 6D 65 6E 74 01 01 00 08 43 80 44 52 42 2E 52 
+                                                6C 63 53 64 75 54 72 61 6E 73 6D 69 74 74 65 64 
+                                                56 6F 6C 75 6D 65 44 4C 00 00 00 43 80 44 52 42 
+                                                2E 52 6C 63 53 64 75 54 72 61 6E 73 6D 69 74 74 
+                                                65 64 56 6F 6C 75 6D 65 55 4C 00 00 01 43 40 44 
+                                                52 42 2E 50 65 72 44 61 74 61 56 6F 6C 75 6D 65 
+                                                44 4C 44 69 73 74 2E 42 69 6E 00 00 02 43 40 44 
+                                                52 42 2E 50 65 72 44 61 74 61 56 6F 6C 75 6D 65 
+                                                55 4C 44 69 73 74 2E 42 69 6E 00 00 03 43 40 44 
+                                                52 42 2E 52 6C 63 50 61 63 6B 65 74 44 72 6F 70 
+                                                52 61 74 65 44 4C 44 69 73 74 00 00 04 42 E0 44 
+                                                52 42 2E 50 61 63 6B 65 74 4C 6F 73 73 52 61 74 
+                                                65 55 4C 44 69 73 74 00 00 05 42 20 4C 31 4D 2E 
+                                                44 4C 2D 53 53 2D 52 53 52 50 2E 53 53 42 00 00 
+                                                06 42 20 4C 31 4D 2E 44 4C 2D 53 53 2D 53 49 4E 
+                                                52 2E 53 53 42 00 00 07 41 C0 4C 31 4D 2E 55 4C 
+                                                2D 53 52 53 2D 52 53 52 50 00 00 08 01 01 01 01 
+                                                00 01 02 11 00 45 32 20 4E 6F 64 65 20 4D 65 61 
+                                                73 75 72 65 6D 65 6E 74 20 66 6F 72 20 61 20 73 
+                                                69 6E 67 6C 65 20 55 45 01 02 00 08 43 80 44 52 
+                                                42 2E 52 6C 63 53 64 75 54 72 61 6E 73 6D 69 74 
+                                                74 65 64 56 6F 6C 75 6D 65 44 4C 00 00 00 43 80 
+                                                44 52 42 2E 52 6C 63 53 64 75 54 72 61 6E 73 6D 
+                                                69 74 74 65 64 56 6F 6C 75 6D 65 55 4C 00 00 01 
+                                                43 40 44 52 42 2E 50 65 72 44 61 74 61 56 6F 6C 
+                                                75 6D 65 44 4C 44 69 73 74 2E 42 69 6E 00 00 02 
+                                                43 40 44 52 42 2E 50 65 72 44 61 74 61 56 6F 6C 
+                                                75 6D 65 55 4C 44 69 73 74 2E 42 69 6E 00 00 03 
+                                                43 40 44 52 42 2E 52 6C 63 50 61 63 6B 65 74 44 
+                                                72 6F 70 52 61 74 65 44 4C 44 69 73 74 00 00 04 
+                                                42 E0 44 52 42 2E 50 61 63 6B 65 74 4C 6F 73 73 
+                                                52 61 74 65 55 4C 44 69 73 74 00 00 05 42 20 4C 
+                                                31 4D 2E 44 4C 2D 53 53 2D 52 53 52 50 2E 53 53 
+                                                42 00 00 06 42 20 4C 31 4D 2E 44 4C 2D 53 53 2D 
+                                                53 49 4E 52 2E 53 53 42 00 00 07 41 C0 4C 31 4D 
+                                                2E 55 4C 2D 53 52 53 2D 52 53 52 50 00 00 08 01 
+                                                01 01 01 00 01 03 16 00 43 6F 6E 64 69 74 69 6F 
+                                                6E 2D 62 61 73 65 64 2C 20 55 45 2D 6C 65 76 65 
+                                                6C 20 45 32 20 4E 6F 64 65 20 4D 65 61 73 75 72 
+                                                65 6D 65 6E 74 01 03 00 08 43 80 44 52 42 2E 52 
+                                                6C 63 53 64 75 54 72 61 6E 73 6D 69 74 74 65 64 
+                                                56 6F 6C 75 6D 65 44 4C 00 00 00 43 80 44 52 42 
+                                                2E 52 6C 63 53 64 75 54 72 61 6E 73 6D 69 74 74 
+                                                65 64 56 6F 6C 75 6D 65 55 4C 00 00 01 43 40 44 
+                                                52 42 2E 50 65 72 44 61 74 61 56 6F 6C 75 6D 65 
+                                                44 4C 44 69 73 74 2E 42 69 6E 00 00 02 43 40 44 
+                                                52 42 2E 50 65 72 44 61 74 61 56 6F 6C 75 6D 65 
+                                                55 4C 44 69 73 74 2E 42 69 6E 00 00 03 43 40 44 
+                                                52 42 2E 52 6C 63 50 61 63 6B 65 74 44 72 6F 70 
+                                                52 61 74 65 44 4C 44 69 73 74 00 00 04 42 E0 44 
+                                                52 42 2E 50 61 63 6B 65 74 4C 6F 73 73 52 61 74 
+                                                65 55 4C 44 69 73 74 00 00 05 42 20 4C 31 4D 2E 
+                                                44 4C 2D 53 53 2D 52 53 52 50 2E 53 53 42 00 00 
+                                                06 42 20 4C 31 4D 2E 44 4C 2D 53 53 2D 53 49 4E 
+                                                52 2E 53 53 42 00 00 07 41 C0 4C 31 4D 2E 55 4C 
+                                                2D 53 52 53 2D 52 53 52 50 00 00 08 01 01 01 02 
+                                                00 01 04 15 80 43 6F 6D 6D 6F 6E 20 43 6F 6E 64 
+                                                69 74 69 6F 6E 2D 62 61 73 65 64 2C 20 55 45 2D 
+                                                6C 65 76 65 6C 20 4D 65 61 73 75 72 65 6D 65 6E 
+                                                74 01 04 00 08 43 80 44 52 42 2E 52 6C 63 53 64 
+                                                75 54 72 61 6E 73 6D 69 74 74 65 64 56 6F 6C 75 
+                                                6D 65 44 4C 00 00 00 43 80 44 52 42 2E 52 6C 63 
+                                                53 64 75 54 72 61 6E 73 6D 69 74 74 65 64 56 6F 
+                                                6C 75 6D 65 55 4C 00 00 01 43 40 44 52 42 2E 50 
+                                                65 72 44 61 74 61 56 6F 6C 75 6D 65 44 4C 44 69 
+                                                73 74 2E 42 69 6E 00 00 02 43 40 44 52 42 2E 50 
+                                                65 72 44 61 74 61 56 6F 6C 75 6D 65 55 4C 44 69 
+                                                73 74 2E 42 69 6E 00 00 03 43 40 44 52 42 2E 52 
+                                                6C 63 50 61 63 6B 65 74 44 72 6F 70 52 61 74 65 
+                                                44 4C 44 69 73 74 00 00 04 42 E0 44 52 42 2E 50 
+                                                61 63 6B 65 74 4C 6F 73 73 52 61 74 65 55 4C 44 
+                                                69 73 74 00 00 05 42 20 4C 31 4D 2E 44 4C 2D 53 
+                                                53 2D 52 53 52 50 2E 53 53 42 00 00 06 42 20 4C 
+                                                31 4D 2E 44 4C 2D 53 53 2D 53 49 4E 52 2E 53 53 
+                                                42 00 00 07 41 C0 4C 31 4D 2E 55 4C 2D 53 52 53 
+                                                2D 52 53 52 50 00 00 08 01 01 01 03 00 01 05 11 
+                                                80 45 32 20 4E 6F 64 65 20 4D 65 61 73 75 72 65 
+                                                6D 65 6E 74 20 66 6F 72 20 6D 75 6C 74 69 70 6C 
+                                                65 20 55 45 73 01 05 00 08 43 80 44 52 42 2E 52 
+                                                6C 63 53 64 75 54 72 61 6E 73 6D 69 74 74 65 64 
+                                                56 6F 6C 75 6D 65 44 4C 00 00 00 43 80 44 52 42 
+                                                2E 52 6C 63 53 64 75 54 72 61 6E 73 6D 69 74 74 
+                                                65 64 56 6F 6C 75 6D 65 55 4C 00 00 01 43 40 44 
+                                                52 42 2E 50 65 72 44 61 74 61 56 6F 6C 75 6D 65 
+                                                44 4C 44 69 73 74 2E 42 69 6E 00 00 02 43 40 44 
+                                                52 42 2E 50 65 72 44 61 74 61 56 6F 6C 75 6D 65 
+                                                55 4C 44 69 73 74 2E 42 69 6E 00 00 03 43 40 44 
+                                                52 42 2E 52 6C 63 50 61 63 6B 65 74 44 72 6F 70 
+                                                52 61 74 65 44 4C 44 69 73 74 00 00 04 42 E0 44 
+                                                52 42 2E 50 61 63 6B 65 74 4C 6F 73 73 52 61 74 
+                                                65 55 4C 44 69 73 74 00 00 05 42 20 4C 31 4D 2E 
+                                                44 4C 2D 53 53 2D 52 53 52 50 2E 53 53 42 00 00 
+                                                06 42 20 4C 31 4D 2E 44 4C 2D 53 53 2D 53 49 4E 
+                                                52 2E 53 53 42 00 00 07 41 C0 4C 31 4D 2E 55 4C 
+                                                2D 53 52 53 2D 52 53 52 50 00 00 08 01 01 01 03
+                                            </ranFunctionDefinition>
+                                            <ranFunctionRevision>2</ranFunctionRevision>
+                                            <ranFunctionOID>OID123</ranFunctionOID>
+                                        </RANfunction-Item>
+                                    </value>
+                                </ProtocolIE-SingleContainer>
+                            </RANfunctions-List>
+                        </value>
+                    </E2setupRequestIEs>
+                    <E2setupRequestIEs>
+                        <id>50</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <E2nodeComponentConfigAddition-List>
+                                <ProtocolIE-SingleContainer>
+                                    <id>51</id>
+                                    <criticality><reject/></criticality>
+                                    <value>
+                                        <E2nodeComponentConfigAddition-Item>
+                                            <e2nodeComponentInterfaceType><ng/></e2nodeComponentInterfaceType>
+                                            <e2nodeComponentID>
+                                                <e2nodeComponentInterfaceTypeNG>
+                                                    <amf-name>nginterf</amf-name>
+                                                </e2nodeComponentInterfaceTypeNG>
+                                            </e2nodeComponentID>
+                                            <e2nodeComponentConfiguration>
+                                                <e2nodeComponentRequestPart>72 65 71 70 61 72 74</e2nodeComponentRequestPart>
+                                                <e2nodeComponentResponsePart>72 65 73 70 61 72 74</e2nodeComponentResponsePart>
+                                            </e2nodeComponentConfiguration>
+                                        </E2nodeComponentConfigAddition-Item>
+                                    </value>
+                                </ProtocolIE-SingleContainer>
+                            </E2nodeComponentConfigAddition-List>
+                        </value>
+                    </E2setupRequestIEs>
+                </protocolIEs>
+            </E2setupRequest>
+        </value>
+    </initiatingMessage>
+</E2AP-PDU>
+[e2sim.cpp:175] [INFO] Error length 0, error buf 
+[e2sim.cpp:181] [INFO] Error encoded 1692
+[e2sim.cpp:186] [INFO] Sent E2-SETUP-REQUEST as E2AP message
+[e2sim.cpp:196] [INFO] Waiting for SCTP data
+[e2sim.cpp:203] [INFO] Received new data of size 60
+[e2ap_message_handler.cpp:52] [DEBUG] Unpacked E2AP-PDU: index = 2, procedureCode = 1
+[e2ap_message_handler.cpp:56] [INFO] Received a message of E2 setup procedure
+[e2ap_message_handler.cpp:64] [INFO] Received SETUP-RESPONSE-SUCCESS

@@ -32,11 +32,13 @@
 6. In pcap confirm: E2setupRequest→Response (E2AP v3.01), RANfunction accepted, RICsubscriptionRequest→Response, RICindication (E2SM-KPM v3.00 OID, 8-byte TimeStamp). Annotate procedure codes/OIDs in `lrelease-facts.md`.
 
 ## Todo List
-- [ ] E2Term NodePort + node IP + namespace + image tag recorded
-- [ ] kpimon-go RAN-func-ID/OID recorded
-- [ ] bundled KPM sim registers with live E2Term
-- [ ] `golden-lrelease-e2.pcap` with full setup→subscription→indication
-- [ ] `lrelease-facts.md` written; notes file updated
+- [x] E2Term NodePort (32222) + node IP (192.168.122.78) + ns (ricplt) + image (**ric-plt-e2:6.0.6**) recorded
+- [x] func-ID/OID recorded: bundled sim **func 2 / OID123**; scp-kpimon subscribes **func 0** (mismatch — see Q3)
+- [x] bundled KPM sim registers with live E2Term (e2mgr `CONNECTED` via NodePort 32222)
+- [~] `golden-lrelease-e2.pcap` = **E2 Setup req+resp** captured. **Subscription→indication DEFERRED** (no xApp deployed; see Q4)
+- [x] `lrelease-facts.md` written; `implementation-notes.html` updated
+
+**Deviation:** No xApp in `ricxapp` ns ⇒ no subscription/indication available. Captured the **E2 Setup golden** (v3.01 req+resp, the key reference for Phases 3–4). Indication golden (M4/M5) deferred to Phase 5 (onboard scp-kpimon/kpimon-go) or Phase 2 (standalone sim-driven). e2term 6.0.6 **accepts OID123** ⇒ OID is a subscription concern, not setup.
 
 ## Success Criteria
 Bundled L-release sim completes E2 Setup + KPM subscription + indication against the live RIC; golden pcap + facts pinned.

@@ -1,0 +1,37 @@
+# Bronze baseline commit manifest
+# Captured: 2026-06-06 (tag: baseline-bronze-260606)
+# Host for golden pcap: oran-kvm (Ubuntu 20.04.6, Docker Bronze RIC)
+
+## Superproject
+branch: dev/migrate-to-l-release
+HEAD:   885a088d24ab26b92a44aa2fa37d5df135a94fc8
+
+## Submodules (git submodule status)
+ e3161c1f4cc25158f79463cc10c9aa066cfb3d99 colosseum-near-rt-ric (2021.12-12-ge3161c1)
+ 0e8ea584c6b4e8a98d1f3b9f28900def51582005 ns-o-ran-gym (0.0.2-1-g0e8ea58)
+ 4e5073c3a937643424a0582ce1a3eb743540bd58 ns3-mmwave-oran (3.38-4-g4e5073c3)
+ 2209995a84412b5178f2a49cb92125fd23cb7553 oran-e2sim (v1.0-1-g2209995)
+ 5f547ae8b5ca2d051b9f4d19391d17289ed433d9 oran-interface (heads/master)
+
+## Submodule remotes
+[oran-e2sim]
+  origin	git@github.com:thienandangthanh/o-ran-e2sim.git (fetch)
+  origin	git@github.com:thienandangthanh/o-ran-e2sim.git (push)
+  upstream	git@github.com:wineslab/ns-o-ran-e2-sim (fetch)
+  upstream	git@github.com:wineslab/ns-o-ran-e2-sim (push)
+[oran-interface]
+  origin	git@github.com:thienandangthanh/sim-ns3-o-ran-e2.git (fetch)
+  origin	git@github.com:thienandangthanh/sim-ns3-o-ran-e2.git (push)
+  upstream	git@github.com:o-ran-sc/sim-ns3-o-ran-e2 (fetch)
+  upstream	git@github.com:o-ran-sc/sim-ns3-o-ran-e2 (push)
+[ns3-mmwave-oran]
+  origin	git@github.com:thienandangthanh/ns-o-ran-ns3-mmwave.git (fetch)
+  origin	git@github.com:thienandangthanh/ns-o-ran-ns3-mmwave.git (push)
+  upstream	git@github.com:wineslab/ns-o-ran-ns3-mmwave (fetch)
+  upstream	git@github.com:wineslab/ns-o-ran-ns3-mmwave (push)
+[colosseum-near-rt-ric]
+  origin	git@github.com:wineslab/colosseum-near-rt-ric (fetch)
+  origin	git@github.com:wineslab/colosseum-near-rt-ric (push)
+[ns-o-ran-gym]
+  origin	git@github.com:wineslab/ns-o-ran-gym.git (fetch)
+  origin	git@github.com:wineslab/ns-o-ran-gym.git (push)

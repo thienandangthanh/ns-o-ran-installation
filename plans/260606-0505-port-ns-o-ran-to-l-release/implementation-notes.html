@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ns-O-RAN &rarr; L-release Migration &mdash; Implementation Notes</title>
+<style>
+  :root { --fg:#1a1a1a; --muted:#666; --acc:#0b5fff; --ok:#1a7f37; --warn:#b35900; --bad:#b40000; --bg:#fafafa; --card:#fff; --bd:#e3e3e3; }
+  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color:var(--fg); background:var(--bg); margin:0; line-height:1.5; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  h1 { font-size:1.6rem; margin:0 0 .25rem; }
+  h2 { font-size:1.15rem; margin:2rem 0 .6rem; border-bottom:2px solid var(--bd); padding-bottom:.3rem; }
+  h3 { font-size:1rem; margin:1.2rem 0 .4rem; }
+  .sub { color:var(--muted); font-size:.9rem; }
+  table { border-collapse:collapse; width:100%; margin:.5rem 0 1rem; font-size:.9rem; background:var(--card); }
+  th,td { border:1px solid var(--bd); padding:.4rem .55rem; text-align:left; vertical-align:top; }
+  th { background:#f0f3f8; }
+  code { background:#eef1f5; padding:.1rem .3rem; border-radius:3px; font-size:.85em; }
+  .tag { display:inline-block; font-size:.72rem; padding:.1rem .45rem; border-radius:10px; font-weight:600; }
+  .ok{ background:#e3f5e9; color:var(--ok);} .warn{ background:#fbeede; color:var(--warn);} .bad{ background:#fbe3e3; color:var(--bad);} .todo{ background:#eceff3; color:var(--muted);}
+  .card { background:var(--card); border:1px solid var(--bd); border-radius:8px; padding:.9rem 1.1rem; margin:.6rem 0; }
+  ul { margin:.3rem 0 .8rem 1.2rem; } li { margin:.2rem 0; }
+  .log td:first-child { white-space:nowrap; color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>ns-O-RAN &rarr; OSC Near-RT RIC L-release &mdash; Implementation Notes</h1>
+<p class="sub">Running record of design decisions, deviations, tradeoffs, open questions.
+Plan: <code>plans/260606-0505-port-ns-o-ran-to-l-release/</code> &middot; Branch (superproject): <code>dev/migrate-to-l-release</code> &middot; Started 2026-06-06.</p>
+
+<h2>1. Scope &amp; Locked Decisions</h2>
+<div class="card">
+<ul>
+  <li><b>Goal:</b> Connect ns-3 RAN (<code>ns3-mmwave-oran</code>) to OSC L-release near-RT RIC. <b>KPM-only</b> this migration; E2SM-RC / closed-loop Traffic Steering deferred.</li>
+  <li><b>Version jump:</b> E2AP v01.00&rarr;<b>v03.01</b>, E2SM-KPM v02.00.03&rarr;<b>v03.00</b>; PER&rarr;<b>APER</b>; TimeStamp 4&rarr;<b>8 bytes</b>.</li>
+  <li><b>e2sim:</b> rebase <code>oran-e2sim</code> onto OSC <code>e2-interface</code> <code>da6f82f2</code>; re-apply ns-3 bits as <b>adapter layer</b> in <code>oran-interface/model/</code> (public <code>E2Termination</code> API kept stable).</li>
+  <li><b>Topology:</b> ns-3 <b>co-located on the L-release VM</b>, connects to E2Term <b>node-IP:32222</b> (NodePort SCTP). No cross-VM routing.</li>
+  <li><b>Validation:</b> versioned, re-runnable M1&ndash;M6 harness (<code>scripts/l-release-validation/</code>), golden-pcap diff at every milestone.</li>
+  <li><b>VC:</b> feature branch <code>dev/l-release</code> per fork (<code>origin</code>=our fork, <code>upstream</code>=original). No upstream PRs.</li>
+</ul>
+</div>
+
+<h2>2. Confirmed Environment (live, 2026-06-06)</h2>
+<table>
+<tr><th>VM (SSH alias)</th><th>Real hostname</th><th>Role</th><th>State (verified)</th></tr>
+<tr><td><code>oran-kvm</code></td><td>oran-kvm</td><td>Bronze RIC &mdash; regression reference</td>
+    <td><span class="tag ok">UP</span> Ubuntu 20.04.6; Docker: db, e2mgr, e2rtmansim, e2term, sample-xapp-24 all up; SCTP <code>10.0.2.1:36422</code>; e2term <code>10.0.2.10</code> reachable. scenario-zero pre-built.</td></tr>
+<tr><td><code>oran-kvm-2</code></td><td><b>oran-kvm-3</b> &#9888;</td><td>OSC L-release testbed</td>
+    <td><span class="tag ok">UP</span> Ubuntu 20.04.6; <code>ricplt</code> ns running 139d; e2term-alpha pod up; NodePort SCTP <b><code>36422:32222/SCTP</code></b>; node IP <b><code>192.168.122.78</code></b>.</td></tr>
+</table>
+<p class="sub">&#9888; SSH alias <code>oran-kvm-2</code> resolves to a host reporting hostname <code>oran-kvm-3</code> &mdash; functionally the L-release testbed; flagged as an open question (VM may have been renamed/recreated).</p>
+
+<h3>L-release RIC facts (so far)</h3>
+<table>
+<tr><th>Item</th><th>Value</th><th>Source</th></tr>
+<tr><td>Namespace</td><td><code>ricplt</code></td><td>kubectl</td></tr>
+<tr><td>E2Term deployment</td><td><code>deployment-ricplt-e2term-alpha</code></td><td>kubectl</td></tr>
+<tr><td>E2Term SCTP svc</td><td><code>service-ricplt-e2term-sctp-alpha</code> NodePort <code>36422:32222/SCTP</code></td><td>kubectl get svc</td></tr>
+<tr><td>Node IP</td><td><code>192.168.122.78</code></td><td>hostname -I</td></tr>
+<tr><td>e2term image tag</td><td><code>ric-plt-e2:<b>6.0.6</b></code> (recon said 3.0.1)</td><td>kubectl deploy</td></tr>
+<tr><td>Bundled sim RAN-func-ID / OID</td><td>func <b>2</b> (<code>ORAN-E2SM-KPM</code>), OID <code>OID123</code> (dummy, <b>accepted</b> by e2term)</td><td>kpm_callbacks.cpp / live</td></tr>
+<tr><td>scp-kpimon subscribes with</td><td>func <b>0</b> (<code>control.go:90</code>) &mdash; <span class="tag warn">mismatch vs sim's 2</span></td><td>ric-scp-kpimon</td></tr>
+</table>
+
+<h2>3. Phase 0 &mdash; Bronze baseline (regression anchor) <span class="tag ok">DONE</span></h2>
+<div class="card">
+<ul>
+  <li><b>Tag:</b> <code>baseline-bronze-260606</code> on superproject HEAD <code>885a088</code> (branch <code>dev/migrate-to-l-release</code>).</li>
+  <li><b>Commit manifest:</b> <code>baseline/commit-manifest.txt</code> (submodule pins + remotes).</li>
+  <li><b>Pinned submodule commits:</b> oran-e2sim <code>2209995</code> (v1.0), oran-interface <code>5f547ae</code>, ns3-mmwave-oran <code>4e5073c3</code>, colosseum-near-rt-ric <code>e3161c1</code>.</li>
+  <li><b>Golden Bronze pcap (FULL pub-sub):</b> <code>baseline/bronze-e2.pcap</code> &mdash; ~1.4 MB, 1470 SCTP DATA chunks on bridge <code>brric</code>. Decoded flow: <b>5&times; E2setupRequest, 5&times; RICsubscriptionRequest&rarr;Response, ~787&times; RICindication</b> (KPM). Captured with the sample xApp subscribing (see below).</li>
+  <li><b>Decoded reference:</b> <code>baseline/bronze-e2setup-decoded.txt</code> + <code>baseline/bronze-e2term.log</code>. RAN functions: <b>funcID 200 (ORAN-WG3-KPM)</b> + <b>300 (ORAN-WG3-RC)</b>, dummy OID <code>OID123</code>, <code>ranFunctionRevision 2</code>. <b>This is the exact v01.00/v2 byte format Phases 3&ndash;6 replace.</b></li>
+  <li><b>dev/l-release branches created</b> (local, at pinned commits): oran-e2sim, oran-interface, ns3-mmwave-oran.</li>
+</ul>
+</div>
+<div class="card">
+<b>Full pub-sub method (resolves earlier setup-only gap):</b> Bronze KPM indications require an active xApp subscription. Run scenario-zero AND the sample xApp: <code>colosseum-near-rt-ric/setup-scripts/start-xapp-ns-o-ran.sh</code> (container <code>sample-xapp-24</code>, <code>GNB_ID=ns-o-ran</code>), then inside it <code>/home/sample-xapp/run_xapp.sh</code> (agent &rarr; 10s &rarr; connector subscribes). Sequence: start ns-3 &rarr; wait ~50s for gNB E2 registration &rarr; start xApp &rarr; indications flow. Note: Bronze e2mgr logs no explicit E2setupResponse PDU yet subscriptions still succeed (registration is enough).
+</div>
+<div class="card">
+<b>Reusable gotcha (capture):</b> Bronze E2 SCTP rides the Docker <code>ric</code> bridge <b><code>brric</code></b> (10.0.2.1&harr;10.0.2.10), <i>not</i> <code>-i any</code> (the <code>sctp</code> BPF filter on <code>any</code> caught 0 pkts). Also <code>tcpdump</code> errors <code>Permission denied</code> if reusing a savefile owned by the dropped-priv <code>tcpdump</code> user &mdash; write a fresh path each run. tcpdump timeout must exceed sim wall-clock (~375s for simTime=10).</li>
+</div>
+
+<h2>3b. Phase 1 &mdash; L-release E2 Setup golden <span class="tag ok">DONE (setup)</span> <span class="tag warn">indication deferred</span></h2>
+<div class="card">
+<ul>
+  <li><b>NodePort path validated:</b> bundled <code>kpm_sim</code> &rarr; <code>192.168.122.78:32222</code> &rarr; <i>Connection established</i>. This is the exact path ns-3 will use &mdash; de-risks Phases 2/3.</li>
+  <li><b>M2+M3 demonstrated:</b> e2mgr <code>/v1/nodeb/states</code> &rarr; <code>connectionStatus: CONNECTED</code> (<code>gnb_734_373</code>). E2 Setup + RAN function accepted by the live L-release RIC.</li>
+  <li><b>Golden pcap:</b> <code>baseline/golden-lrelease-e2.pcap</code> (10 SCTP pkts; <b>2 DATA = E2setupRequest + E2setupResponse</b>). Decoded: <code>baseline/golden-lrelease-e2setup.xml</code> &mdash; carries <code>E2nodeComponentConfigAddition-List</code> (v3.01 IE, absent in Bronze).</li>
+  <li><b>Facts pinned:</b> <code>baseline/lrelease-facts.md</code> (image 6.0.6, NodePort 32222, node IP, funcIDs, capture how-to).</li>
+  <li><b>Revised assumption:</b> e2term 6.0.6 <b>accepts dummy <code>OID123</code></b> at E2 Setup &mdash; OID matters for the xApp <b>subscription</b> (Phase 5), not setup acceptance (Phase 3/4).</li>
+  <li><b>Deferred:</b> subscription+indication golden (M4/M5) &mdash; no xApp deployed (<code>ricxapp</code> empty). Captured the setup golden now; indication golden when scp-kpimon/kpimon-go is onboarded (Phase 5) or via standalone sim (Phase 2).</li>
+</ul>
+</div>
+
+<h2>4. Open Questions</h2>
+<table>
+<tr><th>#</th><th>Question</th><th>Status</th></tr>
+<tr><td>Q1</td><td>SSH <code>oran-kvm-2</code> &rarr; hostname <code>oran-kvm-3</code>. <b>RESOLVED (user):</b> same VM, rename pending; treat as one.</td><td><span class="tag ok">resolved</span></td></tr>
+<tr><td>Q2</td><td>oran-interface upstream <code>l-release</code> vs <code>master</code>. <b>RESOLVED:</b> our pin <code>5f547ae</code> == upstream/master == upstream/m-release; upstream/<code>l-release</code> (8ceee89) differs by <b>only README.md</b>. <b>Decision (user):</b> base the Phase 3&ndash;6 adapter on upstream <code>l-release</code>. The O-RAN-SC oran-interface model code is already v3-shaped (S-NSSAI, htobe64 8-byte TimeStamp) but still emits dummy <code>OID123</code> + <code>ric_ReportStyle_Type</code> &mdash; real porting work is the e2sim relink + remaining v3 field renames, not a from-scratch rewrite.</td><td><span class="tag ok">resolved</span></td></tr>
+<tr><td>Q3</td><td>RAN-func-ID ns-3 must advertise: bundled sim uses <b>2</b>, scp-kpimon subscribes with <b>0</b>. Working assumption <b>2</b>; confirm empirically in Phase 5.</td><td><span class="tag warn">Phase 5</span></td></tr>
+<tr><td>Q4</td><td>Indication golden (M4/M5): onboard scp-kpimon/kpimon-go xApp, or drive indications standalone from the sim in Phase 2? (No xApp currently deployed.)</td><td><span class="tag warn">open</span></td></tr>
+</table>
+
+<h2>5. Running Log</h2>
+<table class="log">
+<tr><th>When</th><th>Event</th></tr>
+<tr><td>2026-06-06</td><td>Recon confirmed both VMs live &amp; healthy. Phase 0 started.</td></tr>
+<tr><td>2026-06-06</td><td>Wrote commit-manifest; tagged <code>baseline-bronze-260606</code>; created <code>dev/l-release</code> on 3 forks.</td></tr>
+<tr><td>2026-06-06</td><td>Captured Bronze pcap on <code>brric</code> (1262 frames, 5 E2setupRequests, funcID 200+300/OID123/rev2). No response/indication (no subscriber). Phase 0 closed: accept setup-phase anchor.</td></tr>
+<tr><td>2026-06-06</td><td>Phase 1: bundled <code>kpm_sim</code> (func 2) &rarr; NodePort 32222 &rarr; CONNECTED (e2mgr). Golden L-release setup pcap (req+resp) + <code>lrelease-facts.md</code>. Found e2term 6.0.6, OID123 accepted, scp-kpimon subscribes func 0 (vs sim 2). Indication golden deferred (no xApp).</td></tr>
+<tr><td>2026-06-06</td><td>Q1+Q2 resolved (user): oran-kvm-2==oran-kvm-3; base adapter on upstream/l-release. Re-captured FULL Bronze pub-sub with sample xApp: 5 E2setup + 5 sub req/resp + ~787 indications (1470 DATA chunks). Phase 0 golden pcap now complete. Hand-off report written.</td></tr>
+</table>
+
+</div>
+</body>
+</html>
