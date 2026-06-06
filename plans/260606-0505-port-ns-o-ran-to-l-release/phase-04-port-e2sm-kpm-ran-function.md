@@ -7,7 +7,7 @@
 - kpimon-go func-ID/OID: from [phase-01](phase-01-confirm-lrelease-e2term.md) `lrelease-facts.md`
 
 ## Overview
-- **Priority:** P0. **Status:** planned.
+- **Priority:** P0. **Status:** ✅ DONE (2026-06-06) — v3.00 descriptor encodes (1600 B), round-trips, live M3 GREEN with real descriptor on wire.
 - Build a valid **E2SM-KPM v3.00 RAN function description** so the E2Term/e2mgr **accept** the ns-3 node's KPM function (**M3**).
 
 ## Key Insights
@@ -30,14 +30,14 @@
 5. Assert **M3**: function present in E2 Setup Response / `kubectl -n ricplt logs <e2mgr>` shows RAN function registered; no `RANfunction rejected`. Compare to golden pcap RAN-func IE.
 
 ## Todo List
-- [ ] E2SM-KPM v3 C types available/regenerated (pinned asn1c)
-- [ ] real KPM v3 OID emitted
-- [ ] `ric_Style_Type` rename + `ric_KPM_Node_List` removal applied
-- [ ] RAN-func-ID aligned with kpimon-go
-- [ ] **M3 RAN function accepted** (e2mgr/setup response)
+- [x] E2SM-KPM v3 C types available (vendored OSC `da6f82f2`, asn1c 0.9.29 — no regen)
+- [x] OID emitted = `OID123` (golden parity; "real OID" plan note superseded by evidence — OSC sim + E2Term use OID123) — user-approved
+- [x] v3 field port applied: `ric_Indication{Header,Message}Format_Type` rename + `ric_ActionFormat_Type` + `measInfo_Action_List` (per-style, free-safe); EventTrigger unchanged; `ric_KPM_Node_List` already absent in v3 struct
+- [x] RAN-func-ID = **2** (mirrors OSC kpm_sim / Phase 2-3; kpimon func-0 vs 2 = Q3, deferred Phase 5)
+- [x] **M3 RAN function accepted** — live E2Term, real 1600 B descriptor on wire, all 4 asserts PASS
 
 ## Success Criteria
-ns-3 node's E2SM-KPM v3.00 RAN function is accepted by the L-release RIC (visible in e2mgr / setup response), no rejection.
+✅ MET. ns-3-side encoder produces a valid E2SM-KPM v3.00 RAN-function-description (1600 B, round-trip decode consumes all bytes, 1 trigger + 5 report styles + 9 measurements), advertised in E2 Setup and accepted by the live L-release RIC (E2setupResponse + RANfunctionsAccepted, no reject). Descriptor content (ORAN-E2SM-KPM/OID123/KPM Monitor/Periodic Report/E2 Node Measurement/DRB./L1M. metrics) verified on the wire.
 
 ## Risk Assessment
 - OID/version still rejected → byte-diff RAN-func IE vs golden pcap; verify OID arc + version3.
