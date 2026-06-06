@@ -14,8 +14,18 @@ This repo helps you install and run **ns-O-RAN**: ns-3 5G simulation talking to 
 
 ## Target environment
 
+Two deployment options are now supported:
+
+### Option 1: Bronze Near-RT RIC (Legacy)
+- **RIC**: Docker stack on same VM (`ric` network, 10.0.2.0/24)
 - **VM**: Ubuntu 20.04.6, with Docker (VirtualBox, VMware, or libvirt/KVM)
 - **Repo in VM**: `~/ns-O-RAN-installation`
+
+### Option 2: OSC L-release Near-RT RIC (L-release, v3 protocol)
+- **RIC**: Kubernetes cluster on dedicated VM (`oran-kvm-2`, node IP 192.168.122.78)
+- **ns-3**: Co-located on same VM (virtiofs-mounted repo)
+- **Namespace**: `ricplt` (e2term, e2mgr, ricxapp, kpimon-go)
+- **E2 protocol**: E2AP v03.01, E2SM-KPM v03.00
 
 > **Note for Linux users**: If you're using libvirt/KVM with virtiofs, see `docs/linux-vm-setup-guide.md` for host setup instructions.
 
@@ -125,6 +135,93 @@ cd ~/ns-O-RAN-installation/colosseum-near-rt-ric/setup-scripts
 ./setup-sample-xapp.sh ns-o-ran
 # then: ./start-xapp-ns-o-ran.sh  (or follow start-xapp.sh for your gNB ID)
 ```
+
+---
+
+## L-release Quick Start (E2AP v03.01 / E2SM-KPM v03.00)
+
+**Prerequisites**: ns-3 and e2sim build dependencies (same as Bronze); L-release RIC deployed on `oran-kvm-2`.
+
+### Build
+
+The build order differs from Bronze due to e2sim dependencies:
+
+```bash
+cd ~/ns-O-RAN-installation
+
+# 1. Build libe2sim from OSC e2-interface (branch dev/l-release)
+cd oran-e2sim/e2sim
+cmake . && make e2sim_shared && sudo make install && sudo ldconfig
+
+# 2. CRITICAL: Manually install e2sim.hpp (make install does not refresh existing files)
+sudo cp src/base/e2sim.hpp /usr/local/include/e2sim/
+
+# 3. Build asn1c static archive (libe2sim does not bundle asn_DEF_* symbols)
+cd ../asn1c
+gcc -O2 -fPIC -I. -c *.c
+ar rcs /usr/local/lib/libasn1c_e2.a *.o
+sudo cp /usr/local/lib/libasn1c_e2.a /usr/local/lib/
+
+# 4. Build ns-3 (branch dev/l-release)
+cd ~/ns-O-RAN-installation/ns-3-mmwave-oran
+./ns3 build
+```
+
+### Run scenario-zero against L-release RIC
+
+**Before each run**: Clear stale RNIB state and restart kpimon-go pod (force subscription retry):
+
+```bash
+# SSH to RIC VM
+ssh oran-kvm-2
+
+# Clear RNIB
+curl -X PUT http://localhost:3800/v1/nodeb/shutdown
+
+# Restart kpimon-go pod (e2term POD IP 10.244.0.48 must be reachable from ns-3 VM)
+kubectl -n ricxapp delete pod <kpimon-pod-name>
+```
+
+**Run ns-3 scenario-zero**:
+
+```bash
+cd ~/ns-O-RAN-installation/ns-3-mmwave-oran
+./ns3 run "scratch/scenario-zero \
+  --enableE2FileLogging=false \
+  --e2TermIp=10.244.0.48 \
+  --e2TermPort=36422 \
+  --simTime=20 \
+  --reducedPmValues=1 \
+  --e2du=1 \
+  --e2cuUp=0 \
+  --e2cuCp=0"
+```
+
+**Key points**:
+- e2term **POD IP** (`10.244.0.48:36422`), not NodePort (`192.168.122.78:32222`). The NodePort IPVS SNAT resets persistent SCTP associations.
+- `reducedPmValues=1`: Emits 5 cell-level KPM metrics (DRB/RRU/TB DL counts); matches the advertised descriptor (kpimon gate: metric count == descriptor count).
+- `simTime=20`: Wall-clock ~40–60 sec (1 sec sim-time ≈ 2–3 wall-clock sec). Enough for kpimon startup + subscription + indications.
+
+### Validation
+
+All milestones (M1 SCTP, M2 E2 Setup, M3 RAN functions, M4 subscription, M5 indication, M6 real KPM decode) are green. See `scripts/l-release-validation/` for the harness and evidence pcaps:
+
+```bash
+cd ~/ns-O-RAN-installation
+scripts/l-release-validation/assert-pcap.sh captures/phase7-m5m6-scenario-zero.pcap \
+  sctp-init e2setup-response sub-response ric-indication kpm-v3
+```
+
+Expected output: `PASS` for all 4 assertions.
+
+### Submodule branches
+
+L-release migration spans three submodule forks (all on `dev/l-release`):
+- `oran-e2sim`: OSC `e2-interface` rebased; per-instance SCTP source-port fix
+- `oran-interface`: v3 model port (KPM indication headers/messages), funcId=2 registration
+- `ns3-mmwave-oran` (super-repo): v3 flat-message KPM model, malloc/free memory contract fixes, reduced-PM support
+
+Run `git submodule update --init --recursive` to sync to the branch pins.
 
 ---
 

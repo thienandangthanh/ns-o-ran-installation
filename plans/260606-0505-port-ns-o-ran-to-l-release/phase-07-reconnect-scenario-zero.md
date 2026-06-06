@@ -7,7 +7,7 @@
 - Scenario: `ns3-mmwave-oran/scratch/scenario-zero.cc`; helper `ns3-mmwave-oran/run-test.sh`
 
 ## Overview
-- **Priority:** P0. **Status:** ◐ code-port DONE (Stages A–F: v3 model port + clean full ns-3 build + offline model proof PASS). Live M1–M6 RIC run = next session.
+- **Priority:** P0. **Status:** ✅ DONE — live M1–M6 all GREEN against L-release RIC. Real scenario-zero KPM decoded by kpimon-go (5 cell metrics) and written to InfluxDB. Three live-only bugs fixed (funcId 2, SCTP source-port collision, PDU double-free) + cell-style reduced-PM. Finalization (README/docs/pins/commit) remaining.
 - Port the **real ns-3 KPM pipeline** to E2SM-KPM v3.00 so the unmodified scenario-zero streams decodable v3 indications to kpimon-go. M6 = real ns-3 KPM values, not the dummy builder.
 
 ## Locked decisions (this session)
@@ -56,7 +56,8 @@
 - [x] Stage E: clean full ns-3 build on oran-kvm-2 (scenario-zero links; +libasn1c_e2.a; E2SM-RC excluded)
 - [x] Stage F: offline model proof PASS (kpm-v3-model-proof: hdr 38 B + msg 192 B, 5 metrics, exit 0)
 - [x] code-review (0 crit, 1 high FIXED + M1/M3 made loud; M2/L1 documented for live run)
-- [ ] **Live (next session):** scenario-zero end-to-end M1–M6 vs L-release RIC; README/docs migration; submodule pins; finalize notes
+- [x] **Live M1–M6 (DONE):** scenario-zero end-to-end vs L-release RIC — all green. funcId 200→2 (kpimon hardcodes 2) + Trampoline2; SCTP per-gNB source-port fix (e2sim); PDU double-free fix (5 sites); cell-only reduced-PM (5 metrics == descriptor). kpimon decoded values → InfluxDB. Evidence: scripts/l-release-validation/captures/phase7-m5m6-scenario-zero.pcap. Journal: docs/journals/2026-06-07-phase7-live-m1-m6-end-to-end.md
+- [ ] **Finalize:** README L-release section; docs/ migration writeup; submodule pins (forks + super); finalize implementation-notes.html; commit/push
 
 ## Success Criteria (this session)
 Real ns-3 `model/` KPM pipeline ported to v3.00; DoStart adapter in place; **full ns-3 build compiles clean on oran-kvm-2**; offline proof shows a valid v3 indication from the real path. Live end-to-end M1–M6 deferred to next session with a clean handoff.
