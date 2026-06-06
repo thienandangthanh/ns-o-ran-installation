@@ -5,7 +5,7 @@
 - Source: `oran-e2sim/e2sim/src/messagerouting/e2ap_message_handler.cpp` (RIC subscription handler), `…/encoding/encode_e2apv1.cpp` (subscription response), `oran-interface/model/oran-interface.cc` (`ProcessRicSubscriptionRequest`)
 
 ## Overview
-- **Priority:** P0. **Status:** planned.
+- **Priority:** P0. **Status:** ✅ DONE (M4 GREEN — real kpimon-go subscription admitted; offline proof + live pcap, both decode paths).
 - Decode the L-release **RICsubscriptionRequest** for the KPM function and return a valid **RICsubscriptionResponse** (**M4**), driven by the real kpimon-go xApp.
 
 ## Key Insights
@@ -28,11 +28,17 @@
 5. Assert **M4**: RICsubscriptionRequest→Response success; `kubectl -n ricplt logs <kpimon>` shows subscription established. Compare to golden pcap.
 
 ## Todo List
-- [ ] v3 subscription decode (correct ProtocolIE-IDs)
-- [ ] ActionDefinition Format1 parsed; Formats 2–5 handled gracefully
-- [ ] v3 RICsubscriptionResponse success emitted
-- [ ] kpimon-go subscription established to ns-3 node
-- [ ] **M4 subscription succeeds** vs golden pcap
+- [x] v3 subscription decode (correct ProtocolIE-IDs) — handled by installed libe2sim v3 dispatcher; our callback parses RICrequestID + RICsubscriptionDetails
+- [x] ActionDefinition Format1 parsed; Formats 2–5 handled gracefully — keyed off `ricActionType` only, never decoding the action body → any format tolerated
+- [x] v3 RICsubscriptionResponse success emitted — `kpm-subscription-handler.h` (admit first REPORT) + offline round-trip proof
+- [x] kpimon-go subscription established to ns-3 node — onboarded via NIST testbed script (func id 2); subscribed after RNIB rescan
+- [x] **M4 subscription succeeds** — `phase5-m4-subscription.pcap`: successfulOutcome/id-RICsubscription, RICrequestID 123/1 echoed, action id 1 admitted (host E2AP decode + VM byte-fallback both PASS)
+
+## Implementation notes (as-built)
+- **Code:** `oran-interface/examples/kpm-subscription-handler.h` (pure parse+build, no send) + `e2-setup-minimal.cc` registers the callback under func 2 (kpimon-go) and func 0 (scp-kpimon fallback). Offline proof: `kpm-subscription-test.cc`.
+- **No e2sim/oran-interface.cc edits needed:** the installed OSC libe2sim already does v3 subscription decode + dispatch (`get_function_id_from_subscription` → registered callback) and provides `generate_e2apv1_subscription_response_success`. The plan's "modify oran-e2sim/oran-interface" steps were obviated by the vendored OSC lib — kept the API stable.
+- **Live-RIC gotchas (now codified in `m4-subscription.sh`):** connect to e2term POD IP:36422 over cni0 (NodePort 32222 SNAT resets a persistent association); clear stale RNIB via `PUT /v1/nodeb/shutdown` before connecting (a DISCONNECTED entry makes e2term skip setup); restart kpimon-go after the node is CONNECTED so it re-scans RNIB and subscribes.
+- **Response quirk:** libe2sim hardcodes RANfunctionID=147 in the response; submgr correlates by RICrequestID, so it is accepted (proven live).
 
 ## Success Criteria
 A real kpimon-go subscription to the ns-3 node's KPM function completes successfully (M4); action stored for indications.

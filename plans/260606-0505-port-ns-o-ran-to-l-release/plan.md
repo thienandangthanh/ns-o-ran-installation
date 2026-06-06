@@ -54,8 +54,8 @@ ActionDefinition `Format1`→`Formats 1-5`; `MeasurementLabel` 17→24; `ric_KPM
 | 2 | Standalone L-release e2sim test (M1–M5, no ns-3) | [phase-02](phase-02-standalone-e2sim-test.md) | ✅ DONE (M1–M3 green, golden-matched; vendored e2sim builds; harness done) · ⚠ M4/M5 subscriber-gated (Q4 escalated) |
 | 3 | Port E2 Setup procedure (A SCTP + B E2AP) | [phase-03](phase-03-port-e2-setup.md) | ✅ DONE (M2 green, golden-matched) |
 | 4 | Port E2SM-KPM RAN function definition (C) | [phase-04](phase-04-port-e2sm-kpm-ran-function.md) | ✅ DONE (v3.00 descriptor 1600 B, round-trip + live M3 green) |
-| 5 | Port subscription handling | [phase-05](phase-05-port-subscription-handling.md) | ◐ next |
-| 6 | Port KPM indication messages (D metric mapping) | [phase-06](phase-06-port-kpm-indications.md) | ☐ |
+| 5 | Port subscription handling | [phase-05](phase-05-port-subscription-handling.md) | ✅ DONE (M4 GREEN — real kpimon-go sub admitted; offline proof + live pcap) |
+| 6 | Port KPM indication messages (D metric mapping) | [phase-06](phase-06-port-kpm-indications.md) | ◐ next |
 | 7 | Reconnect ns-3 scenario-zero (end-to-end) | [phase-07](phase-07-reconnect-scenario-zero.md) | ☐ |
 
 ## Validation milestones (harness `scripts/l-release-validation/`)

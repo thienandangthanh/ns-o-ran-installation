@@ -91,9 +91,12 @@ check_no_ranfunc_reject() {
   ok "M3 no RANfunctionsRejected (correctly absent)"
 }
 
-# RICsubscriptionResponse: successfulOutcome(0x20) + procedureCode id-RICsub(0x08) => "2008"
+# RICsubscriptionResponse: successfulOutcome(0x20) + procedureCode id-RICsub(0x08)
+# then the open-type length octet(s). The success response is short (Phase-5 live
+# response measured "2008 00 1d ..." for 1 admitted action), so match 2008 + 00 +
+# a length byte rather than a fixed 0x3x nibble.
 check_sub_response() {
-  if has_decode "RICsubscriptionResponse" || has_bytes "2008003[0-9a-f]"; then
+  if has_decode "RICsubscriptionResponse" || has_bytes "200800[0-9a-f]{2}"; then
     ok "M4 RICsubscriptionResponse"
   else bad "M4 RICsubscriptionResponse"; fi
 }
