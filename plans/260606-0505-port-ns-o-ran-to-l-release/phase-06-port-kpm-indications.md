@@ -6,8 +6,20 @@
 - Metric source: `ns3-mmwave-oran/src/mmwave/model/mmwave-enb-net-device.cc` (`BuildAndSendReportMessage`), `…/lte/model/lte-enb-net-device.cc`
 
 ## Overview
-- **Priority:** P0. **Status:** planned.
+- **Priority:** P0. **Status:** ✅ DONE (M5 GREEN). M6 (real ns-3 metrics) deferred to Phase 7 (needs first full ns-3 build + mmwave scenario run — same scope as P7).
 - Emit valid **E2SM-KPM v3.00 RICindication** PDUs carrying ns-3 metrics: first static (**M5 dummy**), then live sim values (**M6 real**).
+
+## Result (M5 GREEN — 2026-06-06)
+Mirrored the Phase-5 pattern (standalone builder in `examples/`, NOT touching the ns-3 `model/kpm-indication.cc`). Vendored libe2sim already provides the indication encoder + all v3 ASN.1 types; only the E2SM-KPM header/message builders were ported (from OSC `encode_kpm.cpp`).
+
+**Three-level proof:**
+1. **Offline** `kpm-indication-test` exit 0 — header 38 B / message 27 B, both APER round-trip; E2AP PDU proc-5; Format1 + 8-byte timestamp asserted.
+2. **Wire** (Wireshark 4.6.5 E2SM-KPM dissector): 15× RICindication (proc 5) decoded as `IndicationHeader-Format1` (8-byte `colletStartTime` = `"20200613"`) + `IndicationMessage-Format1` (PLMN 747, S-NSSAI SD 100); RICrequestID 123/2, RANfunctionID 2, actionID 1.
+3. **Live decode** kpimon-go logs: `Message received: name=RIC_INDICATION ... len=122` → `Indication Header format = 1` → `No of cell metrics = 1`. kpimon decodes the v3 structure.
+
+**Deviation:** kpimon logs benign `no_of_cell_metrics != len(tmpCellKpi)` + header `RC_WMORE` — dummy `measID=1`/integer value does NOT populate kpimon's named-metric table. Expected for dummy data; closing it is exactly the M6 (real ns-3 metric mapping) work in Phase 7.
+
+**Evidence pcap:** `scripts/l-release-validation/captures/phase6-m5-indication.pcap` (25.4 KB).
 
 ## Key Insights
 - v3 indication changes: **8-byte TimeStamp** (was 4), `MeasurementLabel` 24 fields, `QosFlowIdentifier`, `S-NSSAI`, IndicationMessage Format1.
@@ -30,12 +42,12 @@
 6. Harness: add M5/M6 assertions (RICindication present, E2SM-KPM v3 OID, decodable measurement records). Update notes with any metric-mapping deviations.
 
 ## Todo List
-- [ ] v3 IndicationHeader (8-byte timestamp)
-- [ ] v3 IndicationMessage (MeasurementRecord, v3 label/types)
-- [ ] helpers map ns-3 metrics → v3 items
-- [ ] **M5 dummy KPM** decoded by kpimon-go
-- [ ] **M6 real ns-3 KPM** decoded; values track sim
-- [ ] harness M5/M6 assertions
+- [x] v3 IndicationHeader (8-byte timestamp) — `kpm-indication-builder.h:BuildIndicationHeader`
+- [x] v3 IndicationMessage (MeasurementRecord, v3 label/types) — `BuildDummyIndicationMessage`
+- [ ] helpers map ns-3 metrics → v3 items — **deferred to Phase 7 (M6)**
+- [x] **M5 dummy KPM** decoded by kpimon-go (`Indication Header format = 1`, `No of cell metrics = 1`)
+- [ ] **M6 real ns-3 KPM** decoded; values track sim — **Phase 7**
+- [x] harness M5 assertions (`m5-dummy-kpm.sh` live + offline proof); M6 assertions → Phase 7
 
 ## Success Criteria
 kpimon-go decodes E2SM-KPM v3.00 indications carrying ns-3 metrics (M5 then M6); harness asserts both.
