@@ -44,7 +44,6 @@ finding that reframes next steps, plus the agreed strategy. No prior chat contex
 
 **Local paths:**
 - Deployed xApps: `O-RAN-Testbed-Automation/RAN_Intelligent_Controllers/Near-Real-Time-RIC/xApps/{kpimon-go,rc,ts,qp,ad}/`
-- kpimon-go golden clone: `~/Documents/UCLAB/projects/O-RAN-DW/OSC-repos/ric-app-kpimon-go/`
 - ns-O-RAN e2sim asn: `oran-e2sim/e2sim/asn1c/asn/v03/`
 - `.asn` provenance: vendored from OSC `e2-interface da6f82f2` in commit `3b90440 feat(e2sim): vendor OSC e2-interface da6f82f2 as L-release base`. The `develop` worktree (wineslab Bronze, `2209995`) has **no `asn/` dir** — confirms the v3 asn entered via this migration.
 
@@ -106,7 +105,7 @@ M5/M6 reported GREEN: kpimon-go decoded **5 cell metrics** → InfluxDB. But sen
 
 1. **§3 — how did v3-sender/v2-receiver KPM decode succeed?** (resolve via capture)
 2. **Do kpimon-go / rc / ts / qp / ad run without SDR/USRP** on the current testbed? (pure sim viability)
-3. **Which RC version to target** — `nov2021` (v01.03) vs `e2sm-rc-2.0`? Match whatever the deployed `rc` xApp emits.
+3. **Which RC version to target** — `nov2021` (v01.00) vs `e2sm-rc-2.0`? Match whatever the deployed `rc` xApp emits.
 4. **Does the deployed `rc` actually work** on this L testbed, end-to-end, and what Control Action style (Format) does it send?
 5. **Source of v2 KPM asn** if rollback chosen — wineslab Bronze tree vs re-vendor into OSC e2sim.
 6. **Real KPM/RC OIDs** — replace `OID123`; confirm what the deployed xApps require.
