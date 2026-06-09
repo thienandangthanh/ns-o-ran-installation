@@ -130,6 +130,14 @@ v3 flat model can emit cell + per-UE items in one array. Descriptor advertises 5
 
 OSC e2sim CMake exports only headers; compiled ASN.1 objects are in an `OBJECT` library not bundled into libe2sim. Must build and install separately. Documented in setup guide.
 
+### Cross-version interop: ns-3 KPM v03.00 ↔ deployed kpimon-go v2.0
+
+The deployed kpimon-go decodes with **E2SM-KPM v2.0** (`kpm2_0.asn`), not v3. Root-caused on captured bytes (M1, `plans/260609-0127-rc-path-and-xapp-deploy-observe/reports/phase1-kpm-version-rootcause.md`). **Verdict = SPLIT:**
+
+- **IndicationMessage Format1 (the metrics) is genuinely byte-compatible** v2.0↔v03.00 — Format1 + whole MeasurementData/Info family identical (only v3 additions are post-extension-marker optionals never sent). Verified: real captured 194B v3 message → v2 decoder = `RC_OK`, full consume, exact values. This is **by ASN.1 design**, not luck — safe to rely on.
+- **IndicationHeader does NOT decode under v2** (`TimeStamp` 4→8 bytes + always-present sender strings ⇒ `RC_WMORE`). It is harmless: `wrapper.c` returns the partial struct on RC_WMORE, asn1c sets `present=Format1` pre-failure, and `control.go` never reads header content (uses its own ingest timestamp). The Phase-0 "Indication Header format=1" log was this salvaged partial, not a successful decode.
+- **Implication:** keeping ns-3 at v03.00 is safe for KPM monitoring. The header mismatch is a **latent risk** only if a future xApp parses the indication header. No rollback warranted.
+
 ---
 
 ## Known Limitations & Follow-up Work

@@ -1,7 +1,7 @@
 ---
 title: RC control path + deploy-and-observe real xApps (post-KPM L-release)
 slug: 260609-0127-rc-path-and-xapp-deploy-observe
-status: Phase 0 DONE (M0 GREEN 2026-06-09); Phase 1 next
+status: Phase 1 DONE (M1 GREEN 2026-06-09); Phase 2 next
 created: 2026-06-09
 updated: 2026-06-09
 branch: dev/migrate-to-l-release (continue on dev/l-release per fork)
@@ -73,7 +73,7 @@ capability (KPM was send-only; RC is receive+ACK+act). **ML is out of scope as a
 | # | Phase | Goal | Exit milestone |
 |---|---|---|---|
 | 0 | Deploy & observe | Live KPM via ns-3→e2term; deploy rc; tshark-capture real E2SM version/OID/funcId/Control-Format; confirm no-SDR | ✅ **M0 DONE** — see `reports/phase0-capture-analysis.md` |
-| 1 | Resolve KPM v3↔v2 | Explain how v2.0 decoder parsed v3.00 bytes (H1–H4) | **M1** root-cause written |
+| 1 | Resolve KPM v3↔v2 | Explain how v2.0 decoder parsed v3.00 bytes (H1–H4) | ✅ **M1 DONE** — see `reports/phase1-kpm-version-rootcause.md` |
 | 2 | Version decision gate | Keep KPM v3.00 vs roll ns-3 → v2.0; fold in NodePort + real-OID debt | **M2** decision in docs/l-release-migration.md |
 | 3 | RC-2.0 ASN.1 base | Add `e2sm-rc-2.0.asn` to ns-3 e2sim; regenerate via asn1c; round-trip | **M3** RC types compile + round-trip |
 | 4 | RC receive + ACK | ns-3 decodes RIC Control Request, returns Control Acknowledge (no-op action) | **M-RC1** Control Req decoded + ACK on wire |
@@ -134,6 +134,14 @@ tshark E2SM dissector gap (offline asn1c fallback).
 - **NodePort SCTP NOT viable** (handshake OK then reset→ns-3 SIGSEGV); **pod-IP `10.244.0.13:36422` is the working path.** Connect target fully arg-overridable (`--e2TermIp`, `--ns3::MmWaveHelper::E2Port`) — no source edit. Rewrites Phase-2 NodePort debt.
 - Ops gotchas: always `pkill -9` ns-3 (zombie holds SCTP src port); restart kpimon AFTER gNB CONNECTED to force subscribe.
 - Full detail + reproducible procedure: `reports/phase0-capture-analysis.md`.
+
+## Phase 1 result (M1 GREEN, 2026-06-09)
+Root cause settled on **ground-truth captured bytes** (Python pcapng parser + v3 e2sim asn1c E2AP split + built v2 decoder). **Verdict = SPLIT:**
+- **MESSAGE (carries metrics→InfluxDB) = ROBUST.** IndicationMessage Format1 + whole MeasurementData/Info family byte-identical v2.0↔v03.00 (only v3 diff = 3 post-extension-marker optionals in MeasurementLabel, never sent). Real captured 194B v3 msg → v2 decoder = `RC_OK 194/194`, values `[2154,765,0,86,3]` + 5 metric names exactly = InfluxDB fields. Compatible **by ASN.1 design**.
+- **HEADER = BROKEN but inert.** v2 `TimeStamp SIZE(4)` vs v3 `SIZE(8)` + always-present sender strings ⇒ real 38B v3 header → v2 = `RC_WMORE consumed=0` (**fails**). Phase-0 "Indication Header format=1" was a **salvaged partial**: `wrapper.c` returns the partial struct on RC_WMORE; asn1c set `present=Format1` pre-failure; `control.go` logs only `present` and **never reads header content** (sender-field reads commented out; kpimon uses its own ingest timestamp). Decode failure silently swallowed (stderr `header RC_WMORE`).
+- **H-scorecard:** H1 confirmed-robust · H2 confirmed (header breakage point) · H3 confirmed (salvaged *failed* parse via `asn_decode` non-`_complete` + wrapper RC_WMORE branch) · H4 refuted (binary == on-disk `kpm2_0.asn`; `pm_Containers` code is dead legacy).
+- **Phase-2 steer:** keep KPM v03.00 (monitoring payload genuinely compatible; rollback gains nothing, RC work is v3/RC-2.0). Header mismatch = latent risk only if a future xApp parses the indication header.
+- Full detail + reproducible harnesses: `reports/phase1-kpm-version-rootcause.md`.
 
 ## Open questions
 1. ns-3 already built — rebuild fast (cached). **Resolved:** cache hit, fast.
