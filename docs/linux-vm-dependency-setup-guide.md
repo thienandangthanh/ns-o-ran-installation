@@ -8,6 +8,34 @@ https://www.nsnam.org/docs/installation/html/quick-start.html#prerequisites
 sudo apt install -y cmake make
 ```
 
+## tshark - Wireshark CLI
+
+We use `tshark` (CLI) since we work in the terminal. Install Wireshark (GUI) later only when a human needs to inspect packets manually.
+
+Ref: https://www.geeksforgeeks.org/linux-unix/how-to-install-and-use-wireshark-on-ubuntu-linux/
+
+```bash
+# 1. Install from the official Wireshark PPA (newer than Ubuntu's repo)
+sudo add-apt-repository ppa:wireshark-dev/stable
+sudo apt update
+sudo apt install -y tshark
+# When prompted "Should non-superusers be able to capture packets?" → choose <Yes>
+```
+
+```bash
+# 2. Allow capture without sudo: add your user to the 'wireshark' group
+sudo usermod -aG wireshark $USER
+# Log out / back in (or run `newgrp wireshark`) for the group to take effect
+```
+
+```bash
+# 3. Verify
+tshark --version
+tshark -D            # list capture interfaces (no sudo needed if step 2 worked)
+```
+
+If step 1's prompt was missed, re-run: `sudo dpkg-reconfigure wireshark-common`.
+
 ## E2SM L-release: asn1c type archive for ns-3 oran-interface (REQUIRED)
 
 The OSC e2sim install (`libe2sim_shared.so` / `libe2sim.a` under `/usr/local/lib`)
