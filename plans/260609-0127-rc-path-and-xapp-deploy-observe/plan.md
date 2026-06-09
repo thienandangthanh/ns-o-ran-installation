@@ -140,7 +140,7 @@ Root cause settled on **ground-truth captured bytes** (Python pcapng parser + v3
 - **MESSAGE (carries metrics→InfluxDB) = ROBUST.** IndicationMessage Format1 + whole MeasurementData/Info family byte-identical v2.0↔v03.00 (only v3 diff = 3 post-extension-marker optionals in MeasurementLabel, never sent). Real captured 194B v3 msg → v2 decoder = `RC_OK 194/194`, values `[2154,765,0,86,3]` + 5 metric names exactly = InfluxDB fields. Compatible **by ASN.1 design**.
 - **HEADER = BROKEN but inert.** v2 `TimeStamp SIZE(4)` vs v3 `SIZE(8)` + always-present sender strings ⇒ real 38B v3 header → v2 = `RC_WMORE consumed=0` (**fails**). Phase-0 "Indication Header format=1" was a **salvaged partial**: `wrapper.c` returns the partial struct on RC_WMORE; asn1c set `present=Format1` pre-failure; `control.go` logs only `present` and **never reads header content** (sender-field reads commented out; kpimon uses its own ingest timestamp). Decode failure silently swallowed (stderr `header RC_WMORE`).
 - **H-scorecard:** H1 confirmed-robust · H2 confirmed (header breakage point) · H3 confirmed (salvaged *failed* parse via `asn_decode` non-`_complete` + wrapper RC_WMORE branch) · H4 refuted (binary == on-disk `kpm2_0.asn`; `pm_Containers` code is dead legacy).
-- **Phase-2 steer:** keep KPM v03.00 (monitoring payload genuinely compatible; rollback gains nothing, RC work is v3/RC-2.0). Header mismatch = latent risk only if a future xApp parses the indication header.
+- **Phase-2 steer:** keep KPM v03.00 (monitoring payload genuinely compatible; rollback gains nothing, RC work is v3/RC-2.0). Header mismatch = latent risk only if a future xApp parses the indication header (e.g. `colletStartTime` time-alignment → open-Q 6; would require upgrading kpimon-go decoder to v03.00, future/out-of-scope here).
 - Full detail + reproducible harnesses: `reports/phase1-kpm-version-rootcause.md`.
 
 ## Open questions
@@ -149,6 +149,7 @@ Root cause settled on **ground-truth captured bytes** (Python pcapng parser + v3
 3. Can VM tshark dissect E2SM? **Resolved: NO** (tshark 3.2.3, no E2AP dissector). Use xApp/ns-3 asn1c logs + offline asn1c; E2AP=SCTP PPID 70.
 4. RC-2.0 from rc repo clone — **decided** (OSC golden sim-e2-interface has no RC). On-wire 2.0-vs-nov2021 inconclusive by OID (ns-3 dummy) → confirm Phase 3.
 5. If KPM rollback chosen: source of v2 KPM asn (wineslab Bronze tree vs re-vendor). *(open, Phase 2)*
+6. **KPM indication-header timestamp truthfulness.** kpimon-go writes its own InfluxDB *ingestion* time, not the payload `colletStartTime` (collection time at the E2 node) → conflates transport/queue/subscription-jitter latency with true measurement time. Correct source IS the header timestamp, but it's currently **unreadable**: the v2.0 decoder fails on v3's 8-byte `TimeStamp` (the Phase-1 SPLIT header break). Low impact for live viz (~3s, single low-latency VM; ns-3 value is sim-time anyway), but a real concern for **Phase-6 ML training-set construction / closed-loop control timing**. **Fix path = upgrade kpimon-go's E2SM-KPM decoder to v03.00 — explicitly FUTURE / OUT OF SCOPE for this plan** (this plan focuses E2SM-RC / rc). When revisited: verify kpimon's actual InfluxDB write-time behavior in source. *(open, Phase 2/6)*
 
 ## References
 - Handoff: `plans/reports/handoff-260609-0127-xapp-version-audit-and-rc-roadmap.md`
