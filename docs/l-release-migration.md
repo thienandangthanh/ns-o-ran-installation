@@ -140,6 +140,47 @@ The deployed kpimon-go decodes with **E2SM-KPM v2.0** (`kpm2_0.asn`), not v3. Ro
 
 ---
 
+## Phase 2 — Version Decision Gate (M2, 2026-06-10)
+
+Decision gate following Phase-0 capture (M0) + Phase-1 root-cause (M1). **Outcome: keep ns-3 at E2SM-KPM v03.00; both carried debts documented and deferred (no code change this phase).**
+
+### Decision 1 — KEEP KPM v03.00 (no rollback to v2.0)
+
+Rationale (on Phase-1 SPLIT verdict, ground-truth bytes):
+- **Monitoring payload is genuinely compatible.** IndicationMessage Format1 + whole MeasurementData/Info family byte-identical v2.0↔v03.00 (v3-only fields are post-extension-marker optionals, never sent). Captured 194 B v3 message → deployed v2.0 decoder = `RC_OK`, exact values → InfluxDB. Compatible **by ASN.1 design**, not luck.
+- **Header mismatch is inert.** v2 `TimeStamp SIZE(4)` vs v3 `SIZE(8)` ⇒ `RC_WMORE`, but `control.go` never reads header content (uses own ingest timestamp); failure silently salvaged. No live impact.
+- **Rollback gains nothing + costs.** Would re-vendor v2 KPM asn (open-Q5), re-port the message model, and lose v3 alignment — while the RC work ahead is intrinsically v3 / RC-2.0. Header-truthfulness concern (open-Q6) is a *future* kpimon-go decoder upgrade, orthogonal to ns-3's emit version.
+
+**Verdict:** ns-3 stays v03.00. Revisit only if a future xApp must parse the KPM indication header (→ upgrade kpimon-go decoder to v03.00, not roll ns-3 back).
+
+### Decision 2 — NodePort connect debt → arg-override + scripted pod-IP discovery (no source edit)
+
+Phase-0 reframed the original "replace `mmwave-helper.cc:~300` hardcode" debt:
+- **NodePort SCTP is non-viable with stock kube-proxy.** Handshake succeeds then `Connection reset by peer` → ns-3 SIGSEGV (kube-proxy DNATs INIT but e2term pod return path bypasses the NodePort VIP). Evidence: `phase0-kpm-*-nodeport-attempt.pcapng`.
+- **pod-IP `<e2term-pod-IP>:36422` is the working sustained path.** The `mmwave-helper.cc:300` value is only a *default* — fully overridable at runtime: `--e2TermIp=<ip>` (GlobalValue) + `--ns3::MmWaveHelper::E2Port=<port>` (attribute name is `E2Port`). **No source edit required.**
+
+**Resolution:** keep arg-override as the connect mechanism; close the "durable connect" gap with **scripted pod-IP discovery** at run time (cheapest, robust):
+
+```bash
+E2TERM_IP=$(kubectl -n ricplt get pod -l app=ricplt-e2term-alpha \
+  -o jsonpath='{.items[0].status.podIP}')
+./ns3 run "scratch/scenario-zero --e2TermIp=$E2TERM_IP --simTime=100 ..."
+```
+
+A stable e2term ClusterIP / MetalLB LoadBalancer / hostNetwork e2term remains a *future* option if a fixed address is later justified; **deferred** (not needed for RC phases).
+
+### Decision 3 — Dummy `OID123` debt → keep for KPM; introduce real OIDs at Phase-4 RC registration
+
+- KPM subscription routing keys on **funcId 2**, not OID; e2term 6.x does **not** hard-validate the advertised OID (Phase-0: `OID123` accepted ×22). No functional need to change it for KPM.
+- The **golden validation harness asserts `OID123`** (`scripts/l-release-validation/assert-pcap.sh:113`, `manifest.txt:39`). Changing it now breaks golden parity for zero gain.
+- Code already pre-scoped this: `kpm-function-description.cc:131` — *"OID123 kept to match the L-release golden (Phase-4 OID decision)."*
+
+**Resolution:** keep `OID123` for the KPM RANfunction now. **Phase 4** (RC receive+ACK) introduces real, distinct OIDs when advertising the RC RANfunction — that is where funcId/OID-keyed dispatch genuinely needs them. Canonical E2SM-KPM v03.00 RANfunction OID for the eventual switch: `1.3.6.1.4.1.53148.1.2.2.2` (confirm against deployed kpimon-go at Phase 4; module-OID base `…53148 e2(1) version3(3) e2sm(2)` per `e2sm-kpm-v03.00.asn`).
+
+**Exit M2:** decision recorded here. No code/build/validation change this phase. Next: Phase 3 — add `e2sm-rc-2.0.asn` to ns-3 e2sim, regenerate via asn1c, round-trip.
+
+---
+
 ## Known Limitations & Follow-up Work
 
 1. **S-NSSAI SD encoding**: Currently ASCII "100" (3 bytes). Live kpimon accepted it; spec validation pending.

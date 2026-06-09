@@ -1,9 +1,9 @@
 ---
 title: RC control path + deploy-and-observe real xApps (post-KPM L-release)
 slug: 260609-0127-rc-path-and-xapp-deploy-observe
-status: Phase 1 DONE (M1 GREEN 2026-06-09); Phase 2 next
+status: Phase 2 DONE (M2 decided 2026-06-10, keep v03.00 + debts deferred); Phase 3 next
 created: 2026-06-09
-updated: 2026-06-09
+updated: 2026-06-10
 branch: dev/migrate-to-l-release (continue on dev/l-release per fork)
 scope: Observe deployed xApps → resolve KPM v3/v2 question → port E2SM-RC (RC-2.0) control path. ML = evaluate-only, not full pipeline.
 focus: RC (control direction). NOT a full ML training pipeline.
@@ -74,7 +74,7 @@ capability (KPM was send-only; RC is receive+ACK+act). **ML is out of scope as a
 |---|---|---|---|
 | 0 | Deploy & observe | Live KPM via ns-3→e2term; deploy rc; tshark-capture real E2SM version/OID/funcId/Control-Format; confirm no-SDR | ✅ **M0 DONE** — see `reports/phase0-capture-analysis.md` |
 | 1 | Resolve KPM v3↔v2 | Explain how v2.0 decoder parsed v3.00 bytes (H1–H4) | ✅ **M1 DONE** — see `reports/phase1-kpm-version-rootcause.md` |
-| 2 | Version decision gate | Keep KPM v3.00 vs roll ns-3 → v2.0; fold in NodePort + real-OID debt | **M2** decision in docs/l-release-migration.md |
+| 2 | Version decision gate | Keep KPM v3.00 vs roll ns-3 → v2.0; fold in NodePort + real-OID debt | ✅ **M2 DONE** — keep v03.00; debts deferred (docs/l-release-migration.md §Phase 2) |
 | 3 | RC-2.0 ASN.1 base | Add `e2sm-rc-2.0.asn` to ns-3 e2sim; regenerate via asn1c; round-trip | **M3** RC types compile + round-trip |
 | 4 | RC receive + ACK | ns-3 decodes RIC Control Request, returns Control Acknowledge (no-op action) | **M-RC1** Control Req decoded + ACK on wire |
 | 5 | RC act: forced handover | Map a trivial Control Action → ns-3 gNB handover | **M-RC2** handover triggered by xApp control |
@@ -143,13 +143,19 @@ Root cause settled on **ground-truth captured bytes** (Python pcapng parser + v3
 - **Phase-2 steer:** keep KPM v03.00 (monitoring payload genuinely compatible; rollback gains nothing, RC work is v3/RC-2.0). Header mismatch = latent risk only if a future xApp parses the indication header (e.g. `colletStartTime` time-alignment → open-Q 6; would require upgrading kpimon-go decoder to v03.00, future/out-of-scope here).
 - Full detail + reproducible harnesses: `reports/phase1-kpm-version-rootcause.md`.
 
+## Phase 2 result (M2 decided, 2026-06-10)
+Decision gate — **no code change**; full rationale in `docs/l-release-migration.md` §"Phase 2 — Version Decision Gate (M2)".
+- **D1 — KEEP ns-3 KPM v03.00** (no rollback). Phase-1 SPLIT: message byte-compatible by ASN.1 design (live `RC_OK`→InfluxDB); header break inert (`control.go` never reads it). Rollback re-vendors v2 asn (open-Q5) + loses v3 alignment for zero gain; RC work is v3/RC-2.0 anyway. Revisit only if a future xApp parses the KPM indication header → upgrade kpimon-go decoder, not roll ns-3 back (open-Q6).
+- **D2 — NodePort debt → arg-override + scripted pod-IP discovery** (no source edit). Phase-0 proved NodePort SCTP non-viable (kube-proxy return-path → reset → SIGSEGV); pod-IP is the working path; `--e2TermIp` + `--ns3::MmWaveHelper::E2Port` fully override the `mmwave-helper.cc:300` default. Close durable-connect with `kubectl … jsonpath '{.status.podIP}'` at run time. ClusterIP/MetalLB/hostNetwork deferred (not needed for RC).
+- **D3 — dummy `OID123` → keep for KPM; real OIDs at Phase-4 RC registration.** kpimon routes on funcId 2 (not OID); e2term 6.x tolerant; golden harness asserts `OID123` (changing breaks parity, zero gain). Matches existing code comment `kpm-function-description.cc:131`. Canonical KPM v3 OID `1.3.6.1.4.1.53148.1.2.2.2` recorded for the Phase-4 switch.
+
 ## Open questions
 1. ns-3 already built — rebuild fast (cached). **Resolved:** cache hit, fast.
 2. Does deployed **rc** self-emit or need a gRPC driver? **Resolved:** gRPC-driven forwarder (:7777 `SendRICControlReqServiceGrpc`); does NOT self-emit.
 3. Can VM tshark dissect E2SM? **Resolved: NO** (tshark 3.2.3, no E2AP dissector). Use xApp/ns-3 asn1c logs + offline asn1c; E2AP=SCTP PPID 70.
 4. RC-2.0 from rc repo clone — **decided** (OSC golden sim-e2-interface has no RC). On-wire 2.0-vs-nov2021 inconclusive by OID (ns-3 dummy) → confirm Phase 3.
-5. If KPM rollback chosen: source of v2 KPM asn (wineslab Bronze tree vs re-vendor). *(open, Phase 2)*
-6. **KPM indication-header timestamp truthfulness.** kpimon-go writes its own InfluxDB *ingestion* time, not the payload `colletStartTime` (collection time at the E2 node) → conflates transport/queue/subscription-jitter latency with true measurement time. Correct source IS the header timestamp, but it's currently **unreadable**: the v2.0 decoder fails on v3's 8-byte `TimeStamp` (the Phase-1 SPLIT header break). Low impact for live viz (~3s, single low-latency VM; ns-3 value is sim-time anyway), but a real concern for **Phase-6 ML training-set construction / closed-loop control timing**. **Fix path = upgrade kpimon-go's E2SM-KPM decoder to v03.00 — explicitly FUTURE / OUT OF SCOPE for this plan** (this plan focuses E2SM-RC / rc). When revisited: verify kpimon's actual InfluxDB write-time behavior in source. *(open, Phase 2/6)*
+5. If KPM rollback chosen: source of v2 KPM asn (wineslab Bronze tree vs re-vendor). **Resolved-moot (M2):** rollback NOT chosen → no v2 asn sourcing needed.
+6. **KPM indication-header timestamp truthfulness.** kpimon-go writes its own InfluxDB *ingestion* time, not the payload `colletStartTime` (collection time at the E2 node) → conflates transport/queue/subscription-jitter latency with true measurement time. Correct source IS the header timestamp, but it's currently **unreadable**: the v2.0 decoder fails on v3's 8-byte `TimeStamp` (the Phase-1 SPLIT header break). Low impact for live viz (~3s, single low-latency VM; ns-3 value is sim-time anyway), but a real concern for **Phase-6 ML training-set construction / closed-loop control timing**. **Fix path = upgrade kpimon-go's E2SM-KPM decoder to v03.00 — explicitly FUTURE / OUT OF SCOPE for this plan** (this plan focuses E2SM-RC / rc). When revisited: verify kpimon's actual InfluxDB write-time behavior in source. **M2 ruling:** confirmed latent-only / out-of-scope; not a blocker for keeping v03.00 (revisit at Phase 6 if ML timing needs it). *(deferred, Phase 6)*
 
 ## References
 - Handoff: `plans/reports/handoff-260609-0127-xapp-version-audit-and-rc-roadmap.md`
