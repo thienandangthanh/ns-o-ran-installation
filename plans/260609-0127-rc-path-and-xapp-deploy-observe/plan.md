@@ -1,7 +1,7 @@
 ---
 title: RC control path + deploy-and-observe real xApps (post-KPM L-release)
 slug: 260609-0127-rc-path-and-xapp-deploy-observe
-status: Phase 2 DONE (M2 decided 2026-06-10, keep v03.00 + debts deferred); Phase 3 next
+status: Phase 3 DONE (M3 2026-06-10, RC-2.0 asn.1 base compiles + round-trip GREEN); Phase 4 next
 created: 2026-06-09
 updated: 2026-06-10
 branch: dev/migrate-to-l-release (continue on dev/l-release per fork)
@@ -75,7 +75,7 @@ capability (KPM was send-only; RC is receive+ACK+act). **ML is out of scope as a
 | 0 | Deploy & observe | Live KPM via ns-3→e2term; deploy rc; tshark-capture real E2SM version/OID/funcId/Control-Format; confirm no-SDR | ✅ **M0 DONE** — see `reports/phase0-capture-analysis.md` |
 | 1 | Resolve KPM v3↔v2 | Explain how v2.0 decoder parsed v3.00 bytes (H1–H4) | ✅ **M1 DONE** — see `reports/phase1-kpm-version-rootcause.md` |
 | 2 | Version decision gate | Keep KPM v3.00 vs roll ns-3 → v2.0; fold in NodePort + real-OID debt | ✅ **M2 DONE** — keep v03.00; debts deferred (docs/l-release-migration.md §Phase 2) |
-| 3 | RC-2.0 ASN.1 base | Add `e2sm-rc-2.0.asn` to ns-3 e2sim; regenerate via asn1c; round-trip | **M3** RC types compile + round-trip |
+| 3 | RC-2.0 ASN.1 base | Add `e2sm-rc-2.0.asn` to ns-3 e2sim; regenerate via asn1c; round-trip | ✅ **M3 DONE** — see `phase-03-rc-asn1c-base.md` |
 | 4 | RC receive + ACK | ns-3 decodes RIC Control Request, returns Control Acknowledge (no-op action) | **M-RC1** Control Req decoded + ACK on wire |
 | 5 | RC act: forced handover | Map a trivial Control Action → ns-3 gNB handover | **M-RC2** handover triggered by xApp control |
 | 6 | xApp ML evaluation (scope-gate) | Inspect ts/ad/qp source: do they need offline-trained models, or ship runnable inference/defaults? Decide if ANY ML work is in-scope. | **M-RC3** written verdict + (if needed) minimal closed-loop demo path |
@@ -149,11 +149,21 @@ Decision gate — **no code change**; full rationale in `docs/l-release-migratio
 - **D2 — NodePort debt → arg-override + scripted pod-IP discovery** (no source edit). Phase-0 proved NodePort SCTP non-viable (kube-proxy return-path → reset → SIGSEGV); pod-IP is the working path; `--e2TermIp` + `--ns3::MmWaveHelper::E2Port` fully override the `mmwave-helper.cc:300` default. Close durable-connect with `kubectl … jsonpath '{.status.podIP}'` at run time. ClusterIP/MetalLB/hostNetwork deferred (not needed for RC).
 - **D3 — dummy `OID123` → keep for KPM; real OIDs at Phase-4 RC registration.** kpimon routes on funcId 2 (not OID); e2term 6.x tolerant; golden harness asserts `OID123` (changing breaks parity, zero gain). Matches existing code comment `kpm-function-description.cc:131`. Canonical KPM v3 OID `1.3.6.1.4.1.53148.1.2.2.2` recorded for the Phase-4 switch.
 
+## Phase 3 result (M3 DONE, 2026-06-10)
+E2SM-RC v2.0 service-model ASN.1 added to e2sim as an additive, KPM-untouched layer. Full detail: `phase-03-rc-asn1c-base.md`.
+- **Topology learned**: asn types live in `libasn1c_e2.a` (manual `gcc e2sim/asn1c/*.c` + `ar`), NOT in libe2sim; ns-3 oran-interface links it after `libe2sim_shared.so`. RC integration = add RC `.c` to that compile set + install headers (no CMake change).
+- **asn1c**: e2sim tree built by a modern-guarded, prefix-and-continue-on-clash asn1c. Runtime-ABI twin = **mouse07410/asn1c@0983e78a** (constr_TYPE.h + UEID.c body byte-identical). It FATALs on different-OID name clashes ⇒ combined regen impossible; used **RC-only generation + symbol-level dedup**.
+- **Vendored** `oran-e2sim/e2sim/asn1c-rc/` (168 .c/168 .h add-set; clash commons kept as RC's plain-symbol variants, shared commons + runtime reused from `../asn1c`) + `asn/` sources + `PROVENANCE.md` + `roundtrip/`. Source: O-RAN-Testbed-Automation@a8e3af9 rc xApp e2sm/.
+- **Build GREEN**: 661 .o → libasn1c_e2.a; dup-symbol guard EMPTY; `asn_DEF_E2SM_RC_ControlHeader` present, `asn_DEF_E2SM_KPM_*` intact. Headers → `/usr/local/include/e2sim/`. Setup guide updated.
+- **Round-trip GREEN** (re-runnable `asn1c-rc/roundtrip/run.sh`): ControlHeader-Format1 (17B) + ControlMessage-Format1 (9B) APER encode→decode→re-encode byte-identical.
+- **Phase-4 landmine**: `asn_check_constraints()` infinite-loops on RANParameter-bearing RC PDUs in this asn1c build (extensible RANParameter-ValueType CHOICE recursion). Diagnostic-only, NOT on encode/decode path — do NOT call it on RC control messages.
+- **Phase-4 steer**: re-enable `oran-interface/model/ric-control-message.cc` (commented out at `CMakeLists.txt:51,64`); reconcile v1-era field reads (`ric_ControlStyle_Type` → RC-2.0 `ric_Style_Type`); register real RC RANfunction (funcId + OID) + Control-Request decode + ACK.
+
 ## Open questions
 1. ns-3 already built — rebuild fast (cached). **Resolved:** cache hit, fast.
 2. Does deployed **rc** self-emit or need a gRPC driver? **Resolved:** gRPC-driven forwarder (:7777 `SendRICControlReqServiceGrpc`); does NOT self-emit.
 3. Can VM tshark dissect E2SM? **Resolved: NO** (tshark 3.2.3, no E2AP dissector). Use xApp/ns-3 asn1c logs + offline asn1c; E2AP=SCTP PPID 70.
-4. RC-2.0 from rc repo clone — **decided** (OSC golden sim-e2-interface has no RC). On-wire 2.0-vs-nov2021 inconclusive by OID (ns-3 dummy) → confirm Phase 3.
+4. RC-2.0 from rc repo clone — **decided** (OSC golden sim-e2-interface has no RC). On-wire 2.0-vs-nov2021 inconclusive by OID (ns-3 dummy). Phase 3 vendored + round-tripped **2.0**; on-wire byte-confirmation vs a captured rc Control Request **deferred to Phase 4** (decode the Phase-0 87B payload as 2.0).
 5. If KPM rollback chosen: source of v2 KPM asn (wineslab Bronze tree vs re-vendor). **Resolved-moot (M2):** rollback NOT chosen → no v2 asn sourcing needed.
 6. **KPM indication-header timestamp truthfulness.** kpimon-go writes its own InfluxDB *ingestion* time, not the payload `colletStartTime` (collection time at the E2 node) → conflates transport/queue/subscription-jitter latency with true measurement time. Correct source IS the header timestamp, but it's currently **unreadable**: the v2.0 decoder fails on v3's 8-byte `TimeStamp` (the Phase-1 SPLIT header break). Low impact for live viz (~3s, single low-latency VM; ns-3 value is sim-time anyway), but a real concern for **Phase-6 ML training-set construction / closed-loop control timing**. **Fix path = upgrade kpimon-go's E2SM-KPM decoder to v03.00 — explicitly FUTURE / OUT OF SCOPE for this plan** (this plan focuses E2SM-RC / rc). When revisited: verify kpimon's actual InfluxDB write-time behavior in source. **M2 ruling:** confirmed latent-only / out-of-scope; not a blocker for keeping v03.00 (revisit at Phase 6 if ML timing needs it). *(deferred, Phase 6)*
 
