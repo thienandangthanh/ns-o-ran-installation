@@ -3,7 +3,7 @@ title: RC control path + deploy-and-observe real xApps (post-KPM L-release)
 slug: 260609-0127-rc-path-and-xapp-deploy-observe
 status: Phase 3 DONE (M3 2026-06-10, RC-2.0 asn.1 base compiles + round-trip GREEN); Phase 4 next
 created: 2026-06-09
-updated: 2026-06-10
+updated: 2026-06-12
 branch: dev/migrate-to-l-release (continue on dev/l-release per fork)
 scope: Observe deployed xApps → resolve KPM v3/v2 question → port E2SM-RC (RC-2.0) control path. ML = evaluate-only, not full pipeline.
 focus: RC (control direction). NOT a full ML training pipeline.
@@ -79,6 +79,7 @@ capability (KPM was send-only; RC is receive+ACK+act). **ML is out of scope as a
 | 4 | RC receive + ACK | ns-3 decodes RIC Control Request, returns Control Acknowledge (no-op action) | **M-RC1** Control Req decoded + ACK on wire |
 | 5 | RC act: forced handover | Map a trivial Control Action → ns-3 gNB handover | **M-RC2** handover triggered by xApp control |
 | 6 | xApp ML evaluation (scope-gate) | Inspect ts/ad/qp source: do they need offline-trained models, or ship runnable inference/defaults? Decide if ANY ML work is in-scope. | **M-RC3** written verdict + (if needed) minimal closed-loop demo path |
+| 7 | RC build reproducibility | Make the Phase-3 asn1c-rc graft reproducible + self-building: pin asn1c (submodule), capture generate+dedup as a script, wire `libasn1c_e2.a` into CMake | **M-REPRO** clean-checkout `make` builds the archive (no manual gcc/ar); regen script reproduces the 168-file add-set |
 
 ### Phase 0 — Deploy & Observe (executable; single-node oran-kvm-2)
 **0.1 Pre-flight (read-only):** ricplt healthy, kpimon-go Running, InfluxDB up; record `oran-kvm-2` InternalIP → NodePort target `<IP>:32222` SCTP.
@@ -108,6 +109,37 @@ Decode RC Control Message target (UE/cell + action) → call ns-3 mmwave handove
 ### Phase 6 — xApp ML evaluation (scope-gate, NOT a pipeline)
 Inspect `xApps/{ts,ad,qp}/` source: do they (a) ship a runnable model / sane defaults for inference, (b) hard-require an offline-trained artifact, or (c) fetch from AIML-FW? Reference `OSC-repos/{ric-app-ts,ric-app-ad,ric-app-qp,ric-app-qp-aimlfw,aiml-fw}`. **Decide if any ML work is in-scope at all** — prefer running existing inference over training. If a closed loop is cheaply reachable (TS→gRPC→rc→ns-3), document the minimal path. **Exit M-RC3:** written verdict; closed-loop demo path IF trivial, else explicitly deferred.
 
+### Phase 7 — RC build reproducibility (independent of RC roadmap; can run anytime post-M3)
+**Why:** Phase 3 left two gaps (understanding: `understanding/phase3-build-system/checklist.md`). (1) The
+asn1c that generated `asn1c-rc/` (mouse07410@0983e78a) is undocumented as a clone + the 168-of-391
+symbol-dedup is a hand-step → regeneration is archaeology, not a recipe. (2) `libasn1c_e2.a` is built by a
+MANUAL `gcc + ar` step (CMake's `asn1_objects` target is orphaned, wired into nothing) → every clean VM
+build silently needs the manual step or hits `undefined asn_DEF_*` at link. Three deliverables; **A and B
+are orthogonal** (do either independently). Edits land on **our fork** `oran-e2sim` (not upstream churn).
+
+**7.1 (A) Pin asn1c as a submodule.** Add `mouse07410/asn1c @0983e78a` as a git submodule (e.g.
+`third_party/asn1c-mouse07410`). Pins generator + skeletons. Record in `asn1c-rc/PROVENANCE.md`. *Necessary
+but not sufficient* for repro — the dedup (7.2) is the other half.
+**7.2 (A) Capture generate+dedup as a committed script.** `scripts/regen-asn1c-rc.sh`: (i) run the submodule's
+asn1c on `asn1c-rc/asn/*.asn` with the recorded flags (`-S <skeletons> -pdu=auto -fincludes-quoted
+-fcompound-names -findirect-choice -fno-include-deps -no-gen-example -no-gen-OER`) → 391 files in a tmp dir;
+(ii) compute add-set = files whose `asn_DEF_*` ∉ `../asn1c/*.c` (symbol diff via `nm`/grep, not filename);
+(iii) copy the complement (168 .c/.h) into `asn1c-rc/`. Idempotent: re-running reproduces today's tree.
+Guard: `nm | uniq -d` dup-symbol check stays EMPTY. **NOTE:** never call `asn_check_constraints` (Phase-3
+landmine). Do NOT regenerate the whole e2sim tree (mouse07410 fatals on cross-module clash — RC-only only).
+**7.3 (B) Wire `libasn1c_e2.a` into CMake.** New `asn1c-rc/CMakeLists.txt` mirroring `asn1c/CMakeLists.txt`:
+`add_library(asn1_rc_objects OBJECT *.c)` with include dirs **both** `${CMAKE_CURRENT_SOURCE_DIR}` and
+`../asn1c` (clash-plain headers in `asn1c-rc/`, shared headers in `asn1c/` — load-bearing). In top
+`CMakeLists.txt`: `add_subdirectory(./asn1c-rc)` + `add_library(asn1c_e2 STATIC
+$<TARGET_OBJECTS:asn1_objects> $<TARGET_OBJECTS:asn1_rc_objects>)` + `install(TARGETS asn1c_e2 ARCHIVE
+DESTINATION lib)` + `install(DIRECTORY asn1c-rc/ DESTINATION include/e2sim FILES_MATCHING PATTERN "*.h")`.
+`-D ASN_DISABLE_OER_SUPPORT` already global (top CMakeLists:20). **Header install is mandatory** — forgetting
+it breaks ns-3 `oran-interface` at COMPILE (missing RC headers), not link. Validate: `make` produces the
+archive, dup-symbol guard EMPTY, then re-run `asn1c-rc/roundtrip/run.sh` → GREEN.
+**Exit M-REPRO:** clean checkout + `cmake && make install` yields `libasn1c_e2.a` (RC symbols present, KPM
+intact) with NO manual gcc/ar; `scripts/regen-asn1c-rc.sh` on a clean tree reproduces the 168-file add-set
+byte-for-byte; round-trip GREEN; setup guide + PROVENANCE updated to point at submodule + script.
+
 ---
 
 ## Critical files
@@ -117,6 +149,7 @@ Inspect `xApps/{ts,ad,qp}/` source: do they (a) ship a runnable model / sane def
 - RC-2.0 asn source: `O-RAN-Testbed-Automation/.../xApps/rc/e2sm/e2sm-rc-2.0.asn`.
 - Install scripts: `O-RAN-Testbed-Automation/.../additional_scripts/install_xapp_*.sh`; pins `O-RAN-Testbed-Automation/commit_hashes.json`.
 - Docs: `docs/l-release-migration.md`. Old plan to cross-ref: `plans/260606-0505-port-ns-o-ran-to-l-release`.
+- Phase 7 (build repro): `oran-e2sim/e2sim/asn1c/CMakeLists.txt` (orphaned `asn1_objects`), top `oran-e2sim/e2sim/CMakeLists.txt:94,102` (wire-in point), new `oran-e2sim/e2sim/asn1c-rc/CMakeLists.txt` + `scripts/regen-asn1c-rc.sh` + submodule `third_party/asn1c-mouse07410`. Rationale: `understanding/phase3-build-system/checklist.md`.
 
 ## Verification (end-to-end)
 - **M0:** `kubectl get pods -n ricxapp` → kpimon-go+rc Running; e2mgr `/v1/nodeb/states` lists ns-3 gNB; kpimon-go logs decode metrics; InfluxDB receives points; pcap has E2 Setup + RIC Subscription + RIC Indication(KPM) + RIC Control Request; decoded report lists OID/funcId/format/version.
