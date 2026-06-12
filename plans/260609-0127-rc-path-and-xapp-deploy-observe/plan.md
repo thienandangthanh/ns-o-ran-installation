@@ -1,7 +1,7 @@
 ---
 title: RC control path + deploy-and-observe real xApps (post-KPM L-release)
 slug: 260609-0127-rc-path-and-xapp-deploy-observe
-status: Phase 3 DONE (M3 2026-06-10, RC-2.0 asn.1 base compiles + round-trip GREEN); Phase 4 next
+status: Phase 4 DONE (M-RC1 2026-06-13, RICcontrolRequest→Acknowledge on wire, ACK byte-verified, RC-2.0 decode confirmed); Phase 5 next
 created: 2026-06-09
 updated: 2026-06-12
 branch: dev/migrate-to-l-release (continue on dev/l-release per fork)
@@ -76,7 +76,7 @@ capability (KPM was send-only; RC is receive+ACK+act). **ML is out of scope as a
 | 1 | Resolve KPM v3↔v2 | Explain how v2.0 decoder parsed v3.00 bytes (H1–H4) | ✅ **M1 DONE** — see `reports/phase1-kpm-version-rootcause.md` |
 | 2 | Version decision gate | Keep KPM v3.00 vs roll ns-3 → v2.0; fold in NodePort + real-OID debt | ✅ **M2 DONE** — keep v03.00; debts deferred (docs/l-release-migration.md §Phase 2) |
 | 3 | RC-2.0 ASN.1 base | Add `e2sm-rc-2.0.asn` to ns-3 e2sim; regenerate via asn1c; round-trip | ✅ **M3 DONE** — see `phase-03-rc-asn1c-base.md` |
-| 4 | RC receive + ACK | ns-3 decodes RIC Control Request, returns Control Acknowledge (no-op action) | **M-RC1** Control Req decoded + ACK on wire |
+| 4 | RC receive + ACK | ns-3 decodes RIC Control Request, returns Control Acknowledge (no-op action) | ✅ **M-RC1 DONE** — see `phase-04-rc-receive-ack.md` |
 | 5 | RC act: forced handover | Map a trivial Control Action → ns-3 gNB handover | **M-RC2** handover triggered by xApp control |
 | 6 | xApp ML evaluation (scope-gate) | Inspect ts/ad/qp source: do they need offline-trained models, or ship runnable inference/defaults? Decide if ANY ML work is in-scope. | **M-RC3** written verdict + (if needed) minimal closed-loop demo path |
 | 7 | RC build reproducibility | Make the Phase-3 asn1c-rc graft reproducible + self-building: pin asn1c (submodule), capture generate+dedup as a script, wire `libasn1c_e2.a` into CMake | **M-REPRO** clean-checkout `make` builds the archive (no manual gcc/ar); regen script reproduces the 168-file add-set |
@@ -191,6 +191,24 @@ E2SM-RC v2.0 service-model ASN.1 added to e2sim as an additive, KPM-untouched la
 - **Round-trip GREEN** (re-runnable `asn1c-rc/roundtrip/run.sh`): ControlHeader-Format1 (17B) + ControlMessage-Format1 (9B) APER encode→decode→re-encode byte-identical.
 - **Phase-4 landmine**: `asn_check_constraints()` infinite-loops on RANParameter-bearing RC PDUs in this asn1c build (extensible RANParameter-ValueType CHOICE recursion). Diagnostic-only, NOT on encode/decode path — do NOT call it on RC control messages.
 - **Phase-4 steer**: re-enable `oran-interface/model/ric-control-message.cc` (commented out at `CMakeLists.txt:51,64`); reconcile v1-era field reads (`ric_ControlStyle_Type` → RC-2.0 `ric_Style_Type`); register real RC RANfunction (funcId + OID) + Control-Request decode + ACK.
+
+## Phase 4 result (M-RC1 GREEN, 2026-06-13)
+RIC Control receive + ACK plumbing proven end-to-end. Full detail: `phase-04-rc-receive-ack.md`.
+- **Gap closed**: e2sim dropped RICcontrol (procedureCode 4) at the `default:` handler. Added a `case
+  ProcedureCode_id_RICcontrol` dispatch (`get_function_id_from_control` → registered callback) + a
+  `generate_e2apv1_control_acknowledge` encoder (E2AP v03.01 ACK = RICrequestID + RANfunctionID; no
+  RICcontrolStatus IE in this tree). `asn_check_constraints` NOT called on RC PDUs (Phase-3 landmine).
+- **Decoder**: re-enabled `ric-control-message.cc` as a real RC-2.0 minimal decoder (nested
+  `ric_controlHeader_formats.choice.controlHeader_Format1`); dropped stub `RicControlMessage` from
+  `oran-interface.h`. RAN-parameter extraction stubbed (v1 `ranParameters_List` → RC-2.0 `ranP_List` = Phase 5).
+- **Wiring fix**: control targets the **mmwave gNB**, not the LTE eNB — registered funcId 300 + defined
+  `MmWaveEnbNetDevice::ControlMessageReceivedCallback` (decode + ACK). RANFunctionDefinition still a
+  null-buffer stub (real OID + control-style tree deferred to Phase 5).
+- **Live**: grpcurl→rc:7777 (funcId 300, Style 3, Action 1) → ns-3 decoded **`ric_Style_Type=3
+  ric_ControlAction_ID=1`** (matches payload) → ACK 22 B on wire. pcap: frame 2205 RICcontrolRequest →
+  frame 2207 RICcontrolAcknowledge (byte-verified `…05 00 02 01 2c` = RANfunctionID 300) to e2term :36422.
+- **Open Q4 settled**: captured rc Control Request decodes as **RC-2.0** (not nov2021).
+- **Carry-forward (Phase 5)**: `ranP_List` extraction + Control-Action→handover; real RC RANFunctionDefinition.
 
 ## Open questions
 1. ns-3 already built — rebuild fast (cached). **Resolved:** cache hit, fast.
