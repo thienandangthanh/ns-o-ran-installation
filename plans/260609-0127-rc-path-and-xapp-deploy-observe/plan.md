@@ -1,9 +1,9 @@
 ---
 title: RC control path + deploy-and-observe real xApps (post-KPM L-release)
 slug: 260609-0127-rc-path-and-xapp-deploy-observe
-status: Phase 5 DONE (M-RC2 2026-06-13, xApp RIC Control → forced mmWave secondary-cell handover completed in ns-3 cell 2→4/5, invalid-target guard, ACK on wire; via Option B — gNB→master RRC); Phase 6 next
+status: Phase 5 DONE (M-RC2 2026-06-13, xApp RIC Control → forced mmWave secondary-cell handover completed in ns-3 cell 2→4/5, invalid-target guard, ACK on wire; via Option B — gNB→master RRC); Phase 6 DONE (M-RC3 2026-06-13: scope-gate verdict — NO ML pipeline work in scope [qp self-trains (a); ad trains-at-startup (b); qp-aimlfw (c) not deployed; ts = deterministic]; closed loop TS→rc→ns-3 reachable LOW-effort [native TS gRPC SendRICControlReqServiceGrpc already in deployed binary; bounded glue = funcId 3→300 + 110N cell-id + E2MGR cell-map]; live demo deferred user-gated)
 created: 2026-06-09
-updated: 2026-06-12
+updated: 2026-06-13
 branch: dev/migrate-to-l-release (continue on dev/l-release per fork)
 scope: Observe deployed xApps → resolve KPM v3/v2 question → port E2SM-RC (RC-2.0) control path. ML = evaluate-only, not full pipeline.
 focus: RC (control direction). NOT a full ML training pipeline.
@@ -78,7 +78,7 @@ capability (KPM was send-only; RC is receive+ACK+act). **ML is out of scope as a
 | 3 | RC-2.0 ASN.1 base | Add `e2sm-rc-2.0.asn` to ns-3 e2sim; regenerate via asn1c; round-trip | ✅ **M3 DONE** — see `phase-03-rc-asn1c-base.md` |
 | 4 | RC receive + ACK | ns-3 decodes RIC Control Request, returns Control Acknowledge (no-op action) | ✅ **M-RC1 DONE** — see `phase-04-rc-receive-ack.md` |
 | 5 | RC act: forced handover | Map a trivial Control Action → ns-3 gNB handover | ✅ **M-RC2 DONE** — see `phase-05-rc-forced-handover.md` |
-| 6 | xApp ML evaluation (scope-gate) | Inspect ts/ad/qp source: do they need offline-trained models, or ship runnable inference/defaults? Decide if ANY ML work is in-scope. | **M-RC3** written verdict + (if needed) minimal closed-loop demo path |
+| 6 | xApp ML evaluation (scope-gate) | Inspect ts/ad/qp source: do they need offline-trained models, or ship runnable inference/defaults? Decide if ANY ML work is in-scope. | ✅ **M-RC3 DONE** — see `phase-06-xapp-ml-evaluation.md` |
 | 7 | RC build reproducibility | Make the Phase-3 asn1c-rc graft reproducible + self-building: pin asn1c (submodule), capture generate+dedup as a script, wire `libasn1c_e2.a` into CMake | **M-REPRO** clean-checkout `make` builds the archive (no manual gcc/ar); regen script reproduces the 168-file add-set |
 
 ### Phase 0 — Deploy & Observe (executable; single-node oran-kvm-2)
@@ -219,6 +219,14 @@ xApp RIC Control → forced mmWave **secondary-cell handover**, completed live o
 - **Encoding (open Q resolved)**: rc `TargetCellID` is HEX; decoder NRCGI last byte = its low byte ⇒ ns-3 cell N = `TargetCellID "110N"`. amfUENGAPID = ns-3 UE IMSI directly.
 - **Carry-forward (Phase 6)**: real NRCGI↔cellId mapping (vs hex last-byte convention); RANFunctionDefinition advertisement still deferred; LTE-eNB E2 multi-association is a separate testbed effort.
 
+## Phase 6 result (M-RC3 DONE, 2026-06-13)
+xApp ML evaluation (scope-gate / NOT a pipeline). Verdict: **NO ML pipeline work in scope.** Closed-loop TS→rc→ns-3 is LOW-effort reachable. Full detail: `phase-06-xapp-ml-evaluation.md`.
+- **xApp classification (a/b/c):** TS = deterministic (no ML); QP = (a) self-trains lazily from InfluxDB per cell, no artifact, testbed deploys plain Python QP NOT aimlfw; AD = (b) trains-at-startup (main.py:60-62) from InfluxDB, optional TS input only, no artifact; qp-aimlfw = (c) Go variant fetches from AIML-FW, NOT deployed by testbed.
+- **VERDICT**: No ML pipeline in scope (self-training ≠ pipeline work); only ML-adjacent need is InfluxDB data for QP/AD to self-train — that is data plumbing (existing kpimon-go→InfluxDB path), not ML. Matches plan's "evaluate-only" intent → **ML deferred/closed.**
+- **Closed loop: transport+proto VERIFIED match.** TS has native gRPC control path (`send_grpc_control_request()` calls `rc_stub->SendRICControlReqServiceGrpc()`, ts_xapp.cpp:607-671); rc accepts that msg exactly (`rc.proto:74`). **Deployed testbed TS binary already has gRPC stub compiled in** (xApps/ts/ext/protobuf/rc.grpc.pb.cc:34). Same `SendRICControlReqServiceGrpc` as Phase 4/5 manual grpcurl testing.
+- **Bounded glue (LOW-code, reachable):** (1) funcId 3→300 alignment: TS hardcodes `set_ranfuncid(3)` (ts_xapp.cpp:614); rc forwards it as E2 RAN-Function-ID (rcControl.go:271,274); ns-3 registered RC as funcId 300 (Phase 4/5). Patch TS `:614` to 300 + rebuild image, **or** register funcId 3 in ns-3, **or** make configurable. (2) Cell-ID format: TS cell ids must be `"110N"` hex form for ns-3 decode (Phase-5 carry-forward). (3) E2MGR cell-map bootstrap: TS builds `cell_map` from E2MGR REST (:3800); silently drops control if target absent (ts_xapp.cpp:639-647). (4) GUAMI/UE mapping: TS hardcodes GUAMI, maps ue_id→amfUENGAPID (consistent with ns-3 IMSI per Phase 5).
+- **Exit M-RC3 = written verdict: MET.** Live demo execution is discrete, stateful testbed operation (deploy qp+ts, flip config, run ns-3) — proposed as optional follow-on, **user-gated, not required to close Phase 6.**
+
 ## Open questions
 1. ns-3 already built — rebuild fast (cached). **Resolved:** cache hit, fast.
 2. Does deployed **rc** self-emit or need a gRPC driver? **Resolved:** gRPC-driven forwarder (:7777 `SendRICControlReqServiceGrpc`); does NOT self-emit.
@@ -226,6 +234,8 @@ xApp RIC Control → forced mmWave **secondary-cell handover**, completed live o
 4. RC-2.0 from rc repo clone — **decided** (OSC golden sim-e2-interface has no RC). On-wire 2.0-vs-nov2021 inconclusive by OID (ns-3 dummy). Phase 3 vendored + round-tripped **2.0**; on-wire byte-confirmation vs a captured rc Control Request **deferred to Phase 4** (decode the Phase-0 87B payload as 2.0).
 5. If KPM rollback chosen: source of v2 KPM asn (wineslab Bronze tree vs re-vendor). **Resolved-moot (M2):** rollback NOT chosen → no v2 asn sourcing needed.
 6. **KPM indication-header timestamp truthfulness.** kpimon-go writes its own InfluxDB *ingestion* time, not the payload `colletStartTime` (collection time at the E2 node) → conflates transport/queue/subscription-jitter latency with true measurement time. Correct source IS the header timestamp, but it's currently **unreadable**: the v2.0 decoder fails on v3's 8-byte `TimeStamp` (the Phase-1 SPLIT header break). Low impact for live viz (~3s, single low-latency VM; ns-3 value is sim-time anyway), but a real concern for **Phase-6 ML training-set construction / closed-loop control timing**. **Fix path = upgrade kpimon-go's E2SM-KPM decoder to v03.00 — explicitly FUTURE / OUT OF SCOPE for this plan** (this plan focuses E2SM-RC / rc). When revisited: verify kpimon's actual InfluxDB write-time behavior in source. **M2 ruling:** confirmed latent-only / out-of-scope; not a blocker for keeping v03.00 (revisit at Phase 6 if ML timing needs it). *(deferred, Phase 6)*
+7. **funcId 3 vs 300 (Phase 6).** TS hardcodes `set_ranfuncid(3)`; rc forwards as E2 RAN-Function-ID; ns-3 registered RC as funcId 300. Confirmed pass-through in rc source (rcControl.go:271,274); on-wire behavior to be confirmed when live demo runs. Align to 300 when executing the closed-loop test (patch TS `:614` or register funcId 3 in ns-3).
+8. **QP/AD InfluxDB column/measurement match vs our kpimon-go schema (Phase 6).** Researchers flag a possible `ad_config.ini` / measurement-name mismatch (`UEReports`/`CellReports`); affects live-data self-training, not the mock demo. Defer to live (non-mock) demo execution (Phase 6 follow-on if pursued).
 
 ## References
 - Handoff: `plans/reports/handoff-260609-0127-xapp-version-audit-and-rc-roadmap.md`

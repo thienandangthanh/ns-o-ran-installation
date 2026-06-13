@@ -181,6 +181,38 @@ A stable e2term ClusterIP / MetalLB LoadBalancer / hostNetwork e2term remains a 
 
 ---
 
+## Phase 6 — xApp ML Evaluation Gate (M-RC3, 2026-06-13)
+
+Decision gate following Phase-5 live RC forced handover (M-RC2). **Outcome: ML work is out of scope; closed-loop TS→rc→ns-3 path is reachable with bounded glue.**
+
+### Decision — ML pipeline is OUT OF SCOPE
+
+Verdict on deployed xApps' ML dependencies:
+- **TS** (traffic steering): Deterministic threshold engine, no ML.
+- **QP** (QoE predictor): Class (a) — self-trains lazily per-cell on first predict, no offline artifact required.
+- **AD** (anomaly detect): Class (b) — self-trains at startup from InfluxDB history (cold-start blocks until data present; AD is optional TS input, not on control path).
+- **qp-aimlfw**: Class (c) — AIML-FW Go variant; testbed does NOT deploy it.
+
+**Implication:** No offline model training pipeline is required. Only constraint: InfluxDB must have historical KPM data for QP/AD self-training. That is **data plumbing** (existing kpimon-go→InfluxDB), not ML infrastructure.
+
+### Decision — TS→rc closed loop is reachable (LOW effort)
+
+Transport + proto are already compiled into deployed TS binary (`SendRICControlReqServiceGrpc` gRPC stub).
+
+**Bounded glue items:**
+1. **RAN-Function-ID mismatch** (TS hardcodes funcId 3; ns-3 registered funcId 300) — patch one integer + rebuild TS, **or** register funcId 3 in ns-3. Code-touch, not config.
+2. **Cell-ID format** (TS cell ids via E2MGR must be expressed as hex `110N` to match ns-3 decoder).
+3. **E2MGR cell-map bootstrap** (TS reads from E2MGR REST :3800 at startup; target cell must be present).
+4. **GUAMI / UE id alignment** (already established in Phase 5; TS hardcodes VIAVI RSG values; amfUENGAPID = ns-3 IMSI).
+
+**Live demo path:** Deploy QP (or use bundled test/app mock QP), configure TS gRPC endpoint, align funcId, ensure cells in E2MGR → TS decision triggers gRPC → rc → ns-3 handover (same chain as Phase-5 manual grpcurl, now automated).
+
+**Status:** Scope-gate verdict WRITTEN (M-RC3 exit met, 2026-06-13). Live demo execution is a discrete, user-gated follow-on.
+
+**Full details:** `plans/260609-0127-rc-path-and-xapp-deploy-observe/phase-06-xapp-ml-evaluation.md` + researcher reports (plans/reports/researcher-260613-154*-{ts-closed-loop,qp-ml-eval,ad-ml-eval}.md).
+
+---
+
 ## Known Limitations & Follow-up Work
 
 1. **S-NSSAI SD encoding**: Currently ASCII "100" (3 bytes). Live kpimon accepted it; spec validation pending.
