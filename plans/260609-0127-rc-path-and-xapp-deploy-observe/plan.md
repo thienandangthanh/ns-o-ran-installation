@@ -1,7 +1,7 @@
 ---
 title: RC control path + deploy-and-observe real xApps (post-KPM L-release)
 slug: 260609-0127-rc-path-and-xapp-deploy-observe
-status: Phase 4 DONE (M-RC1 2026-06-13, RICcontrolRequest→Acknowledge on wire, ACK byte-verified, RC-2.0 decode confirmed); Phase 5 next
+status: Phase 5 DONE (M-RC2 2026-06-13, xApp RIC Control → forced mmWave secondary-cell handover completed in ns-3 cell 2→4/5, invalid-target guard, ACK on wire; via Option B — gNB→master RRC); Phase 6 next
 created: 2026-06-09
 updated: 2026-06-12
 branch: dev/migrate-to-l-release (continue on dev/l-release per fork)
@@ -77,7 +77,7 @@ capability (KPM was send-only; RC is receive+ACK+act). **ML is out of scope as a
 | 2 | Version decision gate | Keep KPM v3.00 vs roll ns-3 → v2.0; fold in NodePort + real-OID debt | ✅ **M2 DONE** — keep v03.00; debts deferred (docs/l-release-migration.md §Phase 2) |
 | 3 | RC-2.0 ASN.1 base | Add `e2sm-rc-2.0.asn` to ns-3 e2sim; regenerate via asn1c; round-trip | ✅ **M3 DONE** — see `phase-03-rc-asn1c-base.md` |
 | 4 | RC receive + ACK | ns-3 decodes RIC Control Request, returns Control Acknowledge (no-op action) | ✅ **M-RC1 DONE** — see `phase-04-rc-receive-ack.md` |
-| 5 | RC act: forced handover | Map a trivial Control Action → ns-3 gNB handover | **M-RC2** handover triggered by xApp control |
+| 5 | RC act: forced handover | Map a trivial Control Action → ns-3 gNB handover | ✅ **M-RC2 DONE** — see `phase-05-rc-forced-handover.md` |
 | 6 | xApp ML evaluation (scope-gate) | Inspect ts/ad/qp source: do they need offline-trained models, or ship runnable inference/defaults? Decide if ANY ML work is in-scope. | **M-RC3** written verdict + (if needed) minimal closed-loop demo path |
 | 7 | RC build reproducibility | Make the Phase-3 asn1c-rc graft reproducible + self-building: pin asn1c (submodule), capture generate+dedup as a script, wire `libasn1c_e2.a` into CMake | **M-REPRO** clean-checkout `make` builds the archive (no manual gcc/ar); regen script reproduces the 168-file add-set |
 
@@ -209,6 +209,15 @@ RIC Control receive + ACK plumbing proven end-to-end. Full detail: `phase-04-rc-
   frame 2207 RICcontrolAcknowledge (byte-verified `…05 00 02 01 2c` = RANfunctionID 300) to e2term :36422.
 - **Open Q4 settled**: captured rc Control Request decodes as **RC-2.0** (not nov2021).
 - **Carry-forward (Phase 5)**: `ranP_List` extraction + Control-Action→handover; real RC RANFunctionDefinition.
+
+## Phase 5 result (M-RC2 GREEN, 2026-06-13)
+xApp RIC Control → forced mmWave **secondary-cell handover**, completed live on oran-kvm-2. Full detail: `phase-05-rc-forced-handover.md`.
+- **Decode**: ns-3 extracts UE IMSI (ControlHeader `UEID.gNB_UEID.amf_UE_NGAP_ID`) + target cell (`ranP_List`→nested NRCGI last byte) from the RC-2.0 Control Request. Fixed a latent C++ incomplete-type bug from the reverted attempt (nested struct named at file scope → `auto`).
+- **Pivot A→B (live)**: Option A (target LTE eNB) DEAD — only the mmWave gNB connects to the single-node L-release e2term; the LTE eNB never registers (control arrives at the gNB, Phase-4). Pivoted to **Option B**: the **mmWave gNB callback** locates the LTE master RRC via NodeList (`FindMasterLteEnbRrc`) and runs `TakeUeHoControl`+`PerformHandoverToTargetCell` on it via `ScheduleWithContext` (e2sim thread→sim thread). EN-DC secondary-cell HO is master-coordinated (X2 `SendMcHandoverRequest`); the gNB's own RRC can't do it (that was the reverted attempt's flaw).
+- **Live**: grpcurl→rc:7777 (Imsi 1 on cell 2, Style 3, TargetCellID `1105`/`1104`) → ns-3 `handover from 2 to 5`/`2 to 4` → X2 `isMc=1`→ack→`RRC reconf completed on cell 5`/`4`→`path switch`→UE on new cell→`Remove UE 1 from eNB 2`. UE moved, control-driven, no crash. ACK on wire (Phase-4-verified, unchanged).
+- **Robustness**: invalid target (e.g. 19) previously NS_FATAL'd ns-3 (`epc-x2.cc` missing X2 socket); added `MmWaveCellExists()` guard → rejected cleanly ("not a valid mmWave cell; ignoring control"), no crash.
+- **Encoding (open Q resolved)**: rc `TargetCellID` is HEX; decoder NRCGI last byte = its low byte ⇒ ns-3 cell N = `TargetCellID "110N"`. amfUENGAPID = ns-3 UE IMSI directly.
+- **Carry-forward (Phase 6)**: real NRCGI↔cellId mapping (vs hex last-byte convention); RANFunctionDefinition advertisement still deferred; LTE-eNB E2 multi-association is a separate testbed effort.
 
 ## Open questions
 1. ns-3 already built — rebuild fast (cached). **Resolved:** cache hit, fast.
