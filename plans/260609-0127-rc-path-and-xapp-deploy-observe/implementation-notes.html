@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Implementation Notes — Phase 6b / M-RC4 Decision 4 (multi-gNB + multi-UE closed loop)</title>
+<style>
+  :root{--bg:#0f1117;--card:#181b24;--ink:#e6e8ee;--mut:#9aa3b4;--acc:#6db3f2;--dev:#f2a65a;--trade:#b58df0;--q:#f25a7a;--ok:#5fd29a;--code:#11141b;--line:#262b38}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  header{padding:28px 32px 14px;border-bottom:1px solid var(--line)}
+  h1{margin:0 0 4px;font-size:21px}
+  .sub{color:var(--mut);font-size:13px}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 32px 60px}
+  section{margin-top:30px}
+  h2{font-size:16px;letter-spacing:.3px;margin:0 0 12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;vertical-align:middle;margin-left:8px}
+  .t-design{background:rgba(109,179,242,.15);color:var(--acc)}
+  .t-dev{background:rgba(242,166,90,.15);color:var(--dev)}
+  .t-trade{background:rgba(181,141,240,.15);color:var(--trade)}
+  .t-q{background:rgba(242,90,122,.15);color:var(--q)}
+  .entry{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:10px 0}
+  .entry h3{margin:0 0 4px;font-size:14.5px}
+  .entry .when{color:var(--mut);font-size:12px;font-variant-numeric:tabular-nums;float:right;font-weight:400}
+  .entry p{margin:6px 0 0;color:#d2d6e0}
+  code,.ref{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;font-size:12.5px}
+  code{background:var(--code);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+  .ref{display:inline-block;margin-top:7px;color:var(--acc);background:var(--code);border:1px solid var(--line);border-radius:5px;padding:2px 7px}
+  .none{color:var(--mut);font-style:italic}
+  .lead{color:#c9cdda;background:var(--card);border-left:3px solid var(--ok);border-radius:0 8px 8px 0;padding:10px 14px;margin:14px 0}
+  .crit{border-left-color:var(--q)}
+  b.k{color:var(--acc)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Implementation Notes — Phase 6b / M-RC4 “Decision 4”</h1>
+  <div class="sub">Bilateral fix for multi-gNB + multi-UE closed-loop control (TS xApp → rc → ns-3). Branch <code>dev/migrate-to-l-release</code>. Started 2026-06-14.</div>
+</header>
+<div class="wrap">
+
+  <div class="lead">
+    <b>Context.</b> Goal: make the OSC Traffic-Steering xApp drive ns-3 mmWave handovers via rc, for <em>multiple gNBs and multiple UEs</em>.
+    Plan + chronological results live in <code>phase-06b-live-closed-loop-demo.md</code> (§ <code>DECISION 4</code>).
+    Code status: <b>uncommitted</b>; ns-3 stopped; Stage C′ (discovery) and A′ (regression) verified GREEN; Stage D (mock loop) blocked on an inbound-SCTP finding (see Open questions, top).
+  </div>
+
+  <!-- ============ DESIGN DECISIONS ============ -->
+  <section>
+    <h2>Design decisions <span class="tag t-design">choices under ambiguity</span></h2>
+
+    <div class="entry">
+      <span class="when">2026-06-14 20:18 KST</span>
+      <h3>TS case-insensitive cell-prefix grep: normalise <em>both</em> sides to lowercase</h3>
+      <p>The plan only said “case-insensitive grep.” I chose to lowercase the whole decoded <code>message</code> <em>and</em> the ranName-derived prefix, rather than uppercasing. Keeps <code>cell_map</code> keys in E2MGR’s natural-looking lowercase and is robust whichever case E2MGR emits. (Turned out E2MGR renders the requestPart UPPERCASE — see Deviations — so this normalisation is genuinely load-bearing, not cosmetic.)</p>
+      <span class="ref">VM ts_xapp.cpp NodebHandler ~:334 (lowercase loop) + ~:357 (tolower prefix)</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-14 20:16 KST</span>
+      <h3>Defensive parse of <code>m_gnbId</code> with fallback identity</h3>
+      <p>ns-3’s <code>m_gnbId</code> is the cellId string for mmWave gNBs, but the LTE eNB / any non-numeric case could throw. Wrapped <code>std::stoul</code> in try/catch and only set the identity when <code>cellId&gt;0</code>; otherwise the E2Sim default (single-gNB parity) stands. No crash path introduced.</p>
+      <span class="ref">oran-interface/model/oran-interface.cc ~:233 (DoStart)</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-14 20:15 KST</span>
+      <h3>Served cells passed as a <code>std::vector&lt;uint8_t&gt;</code> (size 1 today)</h3>
+      <p>Each ns-3 E2 node serves exactly one cell, so a scalar would suffice. Used a vector anyway because the encoder loops it cleanly and it future-proofs a gNB advertising several cells without an API change. YAGNI-adjacent but zero extra cost.</p>
+      <span class="ref">oran-e2sim/e2sim/src/encoding/encode_e2apv1.cpp ~:277 (requestPart loop)</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-14 20:12 KST</span>
+      <h3>Plumb identity via a setter mirroring <code>set_client_src_port</code> — no globals</h3>
+      <p>E2Sim already had the per-instance setter pattern for the SCTP source port. Added <code>set_e2node_identity(gnbIdValue, servedCells)</code> the same way and passed the stored members into the encoder as parameters, instead of a global or a singleton. Keeps each of the 5 in-process E2 agents independent.</p>
+      <span class="ref">oran-e2sim/e2sim/src/base/e2sim.hpp :48–60 ; e2sim.cpp :162</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-14 20:10 KST</span>
+      <h3>Keep historic <code>0x16B8CEF1</code> as the default gNB-id</h3>
+      <p>The E2Sim member and the encoder’s default arg both default to the original hardcoded value. If <code>set_e2node_identity</code> is never called, the wire behaviour is identical to before (single ranName) — a safe fallback / zero-regression hedge.</p>
+      <span class="ref">oran-e2sim/e2sim/src/base/e2sim.hpp :56 ; encode_e2apv1.hpp :60</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-14 20:06 KST</span>
+      <h3>requestPart bytes = <code>[gNB-id 4B ++ cellByte]</code> per served cell</h3>
+      <p>Reverse-engineered from TS’s <code>NodebHandler</code>: it greps the (hex-rendered) requestPart for the 8-hex gNB-id prefix and grabs <code>substr(i,10)</code> — i.e. prefix(8) + one extra byte (2 hex). So one trailing cell byte per entry is exactly what TS needs; rc later decodes the NRCGI’s last byte = that cell. Compact testbed convention, not a full O-RAN NRCGI (see Open questions).</p>
+      <span class="ref">oran-e2sim/.../encode_e2apv1.cpp ~:277 (was the "reqpart" placeholder :271-276)</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-14 20:05 KST</span>
+      <h3>gNB-id value = <code>0x16B8CE00 | cellId</code>, <code>bits_unused=0</code> (32-bit)</h3>
+      <p>Needed a <em>unique</em> id per gNB (else E2MGR coalesces them) with a <em>stable</em> hex width (else leading-zero stripping breaks TS’s fixed-length prefix grep). Keeping the top nibble = 1 (the <code>0x16…</code> base) guarantees E2MGR always renders 8 nibbles, and the low byte = cellId gives uniqueness + a recognisable family. Switched <code>bits_unused</code> 3→0 so the rendered value maps 1:1 to the bytes.</p>
+      <span class="ref">oran-e2sim/e2sim/src/encoding/encode_e2apv1.cpp :162–175</span>
+    </div>
+  </section>
+
+  <!-- ============ DEVIATIONS ============ -->
+  <section>
+    <h2>Deviations <span class="tag t-dev">intentional departures</span></h2>
+
+    <div class="entry">
+      <span class="when">2026-06-14 20:42 KST</span>
+      <h3>5 E2 nodes connect (cells 1–5), not the “4 mmWave” the scan implied</h3>
+      <p>The topology scan reported 4 mmWave + 1 LTE; live E2MGR shows 5 CONNECTED gNB-type nodes <code>16b8ce01…05</code>, all with correct unique ids + requestParts. Harmless for the design (every node encodes correctly); just noting the count differs from the pre-read.</p>
+      <span class="ref">E2MGR /v1/nodeb/states (live, 2026-06-14)</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-14 20:40 KST</span>
+      <h3>E2MGR renders requestPart hex <em>UPPERCASE</em> — plan assumed lowercase</h3>
+      <p>The journal/plan hypothesised E2MGR emits lowercase hex (“Go default <code>%x</code>”). Live evidence: requestPart decodes to <code>16B8CE0202</code> (uppercase), while the ranName suffix is lowercase <code>16b8ce02</code>. The mismatch is real but inverted from the guess. No code change needed — the lowercase-both case-fix handles it — but the spec interpretation is corrected.</p>
+      <span class="ref">base64-decode of nodeb.e2nodeComponentRequestPart (live)</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-14 20:20 KST</span>
+      <h3>Left <code>responsePart</code> and the unused <code>config_update</code> encoder unchanged</h3>
+      <p>TS reads only <code>e2nodeComponentRequestPart</code>, so the <code>responsePart</code> (“respart”) placeholder is untouched. A second copy of the encode block lives in <code>generate_e2apv2_config_update</code> (not on our setup path, and it lacks the new params) — deliberately not modified to avoid scope creep / signature churn.</p>
+      <span class="ref">encode_e2apv1.cpp :284 (resPart) ; :435 (unused config_update with its own :471 block)</span>
+    </div>
+  </section>
+
+  <!-- ============ TRADEOFFS ============ -->
+  <section>
+    <h2>Tradeoffs <span class="tag t-trade">alternatives weighed</span></h2>
+
+    <div class="entry">
+      <span class="when">2026-06-14 20:18 KST</span>
+      <h3>Case fix: lowercase-both vs remove-toupper vs uppercase-both</h3>
+      <p>Three viable fixes. “Remove toupper” is smallest but assumes ranName is lowercase. “Uppercase-both” yields uppercase keys (less natural, must match mock JSON). Chose <b class="k">lowercase-both</b>: robust to either side’s case and keeps keys lowercase like a real kpimon-fed key would look.</p>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-14 20:08 KST</span>
+      <h3>gNB-id low byte = cellId (≤255 cells) vs a wider field</h3>
+      <p>Encoding the cellId in the last byte caps unique gNBs at 255 and keeps the prefix at a clean 8 nibbles. A wider field (2+ bytes) would lift the cap but complicates TS’s <code>substr(i,10)</code> math. Picked the KISS path — testbed scenarios are far below 255 cells.</p>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-14 20:05 KST</span>
+      <h3>Default args on the encoder vs hard-required params</h3>
+      <p>Gave the two new encoder params defaults (<code>0x16B8CEF1</code>, empty cells). Costs a tiny ambiguity but means any caller I didn’t find (examples/tests) still compiles and behaves as before. Single real caller passes explicit values.</p>
+      <span class="ref">encode_e2apv1.hpp :60</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-14 19:58 KST</span>
+      <h3>Delegated ns-3 topology/handover trace to an Explore subagent</h3>
+      <p>The investigation spanned scenario, mmwave-helper, net-device, RC decode across two repos. Ran it as one read-only Explore agent (quoted snippets back) to keep the main context lean, rather than reading every file inline. Verified the load-bearing facts (encoder bytes, E2MGR contract) myself.</p>
+    </div>
+  </section>
+
+  <!-- ============ OPEN QUESTIONS ============ -->
+  <section>
+    <h2>Open questions <span class="tag t-q">need your call</span></h2>
+
+    <div class="entry">
+      <span class="when">2026-06-14 20:50 KST</span>
+      <h3>★ Multi-instance e2sim inbound-SCTP flakiness — the Stage-D blocker</h3>
+      <p>In a 5-gNB run, not every in-process e2sim agent reads inbound SCTP. The control to cell 5 was wire-delivered and <em>kernel-SACK’d by ns-3</em>, yet cell-5’s e2sim never read it (only 4/5 logged <code>Received new data</code>); cell 4 processed fully. Pre-existing (no SCTP-fd code changed). <b>How do you want to handle it?</b> (a) investigate root cause — recv-thread startup race? load? always same instance; (b) fix the recv path; (c) Stage-D workaround: route all controls to one healthy node (handover runs via shared master RRC anyway), needs a small TS <code>e2nodeid</code> override.</p>
+      <span class="ref">captures/phase6b-stageA-1781437269.{pcapng,ns3-…log} on oran-kvm-2</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-14 20:55 KST</span>
+      <h3>Commit the proven Stage C′/A′ work now, or after the flakiness fix?</h3>
+      <p>All 5 edits are uncommitted. The discovery + regression are GREEN and self-contained; committing now (oran-e2sim + oran-interface + superproject pins, plus the TS patch noted) would checkpoint a known-good state before the riskier inbound-SCTP work. Your preference?</p>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-14 20:30 KST</span>
+      <h3>Stage E real-QP: kpimon→InfluxDB cell-id vs the 10-char <code>cell_map</code> key</h3>
+      <p>Mock predictions (Stage D) let us craft cell-id keys to match <code>cell_map</code>. The real QP reads InfluxDB CellReports whose cell-id format (from kpimon-go) may not equal the 10-char <code>16b8ce0N0N</code> key. Confirm whether Stage E is in scope now or deferred (open-Q8).</p>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-14 20:05 KST</span>
+      <h3>Compact NRCGI convention vs a faithful O-RAN encoding?</h3>
+      <p>The requestPart carries a testbed-compact <code>[gNB-id ++ cellByte]</code>, not a spec-faithful PLMN+NRCGI structure. It satisfies TS’s lenient grep and rc’s last-byte decode. Fine for the demo; flagging in case you want ns-3 to be a fully spec-faithful E2 node for other consumer xApps later.</p>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-14 20:05 KST</span>
+      <h3>gNB-id render-width assumption across E2MGR versions</h3>
+      <p>Stable 8-nibble rendering relies on the top nibble being non-zero (the <code>0x16…</code> base). Verified on this E2MGR build. If a future E2MGR formats gNB-ids differently, the TS prefix length could drift — the Stage-C′ dump is the canary.</p>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

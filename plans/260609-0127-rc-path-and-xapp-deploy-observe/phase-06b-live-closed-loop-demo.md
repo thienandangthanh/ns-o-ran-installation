@@ -79,7 +79,7 @@ Files (all local = VM via virtiofs):
 
 ## Live session progress & findings (2026-06-13, paused for deep-understanding)
 
-**Net state**: Stage A GREEN, Stage B done, **Stage C BLOCKED on a TS cell_map gap** → automated loop NOT yet closed. Decision pending (3 options). All code changes UNCOMMITTED. ns-3 stopped.
+**Net state**: Stage A GREEN, Stage B done, Stage C was BLOCKED on a TS cell_map gap → **DECISION (2026-06-14): Option 4 chosen** (multi-gNB + multi-UE bilateral fix). Full implementation plan in **`## DECISION 4 (2026-06-14)`** below. All Stage-A code changes UNCOMMITTED. ns-3 stopped.
 
 ### Environment (verified live)
 - **Repo is virtiofs-shared**: host `…/ns-O-RAN-installation` == VM `oran-kvm-2:/home/uc/ns-O-RAN-installation`. Edit locally → instantly on VM → `ssh oran-kvm-2` to build/run. (`ssh oran-kvm-2` = host oran-kvm-3, user `uc`, passwordless sudo.)
@@ -116,6 +116,76 @@ Files (all local = VM via virtiofs):
 4. **(Robust / recommended if multi-node ever matters) Bilateral proper fix** — fix BOTH sides: ns-3 emits **real served-cell NRCGIs** (fixes a) + TS greps **case-insensitively** (fixes b, ~1 line). Generalizes to **N gNBs** (true cell→node resolution, not a shortcut) and makes ns-3 a more faithful E2 node for *any* consumer xApp. **TS rebuild+re-onboard cost is identical to Option 1**, so the case-fix is nearly free once rebuilding; the real extra cost is the ns-3 served-cell encode work. The one-line TS case-fix is **necessary but not sufficient** alone — a case-insensitive grep over `"reqpart"` still finds zero NRCGIs, so ns-3 MUST also emit real cells.
 
 **Deciding question:** will these demos / future ML scenarios ever run **more than one gNB**? **Yes (or want a reusable, faithful testbed)** → Option 4. **Only ever one gNB** (pure YAGNI) → Option 1 is simpler and sufficient. Option 3 if any TS rebuild is currently too risky.
+
+---
+
+## DECISION 4 (2026-06-14) — Option 4 chosen: bilateral fix, multi-gNB + multi-UE closed loop
+
+**Choice**: Option 4 (bilateral proper fix). scenario-zero already instantiates **4 mmWave gNBs + 12 UEs**, so >1 gNB is the actual case, not hypothetical. Option 4 makes ns-3 a faithful multi-node E2 agent for *any* consumer xApp; TS rebuild cost is identical to Option 1, so the case-fix is ~free once rebuilding.
+
+### Verified design facts (this session — live testbed + source, high confidence)
+- **E2MGR contract (decisive, empirically confirmed)**: the RNIB `e2nodeComponentRequestPart` REST field = `base64( lowercase_hex( raw_requestPart_bytes ns-3 sent ) )`. Proof: placeholder `"reqpart"` → field `NzI2NTcxNzA2MTcyNzQ=` → base64-decodes to ASCII `"72657170617274"` (= hex of "reqpart"). So **ns-3's raw OCTET_STRING bytes get hex-rendered (lowercase) by E2MGR**, then TS base64-decodes that hex string and greps it.
+- **TS NodebHandler** (`ts_xapp.cpp:331-376`): prefix = ranName chars after the **3rd `_`** (the gNB-id hex, e.g. `16b8cef1`), `toupper`'d; greps base64-decoded field for prefix; per match grabs `substr(i,10)` (10 hex chars = gNB-id 8 + cell byte 2) as a `cell_map` key; `cell_map[key] = nodeb`. `send_grpc_control_request` (`:606-676`) resolves `e2nodeid/plmnid/ranname` from `cell_map[target]->nodeb`; **miss → silent `return`**.
+- **Multi-gNB blocker #0 (gNB-id collision)**: e2sim `encode_e2apv1.cpp:162-170` HARDCODES gnb-id buf `[B5 C6 77 88]`/`bits_unused=3` → value `0x16B8CEF1` → every E2 node's ranName = `gnb_734_373_16b8cef1` → E2MGR coalesces all 4 into ONE node. (Each cell ALREADY has its own SCTP assoc + `E2Termination`, src port `38470+cellId` — `mmwave-helper.cc:2193-2202` — so the only thing missing is a unique identity.)
+- **Failure a (empty served cells)**: requestPart = `"reqpart"` placeholder, no NRCGIs (`encode_e2apv1.cpp:271-276`).
+- **Failure b (case)**: E2MGR hex lowercase vs TS `toupper` grep.
+- **Multi-UE in ns-3: ALREADY DONE (Phase 5)**: `ControlMessageReceivedCallback` (`mmwave-enb-net-device.cc:718-787`) reads `m_imsi` (decoded from `amf_UE_NGAP_ID`, `ric-control-message.cc:139-149`) + `m_targetCellId` and calls `LteEnbRrc::TakeUeHoControl(imsi)` + `PerformHandoverToTargetCell(imsi, targetCellId)`. Hands over the **specific UE**. **No ns-3 multi-UE change needed.**
+- **Each E2 node serves exactly ONE cell** = its own cellId (no per-gNB cell registry). So each node's requestPart carries one served-cell entry.
+- **e2sim plumbing hook**: `E2Sim` already has the `set_client_src_port(int)` setter + `m_client_src_port` member (`e2sim.hpp:42,48`), called from `E2Termination::DoStart` (`oran-interface.cc:232`). Mirror this to inject identity. `generate_e2apv1_setup_request_parameterized(pdu, all_funcs)` is the single setup encoder, called at `e2sim.cpp:162`.
+- **mmwave-helper** sets per-cell `gnb_id = std::to_string(cellId)`, `plmnId = "111"` (`mmwave-helper.cc:2194-2196`) → already unique per device, just not on the wire. mmWave cells are **2,3,4,5** (LTE eNB = cell 1, does not connect to E2).
+
+### Encoding scheme (one change fixes collision + failure a together)
+For an E2 node with ns-3 cellId `N` (one served cell):
+- **gNB-id BIT_STRING**: `buf=[0x16,0xB8,0xCE,(uint8_t)N]`, `size=4`, `bits_unused=0` → value `0x16B8CE0N` → E2MGR ranName suffix `16b8ce<NN>` (top nibble `1` ⇒ stable 8-nibble width, no leading-zero strip). **Unique per cell ⇒ unique ranName ⇒ E2MGR keeps all 4 nodes.**
+- **requestPart raw bytes**: `[0x16,0xB8,0xCE,N, N]` (gNB-id 4 bytes ++ cell byte `N`). E2MGR hex → `16b8ce<NN><NN>`. TS prefix `16b8ce<NN>` matches at pos 0 → `cell_map` key `16b8ce<NN><NN>`.
+- **delivery (unchanged, already works)**: `target_cell_id` = that 10-char key → rc hex-decodes 5 bytes → ns-3 reads **last byte** = `N` (`ric-control-message.cc:274`). Consistent with Phase-5 last-byte convention.
+
+### Work items
+
+**ns-3 / e2sim (fixes failure a + multi-gNB identity) — our forks:**
+1. `oran-e2sim/e2sim/src/base/e2sim.hpp` — add `m_gnb_id_value` (uint32) + `m_served_cells` (`std::vector<uint8_t>`) members + `set_e2node_identity(uint32_t, std::vector<uint8_t>)` setter (mirror `set_client_src_port`).
+2. `oran-e2sim/e2sim/src/encoding/encode_e2apv1.{hpp,cpp}` — extend `generate_e2apv1_setup_request_parameterized` to accept `(gnbIdValue, servedCells)`; replace hardcoded gnb-id (`:162-170`) with bytes from `gnbIdValue`; replace `reqPart` placeholder (`:271-276`) with concatenated `[gnbIdBytes ++ cellByte]` per served cell. **Do NOT touch `responsePart`** (TS doesn't read it).
+3. `oran-e2sim/e2sim/src/base/e2sim.cpp:162` — pass `m_gnb_id_value`, `m_served_cells` into the encode call.
+4. `oran-interface/model/oran-interface.cc` `DoStart` (after `:232`) — parse `m_gnbId` → int N; `m_e2sim->set_e2node_identity(0x16B8CE00u | (N & 0xFF), {(uint8_t)N})`.
+
+**TS xApp (fixes failure b) — `ts_xapp.cpp` NodebHandler (`:347-366`):**
+5. Make prefix match **case-insensitive** (normalize both `last_matching_bits` and the compared `message` substring to one case). ~3 lines. This is the **only** TS code change — `build_cell_mapping` already loops all nodebs (multi-gNB) and `send_grpc_control_request` already resolves per-cell owning node; `prediction_callback` already does one control per UE (multi-UE).
+
+**Build (strict order — e2sim is touched, per CLAUDE.md):**
+6. On VM: rebuild libe2sim (`cmake . && make e2sim_shared && sudo make install && sudo ldconfig`) → **re-copy header** `sudo cp src/base/e2sim.hpp /usr/local/include/e2sim/` → rebuild `libasn1c_e2.a` (only if asn1c touched — it is NOT, skip) → `cd ns3-mmwave-oran && ./ns3 build`. Then rebuild TS image + `dms_cli` re-onboard (config already points at rc gRPC).
+
+### Stages (execution order)
+- **Stage A′ (regression)** — re-verify grpcurl funcId-3 → handover still GREEN after e2sim id change. NOTE: gNB-id bytes change ⇒ Stage-A golden pcap signature shifts (expected; update assertion intentionally, not a regression).
+- **Stage C′ (discovery — the de-risk GATE, do BEFORE TS rebuild)** — start ns-3 (4 gNBs); confirm E2MGR `/v1/nodeb/states` shows **4 CONNECTED ranNames** `gnb_734_373_16b8ce0{2,3,4,5}`; for each, dump `e2nodeComponentRequestPart`, base64-decode, **assert hex == `16b8ce<NN><NN>`** and ranName suffix == `16b8ce<NN>`. This empirical check catches any width/case surprise before spending a TS rebuild.
+- **Stage D (mock multi-UE/multi-gNB loop)** — inject predictions for **≥2 UEs (distinct IMSIs)** targeting cells on **≥2 different gNBs** → TS emits ≥2 gRPC controls → rc → ns-3 hands over each UE to its target. Capture pcap + ns-3 log showing 2 distinct `handover from X to Y` for 2 IMSIs. (Mock = we craft prediction JSON whose cell-id keys == the 10-char cell_map keys.)
+- **Stage E (real QP, optional/may defer)** — deploy QP; align kpimon→InfluxDB CellReport cell-id format to the 10-char keys (open-Q8). Defer if schema mismatched; mock already proves the loop.
+- **Stage F (finalize)** — add M-RC4 assertion to `scripts/l-release-validation/` + a re-runnable `scripts/phase6b-closed-loop-run.sh`; update `plan.md` (M-RC4 DONE), this doc (results), `docs/l-release-migration.md`; `/ck:journal`; commit across forks (oran-e2sim, oran-interface, ns3-mmwave-oran) + superproject pins (branch `dev/l-release`, no push unless asked).
+
+### Risks / mitigations (Decision 4)
+- **gNB-id render width** (E2MGR nibble count) → mitigated by top-nibble-`1` (stable 8 nibbles) + **Stage-C′ empirical gate** before any TS rebuild.
+- **golden-pcap parity** → gNB-id bytes change shifts the Stage-A signature; update the golden assertion deliberately.
+- **e2sim build order** → must rebuild libe2sim + re-copy header before `./ns3 build` or stale symbols/headers; asn1c archive untouched (no RC ASN.1 change).
+- **Real-QP cell-id schema** (Stage E) → kpimon cell-id vs 10-char key mismatch; deferred, mock is the proof of the automated loop.
+- **TS case-fix side effect** → changing `cell_map` key case must stay consistent with the case used in mock prediction JSON keys (we control both).
+
+### Open questions (Decision 4)
+- Stage E only: does kpimon-go emit a cell-id into InfluxDB CellReports that QP turns into a key matching the 10-char `cell_map` form? (open-Q8; gates real-QP, not mock.)
+- Mock injector mechanism: bundled `ric-app-ts/test` QP vs hand-rolled RMR `TS_QOE_PREDICTION` (30002) sender (decide at Stage D).
+
+### Stage C′ + A′ results (2026-06-14) — code GREEN, multi-node path PROVEN
+
+**Code**: all 5 edits applied (e2sim `e2sim.{hpp,cpp}` + `encode_e2apv1.{hpp,cpp}`, `oran-interface.cc`; TS `ts_xapp.cpp`). libe2sim + ns-3 rebuilt clean (strict order; headers `e2sim.hpp`+`encode_e2apv1.hpp` re-copied). TS case-insensitive fix applied on VM (backup `ts_xapp.cpp.orig-phase6b`). **TS NOT yet rebuilt/re-onboarded** (deferred to Stage D).
+
+**Stage C′ (discovery) — GREEN.** scenario-zero now registers **5 DISTINCT** E2 nodes in E2MGR (was 1 — all collapsed under the hardcoded id): `gnb_734_373_16b8ce0{1..5}`, each `nbId=0x16B8CE0N`, each `e2nodeComponentRequestPart` decoding to `16B8CE0N0N`. Encoding matches the design exactly.
+- **Correction to a prior assumption**: E2MGR hex-renders the requestPart **UPPERCASE** (`16B8CE0202`), while the ranName suffix is **lowercase** (`16b8ce02`). So the case mismatch is real but *inverted* from the journal's guess — the TS case-insensitive fix (normalise both sides) is load-bearing and correct. After TS rebuild, `cell_map` will hold 5 cell→node entries.
+
+**Stage A′ (regression + multi-node routing) — GREEN.** grpcurl funcId-3 → rc → e2term → ns-3 cell-4 → `RIC Control Request: imsi=1 targetCellId=4` → `RC forced handover: imsi=1 -> targetCellId=4 via LTE master RRC` → `handover from 2 to 4` + Control Acknowledge. Confirms: (i) the gNB-id change did **not** regress the RC path; (ii) rc routes a control to ONE specific node among 5; (iii) per-UE targeting (imsi decoded + used) → multi-UE ready on the ns-3 side.
+
+**NEW finding — multi-instance e2sim inbound-SCTP flakiness (PRE-EXISTING; gates Stage D reliability).** In a 5-gNB run, not every in-process e2sim agent reliably reads inbound SCTP. A control to cell **5** was put on the wire by e2term (DATA→port 38475) and **kernel-SACK'd by ns-3**, but cell-5's e2sim never read it (`Received new data` absent for that instance — only 4/5 instances logged inbound). A control to cell **4** (a healthy instance) processed fully. My change touched **no** SCTP-fd code → this is a latent ns-O-RAN limitation (one e2sim per gNB in one process), newly *exposed* because controls now route to a *specific* node instead of collapsing onto one. Decision/mitigation needed before Stage D (the target cell's node must be a live "receiving" instance — e.g. fix the e2sim recv-thread startup race, or verify per-node receive before steering). Evidence: `oran-kvm-2:/home/uc/captures/phase6b-stageA-{1781437269.pcapng,ns3-1781437269.log}`.
+
+**State**: ns-3 stopped; e2term-alpha restarted (clean); all code **UNCOMMITTED**; TS config VM-only. **Paused per user gate** before Stage D (mock loop + TS rebuild).
+
+---
 
 ### Artifacts / scripts (this session)
 - Scripts (committed-tree, virtiofs): `scripts/phase6b-stage-a-grpcurl3-verify.sh`, `scripts/phase6b-start-ns3.sh`.
