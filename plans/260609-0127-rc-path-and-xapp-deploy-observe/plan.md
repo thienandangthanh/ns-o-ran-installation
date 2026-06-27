@@ -1,7 +1,7 @@
 ---
 title: RC control path + deploy-and-observe real xApps (post-KPM L-release)
 slug: 260609-0127-rc-path-and-xapp-deploy-observe
-status: Phase 5 DONE (M-RC2 2026-06-13, xApp RIC Control → forced mmWave secondary-cell handover completed in ns-3 cell 2→4/5, invalid-target guard, ACK on wire; via Option B — gNB→master RRC); Phase 6 DONE (M-RC3 2026-06-13: scope-gate verdict — NO ML pipeline work in scope [qp self-trains (a); ad trains-at-startup (b); qp-aimlfw (c) not deployed; ts = deterministic]; closed loop TS→rc→ns-3 reachable LOW-effort [native TS gRPC SendRICControlReqServiceGrpc already in deployed binary; bounded glue = funcId 3→300 + 110N cell-id + E2MGR cell-map]; live demo deferred user-gated)
+status: Phase 5 DONE (M-RC2 2026-06-13, xApp RIC Control → forced mmWave secondary-cell handover completed in ns-3 cell 2→4/5, invalid-target guard, ACK on wire; via Option B — gNB→master RRC); Phase 6 DONE (M-RC3 2026-06-13: scope-gate verdict — NO ML pipeline work in scope [qp self-trains (a); ad trains-at-startup (b); qp-aimlfw (c) not deployed; ts = deterministic]; closed loop TS→rc→ns-3 reachable LOW-effort [native TS gRPC SendRICControlReqServiceGrpc already in deployed binary; bounded glue = funcId 3→300 + 110N cell-id + E2MGR cell-map]; live demo deferred user-gated); **Phase 6b DONE (M-RC4 2026-06-28: live mock-prediction → TS gRPC control → ns-3 — 2 distinct handovers / 2 IMSIs / 2 owning gNBs, no grpcurl; PASS + asserted)**
 created: 2026-06-09
 updated: 2026-06-13
 branch: dev/migrate-to-l-release (continue on dev/l-release per fork)
@@ -79,6 +79,7 @@ capability (KPM was send-only; RC is receive+ACK+act). **ML is out of scope as a
 | 4 | RC receive + ACK | ns-3 decodes RIC Control Request, returns Control Acknowledge (no-op action) | ✅ **M-RC1 DONE** — see `phase-04-rc-receive-ack.md` |
 | 5 | RC act: forced handover | Map a trivial Control Action → ns-3 gNB handover | ✅ **M-RC2 DONE** — see `phase-05-rc-forced-handover.md` |
 | 6 | xApp ML evaluation (scope-gate) | Inspect ts/ad/qp source: do they need offline-trained models, or ship runnable inference/defaults? Decide if ANY ML work is in-scope. | ✅ **M-RC3 DONE** — see `phase-06-xapp-ml-evaluation.md` |
+| 6b | Live closed loop (mock prediction) | Mock RMR `TS_QOE_PREDICTION` → TS gRPC control → ns-3 forced handover, multi-UE/multi-gNB, no grpcurl | ✅ **M-RC4 DONE (2026-06-28)** — see `phase-06b-stage-d-mock-closed-loop.md` §Results |
 | 7 | RC build reproducibility | Make the Phase-3 asn1c-rc graft reproducible + self-building: pin asn1c (submodule), capture generate+dedup as a script, wire `libasn1c_e2.a` into CMake | **M-REPRO** clean-checkout `make` builds the archive (no manual gcc/ar); regen script reproduces the 168-file add-set |
 
 ### Phase 0 — Deploy & Observe (executable; single-node oran-kvm-2)
@@ -226,6 +227,12 @@ xApp ML evaluation (scope-gate / NOT a pipeline). Verdict: **NO ML pipeline work
 - **Closed loop: transport+proto VERIFIED match.** TS has native gRPC control path (`send_grpc_control_request()` calls `rc_stub->SendRICControlReqServiceGrpc()`, ts_xapp.cpp:607-671); rc accepts that msg exactly (`rc.proto:74`). **Deployed testbed TS binary already has gRPC stub compiled in** (xApps/ts/ext/protobuf/rc.grpc.pb.cc:34). Same `SendRICControlReqServiceGrpc` as Phase 4/5 manual grpcurl testing.
 - **Bounded glue (LOW-code, reachable):** (1) funcId 3→300 alignment: TS hardcodes `set_ranfuncid(3)` (ts_xapp.cpp:614); rc forwards it as E2 RAN-Function-ID (rcControl.go:271,274); ns-3 registered RC as funcId 300 (Phase 4/5). Patch TS `:614` to 300 + rebuild image, **or** register funcId 3 in ns-3, **or** make configurable. (2) Cell-ID format: TS cell ids must be `"110N"` hex form for ns-3 decode (Phase-5 carry-forward). (3) E2MGR cell-map bootstrap: TS builds `cell_map` from E2MGR REST (:3800); silently drops control if target absent (ts_xapp.cpp:639-647). (4) GUAMI/UE mapping: TS hardcodes GUAMI, maps ue_id→amfUENGAPID (consistent with ns-3 IMSI per Phase 5).
 - **Exit M-RC3 = written verdict: MET.** Live demo execution is discrete, stateful testbed operation (deploy qp+ts, flip config, run ns-3) — proposed as optional follow-on, **user-gated, not required to close Phase 6.**
+
+## Phase 6b result — M-RC4 LIVE CLOSED LOOP DONE (2026-06-28)
+The user-gated live demo (M-RC3 follow-on) is **done**. A mock RMR `TS_QOE_PREDICTION` (30002) injected in-cluster drove the **TS xApp's own gRPC control emit** (no grpcurl) → **2 distinct forced mmWave handovers** for **2 distinct IMSIs** on **2 distinct owning gNBs** (imsi 1: cell 2→4, imsi 7: cell 2→5), each ACK'd. `scripts/phase6b-closed-loop-run.sh` → `RESULT: PASS`; `scripts/l-release-validation/m-rc4-closed-loop.sh` → all checks pass. Full detail + per-substep (D0–D5) in `phase-06b-stage-d-mock-closed-loop.md` (§Results). Key live findings:
+- **D0 rebuild NOT required:** the deployed (un-rebuilt) TS already builds a working `cell_map` keyed **UPPERCASE** `16B8CE0N0N` (requestPart is uppercase; old `toupper`-prefix grep matches). The committed lowercase case-fix only flips key *case*. Mock keys are uppercase against the deployed image. *(Open: do the D0 rebuild for source⇄deploy parity, or keep the working image — user call.)*
+- **Two real live constraints** (now handled in the script): the **rc xApp restarts intermittently** (TS→rc gRPC fails `UNAVAILABLE` mid-restart → `wait_rc` gate); the **LTE master RRC serializes EN-DC handovers** (concurrent 2nd HO rejected → sequential handover-gated injection). Target a UE only to a cell it is not already on.
+- New committed deliverables: `scripts/phase6b-{mock-qp-inject.py,injector.Dockerfile,closed-loop-run.sh}` + `scripts/l-release-validation/m-rc4-closed-loop.sh` + `assert-pcap.sh` control-req/ack checks. No fork code changes (TS lives in the VM testbed tree).
 
 ## Open questions
 1. ns-3 already built — rebuild fast (cached). **Resolved:** cache hit, fast.

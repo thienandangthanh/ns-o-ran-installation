@@ -3,7 +3,7 @@
 #
 # Usage: assert-pcap.sh <pcap> <check> [check ...]
 #   checks: sctp-init | e2setup-response | ranfunc-accepted | no-ranfunc-reject
-#           sub-response | ric-indication | kpm-v3
+#           sub-response | ric-indication | kpm-v3 | control-request | control-ack
 #
 # Two decode paths, auto-selected:
 #   (A) tshark WITH the E2AP dissector (Wireshark >= ~3.6 / the local 4.x host):
@@ -115,6 +115,31 @@ check_kpm_v3() {
   else bad "M5 E2SM-KPM v3 OID/IE"; fi
 }
 
+# Count E2AP RICcontrol PDUs of one outcome on a 4.x host; -1 if no E2AP dissector.
+count_e2ap() {  # $1 = e2ap display-filter
+  [ "$HAVE_E2AP" = 1 ] || { echo -1; return; }
+  "$TSHARK" "${FLAGS[@]}" -Y "$1" 2>/dev/null | wc -l
+}
+
+# RICcontrolRequest: initiatingMessage(0x00) + procedureCode id-RICcontrol(0x04) => "0004".
+# >=N requires the E2AP dissector (the byte sig is presence-only on the VM fallback).
+check_control_request() {  # optional $1 = min count (default 1)
+  local min="${1:-1}" n
+  n=$(count_e2ap "e2ap.RICcontrolRequest_element")
+  if [ "$n" -ge "$min" ]; then ok "M-RC4 RICcontrolRequest x$n (>=$min)"
+  elif [ "$n" = -1 ] && has_bytes "0004"; then ok "M-RC4 RICcontrolRequest present (byte sig 0004; count needs 4.x host)"
+  else bad "M-RC4 RICcontrolRequest (have $n, need >=$min)"; fi
+}
+
+# RICcontrolAcknowledge: successfulOutcome(0x20) + procedureCode id-RICcontrol(0x04) => "2004".
+check_control_ack() {  # optional $1 = min count (default 1)
+  local min="${1:-1}" n
+  n=$(count_e2ap "e2ap.RICcontrolAcknowledge_element")
+  if [ "$n" -ge "$min" ]; then ok "M-RC4 RICcontrolAcknowledge x$n (>=$min)"
+  elif [ "$n" = -1 ] && has_bytes "2004"; then ok "M-RC4 RICcontrolAcknowledge present (byte sig 2004; count needs 4.x host)"
+  else bad "M-RC4 RICcontrolAcknowledge (have $n, need >=$min)"; fi
+}
+
 for c in "$@"; do
   case "$c" in
     sctp-init)         check_sctp_init ;;
@@ -124,6 +149,8 @@ for c in "$@"; do
     sub-response)      check_sub_response ;;
     ric-indication)    check_ric_indication ;;
     kpm-v3)            check_kpm_v3 ;;
+    control-request)   check_control_request 2 ;;
+    control-ack)       check_control_ack 2 ;;
     *) bad "unknown check '$c'" ;;
   esac
 done

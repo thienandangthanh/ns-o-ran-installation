@@ -41,13 +41,48 @@
 
   <div class="lead">
     <b>Context.</b> Goal: make the OSC Traffic-Steering xApp drive ns-3 mmWave handovers via rc, for <em>multiple gNBs and multiple UEs</em>.
-    Plan + chronological results live in <code>phase-06b-live-closed-loop-demo.md</code> (§ <code>DECISION 4</code>).
-    Code status: <b>uncommitted</b>; ns-3 stopped; Stage C′ (discovery) and A′ (regression) verified GREEN; Stage D (mock loop) blocked on an inbound-SCTP finding (see Open questions, top).
+    Plan + chronological results live in <code>phase-06b-live-closed-loop-demo.md</code> (§ <code>DECISION 4</code>); Stage-D execution plan in <code>phase-06b-stage-d-mock-closed-loop.md</code>.
+    Code status (2026-06-28): Decision-4 fork edits <b>committed</b> (pin <code>222ac76</code>); the <b>SCTP multi-instance blocker is RESOLVED</b> (per-instance <code>client_fd</code>, 5/5 nodes recv+ACK). <b>Stage D: M-RC4 PROVEN &amp; ASSERTED</b> — a mock RMR <code>TS_QOE_PREDICTION</code> (30002) injected in-cluster made the TS xApp emit gRPC controls (no grpcurl) → <b>2 distinct forced handovers</b> for <b>2 IMSIs</b> on <b>2 distinct owning gNBs</b>: <code>imsi 1: cell 2→4</code>, <code>imsi 7: cell 2→5</code>, each ACK'd; the <code>m-rc4-closed-loop.sh</code> harness passes all checks (pcap control-req/ack x2, ns-3 handovers/IMSIs/ACKs x2, TS emits, 0 drops). Evidence on oran-kvm-2: <code>captures/phase6b-closedloop-1782599483.{pcapng,ns3-…log,ts-…log}</code>. Open: the optional D0 rebuild (Open questions).
   </div>
 
   <!-- ============ DESIGN DECISIONS ============ -->
   <section>
     <h2>Design decisions <span class="tag t-design">choices under ambiguity</span></h2>
+
+    <div class="entry crit">
+      <span class="when">2026-06-28 08:35 KST</span>
+      <h3>★ Inject UEs <em>sequentially, handover-gated</em> — the LTE master RRC serializes EN-DC handovers</h3>
+      <p>Firing both predictions ~immediately made imsi 2's control arrive 116 ms (sim-time) after imsi 1's, while imsi 1's HO was still in flight → the master RRC rejected it: <code>PerformHandover: alreadyAssociatedImsi 1 onHandoverImsi 1 ## Warn: handover not triggered because the UE is already performing HO!</code>. EN-DC handover is master-coordinated and <b>one-at-a-time</b>, so the run script now injects one UE, waits for its <code>handover from X to Y</code> to land (re-firing if the control raced an in-flight HO), then injects the next. This is a real RRC constraint, not a bug — a realistic QP would never fire two HOs 116 ms apart.</p>
+      <span class="ref">scripts/phase6b-closed-loop-run.sh inject() (ho_count gate + retry) ; ns-3 LteEnbRrc:PerformHandoverToTargetCell</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-28 07:30 KST</span>
+      <h3>Injector image = slim Python + <em>vendored</em> librmr + ricxappframe (not packagecloud, not the qp image)</h3>
+      <p>Plan DECIDED "in-cluster Python <code>ricxappframe.rmr</code> sender" but left placement open. Chose a purpose-built <code>python:3.11-slim</code> image that <b>vendors <code>librmr_si.so.4.8.1</code> straight from the running TS pod</b> (guaranteed wire-compat with the testbed rmr; no packagecloud download at build), then <code>pip install ricxappframe==3.2.2</code> (matches <code>xApps/qp/setup.py</code>). Rejected (a) the qp xApp image — drags in sklearn/statsmodels/pandas, slow; (b) packagecloud rmr deb — needless external dep when the exact <code>.so</code> is one <code>kubectl exec tar</code> away.</p>
+      <span class="ref">scripts/phase6b-injector.Dockerfile ; phase6b-closed-loop-run.sh ensure_injector()</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-28 07:30 KST</span>
+      <h3>Injector pod = long-lived sleeper; script <code>kubectl cp</code>'d in, not baked</h3>
+      <p>The image bakes only the runtime (python+rmr+ricxappframe); <code>phase6b-mock-qp-inject.py</code> is copied into <code>/opt/inject</code> at run time. Lets me iterate the JSON-crafting logic without an image rebuild + <code>ctr import</code> each change, while the image (the slow part) is built once and guarded on existence.</p>
+      <span class="ref">phase6b-closed-loop-run.sh ensure_injector() (kubectl cp) ; run pod CMD sleep 7200</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-28 07:30 KST</span>
+      <h3>Injector writes its own seed route table before <code>rmr_init</code></h3>
+      <p>The sender is an unregistered app, so rtmgr won't distribute a 30002 route to it (the TS <code>bootstrap.rt</code> has no 30002 entry — it's a <em>receiver</em> of 30002). The script writes <code>mse|30002|-1|service-ricxapp-trafficxapp-rmr.ricxapp:4560</code> to a temp file, sets <code>RMR_SEED_RT</code> in <code>os.environ</code> <em>before</em> importing <code>ricxappframe.rmr</code>, so <code>rmr_init</code> reads it. One send-retry covers the seed-RT load race.</p>
+      <span class="ref">scripts/phase6b-mock-qp-inject.py write_seed_rt() + main() (import after env set)</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-28 07:30 KST</span>
+      <h3>D1 gate = first <em>routed</em> injection, not a cell_map log read</h3>
+      <p>Plan's D1 says "verify cell_map built 5 entries from TS logs" — but <code>cell_map[...]=nodeb</code> (ts_xapp.cpp:376) has <b>no logging</b> (the surrounding <code>cout</code>s are commented; <code>build_cell_mapping</code> only logs on REST failure). So the gate is operational: inject one prediction and confirm TS <em>routes</em> it (proceeds to the gRPC emit) rather than logging <code>Cannot find RAN name corresponding to cell id</code> (the silent-drop on a cell_map miss, :650). A hit proves cell_map is populated <em>and</em> the key case is right in one shot.</p>
+      <span class="ref">VM ts_xapp.cpp:376 (no log) , :643-650 (hit→emit / miss→drop) , :830-895 build_cell_mapping</span>
+    </div>
 
     <div class="entry">
       <span class="when">2026-06-14 20:18 KST</span>
@@ -103,6 +138,41 @@
   <section>
     <h2>Deviations <span class="tag t-dev">intentional departures</span></h2>
 
+    <div class="entry crit">
+      <span class="when">2026-06-28 08:05 KST</span>
+      <h3>★ The D0 premise is wrong: the <em>un-rebuilt</em> TS image already has a working cell_map (UPPERCASE keys)</h3>
+      <p>Plan D0 assumes the running TS still has a <b>broken/empty</b> cell_map until rebuilt. Live evidence says otherwise: the deployed (old) image populates cell_map fine — with <b>UPPERCASE</b> keys <code>16B8CE0N0N</code>. Reason: the served requestPart decodes <em>uppercase</em> (Stage C′), and the old code <code>toupper</code>'d the prefix, so uppercase-vs-uppercase <b>matched</b>. The committed lowercase case-fix only changes the resulting key <em>case</em> (to <code>16b8ce0N0N</code>); it does not fix a real breakage on this E2MGR. Consequence: against the deployed image the mock JSON keys must be <b>UPPERCASE</b>; the closed-loop script default is now uppercase. <b>D0 rebuild is therefore OPTIONAL</b> (see Open questions).</p>
+      <span class="ref">live: TS emits control on UPPERCASE key; "Cannot find" on lowercase ; ts_xapp.cpp NodebHandler</span>
+    </div>
+
+    <div class="entry crit">
+      <span class="when">2026-06-28 08:05 KST</span>
+      <h3>★ The real Stage-D blocker was a flaky rc pod mid-restart, not the keys</h3>
+      <p>First uppercase inject: TS built a perfect control (<code>ranName gnb_734_373_16b8ce04</code>, <code>TargetCellID 16B8CE0404</code>, amfUENGAPID 1) but the TS→rc gRPC failed with <code>error_code=14 (UNAVAILABLE), "Socket closed"/"Connect Failed"</code> — the rc xApp was restarting (it has 9 restarts/18d; became RMR-ready only seconds later). Re-injecting once rc was Ready → <b>full success</b>. Fix: the run script now <code>wait_rc()</code>s for rc Ready + settle <em>before</em> injecting. This pod flakiness, not the protocol path, is the live-demo fragility to guard.</p>
+      <span class="ref">scripts/phase6b-closed-loop-run.sh wait_rc() ; rc pod RESTARTS=9</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-28 07:35 KST</span>
+      <h3>cell_map keys are <em>lowercase</em> <code>16b8ce0N0N</code> — plan/D-mechanics wrote uppercase</h3>
+      <p>The Stage-D plan repeatedly says keys are the "10-char <code>16B8CE0N0N</code>" (uppercase). The applied patch lowercases the <em>whole</em> decoded requestPart before the substr, so the extracted <code>cell_map</code> key is <b>lowercase</b> (<code>16b8ce0202</code>, <code>16b8ce0404</code>, …). <code>cell_map.find</code> is case-sensitive, so the mock JSON keys must be lowercase. The injector defaults + <code>PREDICTIONS_JSON</code> use lowercase; the live D1 gate is the final arbiter of case.</p>
+      <span class="ref">VM ts_xapp.cpp:337 (tolower whole message) , :376 (cell_map[substr(i,10)])</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-28 07:35 KST</span>
+      <h3>Probe-first: run the D1 gate before deciding whether D0 (TS image rebuild) is needed</h3>
+      <p>Plan orders D0 (rebuild+re-onboard) then D1 (gate). Since the only thing the rebuild changes is whether the <em>running</em> image carries the case-fix, and the D1 gate (routed vs dropped injection) <em>directly</em> reveals that, I run D1 first: if the injection routes, the running image already has the fix → skip the ~10-min rebuild; if it drops on every key case → rebuild (D0) then re-gate. Safe (D1 is the real gate) and avoids an unconditional rebuild. The source patch + descriptor config (the other D0 prereqs) are already confirmed applied on the VM tree.</p>
+      <span class="ref">VM ts_xapp.cpp.orig-phase6b diff (patch present) ; config-file.json controls=grpc (present)</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-28 07:35 KST</span>
+      <h3>pcap control-req/ack counted by ns-3/TS logs; pcap gives byte-sig presence only</h3>
+      <p>The VM tshark (3.2.3) has no E2AP dissector, so it can't count <code>RICcontrolRequest</code>/<code>Acknowledge</code> PDUs by display filter. Following the existing M-series convention, the pcap check asserts the APER byte signatures <code>0004</code> (control request) / <code>2004</code> (control ack) for <em>presence</em>, and the authoritative ≥2 <em>count</em> comes from the ns-3 log (distinct handovers/IMSIs, ACKs) and TS log (emits). Exact pcap counts are available when the same pcap is asserted on a tshark-4.x host.</p>
+      <span class="ref">scripts/l-release-validation/assert-pcap.sh check_control_request/ack ; m-rc4-closed-loop.sh</span>
+    </div>
+
     <div class="entry">
       <span class="when">2026-06-14 20:42 KST</span>
       <h3>5 E2 nodes connect (cells 1–5), not the “4 mmWave” the scan implied</h3>
@@ -128,6 +198,20 @@
   <!-- ============ TRADEOFFS ============ -->
   <section>
     <h2>Tradeoffs <span class="tag t-trade">alternatives weighed</span></h2>
+
+    <div class="entry">
+      <span class="when">2026-06-28 07:38 KST</span>
+      <h3>Mock JSON: serving key is cosmetic; exaggerate throughput vs push an A1 policy</h3>
+      <p>In TS's <code>prediction_callback</code> the serving key only feeds the <em>threshold math</em> (serving throughput); the actual handover is <code>imsi=ueId → target = highest-downlink key</code>. With the default A1 <code>downlink_threshold=0</code> the gate is simply <code>highest&gt;serving</code>, so <code>serving [1,1] / target [9000,9000]</code> always fires with <b>no A1 policy push</b> (confirmed default in source). I keep the serving key a valid cell_map key for realism, but correctness rests only on target being a valid mmWave cell ≠ the UE's current cell.</p>
+      <span class="ref">VM ts_xapp.cpp:96 (downlink_threshold=0) , :698-731 (gate + send_grpc_control_request(ue,highest))</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-28 07:38 KST</span>
+      <h3>Default predictions target cells 4 &amp; 5 on distinct nodes (Phase-5-proven)</h3>
+      <p>The script's default <code>PREDICTIONS_JSON</code> targets cell 4 (node …04) for imsi 1 and cell 5 (node …05) for imsi 2 — two <em>distinct</em> owning gNBs, both already proven valid mmWave handover targets in Phase 5, never cell 1 (the LTE-eNB identity / invalid HO target). The real imsi→serving topology is discovered live at D1; if a default UE already sits on its target cell, I retarget to a different valid mmWave cell.</p>
+      <span class="ref">scripts/phase6b-closed-loop-run.sh PREDICTIONS_JSON default</span>
+    </div>
 
     <div class="entry">
       <span class="when">2026-06-14 20:18 KST</span>
@@ -160,16 +244,30 @@
     <h2>Open questions <span class="tag t-q">need your call</span></h2>
 
     <div class="entry">
-      <span class="when">2026-06-14 20:50 KST</span>
-      <h3>★ Multi-instance e2sim inbound-SCTP flakiness — the Stage-D blocker</h3>
-      <p>In a 5-gNB run, not every in-process e2sim agent reads inbound SCTP. The control to cell 5 was wire-delivered and <em>kernel-SACK’d by ns-3</em>, yet cell-5’s e2sim never read it (only 4/5 logged <code>Received new data</code>); cell 4 processed fully. Pre-existing (no SCTP-fd code changed). <b>How do you want to handle it?</b> (a) investigate root cause — recv-thread startup race? load? always same instance; (b) fix the recv path; (c) Stage-D workaround: route all controls to one healthy node (handover runs via shared master RRC anyway), needs a small TS <code>e2nodeid</code> override.</p>
-      <span class="ref">captures/phase6b-stageA-1781437269.{pcapng,ns3-…log} on oran-kvm-2</span>
+      <span class="when">2026-06-28 08:10 KST</span>
+      <h3 style="text-decoration:line-through;opacity:.7">★ Do the D0 TS rebuild anyway (code/deploy consistency), or keep the working old image?</h3>
+      <p><b>RESOLVED (user, 2026-06-28): skip the rebuild.</b> M-RC4 stays proven on the deployed (un-rebuilt) image with UPPERCASE keys; the committed lowercase case-fix remains in the testbed source but is not deployed (it only changes key case on this E2MGR, not a real fix). A D0 rebuild is a clean follow-up if source⇄deploy parity is ever wanted — then flip <code>PREDICTIONS_JSON</code> to lowercase.</p>
+      <span class="ref">scripts/phase6b-closed-loop-run.sh (PREDICTIONS_JSON case) ; plan D0</span>
     </div>
 
     <div class="entry">
-      <span class="when">2026-06-14 20:55 KST</span>
-      <h3>Commit the proven Stage C′/A′ work now, or after the flakiness fix?</h3>
-      <p>All 5 edits are uncommitted. The discovery + regression are GREEN and self-contained; committing now (oran-e2sim + oran-interface + superproject pins, plus the TS patch noted) would checkpoint a known-good state before the riskier inbound-SCTP work. Your preference?</p>
+      <span class="when">2026-06-28 08:50 KST</span>
+      <h3 style="text-decoration:line-through;opacity:.7">Live D1 unknowns (resolve during the run, not blocking design)</h3>
+      <p><b>RESOLVED live.</b> (1) Running TS image is the <em>old</em> code but cell_map works with UPPERCASE keys — no rebuild needed for M-RC4. (2) imsi→serving-cell map under NoAuto: <b>cell 2 = {1,7,9}, cell 3 = {12}, cell 4 = {5,11}, cell 5 = {2,4,6,8,10}</b> (12 UEs = 3×4 mmWave gNBs). Picked imsi 1→cell 4 and imsi 7→cell 5 (both start on cell 2 → clean distinct moves to distinct nodes). (3) Valid mmWave HO cells = 2,3,4,5 (all carry UEs except 3 which has only imsi 12); cell 1 = LTE eNB, never targeted. A UE must be sent to a cell it is <em>not</em> already on (imsi 2→5 was a silent no-op since imsi 2 is on cell 5).</p>
+      <span class="ref">live ns-3 log secondary-cell access map ; scripts/phase6b-closed-loop-run.sh PREDICTIONS_JSON default</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-28 07:40 KST</span>
+      <h3 style="text-decoration:line-through;opacity:.7">★ Multi-instance e2sim inbound-SCTP flakiness — the Stage-D blocker</h3>
+      <p><b>RESOLVED 2026-06-27.</b> Root cause was a process-global <code>client_fd</code> in <code>e2sim.cpp</code> — every embedded agent read the last-connecting socket, so only one node received inbound SCTP. Fixed by making <code>client_fd</code> a per-instance <code>E2Sim</code> member; verified 5/5 nodes receive+decode(funcId 3)+ACK (<code>oran-e2sim 75257c7</code>, pin <code>222ac76</code>). Unblocks Stage D.</p>
+      <span class="ref">oran-e2sim/e2sim/src/base/e2sim.cpp (client_fd → member) ; scripts/phase6b-verify-multinode-recv.sh</span>
+    </div>
+
+    <div class="entry">
+      <span class="when">2026-06-28 07:40 KST</span>
+      <h3 style="text-decoration:line-through;opacity:.7">Commit the proven Stage C′/A′ work now, or after the flakiness fix?</h3>
+      <p><b>RESOLVED.</b> Committed — Decision-4 fork edits + the SCTP fix are in (superproject pin <code>222ac76</code>; oran-e2sim <code>75257c7</code>). Stage D adds only committed-tree scripts (injector, run script, M-RC4 assertion); no fork code changes expected.</p>
     </div>
 
     <div class="entry">
