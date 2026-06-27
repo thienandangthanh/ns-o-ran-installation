@@ -1,9 +1,28 @@
-# Phase 6b Decision 4: Multi-gNB + Multi-UE Bilateral Fix — Implementation Complete, SCTP Flakiness Exposed
+# Phase 6b Decision 4: Multi-gNB + Multi-UE Bilateral Fix — Implementation Complete; "SCTP Flakiness" Root-Caused to a Global client_fd (RESOLVED 2026-06-27)
 
-**Date**: 2026-06-16 03:45  
-**Severity**: High (Stage-D blocker identified)  
+**Date**: 2026-06-16 03:45 (correction appended 2026-06-27)  
+**Severity**: High (Stage-D blocker — now resolved)  
 **Component**: E2SM-RC control path (e2sim encode, TS xApp, ns-3 multi-node)  
-**Status**: Code GREEN; execution blocked on inbound-SCTP reliability
+**Status**: Code GREEN. The "inbound-SCTP" blocker was root-caused + **FIXED 2026-06-27** (process-global `client_fd` → per-instance `E2Sim` member). See the Correction below.
+
+> ## ⚠️ CORRECTION (2026-06-27) — the root-cause analysis in this journal is WRONG
+> The "multi-instance inbound-SCTP race / half-established association / deaf-from-start"
+> diagnosis below is a **misdiagnosis**. The true cause was a **process-global `client_fd`**
+> at `oran-e2sim/e2sim/src/base/e2sim.cpp:36` — a file-scope global, NOT a member of `E2Sim`.
+> ns-3 runs one `E2Sim` per gNB in a single process, each `run_loop()` on its own detached
+> thread; every agent's `connect()` overwrote the shared global, so the **last connector won**
+> and ALL recv loops `recv()`'d that one socket — the other agents' sockets were never read
+> (the kernel ACKs the data, userspace never `recv()`s it).
+>
+> The pcap actually shows all 5 agents bound **distinct** source ports (38471–38475) and each
+> read ≥1 PDU — they were **not** "deaf." The single healthy node was simply the **last to
+> INIT**, which is random per run — that is the entire "flakiness."
+>
+> **Fix:** move `client_fd` into `E2Sim` as a per-instance member (mirrors `m_client_src_port`).
+> 2 lines. `oran-e2sim` `75257c7`, superproject pin `222ac76`.
+> **Verified live:** a RIC Control fanned to all 5 nodes `gnb_734_373_16b8ce0{1..5}` →
+> **5/5 receive + decode (funcId 3) + ACK** (was 1). Re-runnable: `scripts/phase6b-verify-multinode-recv.sh`.
+> **Stage D (mock loop + TS rebuild) is unblocked.**
 
 ## What Happened
 
@@ -30,7 +49,7 @@ E2MGR `/v1/nodeb/states` now shows 5 DISTINCT ranNames: `gnb_734_373_16b8ce0{1..
 **Stage A′ Results (regression + multi-node routing) — MOSTLY GREEN:**
 grpcurl funcId-3 to cell 4 → rc → ns-3 cell-4 → `RIC Control Request: imsi=1 targetCellId=4` → `RC forced handover: imsi=1 -> targetCellId=4` → ACK on wire. Confirms: (i) gNB-id bytes change did NOT regress rc path; (ii) rc routes to ONE node among 5 correctly; (iii) per-UE targeting (imsi decoded) live.
 
-**Stage A′ Critical Finding (inbound-SCTP flakiness):**
+**Stage A′ Critical Finding (inbound-SCTP flakiness):** *(2026-06-27: the "only 4/5 logged `Received new data`" attribution was a MISREAD — the logs from 5 threads are interleaved and untagged, so per-instance attribution was unreliable. Re-analysing the pcap shows all 5 agents bound distinct ports and each read ≥1 PDU. The real cause is the global `client_fd` — see the Correction at the top.)*
 In the same 5-gNB run, a control to cell 5 was wire-delivered and **kernel-SACK'd by ns-3** (evidence: DATA frame on port 38475 + SACK in pcap), yet cell-5's e2sim never logged `Received new data` (only 4/5 did). Cell-4's control processed fully. This is **pre-existing** (no SCTP-fd code touched in Decision 4), now **exposed** because controls no longer collapse onto one node.
 
 Evidence: `oran-kvm-2:/home/uc/captures/phase6b-stageA-1781437269.{pcapng,ns3-1781437269.log}` — pcap shows DATA→38475 + SACK; ns3 log shows only cells 2,3,4,5 logged inbound (1 missing), and 5's line is absent entirely.
@@ -46,6 +65,14 @@ Built and tested incrementally:
 No retry of cell-5 yet; the inbound issue is the blocker, not a transient failure.
 
 ## Root Cause Analysis
+
+> **❌ SUPERSEDED (2026-06-27) — this analysis is WRONG; kept for the record.** There is no
+> SCTP connect/recv race and no "half-established association." The real cause is a process-global
+> `client_fd` shared by all in-process `E2Sim` agents (see the Correction at the top). The text below
+> correctly notes "each E2Termination spawns its own detached recv thread … blocking on
+> `sctp_receive_data(client_fd)`" — but missed that `client_fd` was a **file-scope global**, so every
+> thread blocked on the SAME fd (the last connector's), not "its own association." The "deaf from the
+> start" conclusion is a misread of untagged interleaved logs.
 
 Each E2Termination spawns its OWN detached recv thread (`oran-interface.cc:208`), each blocking on `sctp_receive_data(client_fd)` for its own association — there is NO shared thread/pollfd pool. So the race is per-instance, not a shared reader. Likely culprit is the SCTP client bind/connect path: all 5 agents bind distinct source ports (`m_e2localPort + cellId`) and `connect()` near-simultaneously to the same e2term, so one association may be left half-established (its `client_fd` recv stalls) while the others are fine. Fits the evidence: cell-5's e2sim logged neither its setup-response NOR the control (only 4/5 instances logged inbound), i.e. that agent was deaf from the start, not just for the control. This was hidden when all gNBs shared one identity — E2MGR coalesced them, rc routed to one unified "node," and only that one e2sim ever saw inbound. Now it's visible.
 
@@ -69,9 +96,9 @@ Not a ns-3 stack issue (ns-3 correctly ACK'd the segment); not an rc issue (rc s
 
 **Recommendation:** (a) is the proper fix but needs e2sim internals expertise. Start with (c) as a parallel track: mock loop with cell 4 only, commit the proven Stage C′/A′ code, document the flakiness, and hand off the threading fix to the next session. This unblocks M-RC4 validation without requiring a deep e2sim rewrite now.
 
-**Unresolved questions:**
-- Is the recv race deterministic or load-dependent? Run same test 3× to confirm cell 5 always fails.
-- Does the recv-fd registration happen before the poll loop starts in E2Termination?
-- Is the flakiness in libe2sim's event loop, or in how e2sim agents are spawned/wired in ns-3?
+**Unresolved questions:** *(all RESOLVED 2026-06-27 — see Correction.)*
+- ~~Is the recv race deterministic or load-dependent?~~ There is no recv race. The "winner" node varies per run only because it is the last thread to write the global `client_fd`.
+- ~~Does the recv-fd registration happen before the poll loop starts in E2Termination?~~ N/A — the bug was a shared global fd, not registration ordering.
+- ~~Is the flakiness in libe2sim's event loop, or in how e2sim agents are spawned/wired?~~ It was a shared global `client_fd` in libe2sim; fixed by making it a per-instance `E2Sim` member.
 
-**Status:** Uncommitted code; oran-kvm-2 artifacts retained. Awaiting user decision on mitigation strategy before Stage D.
+**Status (updated 2026-06-27):** Decision-4 code committed (`oran-e2sim a24e8f9`, pin `52f547e`). The "SCTP flakiness" blocker is **RESOLVED** — global `client_fd` made per-instance (`oran-e2sim 75257c7`, pin `222ac76`); verified live 5/5 nodes receive + ACK. Stage D (mock loop + TS rebuild) unblocked.
