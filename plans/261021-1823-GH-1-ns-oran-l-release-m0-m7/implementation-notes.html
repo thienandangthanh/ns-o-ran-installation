@@ -254,6 +254,13 @@ Neither is produced by our code. The agent accepts the subscription without inte
 </ul></li>
 <li>Fix: attribute traffic by SCTP association, using the gNB-ID in that association's E2SetupRequest, not by container IP. Require hello ≥ 1 with consistent counters.</li>
 </ul></li>
+<li><span class="tag decision"><b>M7 green</b></span> 2026-10-21 19:15Z, attempt 2, harness <code>62ed776</code>, evidence <code>evidence/m7/20261021T184727Z</code>, 52/52 checks. Re-verified by the orchestrator on the wire:
+<ul>
+<li>Before the delete: 5 associations, one per agent, from 172.17.0.2–.6 carrying gNB-IDs 1–5, with 0 ABORT during the 15 min endurance window.</li>
+<li>After the e2term pod delete: a new E2SetupResponse for every node (gNBs +194 s, eNB +237 s) and 5 new RICsubscriptionRequests.</li>
+<li>4539 indication PDUs, all clean RC_OK per the harness.</li>
+<li>Snapshot <code>l7-multignb</code> taken. <b>Dev run M0–M7 complete.</b></li>
+</ul></li>
 <li><span class="tag deviation">deviation</span>Gate helper: after an InfluxDB pod restart the in-pod CLI config is gone (401). <code>influx_rows</code> now uses the pod's <code>DOCKER_INFLUXDB_INIT_ADMIN_TOKEN</code>, expanded inside the pod so it is never printed. Verified on the VM: 401 before, rows returned after.</li>
 </ul>
 </body>

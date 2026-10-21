@@ -31,10 +31,10 @@ P7 (RC) of the original contract is deferred; numbering is kept so "P3 sign-off 
 | P1 | [RIC on L pins](phase-01-ric-l-install-m1.md) | M1 | `l1-ric-up` | **done** (M1 green) |
 | P2 | [Reference node, golden pcap, kpimon baseline + SIZE(8) patch](phase-02-reference-node-kpimon-baseline-and-patch-m2-m3.md) | M2, M3 | `l2-refnode`, `l3-xapps` | **done** (M2, M3 green) |
 | P3 | [E2 agent design checkpoint](phase-03-e2-agent-design-checkpoint.md) | — (user sign-off) | — | **done** (user sign-off 2026-10-22) |
-| P4 | [ns-3 decouple, IPC emitter, scripted build, timing](phase-04-ns3-decouple-ipc-emitter-build-timing-m4.md) | M4 | `l4-ns3-build` | pending |
-| P5 | [Agent + single-gNB KPM](phase-05-e2-agent-single-gnb-kpm-m5-m6.md) | M5, M6 | `l5-agent-setup`, `l6-kpm` | pending |
-| P6 | [Multi-gNB robustness](phase-06-multi-gnb-robustness-m7.md) | M7 | `l7-multignb` | pending |
-| P8 | [Unattended re-run from fresh-install to M7; docs; pre-M8 gate](phase-08-unattended-rerun-to-m7-and-handoff.md) | M0–M7 again | `f7-rerun-green` | pending |
+| P4 | [ns-3 decouple, IPC emitter, scripted build, timing](phase-04-ns3-decouple-ipc-emitter-build-timing-m4.md) | M4 | `l4-ns3-build` | **done** (M4 green) |
+| P5 | [Agent + single-gNB KPM](phase-05-e2-agent-single-gnb-kpm-m5-m6.md) | M5, M6 | `l5-agent-setup`, `l6-kpm` | **done** (M5, M6 green) |
+| P6 | [Multi-gNB robustness](phase-06-multi-gnb-robustness-m7.md) | M7 | `l7-multignb` | **done** (M7 green) |
+| P8 | [Unattended re-run from fresh-install to M7; docs; pre-M8 gate](phase-08-unattended-rerun-to-m7-and-handoff.md) | M0–M7 again | `f7-rerun-green` | in progress |
 
 Dependencies: strictly sequential P0→P1→P2→P3→P4→P5→P6→P8. P3 needs P2's
 golden pcap, and P4 starts only after P3 sign-off. Idle time during long

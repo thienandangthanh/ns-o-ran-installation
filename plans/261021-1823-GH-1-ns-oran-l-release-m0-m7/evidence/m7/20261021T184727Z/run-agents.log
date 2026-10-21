@@ -1,0 +1,10 @@
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/ns3_e2_agent/install_scripts/run_ns3_e2_agents.sh --nodes enb:1,gnb:2,gnb:3,gnb:4,gnb:5
+e2term: Service service-ricplt-e2term-sctp-alpha -> 10.106.169.160:36422 (SCTP)
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/ns3_e2_agent/install_scripts/stop_ns3_e2_agents.sh 
+No ns3-e2-agent containers.
+started ns3-e2-agent-1 (enb, IPC 127.0.0.1:38471, expected RAN name gnb_001_001_00000001)
+started ns3-e2-agent-2 (gnb, IPC 127.0.0.1:38472, expected RAN name gnb_001_001_00000002)
+started ns3-e2-agent-3 (gnb, IPC 127.0.0.1:38473, expected RAN name gnb_001_001_00000003)
+started ns3-e2-agent-4 (gnb, IPC 127.0.0.1:38474, expected RAN name gnb_001_001_00000004)
+started ns3-e2-agent-5 (gnb, IPC 127.0.0.1:38475, expected RAN name gnb_001_001_00000005)
+Wrote /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/ns3_e2_agent/run/agents.json (5 agents)
