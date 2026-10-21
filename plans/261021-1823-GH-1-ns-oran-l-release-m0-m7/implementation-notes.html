@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L-release M0–M7 notes</title>
+<style>
+:root { --bg:#fff; --fg:#1d1d1f; --muted:#5f6368; --line:#e3e3e3; --ok:#137333; --warn:#b06000; --bad:#c5221f; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#16181c; --fg:#e8eaed; --muted:#9aa0a6; --line:#33363b; --ok:#81c995; --warn:#fdd663; --bad:#f28b82; } }
+:root[data-theme="dark"] { --bg:#16181c; --fg:#e8eaed; --muted:#9aa0a6; --line:#33363b; --ok:#81c995; --warn:#fdd663; --bad:#f28b82; }
+body { background:var(--bg); color:var(--fg); font:15px/1.55 system-ui, sans-serif; max-width:960px; margin:0 auto; padding:24px 16px; }
+h1 { font-size:1.5rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:4px; margin-top:2rem; }
+code { font-size:.9em; } .muted { color:var(--muted); }
+.tag { display:inline-block; font-size:.75rem; padding:0 6px; border:1px solid currentColor; border-radius:4px; margin-right:6px; }
+.decision { color:var(--ok); } .deviation { color:var(--warn); } .question { color:var(--bad); } .tradeoff { color:var(--muted); }
+li { margin:.35rem 0; }
+table { border-collapse:collapse; width:100%; } td, th { border:1px solid var(--line); padding:4px 8px; text-align:left; vertical-align:top; }
+</style>
+</head>
+<body>
+<h1>Implementation notes: ns-O-RAN on L-release (NIST v1.8.0), M0–M7</h1>
+<p class="muted">Plan: <code>plan.md</code> in this directory. Updated as work proceeds. Tags: decision (spec ambiguous), deviation (differs from plan, with reason), tradeoff, question (open for the user).</p>
+
+<h2>Disk budget (host <code>/home</code>, per gate)</h2>
+<table>
+<tr><th>Point</th><th>Host free</th><th>Image dir allocated</th><th>Note</th></tr>
+<tr><td>Start (2026-10-21)</td><td>118 G</td><td>base raw ~3.4 G allocated + overlay 49 M</td><td>VM running from <code>ubuntu24.fresh-install</code></td></tr>
+</table>
+
+<h2>P0: preflight, branches, gate harness</h2>
+<ul>
+<li><span class="tag decision">decision</span>Fork branches <code>dev/l-release-nist180</code> cut from the upstream pins and pushed: Testbed <code>6088882</code> (+ L drop-in commit <code>03d71c0</code>), ns-3 <code>8c42089d</code>, oran-interface <code>5f547ae</code>, oran-e2sim <code>2209995</code>.</li>
+<li><span class="tag deviation">deviation</span>Pins file is <code>scripts/pins.conf</code>, not <code>scripts/pins.env</code>. The local privacy hook blocks every <code>*.env</code> path and would prompt mid-run, breaking unattended runs. The file holds only public URLs and SHAs; same shell-sourceable format.</li>
+<li><span class="tag decision">decision</span>Gates run on the VM as transient systemd units (<code>sudo systemd-run --uid=uc</code>), launched by <code>scripts/vm/vm-exec.sh</code>. The wrapper writes <code>exit_code</code> last and the host polls for it, so an ssh drop never kills a gate and a crashed gate without a verdict is still detected.</li>
+<li><span class="tag decision">decision</span>Snapshot overlays get explicit names <code>/home/andang/VMs/ubuntu24.04-&lt;snapshot&gt;.qcow2</code> instead of libvirt's default <code>&lt;stem&gt;.&lt;snapshot&gt;</code>, so a revert-generated file can never collide with a later gate name.</li>
+<li><span class="tag decision">decision</span>M0 is split into a host half (<code>gate-m0-host.sh</code>: host facts, visibility, anonymous clone, K4 snapshot probe, no VM credentials) and a VM half (<code>gate-m0-preflight.sh</code>). Each writes its own <code>verdict.json</code>; M0 is green only when both pass.</li>
+<li><span class="tag decision">decision</span>The evidence scrubber redacts every string from NIST's <code>influxdb_auth_token.json</code> plus any influx-v2-shaped token (80+ base64url chars ending <code>==</code>). The regex deliberately cannot match 64-hex image digests or sha256 manifests.</li>
+</ul>
+</body>
+</html>
