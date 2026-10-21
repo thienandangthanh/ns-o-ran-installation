@@ -30,7 +30,7 @@ P7 (RC) of the original contract is deferred; numbering is kept so "P3 sign-off 
 | P0 | [Preflight, branches, gate harness](phase-00-preflight-branches-gate-harness-m0.md) | M0 | `l0-preflight` | **done** (M0 green 2026-10-21) |
 | P1 | [RIC on L pins](phase-01-ric-l-install-m1.md) | M1 | `l1-ric-up` | **done** (M1 green) |
 | P2 | [Reference node, golden pcap, kpimon baseline + SIZE(8) patch](phase-02-reference-node-kpimon-baseline-and-patch-m2-m3.md) | M2, M3 | `l2-refnode`, `l3-xapps` | **done** (M2, M3 green) |
-| P3 | [E2 agent design checkpoint](phase-03-e2-agent-design-checkpoint.md) | — (user sign-off) | — | **awaiting user sign-off** (journal ready) |
+| P3 | [E2 agent design checkpoint](phase-03-e2-agent-design-checkpoint.md) | — (user sign-off) | — | **done** (user sign-off 2026-10-22) |
 | P4 | [ns-3 decouple, IPC emitter, scripted build, timing](phase-04-ns3-decouple-ipc-emitter-build-timing-m4.md) | M4 | `l4-ns3-build` | pending |
 | P5 | [Agent + single-gNB KPM](phase-05-e2-agent-single-gnb-kpm-m5-m6.md) | M5, M6 | `l5-agent-setup`, `l6-kpm` | pending |
 | P6 | [Multi-gNB robustness](phase-06-multi-gnb-robustness-m7.md) | M7 | `l7-multignb` | pending |

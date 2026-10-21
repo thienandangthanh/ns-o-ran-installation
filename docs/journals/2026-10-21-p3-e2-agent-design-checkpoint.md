@@ -1,6 +1,6 @@
 # P3 checkpoint: design of the out-of-process E2 agent (sign-off required before P4)
 
-Date: 2026-10-21. Plan: `plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/` (phase-03). Status: **awaiting user sign-off**.
+Date: 2026-10-21. Plan: `plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/` (phase-03). Status: **signed off by the user 2026-10-22** (S1–S4 as recommended; see section 5).
 Full counsel with file:line citations: `plans/reports/kongming-261021-2005-GH-1-p3-e2-agent-design-counsel.md`.
 ns-3 side facts: `plans/reports/scout-261021-2005-GH-1-ns3-e2-kpm-path-fact-pack.md`.
 
@@ -194,7 +194,7 @@ kpimon builds its single action from these lists.
 - **Discovery.** Gates find agents through Docker labels plus `run/agents.json`, and each agent writes a stats line every 5 s.
 - **Capture.** On `docker0` with BPF `ip proto 132`, started **before** the agents, because Wireshark learns the E2SM mapping only from E2Setup.
 
-## 5. Decisions that need your sign-off
+## 5. Decisions signed off (user, 2026-10-22: S1 agent-owned loop, S2 eNB as gNB-type, S3 P5 single gNB with `--e2lteEnabled=false`, S4 8 s hold-off + ephemeral port)
 
 **S1. Reverse K1's mechanism (outcome-neutral, approach detail).** The review recommended option (a), patching NIST's `encode_e2apv1.cpp`/`e2sim.cpp` to read identity from env vars. This design uses option (b) instead: the agent owns its loop and edits the generated PDUs, and **no NIST file is modified**.
 - Reason: section 3. Patching the library cannot fix the blocking callback, the missing delete dispatch or the `exit(1)` paths. It would also rebuild NIST's own kpm_sim from patched code.
