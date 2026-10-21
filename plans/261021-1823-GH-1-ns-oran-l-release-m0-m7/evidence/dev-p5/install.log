@@ -1,0 +1,608 @@
+# Script: /home/uc/dev-agent/testbed/RAN_Intelligent_Controllers/Near-Real-Time-RIC/ns3_e2_agent/install_scripts/install_ns3_e2_agent.sh 
+{"map": "metric-map.v1.json", "rows": 116, "lists": {"gnb/cell": 33, "gnb/ue": 58, "enb/cell": 8, "enb/ue": 17}, "findings": 0}
+Copied the agent to /home/uc/dev-agent/e2-interface/e2sim/e2sm_examples/ns3_e2_agent
+Building ns3-e2-agent:ca5be2eab505 (timeout 3600s)...
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.35kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for nexus3.o-ran-sc.org:10002/o-ran-sc/bldr-ubuntu22-c-go:1.0.0
+#2 DONE 1.6s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [ 1/14] FROM nexus3.o-ran-sc.org:10002/o-ran-sc/bldr-ubuntu22-c-go:1.0.0@sha256:35959c1fd0a618a6e6b867833ae7883d595d264f1ffd7c49789c975dc240b8bd
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 222.18kB 0.0s done
+#5 DONE 0.0s
+
+#6 [ 9/14] RUN dpkg -i /playpen/e2sim/build/e2sim_1.0.0_amd64.deb /playpen/e2sim/build/e2sim-dev_1.0.0_amd64.deb
+#6 CACHED
+
+#7 [ 4/14] RUN apt-get update 	&& apt-get install -y 	build-essential 	cmake 	libsctp-dev 	lksctp-tools 	nlohmann-json3-dev 	&& apt-get clean 	&& rm -rf /var/lib/apt/lists/*
+#7 CACHED
+
+#8 [ 8/14] RUN mkdir /playpen/e2sim/build && cd /playpen/e2sim/build && cmake .. && make package && cmake .. -DDEV_PKG=1 && make package
+#8 CACHED
+
+#9 [ 5/14] COPY asn1c/ /playpen/e2sim/asn1c
+#9 CACHED
+
+#10 [ 6/14] COPY src/ /playpen/e2sim/src
+#10 CACHED
+
+#11 [ 7/14] COPY CMakeLists.txt /playpen/e2sim
+#11 CACHED
+
+#12 [ 2/14] RUN mkdir -p /playpen/e2sim /playpen/agent
+#12 CACHED
+
+#13 [ 3/14] WORKDIR /playpen
+#13 CACHED
+
+#14 [10/14] RUN rm -rf /playpen/e2sim
+#14 CACHED
+
+#15 [11/14] COPY e2sm_examples/ns3_e2_agent/ /playpen/agent/
+#15 DONE 0.1s
+
+#16 [12/14] COPY asn1c/ /playpen/agent/asn1c/
+#16 DONE 0.2s
+
+#17 [13/14] RUN cd /playpen/agent && rm -rf .build && mkdir .build && cd .build && cmake .. && make -j"$(nproc)" install
+#17 0.262 -- The C compiler identification is GNU 11.4.0
+#17 0.295 -- The CXX compiler identification is GNU 11.4.0
+#17 0.301 -- Detecting C compiler ABI info
+#17 0.342 -- Detecting C compiler ABI info - done
+#17 0.346 -- Check for working C compiler: /usr/bin/cc - skipped
+#17 0.347 -- Detecting C compile features
+#17 0.347 -- Detecting C compile features - done
+#17 0.349 -- Detecting CXX compiler ABI info
+#17 0.396 -- Detecting CXX compiler ABI info - done
+#17 0.400 -- Check for working CXX compiler: /usr/bin/c++ - skipped
+#17 0.400 -- Detecting CXX compile features
+#17 0.400 -- Detecting CXX compile features - done
+#17 0.403 -- Configuring done
+#17 0.444 -- Generating done
+#17 0.445 -- Build files have been written to: /playpen/agent/.build
+#17 0.482 [  0%] Building C object asn1c/CMakeFiles/asn1_objects.dir/AMFName.c.o
+#17 0.482 [  0%] Building C object asn1c/CMakeFiles/asn1_objects.dir/AMFPointer.c.o
+#17 0.482 [  0%] Building C object asn1c/CMakeFiles/asn1_objects.dir/AMFSetID.c.o
+#17 0.482 [  0%] Building C object asn1c/CMakeFiles/asn1_objects.dir/AMFRegionID.c.o
+#17 0.482 [  0%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ANY_aper.c.o
+#17 0.482 [  1%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ANY.c.o
+#17 0.482 [  1%] Building C object asn1c/CMakeFiles/asn1_objects.dir/AMF-UE-NGAP-ID.c.o
+#17 0.487 [  1%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ANY_ber.c.o
+#17 0.508 [  1%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ANY_uper.c.o
+#17 0.508 [  1%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ANY_jer.c.o
+#17 0.508 [  2%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ANY_xer.c.o
+#17 0.511 [  2%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BIT_STRING_print.c.o
+#17 0.511 [  2%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BIT_STRING.c.o
+#17 0.511 [  2%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BIT_STRING_jer.c.o
+#17 0.514 [  3%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BIT_STRING_rfill.c.o
+#17 0.514 [  3%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BIT_STRING_uper.c.o
+#17 0.531 [  3%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BOOLEAN.c.o
+#17 0.531 [  3%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BIT_STRING_xer.c.o
+#17 0.535 [  3%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BOOLEAN_aper.c.o
+#17 0.537 [  3%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BOOLEAN_ber.c.o
+#17 0.539 [  4%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BOOLEAN_jer.c.o
+#17 0.541 [  4%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BOOLEAN_print.c.o
+#17 0.549 [  4%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BOOLEAN_rfill.c.o
+#17 0.549 [  4%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BOOLEAN_uper.c.o
+#17 0.560 [  4%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BOOLEAN_xer.c.o
+#17 0.561 [  5%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BinIndex.c.o
+#17 0.564 [  5%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BinRangeValue.c.o
+#17 0.564 [  5%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BinRangeList.c.o
+#17 0.564 [  5%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BinRangeItem.c.o
+#17 0.564 [  5%] Building C object asn1c/CMakeFiles/asn1_objects.dir/BinRangeDefinition.c.o
+#17 0.578 [  6%] Building C object asn1c/CMakeFiles/asn1_objects.dir/CGI.c.o
+#17 0.584 [  6%] Building C object asn1c/CMakeFiles/asn1_objects.dir/Cause.c.o
+#17 0.591 [  6%] Building C object asn1c/CMakeFiles/asn1_objects.dir/CauseE2node.c.o
+#17 0.591 [  6%] Building C object asn1c/CMakeFiles/asn1_objects.dir/CauseMisc.c.o
+#17 0.591 [  6%] Building C object asn1c/CMakeFiles/asn1_objects.dir/CauseProtocol.c.o
+#17 0.591 [  7%] Building C object asn1c/CMakeFiles/asn1_objects.dir/CauseRICrequest.c.o
+#17 0.591 [  7%] Building C object asn1c/CMakeFiles/asn1_objects.dir/CauseRICservice.c.o
+#17 0.592 [  7%] Building C object asn1c/CMakeFiles/asn1_objects.dir/CauseTransport.c.o
+#17 0.610 [  7%] Building C object asn1c/CMakeFiles/asn1_objects.dir/CoreCPID.c.o
+#17 0.613 [  7%] Building C object asn1c/CMakeFiles/asn1_objects.dir/Criticality.c.o
+#17 0.613 [  7%] Building C object asn1c/CMakeFiles/asn1_objects.dir/CriticalityDiagnostics-IE-Item.c.o
+#17 0.613 [  7%] Building C object asn1c/CMakeFiles/asn1_objects.dir/DistMeasurementBinRangeItem.c.o
+#17 0.613 [  7%] Building C object asn1c/CMakeFiles/asn1_objects.dir/DistMeasurementBinRangeList.c.o
+#17 0.614 [  7%] Building C object asn1c/CMakeFiles/asn1_objects.dir/CriticalityDiagnostics.c.o
+#17 0.619 [  8%] Building C object asn1c/CMakeFiles/asn1_objects.dir/CriticalityDiagnostics-IE-List.c.o
+#17 0.627 [  8%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E-UTRA-ARFCN.c.o
+#17 0.636 [  9%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E-UTRA-PCI.c.o
+#17 0.639 [  9%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E-UTRA-TAC.c.o
+#17 0.640 [  9%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2AP-IEs_ENB-ID.c.o
+#17 0.642 [  9%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2AP-IEs_GNB-DU-ID.c.o
+#17 0.642 [  9%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2AP-IEs_GNB-CU-UP-ID.c.o
+#17 0.645 [ 10%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2AP-IEs_GlobalENB-ID.c.o
+#17 0.653 [ 10%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2AP-IEs_GlobalenGNB-ID.c.o
+#17 0.661 [ 10%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2AP-IEs_NGENB-DU-ID.c.o
+#17 0.663 [ 10%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2AP-PDU.c.o
+#17 0.663 [ 10%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2RemovalFailure.c.o
+#17 0.666 [ 11%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2RemovalRequest.c.o
+#17 0.666 [ 11%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2RemovalResponse.c.o
+#17 0.668 [ 11%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-COMMON-IEs_ENB-ID.c.o
+#17 0.671 [ 11%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-COMMON-IEs_GNB-CU-UP-ID.c.o
+#17 0.678 [ 11%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-COMMON-IEs_GNB-DU-ID.c.o
+#17 0.688 [ 12%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-COMMON-IEs_GlobalENB-ID.c.o
+#17 0.690 [ 12%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-COMMON-IEs_GlobalenGNB-ID.c.o
+#17 0.691 [ 12%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-COMMON-IEs_NGENB-DU-ID.c.o
+#17 0.691 [ 12%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-KPM-ActionDefinition-Format1.c.o
+#17 0.695 [ 12%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-KPM-ActionDefinition-Format2.c.o
+#17 0.705 [ 13%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-KPM-ActionDefinition-Format3.c.o
+#17 0.705 [ 13%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-KPM-ActionDefinition-Format4.c.o
+#17 0.718 [ 13%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-KPM-ActionDefinition.c.o
+#17 0.720 [ 13%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-KPM-ActionDefinition-Format5.c.o
+#17 0.721 [ 14%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-KPM-EventTriggerDefinition.c.o
+#17 0.722 [ 14%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-KPM-EventTriggerDefinition-Format1.c.o
+#17 0.723 [ 14%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-KPM-IndicationHeader.c.o
+#17 0.723 [ 14%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-KPM-IndicationHeader-Format1.c.o
+#17 0.735 [ 14%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-KPM-IndicationMessage-Format1.c.o
+#17 0.737 [ 14%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-KPM-IndicationMessage-Format2.c.o
+#17 0.745 [ 14%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-KPM-RANfunction-Description.c.o
+#17 0.745 [ 15%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-KPM-IndicationMessage-Format3.c.o
+#17 0.746 [ 15%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2connectionSetupFailed-Item.c.o
+#17 0.746 [ 15%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2SM-KPM-IndicationMessage.c.o
+#17 0.748 [ 15%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2connectionSetupFailed-List.c.o
+#17 0.758 [ 15%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2connectionUpdate-Item.c.o
+#17 0.764 [ 16%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2connectionUpdate-List.c.o
+#17 0.767 [ 16%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2connectionUpdate.c.o
+#17 0.769 [ 16%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2connectionUpdateAcknowledge.c.o
+#17 0.771 [ 16%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2connectionUpdateFailure.c.o
+#17 0.773 [ 16%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2connectionUpdateRemove-Item.c.o
+#17 0.775 [ 17%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2connectionUpdateRemove-List.c.o
+#17 0.783 [ 17%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentConfigAddition-List.c.o
+#17 0.783 [ 17%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentConfigAddition-Item.c.o
+#17 0.792 [ 17%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentConfigAdditionAck-Item.c.o
+#17 0.793 [ 17%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentConfigAdditionAck-List.c.o
+#17 0.796 [ 18%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentConfigRemoval-Item.c.o
+#17 0.797 [ 18%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentConfigRemoval-List.c.o
+#17 0.800 [ 18%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentConfigRemovalAck-Item.c.o
+#17 0.807 [ 18%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentConfigRemovalAck-List.c.o
+#17 0.808 [ 18%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentConfigUpdate-Item.c.o
+#17 0.820 [ 19%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentConfigUpdateAck-Item.c.o
+#17 0.820 [ 19%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentConfigUpdate-List.c.o
+#17 0.821 [ 19%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentConfigUpdateAck-List.c.o
+#17 0.823 [ 19%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentConfigurationAck.c.o
+#17 0.824 [ 19%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentConfiguration.c.o
+#17 0.834 [ 19%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentInterfaceE1.c.o
+#17 0.834 [ 20%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentID.c.o
+#17 0.842 [ 20%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentInterfaceF1.c.o
+#17 0.848 [ 20%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentInterfaceNG.c.o
+#17 0.851 [ 20%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentInterfaceS1.c.o
+#17 0.852 [ 21%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentInterfaceType.c.o
+#17 0.854 [ 21%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentInterfaceX2.c.o
+#17 0.855 [ 21%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentInterfaceW1.c.o
+#17 0.884 [ 21%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeComponentInterfaceXn.c.o
+#17 0.885 [ 21%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeConfigurationUpdate.c.o
+#17 0.887 [ 22%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeTNLassociationRemoval-Item.c.o
+#17 0.887 [ 22%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeConfigurationUpdateAcknowledge.c.o
+#17 0.888 [ 22%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeTNLassociationRemoval-List.c.o
+#17 0.888 [ 22%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2nodeConfigurationUpdateFailure.c.o
+#17 0.888 [ 22%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2setupFailure.c.o
+#17 0.889 [ 23%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2setupRequest.c.o
+#17 0.910 [ 23%] Building C object asn1c/CMakeFiles/asn1_objects.dir/E2setupResponse.c.o
+#17 0.912 [ 23%] Building C object asn1c/CMakeFiles/asn1_objects.dir/EN-GNB-ID.c.o
+#17 0.912 [ 23%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ENB-UE-X2AP-ID-Extension.c.o
+#17 0.912 [ 23%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ENB-ID-Choice.c.o
+#17 0.914 [ 23%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ENB-UE-X2AP-ID.c.o
+#17 0.915 [ 24%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ENGNB-ID.c.o
+#17 0.921 [ 24%] Building C object asn1c/CMakeFiles/asn1_objects.dir/EUTRA-CGI.c.o
+#17 0.926 [ 24%] Building C object asn1c/CMakeFiles/asn1_objects.dir/EUTRACellIdentity.c.o
+#17 0.936 [ 24%] Building C object asn1c/CMakeFiles/asn1_objects.dir/EXTERNAL.c.o
+#17 0.936 [ 24%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ErrorIndication.c.o
+#17 0.939 [ 25%] Building C object asn1c/CMakeFiles/asn1_objects.dir/FiveGS-TAC.c.o
+#17 0.941 [ 25%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GNB-CU-CP-UE-E1AP-ID.c.o
+#17 0.941 [ 25%] Building C object asn1c/CMakeFiles/asn1_objects.dir/FiveQI.c.o
+#17 0.941 [ 25%] Building C object asn1c/CMakeFiles/asn1_objects.dir/FreqBandNrItem.c.o
+#17 0.949 [ 25%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GNB-CU-UE-F1AP-ID.c.o
+#17 0.951 [ 26%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GNB-ID-Choice.c.o
+#17 0.963 [ 26%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GUAMI.c.o
+#17 0.963 [ 26%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GlobalE2node-ID.c.o
+#17 0.963 [ 26%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GNB-ID.c.o
+#17 0.963 [ 26%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GUMMEI.c.o
+#17 0.970 [ 27%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GlobalE2node-eNB-ID.c.o
+#17 0.975 [ 27%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GlobalE2node-en-gNB-ID.c.o
+#17 0.976 [ 27%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GlobalE2node-ng-eNB-ID.c.o
+#17 0.979 [ 27%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GlobalE2node-gNB-ID.c.o
+#17 0.987 [ 28%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GlobalNG-RANNode-ID.c.o
+#17 0.987 [ 28%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GlobalGNB-ID.c.o
+#17 0.992 [ 28%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GlobalNgENB-ID.c.o
+#17 0.994 [ 28%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GlobalNGRANNodeID.c.o
+#17 0.996 [ 28%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GlobalRIC-ID.c.o
+#17 1.004 [ 28%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GlobalgNB-ID.c.o
+#17 1.009 [ 29%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GroupID.c.o
+#17 1.009 [ 29%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GranularityPeriod.c.o
+#17 1.009 [ 29%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GraphicString.c.o
+#17 1.009 [ 29%] Building C object asn1c/CMakeFiles/asn1_objects.dir/GlobalngeNB-ID.c.o
+#17 1.019 [ 30%] Building C object asn1c/CMakeFiles/asn1_objects.dir/INTEGER_aper.c.o
+#17 1.023 [ 30%] Building C object asn1c/CMakeFiles/asn1_objects.dir/INTEGER.c.o
+#17 1.024 [ 30%] Building C object asn1c/CMakeFiles/asn1_objects.dir/INTEGER_ber.c.o
+#17 1.034 [ 30%] Building C object asn1c/CMakeFiles/asn1_objects.dir/INTEGER_jer.c.o
+#17 1.034 [ 30%] Building C object asn1c/CMakeFiles/asn1_objects.dir/INTEGER_rfill.c.o
+#17 1.034 [ 30%] Building C object asn1c/CMakeFiles/asn1_objects.dir/INTEGER_uper.c.o
+#17 1.035 [ 31%] Building C object asn1c/CMakeFiles/asn1_objects.dir/INTEGER_xer.c.o
+#17 1.037 [ 31%] Building C object asn1c/CMakeFiles/asn1_objects.dir/INTEGER_print.c.o
+#17 1.050 [ 31%] Building C object asn1c/CMakeFiles/asn1_objects.dir/IndexToRFSP.c.o
+#17 1.053 [ 31%] Building C object asn1c/CMakeFiles/asn1_objects.dir/InitiatingMessage.c.o
+#17 1.060 [ 31%] Building C object asn1c/CMakeFiles/asn1_objects.dir/Interface-MessageID.c.o
+#17 1.061 [ 31%] Building C object asn1c/CMakeFiles/asn1_objects.dir/InterfaceID-E1.c.o
+#17 1.065 [ 32%] Building C object asn1c/CMakeFiles/asn1_objects.dir/InterfaceID-F1.c.o
+#17 1.068 [ 32%] Building C object asn1c/CMakeFiles/asn1_objects.dir/InterfaceID-S1.c.o
+#17 1.068 [ 32%] Building C object asn1c/CMakeFiles/asn1_objects.dir/InterfaceID-NG.c.o
+#17 1.071 [ 32%] Building C object asn1c/CMakeFiles/asn1_objects.dir/InterfaceID-W1.c.o
+#17 1.079 [ 32%] Building C object asn1c/CMakeFiles/asn1_objects.dir/InterfaceID-X2.c.o
+#17 1.086 [ 33%] Building C object asn1c/CMakeFiles/asn1_objects.dir/InterfaceID-Xn.c.o
+#17 1.089 [ 33%] Building C object asn1c/CMakeFiles/asn1_objects.dir/InterfaceIdentifier.c.o
+#17 1.092 [ 33%] Building C object asn1c/CMakeFiles/asn1_objects.dir/InterfaceType.c.o
+#17 1.092 [ 33%] Building C object asn1c/CMakeFiles/asn1_objects.dir/LabelInfoItem.c.o
+#17 1.097 [ 34%] Building C object asn1c/CMakeFiles/asn1_objects.dir/LogicalOR.c.o
+#17 1.099 [ 34%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MME-Code.c.o
+#17 1.099 [ 34%] Building C object asn1c/CMakeFiles/asn1_objects.dir/LabelInfoList.c.o
+#17 1.107 [ 34%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MME-Group-ID.c.o
+#17 1.112 [ 34%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MME-UE-S1AP-ID.c.o
+#17 1.116 [ 34%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MMEname.c.o
+#17 1.117 [ 35%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MatchingCondItem-Choice.c.o
+#17 1.117 [ 35%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MatchingCondItem.c.o
+#17 1.124 [ 35%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MatchingCondList.c.o
+#17 1.124 [ 35%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MatchingUEidItem-PerGP.c.o
+#17 1.125 [ 35%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MatchingUEidItem.c.o
+#17 1.137 [ 35%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MatchingUEidList.c.o
+#17 1.138 [ 36%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MatchingUEidList-PerGP.c.o
+#17 1.142 [ 36%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MatchingUEidPerGP-Item.c.o
+#17 1.142 [ 36%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MatchingUEidPerGP.c.o
+#17 1.147 [ 37%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MatchingUeCondPerSubItem.c.o
+#17 1.147 [ 37%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MatchingUEidPerSubItem.c.o
+#17 1.147 [ 37%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MatchingUEidPerSubList.c.o
+#17 1.152 [ 37%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MatchingUeCondPerSubList.c.o
+#17 1.160 [ 37%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MeasurementCondItem.c.o
+#17 1.165 [ 37%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MeasurementCondList.c.o
+#17 1.169 [ 38%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MeasurementCondUEidItem.c.o
+#17 1.170 [ 38%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MeasurementCondUEidList.c.o
+#17 1.172 [ 38%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MeasurementData.c.o
+#17 1.176 [ 38%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MeasurementDataItem.c.o
+#17 1.180 [ 38%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MeasurementInfo-Action-List.c.o
+#17 1.180 [ 38%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MeasurementInfo-Action-Item.c.o
+#17 1.189 [ 39%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MeasurementInfoItem.c.o
+#17 1.191 [ 39%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MeasurementInfoList.c.o
+#17 1.195 [ 39%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MeasurementRecord.c.o
+#17 1.195 [ 39%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MeasurementRecordItem.c.o
+#17 1.203 [ 39%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MeasurementLabel.c.o
+#17 1.203 [ 40%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MeasurementTypeID.c.o
+#17 1.203 [ 40%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MeasurementType.c.o
+#17 1.209 [ 40%] Building C object asn1c/CMakeFiles/asn1_objects.dir/MeasurementTypeName.c.o
+#17 1.215 [ 40%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NG-RANnodeUEXnAPID.c.o
+#17 1.216 [ 40%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NGENB-CU-UE-W1AP-ID.c.o
+#17 1.220 [ 41%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NR-ARFCN.c.o
+#17 1.220 [ 41%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NR-CGI.c.o
+#17 1.229 [ 41%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NR-PCI.c.o
+#17 1.231 [ 41%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NRCellIdentity.c.o
+#17 1.236 [ 41%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NRFrequencyBand-List.c.o
+#17 1.239 [ 42%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NRFrequencyShift7p5khz.c.o
+#17 1.239 [ 42%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NRFrequencyInfo.c.o
+#17 1.239 [ 42%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NRFrequencyBandItem.c.o
+#17 1.245 [ 42%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NULL_aper.c.o
+#17 1.246 [ 42%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NULL.c.o
+#17 1.255 [ 43%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NULL_ber.c.o
+#17 1.258 [ 43%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NULL_jer.c.o
+#17 1.262 [ 43%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NULL_print.c.o
+#17 1.263 [ 43%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NULL_rfill.c.o
+#17 1.266 [ 43%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NULL_uper.c.o
+#17 1.270 [ 44%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NULL_xer.c.o
+#17 1.270 [ 44%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeEnumerated.c.o
+#17 1.272 [ 44%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeEnumerated_aper.c.o
+#17 1.282 [ 44%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeEnumerated_jer.c.o
+#17 1.285 [ 45%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeEnumerated_uper.c.o
+#17 1.285 [ 45%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeEnumerated_xer.c.o
+#17 1.291 [ 45%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeInteger.c.o
+#17 1.293 [ 45%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeInteger_ber.c.o
+#17 1.293 [ 45%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeInteger_aper.c.o
+#17 1.297 [ 45%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeInteger_jer.c.o
+#17 1.305 [ 46%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeInteger_print.c.o
+#17 1.309 [ 46%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeInteger_rfill.c.o
+#17 1.318 [ 46%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeInteger_uper.c.o
+#17 1.319 [ 46%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeInteger_xer.c.o
+#17 1.323 [ 46%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeReal.c.o
+#17 1.323 [ 46%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeReal_aper.c.o
+#17 1.323 [ 46%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeReal_jer.c.o
+#17 1.323 [ 47%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeReal_ber.c.o
+#17 1.331 [ 47%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeReal_print.c.o
+#17 1.345 [ 47%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeReal_rfill.c.o
+#17 1.348 [ 47%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeReal_uper.c.o
+#17 1.350 [ 48%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NativeReal_xer.c.o
+#17 1.353 [ 48%] Building C object asn1c/CMakeFiles/asn1_objects.dir/NgENB-ID.c.o
+#17 1.353 [ 48%] Building C object asn1c/CMakeFiles/asn1_objects.dir/OBJECT_IDENTIFIER.c.o
+#17 1.355 [ 48%] Building C object asn1c/CMakeFiles/asn1_objects.dir/OBJECT_IDENTIFIER_jer.c.o
+#17 1.360 [ 48%] Building C object asn1c/CMakeFiles/asn1_objects.dir/OBJECT_IDENTIFIER_print.c.o
+#17 1.369 [ 49%] Building C object asn1c/CMakeFiles/asn1_objects.dir/OBJECT_IDENTIFIER_rfill.c.o
+#17 1.378 [ 49%] Building C object asn1c/CMakeFiles/asn1_objects.dir/OBJECT_IDENTIFIER_xer.c.o
+#17 1.378 [ 49%] Building C object asn1c/CMakeFiles/asn1_objects.dir/OCTET_STRING.c.o
+#17 1.382 [ 49%] Building C object asn1c/CMakeFiles/asn1_objects.dir/OCTET_STRING_aper.c.o
+#17 1.382 [ 49%] Building C object asn1c/CMakeFiles/asn1_objects.dir/OCTET_STRING_ber.c.o
+#17 1.387 [ 50%] Building C object asn1c/CMakeFiles/asn1_objects.dir/OCTET_STRING_jer.c.o
+#17 1.388 [ 50%] Building C object asn1c/CMakeFiles/asn1_objects.dir/OCTET_STRING_print.c.o
+#17 1.394 [ 50%] Building C object asn1c/CMakeFiles/asn1_objects.dir/OCTET_STRING_rfill.c.o
+#17 1.394 [ 50%] Building C object asn1c/CMakeFiles/asn1_objects.dir/OCTET_STRING_uper.c.o
+#17 1.407 [ 50%] Building C object asn1c/CMakeFiles/asn1_objects.dir/OCTET_STRING_xer.c.o
+#17 1.411 [ 51%] Building C object asn1c/CMakeFiles/asn1_objects.dir/OPEN_TYPE.c.o
+#17 1.415 [ 51%] Building C object asn1c/CMakeFiles/asn1_objects.dir/OPEN_TYPE_aper.c.o
+#17 1.417 [ 51%] Building C object asn1c/CMakeFiles/asn1_objects.dir/OPEN_TYPE_ber.c.o
+#17 1.417 [ 51%] Building C object asn1c/CMakeFiles/asn1_objects.dir/OPEN_TYPE_uper.c.o
+#17 1.426 [ 51%] Building C object asn1c/CMakeFiles/asn1_objects.dir/OPEN_TYPE_xer.c.o
+#17 1.431 [ 52%] Building C object asn1c/CMakeFiles/asn1_objects.dir/PLMN-Identity.c.o
+#17 1.431 [ 52%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ObjectDescriptor.c.o
+#17 1.441 [ 52%] Building C object asn1c/CMakeFiles/asn1_objects.dir/PLMNIdentity.c.o
+#17 1.443 [ 52%] Building C object asn1c/CMakeFiles/asn1_objects.dir/Presence.c.o
+#17 1.444 [ 52%] Building C object asn1c/CMakeFiles/asn1_objects.dir/PrintableString.c.o
+#17 1.445 [ 53%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ProcedureCode.c.o
+#17 1.452 [ 53%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ProtocolIE-Container.c.o
+#17 1.453 [ 53%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ProtocolIE-ContainerList.c.o
+#17 1.457 [ 53%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ProtocolIE-ContainerPair.c.o
+#17 1.467 [ 53%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ProtocolIE-ContainerPairList.c.o
+#17 1.468 [ 53%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ProtocolIE-Field.c.o
+#17 1.470 [ 54%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ProtocolIE-ID.c.o
+#17 1.470 [ 54%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ProtocolIE-FieldPair.c.o
+#17 1.477 [ 54%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ProtocolIE-SingleContainer.c.o
+#17 1.481 [ 54%] Building C object asn1c/CMakeFiles/asn1_objects.dir/QCI.c.o
+#17 1.485 [ 54%] Building C object asn1c/CMakeFiles/asn1_objects.dir/QoSID.c.o
+#17 1.489 [ 55%] Building C object asn1c/CMakeFiles/asn1_objects.dir/QosFlowIdentifier.c.o
+#17 1.494 [ 55%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RANUEID.c.o
+#17 1.494 [ 55%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RANfunction-Item.c.o
+#17 1.501 [ 55%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RANfunction-Name.c.o
+#17 1.508 [ 55%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RANfunctionDefinition.c.o
+#17 1.511 [ 56%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RANfunctionID-Item.c.o
+#17 1.512 [ 56%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RANfunctionIDcause-Item.c.o
+#17 1.514 [ 56%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RANfunctionID.c.o
+#17 1.518 [ 56%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RANfunctionOID.c.o
+#17 1.522 [ 56%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RANfunctionRevision.c.o
+#17 1.537 [ 57%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RANfunctionsID-List.c.o
+#17 1.537 [ 57%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RANfunctions-List.c.o
+#17 1.537 [ 57%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RANfunctionsIDcause-List.c.o
+#17 1.538 [ 57%] Building C object asn1c/CMakeFiles/asn1_objects.dir/REAL.c.o
+#17 1.547 [ 57%] Building C object asn1c/CMakeFiles/asn1_objects.dir/REAL_aper.c.o
+#17 1.547 [ 57%] Building C object asn1c/CMakeFiles/asn1_objects.dir/REAL_print.c.o
+#17 1.547 [ 58%] Building C object asn1c/CMakeFiles/asn1_objects.dir/REAL_jer.c.o
+#17 1.569 [ 58%] Building C object asn1c/CMakeFiles/asn1_objects.dir/REAL_rfill.c.o
+#17 1.572 [ 58%] Building C object asn1c/CMakeFiles/asn1_objects.dir/REAL_uper.c.o
+#17 1.572 [ 58%] Building C object asn1c/CMakeFiles/asn1_objects.dir/REAL_xer.c.o
+#17 1.575 [ 58%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RIC-Format-Type.c.o
+#17 1.575 [ 58%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RIC-ReportStyle-Item.c.o
+#17 1.575 [ 59%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RIC-EventTriggerStyle-Item.c.o
+#17 1.584 [ 59%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RIC-Style-Name.c.o
+#17 1.597 [ 59%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RIC-Style-Type.c.o
+#17 1.597 [ 60%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICQueryFailure.c.o
+#17 1.597 [ 60%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICQueryRequest.c.o
+#17 1.600 [ 60%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-AddedForModification-Item.c.o
+#17 1.600 [ 60%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICQueryResponse.c.o
+#17 1.612 [ 60%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-Admitted-Item.c.o
+#17 1.617 [ 61%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-Admitted-List.c.o
+#17 1.621 [ 61%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-ConfirmedForModification-Item.c.o
+#17 1.621 [ 61%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-FailedToBeAddedForModification-Item.c.o
+#17 1.623 [ 61%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-FailedToBeModifiedForModification-Item.c.o
+#17 1.625 [ 61%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-FailedToBeRemovedForModification-Item.c.o
+#17 1.626 [ 61%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-ConfirmedForRemoval-Item.c.o
+#17 1.642 [ 62%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-ModifiedForModification-Item.c.o
+#17 1.644 [ 62%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-NotAdmitted-List.c.o
+#17 1.644 [ 62%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-NotAdmitted-Item.c.o
+#17 1.648 [ 62%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-RefusedToBeRemoved-Item.c.o
+#17 1.648 [ 62%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-RefusedToBeModified-Item.c.o
+#17 1.651 [ 63%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-RemovedForModification-Item.c.o
+#17 1.656 [ 63%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-RequiredToBeModified-Item.c.o
+#17 1.668 [ 63%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-RequiredToBeRemoved-Item.c.o
+#17 1.671 [ 63%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-ToBeAddedForModification-Item.c.o
+#17 1.671 [ 63%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-ToBeModifiedForModification-Item.c.o
+#17 1.673 [ 64%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-ToBeRemovedForModification-Item.c.o
+#17 1.675 [ 64%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICaction-ToBeSetup-Item.c.o
+#17 1.682 [ 64%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactionDefinition.c.o
+#17 1.688 [ 64%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactionExecutionOrder.c.o
+#17 1.695 [ 64%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactionID.c.o
+#17 1.696 [ 65%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactionType.c.o
+#17 1.700 [ 65%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactions-AddedForModification-List.c.o
+#17 1.702 [ 65%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactions-ConfirmedForModification-List.c.o
+#17 1.706 [ 65%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactions-FailedToBeAddedForModification-List.c.o
+#17 1.708 [ 65%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactions-ConfirmedForRemoval-List.c.o
+#17 1.716 [ 66%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactions-FailedToBeModifiedForModification-List.c.o
+#17 1.720 [ 66%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactions-FailedToBeRemovedForModification-List.c.o
+#17 1.724 [ 66%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactions-ModifiedForModification-List.c.o
+#17 1.731 [ 66%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactions-RefusedToBeModified-List.c.o
+#17 1.737 [ 66%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactions-RefusedToBeRemoved-List.c.o
+#17 1.741 [ 67%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactions-RemovedForModification-List.c.o
+#17 1.745 [ 67%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactions-RequiredToBeModified-List.c.o
+#17 1.881 [ 67%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactions-ToBeAddedForModification-List.c.o
+#17 1.881 [ 67%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactions-ToBeSetup-List.c.o
+#17 1.881 [ 67%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactions-RequiredToBeRemoved-List.c.o
+#17 1.882 [ 68%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactions-ToBeRemovedForModification-List.c.o
+#17 1.884 [ 68%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICcallProcessID.c.o
+#17 1.885 [ 68%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICcontrolAcknowledge.c.o
+#17 1.885 [ 68%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICcontrolAckRequest.c.o
+#17 1.886 [ 68%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICactions-ToBeModifiedForModification-List.c.o
+#17 1.907 [ 69%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICcontrolFailure.c.o
+#17 1.911 [ 69%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICcontrolOutcome.c.o
+#17 1.911 [ 69%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICcontrolMessage.c.o
+#17 1.911 [ 69%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICeventTriggerDefinition.c.o
+#17 1.912 [ 69%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICcontrolHeader.c.o
+#17 1.917 [ 69%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICcontrolRequest.c.o
+#17 1.919 [ 70%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICindication.c.o
+#17 1.934 [ 70%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICindicationHeader.c.o
+#17 1.938 [ 70%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICindicationSN.c.o
+#17 1.938 [ 70%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICindicationMessage.c.o
+#17 1.939 [ 70%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICindicationType.c.o
+#17 1.940 [ 71%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICqueryDefinition.c.o
+#17 1.945 [ 71%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICqueryHeader.c.o
+#17 1.946 [ 71%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICqueryOutcome.c.o
+#17 1.952 [ 71%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICrequestID.c.o
+#17 1.960 [ 71%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICserviceQuery.c.o
+#17 1.962 [ 72%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICserviceUpdate.c.o
+#17 1.965 [ 72%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICserviceUpdateAcknowledge.c.o
+#17 1.965 [ 72%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICserviceUpdateFailure.c.o
+#17 1.970 [ 72%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubscription-List-withCause.c.o
+#17 1.973 [ 72%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubscription-withCause-Item.c.o
+#17 1.978 [ 73%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubscriptionDeleteFailure.c.o
+#17 1.985 [ 73%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubscriptionDeleteRequest.c.o
+#17 1.987 [ 73%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubscriptionDeleteRequired.c.o
+#17 1.991 [ 73%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubscriptionDeleteResponse.c.o
+#17 1.992 [ 73%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubscriptionDetails.c.o
+#17 1.996 [ 74%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubscriptionFailure.c.o
+#17 1.998 [ 74%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubscriptionModificationConfirm.c.o
+#17 2.005 [ 74%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubscriptionModificationFailure.c.o
+#17 2.005 [ 74%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubscriptionModificationRefuse.c.o
+#17 2.010 [ 74%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubscriptionModificationRequest.c.o
+#17 2.016 [ 75%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubscriptionRequest.c.o
+#17 2.016 [ 75%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubscriptionModificationResponse.c.o
+#17 2.016 [ 75%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubscriptionModificationRequired.c.o
+#17 2.026 [ 75%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubscriptionTime.c.o
+#17 2.029 [ 75%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubscriptionResponse.c.o
+#17 2.030 [ 76%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubsequentAction.c.o
+#17 2.031 [ 76%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICsubsequentActionType.c.o
+#17 2.040 [ 76%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RICtimeToWait.c.o
+#17 2.040 [ 76%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RRCclass-LTE.c.o
+#17 2.040 [ 76%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RRC-MessageID.c.o
+#17 2.040 [ 76%] Building C object asn1c/CMakeFiles/asn1_objects.dir/RRCclass-NR.c.o
+#17 2.055 [ 76%] Building C object asn1c/CMakeFiles/asn1_objects.dir/S-NSSAI.c.o
+#17 2.055 [ 76%] Building C object asn1c/CMakeFiles/asn1_objects.dir/SD.c.o
+#17 2.056 [ 77%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ResetRequest.c.o
+#17 2.056 [ 77%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ResetResponse.c.o
+#17 2.062 [ 77%] Building C object asn1c/CMakeFiles/asn1_objects.dir/SST.c.o
+#17 2.063 [ 77%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ServingCell-PCI.c.o
+#17 2.063 [ 78%] Building C object asn1c/CMakeFiles/asn1_objects.dir/SubscriberProfileIDforRFP.c.o
+#17 2.064 [ 78%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ServingCell-ARFCN.c.o
+#17 2.079 [ 78%] Building C object asn1c/CMakeFiles/asn1_objects.dir/SuccessfulOutcome.c.o
+#17 2.081 [ 78%] Building C object asn1c/CMakeFiles/asn1_objects.dir/SupportedSULBandList.c.o
+#17 2.084 [ 79%] Building C object asn1c/CMakeFiles/asn1_objects.dir/SupportedSULFreqBandItem.c.o
+#17 2.086 [ 79%] Building C object asn1c/CMakeFiles/asn1_objects.dir/TNLusage.c.o
+#17 2.087 [ 79%] Building C object asn1c/CMakeFiles/asn1_objects.dir/TestCond-Expression.c.o
+#17 2.088 [ 79%] Building C object asn1c/CMakeFiles/asn1_objects.dir/TNLinformation.c.o
+#17 2.090 [ 79%] Building C object asn1c/CMakeFiles/asn1_objects.dir/TestCond-Type.c.o
+#17 2.092 [ 80%] Building C object asn1c/CMakeFiles/asn1_objects.dir/TestCond-Value.c.o
+#17 2.113 [ 80%] Building C object asn1c/CMakeFiles/asn1_objects.dir/TestCondInfo.c.o
+#17 2.113 [ 80%] Building C object asn1c/CMakeFiles/asn1_objects.dir/TimeStamp.c.o
+#17 2.113 [ 80%] Building C object asn1c/CMakeFiles/asn1_objects.dir/TimeToWait.c.o
+#17 2.113 [ 81%] Building C object asn1c/CMakeFiles/asn1_objects.dir/TriggeringMessage.c.o
+#17 2.114 [ 81%] Building C object asn1c/CMakeFiles/asn1_objects.dir/TransactionID.c.o
+#17 2.117 [ 81%] Building C object asn1c/CMakeFiles/asn1_objects.dir/TypeOfError.c.o
+#17 2.118 [ 81%] Building C object asn1c/CMakeFiles/asn1_objects.dir/UEID-EN-GNB.c.o
+#17 2.119 [ 81%] Building C object asn1c/CMakeFiles/asn1_objects.dir/UEID-ENB.c.o
+#17 2.136 [ 82%] Building C object asn1c/CMakeFiles/asn1_objects.dir/UEID-GNB-CU-CP-E1AP-ID-Item.c.o
+#17 2.136 [ 82%] Building C object asn1c/CMakeFiles/asn1_objects.dir/UEID-GNB-CU-CP-E1AP-ID-List.c.o
+#17 2.136 [ 82%] Building C object asn1c/CMakeFiles/asn1_objects.dir/UEID-GNB-CU-CP-F1AP-ID-Item.c.o
+#17 2.138 [ 82%] Building C object asn1c/CMakeFiles/asn1_objects.dir/UEID-GNB-CU-F1AP-ID-List.c.o
+#17 2.143 [ 82%] Building C object asn1c/CMakeFiles/asn1_objects.dir/UEID-GNB-CU-UP.c.o
+#17 2.149 [ 82%] Building C object asn1c/CMakeFiles/asn1_objects.dir/UEID-GNB-DU.c.o
+#17 2.149 [ 83%] Building C object asn1c/CMakeFiles/asn1_objects.dir/UEID-GNB.c.o
+#17 2.153 [ 83%] Building C object asn1c/CMakeFiles/asn1_objects.dir/UEID-NG-ENB-DU.c.o
+#17 2.159 [ 83%] Building C object asn1c/CMakeFiles/asn1_objects.dir/UEID.c.o
+#17 2.159 [ 83%] Building C object asn1c/CMakeFiles/asn1_objects.dir/UEID-NG-ENB.c.o
+#17 2.162 [ 83%] Building C object asn1c/CMakeFiles/asn1_objects.dir/UEMeasurementReportItem.c.o
+#17 2.166 [ 83%] Building C object asn1c/CMakeFiles/asn1_objects.dir/UnsuccessfulOutcome.c.o
+#17 2.167 [ 84%] Building C object asn1c/CMakeFiles/asn1_objects.dir/UEMeasurementReportList.c.o
+#17 2.178 [ 84%] Building C object asn1c/CMakeFiles/asn1_objects.dir/aper_decoder.c.o
+#17 2.180 [ 84%] Building C object asn1c/CMakeFiles/asn1_objects.dir/aper_encoder.c.o
+#17 2.183 [ 84%] Building C object asn1c/CMakeFiles/asn1_objects.dir/aper_opentype.c.o
+#17 2.185 [ 85%] Building C object asn1c/CMakeFiles/asn1_objects.dir/aper_support.c.o
+#17 2.185 [ 85%] Building C object asn1c/CMakeFiles/asn1_objects.dir/asn_SEQUENCE_OF.c.o
+#17 2.194 [ 85%] Building C object asn1c/CMakeFiles/asn1_objects.dir/asn_SET_OF.c.o
+#17 2.194 [ 85%] Building C object asn1c/CMakeFiles/asn1_objects.dir/asn_application.c.o
+#17 2.201 [ 85%] Building C object asn1c/CMakeFiles/asn1_objects.dir/asn_bit_data.c.o
+#17 2.207 [ 85%] Building C object asn1c/CMakeFiles/asn1_objects.dir/asn_codecs_prim.c.o
+#17 2.208 [ 86%] Building C object asn1c/CMakeFiles/asn1_objects.dir/asn_codecs_prim_ber.c.o
+#17 2.211 [ 86%] Building C object asn1c/CMakeFiles/asn1_objects.dir/asn_codecs_prim_xer.c.o
+#17 2.216 [ 86%] Building C object asn1c/CMakeFiles/asn1_objects.dir/asn_internal.c.o
+#17 2.219 [ 86%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ber_decoder.c.o
+#17 2.219 [ 86%] Building C object asn1c/CMakeFiles/asn1_objects.dir/asn_random_fill.c.o
+#17 2.234 [ 87%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ber_tlv_tag.c.o
+#17 2.234 [ 87%] Building C object asn1c/CMakeFiles/asn1_objects.dir/ber_tlv_length.c.o
+#17 2.235 [ 87%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_CHOICE.c.o
+#17 2.240 [ 87%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_CHOICE_aper.c.o
+#17 2.243 [ 88%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_CHOICE_jer.c.o
+#17 2.244 [ 88%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_CHOICE_ber.c.o
+#17 2.245 [ 88%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_CHOICE_print.c.o
+#17 2.255 [ 88%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_CHOICE_rfill.c.o
+#17 2.261 [ 88%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_CHOICE_uper.c.o
+#17 2.263 [ 88%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_CHOICE_xer.c.o
+#17 2.266 [ 89%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SEQUENCE.c.o
+#17 2.270 [ 89%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SEQUENCE_OF.c.o
+#17 2.270 [ 89%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SEQUENCE_OF_aper.c.o
+#17 2.279 [ 89%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SEQUENCE_OF_ber.c.o
+#17 2.284 [ 90%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SEQUENCE_OF_jer.c.o
+#17 2.284 [ 90%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SEQUENCE_OF_uper.c.o
+#17 2.293 [ 90%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SEQUENCE_OF_xer.c.o
+#17 2.294 [ 90%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SEQUENCE_jer.c.o
+#17 2.294 [ 91%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SEQUENCE_print.c.o
+#17 2.294 [ 91%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SEQUENCE_ber.c.o
+#17 2.297 [ 91%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SEQUENCE_aper.c.o
+#17 2.310 [ 91%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SEQUENCE_rfill.c.o
+#17 2.315 [ 91%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SEQUENCE_uper.c.o
+#17 2.317 [ 91%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SEQUENCE_xer.c.o
+#17 2.320 [ 91%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SET_OF.c.o
+#17 2.327 [ 92%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SET_OF_aper.c.o
+#17 2.329 [ 92%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SET_OF_jer.c.o
+#17 2.333 [ 92%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SET_OF_ber.c.o
+#17 2.334 [ 92%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SET_OF_print.c.o
+#17 2.337 [ 92%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SET_OF_rfill.c.o
+#17 2.349 [ 92%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SET_OF_uper.c.o
+#17 2.353 [ 92%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_TYPE.c.o
+#17 2.355 [ 92%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constraints.c.o
+#17 2.355 [ 93%] Building C object asn1c/CMakeFiles/asn1_objects.dir/constr_SET_OF_xer.c.o
+#17 2.361 [ 93%] Building C object asn1c/CMakeFiles/asn1_objects.dir/der_encoder.c.o
+#17 2.366 [ 94%] Building C object asn1c/CMakeFiles/asn1_objects.dir/per_decoder.c.o
+#17 2.366 [ 94%] Building C object asn1c/CMakeFiles/asn1_objects.dir/jer_encoder.c.o
+#17 2.371 [ 94%] Building C object asn1c/CMakeFiles/asn1_objects.dir/per_encoder.c.o
+#17 2.382 [ 94%] Building C object asn1c/CMakeFiles/asn1_objects.dir/per_opentype.c.o
+#17 2.382 [ 94%] Building C object asn1c/CMakeFiles/asn1_objects.dir/per_support.c.o
+#17 2.384 [ 94%] Building C object asn1c/CMakeFiles/asn1_objects.dir/uper_decoder.c.o
+#17 2.389 [ 95%] Building C object asn1c/CMakeFiles/asn1_objects.dir/uper_encoder.c.o
+#17 2.393 [ 95%] Building C object asn1c/CMakeFiles/asn1_objects.dir/uper_opentype.c.o
+#17 2.395 [ 95%] Building C object asn1c/CMakeFiles/asn1_objects.dir/xer_decoder.c.o
+#17 2.398 [ 95%] Building C object asn1c/CMakeFiles/asn1_objects.dir/uper_support.c.o
+#17 2.399 [ 95%] Building C object asn1c/CMakeFiles/asn1_objects.dir/xer_encoder.c.o
+#17 2.404 [ 96%] Building C object asn1c/CMakeFiles/asn1_objects.dir/xer_support.c.o
+#17 2.433 [ 96%] Built target asn1_objects
+#17 2.448 [ 97%] Building CXX object CMakeFiles/ns3_e2_agent_core.dir/src/kpm-ran-function-description.cpp.o
+#17 2.448 [ 97%] Building CXX object CMakeFiles/ns3_e2_agent_core.dir/src/agent-config.cpp.o
+#17 2.448 [ 97%] Building CXX object CMakeFiles/ns3_e2_agent_core.dir/src/sha256.cpp.o
+#17 2.448 [ 97%] Building CXX object CMakeFiles/ns3_e2_agent_core.dir/src/metric-map.cpp.o
+#17 2.448 [ 97%] Building CXX object CMakeFiles/ns3_e2_agent_core.dir/src/kpm-indication-message.cpp.o
+#17 2.448 [ 97%] Building CXX object CMakeFiles/ns3_e2_agent_core.dir/src/asn-util.cpp.o
+#17 2.448 [ 97%] Building CXX object CMakeFiles/ns3_e2_agent_core.dir/src/e2ap-builders.cpp.o
+#17 2.451 [ 97%] Building CXX object CMakeFiles/ns3_e2_agent_core.dir/src/e2ap-inbound.cpp.o
+#17 6.013 [ 98%] Linking CXX static library libns3_e2_agent_core.a
+#17 6.172 [ 98%] Built target ns3_e2_agent_core
+#17 6.184 [ 98%] Building CXX object CMakeFiles/codec-probe.dir/tests/codec-probe.cpp.o
+#17 6.184 [ 98%] Building CXX object CMakeFiles/codec-probe.dir/tests/codec-probe-e2ap.cpp.o
+#17 6.184 [ 98%] Building CXX object CMakeFiles/ns3-e2-agent.dir/src/main.cpp.o
+#17 6.185 [ 98%] Building CXX object CMakeFiles/ns3-e2-agent.dir/src/ipc-server.cpp.o
+#17 6.185 [ 98%] Building CXX object CMakeFiles/ns3-e2-agent.dir/src/subscription-table.cpp.o
+#17 6.186 [ 98%] Building CXX object CMakeFiles/ns3-e2-agent.dir/src/sctp-association.cpp.o
+#17 6.187 [ 98%] Building CXX object CMakeFiles/ns3-e2-agent.dir/src/sample-forwarder.cpp.o
+#17 6.189 [ 99%] Building CXX object CMakeFiles/ns3-e2-agent.dir/src/agent-stats.cpp.o
+#17 6.440 [100%] Building CXX object CMakeFiles/ns3-e2-agent.dir/src/e2-session.cpp.o
+#17 9.046 [100%] Linking CXX executable ns3-e2-agent
+#17 9.185 [100%] Linking CXX executable codec-probe
+#17 9.225 [100%] Built target ns3-e2-agent
+#17 9.358 [100%] Built target codec-probe
+#17 9.368 Install the project...
+#17 9.373 -- Install configuration: ""
+#17 9.373 -- Installing: /usr/local/bin/ns3-e2-agent
+#17 9.380 -- Installing: /usr/local/bin/codec-probe
+#17 DONE 9.7s
+
+#18 [14/14] RUN mkdir -p /etc/ns3-e2-agent && cp /playpen/agent/schema/metric-map.v1.json /etc/ns3-e2-agent/ 	&& sha256sum /etc/ns3-e2-agent/metric-map.v1.json
+#18 0.194 ab81b6392868b32ea26816a9d394c8b58403d1a41f652b30a3498cfa96a93b66  /etc/ns3-e2-agent/metric-map.v1.json
+#18 DONE 0.2s
+
+#19 exporting to image
+#19 exporting layers
+#19 exporting layers 0.2s done
+#19 writing image sha256:91df2f70f54527f2972ebb7d0609b0ecacff7e9d7d81bd2c8610cdc7a54abd0b done
+#19 naming to docker.io/library/ns3-e2-agent:ca5be2eab505 done
+#19 DONE 0.3s
+Built ns3-e2-agent:ca5be2eab505 (sha256:91df2f70f54527f2972ebb7d0609b0ecacff7e9d7d81bd2c8610cdc7a54abd0b); metric map sha256 ab81b6392868b32ea26816a9d394c8b58403d1a41f652b30a3498cfa96a93b66
+Recorded in /home/uc/dev-agent/testbed/RAN_Intelligent_Controllers/Near-Real-Time-RIC/ns3_e2_agent/run/image.env

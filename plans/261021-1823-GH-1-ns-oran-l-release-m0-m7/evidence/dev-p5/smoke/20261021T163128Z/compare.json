@@ -1,0 +1,27 @@
+{
+ "harness": {
+  "indications": 150,
+  "clean": 150,
+  "cell_msgs": 50,
+  "ue_msgs": 100,
+  "records_equal": 150,
+  "records_differ": 0,
+  "real_records": 2800,
+  "samples_with_cell_msg": 50,
+  "ue_rows_covered": 300
+ },
+ "influx_cell": {
+  "rows": 50,
+  "rows_matched": 50,
+  "fields_compared": 1650,
+  "fields_differ": 0,
+  "keys": 50
+ },
+ "influx_ue": {
+  "rows": 300,
+  "rows_matched": 300,
+  "fields_compared": 17400,
+  "fields_differ": 0,
+  "keys": 300
+ }
+}

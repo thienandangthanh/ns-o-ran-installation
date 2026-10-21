@@ -241,7 +241,13 @@ kpimon_log_counts() {
 influx_rows() {
     local range="${1:--5m}" raw
     local flux="from(bucket: \"kpimon\") |> range(start: $range) |> filter(fn: (r) => r._measurement == \"cellMetrics\" or r._measurement == \"UeMetrics\") |> group(columns: [\"_measurement\"]) |> count()"
-    raw=$(kc exec -n ricplt "$INFLUX_POD" -- influx query --org influxdata --raw "$flux" </dev/null 2>&1) || {
+    # The in-pod influx CLI config is lost whenever the InfluxDB pod restarts
+    # (then every query is 401). Use the pod's own admin token, expanded inside
+    # the pod (single quotes) so it never reaches this shell or the evidence.
+    # shellcheck disable=SC2016
+    raw=$(kc exec -n ricplt "$INFLUX_POD" -- sh -c \
+        'export INFLUX_TOKEN="${INFLUX_TOKEN:-$DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}"; exec influx query --org influxdata --raw "$1"' \
+        _ "$flux" </dev/null 2>&1) || {
         echo "influx query failed: $(echo "$raw" | redact_stream | tail -n 5)"; echo "total=ERR"; return 1; }
     echo "$raw" | python3 -c '
 import csv, io, sys

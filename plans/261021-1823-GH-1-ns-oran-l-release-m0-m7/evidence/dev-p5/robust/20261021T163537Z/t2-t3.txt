@@ -1,0 +1,12 @@
+mode=silent fake=172.17.0.2 exit=3 after 18 s
+2026-10-21T16:38:38.533Z ns3-e2-agent INFO SCTP up 172.17.0.3:56832 -> 172.17.0.2:36422; E2SetupRequest sent (2382 octets)
+2026-10-21T16:38:48.532Z ns3-e2-agent ERROR exit 3: no E2SetupResponse within E2_SETUP_TIMEOUT_S
+listening silent
+16:38:38 accepted ('172.17.0.3', 56832) first message 2382 octets
+16:38:48 peer gone
+mode=close fake=172.17.0.2 exit=2 after 9 s
+2026-10-21T16:38:59.282Z ns3-e2-agent INFO SCTP up 172.17.0.3:46015 -> 172.17.0.2:36422; E2SetupRequest sent (2382 octets)
+2026-10-21T16:39:00.282Z ns3-e2-agent ERROR exit 2: association lost: SCTP_SHUTDOWN_EVENT
+listening close
+16:38:59 accepted ('172.17.0.3', 46015) first message 2382 octets
+16:39:00 closed

@@ -1,0 +1,15 @@
+2026-10-21T16:36:31.750Z ns3-e2-agent INFO node 2 kind gnb gNB-ID 2 PLMN 00101 -> e2term 10.255.255.1:36422 (src port 0); RAN function 2 OID 1.3.6.1.4.1.53148.1.3.2.2
+2026-10-21T16:36:31.750Z ns3-e2-agent INFO metric map /etc/ns3-e2-agent/metric-map.v1.json sha256 266f4ced8a31e151dd7e9f225a6eb34f863322140bd67804600aa04fd05d18c3: cell 33, ue 58 items; definition 2271 octets
+2026-10-21T16:36:31.750Z ns3-e2-agent INFO ipc: listening on tcp/38472
+2026-10-21T16:36:31.750Z ns3-e2-agent INFO HOLDOFF 8 s before the first connect
+2026-10-21T16:36:34.772Z ns3-e2-agent INFO ipc: client 172.17.0.1:42340 connected
+2026-10-21T16:36:34.772Z ns3-e2-agent WARN ipc: hello rejected: nodeId does not match E2_NODE_ID=2
+2026-10-21T16:36:34.772Z ns3-e2-agent INFO ipc: client closed (hello rejected)
+2026-10-21T16:36:35.272Z ns3-e2-agent INFO ipc: client 172.17.0.1:42350 connected
+2026-10-21T16:36:35.272Z ns3-e2-agent INFO ipc: hello accepted (runId probe, periodNs 100000000, simStartEpochMs 1)
+2026-10-21T16:36:35.572Z ns3-e2-agent WARN ipc: second client 172.17.0.1:42358 refused (one client at a time)
+2026-10-21T16:36:36.572Z ns3-e2-agent INFO ipc: client closed (EOF)
+2026-10-21T16:36:42.750Z ns3-e2-agent WARN connect to 10.255.255.1:36422 failed (connect timeout); retry in 2 s
+2026-10-21T16:36:47.750Z ns3-e2-agent WARN connect to 10.255.255.1:36422 failed (connect timeout); retry in 2 s
+2026-10-21T16:36:52.750Z ns3-e2-agent WARN connect to 10.255.255.1:36422 failed (connect timeout); retry in 2 s
+2026-10-21T16:36:57.750Z ns3-e2-agent WARN connect to 10.255.255.1:36422 failed (connect timeout); retry in 2 s

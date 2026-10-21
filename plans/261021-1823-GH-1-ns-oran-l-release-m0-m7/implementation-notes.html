@@ -153,5 +153,37 @@ Its wire evidence already showed the probe passing.</li>
 The gate now checks these facts instead.</li>
 <li><span class="tag question">observation</span>Pacing input for pre-M8: a 2 s simulation takes about 55 s of wall time with the default 5 nodes (about 27 real s per sim s) and about 3.6 s with 1 gNB. M4's timing script measures this properly.</li>
 </ul>
+<h2>P5: E2 agent (development; gates M5/M6 follow)</h2>
+<ul>
+<li><span class="tag decision">decision</span>The agent was implemented by an Opus subagent. Testbed fork <code>ns3_e2_agent/</code> at HEAD <code>ca5be2e</code>:
+<ul>
+<li>17 source files with a single <code>poll()</code> loop.</li>
+<li>NIST's libe2sim is linked statically and not modified. The binary never calls <code>run_loop</code> or the callbacks, and defines no <code>client_fd</code>.</li>
+<li>Metric map v1: 116 rows, sha256 <code>ab81b639…</code>.</li>
+<li>Install, run and stop scripts. Harness modes <code>--records</code> and <code>--ranfunc</code> were added. Dev evidence: <code>evidence/dev-p5/</code>.</li>
+</ul></li>
+<li><span class="tag decision"><b>R1 codec probe passed</b></span>, decoded with kpimon's own SIZE(8) library:
+<ul>
+<li>RAN function description 2271/2271 octets; kpimon's <code>buildRanCellUeKpi</code> finds 33 cell and 58 UE names, equal to the map.</li>
+<li>Header 40/40 with an 8-octet TimeStamp.</li>
+<li>Format 1 409/409, and Format 2 with UE IDs 144/144 and 3996/3996 (58 metrics × 4 UEs).</li>
+<li>All 77 REAL values bit-identical, including −0.0 and 5e-324.</li>
+</ul></li>
+<li><span class="tag decision">decision</span>Dev smoke tests against the live RIC (gnb:2):
+<ul>
+<li>e2mgr shows <code>gnb_001_001_00000002</code>, PLMN 00F110, CONNECTED. kpimon subscribed.</li>
+<li>Python feeder: 150/150 indications clean RC_OK, and Influx cellMetrics/UeMetrics fields equal the trace bit-exactly (1650 + 17400 fields).</li>
+<li>Real decoupled ns-3 (single node, 5 s): 99/99 clean, 1650 + 5394 Influx fields, 0 differences.</li>
+<li>Restart test: a new INIT about 8.3 s after <code>docker restart</code>, from a new port, followed by a new RICsubscriptionRequest.</li>
+</ul>
+The orchestrator spot-checked the pcap: RAN function 2, the real OID, <code>ORAN-E2SM-KPM</code>, gNB-ID 2.</li>
+<li><span class="tag deviation">deviation</span>Agent details:
+<ul>
+<li>senderType is "ns-3-sim": KPM v3 limits it to PrintableString SIZE(0..8), and "simulator" is 9.</li>
+<li>Extra in-place fixes to NIST generator defects: uninitialised OCTET STRING contexts in the setup request, and the service update's RANfunctionID, OID, revision, Modified alternative and TransactionID. The wire bytes for setup are unchanged.</li>
+<li>tshark reports "Malformed NGAP" inside the setup, from NIST's dummy component-config bytes, which the agent carries unchanged.</li>
+</ul></li>
+<li><span class="tag deviation">deviation</span>Gate helper: after an InfluxDB pod restart the in-pod CLI config is gone (401). <code>influx_rows</code> now uses the pod's <code>DOCKER_INFLUXDB_INIT_ADMIN_TOKEN</code>, expanded inside the pod so it is never printed. Verified on the VM: 401 before, rows returned after.</li>
+</ul>
 </body>
 </html>

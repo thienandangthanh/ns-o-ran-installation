@@ -12,6 +12,11 @@
  *                          the first N decoded messages (RC_OK only)
  *         --timestamp-size print TimeStamp SIZE lower bound compiled into the
  *                          linked library (4 or 8) and exit
+ *         --records        add the decoded header fields and record values
+ *                          (REAL as IEEE-754 bits; kpimon-decode-harness-records.c)
+ *         --ranfunc        different input: "<id> <ranFunctionDefinition_hex>"
+ *                          lines; decode as kpimon does (buildRanCellUeKpi) and
+ *                          strictly (kpimon-decode-harness-ranfunc.c)
  *
  * msg_format is the asn1c "present" index of indicationMessage_formats
  * (1 = Format1, 2 = Format2). ts_len is reported only when the header is RC_OK.
@@ -24,6 +29,7 @@
 #include <E2SM-KPM-IndicationHeader-Format1.h>
 #include <E2SM-KPM-IndicationMessage.h>
 #include <per_support.h>
+#include "kpimon-decode-harness.h"
 
 /* Not declared in any generated header; non-static in TimeStamp.c. */
 extern asn_per_constraints_t asn_PER_type_TimeStamp_constr_1;
@@ -38,7 +44,7 @@ static const char *code_name(int c) {
 }
 
 /* Hex (with optional separators) -> bytes. Returns length, or -1 on bad hex. */
-static long hex_decode(const char *s, unsigned char *out) {
+long hex_decode(const char *s, unsigned char *out) {
 	long n = 0;
 	int hi = -1;
 	if (strcmp(s, "-") == 0) return 0;
@@ -54,18 +60,21 @@ static long hex_decode(const char *s, unsigned char *out) {
 	return hi < 0 ? n : -1;
 }
 
-static void json_str(const char *s) {
+void json_octets(const unsigned char *b, size_t n) {
 	putchar('"');
-	for (; *s; s++) {
-		if (*s == '"' || *s == '\\') { putchar('\\'); putchar(*s); }
-		else if ((unsigned char)*s < 0x20) printf("\\u%04x", *s);
-		else putchar(*s);
+	for (size_t i = 0; i < n; i++) {
+		if (b[i] == '"' || b[i] == '\\') { putchar('\\'); putchar(b[i]); }
+		else if (b[i] < 0x20 || b[i] >= 0x7f) printf("\\u%04x", b[i]);
+		else putchar(b[i]);
 	}
 	putchar('"');
 }
 
+void json_str(const char *s) { json_octets((const unsigned char *)s, strlen(s)); }
+
 int main(int argc, char **argv) {
 	long xer_left_h = 0, xer_left_m = 0;
+	int records = 0;
 	char *line = NULL;
 	size_t cap = 0;
 	ssize_t got;
@@ -74,10 +83,14 @@ int main(int argc, char **argv) {
 		if (strcmp(argv[i], "--timestamp-size") == 0) {
 			printf("%ld\n", (long)asn_PER_type_TimeStamp_constr_1.size.lower_bound);
 			return 0;
+		} else if (strcmp(argv[i], "--ranfunc") == 0) {
+			return run_ranfunc_mode();
+		} else if (strcmp(argv[i], "--records") == 0) {
+			records = 1;
 		} else if (strcmp(argv[i], "--xer") == 0 && i + 1 < argc) {
 			xer_left_h = xer_left_m = atol(argv[++i]);
 		} else {
-			fprintf(stderr, "usage: %s [--xer N] [--timestamp-size] < lines\n", argv[0]);
+			fprintf(stderr, "usage: %s [--xer N] [--records] [--timestamp-size] [--ranfunc] < lines\n", argv[0]);
 			return 2;
 		}
 	}
@@ -141,7 +154,10 @@ int main(int argc, char **argv) {
 		printf(",\"hdr_code\":\"%s\",\"hdr_consumed\":%ld,\"hdr_len\":%ld", hcode, hcons, hl < 0 ? 0 : hl);
 		printf(",\"msg_code\":\"%s\",\"msg_consumed\":%ld,\"msg_len\":%ld", mcode, mcons, ml < 0 ? 0 : ml);
 		if (ts_len >= 0) printf(",\"ts_len\":%ld", ts_len); else printf(",\"ts_len\":null");
-		if (msg_format >= 0) printf(",\"msg_format\":%ld}\n", msg_format); else printf(",\"msg_format\":null}\n");
+		if (msg_format >= 0) printf(",\"msg_format\":%ld", msg_format); else printf(",\"msg_format\":null");
+		if (records && hdr && strcmp(hcode, "RC_OK") == 0) print_header_fields(hdr);
+		if (records && msg && strcmp(mcode, "RC_OK") == 0) print_message_records(msg);
+		printf("}\n");
 
 		ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_IndicationHeader, hdr);
 		ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_IndicationMessage, msg);
