@@ -71,5 +71,22 @@ table { border-collapse:collapse; width:100%; } td, th { border:1px solid var(--
 <li><span class="tag question">observation</span>During <code>full_install.sh</code>, NIST's kpm_sim sent an E2SetupRequest and e2term then closed the association ("Connection closed by remote peer"); e2mgr listed no nodes at the end of M1. NIST's own success marker (<code>&lt;/E2AP-PDU&gt;</code> in the log) also matches the node's printout of its own request, so it proves nothing. M2 decides, from e2mgr state and decoded wire bytes.</li>
 <li><span class="tag decision">decision</span>Known NIST hang points, bounded only by the outer <code>timeout</code>: <code>wait_for_ricplt_pods.sh:49</code>, <code>run_e2sim_and_connect_to_ric.sh:104</code> (restarts kubelet every third wrap), <code>full_install.sh:319</code> and <code>:498</code>. They are not patched unless the run shows they hang.</li>
 </ul>
+<h2>P2: reference node, golden pcap (M2)</h2>
+<ul>
+<li><span class="tag deviation">deviation</span>M2 attempt 1 (<code>evidence/m2/20261021T113313Z</code>) failed on two harness bugs only:
+<ul>
+<li><code>timeout</code> cannot run the shell function <code>dk</code>; it now uses <code>$(dk_cmd)</code> from <code>lib.sh</code>.</li>
+<li>Docker 29 removed the top-level <code>NetworkSettings.IPAddress</code>; the gate now reads the per-network IP.</li>
+</ul>
+Its wire evidence already showed the probe passing.</li>
+<li><span class="tag decision"><b>M2 green</b></span> 2026-10-21 11:56Z, harness <code>93abcb8</code>, evidence <code>evidence/m2/20261021T114530Z</code>:
+<ul>
+<li>tshark 4.2.2 from noble has an E2AP dissector and only "KPM V2".</li>
+<li>kpm_sim (172.17.0.2) → e2term ClusterIP 10.106.169.160:36422 (<code>service-ricplt-e2term-sctp-alpha</code>). E2SetupRequest/Response decoded, with RAN function 2, <code>ORAN-E2SM-KPM</code>, OID123 and gNB-ID B5C67788.</li>
+<li>The association stayed CONNECTED for 5 min with heartbeats and SACKs, and zero ABORT.</li>
+<li>K10: two probe containers (172.17.0.3/.4) each held their own association from source port 36422 to the same ClusterIP for 300 s, at the same time as kpm_sim's. Each had 9 heartbeat/ack pairs, zero ABORT and a clean shutdown.</li>
+<li>Snapshot <code>l2-refnode</code> taken.</li>
+</ul></li>
+</ul>
 </body>
 </html>
