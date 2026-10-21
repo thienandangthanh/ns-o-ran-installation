@@ -32,7 +32,6 @@ PROBE_CAP="probe-two-assoc"
 PROBE_NAMES="m2probe-a m2probe-b"
 
 # docker as the current user, else via sudo (group membership may not be active yet).
-dk() { if docker info >/dev/null 2>&1; then docker "$@"; else sudo -n docker "$@"; fi; }
 
 # tshark_count <pcap> <display filter>: number of matching frames on stdout.
 tshark_count() { tshark -r "$1" -d "sctp.port==$E2_PORT,e2ap" -Y "$2" 2>/dev/null | wc -l; }
@@ -202,7 +201,7 @@ print("held %ds, closed intentionally" % hold, flush=True)
 
 probe_prepare() {
     ip link show docker0 >/dev/null 2>&1 || return 1
-    dk image inspect "$PROBE_IMAGE" >/dev/null 2>&1 || timeout 300 dk pull -q "$PROBE_IMAGE" || return 1
+    dk image inspect "$PROBE_IMAGE" >/dev/null 2>&1 || timeout 300 $(dk_cmd) pull -q "$PROBE_IMAGE" || return 1
     probe_cleanup
 }
 check m2_probe_image_ready probe_prepare

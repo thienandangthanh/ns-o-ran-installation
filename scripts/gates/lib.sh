@@ -79,6 +79,13 @@ nist_run() {
     timeout --kill-after=60 "$t" "$@" < <(exec sleep $((t + 120)))
 }
 
+# dk: docker as the current user when the socket allows it, else via sudo.
+# External wrappers cannot run shell functions, so they use $(dk_cmd) instead:
+#   timeout 300 $(dk_cmd) pull IMAGE
+dk_cmd() { if docker info >/dev/null 2>&1; then echo docker; else echo "sudo -n docker"; fi; }
+# shellcheck disable=SC2046
+dk() { $(dk_cmd) "$@"; }
+
 # disk_guard: VM / must keep >= 25 % free; prune docker build cache if docker exists.
 disk_guard() {
     if command -v docker >/dev/null 2>&1; then

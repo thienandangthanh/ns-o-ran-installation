@@ -71,9 +71,9 @@ regen_proof() {
     local w="$WORK/regen"
     rm -rf "$w"; mkdir -p "$w/out"
     clone_pinned "$KPIMON_URL" "$KPIMON_SHA" "$w/src" || return 1
-    dk image inspect ubuntu:24.04 >/dev/null 2>&1 || timeout 300 dk pull -q ubuntu:24.04 || return 1
+    dk image inspect ubuntu:24.04 >/dev/null 2>&1 || timeout 300 $(dk_cmd) pull -q ubuntu:24.04 || return 1
     # shellcheck disable=SC2016  # the container script must expand its own variables
-    timeout 2700 dk run --rm -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
+    timeout 2700 $(dk_cmd) run --rm -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
         -v "$HARNESS_DIR/tools:/h:ro" -v "$w/src:/src:ro" -v "$PATCH_DIR:/p:ro" -v "$w/out:/out" \
         ubuntu:24.04 bash -c '
             export DEBIAN_FRONTEND=noninteractive

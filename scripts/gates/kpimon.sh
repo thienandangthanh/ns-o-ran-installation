@@ -27,7 +27,6 @@ INFLUX_POD=r4-influxdb-influxdb2-0
 HARNESS_TOOLS="$HARNESS_DIR/tools/kpimon-decode-harness"
 KPIMON_POD=""  # set by kpimon_wait_ready
 
-dk() { if docker info >/dev/null 2>&1; then docker "$@"; else sudo -n docker "$@"; fi; }
 
 
 # redact_stream: defensive filter for NIST installer output; strips anything shaped like an
