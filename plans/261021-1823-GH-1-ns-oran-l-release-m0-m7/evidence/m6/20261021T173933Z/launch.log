@@ -1,0 +1,41 @@
+[17:39:33] gate m6 start; evidence /home/uc/evidence/m6/20261021T173933Z; harness 6b008ddc04b2d3e1ecb03eb1181757bd7890d3c8
+[17:39:33] ric watchdog started (pid 3990, threshold 600s)
+[17:39:33] PASS m6_nist_tree_at_testbed_sha_with_agent_dir
+[17:39:33] PASS m6_build_tools_present
+[17:39:33] PASS m6_sctp_module_loaded_and_persisted
+[17:39:34] PASS m6_kpimon_so_extracted_from_image
+[17:39:34] PASS m6_kpimon_so_is_the_size8_patched_build
+[17:39:34] PASS m6_ns3_binary_located
+[17:39:34] PASS m6_capture_started_before_agents
+[17:45:06] PASS m6_bringup_agents_kpm_sim_stopped_connected_set_exact
+[17:45:06] PASS m6_agent_container_ip_recorded
+[17:45:09] PASS m6_wire_shows_kpimon_subscription_request_and_agent_response
+[17:45:09] PASS m6_pcap_subscription_facts
+[17:45:09] PASS m6_tshark_decodes_subscription_request_response_func2
+[17:45:11] PASS m6_ns3_started_single_gnb
+[17:45:26] PASS m6_ns3_completes_exit0
+[17:45:26] draining 8s
+[17:45:34] PASS m6_influx_exported
+[17:45:35] PASS m6_capture_stopped
+[17:45:35] PASS m6_pcap_facts_extracted
+[17:45:35] FAIL m6_tshark_decodes_ricindications_header_and_message: exit 1: 0
+[17:45:36] PASS m6_harness_ran_on_pcap
+[17:45:36] PASS m6_wire_indications_gt0_no_rows_skipped
+[17:45:36] PASS m6_harness_every_header_clean_rc_ok_equals_wire
+[17:45:36] PASS m6_harness_every_message_clean_rc_ok_equals_wire
+[17:45:36] PASS m6_harness_zero_wmore_fail_other
+[17:45:36] PASS m6_harness_ts_len_8_everywhere
+[17:45:36] PASS m6_kpimon_log_indications_equal_wire_zero_wmore
+[17:45:36] PASS m6_agent_indtx_equals_wire
+[17:45:36] FAIL m6_kpimon_pod_no_restart: exit 1: kpimon pod ricxapp-kpimon-go-85dc5fdf8b-9rlns restarts 2 -> 3
+[17:45:36] PASS m6_emitter_bye_sent_equals_built_zero_drops
+[17:45:36] PASS m6_agent_counters_clean_samples_in_equal_forwarded_equal_trace
+[17:45:36] PASS m6_influx_three_samples_equal_trace_bit_exact
+[17:45:36] PASS m6_influx_all_samples_comparison_informational
+[17:45:39] PASS m6_agents_stopped_no_container_left
+[17:45:39] PASS m6_no_stray_ns3_agent_process_or_3847x_listener
+[17:45:39] PASS m6_no_capture_left_running
+[17:45:39] PASS m6_pcap_in_evidence
+Terminated
+[17:45:39] ric watchdog stopped (pid 3990)
+verdict m6: FAIL failed=['m6_tshark_decodes_ricindications_header_and_message', 'm6_kpimon_pod_no_restart']

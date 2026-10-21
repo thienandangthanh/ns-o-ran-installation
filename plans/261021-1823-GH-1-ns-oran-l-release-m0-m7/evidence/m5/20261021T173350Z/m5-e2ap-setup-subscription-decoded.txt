@@ -1,0 +1,1347 @@
+Frame 6: 994 bytes on wire (7952 bits), 994 bytes captured (7952 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 17:38:18.034573000 UTC
+    UTC Arrival Time: Oct 21, 2026 17:38:18.034573000 UTC
+    Epoch Arrival Time: 1792604298.034573000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000011000 seconds]
+    [Time delta from previous displayed frame: 0.000000000 seconds]
+    [Time since reference or first frame: 0.000152000 seconds]
+    Frame Number: 6
+    Frame Length: 994 bytes (7952 bits)
+    Capture Length: 994 bytes (7952 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp:e2ap:e2ap:ngap]
+Ethernet II, Src: 56:f9:06:65:61:7d (56:f9:06:65:61:7d), Dst: 42:26:45:1f:11:b0 (42:26:45:1f:11:b0)
+    Destination: 42:26:45:1f:11:b0 (42:26:45:1f:11:b0)
+        Address: 42:26:45:1f:11:b0 (42:26:45:1f:11:b0)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: 56:f9:06:65:61:7d (56:f9:06:65:61:7d)
+        Address: 56:f9:06:65:61:7d (56:f9:06:65:61:7d)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 980
+    Identification: 0x0003 (3)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd683 [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 48894 (48894), Dst Port: 36422 (36422)
+    Source port: 48894
+    Destination port: 36422
+    Verification tag: 0xa333fd05
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    DATA chunk (ordered, last segment, TSN: 1, SID: 0, SSN: 0, PPID: 0, payload length: 930 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x01
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..0. = B-Bit: Subsequent segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 946
+        Transmission sequence number (relative): 1
+        Transmission sequence number (absolute): 1106050010
+        Stream identifier: 0x0000
+        Stream sequence number: 0
+        Payload protocol identifier: not specified (0)
+        Reassembled SCTP Fragments (2382 bytes, 2 fragments): 
+            Frame: 5, payload: 2382-3833 (1452 bytes)
+            Frame: 6, payload: 3834-4763 (930 bytes)
+E2 Application Protocol
+    E2AP-PDU: initiatingMessage (0)
+        initiatingMessage
+            procedureCode: id-E2setup (1)
+            criticality: reject (0)
+            value
+                E2setupRequest
+                    protocolIEs: 4 items
+                        Item 0: id-TransactionID
+                            ProtocolIE-Field
+                                id: id-TransactionID (49)
+                                criticality: reject (0)
+                                value
+                                    TransactionID: 1
+                        Item 1: id-GlobalE2node-ID
+                            ProtocolIE-Field
+                                id: id-GlobalE2node-ID (3)
+                                criticality: reject (0)
+                                value
+                                    GlobalE2node-ID: gNB (0)
+                                        gNB
+                                            global-gNB-ID
+                                                plmn-id: 00f110
+                                                gnb-id: gnb-ID (0)
+                                                    gnb-ID: 00000010 [bit length 29, 3 LSB pad bits, 0000 0000  0000 0000  0000 0000  0001 0... decimal value 2]
+                        Item 2: id-RANfunctionsAdded
+                            ProtocolIE-Field
+                                id: id-RANfunctionsAdded (10)
+                                criticality: reject (0)
+                                value
+                                    RANfunctions-List: 1 item
+                                        Item 0: id-RANfunction-Item
+                                            ProtocolIE-SingleContainer
+                                                id: id-RANfunction-Item (8)
+                                                criticality: reject (0)
+                                                value
+                                                    RANfunction-Item
+                                                        ranFunctionID: 2
+                                                        ranFunctionDefinition [truncated]: 68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d617020763120616238316236333901010001010700506572696f646963205265706f727401010401010900
+                                                        E2SM-KPM-RANfunction-Description
+                                                            ranFunction-Name
+                                                                ranFunction-ShortName: ORAN-E2SM-KPM
+                                                                ranFunction-E2SM-OID: 1.3.6.1.4.1.53148.1.3.2.2
+                                                                [Version (frame): iso.3.6.1.4.1.53148.1.3.2.2]
+                                                                ranFunction-Description: ns-O-RAN KPM map v1 ab81b639
+                                                                ranFunction-Instance: 1
+                                                            ric-EventTriggerStyle-List: 1 item
+                                                                Item 0
+                                                                    RIC-EventTriggerStyle-Item
+                                                                        ric-EventTriggerStyle-Type: 1
+                                                                        ric-EventTriggerStyle-Name: Periodic Report
+                                                                        ric-EventTriggerFormat-Type: 1
+                                                            ric-ReportStyle-List: 2 items
+                                                                Item 0
+                                                                    RIC-ReportStyle-Item
+                                                                        ric-ReportStyle-Type: 1
+                                                                        ric-ReportStyle-Name: E2 Node Measurement
+                                                                        ric-ActionFormat-Type: 1
+                                                                        measInfo-Action-List: 33 items
+                                                                            Item 0
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.nodeId
+                                                                                    measID: 1
+                                                                            Item 1
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.simTimeMs
+                                                                                    measID: 2
+                                                                            Item 2
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.seq
+                                                                                    measID: 3
+                                                                            Item 3
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: TB.TotNbrDl.1
+                                                                                    measID: 4
+                                                                            Item 4
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: TB.TotNbrDlInitial
+                                                                                    measID: 5
+                                                                            Item 5
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: TB.TotNbrDlInitial.Qpsk
+                                                                                    measID: 6
+                                                                            Item 6
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: TB.TotNbrDlInitial.16Qam
+                                                                                    measID: 7
+                                                                            Item 7
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: TB.TotNbrDlInitial.64Qam
+                                                                                    measID: 8
+                                                                            Item 8
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: RRU.PrbUsedDl
+                                                                                    measID: 9
+                                                                            Item 9
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: TB.ErrTotalNbrDl.1
+                                                                                    measID: 10
+                                                                            Item 10
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: QosFlow.PdcpPduVolumeDL
+                                                                                    measID: 11
+                                                                            Item 11
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: CARR.PDSCHMCSDist.Bin1
+                                                                                    measID: 12
+                                                                            Item 12
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: CARR.PDSCHMCSDist.Bin2
+                                                                                    measID: 13
+                                                                            Item 13
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: CARR.PDSCHMCSDist.Bin3
+                                                                                    measID: 14
+                                                                            Item 14
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: CARR.PDSCHMCSDist.Bin4
+                                                                                    measID: 15
+                                                                            Item 15
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: CARR.PDSCHMCSDist.Bin5
+                                                                                    measID: 16
+                                                                            Item 16
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: CARR.PDSCHMCSDist.Bin6
+                                                                                    measID: 17
+                                                                            Item 17
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.RS-SINR.Bin34
+                                                                                    measID: 18
+                                                                            Item 18
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.RS-SINR.Bin46
+                                                                                    measID: 19
+                                                                            Item 19
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.RS-SINR.Bin58
+                                                                                    measID: 20
+                                                                            Item 20
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.RS-SINR.Bin70
+                                                                                    measID: 21
+                                                                            Item 21
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.RS-SINR.Bin82
+                                                                                    measID: 22
+                                                                            Item 22
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.RS-SINR.Bin94
+                                                                                    measID: 23
+                                                                            Item 23
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.RS-SINR.Bin127
+                                                                                    measID: 24
+                                                                            Item 24
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.BufferSize.Qos
+                                                                                    measID: 25
+                                                                            Item 25
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.MeanActiveUeDl
+                                                                                    measID: 26
+                                                                            Item 26
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: RRU.PrbAvailDl
+                                                                                    measID: 27
+                                                                            Item 27
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: RRU.PrbAvailUl
+                                                                                    measID: 28
+                                                                            Item 28
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: RRU.PrbTotDl
+                                                                                    measID: 29
+                                                                            Item 29
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: RRU.PrbTotUl
+                                                                                    measID: 30
+                                                                            Item 30
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.du.qci
+                                                                                    measID: 31
+                                                                            Item 31
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.cuCp.numActiveUes
+                                                                                    measID: 32
+                                                                            Item 32
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: RRC.ConnMean
+                                                                                    measID: 33
+                                                                        ric-IndicationHeaderFormat-Type: 1
+                                                                        ric-IndicationMessageFormat-Type: 1
+                                                                Item 1
+                                                                    RIC-ReportStyle-Item
+                                                                        ric-ReportStyle-Type: 3
+                                                                        ric-ReportStyle-Name: Condition-based, UE-level E2 Node Measurement
+                                                                        ric-ActionFormat-Type: 3
+                                                                        measInfo-Action-List: 58 items
+                                                                            Item 0
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.nodeId
+                                                                                    measID: 1001
+                                                                            Item 1
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.simTimeMs
+                                                                                    measID: 1002
+                                                                            Item 2
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.seq
+                                                                                    measID: 1003
+                                                                            Item 3
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.imsi
+                                                                                    measID: 1004
+                                                                            Item 4
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: TB.TotNbrDl.1
+                                                                                    measID: 1005
+                                                                            Item 5
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: TB.TotNbrDlInitial
+                                                                                    measID: 1006
+                                                                            Item 6
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: TB.TotNbrDlInitial.Qpsk
+                                                                                    measID: 1007
+                                                                            Item 7
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: TB.TotNbrDlInitial.16Qam
+                                                                                    measID: 1008
+                                                                            Item 8
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: TB.TotNbrDlInitial.64Qam
+                                                                                    measID: 1009
+                                                                            Item 9
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: TB.ErrTotalNbrDl.1
+                                                                                    measID: 1010
+                                                                            Item 10
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.du.QosFlow.PdcpPduVolumeDL
+                                                                                    measID: 1011
+                                                                            Item 11
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: RRU.PrbUsedDl
+                                                                                    measID: 1012
+                                                                            Item 12
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: CARR.PDSCHMCSDist.Bin1
+                                                                                    measID: 1013
+                                                                            Item 13
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: CARR.PDSCHMCSDist.Bin2
+                                                                                    measID: 1014
+                                                                            Item 14
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: CARR.PDSCHMCSDist.Bin3
+                                                                                    measID: 1015
+                                                                            Item 15
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: CARR.PDSCHMCSDist.Bin4
+                                                                                    measID: 1016
+                                                                            Item 16
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: CARR.PDSCHMCSDist.Bin5
+                                                                                    measID: 1017
+                                                                            Item 17
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: CARR.PDSCHMCSDist.Bin6
+                                                                                    measID: 1018
+                                                                            Item 18
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.RS-SINR.Bin34
+                                                                                    measID: 1019
+                                                                            Item 19
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.RS-SINR.Bin46
+                                                                                    measID: 1020
+                                                                            Item 20
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.RS-SINR.Bin58
+                                                                                    measID: 1021
+                                                                            Item 21
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.RS-SINR.Bin70
+                                                                                    measID: 1022
+                                                                            Item 22
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.RS-SINR.Bin82
+                                                                                    measID: 1023
+                                                                            Item 23
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.RS-SINR.Bin94
+                                                                                    measID: 1024
+                                                                            Item 24
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.RS-SINR.Bin127
+                                                                                    measID: 1025
+                                                                            Item 25
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.BufferSize.Qos
+                                                                                    measID: 1026
+                                                                            Item 26
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.UEThpDl
+                                                                                    measID: 1027
+                                                                            Item 27
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: QosFlow.PdcpPduVolumeDL
+                                                                                    measID: 1028
+                                                                            Item 28
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.PdcpPduNbrDl.Qos
+                                                                                    measID: 1029
+                                                                            Item 29
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.EstabSucc.5QI
+                                                                                    measID: 1030
+                                                                            Item 30
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.RelActNbr.5QI
+                                                                                    measID: 1031
+                                                                            Item 31
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.servCellId
+                                                                                    measID: 1032
+                                                                            Item 32
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.servSinrDb
+                                                                                    measID: 1033
+                                                                            Item 33
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.servSinr3gpp
+                                                                                    measID: 1034
+                                                                            Item 34
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr1.cellId
+                                                                                    measID: 1035
+                                                                            Item 35
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr1.sinrDb
+                                                                                    measID: 1036
+                                                                            Item 36
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr1.sinr3gpp
+                                                                                    measID: 1037
+                                                                            Item 37
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr2.cellId
+                                                                                    measID: 1038
+                                                                            Item 38
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr2.sinrDb
+                                                                                    measID: 1039
+                                                                            Item 39
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr2.sinr3gpp
+                                                                                    measID: 1040
+                                                                            Item 40
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr3.cellId
+                                                                                    measID: 1041
+                                                                            Item 41
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr3.sinrDb
+                                                                                    measID: 1042
+                                                                            Item 42
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr3.sinr3gpp
+                                                                                    measID: 1043
+                                                                            Item 43
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr4.cellId
+                                                                                    measID: 1044
+                                                                            Item 44
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr4.sinrDb
+                                                                                    measID: 1045
+                                                                            Item 45
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr4.sinr3gpp
+                                                                                    measID: 1046
+                                                                            Item 46
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr5.cellId
+                                                                                    measID: 1047
+                                                                            Item 47
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr5.sinrDb
+                                                                                    measID: 1048
+                                                                            Item 48
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr5.sinr3gpp
+                                                                                    measID: 1049
+                                                                            Item 49
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr6.cellId
+                                                                                    measID: 1050
+                                                                            Item 50
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr6.sinrDb
+                                                                                    measID: 1051
+                                                                            Item 51
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr6.sinr3gpp
+                                                                                    measID: 1052
+                                                                            Item 52
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr7.cellId
+                                                                                    measID: 1053
+                                                                            Item 53
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr7.sinrDb
+                                                                                    measID: 1054
+                                                                            Item 54
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr7.sinr3gpp
+                                                                                    measID: 1055
+                                                                            Item 55
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr8.cellId
+                                                                                    measID: 1056
+                                                                            Item 56
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr8.sinrDb
+                                                                                    measID: 1057
+                                                                            Item 57
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: ns3.l3.nbr8.sinr3gpp
+                                                                                    measID: 1058
+                                                                        ric-IndicationHeaderFormat-Type: 1
+                                                                        ric-IndicationMessageFormat-Type: 2
+                                                        ranFunctionRevision: 2
+                                                        ranFunctionOID: 1.3.6.1.4.1.53148.1.3.2.2
+                        Item 3: id-E2nodeComponentConfigAddition
+                            ProtocolIE-Field
+                                id: id-E2nodeComponentConfigAddition (50)
+                                criticality: reject (0)
+                                value
+                                    E2nodeComponentConfigAddition-List: 1 item
+                                        Item 0: id-E2nodeComponentConfigAddition-Item
+                                            ProtocolIE-SingleContainer
+                                                id: id-E2nodeComponentConfigAddition-Item (51)
+                                                criticality: reject (0)
+                                                value
+                                                    E2nodeComponentConfigAddition-Item
+                                                        e2nodeComponentInterfaceType: ng (0)
+                                                        e2nodeComponentID: e2nodeComponentInterfaceTypeNG (0)
+                                                            e2nodeComponentInterfaceTypeNG
+                                                                amf-name: nginterf
+                                                        e2nodeComponentConfiguration
+                                                            e2nodeComponentRequestPart: 72657170617274
+                                                            NG Application Protocol
+                                                                something unknown here [unknown extension root index in choice]
+                                                                    [Expert Info (Warning/Undecoded): something unknown here [unknown extension root index in choice]]
+                                                                        [something unknown here [unknown extension root index in choice]]
+                                                                        [Severity level: Warning]
+                                                                        [Group: Undecoded]
+[Malformed Packet: NGAP]
+    [Expert Info (Error/Malformed): Malformed Packet (Exception occurred)]
+        [Malformed Packet (Exception occurred)]
+        [Severity level: Error]
+        [Group: Malformed]
+
+Frame 9: 122 bytes on wire (976 bits), 122 bytes captured (976 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 17:38:21.096575000 UTC
+    UTC Arrival Time: Oct 21, 2026 17:38:21.096575000 UTC
+    Epoch Arrival Time: 1792604301.096575000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.006788000 seconds]
+    [Time delta from previous displayed frame: 3.062002000 seconds]
+    [Time since reference or first frame: 3.062154000 seconds]
+    Frame Number: 9
+    Frame Length: 122 bytes (976 bits)
+    Capture Length: 122 bytes (976 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp:e2ap:e2ap]
+Ethernet II, Src: 42:26:45:1f:11:b0 (42:26:45:1f:11:b0), Dst: 56:f9:06:65:61:7d (56:f9:06:65:61:7d)
+    Destination: 56:f9:06:65:61:7d (56:f9:06:65:61:7d)
+        Address: 56:f9:06:65:61:7d (56:f9:06:65:61:7d)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: 42:26:45:1f:11:b0 (42:26:45:1f:11:b0)
+        Address: 42:26:45:1f:11:b0 (42:26:45:1f:11:b0)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 108
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdaee [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 48894 (48894)
+    Source port: 36422
+    Destination port: 48894
+    Verification tag: 0x344a3a03
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x0a504a35 [unverified]
+    [Checksum Status: Unverified]
+    DATA chunk (ordered, complete segment, TSN: 0, SID: 0, SSN: 0, PPID: 70, payload length: 60 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x03
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 76
+        Transmission sequence number (relative): 0
+        Transmission sequence number (absolute): 3867493216
+        Stream identifier: 0x0000
+        Stream sequence number: 0
+        Payload protocol identifier: E2-CP (70)
+E2 Application Protocol
+    E2AP-PDU: successfulOutcome (1)
+        successfulOutcome
+            procedureCode: id-E2setup (1)
+            criticality: reject (0)
+            value
+                E2setupResponse
+                    protocolIEs: 4 items
+                        Item 0: id-TransactionID
+                            ProtocolIE-Field
+                                id: id-TransactionID (49)
+                                criticality: reject (0)
+                                value
+                                    TransactionID: 1
+                        Item 1: id-GlobalRIC-ID
+                            ProtocolIE-Field
+                                id: id-GlobalRIC-ID (4)
+                                criticality: reject (0)
+                                value
+                                    GlobalRIC-ID
+                                        pLMN-Identity: 131014
+                                        ric-ID: aacce0 [bit length 20, 4 LSB pad bits, 1010 1010  1100 1100  1110 .... decimal value 699598]
+                        Item 2: id-RANfunctionsAccepted
+                            ProtocolIE-Field
+                                id: id-RANfunctionsAccepted (9)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionsID-List: 1 item
+                                        Item 0: id-RANfunctionID-Item
+                                            ProtocolIE-SingleContainer
+                                                id: id-RANfunctionID-Item (6)
+                                                criticality: ignore (1)
+                                                value
+                                                    RANfunctionID-Item
+                                                        ranFunctionID: 2
+                                                        ranFunctionRevision: 2
+                        Item 3: id-E2nodeComponentConfigAdditionAck
+                            ProtocolIE-Field
+                                id: id-E2nodeComponentConfigAdditionAck (52)
+                                criticality: reject (0)
+                                value
+                                    E2nodeComponentConfigAdditionAck-List: 1 item
+                                        Item 0: id-E2nodeComponentConfigAdditionAck-Item
+                                            ProtocolIE-SingleContainer
+                                                id: id-E2nodeComponentConfigAdditionAck-Item (53)
+                                                criticality: reject (0)
+                                                value
+                                                    E2nodeComponentConfigAdditionAck-Item
+                                                        e2nodeComponentInterfaceType: ng (0)
+                                                        e2nodeComponentID: e2nodeComponentInterfaceTypeNG (0)
+                                                            e2nodeComponentInterfaceTypeNG
+                                                                amf-name: nginterf
+                                                        e2nodeComponentConfigurationAck
+                                                            updateOutcome: success (0)
+
+Frame 12: 1602 bytes on wire (12816 bits), 1602 bytes captured (12816 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 17:38:22.332265000 UTC
+    UTC Arrival Time: Oct 21, 2026 17:38:22.332265000 UTC
+    Epoch Arrival Time: 1792604302.332265000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 1.034423000 seconds]
+    [Time delta from previous displayed frame: 1.235690000 seconds]
+    [Time since reference or first frame: 4.297844000 seconds]
+    Frame Number: 12
+    Frame Length: 1602 bytes (12816 bits)
+    Capture Length: 1602 bytes (12816 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp:e2ap:e2ap]
+Ethernet II, Src: 42:26:45:1f:11:b0 (42:26:45:1f:11:b0), Dst: 56:f9:06:65:61:7d (56:f9:06:65:61:7d)
+    Destination: 56:f9:06:65:61:7d (56:f9:06:65:61:7d)
+        Address: 56:f9:06:65:61:7d (56:f9:06:65:61:7d)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: 42:26:45:1f:11:b0 (42:26:45:1f:11:b0)
+        Address: 42:26:45:1f:11:b0 (42:26:45:1f:11:b0)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 1588
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xd526 [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 48894 (48894)
+    Source port: 36422
+    Destination port: 48894
+    Verification tag: 0x344a3a03
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    DATA chunk (ordered, first segment, TSN: 1, SID: 1, SSN: 0, PPID: 70, payload length: 1380 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x02
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...0 = E-Bit: Not the last segment
+        Chunk length: 1396
+        Transmission sequence number (relative): 1
+        Transmission sequence number (absolute): 3867493217
+        Stream identifier: 0x0001
+        Stream sequence number: 0
+        Payload protocol identifier: E2-CP (70)
+Stream Control Transmission Protocol
+    DATA chunk (ordered, last segment, TSN: 2, SID: 1, SSN: 0, PPID: 70, payload length: 141 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x01
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..0. = B-Bit: Subsequent segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 157
+        Transmission sequence number (relative): 2
+        Transmission sequence number (absolute): 3867493218
+        Stream identifier: 0x0001
+        Stream sequence number: 0
+        Payload protocol identifier: E2-CP (70)
+        Reassembled SCTP Fragments (1521 bytes, 2 fragments): 
+            Frame: 12, payload: 1521-2900 (1380 bytes)
+            Frame: 12, payload: 2901-3041 (141 bytes)
+E2 Application Protocol
+    E2AP-PDU: initiatingMessage (0)
+        initiatingMessage
+            procedureCode: id-RICsubscription (8)
+            criticality: ignore (1)
+            value
+                RICsubscriptionRequest
+                    protocolIEs: 3 items
+                        Item 0: id-RICrequestID
+                            ProtocolIE-Field
+                                id: id-RICrequestID (29)
+                                criticality: reject (0)
+                                value
+                                    RICrequestID
+                                        ricRequestorID: 123
+                                        ricInstanceID: 1
+                        Item 1: id-RANfunctionID
+                            ProtocolIE-Field
+                                id: id-RANfunctionID (5)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionID: 2
+                        Item 2: id-RICsubscriptionDetails
+                            ProtocolIE-Field
+                                id: id-RICsubscriptionDetails (30)
+                                criticality: reject (0)
+                                value
+                                    RICsubscriptionDetails
+                                        ricEventTriggerDefinition: 08270f
+                                        [RANfunction setup frame: 6 (2 -> KPM)]
+                                        [Version (frame): iso.3.6.1.4.1.53148.1.3.2.2]
+                                        [Version (dissector): KPM v3]
+                                            [Expert Info (Warning/Protocol): Dissector version mismatch - frame is iso.3.6.1.4.1.53148.1.3.2.2 but dissector is KPM v3]
+                                                [Dissector version mismatch - frame is iso.3.6.1.4.1.53148.1.3.2.2 but dissector is KPM v3]
+                                                [Severity level: Warning]
+                                                [Group: Protocol]
+                                        E2SM-KPM-EventTriggerDefinition
+                                            eventDefinition-formats: eventDefinition-Format1 (0)
+                                                eventDefinition-Format1
+                                                    reportingPeriod: 10000
+                                        ricAction-ToBeSetup-List: 1 item
+                                            Item 0: id-RICaction-ToBeSetup-Item
+                                                ProtocolIE-SingleContainer
+                                                    id: id-RICaction-ToBeSetup-Item (19)
+                                                    criticality: ignore (1)
+                                                    value
+                                                        RICaction-ToBeSetup-Item
+                                                            ricActionID: 1
+                                                            ricActionType: report (0)
+                                                            ricActionDefinition [truncated]: 00010340003900906e73332e6e6f64654964000004000000186e73332e73696d54696d654d730000040000000c6e73332e7365710000040000000e6e73332e696d73690000040000001854422e546f744e6272446c2e310000040000002254422e546f744e6272
+                                                            [RANfunction setup frame: 6 (2 -> KPM)]
+                                                            [Version (frame): iso.3.6.1.4.1.53148.1.3.2.2]
+                                                            [Version (dissector): KPM v3]
+                                                                [Expert Info (Warning/Protocol): Dissector version mismatch - frame is iso.3.6.1.4.1.53148.1.3.2.2 but dissector is KPM v3]
+                                                                    [Dissector version mismatch - frame is iso.3.6.1.4.1.53148.1.3.2.2 but dissector is KPM v3]
+                                                                    [Severity level: Warning]
+                                                                    [Group: Protocol]
+                                                            E2SM-KPM-ActionDefinition
+                                                                ric-Style-Type: 3
+                                                                actionDefinition-formats: actionDefinition-Format3 (2)
+                                                                    actionDefinition-Format3
+                                                                        measCondList: 58 items
+                                                                            Item 0
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: ns3.nodeId
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 1
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: ns3.simTimeMs
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 2
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: ns3.seq
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 3
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: ns3.imsi
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 4
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: TB.TotNbrDl.1
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 5
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: TB.TotNbrDlInitial
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 6
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: TB.TotNbrDlInitial.Qpsk
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 7
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: TB.TotNbrDlInitial.16Qam
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 8
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: TB.TotNbrDlInitial.64Qam
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 9
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: TB.ErrTotalNbrDl.1
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 10
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: ns3.du.QosFlow.PdcpPduVolumeDL
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 11
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: RRU.PrbUsedDl
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 12
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: CARR.PDSCHMCSDist.Bin1
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 13
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: CARR.PDSCHMCSDist.Bin2
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 14
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: CARR.PDSCHMCSDist.Bin3
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 15
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: CARR.PDSCHMCSDist.Bin4
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 16
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: CARR.PDSCHMCSDist.Bin5
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 17
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: CARR.PDSCHMCSDist.Bin6
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 18
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: L1M.RS-SINR.Bin34
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 19
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: L1M.RS-SINR.Bin46
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 20
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: L1M.RS-SINR.Bin58
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 21
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: L1M.RS-SINR.Bin70
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 22
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: L1M.RS-SINR.Bin82
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 23
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: L1M.RS-SINR.Bin94
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 24
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: L1M.RS-SINR.Bin127
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 25
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: DRB.BufferSize.Qos
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 26
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: DRB.UEThpDl
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 27
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: QosFlow.PdcpPduVolumeDL
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 28
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: DRB.PdcpPduNbrDl.Qos
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 29
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: DRB.EstabSucc.5QI
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 30
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: DRB.RelActNbr.5QI
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 31
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: ns3.l3.servCellId
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 32
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: ns3.l3.servSinrDb
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 33
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: ns3.l3.servSinr3gpp
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 34
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: ns3.l3.nbr1.cellId
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 35
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: ns3.l3.nbr1.sinrDb
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 36
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: ns3.l3.nbr1.sinr3gpp
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 37
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: ns3.l3.nbr2.cellId
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 38
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: ns3.l3.nbr2.sinrDb
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 39
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: ns3.l3.nbr2.sinr3gpp
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 40
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: ns3.l3.nbr3.�ellId
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                            Item 41
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: �
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 42
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: �
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                Choice no. 57 in extension
+                                                                                                    [Expert Info (Note/Undecoded): Choice no. 57 in extension]
+                                                                                                        [Choice no. 57 in extension]
+                                                                                                        [Severity level: Note]
+                                                                                                        [Group: Undecoded]
+                                                                            Item 43
+                                                                                MeasurementCondItem
+                                                                                    something unknown here [too long integer(per_normally_small_nonnegative_whole_number)]
+                                                                                        [Expert Info (Warning/Undecoded): something unknown here [too long integer(per_normally_small_nonnegative_whole_number)]]
+                                                                                            [something unknown here [too long integer(per_normally_small_nonnegative_whole_number)]]
+                                                                                            [Severity level: Warning]
+                                                                                            [Group: Undecoded]
+[Malformed Packet: E2AP]
+    [Expert Info (Error/Malformed): Malformed Packet (Exception occurred)]
+        [Malformed Packet (Exception occurred)]
+        [Severity level: Error]
+        [Group: Malformed]
+
+Frame 14: 98 bytes on wire (784 bits), 98 bytes captured (784 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 17:38:22.332430000 UTC
+    UTC Arrival Time: Oct 21, 2026 17:38:22.332430000 UTC
+    Epoch Arrival Time: 1792604302.332430000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000134000 seconds]
+    [Time delta from previous displayed frame: 0.000165000 seconds]
+    [Time since reference or first frame: 4.298009000 seconds]
+    Frame Number: 14
+    Frame Length: 98 bytes (784 bits)
+    Capture Length: 98 bytes (784 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp:e2ap:e2ap]
+Ethernet II, Src: 56:f9:06:65:61:7d (56:f9:06:65:61:7d), Dst: 42:26:45:1f:11:b0 (42:26:45:1f:11:b0)
+    Destination: 42:26:45:1f:11:b0 (42:26:45:1f:11:b0)
+        Address: 42:26:45:1f:11:b0 (42:26:45:1f:11:b0)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: 56:f9:06:65:61:7d (56:f9:06:65:61:7d)
+        Address: 56:f9:06:65:61:7d (56:f9:06:65:61:7d)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 84
+    Identification: 0x0007 (7)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9ff [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 48894 (48894), Dst Port: 36422 (36422)
+    Source port: 48894
+    Destination port: 36422
+    Verification tag: 0xa333fd05
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    DATA chunk (ordered, complete segment, TSN: 2, SID: 0, SSN: 1, PPID: 0, payload length: 33 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x03
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 49
+        Transmission sequence number (relative): 2
+        Transmission sequence number (absolute): 1106050011
+        Stream identifier: 0x0000
+        Stream sequence number: 1
+        Payload protocol identifier: not specified (0)
+        Chunk padding: 000000
+E2 Application Protocol
+    E2AP-PDU: successfulOutcome (1)
+        successfulOutcome
+            procedureCode: id-RICsubscription (8)
+            criticality: reject (0)
+            value
+                RICsubscriptionResponse
+                    protocolIEs: 3 items
+                        Item 0: id-RICrequestID
+                            ProtocolIE-Field
+                                id: id-RICrequestID (29)
+                                criticality: reject (0)
+                                value
+                                    RICrequestID
+                                        ricRequestorID: 123
+                                        ricInstanceID: 1
+                        Item 1: id-RANfunctionID
+                            ProtocolIE-Field
+                                id: id-RANfunctionID (5)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionID: 2
+                        Item 2: id-RICactions-Admitted
+                            ProtocolIE-Field
+                                id: id-RICactions-Admitted (17)
+                                criticality: reject (0)
+                                value
+                                    RICaction-Admitted-List: 1 item
+                                        Item 0: id-RICaction-Admitted-Item
+                                            ProtocolIE-SingleContainer
+                                                id: id-RICaction-Admitted-Item (14)
+                                                criticality: reject (0)
+                                                value
+                                                    RICaction-Admitted-Item
+                                                        ricActionID: 1
+

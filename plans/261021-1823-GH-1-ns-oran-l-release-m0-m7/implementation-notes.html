@@ -199,6 +199,20 @@ The orchestrator spot-checked the pcap: RAN function 2, the real OID, <code>ORAN
 <li>Fix (Testbed <code>e3aacf8</code>+<code>725b167</code>): on SIGTERM the agent sends SCTP SHUTDOWN (<code>shutdown(SHUT_WR)</code>, bounded 2 s wait), and the stop script uses <code>docker stop -t 10</code> before <code>rm -f</code>.</li>
 <li>Verified on the VM: SHUTDOWN, SHUTDOWN-ACK and SHUTDOWN-COMPLETE on the wire, and e2mgr DISCONNECTED within 1 s.</li>
 </ul></li>
+<li><span class="tag decision"><b>M5 green</b></span> 2026-10-21 17:39Z, attempt 2, harness <code>6b008dd</code>, evidence <code>evidence/m5/20261021T173350Z</code>, 21/21 checks. The orchestrator re-decoded the pcap:
+<ul>
+<li>E2SetupRequest: gNB-ID 2, function 2, OID 1.3.6.1.4.1.53148.1.3.2.2, ORAN-E2SM-KPM. The response has RANfunctionsAccepted containing 2.</li>
+<li>e2mgr: <code>gnb_001_001_00000002</code> CONNECTED, PLMN 00F110. Through kpimon's library the definition gives 2271/2271 octets and 33/58 names, equal to the map.</li>
+<li>Teardown: SHUTDOWN, ACK and COMPLETE, then e2mgr DISCONNECTED.</li>
+<li>Snapshot <code>l5-agent-setup</code> taken.</li>
+</ul></li>
+<li><span class="tag deviation">deviation</span><b>M6 attempt 1</b> (<code>evidence/m6/20261021T173933Z</code>): the substance passed, and two gate-side checks failed.
+<ul>
+<li>Substance: 199 indications; harness clean RC_OK 199/199 for headers and messages, ts_len 8; kpimon logged 199 with 0 WMORE; Influx 100 cell + 193 UE rows, with all 14,494 fields equal to the ns-3 trace.</li>
+<li>Failure (1): the tshark sample decode used <code>-Y … -c 3</code>, and <code>-c</code> caps packets read, not packets displayed; the set syntax also needs commas. Shared helper <code>e2ap_sample_decode</code> fixes both (M3's evidence used the same pattern).</li>
+<li>Failure (2): the kpimon restart baseline was read before kpimon's post-boot restart (container started 17:40:01Z; the previous instance ended via xApp-frame shutdown with boot-time DNS errors). The baseline is now taken after the subscription is seen.</li>
+<li>Finding: noble's tshark 4.2.2 throws "Malformed Packet" (epan/asn1.c:232 assertion) on E2SM-KPM REAL records. The PPA's tshark 4.6.6 decodes all 199 frames cleanly. M5–M7 now install tshark from <code>ppa:wireshark-dev/stable</code> (the plan's K15 fallback; tshark only, retried, because Launchpad returned 503s), and M6 requires zero malformed indication frames.</li>
+</ul></li>
 <li><span class="tag deviation">deviation</span>Gate helper: after an InfluxDB pod restart the in-pod CLI config is gone (401). <code>influx_rows</code> now uses the pod's <code>DOCKER_INFLUXDB_INIT_ADMIN_TOKEN</code>, expanded inside the pod so it is never printed. Verified on the VM: 401 before, rows returned after.</li>
 </ul>
 </body>

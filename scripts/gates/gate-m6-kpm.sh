@@ -41,8 +41,6 @@ check m6_kpimon_so_extracted_from_image kpimon_extract_so "$SODIR"
 so_size8() { echo "TimeStamp SIZE in the extracted .so: $(harness_so_size "$SODIR")"; [ "$(harness_so_size "$SODIR")" = 8 ]; }
 check m6_kpimon_so_is_the_size8_patched_build so_size8
 check m6_ns3_binary_located agents_ns3_locate
-KPIMON_POD0=""; KPIMON_RESTARTS0=""
-read -r KPIMON_POD0 _ _ KPIMON_RESTARTS0 < <(pod_info ricxapp kpimon-go) || true
 
 ################################################################################
 # capture, agent, subscription
@@ -64,6 +62,11 @@ wait_sub() {
     return 1
 }
 check m6_wire_shows_kpimon_subscription_request_and_agent_response wait_sub
+# kpimon restart baseline: taken once kpimon has subscribed, i.e. after the
+# post-boot settling (the snapshot boundary reboots the VM and k8s restarts the
+# kpimon container then, before any of this gate's traffic).
+KPIMON_POD0=""; KPIMON_RESTARTS0=""
+read -r KPIMON_POD0 _ _ KPIMON_RESTARTS0 < <(pod_info ricxapp kpimon-go) || true
 check m6_pcap_subscription_facts pcap_facts "$e/m6.pcap" m6-sub
 check m6_tshark_decodes_subscription_request_response_func2 \
     python3 -I "$E2EV/e2-facts-query.py" "$e/m6-sub-facts.json" subscription --func-id 2
@@ -91,10 +94,15 @@ check m6_capture_stopped capture_stop m6
 ################################################################################
 check m6_pcap_facts_extracted pcap_facts "$e/m6.pcap" m6
 ind_decoded() {
-    tshark -r "$e/m6.pcap" -d sctp.port==36422,e2ap -Y 'e2ap.procedureCode == 5' -c 3 -V >"$e/m6-indication-sample-decode.txt" 2>/dev/null
+    e2ap_sample_decode "$e/m6.pcap" 5 3 "$e/m6-indication-sample-decode.txt"
     grep -c 'id-RICindication' "$e/m6-indication-sample-decode.txt"
-    grep -q 'RICindicationHeader' "$e/m6-indication-sample-decode.txt" && grep -q 'RICindicationMessage' "$e/m6-indication-sample-decode.txt" &&
-        python3 -I "$E2EV/e2-facts-query.py" "$e/m6-facts.json" indications --node-ips "$e/node-ips.json"
+    grep -q 'RICindicationHeader' "$e/m6-indication-sample-decode.txt" && grep -q 'RICindicationMessage' "$e/m6-indication-sample-decode.txt" || return 1
+    grep -q 'E2SM-KPM-IndicationHeader' "$e/m6-indication-sample-decode.txt" && grep -q 'indicationMessage-formats' "$e/m6-indication-sample-decode.txt" || return 1
+    # Every indication must dissect without a malformed-packet exception.
+    local bad
+    bad=$(tshark -r "$e/m6.pcap" -d sctp.port==36422,e2ap -Y 'e2ap.procedureCode == 5 && _ws.malformed' -T fields -e frame.number 2>/dev/null | wc -l)
+    echo "tshark $(tshark --version | head -n 1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1): malformed indication frames $bad"
+    [ "$bad" -eq 0 ] && python3 -I "$E2EV/e2-facts-query.py" "$e/m6-facts.json" indications --node-ips "$e/node-ips.json"
 }
 check m6_tshark_decodes_ricindications_header_and_message ind_decoded
 

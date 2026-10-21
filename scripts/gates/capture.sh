@@ -89,3 +89,14 @@ e2ap_decode() {
         >"$out.fields.tsv" 2>>"$out.err"
     [ -s "$out" ]
 }
+
+# e2ap_sample_decode <pcap> <procedureCode> <n> <out>: full -V decode of the
+# first n frames carrying that E2AP procedure. tshark's -c caps packets READ,
+# not packets displayed, so "-Y ... -c n" would stop before the first match.
+e2ap_sample_decode() {
+    local pcap="$1" code="$2" n="$3" out="$4" frames
+    frames=$(tshark -r "$pcap" -d sctp.port==36422,e2ap -Y "e2ap.procedureCode == $code" \
+        -T fields -e frame.number 2>/dev/null | head -n "$n" | paste -sd',')
+    [ -n "$frames" ] || { : >"$out"; return 1; }
+    tshark -r "$pcap" -d sctp.port==36422,e2ap -Y "frame.number in {$frames}" -V >"$out" 2>/dev/null
+}

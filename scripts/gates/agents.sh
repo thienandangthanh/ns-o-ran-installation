@@ -55,7 +55,30 @@ agents_ensure_build_tools() {
             timeout 900 apt-get install -y -q build-essential tshark tcpdump </dev/null || return 1
     fi
     gcc --version | head -n 1
-    command -v tcpdump >/dev/null && tshark --version | head -n 1
+    command -v tcpdump >/dev/null || return 1
+    ensure_tshark_kpm
+}
+
+# ensure_tshark_kpm: noble's tshark 4.2 asserts while dissecting E2SM-KPM REAL
+# records (epan/asn1.c:232, "Malformed Packet"), observed 2026-10-22; 4.6 from
+# NIST's wireshark-dev/stable PPA (the plan's K15 fallback) decodes them
+# cleanly. Installs tshark only (not the GUI); Launchpad is flaky, so retry.
+ensure_tshark_kpm() {
+    local ver i
+    ver=$(tshark --version 2>/dev/null | head -n 1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
+    if [ -n "$ver" ] && [ "$(printf '%s\n4.4.0\n' "$ver" | sort -V | head -n 1)" = 4.4.0 ]; then
+        echo "tshark $ver (>= 4.4)"; return 0
+    fi
+    echo "wireshark-common wireshark-common/install-setuid boolean false" | sudo -n debconf-set-selections
+    sudo -n timeout 300 add-apt-repository -y ppa:wireshark-dev/stable </dev/null >/dev/null || return 1
+    for i in 1 2 3 4; do
+        sudo -n env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=l NEEDRESTART_SUSPEND=1 \
+            timeout 900 sh -c 'apt-get update -q && apt-get install -y -q tshark' </dev/null >/dev/null && break
+        echo "tshark PPA install try $i failed; retrying"; sleep 30
+    done
+    tshark --version | head -n 1
+    ver=$(tshark --version 2>/dev/null | head -n 1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
+    [ "$(printf '%s\n4.4.0\n' "$ver" | sort -V | head -n 1)" = 4.4.0 ]
 }
 
 ################################################################################

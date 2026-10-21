@@ -173,7 +173,7 @@ phase() {
     # tshark: subscription request / response and a sample of indications
     sub_counts=$(e2ap_proc_counts "$pcap" 8 "$e/m3-$tag-subscription-decode.txt")
     echo "subscription (procedureCode 8): $sub_counts" >"$e/m3-$tag-subscription-counts.txt"
-    tshark -r "$pcap" -d sctp.port==36422,e2ap -Y 'e2ap.procedureCode == 5' -c 3 -V >"$e/m3-$tag-indication-sample-decode.txt" 2>/dev/null
+    e2ap_sample_decode "$pcap" 5 3 "$e/m3-$tag-indication-sample-decode.txt"
     sub_req=$(echo "$sub_counts" | sed -n 's/.*initiating=\([0-9]*\).*/\1/p')
     sub_resp=$(echo "$sub_counts" | sed -n 's/.*successful=\([0-9]*\).*/\1/p')
     : "${sub_req:=0}" "${sub_resp:=0}"
