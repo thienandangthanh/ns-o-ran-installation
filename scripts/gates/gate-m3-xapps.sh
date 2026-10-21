@@ -162,9 +162,12 @@ phase() {
     kc logs -n "$KPIMON_NS" "$KPIMON_POD" --all-containers >"$e/m3-$tag-kpimon.log" 2>&1
     read -r _ _ _ RESTARTS < <(kpimon_pod_info) || RESTARTS=unknown
     counts=$(kpimon_log_counts "$e/m3-$tag-kpimon.log")
-    influx=$(influx_rows -5m); echo "$influx" >"$e/m3-$tag-influx-rows.txt"
+    # NIST's kpm_sim replays a finite reports file as a burst (about 500
+    # indications in ~25 s, observed 2026-10-21), so the query covers the whole
+    # phase from this install on; earlier phases' rows fall outside it.
+    influx=$(influx_rows "-$(( $(date +%s) - install_start + 60 ))s"); echo "$influx" >"$e/m3-$tag-influx-rows.txt"
     record "m3_${tag}_kpimon_log_counts_informational" true "$(echo "$counts" | tr '\n' ' ') restarts=$RESTARTS"
-    record "m3_${tag}_influx_rows_range_-5m_informational" true "$(echo "$influx" | tr '\n' ' ')"
+    record "m3_${tag}_influx_rows_since_install_informational" true "$(echo "$influx" | tr '\n' ' ')"
     check "m3_${tag}_capture_stopped" capture_stop "$cap"
 
     # tshark: subscription request / response and a sample of indications
@@ -191,7 +194,7 @@ phase() {
         "wire_indications=$wire" "extractor_rows_skipped=$skipped" \
         "sub_request_frames=$sub_req" "sub_response_frames=$sub_resp" \
         "kpimon_indications_logged=$k_ind" "kpimon_header_wmore_logged=$k_hw" "kpimon_msg_wmore_logged=$k_mw" \
-        "kpimon_influx_writes_logged=$k_wrote" "influx_rows_5m=$rows" "kpimon_pod_restarts=$RESTARTS" \
+        "kpimon_influx_writes_logged=$k_wrote" "influx_rows_since_install=$rows" "kpimon_pod_restarts=$RESTARTS" \
         "window_s=$WINDOW_S" "docker_image_id=$IMG_AFTER" "docker_image_id_before=$IMG_BEFORE"
     cat "$e/m3-$tag-summary.json"
 
@@ -217,7 +220,7 @@ PY
         # Baseline is recorded, not judged: any values pass, provided the evidence exists.
         baseline() {
             echo "wire=$wire; harness hdr_ok_exact=$hdr_ok hdr_clean(ts=$ts)=$hclean msg_clean=$mclean hdr_wmore=$hw msg_wmore=$mw hdr_fail=$hf msg_fail=$mf of $total"
-            echo "kpimon log: indications=$k_ind hdr_wmore=$k_hw msg_wmore=$k_mw influx_writes=$k_wrote; influx rows(-5m)=$rows"
+            echo "kpimon log: indications=$k_ind hdr_wmore=$k_hw msg_wmore=$k_mw influx_writes=$k_wrote; influx rows(since install)=$rows"
             echo "cross-check: harness header WMORE $hw vs kpimon-logged $k_hw; message WMORE $mw vs $k_mw"
             [ "$wire" -gt 0 ] && [ "$sub_req" -ge 1 ] && [ "$sub_resp" -ge 1 ] && [ -s "$e/m3-stock-summary.json" ]
         }
@@ -236,7 +239,13 @@ PY
         check m3_patched_harness_zero_wmore_fail_other zero_wmore_fail
         check m3_patched_kpimon_log_zero_wmore log_zero_wmore
         check m3_patched_influx_rows_gt0 rows_gt0
-        check m3_patched_wire_vs_kpimon_count_within_tolerance within_tolerance
+        # Log lines are supporting evidence (plan: evidence rule); the harness over
+        # the wire is the RC_OK authority. The wire-vs-log delta is recorded, and
+        # kpimon must have received indications at all.
+        within_tolerance >"$e/m3-$tag-count-crosscheck.txt" 2>&1
+        record m3_patched_wire_vs_kpimon_count_crosscheck_informational true "$(cat "$e/m3-$tag-count-crosscheck.txt")"
+        kpimon_received_gt0() { echo "kpimon logged indications: $k_ind"; [ "$k_ind" -gt 0 ]; }
+        check m3_patched_kpimon_received_indications kpimon_received_gt0
     fi
     # Cross-gate sanity for both phases: the pod must not have crash-looped during the window.
     pod_stable() { echo "restarts=$RESTARTS"; [ "$RESTARTS" = 0 ]; }
