@@ -153,6 +153,14 @@ Its wire evidence already showed the probe passing.</li>
 The gate now checks these facts instead.</li>
 <li><span class="tag question">observation</span>Pacing input for pre-M8: a 2 s simulation takes about 55 s of wall time with the default 5 nodes (about 27 real s per sim s) and about 3.6 s with 1 gNB. M4's timing script measures this properly.</li>
 </ul>
+<li><span class="tag decision"><b>M4 green</b></span> 2026-10-21 17:17Z, first attempt, harness <code>d1b0edc</code>, evidence <code>evidence/m4/20261021T165230Z</code>, 18/18 checks:
+<ul>
+<li>Clean-clone build in 175 s; no e2sim/asn1c linkage across 21 files; CMake cache clean.</li>
+<li>Smoke runs: default (5 nodes, 20 samples each, trace equals wire), single node, agent down, and the default-args regression.</li>
+<li>Timing: <b>1.685 s</b> (1 gNB) and <b>31.96 s</b> (default 4+1) of wall time per simulated second, CV under 1 %. Report: <code>plans/reports/timing-261022-0217-GH-1-ns3-scenario-zero-real-vs-sim-time.md</code>.</li>
+<li>Snapshot <code>l4-ns3-build</code> taken.</li>
+</ul></li>
+</ul>
 <h2>P5: E2 agent (development; gates M5/M6 follow)</h2>
 <ul>
 <li><span class="tag decision">decision</span>The agent was implemented by an Opus subagent. Testbed fork <code>ns3_e2_agent/</code> at HEAD <code>ca5be2e</code>:

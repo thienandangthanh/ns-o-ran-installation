@@ -1,0 +1,28 @@
+ file   disk    vda   /home/andang/VMs/ubuntu24.04-l4-ns3-build.qcow2
+ file   cdrom   sda   -
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='/home/andang/VMs/ubuntu24.04-l4-ns3-build.qcow2'/>
+      <target dev='vda' bus='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
+    </disk>
+apparent 107390828544	/home/andang/VMs/ubuntu24.04
+apparent 28448456704	/home/andang/VMs/ubuntu24.04-l1-ric-up.1792592057
+apparent 2660958208	/home/andang/VMs/ubuntu24.04-l1-ric-up.1792601529
+apparent 688128000	/home/andang/VMs/ubuntu24.04-l1-ric-up.qcow2
+apparent 198208	/home/andang/VMs/ubuntu24.04-l4-ns3-build.qcow2
+apparent 23527424	/home/andang/VMs/ubuntu24.04-m0-branch-l10211038.qcow2
+apparent 18284544	/home/andang/VMs/ubuntu24.04-m0-probe-l10211038.qcow2
+apparent 277020672	/home/andang/VMs/ubuntu24.1792579224
+apparent 15171256320	/home/andang/VMs/ubuntu24.1792580995
+apparent 286326784	/home/andang/VMs/ubuntu24.fresh-install
+allocated 3488784384	/home/andang/VMs/ubuntu24.04
+allocated 28448423936	/home/andang/VMs/ubuntu24.04-l1-ric-up.1792592057
+allocated 2660904960	/home/andang/VMs/ubuntu24.04-l1-ric-up.1792601529
+allocated 688070656	/home/andang/VMs/ubuntu24.04-l1-ric-up.qcow2
+allocated 200704	/home/andang/VMs/ubuntu24.04-l4-ns3-build.qcow2
+allocated 23470080	/home/andang/VMs/ubuntu24.04-m0-branch-l10211038.qcow2
+allocated 18227200	/home/andang/VMs/ubuntu24.04-m0-probe-l10211038.qcow2
+allocated 276963328	/home/andang/VMs/ubuntu24.1792579224
+allocated 15171227648	/home/andang/VMs/ubuntu24.1792580995
+allocated 286269440	/home/andang/VMs/ubuntu24.fresh-install

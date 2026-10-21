@@ -1,0 +1,17 @@
+ns-3 scenario-zero timing (real seconds per simulated second)
+date 2026-10-22T01:58:15+09:00 .. 2026-10-22T02:15:09+09:00 (Asia/Seoul)
+simTime 10s, indicationPeriodicity 0.1s, expected samples/node 100
+commits: ns3-mmwave ace321688130834fb79cf724050178a661ed4cf8, oran-interface 438a839aad69854acca41ef435ff681ee7bd3134, harness d1b0edccb4ca85451ad348781ab09263ee6cf9e8
+nproc 8, load avg before [1.82 2.52 1.32] after [1.05 1.51 1.41]
+binary /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default
+
+single   repeats=3 mean=1.685 min=1.680 max=1.690 stdev=0.005 cv=0.3%
+  r1 wall=16.80s rc=0 samples/node={'2': 100} invalid=0
+  r2 wall=16.85s rc=0 samples/node={'2': 100} invalid=0
+  r3 wall=16.90s rc=0 samples/node={'2': 100} invalid=0
+default  repeats=3 mean=31.958 min=31.730 max=32.108 stdev=0.201 cv=0.6%
+  r1 wall=320.36s rc=0 samples/node={'1': 100, '2': 100, '3': 100, '4': 100, '5': 100} invalid=0
+  r2 wall=321.08s rc=0 samples/node={'1': 100, '2': 100, '3': 100, '4': 100, '5': 100} invalid=0
+  r3 wall=317.30s rc=0 samples/node={'1': 100, '2': 100, '3': 100, '4': 100, '5': 100} invalid=0
+
+result: ok

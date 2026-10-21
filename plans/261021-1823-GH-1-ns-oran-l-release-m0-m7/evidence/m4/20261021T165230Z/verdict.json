@@ -1,0 +1,111 @@
+{
+  "gate": "m4",
+  "ts": "20261021T165230Z",
+  "harness_sha": "d1b0edccb4ca85451ad348781ab09263ee6cf9e8",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "ca5be2eab50552d2ed22f5688b4d4b3c76387991",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "ace321688130834fb79cf724050178a661ed4cf8",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "438a839aad69854acca41ef435ff681ee7bd3134",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+  },
+  "duration_s": 1357,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "m4_build_ns3_exit0",
+      "pass": true,
+      "detail": "[build-ns3 16:55:27] done\nbuild-ns3.sh exit 0 after 175s\nbinary /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"
+    },
+    {
+      "name": "m4_configure_flags_recorded",
+      "pass": true,
+      "detail": "ns3: https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git ace321688130834fb79cf724050178a661ed4cf8\noran-interface: https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git 438a839aad69854acca41ef435ff681ee7bd3134\nbuild: ./ns3 build -j8 scenario-zero"
+    },
+    {
+      "name": "m4_build_duration_informational",
+      "pass": true,
+      "detail": "build-ns3.sh took 175s"
+    },
+    {
+      "name": "m4_no_e2sim_asn1c_linkage",
+      "pass": true,
+      "detail": "checked 21 files (binary + build/lib/*.so)"
+    },
+    {
+      "name": "m4_cmakecache_has_no_e2sim",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m4_usr_local_include_e2sim_informational",
+      "pass": true,
+      "detail": "ls /usr/local/include/e2sim: ls: cannot access '/usr/local/include/e2sim': No such file or directory "
+    },
+    {
+      "name": "m4_no_e2sim_in_build_files",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m4_smoke_default_exits0",
+      "pass": true,
+      "detail": "scenario smoke exit 0 in 54.3s: --simTime=2 --indicationPeriodicity=0.1 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/m4/20261021T165230Z/runs/smoke"
+    },
+    {
+      "name": "m4_smoke_sink_hello_bye_samples_ues_imsis",
+      "pass": true,
+      "detail": "sink validation=structural nodes=['1', '2', '3', '4', '5'] samples={'1': 20, '2': 20, '3': 20, '4': 20, '5': 20} ues={'1': {'0': 1, '12': 19}, '2': {'0': 1, '3': 4, '4': 7, '2': 1, '5': 5, '6': 2}, '3': {'0': 1, '1': 1, '2': 6, '3': 8, '4': 4}, '4': {'0': 1, '2': 12, '1': 7}, '5': {'0': 1, '4': 5, '3': 10, '2': 4}} imsis=12 invalid=0"
+    },
+    {
+      "name": "m4_smoke_trace_equals_wire",
+      "pass": true,
+      "detail": "node 3: 20 sample lines identical\nnode 4: 20 sample lines identical\nnode 5: 20 sample lines identical"
+    },
+    {
+      "name": "m4_single_node_exits0",
+      "pass": true,
+      "detail": "scenario single exit 0 in 3.6s: --simTime=2 --indicationPeriodicity=0.1 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/m4/20261021T165230Z/runs/single --nMmWaveEnbNodes=1 --e2lteEnabled=false"
+    },
+    {
+      "name": "m4_single_node_only_node2_hello",
+      "pass": true,
+      "detail": "sink validation=structural nodes=['2'] samples={'2': 20} ues={'2': {'0': 1, '1': 5, '2': 14}} imsis=2 invalid=0"
+    },
+    {
+      "name": "m4_agent_down_completes_traces_complete",
+      "pass": true,
+      "detail": "node 3: 20 samples, last ipcDropped=19\nnode 4: 20 samples, last ipcDropped=19\nnode 5: 20 samples, last ipcDropped=19"
+    },
+    {
+      "name": "m4_default_run_no_new_args_exits0",
+      "pass": true,
+      "detail": "scenario regress exit 0 in 53.8s: --simTime=2"
+    },
+    {
+      "name": "m4_default_run_same_nodes_and_ues_as_smoke",
+      "pass": true,
+      "detail": "sink validation=structural nodes=['1', '2', '3', '4', '5'] samples={'1': 20, '2': 20, '3': 20, '4': 20, '5': 20} ues={'1': {'0': 1, '12': 19}, '2': {'0': 1, '3': 4, '4': 7, '2': 1, '5': 5, '6': 2}, '3': {'0': 1, '1': 1, '2': 6, '3': 8, '4': 4}, '4': {'0': 1, '2': 12, '1': 7}, '5': {'0': 1, '4': 5, '3': 10, '2': 4}} imsis=12 invalid=0"
+    },
+    {
+      "name": "m4_timing_script_runs",
+      "pass": true,
+      "detail": "  r3 wall=317.30s rc=0 samples/node={'1': 100, '2': 100, '3': 100, '4': 100, '5': 100} invalid=0\n\nresult: ok"
+    },
+    {
+      "name": "m4_timing_report_repeats_and_shas",
+      "pass": true,
+      "detail": "single: 3 repeats, mean 1.685 real s per sim s, cv 0.3%\ndefault: 3 repeats, mean 31.958 real s per sim s, cv 0.6%\ncommits {'ns3_mmwave': 'ace321688130834fb79cf724050178a661ed4cf8', 'oran_interface': '438a839aad69854acca41ef435ff681ee7bd3134', 'harness': 'd1b0edccb4ca85451ad348781ab09263ee6cf9e8'} nproc 8 load 1.82 2.52 1.32 -> 1.05 1.51 1.41"
+    },
+    {
+      "name": "m4_no_stray_process_or_listener",
+      "pass": true,
+      "detail": "no scenario process, no listener on 3847x"
+    }
+  ]
+}

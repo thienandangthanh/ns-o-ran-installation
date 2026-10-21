@@ -1,0 +1,56 @@
+{
+  "schema": "ipc-null-sink-summary.v1",
+  "validation": "structural",
+  "ports": {
+    "38472": {
+      "connections": 1,
+      "hello": 1,
+      "sample": 100,
+      "bye": 1,
+      "invalid": 0,
+      "bytes": 278692
+    }
+  },
+  "nodes": {
+    "2": {
+      "port": 38472,
+      "kind": "gnb",
+      "hello": 1,
+      "sample": 100,
+      "bye": 1,
+      "last_seq": 99,
+      "seq_gaps": 0,
+      "ue_counts": {
+        "0": 1,
+        "1": 5,
+        "2": 94
+      },
+      "ipc_dropped_last": 0,
+      "ipc_dropped_max": 0,
+      "period_ns": 100000000,
+      "run_ids": [
+        "1792601930875-22882"
+      ],
+      "bye_msg": {
+        "lastSeq": 99,
+        "built": 100,
+        "sent": 100,
+        "droppedDisconnected": 0,
+        "droppedBackpressure": 0
+      }
+    }
+  },
+  "totals": {
+    "hello": 1,
+    "sample": 100,
+    "bye": 1,
+    "invalid": 0,
+    "connections": 1,
+    "distinct_imsis": [
+      2,
+      3
+    ],
+    "n_distinct_imsis": 2
+  },
+  "invalid_examples": []
+}
