@@ -1,0 +1,180 @@
+[19:59:14] gate m3 start; evidence /home/uc/evidence/m3/20261021T195913Z; harness b94622da1222fc8341ab89ecefb42516a950cf45
+[19:59:14] ric watchdog started (pid 2253, threshold 600s)
+[20:02:26] PASS m3_refnode_up
+[20:02:26] PASS m3_nist_tree_at_testbed_sha
+[20:02:26] PASS m3_build_tools_installed
+[20:02:26] PASS m3_kubectl_exec_it_works_without_tty
+[20:04:05] PASS m3_regen_check_pass
+[20:04:05] ===== phase stock (KPIMON_TIMESTAMP_SIZE8=false) =====
+[20:04:15] PASS m3_stock_refnode_stopped_before_uninstall
+[20:04:17] PASS m3_stock_kpimon_uninstalled
+[20:04:18] PASS m3_stock_capture_started
+[20:12:15] PASS m3_stock_installer_ok
+[20:13:02] PASS m3_stock_pod_ready_and_created_after_install
+[20:13:02] PASS m3_stock_pod_image_id_informational
+[20:13:03] PASS m3_stock_so_extracted_and_harness_built
+[20:13:03] PASS m3_stock_so_timestamp_size_is_4
+[20:13:31] PASS m3_stock_refnode_restarted
+[20:13:31] PASS m3_stock_first_indication_logged
+window 600s done; not-connected samples: 0
+[20:23:32] PASS m3_stock_kpimon_log_counts_informational
+[20:23:32] PASS m3_stock_influx_rows_since_install_informational
+[20:23:33] PASS m3_stock_capture_stopped
+[20:23:33] PASS m3_stock_tshark_decodes_subscription_request_and_response
+[20:23:33] PASS m3_stock_harness_ran_on_pcap
+{
+  "decode": {
+    "expect_ts_len": 4,
+    "hdr_clean": 0,
+    "hdr_fail": 0,
+    "hdr_ok_exact": 0,
+    "hdr_other": 0,
+    "hdr_wmore": 505,
+    "msg_clean": 505,
+    "msg_fail": 0,
+    "msg_other": 0,
+    "msg_wmore": 0,
+    "total": 505
+  },
+  "extract": {
+    "indications_seen": 505,
+    "retransmissions_dropped": 0,
+    "rows_skipped": 0,
+    "unique": 505
+  },
+  "facts": {
+    "docker_image_id": "sha256:3b8d156d99d7a783a084ce1c569e50c0425e672eb3d78f4d106cd2a36a034c36",
+    "docker_image_id_before": "",
+    "expect_ts_len": 4,
+    "extractor_rows_skipped": 0,
+    "influx_rows_since_install": 2970,
+    "kpimon_header_wmore_logged": 505,
+    "kpimon_indications_logged": 505,
+    "kpimon_influx_writes_logged": 330,
+    "kpimon_msg_wmore_logged": 0,
+    "kpimon_pod_restarts": 0,
+    "size8_install": "false",
+    "sub_request_frames": 1,
+    "sub_response_frames": 1,
+    "tag": "stock",
+    "window_s": 600,
+    "wire_indications": 505
+  },
+  "harness": {
+    "hdr": {
+      "RC_FAIL": 0,
+      "RC_OK": 0,
+      "RC_WMORE": 505
+    },
+    "hdr_ok_with_trailing_bytes": 0,
+    "hdr_other": {},
+    "msg": {
+      "RC_FAIL": 0,
+      "RC_OK": 505,
+      "RC_WMORE": 0
+    },
+    "msg_format_hist": {
+      "1": 505
+    },
+    "msg_ok_with_trailing_bytes": 0,
+    "msg_other": {},
+    "total": 505,
+    "ts_len_hist": {
+      "None": 505
+    }
+  }
+}[20:23:33] PASS m3_stock_baseline_recorded
+[20:23:33] PASS m3_stock_kpimon_pod_no_restarts
+[20:23:34] ===== phase patched (KPIMON_TIMESTAMP_SIZE8=true) =====
+[20:23:44] PASS m3_patched_refnode_stopped_before_uninstall
+[20:24:14] PASS m3_patched_kpimon_uninstalled
+[20:24:15] PASS m3_patched_capture_started
+[20:28:54] PASS m3_patched_installer_ok
+[20:29:41] PASS m3_patched_pod_ready_and_created_after_install
+[20:29:41] PASS m3_patched_pod_image_id_informational
+[20:29:41] PASS m3_patched_so_extracted_and_harness_built
+[20:29:42] PASS m3_patched_so_timestamp_size_is_8
+[20:29:42] PASS m3_patched_docker_image_id_changed
+[20:30:10] PASS m3_patched_refnode_restarted
+[20:30:15] PASS m3_patched_first_indication_logged
+window 600s done; not-connected samples: 0
+[20:40:15] PASS m3_patched_kpimon_log_counts_informational
+[20:40:15] PASS m3_patched_influx_rows_since_install_informational
+[20:40:16] PASS m3_patched_capture_stopped
+[20:40:16] PASS m3_patched_tshark_decodes_subscription_request_and_response
+[20:40:16] PASS m3_patched_harness_ran_on_pcap
+{
+  "decode": {
+    "expect_ts_len": 8,
+    "hdr_clean": 505,
+    "hdr_fail": 0,
+    "hdr_ok_exact": 505,
+    "hdr_other": 0,
+    "hdr_wmore": 0,
+    "msg_clean": 505,
+    "msg_fail": 0,
+    "msg_other": 0,
+    "msg_wmore": 0,
+    "total": 505
+  },
+  "extract": {
+    "indications_seen": 505,
+    "retransmissions_dropped": 0,
+    "rows_skipped": 0,
+    "unique": 505
+  },
+  "facts": {
+    "docker_image_id": "sha256:84e46684cb2a30a0a364e3cc31825a0d78936b54bbf05825a805b513a80ccdfd",
+    "docker_image_id_before": "sha256:3b8d156d99d7a783a084ce1c569e50c0425e672eb3d78f4d106cd2a36a034c36",
+    "expect_ts_len": 8,
+    "extractor_rows_skipped": 0,
+    "influx_rows_since_install": 2970,
+    "kpimon_header_wmore_logged": 0,
+    "kpimon_indications_logged": 505,
+    "kpimon_influx_writes_logged": 330,
+    "kpimon_msg_wmore_logged": 0,
+    "kpimon_pod_restarts": 0,
+    "size8_install": "true",
+    "sub_request_frames": 1,
+    "sub_response_frames": 1,
+    "tag": "patched",
+    "window_s": 600,
+    "wire_indications": 505
+  },
+  "harness": {
+    "hdr": {
+      "RC_FAIL": 0,
+      "RC_OK": 505,
+      "RC_WMORE": 0
+    },
+    "hdr_ok_with_trailing_bytes": 0,
+    "hdr_other": {},
+    "msg": {
+      "RC_FAIL": 0,
+      "RC_OK": 505,
+      "RC_WMORE": 0
+    },
+    "msg_format_hist": {
+      "1": 505
+    },
+    "msg_ok_with_trailing_bytes": 0,
+    "msg_other": {},
+    "total": 505,
+    "ts_len_hist": {
+      "8": 505
+    }
+  }
+}[20:40:17] PASS m3_patched_wire_indications_gt0
+[20:40:17] PASS m3_patched_extractor_skipped_no_rows
+[20:40:17] PASS m3_patched_harness_every_header_clean_rc_ok
+[20:40:17] PASS m3_patched_harness_every_message_clean_rc_ok
+[20:40:17] PASS m3_patched_harness_zero_wmore_fail_other
+[20:40:17] PASS m3_patched_kpimon_log_zero_wmore
+[20:40:17] PASS m3_patched_influx_rows_gt0
+[20:40:17] PASS m3_patched_wire_vs_kpimon_count_crosscheck_informational
+[20:40:17] PASS m3_patched_kpimon_received_indications
+[20:40:17] PASS m3_patched_kpimon_pod_no_restarts
+[20:40:17] PASS m3_no_capture_left_running
+[20:40:17] PASS m3_pcaps_in_evidence
+[20:40:17] ric watchdog stopped (pid 2253)
+verdict m3: PASS failed=[]

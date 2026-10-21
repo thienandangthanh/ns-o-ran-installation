@@ -24,6 +24,8 @@ def parse(dirpath):
     section = None
     for text in texts:
         for line in text.splitlines():
+            if line.startswith("#"):
+                continue
             if line.startswith("--- "):
                 section = line[4:].strip()
                 continue
@@ -46,8 +48,13 @@ def parse(dirpath):
 
 
 def diff(a, b):
-    keys = sorted(set(a) | set(b))
-    return {k: {"dev": a.get(k), "rerun": b.get(k)} for k in keys if a.get(k) != b.get(k)}
+    """Version changes for items both runs recorded."""
+    return {k: {"dev": a[k], "rerun": b[k]} for k in sorted(set(a) & set(b)) if a[k] != b[k]}
+
+
+def only(a, b):
+    """Items one run recorded and the other did not (collection, not drift)."""
+    return {"dev_only": sorted(set(a) - set(b)), "rerun_only": sorted(set(b) - set(a))}
 
 
 def main():
@@ -68,6 +75,7 @@ def main():
         "image_drift": {k: {"dev": list(v["dev"] or []), "rerun": list(v["rerun"] or [])}
                         for k, v in diff(di, ri).items()},
         "platform_drift": diff(do, ro),
+        "not_compared": {"packages": only(dp, rp), "images": only(di, ri), "platform": only(do, ro)},
     }
     report["drift"] = bool(report["package_drift"] or report["image_drift"] or report["platform_drift"])
     text = json.dumps(report, indent=2)

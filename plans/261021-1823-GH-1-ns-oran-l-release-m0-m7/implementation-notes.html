@@ -263,5 +263,16 @@ Neither is produced by our code. The agent accepts the subscription without inte
 </ul></li>
 <li><span class="tag deviation">deviation</span>Gate helper: after an InfluxDB pod restart the in-pod CLI config is gone (401). <code>influx_rows</code> now uses the pod's <code>DOCKER_INFLUXDB_INIT_ADMIN_TOKEN</code>, expanded inside the pod so it is never printed. Verified on the VM: 401 before, rows returned after.</li>
 </ul>
+<h2>P8: unattended re-run from fresh-install</h2>
+<ul>
+<li><span class="tag deviation">deviation</span><b>P8 attempt 1</b>, harness <code>b94622d</code>, log <code>evidence/p8-attempt1-run-to-m7.log</code>, started 2026-10-21 19:16Z:
+<ul>
+<li>M0 through M4 were green unattended (snapshots f0–f3).</li>
+<li>The run then stopped itself at the disk guard before snapshot f4: host <code>/home</code> had 29 G free, and the guard needs 30 G. The re-run used about 41 G through M4: f0 (M1) 13.7 G, f2 (M3) 23.5 G.</li>
+<li>Version drift of M1 against the dev run is none: all 11 shared packages and all 17 images (tag + digest) are identical (<code>version-drift-vs-dev.json</code>).</li>
+<li>Since the finale needs all 8 verdicts from one unattended invocation, P8 restarts from <code>fresh-install</code> rather than resuming.</li>
+</ul></li>
+<li><span class="tag decision">decision</span>Applied D2 (the user's pre-authorised snapshot cleanup). The dev run's own snapshots l7…l0 and m0-* were deleted leaf-first with <code>virsh snapshot-delete</code>, freeing 47 G (29 G to 76 G free); libvirt refused none. The failed P8 attempt's own f3…f0 were deleted too: same category (the run's own intermediate states, evidence archived on the host, re-created by the re-run), and their names would collide. <code>fresh-install</code> was never touched.</li>
+</ul>
 </body>
 </html>

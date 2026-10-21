@@ -1,0 +1,137 @@
+{
+  "binary": "/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default",
+  "simTime_s": 10.0,
+  "indicationPeriodicity_s": 0.1,
+  "expected_samples_per_node": 100,
+  "commits": {
+    "ns3_mmwave": "ace321688130834fb79cf724050178a661ed4cf8",
+    "oran_interface": "438a839aad69854acca41ef435ff681ee7bd3134",
+    "harness": "b94622da1222fc8341ab89ecefb42516a950cf45"
+  },
+  "nproc": 8,
+  "load_avg_before": "1.54 2.70 1.43",
+  "load_avg_after": "1.44 1.28 1.22",
+  "started": "2026-10-22T05:47:08+09:00",
+  "finished": "2026-10-22T06:03:00+09:00",
+  "timezone": "Asia/Seoul",
+  "method": "wall time via python time.monotonic() around the direct binary call, own process group, emitter active against ipc-null-sink; includes process startup and scenario setup",
+  "configs": {
+    "single": {
+      "repeats": 3,
+      "mean": 1.6377128617,
+      "min": 1.6341078449999997,
+      "max": 1.6395881051000003,
+      "stdev": 0.0031228831939347276,
+      "cv": 0.0019068563647311602,
+      "runs": [
+        {
+          "wall_s": 16.394426350000003,
+          "rc": 0,
+          "timed_out": false,
+          "pgid": 21918,
+          "leftover_killed": false,
+          "dir": "/home/uc/evidence/m4/20261021T204138Z/timing/single/r1",
+          "idx": 1,
+          "real_s_per_sim_s": 1.6394426350000004,
+          "samples_per_node": {
+            "2": 100
+          },
+          "invalid_lines": 0
+        },
+        {
+          "wall_s": 16.395881051000003,
+          "rc": 0,
+          "timed_out": false,
+          "pgid": 22329,
+          "leftover_killed": false,
+          "dir": "/home/uc/evidence/m4/20261021T204138Z/timing/single/r2",
+          "idx": 2,
+          "real_s_per_sim_s": 1.6395881051000003,
+          "samples_per_node": {
+            "2": 100
+          },
+          "invalid_lines": 0
+        },
+        {
+          "wall_s": 16.341078449999998,
+          "rc": 0,
+          "timed_out": false,
+          "pgid": 22700,
+          "leftover_killed": false,
+          "dir": "/home/uc/evidence/m4/20261021T204138Z/timing/single/r3",
+          "idx": 3,
+          "real_s_per_sim_s": 1.6341078449999997,
+          "samples_per_node": {
+            "2": 100
+          },
+          "invalid_lines": 0
+        }
+      ]
+    },
+    "default": {
+      "repeats": 3,
+      "mean": 29.9322432414,
+      "min": 29.9095151987,
+      "max": 29.9542674422,
+      "stdev": 0.02238442247715941,
+      "cv": 0.0007478364483621122,
+      "runs": [
+        {
+          "wall_s": 299.542674422,
+          "rc": 0,
+          "timed_out": false,
+          "pgid": 23056,
+          "leftover_killed": false,
+          "dir": "/home/uc/evidence/m4/20261021T204138Z/timing/default/r1",
+          "idx": 1,
+          "real_s_per_sim_s": 29.9542674422,
+          "samples_per_node": {
+            "1": 100,
+            "2": 100,
+            "3": 100,
+            "4": 100,
+            "5": 100
+          },
+          "invalid_lines": 0
+        },
+        {
+          "wall_s": 299.32947083299996,
+          "rc": 0,
+          "timed_out": false,
+          "pgid": 29314,
+          "leftover_killed": false,
+          "dir": "/home/uc/evidence/m4/20261021T204138Z/timing/default/r2",
+          "idx": 2,
+          "real_s_per_sim_s": 29.932947083299997,
+          "samples_per_node": {
+            "1": 100,
+            "2": 100,
+            "3": 100,
+            "4": 100,
+            "5": 100
+          },
+          "invalid_lines": 0
+        },
+        {
+          "wall_s": 299.095151987,
+          "rc": 0,
+          "timed_out": false,
+          "pgid": 35581,
+          "leftover_killed": false,
+          "dir": "/home/uc/evidence/m4/20261021T204138Z/timing/default/r3",
+          "idx": 3,
+          "real_s_per_sim_s": 29.9095151987,
+          "samples_per_node": {
+            "1": 100,
+            "2": 100,
+            "3": 100,
+            "4": 100,
+            "5": 100
+          },
+          "invalid_lines": 0
+        }
+      ]
+    }
+  },
+  "ok": true
+}

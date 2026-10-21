@@ -1,0 +1,8 @@
+# ns-3 configure flags used by scripts/build-ns3.sh
+./ns3 configure --build-profile=default --disable-examples --disable-tests --disable-python --enable-modules=mmwave\,oran-interface -G Unix\ Makefiles -- -DNS3_CCACHE=OFF -DNS3_FAST_LINKERS=OFF
+ns3: https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git ace321688130834fb79cf724050178a661ed4cf8
+oran-interface: https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git 438a839aad69854acca41ef435ff681ee7bd3134
+build: ./ns3 build -j8 scenario-zero
+compiler: g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+cmake: cmake version 3.28.3
+host: Ubuntu 24.04.5 LTS x86_64

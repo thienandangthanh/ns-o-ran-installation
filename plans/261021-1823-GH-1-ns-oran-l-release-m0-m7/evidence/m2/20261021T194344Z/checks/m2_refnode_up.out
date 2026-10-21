@@ -1,0 +1,15 @@
+[19:44:28] bringup ric: waiting up to 1200s for ricplt pods
+[19:44:28] bringup ric: rc=0 unready: deployment-ricplt-e2mgr-9b6b8f99f-jsfx2 deployment-ricplt-e2term-alpha-f8f7d7855-9v4pg r4-infrastructure-prometheus-alertmanager-b9cc56766-96bzb 
+[19:44:43] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-9v4pg deployment-ricplt-rtmgr-74fb47b69d-4428g 
+[19:44:58] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-9v4pg 
+[19:45:13] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-9v4pg 
+[19:45:28] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-9v4pg 
+[19:45:44] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-9v4pg 
+[19:45:59] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-9v4pg 
+[19:46:14] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-9v4pg 
+[19:46:29] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-9v4pg 
+[19:46:44] bringup ric: all ricplt pods Ready
+[19:46:54] bringup ric: e2term registered with e2mgr: [{"e2tAddress":"10.105.223.165:38000","ranNames":[]}]
+[19:47:14] bringup refnode: attempt 1: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)
+[19:47:17] bringup refnode: run_e2sim script exit 0
+[19:47:22] bringup refnode: e2mgr shows a CONNECTED node (attempt 1)
