@@ -138,7 +138,7 @@ phase() {
     sleep 2
 
     install_start=$(date +%s)
-    check "m3_${tag}_installer_ok" kpimon_install "$size8" "$e/install-$tag.log"
+    check "m3_${tag}_installer_ok" kpimon_install_retry "$size8" "$e/install-$tag.log"
     check "m3_${tag}_pod_ready_and_created_after_install" kpimon_wait_ready 300 "$install_start"
     IMG_AFTER=$(kpimon_image_id)
     record "m3_${tag}_pod_image_id_informational" true \

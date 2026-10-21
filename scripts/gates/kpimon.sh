@@ -163,6 +163,26 @@ kubectl_exec_it_probe() {
     [ "$rc" -eq 0 ] && grep -q EXEC_IT_OK "$out"
 }
 
+# kpimon_install_retry <size8> <logfile>: the installer builds the image with
+# `go build`, which downloads modules from proxy.golang.org; a reset connection
+# there fails the build (observed 2026-10-21). Retry up to 2 more times, only
+# when the failed log carries a network-error signature. Every attempt keeps
+# its own log, and the attempts are listed in <logfile>.attempts.
+KPIMON_NET_ERR='connection reset by peer|i/o timeout|TLS handshake timeout|dial tcp|unexpected EOF|502 Bad Gateway|503 Service Unavailable'
+kpimon_install_retry() {
+    local size8="$1" log="$2" n rc
+    for n in 1 2 3; do
+        kpimon_install "$size8" "$log.try$n"; rc=$?
+        echo "$(date -u +%FT%TZ) try $n exit $rc" >>"$log.attempts"
+        cp "$log.try$n" "$log"
+        [ "$rc" -eq 0 ] && return 0
+        grep -Eaq "$KPIMON_NET_ERR" "$log.try$n" || { echo "not a network error: no retry"; return "$rc"; }
+        log "kpimon install try $n failed on a network error; retrying"
+        sleep 30
+    done
+    return "$rc"
+}
+
 # kpimon_install <size8:true|false> <logfile>
 kpimon_install() {
     local size8="$1" log="$2" rc
