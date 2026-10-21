@@ -71,10 +71,12 @@ retry() {
 }
 
 # nist_run <timeout-s> <command...>: unattended NIST call. stdin never reaches
-# EOF (busy-loop guard for `read -t`), and the whole call is bounded.
+# EOF (busy-loop guard for `read -t`), and the whole call is bounded. The idle
+# stdin comes from a process substitution, not a pipeline: bash waits for every
+# pipeline member, so `sleep infinity | cmd` would never return.
 nist_run() {
     local t="$1"; shift
-    sleep infinity | timeout --kill-after=60 "$t" "$@"
+    timeout --kill-after=60 "$t" "$@" < <(exec sleep $((t + 120)))
 }
 
 # disk_guard: VM / must keep >= 25 % free; prune docker build cache if docker exists.
