@@ -7,6 +7,7 @@ set -uo pipefail
 VM_DOMAIN="${VM_DOMAIN:-ubuntu24.04}"
 VM_SSH="${VM_SSH:-oran-kvm-2404}"
 VM_IMAGE_DIR="${VM_IMAGE_DIR:-/home/andang/VMs}"
+# shellcheck disable=SC2034  # used by the scripts that source this file
 VM_PROTECTED_SNAPSHOT=fresh-install
 HOST_MIN_FREE_GB="${HOST_MIN_FREE_GB:-20}"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"

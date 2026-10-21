@@ -157,7 +157,7 @@ kubectl_exec_it_probe() {
     # The probe targets e2mgr because InfluxDB is created by the installer itself.
     local out="$EVIDENCE_DIR/kubectl-exec-it-probe.txt" pod rc
     pod=$(kc -n ricplt get pods -o name | grep -m1 e2mgr)
-    timeout 90 kc exec -it -n ricplt "$pod" -- sh -c "echo EXEC_IT_OK" < <(exec sleep 100) >"$out" 2>&1
+    timeout 90 env KUBECONFIG="$HOME/.kube/config" kubectl exec -it -n ricplt "$pod" -- sh -c "echo EXEC_IT_OK" < <(exec sleep 100) >"$out" 2>&1
     rc=$?
     echo "exit $rc on $pod: $(tr '\n' '|' <"$out")"
     [ "$rc" -eq 0 ] && grep -q EXEC_IT_OK "$out"
