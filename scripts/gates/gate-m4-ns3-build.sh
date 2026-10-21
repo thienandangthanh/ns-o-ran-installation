@@ -93,8 +93,13 @@ for nid in want:
         bad.append("node %s seq_gaps=%d ipcDropped=%d" % (nid, n["seq_gaps"], n["ipc_dropped_max"]))
     if (n["kind"] == "enb") != (nid == "1"):
         bad.append("node %s kind %s (cellId 1 must be the only enb)" % (nid, n["kind"]))
-    if n["kind"] == "gnb" and set(n["ue_counts"]) != {"3"}:
-        bad.append("gNB %s ue counts per sample %s (want only 3)" % (nid, n["ue_counts"]))
+    # UEs attach by proximity: per-gNB counts vary (0..6 in scenario-zero),
+    # the LTE eNB (master RRC) carries every UE once attached (seq 0 has none).
+    counts = {int(k) for k in n["ue_counts"]}
+    if n["kind"] == "enb" and not (counts <= {0, int(n_imsi)} and int(n_imsi) in counts):
+        bad.append("eNB %s ue counts per sample %s (want %s after attach)" % (nid, sorted(counts), n_imsi))
+    if n["kind"] == "gnb" and max(counts, default=0) > int(n_imsi):
+        bad.append("gNB %s ue counts per sample %s exceed %s" % (nid, sorted(counts), n_imsi))
     if n["bye_msg"] and n["bye_msg"]["droppedDisconnected"] + n["bye_msg"]["droppedBackpressure"]:
         bad.append("node %s bye reports drops %s" % (nid, n["bye_msg"]))
 if s["totals"]["invalid"]:
@@ -205,9 +210,11 @@ no_linkage() {
 }
 check m4_no_e2sim_asn1c_linkage no_linkage
 
+# ns-3.38 keeps CMakeCache.txt and generated build files in <src>/cmake-cache.
+CMAKE_DIR="$(dirname "$BUILD_DIR")/cmake-cache"
 cache_has_no_e2sim() {
-    [ -f "$BUILD_DIR/CMakeCache.txt" ] || { echo "no CMakeCache.txt"; return 1; }
-    ! grep -ri e2sim "$BUILD_DIR/CMakeCache.txt"
+    [ -f "$CMAKE_DIR/CMakeCache.txt" ] || { echo "no $CMAKE_DIR/CMakeCache.txt"; return 1; }
+    ! grep -ri e2sim "$CMAKE_DIR/CMakeCache.txt"
 }
 check m4_cmakecache_has_no_e2sim cache_has_no_e2sim
 
@@ -215,9 +222,9 @@ check m4_cmakecache_has_no_e2sim cache_has_no_e2sim
 ls -la /usr/local/include/e2sim >"$EVIDENCE_DIR/usr-local-include-e2sim.txt" 2>&1
 record m4_usr_local_include_e2sim_informational true "ls /usr/local/include/e2sim: $(head -n 2 "$EVIDENCE_DIR/usr-local-include-e2sim.txt" | tr '\n' ' ')"
 no_e2sim_in_build_files() {
-    [ -d "$BUILD_DIR" ] || return 1
+    [ -d "$CMAKE_DIR" ] || return 1
     ! grep -rIl e2sim --include=flags.make --include=link.txt --include=build.make \
-        --include=compile_commands.json --include='*.cmake' "$BUILD_DIR"
+        --include=compile_commands.json --include='*.cmake' "$CMAKE_DIR" "$BUILD_DIR"
 }
 check m4_no_e2sim_in_build_files no_e2sim_in_build_files
 
@@ -247,7 +254,8 @@ single_node() {
     return $rc
 }
 check m4_single_node_exits0 single_node
-check m4_single_node_only_node2_hello summary_assert single 2 3
+# Single-node: only 2 of the 3 UEs reach gNB 2 (the third stays LTE-only; LTE is not an E2 node here).
+check m4_single_node_only_node2_hello summary_assert single 2 2
 
 ################################################################################
 # e. agent down: no sink at all; the run completes and the traces are complete
