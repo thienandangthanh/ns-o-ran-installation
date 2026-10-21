@@ -1,0 +1,112 @@
+environments service name is SERVICE_RICPLT_E2TERM_RMR_ALPHA_SERVICE_HOST
+service ip is 10.105.226.184
+nano=38000
+volume=log
+#The key name of the environment holds the local ip address
+#ip address of the E2T in the RMR
+local-ip=10.105.226.184
+#prometheus mode can be pull or push
+prometheusMode=pull
+#timeout can be from 5 seconds to 300 seconds default is 10
+prometheusPushTimeOut=10
+prometheusPushAddr=127.0.0.1:7676
+prometheusPort=8088
+#trace is start, stop
+trace=stop
+external-fqdn=10.105.226.184
+#put pointer to the key that point to pod name
+pod_name=E2TERM_POD_NAME
+sctp-port=36422
+{"ts":1792590552076,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"MDC log level set to 3"}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"line = nano=38000 "}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"entry = nano value = 38000"}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"line = volume=log "}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"entry = volume value = log"}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"line = local-ip=10.105.226.184 "}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"entry = local-ip value = 10.105.226.184"}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"line = prometheusMode=pull "}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"entry = prometheusMode value = pull"}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"line = prometheusPushTimeOut=10 "}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"entry = prometheusPushTimeOut value = 10"}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"line = prometheusPushAddr=127.0.0.1:7676 "}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"entry = prometheusPushAddr value = 127.0.0.1:7676"}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"line = prometheusPort=8088 "}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"entry = prometheusPort value = 8088"}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"line = trace=stop "}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"entry = trace value = stop"}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"line = external-fqdn=10.105.226.184 "}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"entry = external-fqdn value = 10.105.226.184"}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"line = pod_name=E2TERM_POD_NAME "}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"entry = pod_name value = E2TERM_POD_NAME"}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"line = sctp-port=36422 "}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"entry = sctp-port value = 36422"}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"Trace set to: stop"}
+{"ts":1792590552077,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"running parameters for instance : {\"address\": \"10.105.226.184:38000\",\"fqdn\": \"10.105.226.184\",\"pod_name\": \"e2term\"}"}
+1792590552077 23/RMR [INFO] ric message routing library on SI95 p=38000 mv=3 flg=00 id=a (f447e29 4.9.4 built: Dec 13 2023)
+{"ts":1792590552078,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"We are after RMR INIT wait for RMR_Ready"}
+{"ts":1792590553078,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"RMR running"}
+{"ts":1792590553079,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"E2_TERM_INIT successfully sent "}
+1792590553080 23/RMR [INFO] sends: ts=1792590553 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-admission-ctrl-xapp-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590553080 23/RMR [INFO] sends: ts=1792590553 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricplt-rsm-rmr.ricplt:4801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590553080 23/RMR [INFO] sends: ts=1792590553 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=1 succ=1 fail=0 (hard=0 soft=0)
+1792590553080 23/RMR [INFO] sends: ts=1792590553 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricxapp-ueec-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590553080 23/RMR [INFO] sends: ts=1792590553 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590584082 23/RMR [INFO] sends: ts=1792590584 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43338 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590584082 23/RMR [INFO] sends: ts=1792590584 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-admission-ctrl-xapp-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590584082 23/RMR [INFO] sends: ts=1792590584 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricplt-rsm-rmr.ricplt:4801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590584082 23/RMR [INFO] sends: ts=1792590584 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=1 succ=1 fail=0 (hard=0 soft=0)
+1792590584082 23/RMR [INFO] sends: ts=1792590584 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricxapp-ueec-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590584082 23/RMR [INFO] sends: ts=1792590584 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590584082 23/RMR [INFO] sends: ts=1792590584 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43883 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590615085 23/RMR [INFO] sends: ts=1792590615 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43441 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590615085 23/RMR [INFO] sends: ts=1792590615 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43338 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590615085 23/RMR [INFO] sends: ts=1792590615 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43308 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590615085 23/RMR [INFO] sends: ts=1792590615 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-admission-ctrl-xapp-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590615085 23/RMR [INFO] sends: ts=1792590615 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricplt-rsm-rmr.ricplt:4801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590615085 23/RMR [INFO] sends: ts=1792590615 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43955 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590615085 23/RMR [INFO] sends: ts=1792590615 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=1 succ=1 fail=0 (hard=0 soft=0)
+1792590615085 23/RMR [INFO] sends: ts=1792590615 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricxapp-ueec-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590615085 23/RMR [INFO] sends: ts=1792590615 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43252 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590615085 23/RMR [INFO] sends: ts=1792590615 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590615085 23/RMR [INFO] sends: ts=1792590615 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43883 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590646088 23/RMR [INFO] sends: ts=1792590646 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43441 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590646088 23/RMR [INFO] sends: ts=1792590646 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43338 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590646088 23/RMR [INFO] sends: ts=1792590646 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43742 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590646088 23/RMR [INFO] sends: ts=1792590646 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43631 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590646088 23/RMR [INFO] sends: ts=1792590646 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43308 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590646088 23/RMR [INFO] sends: ts=1792590646 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43797 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590646088 23/RMR [INFO] sends: ts=1792590646 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-admission-ctrl-xapp-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590646088 23/RMR [INFO] sends: ts=1792590646 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricplt-rsm-rmr.ricplt:4801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590646088 23/RMR [INFO] sends: ts=1792590646 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43955 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590646088 23/RMR [INFO] sends: ts=1792590646 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=1 succ=1 fail=0 (hard=0 soft=0)
+1792590646088 23/RMR [INFO] sends: ts=1792590646 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricxapp-ueec-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590646088 23/RMR [INFO] sends: ts=1792590646 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43252 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590646088 23/RMR [INFO] sends: ts=1792590646 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590646088 23/RMR [INFO] sends: ts=1792590646 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43883 open=0 succ=0 fail=0 (hard=0 soft=0)
+{"ts":1792590653155,"crit":"ERROR","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"GOT No messages from any xApp"}
+{"ts":1792590653155,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"E2_TERM_INIT successfully sent "}
+1792590677090 23/RMR [INFO] sends: ts=1792590677 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43441 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590677090 23/RMR [INFO] sends: ts=1792590677 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43338 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590677090 23/RMR [INFO] sends: ts=1792590677 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43742 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590677090 23/RMR [INFO] sends: ts=1792590677 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43631 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590677090 23/RMR [INFO] sends: ts=1792590677 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43308 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590677090 23/RMR [INFO] sends: ts=1792590677 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43797 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590677090 23/RMR [INFO] sends: ts=1792590677 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43137 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590677090 23/RMR [INFO] sends: ts=1792590677 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-admission-ctrl-xapp-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590677090 23/RMR [INFO] sends: ts=1792590677 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricplt-rsm-rmr.ricplt:4801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590677090 23/RMR [INFO] sends: ts=1792590677 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43955 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590677090 23/RMR [INFO] sends: ts=1792590677 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43625 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590677090 23/RMR [INFO] sends: ts=1792590677 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43095 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590677090 23/RMR [INFO] sends: ts=1792590677 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=1 succ=2 fail=0 (hard=0 soft=0)
+1792590677090 23/RMR [INFO] sends: ts=1792590677 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricxapp-ueec-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590677090 23/RMR [INFO] sends: ts=1792590677 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43252 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590677090 23/RMR [INFO] sends: ts=1792590677 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590677090 23/RMR [INFO] sends: ts=1792590677 src=service-ricplt-e2term-rmr-alpha.ricplt:38000 target=10.244.0.48:43883 open=0 succ=0 fail=0 (hard=0 soft=0)
+{"ts":1792590695899,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"136809455425280","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"New connection request from sctp network "}
+
+gNB_CU_UP_ID and gNB_DU_ID is null
+cuupid =-1
+duid =-1
+ranName =gnb_734_373_16b8cef1
+{"ts":1792590698966,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"136809455425280","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"send message to gnb_734_373_16b8cef1 address"}
+{"ts":1792590698992,"crit":"INFO","id":"E2Terminator","mdc":{"PID":"23","POD_NAME":"deployment-ricplt-e2term-alpha-59d4746bc7-tftcj","CONTAINER_NAME":"container-ricplt-e2term","SERVICE_NAME":"RIC_E2_TERM","HOST_NAME":"oran-kvm-2404","SYSTEM_NAME":"SEP"},"msg":"Got a message from some application, stop sending E2_TERM_INIT"}

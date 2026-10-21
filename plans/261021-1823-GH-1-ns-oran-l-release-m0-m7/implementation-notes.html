@@ -95,6 +95,22 @@ Its wire evidence already showed the probe passing.</li>
 <li>Fix: the installer always runs without a TTY, and the probe is a real check against the e2mgr pod.</li>
 <li>Reverted to <code>l2-refnode</code> and re-ran.</li>
 </ul></li>
+<li><span class="tag deviation">deviation</span><b>M3 attempt 2</b> (<code>evidence/m3/20261021T123306Z</code>): the substance passed, and two harness checks failed.
+<ul>
+<li>Patched kpimon: harness clean RC_OK on 505/505 headers (consumed = length, TimeStamp 8 octets) and 505/505 messages; kpimon logged 0 WMORE. Stock: header RC_WMORE 505/505 and kpimon logged 492 WMORE.</li>
+<li>Failure 1: the exec-it probe wrapped the shell function <code>kc</code> in <code>timeout</code>. Fixed, and <code>scripts/gates/lint.sh</code> now rejects that pattern.</li>
+<li>Failure 2: Influx was queried with <code>-5m</code> at the window's end. NIST's kpm_sim replays a finite file, about 505 indications in roughly 25 s and then silence, so a trailing 5-minute range is empty. The query now spans the phase from its own install.</li>
+<li><span class="tag tradeoff">tradeoff</span>The wire-vs-kpimon-log count (505 vs 492/496, about 2 % unlogged during a 20/s burst, in both builds) became a recorded cross-check instead of a pass/fail check, plus a hard check that kpimon received anything. Reason: the plan's evidence rule makes logs supporting evidence and the harness the RC_OK authority, and M3's stated pass condition does not include count equality. M6 re-measures this at ns-3's rate.</li>
+</ul></li>
+<li><span class="tag deviation">deviation</span><b>M3 attempt 3</b> (<code>evidence/m3/20261021T130726Z</code>): after the revert (a cold boot), kpm_sim's E2SetupRequest got no response for 180 s. e2mgr had restarted after e2term registered; it is the same symptom as during M1's <code>full_install</code>. The refnode bring-up now makes up to 3 bounded, logged attempts, rolling e2term before attempts 2 and 3 (NIST's own remedy in <code>wait_for_ricplt_pods.sh</code>). Each attempt is recorded in <code>bringup-refnode-attempts.log</code>. Re-ran from <code>l2-refnode</code> at <code>46bce15</code>.</li>
+<li><span class="tag deviation">deviation</span><b>M3 attempt 4</b> (<code>evidence/m3/20261021T131613Z</code>): all 3 refnode attempts failed, and the e2term rolls made it worse.
+<ul>
+<li>Root cause, from the e2mgr logs and a controlled run (<code>evidence/m3/coldboot-diag/</code>): ricplt pods report Ready before e2term has registered with e2mgr. At that point <code>/v1/e2t/list</code> is <code>[]</code>, e2mgr shows <code>RMR_ERR_NOENDPT</code> and "Failed retrieving E2TInstance", and rtmgr rejects requests with HTTP 400.</li>
+<li>An E2SetupRequest sent then is accepted on SCTP but never answered. NIST's kpm_sim sends it once and never resends, so it stalls forever. Every e2term roll empties the E2T list again, and kpm_sim was restarted immediately after each roll.</li>
+<li>In the controlled run, kpm_sim started after the list filled and connected within 10 s.</li>
+<li>Fix (<code>6d3a26b</code>): bring-up <code>ric</code> now waits for an <code>e2tAddress</code> in <code>/v1/e2t/list</code>, which is NIST's own condition from <code>wait_for_ricplt_pods.sh</code>. It rolls e2term once if the list stays empty for 300 s, logged in <code>watchdog.log</code>, then lets routes settle for 20 s. Refnode retries restart only kpm_sim.</li>
+<li>P5 consequence: the agent's SETUP_SENT timeout (exit, then restart and resend) already covers a lost setup.</li>
+</ul></li>
 </ul>
 </body>
 </html>

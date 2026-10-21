@@ -1,0 +1,14 @@
+[13:07:27] gate m3 start; evidence /home/uc/evidence/m3/20261021T130726Z; harness 9074abc275900394ac41d303661a308156cad876
+[13:07:27] ric watchdog started (pid 7079, threshold 600s)
+[13:13:02] FAIL m3_refnode_up: exit 1: [13:09:42] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[13:09:58] bringup ric: all ricplt pods Ready
+[13:09:58] bringup refnode: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)
+[13:10:00] bringup refnode: run_e2sim script exit 0
+[13:13:02] bringup refnode: no CONNECTED node after 180s
+[13:13:02] PASS m3_nist_tree_at_testbed_sha
+[13:13:02] PASS m3_build_tools_installed
+[13:13:02] PASS m3_kubectl_exec_it_works_without_tty
+[13:14:05] PASS m3_regen_check_pass
+[13:14:05] ===== phase stock (KPIMON_TIMESTAMP_SIZE8=false) =====
+[13:14:16] PASS m3_stock_refnode_stopped_before_uninstall
+[13:14:18] PASS m3_stock_kpimon_uninstalled

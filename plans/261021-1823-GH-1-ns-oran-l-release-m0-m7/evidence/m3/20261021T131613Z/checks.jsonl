@@ -1,0 +1,15 @@
+{"name":"m3_refnode_up","pass":false,"detail":"exit 1: [13:30:28] bringup ric: waiting up to 1200s for ricplt pods\n[13:30:28] bringup ric: all ricplt pods Ready\n[13:30:28] bringup refnode: attempt 3: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)\n[13:30:31] bringup refnode: run_e2sim script exit 0\n[13:33:32] bringup refnode: attempt 3: no CONNECTED node after 180s"}
+{"name":"m3_nist_tree_at_testbed_sha","pass":true,"detail":"nist HEAD 0b1cf7ae8b861564e70aec17f9f2f999893ccb21, want 0b1cf7ae8b861564e70aec17f9f2f999893ccb21\nalready at 0b1cf7ae8b861564e70aec17f9f2f999893ccb21"}
+{"name":"m3_build_tools_installed","pass":true,"detail":"gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nTShark (Wireshark) 4.2.2 (Git v4.2.2 packaged as 4.2.2-1.1build3)."}
+{"name":"m3_kubectl_exec_it_works_without_tty","pass":true,"detail":"exit 0 on pod/deployment-ricplt-e2mgr-9b6b8f99f-bnhzn: Unable to use a TTY - input is not a terminal or the right kind of file|EXEC_IT_OK|"}
+{"name":"m3_regen_check_pass","pass":true,"detail":"debconf: delaying package configuration, since apt-utils is not installed\n{\"asn1c\": \"mouse07410/asn1c@584d86e22d54d401c5d349128f28b0c41fae4d24\", \"control\": {\"shipped_files\": 470, \"identical\": 470, \"differ\": [], \"missing_from_regeneration\": []}, \"size8_footprint\": [\"TimeStamp.c\"], \"shipped_patch_equals_regeneration\": true, \"pass\": true}\nregen-check container exit 0"}
+{"name":"m3_stock_refnode_stopped_before_uninstall","pass":true,"detail":"oransim\noransim\nE2 simulator stopped."}
+{"name":"m3_stock_kpimon_uninstalled","pass":true,"detail":"No Xapp to uninstall\nstatus: NOT_OK\nno kpimon-go pod left"}
+{"name":"m3_stock_capture_started","pass":true,"detail":"[13:34:54] capture m3-stock started on docker0 (pid 60382, filter 'sctp')"}
+{"name":"m3_stock_installer_ok","pass":true,"detail":"# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/stop_sudo_refresh.sh \nNo process found to stop.\nSudo refresh process stopped or was not running."}
+{"name":"m3_stock_pod_ready_and_created_after_install","pass":true,"detail":"pod ricxapp-kpimon-go-85dc5fdf8b-h27ns Ready, created epoch 1792589983, restarts 0"}
+{"name":"m3_stock_pod_image_id_informational","pass":true,"detail":"pod imageID: sha256:be8737b489e4c01f3b0644e2305f875f0c970604b7999e736eba05ca69fbc36d; docker id: sha256:be8737b489e4c01f3b0644e2305f875f0c970604b7999e736eba05ca69fbc36d"}
+{"name":"m3_stock_so_extracted_and_harness_built","pass":true,"detail":"timestamp_size: 4\nextracted_at: 2026-10-21T13:40:03+00:00\nTimeStamp SIZE in this .so: 4"}
+{"name":"m3_stock_so_timestamp_size_is_4","pass":true,"detail":""}
+{"name":"m3_stock_refnode_restarted","pass":true,"detail":"[13:40:03] bringup refnode: attempt 1: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)\n[13:40:16] bringup refnode: run_e2sim script exit 0\n[13:40:21] bringup refnode: e2mgr shows a CONNECTED node (attempt 1)"}
+{"name":"m3_stock_first_indication_logged","pass":true,"detail":"first indication logged by ricxapp-kpimon-go-85dc5fdf8b-h27ns"}

@@ -1,0 +1,15 @@
+[13:07:27] bringup ric: waiting up to 1200s for ricplt pods
+[13:07:27] bringup ric: rc=0 unready: deployment-ricplt-e2mgr-9b6b8f99f-bnhzn deployment-ricplt-e2term-alpha-59d4746bc7-tftcj statefulset-ricplt-dbaas-server-0 
+[13:07:42] bringup ric: rc=0 unready: deployment-ricplt-a1mediator-78f79cbb6b-ds6jl deployment-ricplt-e2mgr-9b6b8f99f-bnhzn deployment-ricplt-e2term-alpha-59d4746bc7-tftcj deployment-ricplt-submgr-858956fbdc-qtkhk r4-infrastructure-prometheus-alertmanager-b9cc56766-4nh2g r4-infrastructure-prometheus-server-6476958975-zd9dv statefulset-ricplt-dbaas-server-0 
+[13:07:57] bringup ric: rc=0 unready: deployment-ricplt-e2mgr-9b6b8f99f-bnhzn deployment-ricplt-e2term-alpha-59d4746bc7-tftcj deployment-ricplt-submgr-858956fbdc-qtkhk r4-infrastructure-prometheus-alertmanager-b9cc56766-4nh2g r4-infrastructure-prometheus-server-6476958975-zd9dv 
+[13:08:12] bringup ric: rc=0 unready: deployment-ricplt-e2mgr-9b6b8f99f-bnhzn deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[13:08:27] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj deployment-ricplt-rtmgr-74fb47b69d-dtbtl 
+[13:08:42] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[13:08:57] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[13:09:12] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[13:09:27] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[13:09:42] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[13:09:58] bringup ric: all ricplt pods Ready
+[13:09:58] bringup refnode: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)
+[13:10:00] bringup refnode: run_e2sim script exit 0
+[13:13:02] bringup refnode: no CONNECTED node after 180s

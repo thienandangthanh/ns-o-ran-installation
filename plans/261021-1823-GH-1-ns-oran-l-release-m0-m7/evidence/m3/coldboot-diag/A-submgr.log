@@ -1,0 +1,39 @@
+{"ts":1792590439481,"crit":"INFO","id":"submgr","mdc":{"time":"2026-10-21T13:47:19"},"msg":"Using config file: /cfg/submgr-config.yaml"}
+{"ts":1792590439482,"crit":"INFO","id":"submgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-21T13:47:19"},"msg":"Serving metrics on: url=/ric/v1/metrics namespace="}
+dial tcp: lookup service-ricplt-dbaas-tcp.ricplt: i/o timeout
+dial tcp: lookup service-ricplt-dbaas-tcp.ricplt on 10.96.0.10:53: no such host
+dial tcp: lookup service-ricplt-dbaas-tcp.ricplt on 10.96.0.10:53: no such host
+dial tcp: lookup service-ricplt-dbaas-tcp.ricplt on 10.96.0.10:53: no such host
+{"ts":1792590454616,"crit":"INFO","id":"submgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-21T13:47:34"},"msg":"LoggerLevel = 3"}
+{"ts":1792590454649,"crit":"ERROR","id":"submgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-21T13:47:34"},"msg":"SDL: ReadAllSubscriptionsFromSdl(), GetAll(). Error while reading E2 subscriptions  keys from DBAAS dial tcp: lookup service-ricplt-dbaas-tcp.ricplt on 10.96.0.10:53: no such host\n"}
+1792590455652 1/RMR [INFO] ric message routing library on SI95 p=4560 mv=3 flg=00 id=a (f447e29 4.9.4 built: Dec 13 2023)
+{"ts":1792590455653,"crit":"INFO","id":"submgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-21T13:47:35"},"msg":"new rmrClient with parameters: ProtPort=4560 MaxSize=8192 ThreadType=0 StatDesc=RMR LowLatency=false FastAck=false Policies=[]"}
+{"ts":1792590455653,"crit":"INFO","id":"submgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-21T13:47:35"},"msg":"IP address is not able to resolve Interface () route ip+net: invalid network interface name"}
+{"ts":1792590455653,"crit":"INFO","id":"submgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-21T13:47:35"},"msg":"Xapp started, listening on: :8080"}
+{"ts":1792590455653,"crit":"INFO","id":"submgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-21T13:47:35"},"msg":"Connection to database established!"}
+{"ts":1792590455653,"crit":"INFO","id":"submgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-21T13:47:35"},"msg":"rmrClient: RMR is ready after 0 seconds waiting..."}
+{"ts":1792590455655,"crit":"INFO","id":"submgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-21T13:47:35"},"msg":"Serving subscriptions on 0.0.0.0:8088\n"}
+2026/10/21 13:47:35 Serving xapp framework at http://[::]:8088
+RMR is ready now ...
+{"ts":1792590460654,"crit":"INFO","id":"submgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-21T13:47:40"},"msg":"getService: SERVICE_RICXAPP_SUBMGR_HTTP_PORT []"}
+{"ts":1792590460654,"crit":"INFO","id":"submgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-21T13:47:40"},"msg":"getService: SERVICE_RICXAPP_SUBMGR_RMR_PORT []"}
+{"ts":1792590460654,"crit":"WARNING","id":"submgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-21T13:47:40"},"msg":"Couldn't resolve service endpoints: httpEp= rmrEp="}
+{"ts":1792590460654,"crit":"INFO","id":"submgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-21T13:47:40"},"msg":"Registration done, proceeding with startup ..."}
+1792590518789 1/RMR [INFO] sends: ts=1792590518 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricxapp-hw-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590518789 1/RMR [INFO] sends: ts=1792590518 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590518789 1/RMR [INFO] sends: ts=1792590518 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590549791 1/RMR [INFO] sends: ts=1792590549 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricxapp-hw-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590549791 1/RMR [INFO] sends: ts=1792590549 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590549791 1/RMR [INFO] sends: ts=1792590549 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590580193 1/RMR [INFO] sends: ts=1792590580 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricxapp-hw-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590580193 1/RMR [INFO] sends: ts=1792590580 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590580193 1/RMR [INFO] sends: ts=1792590580 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590611196 1/RMR [INFO] sends: ts=1792590611 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricxapp-hw-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590611196 1/RMR [INFO] sends: ts=1792590611 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590611196 1/RMR [INFO] sends: ts=1792590611 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590642797 1/RMR [INFO] sends: ts=1792590642 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricxapp-hw-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590642797 1/RMR [INFO] sends: ts=1792590642 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590642797 1/RMR [INFO] sends: ts=1792590642 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590673799 1/RMR [INFO] sends: ts=1792590673 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricxapp-hw-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590673799 1/RMR [INFO] sends: ts=1792590673 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792590673799 1/RMR [INFO] sends: ts=1792590673 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)

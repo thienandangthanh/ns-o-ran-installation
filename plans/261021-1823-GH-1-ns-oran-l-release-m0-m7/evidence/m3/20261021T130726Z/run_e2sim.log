@@ -1,0 +1,15 @@
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/run_e2sim_and_connect_to_ric.sh 
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/stop_e2sim.sh 
+Stopping oransim container...
+oransim
+oransim
+E2 simulator stopped.
+Starting a new container 'oransim'...
+66b98862009c63e4c8baae85f375150615b9c629d71eff12d185c6f806d843d2
+service-ricplt-e2term-sctp-alpha            NodePort       10.106.169.160   <none>        36422:32222/SCTP                117m
+IP for service-ricplt-e2term-sctp: 10.106.169.160
+PORT for service-ricplt-e2term-sctp: 36422
+Starting kpm_sim in the background, writing to logs/e2sim_output.txt...
+stty: 'standard input': Inappropriate ioctl for device
+10.103.247.20:3800
+Connection between E2 simulator and RIC cluster is pending.

@@ -1,0 +1,37 @@
+[13:16:15] bringup ric: waiting up to 1200s for ricplt pods
+[13:16:15] bringup ric: rc=0 unready: deployment-ricplt-a1mediator-78f79cbb6b-ds6jl deployment-ricplt-e2mgr-9b6b8f99f-bnhzn deployment-ricplt-e2term-alpha-59d4746bc7-tftcj deployment-ricplt-submgr-858956fbdc-qtkhk r4-infrastructure-kong-78657d8f48-g5fmq r4-infrastructure-prometheus-alertmanager-b9cc56766-4nh2g r4-infrastructure-prometheus-server-6476958975-zd9dv statefulset-ricplt-dbaas-server-0 
+[13:16:30] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj deployment-ricplt-rtmgr-74fb47b69d-dtbtl deployment-ricplt-submgr-858956fbdc-qtkhk r4-infrastructure-prometheus-alertmanager-b9cc56766-4nh2g r4-infrastructure-prometheus-server-6476958975-zd9dv 
+[13:16:45] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[13:17:00] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[13:17:15] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[13:17:30] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[13:17:45] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[13:18:00] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[13:18:15] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[13:18:30] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[13:18:45] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[13:19:00] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[13:19:16] bringup ric: all ricplt pods Ready
+[13:19:16] bringup refnode: attempt 1: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)
+[13:19:18] bringup refnode: run_e2sim script exit 0
+[13:22:20] bringup refnode: attempt 1: no CONNECTED node after 180s
+[13:22:20] bringup refnode: attempt 2: stop kpm_sim, roll e2term
+deployment.apps/deployment-ricplt-e2term-alpha restarted
+Waiting for deployment "deployment-ricplt-e2term-alpha" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "deployment-ricplt-e2term-alpha" rollout to finish: 1 old replicas are pending termination...
+deployment "deployment-ricplt-e2term-alpha" successfully rolled out
+[13:24:55] bringup ric: waiting up to 1200s for ricplt pods
+[13:24:55] bringup ric: all ricplt pods Ready
+[13:24:55] bringup refnode: attempt 2: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)
+[13:24:58] bringup refnode: run_e2sim script exit 0
+[13:27:59] bringup refnode: attempt 2: no CONNECTED node after 180s
+[13:27:59] bringup refnode: attempt 3: stop kpm_sim, roll e2term
+deployment.apps/deployment-ricplt-e2term-alpha restarted
+Waiting for deployment "deployment-ricplt-e2term-alpha" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "deployment-ricplt-e2term-alpha" rollout to finish: 1 old replicas are pending termination...
+deployment "deployment-ricplt-e2term-alpha" successfully rolled out
+[13:30:28] bringup ric: waiting up to 1200s for ricplt pods
+[13:30:28] bringup ric: all ricplt pods Ready
+[13:30:28] bringup refnode: attempt 3: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)
+[13:30:31] bringup refnode: run_e2sim script exit 0
+[13:33:32] bringup refnode: attempt 3: no CONNECTED node after 180s
