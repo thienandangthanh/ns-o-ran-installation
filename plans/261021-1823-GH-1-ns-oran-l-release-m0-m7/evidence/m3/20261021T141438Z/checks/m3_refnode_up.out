@@ -1,0 +1,17 @@
+[14:14:39] bringup ric: waiting up to 1200s for ricplt pods
+[14:14:39] bringup ric: rc=0 unready: deployment-ricplt-a1mediator-78f79cbb6b-ds6jl deployment-ricplt-e2mgr-9b6b8f99f-bnhzn deployment-ricplt-e2term-alpha-59d4746bc7-tftcj deployment-ricplt-submgr-858956fbdc-qtkhk r4-infrastructure-kong-78657d8f48-g5fmq r4-infrastructure-prometheus-alertmanager-b9cc56766-4nh2g r4-infrastructure-prometheus-server-6476958975-zd9dv statefulset-ricplt-dbaas-server-0 
+[14:14:54] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj deployment-ricplt-submgr-858956fbdc-qtkhk r4-infrastructure-prometheus-alertmanager-b9cc56766-4nh2g r4-infrastructure-prometheus-server-6476958975-zd9dv 
+[14:15:09] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj deployment-ricplt-rtmgr-74fb47b69d-dtbtl 
+[14:15:24] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[14:15:39] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[14:15:54] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[14:16:10] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[14:16:25] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[14:16:40] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[14:16:55] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[14:17:10] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[14:17:25] bringup ric: all ricplt pods Ready
+[14:17:30] bringup ric: e2term registered with e2mgr: [{"e2tAddress":"10.105.226.184:38000","ranNames":[]}]
+[14:17:50] bringup refnode: attempt 1: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)
+[14:17:53] bringup refnode: run_e2sim script exit 0
+[14:17:58] bringup refnode: e2mgr shows a CONNECTED node (attempt 1)

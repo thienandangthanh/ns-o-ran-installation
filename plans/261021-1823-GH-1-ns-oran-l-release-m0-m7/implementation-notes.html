@@ -117,6 +117,18 @@ Its wire evidence already showed the probe passing.</li>
 <li>The stock kpimon image build then failed in <code>go build</code> on a transient <code>connection reset by peer</code> from the Go module proxy.</li>
 <li>Fix (<code>ad87b20</code>): the kpimon install retries up to 2 more times, only when the failed log shows a network-error signature. Each attempt keeps its own log, listed in <code>install-&lt;tag&gt;.log.attempts</code>.</li>
 </ul></li>
+<li><span class="tag decision"><b>M3 green</b></span> 2026-10-21 14:49Z, attempt 6, harness <code>ad87b20</code>, Testbed <code>0b1cf7a</code>, evidence <code>evidence/m3/20261021T141438Z</code>. 50/50 checks. The orchestrator verified it independently on the host: tshark gives 505 individual indications per phase (assoc+TSN, 122 SCTP frames with bundling), equal to the harness totals.
+<ul>
+<li><b>K9 regeneration:</b> 470/470 files reproduced; the SIZE(8) footprint is <code>TimeStamp.c</code> only; the shipped patch equals the regeneration.</li>
+<li><b>Stock:</b> the extracted <code>.so</code> has SIZE 4. Harness header RC_WMORE 505/505 and message RC_OK 505/505; kpimon logged 505 indications and 505 header WMORE; Influx rows were written. Subscription Request/Response decoded.</li>
+<li><b>Patched:</b> a new docker image ID, and the <code>.so</code> has SIZE 8. Harness header clean RC_OK 505/505 (consumed = length, TimeStamp 8 octets) and message clean RC_OK 505/505; kpimon logged 0 WMORE; Influx has 2970 values. On the wire, kpm_sim's TimeStamp is the 8 octets <code>32 30 32 30 30 36 31 33</code> (ASCII "20200613").</li>
+<li>Snapshot <code>l3-xapps</code> taken.</li>
+</ul></li>
+</ul>
+<h2>P3: E2 agent design checkpoint</h2>
+<ul>
+<li><span class="tag decision">decision</span>Counsel: <code>plans/reports/kongming-261021-2005-GH-1-p3-e2-agent-design-counsel.md</code> (Opus 5.5 xhigh). ns-3 fact pack: <code>plans/reports/scout-261021-2005-GH-1-ns3-e2-kpm-path-fact-pack.md</code>. Journal: <code>docs/journals/2026-10-21-p3-e2-agent-design-checkpoint.md</code>. IPC schema: Testbed fork <code>ns3_e2_agent/schema/ns3-e2-ipc.v1.schema.json</code>.</li>
+<li><span class="tag question">question</span><b>Awaiting user sign-off on S1–S4</b> (journal section 5). P4 must not start before it.</li>
 </ul>
 </body>
 </html>

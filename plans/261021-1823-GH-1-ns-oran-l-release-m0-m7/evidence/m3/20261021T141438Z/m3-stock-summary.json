@@ -1,0 +1,62 @@
+{
+  "decode": {
+    "expect_ts_len": 4,
+    "hdr_clean": 0,
+    "hdr_fail": 0,
+    "hdr_ok_exact": 0,
+    "hdr_other": 0,
+    "hdr_wmore": 505,
+    "msg_clean": 505,
+    "msg_fail": 0,
+    "msg_other": 0,
+    "msg_wmore": 0,
+    "total": 505
+  },
+  "extract": {
+    "indications_seen": 505,
+    "retransmissions_dropped": 0,
+    "rows_skipped": 0,
+    "unique": 505
+  },
+  "facts": {
+    "docker_image_id": "sha256:f8ecd719032a396c0a6b3605922b2780532f35a9f781bbf59bb61724f09cb235",
+    "docker_image_id_before": "",
+    "expect_ts_len": 4,
+    "extractor_rows_skipped": 0,
+    "influx_rows_since_install": 2970,
+    "kpimon_header_wmore_logged": 505,
+    "kpimon_indications_logged": 505,
+    "kpimon_influx_writes_logged": 330,
+    "kpimon_msg_wmore_logged": 0,
+    "kpimon_pod_restarts": 0,
+    "size8_install": "false",
+    "sub_request_frames": 1,
+    "sub_response_frames": 1,
+    "tag": "stock",
+    "window_s": 600,
+    "wire_indications": 505
+  },
+  "harness": {
+    "hdr": {
+      "RC_FAIL": 0,
+      "RC_OK": 0,
+      "RC_WMORE": 505
+    },
+    "hdr_ok_with_trailing_bytes": 0,
+    "hdr_other": {},
+    "msg": {
+      "RC_FAIL": 0,
+      "RC_OK": 505,
+      "RC_WMORE": 0
+    },
+    "msg_format_hist": {
+      "1": 505
+    },
+    "msg_ok_with_trailing_bytes": 0,
+    "msg_other": {},
+    "total": 505,
+    "ts_len_hist": {
+      "None": 505
+    }
+  }
+}
