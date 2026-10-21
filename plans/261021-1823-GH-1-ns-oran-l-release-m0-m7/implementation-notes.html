@@ -220,6 +220,20 @@ The orchestrator spot-checked the pcap: RAN function 2, the real OID, <code>ORAN
 <li>Verified on the M6 pcap: 199 indications and 0 malformed.</li>
 <li>This is a variant of the plan's K15 fallback: same intent (a newer dissector), and a more reliable archive than Launchpad for the unattended re-run.</li>
 </ul></li>
+<li><span class="tag decision"><b>M6 green</b></span> 2026-10-21 18:11Z, attempt 3, harness <code>75cfbed</code>, evidence <code>evidence/m6/20261021T180718Z</code>, 35/35 checks. Re-verified by the orchestrator on the host:
+<ul>
+<li>199 RICindication PDUs (1 retransmission, deduplicated), 0 malformed indication frames with tshark 4.4.19, and subscription Request/Response 1/1.</li>
+<li>Harness: header and message clean RC_OK 199/199, ts_len 8. kpimon logged 199 with 0 WMORE.</li>
+<li>Emitter: 100 samples built and sent, 0 dropped.</li>
+<li>Influx vs the ns-3 trace: 3 picked samples (seq 1, 50, 99) and all 100 cell + 193 UE rows equal bit-exactly (14,494 fields).</li>
+<li>Snapshot <code>l6-kpm</code> taken.</li>
+</ul></li>
+<li><span class="tag question">observation</span>Two non-indication frames are still flagged malformed by tshark 4.4:
+<ul>
+<li>The E2SetupRequest, from NIST's dummy component-config NGAP bytes, which the agent carries unchanged.</li>
+<li>kpimon's own RICsubscriptionRequest. Its E2SM-KPM action definition (format 3) is encoded with kpimon's v2 schema plus NIST's MatchingCondItem patch, which Wireshark's v3 dissector cannot follow.</li>
+</ul>
+Neither is produced by our code. The agent accepts the subscription without interpreting the action definition (option A).</li>
 <li><span class="tag deviation">deviation</span>Gate helper: after an InfluxDB pod restart the in-pod CLI config is gone (401). <code>influx_rows</code> now uses the pod's <code>DOCKER_INFLUXDB_INIT_ADMIN_TOKEN</code>, expanded inside the pod so it is never printed. Verified on the VM: 401 before, rows returned after.</li>
 </ul>
 </body>

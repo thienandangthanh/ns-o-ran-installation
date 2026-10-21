@@ -1,0 +1,41 @@
+[18:07:20] gate m6 start; evidence /home/uc/evidence/m6/20261021T180718Z; harness 75cfbed413c8b4534953ca2eec8e5260ad9b20c8
+[18:07:20] ric watchdog started (pid 7812, threshold 600s)
+[18:07:20] PASS m6_nist_tree_at_testbed_sha_with_agent_dir
+[18:07:44] PASS m6_build_tools_present
+[18:07:44] PASS m6_sctp_module_loaded_and_persisted
+[18:07:45] PASS m6_kpimon_so_extracted_from_image
+[18:07:45] PASS m6_kpimon_so_is_the_size8_patched_build
+[18:07:45] PASS m6_ns3_binary_located
+[18:07:45] PASS m6_capture_started_before_agents
+[18:10:44] PASS m6_bringup_agents_kpm_sim_stopped_connected_set_exact
+[18:10:44] PASS m6_agent_container_ip_recorded
+[18:10:48] PASS m6_wire_shows_kpimon_subscription_request_and_agent_response
+[18:10:49] PASS m6_pcap_subscription_facts
+[18:10:49] PASS m6_tshark_decodes_subscription_request_response_func2
+[18:10:51] PASS m6_ns3_started_single_gnb
+[18:11:05] PASS m6_ns3_completes_exit0
+[18:11:05] draining 8s
+[18:11:14] PASS m6_influx_exported
+[18:11:14] PASS m6_capture_stopped
+[18:11:15] PASS m6_pcap_facts_extracted
+[18:11:17] PASS m6_tshark_decodes_ricindications_header_and_message
+[18:11:18] PASS m6_harness_ran_on_pcap
+[18:11:18] PASS m6_wire_indications_gt0_no_rows_skipped
+[18:11:18] PASS m6_harness_every_header_clean_rc_ok_equals_wire
+[18:11:18] PASS m6_harness_every_message_clean_rc_ok_equals_wire
+[18:11:18] PASS m6_harness_zero_wmore_fail_other
+[18:11:18] PASS m6_harness_ts_len_8_everywhere
+[18:11:18] PASS m6_kpimon_log_indications_equal_wire_zero_wmore
+[18:11:18] PASS m6_agent_indtx_equals_wire
+[18:11:18] PASS m6_kpimon_pod_no_restart
+[18:11:19] PASS m6_emitter_bye_sent_equals_built_zero_drops
+[18:11:19] PASS m6_agent_counters_clean_samples_in_equal_forwarded_equal_trace
+[18:11:19] PASS m6_influx_three_samples_equal_trace_bit_exact
+[18:11:19] PASS m6_influx_all_samples_comparison_informational
+[18:11:21] PASS m6_agents_stopped_no_container_left
+[18:11:21] PASS m6_no_stray_ns3_agent_process_or_3847x_listener
+[18:11:21] PASS m6_no_capture_left_running
+[18:11:21] PASS m6_pcap_in_evidence
+Terminated
+[18:11:21] ric watchdog stopped (pid 7812)
+verdict m6: PASS failed=[]
