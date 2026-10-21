@@ -26,6 +26,7 @@ table { border-collapse:collapse; width:100%; } td, th { border:1px solid var(--
 <tr><th>Point</th><th>Host free</th><th>Image dir allocated</th><th>Note</th></tr>
 <tr><td>Start (2026-10-21)</td><td>118 G</td><td>base raw ~3.4 G allocated + overlay 49 M</td><td>VM running from <code>ubuntu24.fresh-install</code></td></tr>
 <tr><td>After M0 / <code>l0-preflight</code></td><td>117 G</td><td>base 3.49 G + overlays ~0.4 G</td><td>probe overlays 0.2–23 M each</td></tr>
+<tr><td>After M1 / <code>l1-ric-up</code></td><td>103 G</td><td>+~14 G (3 install attempts, revert overlays included)</td><td>a single clean M1 is about 10–12 G</td></tr>
 </table>
 
 <h2>P0: preflight, branches, gate harness</h2>
@@ -59,6 +60,15 @@ table { border-collapse:collapse; width:100%; } td, th { border:1px solid var(--
 <li>Failure 2: the gate piped installer output through <code>tee</code>. NIST leaves chartmuseum (<code>helm servecm</code>) running as a daemon that inherits that stdout, so <code>tee</code> never sees EOF. Fix in the harness: NIST calls always write straight to a file, and the kpimon log is redacted after the call rather than through a pipe.</li>
 <li>The run was stopped, and M1 restarts from <code>l0-preflight</code> so its verdict comes from one clean, unassisted run.</li>
 </ul></li>
+<li><span class="tag decision"><b>M1 green</b></span> 2026-10-21 11:31Z, attempt 3, harness <code>a9dc8d9</code>, Testbed <code>0b1cf7a</code>, evidence <code>evidence/m1/20261021T111011Z</code>:
+<ul>
+<li>Pins: ric-dep <code>ee47a347</code>, appmgr <code>4c05932d</code>.</li>
+<li>Images: e2term/e2mgr 6.0.6, rtmgr 0.9.6, submgr 0.10.2, appmgr 0.5.8. Platform: k8s v1.33.13, containerd 2.4.2, docker-ce 29.5.3, helm v3.20.2.</li>
+<li>Stability: 11 samples over 10 min, no new restarts (baseline 2 restarts from the install itself), watchdog unused. The install took about 11 min.</li>
+<li>Snapshot <code>l1-ric-up</code> taken.</li>
+</ul></li>
+<li><span class="tag deviation">deviation</span>The M1 <code>versions.txt</code> filter kept only <code>ii</code> dpkg lines, but NIST holds kubeadm/kubelet/kubectl/kubernetes-cni (<code>hi</code>). The gate now keeps both. For this run, <code>versions-supplement.txt</code> (written by the orchestrator from the same VM state, labelled) holds them: all 1.33.13-1.1, kubernetes-cni 1.6.0-1.1. P8 records them natively.</li>
+<li><span class="tag question">observation</span>During <code>full_install.sh</code>, NIST's kpm_sim sent an E2SetupRequest and e2term then closed the association ("Connection closed by remote peer"); e2mgr listed no nodes at the end of M1. NIST's own success marker (<code>&lt;/E2AP-PDU&gt;</code> in the log) also matches the node's printout of its own request, so it proves nothing. M2 decides, from e2mgr state and decoded wire bytes.</li>
 <li><span class="tag decision">decision</span>Known NIST hang points, bounded only by the outer <code>timeout</code>: <code>wait_for_ricplt_pods.sh:49</code>, <code>run_e2sim_and_connect_to_ric.sh:104</code> (restarts kubelet every third wrap), <code>full_install.sh:319</code> and <code>:498</code>. They are not patched unless the run shows they hang.</li>
 </ul>
 </body>

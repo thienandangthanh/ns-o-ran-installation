@@ -75,7 +75,7 @@ write_versions() {
     local f="$EVIDENCE_DIR/versions.txt"
     {
         echo "--- dpkg (kube*, containerd*, docker*, helm)"
-        dpkg -l 'kube*' 'containerd*' 'docker*' 'helm*' 2>/dev/null | grep '^ii'
+        dpkg -l 'kube*' 'containerd*' 'docker*' 'helm*' 2>/dev/null | grep -E '^(ii|hi)'
         echo "--- uname -r"; uname -r
         echo "--- kubectl version"; kc version
         echo "--- containerd --version"; containerd --version
