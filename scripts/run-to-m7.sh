@@ -29,7 +29,7 @@ done
 # gate number -> "script|snapshot-suffix|timeout-s|expected growth GB"
 declare -A GATES=(
     [0]="gate-m0-preflight.sh|preflight|1800|1"
-    [1]="gate-m1-ric-up.sh|ric-up|7200|25"
+    [1]="gate-m1-ric-up.sh|ric-up|9600|25"
     [2]="gate-m2-refnode.sh|refnode|3600|3"
     [3]="gate-m3-xapps.sh|xapps|5400|8"
     [4]="gate-m4-ns3-build.sh|ns3-build|7200|10"
