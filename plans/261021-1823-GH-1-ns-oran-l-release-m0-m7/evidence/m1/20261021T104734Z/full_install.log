@@ -1,0 +1,1870 @@
+Installing Near-Real-Time RAN Intelligent Controller (O-RAN SC)...
+Configured needrestart to list-only (no service restarts).
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/start_sudo_refresh.sh 
+sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+Sudo refresh process started with PID 1271
+Successfully stopped unattended-upgrades service.
+Successfully disabled unattended-upgrades service.
+Successfully stopped apt-daily.timer service.
+Successfully disabled apt-daily.timer service.
+Successfully stopped apt-daily-upgrade.timer service.
+Successfully disabled apt-daily-upgrade.timer service.
+Chrony is not installed, installing...
+Hit:1 https://ftp.kaist.ac.kr/ubuntu noble InRelease
+Get:2 https://ftp.kaist.ac.kr/ubuntu noble-updates InRelease [126 kB]
+Get:3 https://ftp.kaist.ac.kr/ubuntu noble-backports InRelease [126 kB]
+Get:4 https://ftp.kaist.ac.kr/ubuntu noble-updates/main amd64 Packages [1400 kB]
+Get:5 https://ftp.kaist.ac.kr/ubuntu noble-updates/main Translation-en [309 kB]
+Get:6 https://ftp.kaist.ac.kr/ubuntu noble-updates/main amd64 Components [181 kB]
+Get:7 https://ftp.kaist.ac.kr/ubuntu noble-updates/universe amd64 Packages [1706 kB]
+Get:8 https://ftp.kaist.ac.kr/ubuntu noble-updates/universe Translation-en [342 kB]
+Get:9 https://ftp.kaist.ac.kr/ubuntu noble-updates/universe amd64 Components [388 kB]
+Get:10 https://ftp.kaist.ac.kr/ubuntu noble-updates/multiverse amd64 Components [940 B]
+Get:11 https://ftp.kaist.ac.kr/ubuntu noble-backports/main amd64 Components [5744 B]
+Get:12 https://ftp.kaist.ac.kr/ubuntu noble-backports/universe amd64 Components [12.6 kB]
+Hit:13 http://security.ubuntu.com/ubuntu noble-security InRelease
+Fetched 4598 kB in 2s (2895 kB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  tzdata-legacy
+Suggested packages:
+  dnsutils
+The following packages will be REMOVED:
+  systemd-timesyncd
+The following NEW packages will be installed:
+  chrony tzdata-legacy
+0 upgraded, 2 newly installed, 1 to remove and 22 not upgraded.
+Need to get 412 kB of archives.
+After this operation, 1625 kB of additional disk space will be used.
+Get:1 https://ftp.kaist.ac.kr/ubuntu noble-updates/main amd64 tzdata-legacy all 2026e-0ubuntu0.24.04.1 [95.4 kB]
+Get:2 https://ftp.kaist.ac.kr/ubuntu noble-updates/main amd64 chrony amd64 4.5-1ubuntu4.2 [316 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 412 kB in 0s (6968 kB/s)
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 75628 files and directories currently installed.)
+Removing systemd-timesyncd (255.4-1ubuntu8.18) ...
+Selecting previously unselected package tzdata-legacy.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 75612 files and directories currently installed.)
+Preparing to unpack .../tzdata-legacy_2026e-0ubuntu0.24.04.1_all.deb ...
+Unpacking tzdata-legacy (2026e-0ubuntu0.24.04.1) ...
+Selecting previously unselected package chrony.
+Preparing to unpack .../chrony_4.5-1ubuntu4.2_amd64.deb ...
+Unpacking chrony (4.5-1ubuntu4.2) ...
+Setting up tzdata-legacy (2026e-0ubuntu0.24.04.1) ...
+Setting up chrony (4.5-1ubuntu4.2) ...
+
+Creating config file /etc/chrony/chrony.conf with new version
+
+Creating config file /etc/chrony/chrony.keys with new version
+dpkg-statoverride: warning: --update given but /var/log/chrony does not exist
+Created symlink /etc/systemd/system/chronyd.service → /usr/lib/systemd/system/chrony.service.
+Created symlink /etc/systemd/system/multi-user.target.wants/chrony.service → /usr/lib/systemd/system/chrony.service.
+Processing triggers for dbus (1.14.10-4ubuntu4.1) ...
+packages have been installed but needrestart is suspended
+
+Installing Docker, Kubernetes, and Helm...
+Checking if any of the kube-system pods are not running...
+At least one kube-system pod is not running, resetting Kubernetes...
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/git_clone.sh https://gerrit.o-ran-sc.org/r/ric-plt/ric-dep.git ric-dep --https
+Installing jq...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  libjq1 libonig5
+The following NEW packages will be installed:
+  jq libjq1 libonig5
+0 upgraded, 3 newly installed, 0 to remove and 22 not upgraded.
+Need to get 380 kB of archives.
+After this operation, 1127 kB of additional disk space will be used.
+Get:1 https://ftp.kaist.ac.kr/ubuntu noble/main amd64 libonig5 amd64 6.9.9-1build1 [172 kB]
+Get:2 https://ftp.kaist.ac.kr/ubuntu noble-updates/main amd64 libjq1 amd64 1.7.1-3ubuntu0.24.04.2 [142 kB]
+Get:3 https://ftp.kaist.ac.kr/ubuntu noble-updates/main amd64 jq amd64 1.7.1-3ubuntu0.24.04.2 [65.7 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 380 kB in 0s (6089 kB/s)
+Selecting previously unselected package libonig5:amd64.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 76401 files and directories currently installed.)
+Preparing to unpack .../libonig5_6.9.9-1build1_amd64.deb ...
+Unpacking libonig5:amd64 (6.9.9-1build1) ...
+Selecting previously unselected package libjq1:amd64.
+Preparing to unpack .../libjq1_1.7.1-3ubuntu0.24.04.2_amd64.deb ...
+Unpacking libjq1:amd64 (1.7.1-3ubuntu0.24.04.2) ...
+Selecting previously unselected package jq.
+Preparing to unpack .../jq_1.7.1-3ubuntu0.24.04.2_amd64.deb ...
+Unpacking jq (1.7.1-3ubuntu0.24.04.2) ...
+Setting up libonig5:amd64 (6.9.9-1build1) ...
+Setting up libjq1:amd64 (1.7.1-3ubuntu0.24.04.2) ...
+Setting up jq (1.7.1-3ubuntu0.24.04.2) ...
+Processing triggers for libc-bin (2.39-0ubuntu8.9) ...
+packages have been installed but needrestart is suspended
+Cloning https://gerrit.o-ran-sc.org/r/ric-plt/ric-dep.git at branch l-release...
+Cloning into 'ric-dep'...
+Already at commit ee47a347314aa0749881de367e8fedc4a1bba13a.
+stty: 'standard input': Inappropriate ioctl for device
+Repository https://gerrit.o-ran-sc.org/r/ric-plt/ric-dep.git is cloned to /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/ric-dep.
+
+Patching ric-dep...
+Copying over install_k8s_and_helm.sh...
+Patching getConfigmap.go and configmap.yaml so that E2 nodes don't disconnect...
+Patching getConfigmap.go...
+Package "dos2unix" not found, installing...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following NEW packages will be installed:
+  dos2unix
+0 upgraded, 1 newly installed, 0 to remove and 22 not upgraded.
+Need to get 501 kB of archives.
+After this operation, 1868 kB of additional disk space will be used.
+Get:1 https://ftp.kaist.ac.kr/ubuntu noble/universe amd64 dos2unix amd64 7.5.1-1 [501 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 501 kB in 0s (6530 kB/s)
+Selecting previously unselected package dos2unix.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 76419 files and directories currently installed.)
+Preparing to unpack .../dos2unix_7.5.1-1_amd64.deb ...
+Unpacking dos2unix (7.5.1-1) ...
+Setting up dos2unix (7.5.1-1) ...
+packages have been installed but needrestart is suspended
+dos2unix: converting file getConfigmap.go to Unix format...
+Checking patch depRicKubernetesOperator/internal/controller/getConfigmap.go...
+Applied patch depRicKubernetesOperator/internal/controller/getConfigmap.go cleanly.
+Checking patch helm/e2mgr/templates/configmap.yaml...
+Applied patch helm/e2mgr/templates/configmap.yaml cleanly.
+Checking patch new-installer/helm/charts/nearrtric/e2mgr/templates/configmap.yaml...
+Applied patch new-installer/helm/charts/nearrtric/e2mgr/templates/configmap.yaml cleanly.
+Patching rtmgr route templates for valid and reliable E2 routes...
+Checking patch helm/rtmgr/templates/config.yaml...
+Applied patch helm/rtmgr/templates/config.yaml cleanly.
+Checking patch helm/rtmgr/templates/deployment.yaml...
+Applied patch helm/rtmgr/templates/deployment.yaml cleanly.
+Checking patch new-installer/helm/charts/nearrtric/rtmgr/templates/config.yaml...
+Applied patch new-installer/helm/charts/nearrtric/rtmgr/templates/config.yaml cleanly.
+Checking patch new-installer/helm/charts/nearrtric/rtmgr/templates/deployment.yaml...
+Applied patch new-installer/helm/charts/nearrtric/rtmgr/templates/deployment.yaml cleanly.
+Successfully patched ric-dep.
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/remove_expired_apt_keys.sh 
+tee: /dev/tty: No such device or address
+Successfully completed apt-get update with no EXPKEYSIG errors detected.
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/set_file_descriptor_limits.sh 
+Updating file descriptor limits...
+fs.file-max = 1000000
+fs.inotify.max_user_watches = 524288
+fs.inotify.max_user_instances = 512
+File descriptor limits updated. Reboot or restart your services to ensure all limits are fully applied.
++ RESET_IPTABLES=false
+++ ip route
+++ grep default
+++ awk '{print $5}'
+++ head -n 1
++ INTERFACE=enp1s0
+++ ip addr show enp1s0
+++ grep 'inet '
+++ awk '{print $2}'
+++ cut -d/ -f1
++ IP_ADDRESS=192.168.122.137
+++ hostname
++ HOSTNAME=oran-kvm-2404
++ USE_SYSTEMCTL=false
++ command -v systemctl
+++ cat /proc/1/comm
++ '[' systemd = systemd ']'
+++ systemctl
++ OUTPUT='  UNIT                                                                                      LOAD   ACTIVE SUB       DESCRIPTION
+  proc-sys-fs-binfmt_misc.automount                                                         loaded active running   Arbitrary Executable File Formats File System Automount Point
+  sys-devices-pci0000:00-0000:00:02.0-0000:01:00.0-virtio1-net-enp1s0.device                loaded active plugged   Virtio 1.0 network device
+  sys-devices-pci0000:00-0000:00:02.2-0000:03:00.0-virtio2-virtio\x2dports-vport2p1.device  loaded active plugged   /sys/devices/pci0000:00/0000:00:02.2/0000:03:00.0/virtio2/virtio-ports/vport2p1
+  sys-devices-pci0000:00-0000:00:02.2-0000:03:00.0-virtio2-virtio\x2dports-vport2p2.device  loaded active plugged   /sys/devices/pci0000:00/0000:00:02.2/0000:03:00.0/virtio2/virtio-ports/vport2p2
+  sys-devices-pci0000:00-0000:00:02.3-0000:04:00.0-virtio3-block-vda-vda1.device            loaded active plugged   /sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda/vda1
+  sys-devices-pci0000:00-0000:00:02.3-0000:04:00.0-virtio3-block-vda-vda2.device            loaded active plugged   /sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda/vda2
+  sys-devices-pci0000:00-0000:00:02.3-0000:04:00.0-virtio3-block-vda-vda3.device            loaded active plugged   /sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda/vda3
+  sys-devices-pci0000:00-0000:00:02.3-0000:04:00.0-virtio3-block-vda.device                 loaded active plugged   /sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda
+  sys-devices-pci0000:00-0000:00:1b.0-sound-card0-controlC0.device                          loaded active plugged   /sys/devices/pci0000:00/0000:00:1b.0/sound/card0/controlC0
+  sys-devices-pci0000:00-0000:00:1f.2-ata1-host0-target0:0:0-0:0:0:0-block-sr0.device       loaded active plugged   QEMU_DVD-ROM
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.1-tty-ttyS1.device              loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.1/tty/ttyS1
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.10-tty-ttyS10.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.10/tty/ttyS10
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.11-tty-ttyS11.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.11/tty/ttyS11
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.12-tty-ttyS12.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.12/tty/ttyS12
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.13-tty-ttyS13.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.13/tty/ttyS13
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.14-tty-ttyS14.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.14/tty/ttyS14
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.15-tty-ttyS15.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.15/tty/ttyS15
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.16-tty-ttyS16.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.16/tty/ttyS16
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.17-tty-ttyS17.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.17/tty/ttyS17
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.18-tty-ttyS18.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.18/tty/ttyS18
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.19-tty-ttyS19.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.19/tty/ttyS19
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.2-tty-ttyS2.device              loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.2/tty/ttyS2
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.20-tty-ttyS20.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.20/tty/ttyS20
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.21-tty-ttyS21.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.21/tty/ttyS21
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.22-tty-ttyS22.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.22/tty/ttyS22
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.23-tty-ttyS23.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.23/tty/ttyS23
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.24-tty-ttyS24.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.24/tty/ttyS24
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.25-tty-ttyS25.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.25/tty/ttyS25
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.26-tty-ttyS26.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.26/tty/ttyS26
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.27-tty-ttyS27.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.27/tty/ttyS27
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.28-tty-ttyS28.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.28/tty/ttyS28
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.29-tty-ttyS29.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.29/tty/ttyS29
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.3-tty-ttyS3.device              loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.3/tty/ttyS3
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.30-tty-ttyS30.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.30/tty/ttyS30
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.31-tty-ttyS31.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.31/tty/ttyS31
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.4-tty-ttyS4.device              loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.4/tty/ttyS4
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.5-tty-ttyS5.device              loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.5/tty/ttyS5
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.6-tty-ttyS6.device              loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.6/tty/ttyS6
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.7-tty-ttyS7.device              loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.7/tty/ttyS7
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.8-tty-ttyS8.device              loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.8/tty/ttyS8
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.9-tty-ttyS9.device              loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.9/tty/ttyS9
+  sys-devices-pnp0-00:00-00:00:0-00:00:0.0-tty-ttyS0.device                                 loaded active plugged   /sys/devices/pnp0/00:00/00:00:0/00:00:0.0/tty/ttyS0
+  sys-devices-virtual-block-dm\x2d0.device                                                  loaded active plugged   /sys/devices/virtual/block/dm-0
+  sys-devices-virtual-misc-rfkill.device                                                    loaded active plugged   /sys/devices/virtual/misc/rfkill
+  sys-devices-virtual-tty-ttyprintk.device                                                  loaded active plugged   /sys/devices/virtual/tty/ttyprintk
+  sys-module-configfs.device                                                                loaded active plugged   /sys/module/configfs
+  sys-module-fuse.device                                                                    loaded active plugged   /sys/module/fuse
+  sys-subsystem-net-devices-enp1s0.device                                                   loaded active plugged   Virtio 1.0 network device
+  -.mount                                                                                   loaded active mounted   Root Mount
+  boot.mount                                                                                loaded active mounted   /boot
+  dev-hugepages.mount                                                                       loaded active mounted   Huge Pages File System
+  dev-mqueue.mount                                                                          loaded active mounted   POSIX Message Queue File System
+  proc-sys-fs-binfmt_misc.mount                                                             loaded active mounted   Arbitrary Executable File Formats File System
+  sys-fs-fuse-connections.mount                                                             loaded active mounted   FUSE Control File System
+  sys-kernel-config.mount                                                                   loaded active mounted   Kernel Configuration File System
+  sys-kernel-debug.mount                                                                    loaded active mounted   Kernel Debug File System
+  sys-kernel-tracing.mount                                                                  loaded active mounted   Kernel Trace File System
+  systemd-ask-password-console.path                                                         loaded active waiting   Dispatch Password Requests to Console Directory Watch
+  systemd-ask-password-wall.path                                                            loaded active waiting   Forward Password Requests to Wall Directory Watch
+  init.scope                                                                                loaded active running   System and Service Manager
+  apparmor.service                                                                          loaded active exited    Load AppArmor profiles
+  apport.service                                                                            loaded active exited    automatic crash report generation
+  blk-availability.service                                                                  loaded active exited    Availability of block devices
+  chrony.service                                                                            loaded active running   chrony, an NTP client/server
+  console-setup.service                                                                     loaded active exited    Set console font and keymap
+  dbus.service                                                                              loaded active running   D-Bus System Message Bus
+  finalrd.service                                                                           loaded active exited    Create final runtime dir for shutdown pivot root
+  gate-m1-20261021T104734Z.service                                                          loaded active running   /usr/bin/bash -c "bash /home/uc/harness/scripts/gates/gate-m1-ric-up.sh  >/home/uc/evidence/m1/20261021T104734Z/launch.log 2>&1 </dev/null; echo \$? >/home/uc/evidence/m1/20261021T104734Z/exit_code"
+  getty@tty1.service                                                                        loaded active running   Getty on tty1
+  keyboard-setup.service                                                                    loaded active exited    Set the console keyboard layout
+  kmod-static-nodes.service                                                                 loaded active exited    Create List of Static Device Nodes
+  lvm2-monitor.service                                                                      loaded active exited    Monitoring of LVM2 mirrors, snapshots etc. using dmeventd or progress polling
+  multipathd.service                                                                        loaded active running   Device-Mapper Multipath Device Controller
+  packagekit.service                                                                        loaded active running   PackageKit Daemon
+  plymouth-quit-wait.service                                                                loaded active exited    Hold until boot process finishes up
+  plymouth-quit.service                                                                     loaded active exited    Terminate Plymouth Boot Screen
+  plymouth-read-write.service                                                               loaded active exited    Tell Plymouth To Write Out Runtime Data
+  polkit.service                                                                            loaded active running   Authorization Manager
+  setvtrgb.service                                                                          loaded active exited    Set console scheme
+  snapd.apparmor.service                                                                    loaded active exited    Load AppArmor profiles managed internally by snapd
+  snapd.seeded.service                                                                      loaded active exited    Wait until snapd is fully seeded
+  ssh.service                                                                               loaded active running   OpenBSD Secure Shell server
+  systemd-binfmt.service                                                                    loaded active exited    Set Up Additional Binary Formats
+  systemd-fsck@dev-disk-by\x2duuid-bda73ea3\x2dbcfa\x2d422b\x2d9321\x2dc91db99b096e.service loaded active exited    File System Check on /dev/disk/by-uuid/bda73ea3-bcfa-422b-9321-c91db99b096e
+  systemd-journal-flush.service                                                             loaded active exited    Flush Journal to Persistent Storage
+  systemd-journald.service                                                                  loaded active running   Journal Service
+  systemd-logind.service                                                                    loaded active running   User Login Management
+  systemd-modules-load.service                                                              loaded active exited    Load Kernel Modules
+  systemd-networkd-wait-online.service                                                      loaded active exited    Wait for Network to be Configured
+  systemd-networkd.service                                                                  loaded active running   Network Configuration
+  systemd-random-seed.service                                                               loaded active exited    Load/Save OS Random Seed
+  systemd-remount-fs.service                                                                loaded active exited    Remount Root and Kernel File Systems
+  systemd-resolved.service                                                                  loaded active running   Network Name Resolution
+  systemd-sysctl.service                                                                    loaded active exited    Apply Kernel Variables
+  systemd-tmpfiles-setup-dev-early.service                                                  loaded active exited    Create Static Device Nodes in /dev gracefully
+  systemd-tmpfiles-setup-dev.service                                                        loaded active exited    Create Static Device Nodes in /dev
+  systemd-tmpfiles-setup.service                                                            loaded active exited    Create Volatile Files and Directories
+  systemd-udev-trigger.service                                                              loaded active exited    Coldplug All udev Devices
+  systemd-udevd.service                                                                     loaded active running   Rule-based Manager for Device Events and Files
+  systemd-update-utmp.service                                                               loaded active exited    Record System Boot/Shutdown in UTMP
+  systemd-user-sessions.service                                                             loaded active exited    Permit User Sessions
+  -.slice                                                                                   loaded active active    Root Slice
+  system-getty.slice                                                                        loaded active active    Slice /system/getty
+  system-modprobe.slice                                                                     loaded active active    Slice /system/modprobe
+  system-systemd\x2dfsck.slice                                                              loaded active active    Slice /system/systemd-fsck
+  system.slice                                                                              loaded active active    System Slice
+  user.slice                                                                                loaded active active    User and Session Slice
+  dbus.socket                                                                               loaded active running   D-Bus System Message Bus Socket
+  dm-event.socket                                                                           loaded active listening Device-mapper event daemon FIFOs
+  iscsid.socket                                                                             loaded active listening Open-iSCSI iscsid Socket
+  lvm2-lvmpolld.socket                                                                      loaded active listening LVM2 poll daemon socket
+  lxd-installer.socket                                                                      loaded active listening Helper to install lxd snap on demand
+  multipathd.socket                                                                         loaded active running   multipathd control socket
+  snapd.socket                                                                              loaded active listening Socket activation for snappy daemon
+  ssh.socket                                                                                loaded active running   OpenBSD Secure Shell server socket
+  systemd-fsckd.socket                                                                      loaded active listening fsck to fsckd communication Socket
+  systemd-initctl.socket                                                                    loaded active listening initctl Compatibility Named Pipe
+  systemd-journald-dev-log.socket                                                           loaded active running   Journal Socket (/dev/log)
+  systemd-journald.socket                                                                   loaded active running   Journal Socket
+  systemd-networkd.socket                                                                   loaded active running   Network Service Netlink Socket
+  systemd-rfkill.socket                                                                     loaded active listening Load/Save RF Kill Switch Status /dev/rfkill Watch
+  systemd-sysext.socket                                                                     loaded active listening System Extension Image Management (Varlink)
+  systemd-udevd-control.socket                                                              loaded active running   udev Control Socket
+  systemd-udevd-kernel.socket                                                               loaded active running   udev Kernel Socket
+  swap.img.swap                                                                             loaded active active    /swap.img
+  basic.target                                                                              loaded active active    Basic System
+  cryptsetup.target                                                                         loaded active active    Local Encrypted Volumes
+  getty-pre.target                                                                          loaded active active    Preparation for Logins
+  getty.target                                                                              loaded active active    Login Prompts
+  graphical.target                                                                          loaded active active    Graphical Interface
+  integritysetup.target                                                                     loaded active active    Local Integrity Protected Volumes
+  local-fs-pre.target                                                                       loaded active active    Preparation for Local File Systems
+  local-fs.target                                                                           loaded active active    Local File Systems
+  multi-user.target                                                                         loaded active active    Multi-User System
+  network-online.target                                                                     loaded active active    Network is Online
+  network.target                                                                            loaded active active    Network
+  nss-lookup.target                                                                         loaded active active    Host and Network Name Lookups
+  paths.target                                                                              loaded active active    Path Units
+  remote-fs-pre.target                                                                      loaded active active    Preparation for Remote File Systems
+  remote-fs.target                                                                          loaded active active    Remote File Systems
+  slices.target                                                                             loaded active active    Slice Units
+  snapd.mounts-pre.target                                                                   loaded active active    Mounting snaps
+  snapd.mounts.target                                                                       loaded active active    Mounted snaps
+  sockets.target                                                                            loaded active active    Socket Units
+  sound.target                                                                              loaded active active    Sound Card
+  swap.target                                                                               loaded active active    Swaps
+  sysinit.target                                                                            loaded active active    System Initialization
+  time-set.target                                                                           loaded active active    System Time Set
+  time-sync.target                                                                          loaded active active    System Time Synchronized
+  timers.target                                                                             loaded active active    Timer Units
+  veritysetup.target                                                                        loaded active active    Local Verity Protected Volumes
+  dpkg-db-backup.timer                                                                      loaded active waiting   Daily dpkg database backup timer
+  e2scrub_all.timer                                                                         loaded active waiting   Periodic ext4 Online Metadata Check for All Filesystems
+  fstrim.timer                                                                              loaded active waiting   Discard unused filesystem blocks once a week
+  motd-news.timer                                                                           loaded active waiting   Message of the Day
+  systemd-tmpfiles-clean.timer                                                              loaded active waiting   Daily Cleanup of Temporary Directories
+
+Legend: LOAD   → Reflects whether the unit definition was properly loaded.
+        ACTIVE → The high-level unit activation state, i.e. generalization of SUB.
+        SUB    → The low-level unit activation state, values depend on unit type.
+
+156 loaded units listed. Pass --all to see loaded but inactive units, too.
+To show all installed unit files use '\''systemctl list-unit-files'\''.'
++ grep -qiE 'not supported|System has not been booted with systemd'
++ echo '  UNIT                                                                                      LOAD   ACTIVE SUB       DESCRIPTION
+  proc-sys-fs-binfmt_misc.automount                                                         loaded active running   Arbitrary Executable File Formats File System Automount Point
+  sys-devices-pci0000:00-0000:00:02.0-0000:01:00.0-virtio1-net-enp1s0.device                loaded active plugged   Virtio 1.0 network device
+  sys-devices-pci0000:00-0000:00:02.2-0000:03:00.0-virtio2-virtio\x2dports-vport2p1.device  loaded active plugged   /sys/devices/pci0000:00/0000:00:02.2/0000:03:00.0/virtio2/virtio-ports/vport2p1
+  sys-devices-pci0000:00-0000:00:02.2-0000:03:00.0-virtio2-virtio\x2dports-vport2p2.device  loaded active plugged   /sys/devices/pci0000:00/0000:00:02.2/0000:03:00.0/virtio2/virtio-ports/vport2p2
+  sys-devices-pci0000:00-0000:00:02.3-0000:04:00.0-virtio3-block-vda-vda1.device            loaded active plugged   /sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda/vda1
+  sys-devices-pci0000:00-0000:00:02.3-0000:04:00.0-virtio3-block-vda-vda2.device            loaded active plugged   /sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda/vda2
+  sys-devices-pci0000:00-0000:00:02.3-0000:04:00.0-virtio3-block-vda-vda3.device            loaded active plugged   /sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda/vda3
+  sys-devices-pci0000:00-0000:00:02.3-0000:04:00.0-virtio3-block-vda.device                 loaded active plugged   /sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda
+  sys-devices-pci0000:00-0000:00:1b.0-sound-card0-controlC0.device                          loaded active plugged   /sys/devices/pci0000:00/0000:00:1b.0/sound/card0/controlC0
+  sys-devices-pci0000:00-0000:00:1f.2-ata1-host0-target0:0:0-0:0:0:0-block-sr0.device       loaded active plugged   QEMU_DVD-ROM
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.1-tty-ttyS1.device              loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.1/tty/ttyS1
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.10-tty-ttyS10.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.10/tty/ttyS10
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.11-tty-ttyS11.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.11/tty/ttyS11
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.12-tty-ttyS12.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.12/tty/ttyS12
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.13-tty-ttyS13.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.13/tty/ttyS13
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.14-tty-ttyS14.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.14/tty/ttyS14
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.15-tty-ttyS15.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.15/tty/ttyS15
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.16-tty-ttyS16.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.16/tty/ttyS16
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.17-tty-ttyS17.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.17/tty/ttyS17
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.18-tty-ttyS18.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.18/tty/ttyS18
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.19-tty-ttyS19.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.19/tty/ttyS19
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.2-tty-ttyS2.device              loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.2/tty/ttyS2
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.20-tty-ttyS20.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.20/tty/ttyS20
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.21-tty-ttyS21.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.21/tty/ttyS21
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.22-tty-ttyS22.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.22/tty/ttyS22
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.23-tty-ttyS23.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.23/tty/ttyS23
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.24-tty-ttyS24.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.24/tty/ttyS24
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.25-tty-ttyS25.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.25/tty/ttyS25
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.26-tty-ttyS26.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.26/tty/ttyS26
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.27-tty-ttyS27.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.27/tty/ttyS27
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.28-tty-ttyS28.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.28/tty/ttyS28
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.29-tty-ttyS29.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.29/tty/ttyS29
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.3-tty-ttyS3.device              loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.3/tty/ttyS3
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.30-tty-ttyS30.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.30/tty/ttyS30
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.31-tty-ttyS31.device            loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.31/tty/ttyS31
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.4-tty-ttyS4.device              loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.4/tty/ttyS4
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.5-tty-ttyS5.device              loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.5/tty/ttyS5
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.6-tty-ttyS6.device              loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.6/tty/ttyS6
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.7-tty-ttyS7.device              loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.7/tty/ttyS7
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.8-tty-ttyS8.device              loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.8/tty/ttyS8
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.9-tty-ttyS9.device              loaded active plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.9/tty/ttyS9
+  sys-devices-pnp0-00:00-00:00:0-00:00:0.0-tty-ttyS0.device                                 loaded active plugged   /sys/devices/pnp0/00:00/00:00:0/00:00:0.0/tty/ttyS0
+  sys-devices-virtual-block-dm\x2d0.device                                                  loaded active plugged   /sys/devices/virtual/block/dm-0
+  sys-devices-virtual-misc-rfkill.device                                                    loaded active plugged   /sys/devices/virtual/misc/rfkill
+  sys-devices-virtual-tty-ttyprintk.device                                                  loaded active plugged   /sys/devices/virtual/tty/ttyprintk
+  sys-module-configfs.device                                                                loaded active plugged   /sys/module/configfs
+  sys-module-fuse.device                                                                    loaded active plugged   /sys/module/fuse
+  sys-subsystem-net-devices-enp1s0.device                                                   loaded active plugged   Virtio 1.0 network device
+  -.mount                                                                                   loaded active mounted   Root Mount
+  boot.mount                                                                                loaded active mounted   /boot
+  dev-hugepages.mount                                                                       loaded active mounted   Huge Pages File System
+  dev-mqueue.mount                                                                          loaded active mounted   POSIX Message Queue File System
+  proc-sys-fs-binfmt_misc.mount                                                             loaded active mounted   Arbitrary Executable File Formats File System
+  sys-fs-fuse-connections.mount                                                             loaded active mounted   FUSE Control File System
+  sys-kernel-config.mount                                                                   loaded active mounted   Kernel Configuration File System
+  sys-kernel-debug.mount                                                                    loaded active mounted   Kernel Debug File System
+  sys-kernel-tracing.mount                                                                  loaded active mounted   Kernel Trace File System
+  systemd-ask-password-console.path                                                         loaded active waiting   Dispatch Password Requests to Console Directory Watch
+  systemd-ask-password-wall.path                                                            loaded active waiting   Forward Password Requests to Wall Directory Watch
+  init.scope                                                                                loaded active running   System and Service Manager
+  apparmor.service                                                                          loaded active exited    Load AppArmor profiles
+  apport.service                                                                            loaded active exited    automatic crash report generation
+  blk-availability.service                                                                  loaded active exited    Availability of block devices
+  chrony.service                                                                            loaded active running   chrony, an NTP client/server
+  console-setup.service                                                                     loaded active exited    Set console font and keymap
+  dbus.service                                                                              loaded active running   D-Bus System Message Bus
+  finalrd.service                                                                           loaded active exited    Create final runtime dir for shutdown pivot root
+  gate-m1-20261021T104734Z.service                                                          loaded active running   /usr/bin/bash -c "bash /home/uc/harness/scripts/gates/gate-m1-ric-up.sh  >/home/uc/evidence/m1/20261021T104734Z/launch.log 2>&1 </dev/null; echo \$? >/home/uc/evidence/m1/20261021T104734Z/exit_code"
+  getty@tty1.service                                                                        loaded active running   Getty on tty1
+  keyboard-setup.service                                                                    loaded active exited    Set the console keyboard layout
+  kmod-static-nodes.service                                                                 loaded active exited    Create List of Static Device Nodes
+  lvm2-monitor.service                                                                      loaded active exited    Monitoring of LVM2 mirrors, snapshots etc. using dmeventd or progress polling
+  multipathd.service                                                                        loaded active running   Device-Mapper Multipath Device Controller
+  packagekit.service                                                                        loaded active running   PackageKit Daemon
+  plymouth-quit-wait.service                                                                loaded active exited    Hold until boot process finishes up
+  plymouth-quit.service                                                                     loaded active exited    Terminate Plymouth Boot Screen
+  plymouth-read-write.service                                                               loaded active exited    Tell Plymouth To Write Out Runtime Data
+  polkit.service                                                                            loaded active running   Authorization Manager
+  setvtrgb.service                                                                          loaded active exited    Set console scheme
+  snapd.apparmor.service                                                                    loaded active exited    Load AppArmor profiles managed internally by snapd
+  snapd.seeded.service                                                                      loaded active exited    Wait until snapd is fully seeded
+  ssh.service                                                                               loaded active running   OpenBSD Secure Shell server
+  systemd-binfmt.service                                                                    loaded active exited    Set Up Additional Binary Formats
+  systemd-fsck@dev-disk-by\x2duuid-bda73ea3\x2dbcfa\x2d422b\x2d9321\x2dc91db99b096e.service loaded active exited    File System Check on /dev/disk/by-uuid/bda73ea3-bcfa-422b-9321-c91db99b096e
+  systemd-journal-flush.service                                                             loaded active exited    Flush Journal to Persistent Storage
+  systemd-journald.service                                                                  loaded active running   Journal Service
+  systemd-logind.service                                                                    loaded active running   User Login Management
+  systemd-modules-load.service                                                              loaded active exited    Load Kernel Modules
+  systemd-networkd-wait-online.service                                                      loaded active exited    Wait for Network to be Configured
+  systemd-networkd.service                                                                  loaded active running   Network Configuration
+  systemd-random-seed.service                                                               loaded active exited    Load/Save OS Random Seed
+  systemd-remount-fs.service                                                                loaded active exited    Remount Root and Kernel File Systems
+  systemd-resolved.service                                                                  loaded active running   Network Name Resolution
+  systemd-sysctl.service                                                                    loaded active exited    Apply Kernel Variables
+  systemd-tmpfiles-setup-dev-early.service                                                  loaded active exited    Create Static Device Nodes in /dev gracefully
+  systemd-tmpfiles-setup-dev.service                                                        loaded active exited    Create Static Device Nodes in /dev
+  systemd-tmpfiles-setup.service                                                            loaded active exited    Create Volatile Files and Directories
+  systemd-udev-trigger.service                                                              loaded active exited    Coldplug All udev Devices
+  systemd-udevd.service                                                                     loaded active running   Rule-based Manager for Device Events and Files
+  systemd-update-utmp.service                                                               loaded active exited    Record System Boot/Shutdown in UTMP
+  systemd-user-sessions.service                                                             loaded active exited    Permit User Sessions
+  -.slice                                                                                   loaded active active    Root Slice
+  system-getty.slice                                                                        loaded active active    Slice /system/getty
+  system-modprobe.slice                                                                     loaded active active    Slice /system/modprobe
+  system-systemd\x2dfsck.slice                                                              loaded active active    Slice /system/systemd-fsck
+  system.slice                                                                              loaded active active    System Slice
+  user.slice                                                                                loaded active active    User and Session Slice
+  dbus.socket                                                                               loaded active running   D-Bus System Message Bus Socket
+  dm-event.socket                                                                           loaded active listening Device-mapper event daemon FIFOs
+  iscsid.socket                                                                             loaded active listening Open-iSCSI iscsid Socket
+  lvm2-lvmpolld.socket                                                                      loaded active listening LVM2 poll daemon socket
+  lxd-installer.socket                                                                      loaded active listening Helper to install lxd snap on demand
+  multipathd.socket                                                                         loaded active running   multipathd control socket
+  snapd.socket                                                                              loaded active listening Socket activation for snappy daemon
+  ssh.socket                                                                                loaded active running   OpenBSD Secure Shell server socket
+  systemd-fsckd.socket                                                                      loaded active listening fsck to fsckd communication Socket
+  systemd-initctl.socket                                                                    loaded active listening initctl Compatibility Named Pipe
+  systemd-journald-dev-log.socket                                                           loaded active running   Journal Socket (/dev/log)
+  systemd-journald.socket                                                                   loaded active running   Journal Socket
+  systemd-networkd.socket                                                                   loaded active running   Network Service Netlink Socket
+  systemd-rfkill.socket                                                                     loaded active listening Load/Save RF Kill Switch Status /dev/rfkill Watch
+  systemd-sysext.socket                                                                     loaded active listening System Extension Image Management (Varlink)
+  systemd-udevd-control.socket                                                              loaded active running   udev Control Socket
+  systemd-udevd-kernel.socket                                                               loaded active running   udev Kernel Socket
+  swap.img.swap                                                                             loaded active active    /swap.img
+  basic.target                                                                              loaded active active    Basic System
+  cryptsetup.target                                                                         loaded active active    Local Encrypted Volumes
+  getty-pre.target                                                                          loaded active active    Preparation for Logins
+  getty.target                                                                              loaded active active    Login Prompts
+  graphical.target                                                                          loaded active active    Graphical Interface
+  integritysetup.target                                                                     loaded active active    Local Integrity Protected Volumes
+  local-fs-pre.target                                                                       loaded active active    Preparation for Local File Systems
+  local-fs.target                                                                           loaded active active    Local File Systems
+  multi-user.target                                                                         loaded active active    Multi-User System
+  network-online.target                                                                     loaded active active    Network is Online
+  network.target                                                                            loaded active active    Network
+  nss-lookup.target                                                                         loaded active active    Host and Network Name Lookups
+  paths.target                                                                              loaded active active    Path Units
+  remote-fs-pre.target                                                                      loaded active active    Preparation for Remote File Systems
+  remote-fs.target                                                                          loaded active active    Remote File Systems
+  slices.target                                                                             loaded active active    Slice Units
+  snapd.mounts-pre.target                                                                   loaded active active    Mounting snaps
+  snapd.mounts.target                                                                       loaded active active    Mounted snaps
+  sockets.target                                                                            loaded active active    Socket Units
+  sound.target                                                                              loaded active active    Sound Card
+  swap.target                                                                               loaded active active    Swaps
+  sysinit.target                                                                            loaded active active    System Initialization
+  time-set.target                                                                           loaded active active    System Time Set
+  time-sync.target                                                                          loaded active active    System Time Synchronized
+  timers.target                                                                             loaded active active    Timer Units
+  veritysetup.target                                                                        loaded active active    Local Verity Protected Volumes
+  dpkg-db-backup.timer                                                                      loaded active waiting   Daily dpkg database backup timer
+  e2scrub_all.timer                                                                         loaded active waiting   Periodic ext4 Online Metadata Check for All Filesystems
+  fstrim.timer                                                                              loaded active waiting   Discard unused filesystem blocks once a week
+  motd-news.timer                                                                           loaded active waiting   Message of the Day
+  systemd-tmpfiles-clean.timer                                                              loaded active waiting   Daily Cleanup of Temporary Directories
+
+Legend: LOAD   → Reflects whether the unit definition was properly loaded.
+        ACTIVE → The high-level unit activation state, i.e. generalization of SUB.
+        SUB    → The low-level unit activation state, values depend on unit type.
+
+156 loaded units listed. Pass --all to see loaded but inactive units, too.
+To show all installed unit files use '\''systemctl list-unit-files'\''.'
++ systemctl list-units
++ USE_SYSTEMCTL=true
++ sudo mkdir -p /etc/apt/apt.conf.d
++ echo 'APT::Acquire::Retries "3";'
++ sudo tee /etc/apt/apt.conf.d/80-retries
++ APTVARS='NEEDRESTART_MODE=l NEEDRESTART_SUSPEND=1 DEBIAN_FRONTEND=noninteractive'
++ sudo dpkg --configure -a
++ echo 'Installing prerequisites...'
+Installing prerequisites...
++ sudo apt-get update
+Hit:1 https://ftp.kaist.ac.kr/ubuntu noble InRelease
+Hit:2 https://ftp.kaist.ac.kr/ubuntu noble-updates InRelease
+Hit:3 https://ftp.kaist.ac.kr/ubuntu noble-backports InRelease
+Hit:4 http://security.ubuntu.com/ubuntu noble-security InRelease
+Reading package lists...
++ sudo env NEEDRESTART_MODE=l NEEDRESTART_SUSPEND=1 DEBIAN_FRONTEND=noninteractive apt-get install -y curl wget gnupg2 software-properties-common lsb-release net-tools iproute2 iputils-ping
+Reading package lists...
+Building dependency tree...
+Reading state information...
+curl is already the newest version (8.5.0-2ubuntu10.16).
+curl set to manually installed.
+wget is already the newest version (1.21.4-1ubuntu4.5).
+wget set to manually installed.
+software-properties-common is already the newest version (0.99.49.4).
+software-properties-common set to manually installed.
+lsb-release is already the newest version (12.0-2).
+lsb-release set to manually installed.
+iproute2 is already the newest version (6.1.0-1ubuntu6.4).
+iproute2 set to manually installed.
+The following NEW packages will be installed:
+  gnupg2 iputils-ping net-tools
+0 upgraded, 3 newly installed, 0 to remove and 22 not upgraded.
+Need to get 253 kB of archives.
+After this operation, 968 kB of additional disk space will be used.
+Get:1 https://ftp.kaist.ac.kr/ubuntu noble-updates/main amd64 iputils-ping amd64 3:20240117-1ubuntu0.1 [44.6 kB]
+Get:2 https://ftp.kaist.ac.kr/ubuntu noble-updates/main amd64 net-tools amd64 2.10-0.1ubuntu4.4 [204 kB]
+Get:3 https://ftp.kaist.ac.kr/ubuntu noble-updates/universe amd64 gnupg2 all 2.4.4-2ubuntu17.6 [4748 B]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 253 kB in 0s (2724 kB/s)
+Selecting previously unselected package iputils-ping.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 76545 files and directories currently installed.)
+Preparing to unpack .../iputils-ping_3%3a20240117-1ubuntu0.1_amd64.deb ...
+Unpacking iputils-ping (3:20240117-1ubuntu0.1) ...
+Selecting previously unselected package net-tools.
+Preparing to unpack .../net-tools_2.10-0.1ubuntu4.4_amd64.deb ...
+Unpacking net-tools (2.10-0.1ubuntu4.4) ...
+Selecting previously unselected package gnupg2.
+Preparing to unpack .../gnupg2_2.4.4-2ubuntu17.6_all.deb ...
+Unpacking gnupg2 (2.4.4-2ubuntu17.6) ...
+Setting up net-tools (2.10-0.1ubuntu4.4) ...
+Setting up gnupg2 (2.4.4-2ubuntu17.6) ...
+Setting up iputils-ping (3:20240117-1ubuntu0.1) ...
+packages have been installed but needrestart is suspended
++ sudo env NEEDRESTART_MODE=l NEEDRESTART_SUSPEND=1 DEBIAN_FRONTEND=noninteractive apt-get install -y kmod
+Reading package lists...
+Building dependency tree...
+Reading state information...
+kmod is already the newest version (31+20240202-2ubuntu7.2).
+kmod set to manually installed.
+0 upgraded, 0 newly installed, 0 to remove and 22 not upgraded.
++ sudo env NEEDRESTART_MODE=l NEEDRESTART_SUSPEND=1 DEBIAN_FRONTEND=noninteractive apt-get install -y gawk sed
+Reading package lists...
+Building dependency tree...
+Reading state information...
+gawk is already the newest version (1:5.2.1-2ubuntu0.1).
+gawk set to manually installed.
+sed is already the newest version (4.9-2ubuntu0.24.04.1).
+sed set to manually installed.
+0 upgraded, 0 newly installed, 0 to remove and 22 not upgraded.
++ sudo env NEEDRESTART_MODE=l NEEDRESTART_SUSPEND=1 DEBIAN_FRONTEND=noninteractive apt-get install -y iptables
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  libip4tc2 libip6tc2 libjansson4 libnetfilter-conntrack3 libnfnetlink0
+  libnftables1 libnftnl11 nftables
+Suggested packages:
+  firewalld
+The following NEW packages will be installed:
+  iptables libip4tc2 libip6tc2 libjansson4 libnetfilter-conntrack3
+  libnfnetlink0 libnftables1 libnftnl11 nftables
+0 upgraded, 9 newly installed, 0 to remove and 22 not upgraded.
+Need to get 1016 kB of archives.
+After this operation, 4371 kB of additional disk space will be used.
+Get:1 https://ftp.kaist.ac.kr/ubuntu noble/main amd64 libip4tc2 amd64 1.8.10-3ubuntu2 [23.3 kB]
+Get:2 https://ftp.kaist.ac.kr/ubuntu noble/main amd64 libip6tc2 amd64 1.8.10-3ubuntu2 [23.7 kB]
+Get:3 https://ftp.kaist.ac.kr/ubuntu noble/main amd64 libnfnetlink0 amd64 1.0.2-2build1 [14.8 kB]
+Get:4 https://ftp.kaist.ac.kr/ubuntu noble/main amd64 libnetfilter-conntrack3 amd64 1.0.9-6build1 [45.2 kB]
+Get:5 https://ftp.kaist.ac.kr/ubuntu noble/main amd64 libnftnl11 amd64 1.2.6-2build1 [66.0 kB]
+Get:6 https://ftp.kaist.ac.kr/ubuntu noble/main amd64 iptables amd64 1.8.10-3ubuntu2 [381 kB]
+Get:7 https://ftp.kaist.ac.kr/ubuntu noble/main amd64 libjansson4 amd64 2.14-2build2 [32.8 kB]
+Get:8 https://ftp.kaist.ac.kr/ubuntu noble-updates/main amd64 libnftables1 amd64 1.0.9-1ubuntu0.1 [359 kB]
+Get:9 https://ftp.kaist.ac.kr/ubuntu noble-updates/main amd64 nftables amd64 1.0.9-1ubuntu0.1 [69.8 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 1016 kB in 0s (8728 kB/s)
+Selecting previously unselected package libip4tc2:amd64.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 76608 files and directories currently installed.)
+Preparing to unpack .../0-libip4tc2_1.8.10-3ubuntu2_amd64.deb ...
+Unpacking libip4tc2:amd64 (1.8.10-3ubuntu2) ...
+Selecting previously unselected package libip6tc2:amd64.
+Preparing to unpack .../1-libip6tc2_1.8.10-3ubuntu2_amd64.deb ...
+Unpacking libip6tc2:amd64 (1.8.10-3ubuntu2) ...
+Selecting previously unselected package libnfnetlink0:amd64.
+Preparing to unpack .../2-libnfnetlink0_1.0.2-2build1_amd64.deb ...
+Unpacking libnfnetlink0:amd64 (1.0.2-2build1) ...
+Selecting previously unselected package libnetfilter-conntrack3:amd64.
+Preparing to unpack .../3-libnetfilter-conntrack3_1.0.9-6build1_amd64.deb ...
+Unpacking libnetfilter-conntrack3:amd64 (1.0.9-6build1) ...
+Selecting previously unselected package libnftnl11:amd64.
+Preparing to unpack .../4-libnftnl11_1.2.6-2build1_amd64.deb ...
+Unpacking libnftnl11:amd64 (1.2.6-2build1) ...
+Selecting previously unselected package iptables.
+Preparing to unpack .../5-iptables_1.8.10-3ubuntu2_amd64.deb ...
+Unpacking iptables (1.8.10-3ubuntu2) ...
+Selecting previously unselected package libjansson4:amd64.
+Preparing to unpack .../6-libjansson4_2.14-2build2_amd64.deb ...
+Unpacking libjansson4:amd64 (2.14-2build2) ...
+Selecting previously unselected package libnftables1:amd64.
+Preparing to unpack .../7-libnftables1_1.0.9-1ubuntu0.1_amd64.deb ...
+Unpacking libnftables1:amd64 (1.0.9-1ubuntu0.1) ...
+Selecting previously unselected package nftables.
+Preparing to unpack .../8-nftables_1.0.9-1ubuntu0.1_amd64.deb ...
+Unpacking nftables (1.0.9-1ubuntu0.1) ...
+Setting up libip4tc2:amd64 (1.8.10-3ubuntu2) ...
+Setting up libip6tc2:amd64 (1.8.10-3ubuntu2) ...
+Setting up libnftnl11:amd64 (1.2.6-2build1) ...
+Setting up libjansson4:amd64 (2.14-2build2) ...
+Setting up libnfnetlink0:amd64 (1.0.2-2build1) ...
+Setting up libnftables1:amd64 (1.0.9-1ubuntu0.1) ...
+Setting up nftables (1.0.9-1ubuntu0.1) ...
+Setting up libnetfilter-conntrack3:amd64 (1.0.9-6build1) ...
+Setting up iptables (1.8.10-3ubuntu2) ...
+update-alternatives: using /usr/sbin/iptables-legacy to provide /usr/sbin/iptables (iptables) in auto mode
+update-alternatives: using /usr/sbin/ip6tables-legacy to provide /usr/sbin/ip6tables (ip6tables) in auto mode
+update-alternatives: using /usr/sbin/iptables-nft to provide /usr/sbin/iptables (iptables) in auto mode
+update-alternatives: using /usr/sbin/ip6tables-nft to provide /usr/sbin/ip6tables (ip6tables) in auto mode
+update-alternatives: using /usr/sbin/arptables-nft to provide /usr/sbin/arptables (arptables) in auto mode
+update-alternatives: using /usr/sbin/ebtables-nft to provide /usr/sbin/ebtables (ebtables) in auto mode
+Processing triggers for libc-bin (2.39-0ubuntu8.9) ...
+packages have been installed but needrestart is suspended
++ sudo env NEEDRESTART_MODE=l NEEDRESTART_SUSPEND=1 DEBIAN_FRONTEND=noninteractive apt-get install -y ipvsadm
+Reading package lists...
+Building dependency tree...
+Reading state information...
+Suggested packages:
+  heartbeat keepalived ldirectord
+The following NEW packages will be installed:
+  ipvsadm
+0 upgraded, 1 newly installed, 0 to remove and 22 not upgraded.
+Need to get 40.3 kB of archives.
+After this operation, 117 kB of additional disk space will be used.
+Get:1 https://ftp.kaist.ac.kr/ubuntu noble-updates/main amd64 ipvsadm amd64 1:1.31-1ubuntu0.1 [40.3 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 40.3 kB in 0s (587 kB/s)
+Selecting previously unselected package ipvsadm.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 76889 files and directories currently installed.)
+Preparing to unpack .../ipvsadm_1%3a1.31-1ubuntu0.1_amd64.deb ...
+Unpacking ipvsadm (1:1.31-1ubuntu0.1) ...
+Setting up ipvsadm (1:1.31-1ubuntu0.1) ...
+packages have been installed but needrestart is suspended
++ sudo env NEEDRESTART_MODE=l NEEDRESTART_SUSPEND=1 DEBIAN_FRONTEND=noninteractive apt-get install -y socat
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following NEW packages will be installed:
+  socat
+0 upgraded, 1 newly installed, 0 to remove and 22 not upgraded.
+Need to get 374 kB of archives.
+After this operation, 1653 kB of additional disk space will be used.
+Get:1 https://ftp.kaist.ac.kr/ubuntu noble-updates/main amd64 socat amd64 1.8.0.0-4ubuntu0.1 [374 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 374 kB in 0s (4166 kB/s)
+Selecting previously unselected package socat.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 76904 files and directories currently installed.)
+Preparing to unpack .../socat_1.8.0.0-4ubuntu0.1_amd64.deb ...
+Unpacking socat (1.8.0.0-4ubuntu0.1) ...
+Setting up socat (1.8.0.0-4ubuntu0.1) ...
+packages have been installed but needrestart is suspended
++ sudo env NEEDRESTART_MODE=l NEEDRESTART_SUSPEND=1 DEBIAN_FRONTEND=noninteractive apt-get install -y libsctp1 lksctp-tools
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following NEW packages will be installed:
+  libsctp1 lksctp-tools
+0 upgraded, 2 newly installed, 0 to remove and 22 not upgraded.
+Need to get 53.0 kB of archives.
+After this operation, 214 kB of additional disk space will be used.
+Get:1 https://ftp.kaist.ac.kr/ubuntu noble/main amd64 libsctp1 amd64 1.0.19+dfsg-2build1 [9146 B]
+Get:2 https://ftp.kaist.ac.kr/ubuntu noble/universe amd64 lksctp-tools amd64 1.0.19+dfsg-2build1 [43.9 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 53.0 kB in 0s (858 kB/s)
+Selecting previously unselected package libsctp1:amd64.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 76947 files and directories currently installed.)
+Preparing to unpack .../libsctp1_1.0.19+dfsg-2build1_amd64.deb ...
+Unpacking libsctp1:amd64 (1.0.19+dfsg-2build1) ...
+Selecting previously unselected package lksctp-tools.
+Preparing to unpack .../lksctp-tools_1.0.19+dfsg-2build1_amd64.deb ...
+Unpacking lksctp-tools (1.0.19+dfsg-2build1) ...
+Setting up libsctp1:amd64 (1.0.19+dfsg-2build1) ...
+Setting up lksctp-tools (1.0.19+dfsg-2build1) ...
+Processing triggers for libc-bin (2.39-0ubuntu8.9) ...
+packages have been installed but needrestart is suspended
++ sudo env NEEDRESTART_MODE=l NEEDRESTART_SUSPEND=1 DEBIAN_FRONTEND=noninteractive apt-get install -y jq netcat-openbsd make ipset moreutils
+Reading package lists...
+Building dependency tree...
+Reading state information...
+jq is already the newest version (1.7.1-3ubuntu0.24.04.2).
+The following additional packages will be installed:
+  libio-pty-perl libipc-run-perl libipset13 libtime-duration-perl
+  libtimedate-perl
+Suggested packages:
+  make-doc
+The following NEW packages will be installed:
+  ipset libio-pty-perl libipc-run-perl libipset13 libtime-duration-perl
+  libtimedate-perl make moreutils netcat-openbsd
+0 upgraded, 9 newly installed, 0 to remove and 22 not upgraded.
+Need to get 544 kB of archives.
+After this operation, 1669 kB of additional disk space will be used.
+Get:1 https://ftp.kaist.ac.kr/ubuntu noble/main amd64 netcat-openbsd amd64 1.226-1ubuntu2 [44.3 kB]
+Get:2 https://ftp.kaist.ac.kr/ubuntu noble/main amd64 libio-pty-perl amd64 1:1.20-1build2 [31.2 kB]
+Get:3 https://ftp.kaist.ac.kr/ubuntu noble/main amd64 libipc-run-perl all 20231003.0-1 [92.1 kB]
+Get:4 https://ftp.kaist.ac.kr/ubuntu noble/main amd64 libipset13 amd64 7.19-1ubuntu2 [61.5 kB]
+Get:5 https://ftp.kaist.ac.kr/ubuntu noble/main amd64 libtime-duration-perl all 1.21-2 [12.3 kB]
+Get:6 https://ftp.kaist.ac.kr/ubuntu noble/main amd64 libtimedate-perl all 2.3300-2 [34.0 kB]
+Get:7 https://ftp.kaist.ac.kr/ubuntu noble/main amd64 make amd64 4.3-4.1build2 [180 kB]
+Get:8 https://ftp.kaist.ac.kr/ubuntu noble/universe amd64 moreutils amd64 0.69-1 [56.4 kB]
+Get:9 https://ftp.kaist.ac.kr/ubuntu noble/main amd64 ipset amd64 7.19-1ubuntu2 [32.6 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 544 kB in 0s (2429 kB/s)
+Selecting previously unselected package netcat-openbsd.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 76969 files and directories currently installed.)
+Preparing to unpack .../0-netcat-openbsd_1.226-1ubuntu2_amd64.deb ...
+Unpacking netcat-openbsd (1.226-1ubuntu2) ...
+Selecting previously unselected package libio-pty-perl.
+Preparing to unpack .../1-libio-pty-perl_1%3a1.20-1build2_amd64.deb ...
+Unpacking libio-pty-perl (1:1.20-1build2) ...
+Selecting previously unselected package libipc-run-perl.
+Preparing to unpack .../2-libipc-run-perl_20231003.0-1_all.deb ...
+Unpacking libipc-run-perl (20231003.0-1) ...
+Selecting previously unselected package libipset13:amd64.
+Preparing to unpack .../3-libipset13_7.19-1ubuntu2_amd64.deb ...
+Unpacking libipset13:amd64 (7.19-1ubuntu2) ...
+Selecting previously unselected package libtime-duration-perl.
+Preparing to unpack .../4-libtime-duration-perl_1.21-2_all.deb ...
+Unpacking libtime-duration-perl (1.21-2) ...
+Selecting previously unselected package libtimedate-perl.
+Preparing to unpack .../5-libtimedate-perl_2.3300-2_all.deb ...
+Unpacking libtimedate-perl (2.3300-2) ...
+Selecting previously unselected package make.
+Preparing to unpack .../6-make_4.3-4.1build2_amd64.deb ...
+Unpacking make (4.3-4.1build2) ...
+Selecting previously unselected package moreutils.
+Preparing to unpack .../7-moreutils_0.69-1_amd64.deb ...
+Unpacking moreutils (0.69-1) ...
+Selecting previously unselected package ipset.
+Preparing to unpack .../8-ipset_7.19-1ubuntu2_amd64.deb ...
+Unpacking ipset (7.19-1ubuntu2) ...
+Setting up libio-pty-perl (1:1.20-1build2) ...
+Setting up netcat-openbsd (1.226-1ubuntu2) ...
+update-alternatives: using /bin/nc.openbsd to provide /bin/nc (nc) in auto mode
+update-alternatives: warning: skip creation of /usr/share/man/man1/nc.1.gz because associated file /usr/share/man/man1/nc_openbsd.1.gz (of link group nc) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/man1/netcat.1.gz because associated file /usr/share/man/man1/nc_openbsd.1.gz (of link group nc) doesn't exist
+Setting up make (4.3-4.1build2) ...
+Setting up libipc-run-perl (20231003.0-1) ...
+Setting up libtime-duration-perl (1.21-2) ...
+Setting up libtimedate-perl (2.3300-2) ...
+Setting up libipset13:amd64 (7.19-1ubuntu2) ...
+Setting up ipset (7.19-1ubuntu2) ...
+Setting up moreutils (0.69-1) ...
+Processing triggers for libc-bin (2.39-0ubuntu8.9) ...
+packages have been installed but needrestart is suspended
++ KUBEV=1.33
++ KUBECNIV=1.6
++ HELMV=3.20
++ FLANNELV=0.28.5
++ '[' -f /etc/upstream-release/lsb-release ']'
+++ lsb_release -sr
++ UBUNTU_RELEASE=24.04
++ USE_DOCKER_CE=1
++ '[' true = false ']'
++ '[' 1 -eq 0 ']'
++ DOCKERV=29.5
++ [[ 24.04 == 20.* ]]
+++ grep -oP '^UBUNTU_CODENAME=\K.*' /etc/os-release
++ UBUNTU_CODENAME=noble
++ [[ -z noble ]]
++ [[ -z noble ]]
++ sudo apt-get update
+Hit:1 https://ftp.kaist.ac.kr/ubuntu noble InRelease
+Hit:2 https://ftp.kaist.ac.kr/ubuntu noble-updates InRelease
+Hit:3 https://ftp.kaist.ac.kr/ubuntu noble-backports InRelease
+Hit:4 http://security.ubuntu.com/ubuntu noble-security InRelease
+Reading package lists...
++ sudo env NEEDRESTART_MODE=l NEEDRESTART_SUSPEND=1 DEBIAN_FRONTEND=noninteractive apt-get install -y curl gnupg ca-certificates
+Reading package lists...
+Building dependency tree...
+Reading state information...
+curl is already the newest version (8.5.0-2ubuntu10.16).
+gnupg is already the newest version (2.4.4-2ubuntu17.6).
+gnupg set to manually installed.
+ca-certificates is already the newest version (20260816ubuntu0.24.04.1).
+ca-certificates set to manually installed.
+0 upgraded, 0 newly installed, 0 to remove and 22 not upgraded.
++ sudo install -m 0755 -d /etc/apt/keyrings
++ sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
++ sudo chmod a+r /etc/apt/keyrings/docker.asc
++ sudo tee /etc/apt/sources.list.d/docker.list
+++ dpkg --print-architecture
+++ . /etc/os-release
++++ PRETTY_NAME='Ubuntu 24.04.5 LTS'
++++ NAME=Ubuntu
++++ VERSION_ID=24.04
++++ VERSION='24.04.5 LTS (Noble Numbat)'
++++ VERSION_CODENAME=noble
++++ ID=ubuntu
++++ ID_LIKE=debian
++++ HOME_URL=https://www.ubuntu.com/
++++ SUPPORT_URL=https://help.ubuntu.com/
++++ BUG_REPORT_URL=https://bugs.launchpad.net/ubuntu/
++++ PRIVACY_POLICY_URL=https://www.ubuntu.com/legal/terms-and-policies/privacy-policy
++++ UBUNTU_CODENAME=noble
++++ LOGO=ubuntu-logo
+++ echo noble
++ echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu     noble stable'
++ sudo apt-get update
+Get:1 https://download.docker.com/linux/ubuntu noble InRelease [48.5 kB]
+Hit:2 https://ftp.kaist.ac.kr/ubuntu noble InRelease
+Hit:3 https://ftp.kaist.ac.kr/ubuntu noble-updates InRelease
+Get:4 https://download.docker.com/linux/ubuntu noble/stable amd64 Packages [71.2 kB]
+Hit:5 https://ftp.kaist.ac.kr/ubuntu noble-backports InRelease
+Hit:6 http://security.ubuntu.com/ubuntu noble-security InRelease
+Fetched 120 kB in 1s (201 kB/s)
+Reading package lists...
++ [[ 0 -gt 0 ]]
++ [[ 3.20 == 2.* ]]
++ '[' -d /etc/needrestart ']'
++ sudo install -d -m 0755 /etc/needrestart/conf.d
++ sudo tee /etc/needrestart/conf.d/99-no-auto-restart.conf
++ echo 'Configured needrestart to list-only (no service restarts).'
+Configured needrestart to list-only (no service restarts).
++ '[' -z 192.168.122.137 ']'
++ '[' -z oran-kvm-2404 ']'
++ sudo sed -i /oran-kvm-2404/d /etc/hosts
++ echo '192.168.122.137 oran-kvm-2404'
++ sudo tee -a /etc/hosts
+192.168.122.137 oran-kvm-2404
++ echo '### Docker version  = 29.5'
+### Docker version  = 29.5
++ echo '### k8s version     = 1.33'
+### k8s version     = 1.33
++ echo '### helm version    = 3.20'
+### helm version    = 3.20
++ echo '### k8s cni version = 1.6'
+### k8s cni version = 1.6
++ echo
+
++ echo 'Updating Kubernetes keyring...'
+Updating Kubernetes keyring...
++ sudo mkdir -p /etc/apt/keyrings
++ sudo curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key
++ gpg --dearmor --yes
++ sudo tee /etc/apt/keyrings/kubernetes-apt-keyring.gpg
++ echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /'
++ sudo tee /etc/apt/sources.list.d/kubernetes.list
++ echo
+
++ echo 'Updating Helm keyring...'
+Updating Helm keyring...
++ sudo rm -f /etc/apt/sources.list.d/helm-stable-debian.list
++ sudo rm -f /etc/apt/keyrings/helm-apt-keyring.gpg
++ sudo install -d -m 0755 /usr/share/keyrings
++ curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey
++ gpg --dearmor
++ sudo tee /usr/share/keyrings/helm.gpg
++ echo 'deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main'
++ sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
++ sudo apt-get update
+Hit:1 https://download.docker.com/linux/ubuntu noble InRelease
+Hit:2 https://ftp.kaist.ac.kr/ubuntu noble InRelease
+Hit:3 https://ftp.kaist.ac.kr/ubuntu noble-updates InRelease
+Hit:4 https://ftp.kaist.ac.kr/ubuntu noble-backports InRelease
+Get:5 https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.33/deb  InRelease [1233 B]
+Get:6 https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.33/deb  Packages [18.7 kB]
+Hit:7 http://security.ubuntu.com/ubuntu noble-security InRelease
+Get:8 https://packages.buildkite.com/helm-linux/helm-debian/any any InRelease [29.3 kB]
+Get:9 https://packages.buildkite.com/helm-linux/helm-debian/any any/main amd64 Packages [3774 B]
+Fetched 53.0 kB in 2s (26.5 kB/s)
+Reading package lists...
++ APTOPTS='--allow-downgrades --allow-change-held-packages --allow-unauthenticated --ignore-hold '
++ '[' 1 -eq 0 ']'
+++ get_latest_package_version docker-ce 29.5
+++ PACKAGE_NAME=docker-ce
+++ VERSION_PREFIX=29.5
++++ apt-cache madison docker-ce
++++ grep 29.5
++++ head -1
++++ awk '{print $3}'
+++ LATEST_VERSION=5:29.5.3-1~ubuntu.24.04~noble
+++ echo 5:29.5.3-1~ubuntu.24.04~noble
++ DOCKERVERSION=5:29.5.3-1~ubuntu.24.04~noble
+++ get_latest_package_version kubeadm 1.33
+++ PACKAGE_NAME=kubeadm
+++ VERSION_PREFIX=1.33
++++ apt-cache madison kubeadm
++++ grep 1.33
++++ head -1
++++ awk '{print $3}'
+++ LATEST_VERSION=1.33.13-1.1
+++ echo 1.33.13-1.1
++ KUBEVERSION=1.33.13-1.1
+++ get_latest_package_version kubernetes-cni 1.6
+++ PACKAGE_NAME=kubernetes-cni
+++ VERSION_PREFIX=1.6
++++ apt-cache madison kubernetes-cni
++++ head -1
++++ grep 1.6
++++ awk '{print $3}'
+++ LATEST_VERSION=1.6.0-1.1
+++ echo 1.6.0-1.1
++ CNIVERSION=1.6.0-1.1
+++ get_latest_package_version helm 3.20
+++ PACKAGE_NAME=helm
+++ VERSION_PREFIX=3.20
++++ apt-cache madison helm
++++ grep 3.20
++++ head -1
++++ awk '{print $3}'
+++ LATEST_VERSION=3.20.2-1
+++ echo 3.20.2-1
++ HELMVERSION=3.20.2-1
++ '[' -z 5:29.5.3-1~ubuntu.24.04~noble ']'
++ '[' -z 1.33.13-1.1 ']'
++ '[' -z 1.6.0-1.1 ']'
++ '[' -z 3.20.2-1 ']'
+++ remove_version_suffix 5:29.5.3-1~ubuntu.24.04~noble
+++ FULL_VERSION=5:29.5.3-1~ubuntu.24.04~noble
++++ echo 5:29.5.3-1~ubuntu.24.04~noble
++++ cut -d- -f1
+++ VERSION_WITHOUT_SUFFIX=5:29.5.3
+++ echo 5:29.5.3
++ DOCKERVERSIONWITHOUTSUFFIX=5:29.5.3
+++ remove_version_suffix 1.33.13-1.1
+++ FULL_VERSION=1.33.13-1.1
++++ echo 1.33.13-1.1
++++ cut -d- -f1
+++ VERSION_WITHOUT_SUFFIX=1.33.13
+++ echo 1.33.13
++ KUBEVERSIONWITHOUTSUFFIX=1.33.13
+++ remove_version_suffix 1.6.0-1.1
+++ FULL_VERSION=1.6.0-1.1
++++ echo 1.6.0-1.1
++++ cut -d- -f1
+++ VERSION_WITHOUT_SUFFIX=1.6.0
+++ echo 1.6.0
++ CNIVERSIONWITHOUTSUFFIX=1.6.0
+++ remove_version_suffix 3.20.2-1
+++ FULL_VERSION=3.20.2-1
++++ echo 3.20.2-1
++++ cut -d- -f1
+++ VERSION_WITHOUT_SUFFIX=3.20.2
+++ echo 3.20.2
++ HELMVERSIONWITHOUTSUFFIX=3.20.2
++ echo
+
++ echo
+
++ echo 'Docker version: 5:29.5.3-1~ubuntu.24.04~noble'
+Docker version: 5:29.5.3-1~ubuntu.24.04~noble
++ echo 'Kubernetes version: 1.33.13-1.1'
+Kubernetes version: 1.33.13-1.1
++ echo 'Helm version: 3.20.2-1'
+Helm version: 3.20.2-1
++ echo 'Kubernetes CNI version: 1.6.0-1.1'
+Kubernetes CNI version: 1.6.0-1.1
++ echo
+
++ echo 'Docker version without suffix: 5:29.5.3'
+Docker version without suffix: 5:29.5.3
++ echo 'Kubernetes version without suffix: 1.33.13'
+Kubernetes version without suffix: 1.33.13
++ echo 'Helm version without suffix: 3.20.2'
+Helm version without suffix: 3.20.2
++ echo 'Kubernetes CNI version without suffix: 1.6.0'
+Kubernetes CNI version without suffix: 1.6.0
++ echo
+
++ echo
+
+++ grep nameserver /run/systemd/resolve/resolv.conf
+++ awk '{print $2}'
+++ jq -R .
+++ jq -s .
++ DNS_SERVERS='[
+  "192.168.122.1"
+]'
+++ echo '[
+  "192.168.122.1"
+]'
+++ jq '. | select(length > 0)'
++ '[' -z '[
+  "192.168.122.1"
+]' ']'
+++ echo '[
+  "192.168.122.1"
+]'
+++ jq '. | select(length > 0)'
++ '[' -z '[
+  "192.168.122.1"
+]' ']'
++ echo 'Using DNS servers: [
+  "192.168.122.1"
+]'
+Using DNS servers: [
+  "192.168.122.1"
+]
+++ echo '[' '"192.168.122.1"' ']'
+++ jq -r '.[0]'
++ DNS_SERVER=192.168.122.1
++ ping -c 1 192.168.122.1
+++ curl -s ifconfig.co
++ PUBLIC_IP=165.194.104.11
++ sudo rm -rf /opt/config
++ sudo mkdir -p /opt/config
++ sudo chown uc /opt/config
++ sudo chmod 755 /opt/config
++ echo 5:29.5.3
++ echo 1.33.13
++ echo 1.6.0
++ echo 3.20.2
++ echo 192.168.122.137
++ echo 165.194.104.11
++ echo oran-kvm-2404
++ echo __mtu__
++ echo __cinder_volume_id__
++ echo oran-kvm-2404
++ ISAUX=false
+++ cat /opt/config/stack_name.txt
++ [[ oran-kvm-2404 == *aux* ]]
++ sudo modprobe overlay
++ sudo modprobe br_netfilter
++ sudo modprobe ip_vs
++ sudo modprobe ip_vs_rr
++ sudo modprobe ip_vs_wrr
++ sudo modprobe ip_vs_sh
++ sudo modprobe --ignore-install sctp
++ modprobe -c
++ grep -qE '^install[[:space:]]+sctp[[:space:]]+'
+++ uname -r
+++ cut -d- -f1
++ KERNEL_VERSION=6.8.0
+++ echo 6.8.0
+++ cut -d. -f1
++ MAJOR_VERSION=6
++ '[' 6 -lt 5 ']'
++ sudo modprobe nf_conntrack
++ modinfo -F filename nf_conntrack_sctp
++ echo 'NOTE: nf_conntrack_sctp module not present. Feature may be built-in or not provided.'
+NOTE: nf_conntrack_sctp module not present. Feature may be built-in or not provided.
++ cat
++ sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+ip_vs
+ip_vs_rr
+ip_vs_wrr
+ip_vs_sh
+sctp
++ '[' 6 -lt 5 ']'
++ echo nf_conntrack
++ sudo tee -a /etc/modules-load.d/k8s.conf
+nf_conntrack
++ cat
++ sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
++ cat
++ sudo tee /etc/sysctl.d/ipvs.conf
+net.ipv4.ip_forward = 1
+net.ipv4.conf.all.forwarding = 1
+net.ipv6.conf.all.forwarding = 1
+net.ipv4.conf.all.rp_filter = 0
+net.ipv4.conf.default.rp_filter = 0
+net.ipv4.conf.all.accept_source_route = 0
+net.ipv4.conf.default.accept_source_route = 0
+net.ipv4.conf.all.arp_ignore = 1
+net.ipv4.conf.default.arp_ignore = 1
+net.ipv4.conf.all.arp_announce = 2
+net.ipv4.conf.default.arp_announce = 2
++ sudo sysctl --system
+* Applying /usr/lib/sysctl.d/10-apparmor.conf ...
+* Applying /etc/sysctl.d/10-bufferbloat.conf ...
+* Applying /etc/sysctl.d/10-console-messages.conf ...
+* Applying /etc/sysctl.d/10-ipv6-privacy.conf ...
+* Applying /etc/sysctl.d/10-kernel-hardening.conf ...
+* Applying /etc/sysctl.d/10-magic-sysrq.conf ...
+* Applying /etc/sysctl.d/10-map-count.conf ...
+* Applying /etc/sysctl.d/10-network-security.conf ...
+* Applying /etc/sysctl.d/10-ptrace.conf ...
+* Applying /etc/sysctl.d/10-zeropage.conf ...
+* Applying /usr/lib/sysctl.d/50-pid-max.conf ...
+* Applying /usr/lib/sysctl.d/99-protect-links.conf ...
+* Applying /etc/sysctl.d/99-sysctl.conf ...
+* Applying /etc/sysctl.d/ipvs.conf ...
+* Applying /etc/sysctl.d/k8s.conf ...
+* Applying /etc/sysctl.conf ...
+kernel.apparmor_restrict_unprivileged_userns = 1
+net.core.default_qdisc = fq_codel
+kernel.printk = 4 4 1 7
+net.ipv6.conf.all.use_tempaddr = 2
+net.ipv6.conf.default.use_tempaddr = 2
+kernel.kptr_restrict = 1
+kernel.sysrq = 176
+vm.max_map_count = 1048576
+net.ipv4.conf.default.rp_filter = 2
+net.ipv4.conf.all.rp_filter = 2
+kernel.yama.ptrace_scope = 1
+vm.mmap_min_addr = 65536
+kernel.pid_max = 4194304
+fs.protected_fifos = 1
+fs.protected_hardlinks = 1
+fs.protected_regular = 2
+fs.protected_symlinks = 1
+net.ipv4.ip_forward = 1
+net.ipv4.conf.all.forwarding = 1
+net.ipv6.conf.all.forwarding = 1
+net.ipv4.conf.all.rp_filter = 0
+net.ipv4.conf.default.rp_filter = 0
+net.ipv4.conf.all.accept_source_route = 0
+net.ipv4.conf.default.accept_source_route = 0
+net.ipv4.conf.all.arp_ignore = 1
+net.ipv4.conf.default.arp_ignore = 1
+net.ipv4.conf.all.arp_announce = 2
+net.ipv4.conf.default.arp_announce = 2
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
++ mount
++ grep -q /sys/fs/cgroup
++ echo 'Checking for traditional swap in /etc/fstab...'
+Checking for traditional swap in /etc/fstab...
+++ grep swap /etc/fstab
+++ sed '/^[ \t]*#/ d'
+++ tr -s ' '
+++ sed 's/[\t ]/ /g'
+++ cut -f1 '-d '
++ SWAPFILES=/swap.img
++ '[' '!' -z /swap.img ']'
++ for SWAPFILE in $SWAPFILES
++ '[' '!' -z /swap.img ']'
++ echo 'Disabling swap file /swap.img'
+Disabling swap file /swap.img
++ [[ /swap.img == UUID* ]]
++ sudo swapoff /swap.img
++ sudo sed -i '\%/swap.img%d' /etc/fstab
++ echo 'Checking for zram swap devices...'
+Checking for zram swap devices...
+++ sudo swapon --show=NAME,TYPE
+++ grep partition
+++ grep zram
+++ cut '-d ' -f1
++ ZRAM_DEVICES=
++ '[' '!' -z '' ']'
++ echo 'No zram devices currently active.'
+No zram devices currently active.
++ echo 'Verifying swap is disabled...'
+Verifying swap is disabled...
++ sudo swapon --show
++ grep -q swap
++ echo 'All swap has been successfully disabled.'
+All swap has been successfully disabled.
++ echo
+
++ echo
+
++ echo 'Stopping and removing existing Docker installations, then installing Docker 5:29.5.3-1~ubuntu.24.04~noble...'
+Stopping and removing existing Docker installations, then installing Docker 5:29.5.3-1~ubuntu.24.04~noble...
++ command -v docker
++ '[' true = true ']'
++ sudo systemctl is-active --quiet docker.socket
++ sudo systemctl is-active --quiet docker.service
++ sudo systemctl is-active --quiet docker
++ sudo systemctl is-active --quiet containerd.service
++ sudo systemctl is-enabled --quiet docker.socket
++ sudo systemctl is-enabled --quiet docker.service
++ sudo systemctl is-enabled --quiet docker
++ sudo systemctl is-enabled --quiet containerd.service
++ sudo apt-get remove --purge -y --allow-change-held-packages docker docker-engine docker-ce docker.io containerd runc docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras docker-scan-plugin
+Reading package lists...
+Building dependency tree...
+Reading state information...
+Package 'docker' is not installed, so not removed
+Package 'docker-engine' is not installed, so not removed
+E: Unable to locate package docker-scan-plugin
++ true
++ echo 'Unmounting Docker and containerd mount points...'
+Unmounting Docker and containerd mount points...
++ sudo awk '$5 ~ /^\/var\/lib\/docker/ || $5 ~ /^\/var\/lib\/containerd/ {print $5}' /proc/self/mountinfo
++ sort -r
++ xargs -r -n1 sudo umount -l
++ sudo umount -l '/var/lib/docker/overlay2/*/merged'
++ true
++ sudo umount -l '/var/lib/docker/containers/*/mounts/shm'
++ true
++ sudo umount -l '/var/lib/containerd/*/*/*/rootfs'
++ true
++ sudo rm -rf /var/lib/docker /etc/docker /home/docker /var/lib/containerd
++ '[' -f /usr/bin/docker ']'
++ '[' -f /usr/local/bin/docker ']'
++ sudo apt-get autoremove --purge -y
+Reading package lists...
+Building dependency tree...
+Reading state information...
+0 upgraded, 0 newly installed, 0 to remove and 22 not upgraded.
++ hash -r
++ echo 'Installing Docker...'
+Installing Docker...
++ command -v dockerd
++ '[' 1 -eq 0 ']'
++ sudo env NEEDRESTART_MODE=l NEEDRESTART_SUSPEND=1 DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-downgrades --allow-change-held-packages --allow-unauthenticated --ignore-hold docker-ce=5:29.5.3-1~ubuntu.24.04~noble
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  containerd.io docker-buildx-plugin docker-ce-cli docker-ce-rootless-extras
+  docker-compose-plugin pigz
+Suggested packages:
+  cgroupfs-mount | cgroup-lite docker-model-plugin
+The following NEW packages will be installed:
+  containerd.io docker-buildx-plugin docker-ce docker-ce-cli
+  docker-ce-rootless-extras docker-compose-plugin pigz
+0 upgraded, 7 newly installed, 0 to remove and 22 not upgraded.
+Need to get 100.0 MB of archives.
+After this operation, 379 MB of additional disk space will be used.
+Get:1 https://download.docker.com/linux/ubuntu noble/stable amd64 containerd.io amd64 2.4.2-3~ubuntu.24.04~noble [23.3 MB]
+Get:2 https://ftp.kaist.ac.kr/ubuntu noble/universe amd64 pigz amd64 2.8-1 [65.6 kB]
+Get:3 https://download.docker.com/linux/ubuntu noble/stable amd64 docker-ce-cli amd64 5:29.9.2-1~ubuntu.24.04~noble [17.6 MB]
+Get:4 https://download.docker.com/linux/ubuntu noble/stable amd64 docker-ce amd64 5:29.5.3-1~ubuntu.24.04~noble [23.0 MB]
+Get:5 https://download.docker.com/linux/ubuntu noble/stable amd64 docker-buildx-plugin amd64 0.38.1-1~ubuntu.24.04~noble [17.8 MB]
+Get:6 https://download.docker.com/linux/ubuntu noble/stable amd64 docker-ce-rootless-extras amd64 5:29.9.2-1~ubuntu.24.04~noble [10.2 MB]
+Get:7 https://download.docker.com/linux/ubuntu noble/stable amd64 docker-compose-plugin amd64 5.6.1-1~ubuntu.24.04~noble [8083 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 100.0 MB in 4s (25.4 MB/s)
+Selecting previously unselected package containerd.io.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 77157 files and directories currently installed.)
+Preparing to unpack .../0-containerd.io_2.4.2-3~ubuntu.24.04~noble_amd64.deb ...
+Unpacking containerd.io (2.4.2-3~ubuntu.24.04~noble) ...
+Selecting previously unselected package docker-ce-cli.
+Preparing to unpack .../1-docker-ce-cli_5%3a29.9.2-1~ubuntu.24.04~noble_amd64.deb ...
+Unpacking docker-ce-cli (5:29.9.2-1~ubuntu.24.04~noble) ...
+Selecting previously unselected package docker-ce.
+Preparing to unpack .../2-docker-ce_5%3a29.5.3-1~ubuntu.24.04~noble_amd64.deb ...
+Unpacking docker-ce (5:29.5.3-1~ubuntu.24.04~noble) ...
+Selecting previously unselected package pigz.
+Preparing to unpack .../3-pigz_2.8-1_amd64.deb ...
+Unpacking pigz (2.8-1) ...
+Selecting previously unselected package docker-buildx-plugin.
+Preparing to unpack .../4-docker-buildx-plugin_0.38.1-1~ubuntu.24.04~noble_amd64.deb ...
+Unpacking docker-buildx-plugin (0.38.1-1~ubuntu.24.04~noble) ...
+Selecting previously unselected package docker-ce-rootless-extras.
+Preparing to unpack .../5-docker-ce-rootless-extras_5%3a29.9.2-1~ubuntu.24.04~noble_amd64.deb ...
+Unpacking docker-ce-rootless-extras (5:29.9.2-1~ubuntu.24.04~noble) ...
+Selecting previously unselected package docker-compose-plugin.
+Preparing to unpack .../6-docker-compose-plugin_5.6.1-1~ubuntu.24.04~noble_amd64.deb ...
+Unpacking docker-compose-plugin (5.6.1-1~ubuntu.24.04~noble) ...
+Setting up docker-buildx-plugin (0.38.1-1~ubuntu.24.04~noble) ...
+Setting up containerd.io (2.4.2-3~ubuntu.24.04~noble) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/containerd.service → /usr/lib/systemd/system/containerd.service.
+Setting up docker-compose-plugin (5.6.1-1~ubuntu.24.04~noble) ...
+Setting up docker-ce-cli (5:29.9.2-1~ubuntu.24.04~noble) ...
+Setting up pigz (2.8-1) ...
+Setting up docker-ce-rootless-extras (5:29.9.2-1~ubuntu.24.04~noble) ...
+Setting up docker-ce (5:29.5.3-1~ubuntu.24.04~noble) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/docker.service → /usr/lib/systemd/system/docker.service.
+Created symlink /etc/systemd/system/sockets.target.wants/docker.socket → /usr/lib/systemd/system/docker.socket.
+packages have been installed but needrestart is suspended
++ command -v docker
++ '[' '!' -e /usr/bin/docker ']'
++ echo 'Configuring Docker daemon...'
+Configuring Docker daemon...
++ sudo mkdir -p /etc/docker
++ '[' true = true ']'
++ DRIVER=overlay2
++ '[' overlay2 = overlay2 ']'
++ grep -qw overlay /proc/filesystems
++ '[' overlay2 = overlay2 ']'
++ sudo mkdir -p /var/lib/docker/test-overlay/upper /var/lib/docker/test-overlay/work /var/lib/docker/test-overlay/merged
++ sudo mount -t overlay overlay -o lowerdir=/bin,upperdir=/var/lib/docker/test-overlay/upper,workdir=/var/lib/docker/test-overlay/work /var/lib/docker/test-overlay/merged
++ sudo umount /var/lib/docker/test-overlay/merged
++ sudo rm -rf /var/lib/docker/test-overlay
++ CGROUP_DRIVER=systemd
++ '[' true '!=' true ']'
++ '[' -n '' ']'
++ sudo tee /etc/docker/daemon.json
++ dockerd --help
++ grep --quiet -- --validate
++ sudo dockerd --config-file=/etc/docker/daemon.json --validate
+configuration OK
++ echo 'Docker configuration is valid.'
+Docker configuration is valid.
++ echo 'Ensuring Docker group exists and add user to the group before starting Docker service...'
+Ensuring Docker group exists and add user to the group before starting Docker service...
++ sudo groupadd -f docker
++ '[' -n '' ']'
++ sudo usermod -aG docker uc
++ echo 'Enabling and starting Docker service...'
+Enabling and starting Docker service...
++ '[' true = true ']'
++ sudo systemctl daemon-reload
++ sudo systemctl enable docker
+Synchronizing state of docker.service with SysV service script with /usr/lib/systemd/systemd-sysv-install.
+Executing: /usr/lib/systemd/systemd-sysv-install enable docker
++ ATTEMPT=0
++ MAX_ATTEMPTS=5
++ sudo systemctl restart docker
++ sudo systemctl is-active --quiet docker
++ echo 'Successfully started Docker.'
+Successfully started Docker.
++ echo
+
++ echo
+
++ echo 'Stopping and removing existing Kubernetes installations...'
+Stopping and removing existing Kubernetes installations...
++ command -v docker
++ echo 'Stopping and removing existing Docker containers...'
+Stopping and removing existing Docker containers...
+++ sudo docker ps -aq
++ '[' '' ']'
++ echo 'No Docker containers to stop or remove.'
+No Docker containers to stop or remove.
++ '[' true = true ']'
++ sudo systemctl is-active --quiet containerd
++ echo 'Stopping containerd...'
+Stopping containerd...
++ sudo systemctl stop containerd
++ '[' true = true ']'
++ sudo systemctl is-active --quiet kubelet
++ command -v kubeadm
++ SERVICES=("kube-apiserver" "kube-controller-manager" "kube-scheduler" "etcd")
++ for SERVICE in "${SERVICES[@]}"
++ '[' true = true ']'
++ systemctl is-active --quiet kube-apiserver
++ echo 'kube-apiserver is not active.'
+kube-apiserver is not active.
++ sudo test -f /etc/kubernetes/manifests/kube-apiserver.yaml
++ for SERVICE in "${SERVICES[@]}"
++ '[' true = true ']'
++ systemctl is-active --quiet kube-controller-manager
++ echo 'kube-controller-manager is not active.'
+kube-controller-manager is not active.
++ sudo test -f /etc/kubernetes/manifests/kube-controller-manager.yaml
++ for SERVICE in "${SERVICES[@]}"
++ '[' true = true ']'
++ systemctl is-active --quiet kube-scheduler
++ echo 'kube-scheduler is not active.'
+kube-scheduler is not active.
++ sudo test -f /etc/kubernetes/manifests/kube-scheduler.yaml
++ for SERVICE in "${SERVICES[@]}"
++ '[' true = true ']'
++ systemctl is-active --quiet etcd
++ echo 'etcd is not active.'
+etcd is not active.
++ sudo test -f /etc/kubernetes/manifests/etcd.yaml
+++ sudo docker ps -a -q
++ '[' '!' -z '' ']'
++ PROCESSES=("kubelet" "kube-control" "kube-schedul" "kube-apiserver" "etcd")
++ for PROCESS in "${PROCESSES[@]}"
++ pgrep kubelet
++ for PROCESS in "${PROCESSES[@]}"
++ pgrep kube-control
++ for PROCESS in "${PROCESSES[@]}"
++ pgrep kube-schedul
++ for PROCESS in "${PROCESSES[@]}"
++ pgrep kube-apiserver
++ for PROCESS in "${PROCESSES[@]}"
++ pgrep etcd
++ PORTS=(6443 10250 10257 10259 2379 2380)
++ for PORT in "${PORTS[@]}"
++ sudo ss -tulpn
++ grep :6443
++ for PORT in "${PORTS[@]}"
++ sudo ss -tulpn
++ grep :10250
++ for PORT in "${PORTS[@]}"
++ sudo ss -tulpn
++ grep :10257
++ for PORT in "${PORTS[@]}"
++ sudo ss -tulpn
++ grep :10259
++ for PORT in "${PORTS[@]}"
++ sudo ss -tulpn
++ grep :2379
++ for PORT in "${PORTS[@]}"
++ sudo ss -tulpn
++ grep :2380
++ sudo find /var/lib/kubelet -type d -exec umount '{}' ';'
++ true
++ sudo ipvsadm --clear
++ sudo rm -rf /etc/cni/net.d
++ sudo rm -rf /etc/kubernetes/
++ sudo rm -rf /var/lib/etcd
++ sudo rm -rf /var/lib/kubelet
++ sudo rm -rf /var/lib/dockershim
++ sudo rm -rf /var/run/kubernetes
++ sudo rm -rf /var/lib/cni/
++ sudo rm -rf /root/.kube/
++ sudo rm -rf /home/uc/.kube/
++ command -v docker
++ echo 'Removing all Docker images...'
+Removing all Docker images...
+++ sudo docker images -q
++ '[' '' ']'
++ echo 'No Docker images to remove.'
+No Docker images to remove.
++ command -v crictl
++ echo 'crictl not found; skipping containerd cleanup.'
+crictl not found; skipping containerd cleanup.
++ '[' false = true ']'
++ echo 'Removing CNI network interfaces...'
+Removing CNI network interfaces...
++ sudo ip link delete cni0
++ true
++ sudo ip link delete flannel.1
++ true
++ sudo ip link delete weave
++ true
++ echo 'Kubernetes is cleaned up.'
+Kubernetes is cleaned up.
++ echo
+
++ echo
+
++ echo 'Installing Kubernetes...'
+Installing Kubernetes...
++ echo 'Kubernetes version without suffix: 1.33.13'
+Kubernetes version without suffix: 1.33.13
++ '[' -z 1.6.0-1.1 ']'
++ sudo env NEEDRESTART_MODE=l NEEDRESTART_SUSPEND=1 DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-downgrades --allow-change-held-packages --allow-unauthenticated --ignore-hold kubernetes-cni=1.6.0-1.1
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following NEW packages will be installed:
+  kubernetes-cni
+0 upgraded, 1 newly installed, 0 to remove and 23 not upgraded.
+Need to get 37.8 MB of archives.
+After this operation, 91.8 MB of additional disk space will be used.
+Get:1 https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.33/deb  kubernetes-cni 1.6.0-1.1 [37.8 MB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 37.8 MB in 1s (56.1 MB/s)
+Selecting previously unselected package kubernetes-cni.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 77395 files and directories currently installed.)
+Preparing to unpack .../kubernetes-cni_1.6.0-1.1_amd64.deb ...
+Unpacking kubernetes-cni (1.6.0-1.1) ...
+Setting up kubernetes-cni (1.6.0-1.1) ...
+packages have been installed but needrestart is suspended
++ '[' '!' -f /opt/cni/bin/bridge ']'
++ '[' -z 1.33.13-1.1 ']'
++ sudo env NEEDRESTART_MODE=l NEEDRESTART_SUSPEND=1 DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-downgrades --allow-change-held-packages --allow-unauthenticated --ignore-hold kubeadm=1.33.13-1.1 kubelet=1.33.13-1.1 kubectl=1.33.13-1.1
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following NEW packages will be installed:
+  kubeadm kubectl kubelet
+0 upgraded, 3 newly installed, 0 to remove and 23 not upgraded.
+Need to get 40.6 MB of archives.
+After this operation, 218 MB of additional disk space will be used.
+Get:1 https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.33/deb  kubeadm 1.33.13-1.1 [12.8 MB]
+Get:2 https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.33/deb  kubectl 1.33.13-1.1 [11.8 MB]
+Get:3 https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.33/deb  kubelet 1.33.13-1.1 [16.0 MB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 40.6 MB in 1s (55.8 MB/s)
+Selecting previously unselected package kubeadm.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 77424 files and directories currently installed.)
+Preparing to unpack .../kubeadm_1.33.13-1.1_amd64.deb ...
+Unpacking kubeadm (1.33.13-1.1) ...
+Selecting previously unselected package kubectl.
+Preparing to unpack .../kubectl_1.33.13-1.1_amd64.deb ...
+Unpacking kubectl (1.33.13-1.1) ...
+Selecting previously unselected package kubelet.
+Preparing to unpack .../kubelet_1.33.13-1.1_amd64.deb ...
+Unpacking kubelet (1.33.13-1.1) ...
+Setting up kubeadm (1.33.13-1.1) ...
+Setting up kubectl (1.33.13-1.1) ...
+Setting up kubelet (1.33.13-1.1) ...
+packages have been installed but needrestart is suspended
++ command -v kubectl
++ command -v containerd
++ sudo apt-mark hold docker.io kubernetes-cni kubelet kubeadm kubectl
+docker.io set on hold.
+kubernetes-cni set on hold.
+kubelet set on hold.
+kubeadm set on hold.
+kubectl set on hold.
++ '[' true = true ']'
++ sudo systemctl unmask kubelet
++ sudo systemctl enable kubelet
++ sudo systemctl daemon-reload
++ sudo mkdir -p /etc/containerd
++ sudo test -f /etc/containerd/config.toml
+++ date +%s
++ sudo cp -a /etc/containerd/config.toml /etc/containerd/config.toml.bak.1792579698
++ sudo chmod 644 /etc/containerd/config.toml
++ sudo containerd config default
++ sudo tee /etc/containerd/config.toml
++ sudo chmod 644 /etc/containerd/config.toml
++ '[' systemd = systemd ']'
++ sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
++ sudo sed -i 's#^\(\s*\)sandbox_image = ".*"#\1sandbox_image = "registry.k8s.io/pause:3.10"#' /etc/containerd/config.toml
++ sudo sed -i '/^\s*systemd_cgroup\s*=\s*/d' /etc/containerd/config.toml
++ sudo sed -i '/^\s*PodSandboxImage\s*=\s*/d' /etc/containerd/config.toml
++ '[' overlay2 = vfs ']'
++ '[' true = true ']'
++ sudo systemctl daemon-reload
++ sudo systemctl restart containerd
++ sudo mkdir -p /run/containerd /var/run/containerd
++ '[' '!' /var/run/containerd/containerd.sock -ef /run/containerd/containerd.sock ']'
++ command -v crictl
++ echo 'crictl not found, installing...'
+crictl not found, installing...
++ sudo env NEEDRESTART_MODE=l NEEDRESTART_SUSPEND=1 DEBIAN_FRONTEND=noninteractive apt-get install -y cri-tools
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following NEW packages will be installed:
+  cri-tools
+0 upgraded, 1 newly installed, 0 to remove and 23 not upgraded.
+Need to get 17.3 MB of archives.
+After this operation, 42.7 MB of additional disk space will be used.
+Get:1 https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.33/deb  cri-tools 1.33.0-1.1 [17.3 MB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 17.3 MB in 1s (31.2 MB/s)
+Selecting previously unselected package cri-tools.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 77445 files and directories currently installed.)
+Preparing to unpack .../cri-tools_1.33.0-1.1_amd64.deb ...
+Unpacking cri-tools (1.33.0-1.1) ...
+Setting up cri-tools (1.33.0-1.1) ...
+packages have been installed but needrestart is suspended
++ cat
++ sudo tee /etc/crictl.yaml
++ sudo chmod 644 /etc/crictl.yaml
++ sleep 2
+++ seq 1 30
++ for i in $(seq 1 30)
++ sudo crictl info
++ break
++ sudo crictl info
++ sudo modprobe br_netfilter
++ sudo sysctl -w net.bridge.bridge-nf-call-iptables=1 net.bridge.bridge-nf-call-ip6tables=1 net.ipv4.ip_forward=1
++ '[' true = true ']'
++ sudo systemctl restart kubelet
++ echo 'Pulling kube-apiserver, kube-controller-manager, kube-scheduler, kube-proxy, pause, etcd, and coredns...'
+Pulling kube-apiserver, kube-controller-manager, kube-scheduler, kube-proxy, pause, etcd, and coredns...
++ sudo kubeadm config images pull --kubernetes-version=1.33.13 --cri-socket=unix:///run/containerd/containerd.sock
+[config/images] Pulled registry.k8s.io/kube-apiserver:v1.33.13
+[config/images] Pulled registry.k8s.io/kube-controller-manager:v1.33.13
+[config/images] Pulled registry.k8s.io/kube-scheduler:v1.33.13
+[config/images] Pulled registry.k8s.io/kube-proxy:v1.33.13
+[config/images] Pulled registry.k8s.io/coredns/coredns:v1.12.0
+[config/images] Pulled registry.k8s.io/pause:3.10
+[config/images] Pulled registry.k8s.io/etcd:3.5.24-0
++ echo 'Kubernetes components reinstalled and ready for initialization.'
+Kubernetes components reinstalled and ready for initialization.
++ mkdir -p /home/uc/.kube
++ sudo chown --recursive uc /home/uc/.kube/
++ KUBEPROXY_MODE=ipvs
++ sudo modprobe ip_vs ip_vs_rr ip_vs_wrr ip_vs_sh nf_conntrack
++ [[ 1.33.13 == 1.13.* ]]
++ [[ 1.33.13 == 1.14.* ]]
++ [[ 1.33.13 == 1.1[5-9].* ]]
++ RESOLV_CONF=/run/systemd/resolve/resolv.conf
++ sudo test -f /run/systemd/resolve/resolv.conf
++ cat
++ tee /home/uc/.kube/kube-config.yaml
++ sudo test -f /etc/cni/net.d/10-flannel.conflist
++ cat
++ tee /home/uc/.kube/kube-proxy-rbac.yaml
++ ATTEMPT=0
++ MAX_ATTEMPTS=5
++ (( ATTEMPT++ == MAX_ATTEMPTS ))
++ sudo test -d /etc/kubernetes/manifests
++ sudo find /etc/kubernetes/manifests -name '*.yaml' -type f -delete
++ [[ 1 -eq 5 ]]
++ echo 'Kubernetes Initialization: Attempt 1...'
+Kubernetes Initialization: Attempt 1...
++ sudo kubeadm init --config /home/uc/.kube/kube-config.yaml
+[init] Using Kubernetes version: v1.33.13
+[preflight] Running pre-flight checks
+[preflight] Pulling images required for setting up a Kubernetes cluster
+[preflight] This might take a minute or two, depending on the speed of your internet connection
+[preflight] You can also perform this action beforehand using 'kubeadm config images pull'
+[certs] Using certificateDir folder "/etc/kubernetes/pki"
+[certs] Generating "ca" certificate and key
+[certs] Generating "apiserver" certificate and key
+[certs] apiserver serving cert is signed for DNS names [kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local localhost oran-kvm-2404] and IPs [10.96.0.1 192.168.122.137 127.0.0.1]
+[certs] Generating "apiserver-kubelet-client" certificate and key
+[certs] Generating "front-proxy-ca" certificate and key
+[certs] Generating "front-proxy-client" certificate and key
+[certs] Generating "etcd/ca" certificate and key
+[certs] Generating "etcd/server" certificate and key
+[certs] etcd/server serving cert is signed for DNS names [localhost oran-kvm-2404] and IPs [192.168.122.137 127.0.0.1 ::1]
+[certs] Generating "etcd/peer" certificate and key
+[certs] etcd/peer serving cert is signed for DNS names [localhost oran-kvm-2404] and IPs [192.168.122.137 127.0.0.1 ::1]
+[certs] Generating "etcd/healthcheck-client" certificate and key
+[certs] Generating "apiserver-etcd-client" certificate and key
+[certs] Generating "sa" key and public key
+[kubeconfig] Using kubeconfig folder "/etc/kubernetes"
+[kubeconfig] Writing "admin.conf" kubeconfig file
+[kubeconfig] Writing "super-admin.conf" kubeconfig file
+[kubeconfig] Writing "kubelet.conf" kubeconfig file
+[kubeconfig] Writing "controller-manager.conf" kubeconfig file
+[kubeconfig] Writing "scheduler.conf" kubeconfig file
+[etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests"
+[control-plane] Using manifest folder "/etc/kubernetes/manifests"
+[control-plane] Creating static Pod manifest for "kube-apiserver"
+[control-plane] Creating static Pod manifest for "kube-controller-manager"
+[control-plane] Creating static Pod manifest for "kube-scheduler"
+[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[kubelet-start] Starting the kubelet
+[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests"
+[kubelet-check] Waiting for a healthy kubelet at http://127.0.0.1:10248/healthz. This can take up to 4m0s
+[kubelet-check] The kubelet is healthy after 408.458µs
+[control-plane-check] Waiting for healthy control plane components. This can take up to 4m0s
+[control-plane-check] Checking kube-apiserver at https://192.168.122.137:6443/livez
+[control-plane-check] Checking kube-controller-manager at https://127.0.0.1:10257/healthz
+[control-plane-check] Checking kube-scheduler at https://127.0.0.1:10259/livez
+[control-plane-check] kube-controller-manager is healthy after 1.843418ms
+[control-plane-check] kube-scheduler is healthy after 2.836116ms
+[control-plane-check] kube-apiserver is healthy after 1.50143698s
+[upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
+[kubelet] Creating a ConfigMap "kubelet-config" in namespace kube-system with the configuration for the kubelets in the cluster
+[upload-certs] Skipping phase. Please see --upload-certs
+[mark-control-plane] Marking the node oran-kvm-2404 as control-plane by adding the labels: [node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
+[mark-control-plane] Marking the node oran-kvm-2404 as control-plane by adding the taints [node-role.kubernetes.io/control-plane:NoSchedule]
+[bootstrap-token] Using token: tz1eti.gc8xzznnq2k3czm3
+[bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
+[bootstrap-token] Configured RBAC rules to allow Node Bootstrap tokens to get nodes
+[bootstrap-token] Configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+[bootstrap-token] Configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+[bootstrap-token] Configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
+[bootstrap-token] Configured RBAC rules to allow the API server kubelet client certificate to access the kubelet API
+[bootstrap-token] Creating the "cluster-info" ConfigMap in the "kube-public" namespace
+[kubelet-finalize] Updating "/etc/kubernetes/kubelet.conf" to point to a rotatable kubelet client certificate and key
+[addons] Applied essential addon: CoreDNS
+[addons] Applied essential addon: kube-proxy
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.168.122.137:6443 --token tz1eti.gc8xzznnq2k3czm3 \
+	--discovery-token-ca-cert-hash sha256:3e9bec4037a9d9543f0a8576804f01b20c4ca964f0aff338fc979d724587a22a 
++ break
++ [[ 1 -gt 5 ]]
++ echo 'Successfully initialized Kubernetes.'
+Successfully initialized Kubernetes.
++ mkdir -p /home/uc/.kube
++ sudo chown --recursive uc /home/uc/.kube
++ export KUBECONFIG=/home/uc/.kube/config
++ KUBECONFIG=/home/uc/.kube/config
++ sudo cp -f /etc/kubernetes/admin.conf /home/uc/.kube/config
++ sudo chown --recursive uc /home/uc/.kube/config
++ sudo chmod 600 /home/uc/.kube/config
++ sudo chmod 644 /etc/kubernetes/admin.conf
++ sudo sed -i '/^KUBECONFIG=/d' /etc/environment
++ echo KUBECONFIG=/home/uc/.kube/config
++ sudo tee -a /etc/environment
++ source /etc/environment
+++ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+++ KUBECONFIG=/home/uc/.kube/config
+++ id -u
++ [[ 1000 -ne 0 ]]
++ sudo mkdir -p /root/.kube
++ sudo cp -f /etc/kubernetes/admin.conf /root/.kube/config
++ sudo chmod 600 /root/.kube/config
++ '[' '!' -f /home/uc/.bashrc ']'
++ sudo sed -i '/^export KUBECONFIG=/d' /home/uc/.bashrc
++ echo 'export KUBECONFIG="/home/uc/.kube/config"'
++ source /home/uc/.bashrc
+++ case $- in
+++ return
++ kubectl get --raw=/readyz
++ echo 'Applying Flannel CNI (Kube version 1.33.13-1.1)...'
+Applying Flannel CNI (Kube version 1.33.13-1.1)...
+++ echo 1.33.13-1.1
+++ cut -d . -f1
++ KUBE_MAJOR=1
+++ cut -d . -f2
+++ echo 1.33.13-1.1
++ KUBE_MINOR=33
++ sudo mkdir -p /etc/cni/net.d /opt/cni/bin
++ [[ 1 -eq 1 ]]
++ [[ 33 -ge 28 ]]
++ kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/v0.28.5/Documentation/kube-flannel.yml
+namespace/kube-flannel created
+clusterrole.rbac.authorization.k8s.io/flannel created
+clusterrolebinding.rbac.authorization.k8s.io/flannel created
+serviceaccount/flannel created
+configmap/kube-flannel-cfg created
+daemonset.apps/kube-flannel-ds created
++ kubectl -n kube-flannel rollout status ds/kube-flannel-ds --timeout=180s
+Waiting for daemon set spec update to be observed...
+Waiting for daemon set "kube-flannel-ds" rollout to finish: 0 out of 1 new pods have been updated...
+Waiting for daemon set "kube-flannel-ds" rollout to finish: 0 of 1 updated pods are available...
+daemon set "kube-flannel-ds" successfully rolled out
++ kubectl apply -f /home/uc/.kube/kube-proxy-rbac.yaml
+clusterrolebinding.rbac.authorization.k8s.io/kube-proxy created
++ echo 'Waiting for Flannel CNI configuration to be created...'
+Waiting for Flannel CNI configuration to be created...
+++ seq 1 120
++ for i in $(seq 1 120)
++ sudo test -f /etc/cni/net.d/10-flannel.conflist
++ break
++ sudo crictl info
++ grep -q '"NetworkReady": true'
++ echo 'Containerd CRI network not ready. Restarting to apply CNI configuration...'
+Containerd CRI network not ready. Restarting to apply CNI configuration...
++ '[' true = true ']'
++ sudo systemctl restart containerd
+++ seq 1 30
++ for i in $(seq 1 30)
++ sudo crictl info
++ break
+++ seq 1 10
++ for i in $(seq 1 10)
++ sudo crictl info -o json
++ jq -e '.status.conditions[] | select(.type=="NetworkReady" and .status==true)'
++ break
+++ seq 1 120
++ for i in $(seq 1 120)
++ ip link show flannel.1
++ break
++ echo 'Waiting for nodes to be Ready...'
+Waiting for nodes to be Ready...
++ kubectl wait --for=condition=Ready node --all --timeout=300s
+node/oran-kvm-2404 condition met
++ echo 'Checking kubelet DNS and cgroupDriver settings...'
+Checking kubelet DNS and cgroupDriver settings...
++ sudo test -f /var/lib/kubelet/config.yaml
+++ sudo grep -E '^resolvConf:' /var/lib/kubelet/config.yaml
++ echo 'resolvConf: resolvConf: /run/systemd/resolve/resolv.conf'
+resolvConf: resolvConf: /run/systemd/resolve/resolv.conf
+++ sudo grep -E '^cgroupDriver:' /var/lib/kubelet/config.yaml
++ echo 'cgroupDriver: cgroupDriver: systemd'
+cgroupDriver: cgroupDriver: systemd
++ echo 'Checking CoreDNS rollout...'
+Checking CoreDNS rollout...
++ kubectl -n kube-system wait --for=condition=Available deploy/coredns --timeout=120s
+deployment.apps/coredns condition met
++ echo 'CoreDNS status:'
+CoreDNS status:
++ kubectl -n kube-system get pods -l k8s-app=kube-dns -owide
+NAME                       READY   STATUS              RESTARTS   AGE   IP           NODE            NOMINATED NODE   READINESS GATES
+coredns-674b8bbfcf-2dr9b   0/1     ContainerCreating   0          24s   <none>       oran-kvm-2404   <none>           <none>
+coredns-674b8bbfcf-sdn8s   1/1     Running             0          24s   10.244.0.2   oran-kvm-2404   <none>           <none>
++ kubectl -n kube-system wait --for=condition=Ready pods -l k8s-app=kube-dns --timeout=180s
+pod/coredns-674b8bbfcf-2dr9b condition met
+pod/coredns-674b8bbfcf-sdn8s condition met
++ kubectl -n kube-system wait --for=condition=Available deploy/coredns --timeout=180s
+deployment.apps/coredns condition met
++ [[ 1 -eq 1 ]]
++ [[ 33 -ge 28 ]]
++ echo 'Removing taints from control-plane...'
+Removing taints from control-plane...
++ kubectl taint nodes --all node-role.kubernetes.io/control-plane:NoSchedule-
++ kubectl -n kube-flannel rollout status ds/kube-flannel-ds --timeout=180s
+daemon set "kube-flannel-ds" successfully rolled out
++ echo 'Waiting for essential system pods to be ready...'
+Waiting for essential system pods to be ready...
++ [[ 1 -eq 1 ]]
++ [[ 33 -ge 28 ]]
++ wait_for_pods_running 7 kube-system
++ local EXPECTED_COUNT=7
++ local NAMESPACE=kube-system
++ local KEYWORD=Running
++ local ACTUAL_COUNT
++ '[' kube-system == all-namespaces ']'
++ cmd='kubectl get pods -n kube-system'
++ echo 'Initiating wait for 7 pods to be in '\''Running'\'' state in namespace '\''kube-system'\''.'
+Initiating wait for 7 pods to be in 'Running' state in namespace 'kube-system'.
++ true
+++ kubectl get pods -n kube-system
+++ grep -E Running
+++ wc -l
++ ACTUAL_COUNT=7
++ local CMD_STATUS=0
++ '[' 0 -ne 0 ']'
++ echo 'Currently, 7/7 pods are in the desired state in namespace kube-system.'
+Currently, 7/7 pods are in the desired state in namespace kube-system.
++ [[ 7 -ge 7 ]]
++ echo 'Required pod count reached in namespace '\''kube-system'\''.'
+Required pod count reached in namespace 'kube-system'.
++ break
++ wait_for_pods_running 1 kube-flannel
++ local EXPECTED_COUNT=1
++ local NAMESPACE=kube-flannel
++ local KEYWORD=Running
++ local ACTUAL_COUNT
++ '[' kube-flannel == all-namespaces ']'
++ cmd='kubectl get pods -n kube-flannel'
++ echo 'Initiating wait for 1 pods to be in '\''Running'\'' state in namespace '\''kube-flannel'\''.'
+Initiating wait for 1 pods to be in 'Running' state in namespace 'kube-flannel'.
++ true
+++ kubectl get pods -n kube-flannel
+++ grep -E Running
+++ wc -l
++ ACTUAL_COUNT=1
++ local CMD_STATUS=0
++ '[' 0 -ne 0 ']'
++ echo 'Currently, 1/1 pods are in the desired state in namespace kube-flannel.'
+Currently, 1/1 pods are in the desired state in namespace kube-flannel.
++ [[ 1 -ge 1 ]]
++ echo 'Required pod count reached in namespace '\''kube-flannel'\''.'
+Required pod count reached in namespace 'kube-flannel'.
++ break
++ echo 'Removing taints from control-plane...'
+Removing taints from control-plane...
++ kubectl taint nodes --all node.kubernetes.io/not-ready:NoSchedule- node-role.kubernetes.io/control-plane:NoSchedule-
+taint "node.kubernetes.io/not-ready:NoSchedule" not found
+taint "node-role.kubernetes.io/control-plane:NoSchedule" not found
++ echo 'Taint node-role.kubernetes.io/control-plane:NoSchedule not found.'
+Taint node-role.kubernetes.io/control-plane:NoSchedule not found.
++ echo 'Successfully installed Kubernetes.'
+Successfully installed Kubernetes.
++ echo
+
++ echo
+
++ echo 'Installing Helm 3.20.2...'
+Installing Helm 3.20.2...
++ ARCH_SUFFIX=
++ case $(uname -m) in
+++ uname -m
++ ARCH_SUFFIX=amd64
+++ mktemp -d
++ TEMP_DIR=/tmp/tmp.g3lwjWXISL
++ trap 'rm -rf "${TEMP_DIR}"' EXIT
++ HELM_URL=https://get.helm.sh/helm-v3.20.2-linux-amd64.tar.gz
++ HELM_ARCHIVE=/tmp/tmp.g3lwjWXISL/helm-v3.20.2-linux-amd64.tar.gz
++ '[' '!' -e /tmp/tmp.g3lwjWXISL/helm-v3.20.2-linux-amd64.tar.gz ']'
++ curl -fSL --http1.1 https://get.helm.sh/helm-v3.20.2-linux-amd64.tar.gz -o /tmp/tmp.g3lwjWXISL/helm-v3.20.2-linux-amd64.tar.gz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 16.6M  100 16.6M    0     0  31.1M      0 --:--:-- --:--:-- --:--:-- 31.2M
++ file /tmp/tmp.g3lwjWXISL/helm-v3.20.2-linux-amd64.tar.gz
++ grep -q 'gzip compressed data'
+./install_k8s_and_helm.sh: line 1526: file: command not found
++ echo 'Helm archive download failed or file corrupted.'
+Helm archive download failed or file corrupted.
++ exit 1
++ rm -rf /tmp/tmp.g3lwjWXISL
+An error occured when running /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_k8s_and_helm.sh.

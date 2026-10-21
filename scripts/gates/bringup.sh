@@ -3,7 +3,7 @@
 #
 #   gate_bringup <ric|refnode|agents>
 #
-# Only `ric` is implemented: wait (bounded) until every ricplt pod is Running
+# `ric` and `refnode` are implemented (`agents` is not): wait (bounded) until every ricplt pod is Running
 # with all containers Ready (Completed job pods are fine), applying the gate
 # watchdog from plan.md K3 (delete e2term once if it is the only unready pod
 # for > 10 min). The watchdog is also exposed as ric_watchdog_bg/_stop so a
@@ -127,7 +127,50 @@ _bringup_ric() {
     done
 }
 
-_bringup_refnode() { log "bringup refnode: not implemented yet"; return 1; }
+# e2mgr_states: raw JSON of /v1/nodeb/states via the API-server service proxy.
+e2mgr_states() {
+    kc get --raw "/api/v1/namespaces/ricplt/services/http:service-ricplt-e2mgr-http:3800/proxy/v1/nodeb/states" 2>/dev/null
+}
+
+# e2_node_connected: rc 0 when at least one e2mgr node is CONNECTED.
+e2_node_connected() {
+    e2mgr_states | python3 -c '
+import json, sys
+try:
+    d = json.load(sys.stdin)
+except Exception:
+    sys.exit(1)
+sys.exit(0 if any(n.get("connectionStatus") == "CONNECTED" for n in d) else 1)
+' 2>/dev/null
+}
+
+REFNODE_RUN_TIMEOUT_S="${REFNODE_RUN_TIMEOUT_S:-600}"   # nist_run bound for the e2sim script
+REFNODE_CONNECT_TIMEOUT_S="${REFNODE_CONNECT_TIMEOUT_S:-180}"
+
+# refnode: RIC up, then (re)start NIST's kpm_sim container through NIST's own script.
+# The script stops any previous oransim, starts a new one and loops until the
+# E2SetupResponse shows in its log, so it is bounded by nist_run. Truth is e2mgr.
+_bringup_refnode() {
+    local ric_dir="${RIC_DIR:-$HOME/nist/O-RAN-Testbed-Automation/RAN_Intelligent_Controllers/Near-Real-Time-RIC}"
+    local deadline rc
+    _bringup_ric || return 1
+    log "bringup refnode: running NIST run_e2sim_and_connect_to_ric.sh (bound ${REFNODE_RUN_TIMEOUT_S}s)"
+    nist_run "$REFNODE_RUN_TIMEOUT_S" "$ric_dir/install_scripts/run_e2sim_and_connect_to_ric.sh" \
+        >"$EVIDENCE_DIR/run_e2sim.log" 2>&1
+    rc=$?
+    log "bringup refnode: run_e2sim script exit $rc"
+    deadline=$(($(date +%s) + REFNODE_CONNECT_TIMEOUT_S))
+    while ! e2_node_connected; do
+        if [ "$(date +%s)" -ge "$deadline" ]; then
+            log "bringup refnode: no CONNECTED node after ${REFNODE_CONNECT_TIMEOUT_S}s"
+            e2mgr_states >"$EVIDENCE_DIR/bringup-e2mgr-states.json"
+            return 1
+        fi
+        sleep 5
+    done
+    e2mgr_states >"$EVIDENCE_DIR/bringup-e2mgr-states.json"
+    log "bringup refnode: e2mgr shows a CONNECTED node"
+}
 _bringup_agents()  { log "bringup agents: not implemented yet"; return 1; }
 
 gate_bringup() {
