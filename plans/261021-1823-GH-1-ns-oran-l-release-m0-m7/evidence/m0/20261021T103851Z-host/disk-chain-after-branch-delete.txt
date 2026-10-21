@@ -1,0 +1,30 @@
+ file   disk    vda   /home/andang/VMs/ubuntu24.04-m0-branch-l10211038.qcow2
+ file   cdrom   sda   -
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='/home/andang/VMs/ubuntu24.04-m0-branch-l10211038.qcow2' index='2'/>
+      <backingStore type='file' index='3'>
+        <format type='qcow2'/>
+        <source file='/home/andang/VMs/ubuntu24.04-m0-probe-l10211038.qcow2'/>
+        <backingStore type='file' index='4'>
+          <format type='qcow2'/>
+          <source file='/home/andang/VMs/ubuntu24.fresh-install'/>
+          <backingStore type='file' index='5'>
+            <format type='qcow2'/>
+            <source file='/home/andang/VMs/ubuntu24.04'/>
+            <backingStore/>
+          </backingStore>
+        </backingStore>
+      </backingStore>
+      <target dev='vda' bus='virtio'/>
+      <alias name='virtio-disk0'/>
+      <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
+    </disk>
+apparent 107390828544	/home/andang/VMs/ubuntu24.04
+apparent 13041664	/home/andang/VMs/ubuntu24.04-m0-branch-l10211038.qcow2
+apparent 18284544	/home/andang/VMs/ubuntu24.04-m0-probe-l10211038.qcow2
+apparent 286326784	/home/andang/VMs/ubuntu24.fresh-install
+allocated 3488784384	/home/andang/VMs/ubuntu24.04
+allocated 12988416	/home/andang/VMs/ubuntu24.04-m0-branch-l10211038.qcow2
+allocated 18227200	/home/andang/VMs/ubuntu24.04-m0-probe-l10211038.qcow2
+allocated 286269440	/home/andang/VMs/ubuntu24.fresh-install

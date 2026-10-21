@@ -1,0 +1,23 @@
+hostname: oran-kvm-2404
+primary_ipv4: 192.168.122.137
+--- lsb_release -a
+Distributor ID:	Ubuntu
+Description:	Ubuntu 24.04.5 LTS
+Release:	24.04
+Codename:	noble
+--- uname -r
+6.8.0-147-generic
+--- df -h /
+Filesystem                         Size  Used Avail Use% Mounted on
+/dev/mapper/ubuntu--vg-ubuntu--lv   96G  6.3G   85G   7% /
+--- free -g
+               total        used        free      shared  buff/cache   available
+Mem:              15           0          14           0           0          15
+Swap:              3           0           3
+--- nproc
+8
+--- stat -fc %T /sys/fs/cgroup
+cgroup2fs
+--- swapon --show
+NAME      TYPE SIZE USED PRIO
+/swap.img file   4G   0B   -2

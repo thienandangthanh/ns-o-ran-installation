@@ -1,0 +1,107 @@
+{
+  "gate": "m0-host",
+  "ts": "20261021T103851Z",
+  "harness_sha": "006e96d0c70c79efca26d4e531448b4c4c621710",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "03d71c0cf1f8cf70d5529632bda1fcf8821c1a4f",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "8c42089d0859396589f0dbb5a4dca29327ba756c",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "5f547ae8b5ca2d051b9f4d19391d17289ed433d9",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+  },
+  "duration_s": 32,
+  "pass": false,
+  "failed": [
+    "revert_fresh_install",
+    "marker_absent_after_revert",
+    "branch_delete",
+    "branch_unlisted",
+    "branch_overlay_gone"
+  ],
+  "checks": [
+    {
+      "name": "host_free_ge_20g",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "fresh_install_present",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "harness_repo_public",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "harness_anonymous_clone",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "probe_create",
+      "pass": true,
+      "detail": "[host 10:38:55] graceful shutdown of ubuntu24.04\n[host 10:38:58] creating external disk-only snapshot m0-probe-l10211038 (host free 118G)\n[host 10:39:07] snapshot m0-probe-l10211038 created; VM up"
+    },
+    {
+      "name": "probe_marker_written",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "revert_fresh_install",
+      "pass": false,
+      "detail": "exit 1: [host 10:39:07] ERROR: no snapshot fresh-install"
+    },
+    {
+      "name": "marker_absent_after_revert",
+      "pass": false,
+      "detail": "exit 1: "
+    },
+    {
+      "name": "probe_still_listed",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "branch_create",
+      "pass": true,
+      "detail": "[host 10:39:08] graceful shutdown of ubuntu24.04\n[host 10:39:14] creating external disk-only snapshot m0-branch-l10211038 (host free 118G)\n[host 10:39:22] snapshot m0-branch-l10211038 created; VM up"
+    },
+    {
+      "name": "branch_overlay_exists",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "branch_delete",
+      "pass": false,
+      "detail": "exit 1: [host 10:39:22] ERROR: no snapshot m0-branch-l10211038"
+    },
+    {
+      "name": "branch_unlisted",
+      "pass": false,
+      "detail": "exit 1: "
+    },
+    {
+      "name": "branch_overlay_gone",
+      "pass": false,
+      "detail": "exit 1: "
+    },
+    {
+      "name": "vm_up_after_probe",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "vm_no_git_credentials",
+      "pass": true,
+      "detail": ""
+    }
+  ]
+}

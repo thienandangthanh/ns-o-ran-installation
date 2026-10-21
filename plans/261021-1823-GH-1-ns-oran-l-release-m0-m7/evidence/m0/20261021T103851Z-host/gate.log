@@ -1,0 +1,18 @@
+[10:38:51] gate m0-host start; evidence /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m0/20261021T103851Z-host; harness 006e96d0c70c79efca26d4e531448b4c4c621710
+[10:38:51] PASS host_free_ge_20g
+[10:38:51] PASS fresh_install_present
+[10:38:51] PASS harness_repo_public
+[10:38:55] PASS harness_anonymous_clone
+[10:39:07] PASS probe_create
+[10:39:07] PASS probe_marker_written
+[10:39:07] FAIL revert_fresh_install: exit 1: [host 10:39:07] ERROR: no snapshot fresh-install
+[10:39:07] FAIL marker_absent_after_revert: exit 1: 
+[10:39:08] PASS probe_still_listed
+[10:39:22] PASS branch_create
+[10:39:22] PASS branch_overlay_exists
+[10:39:22] FAIL branch_delete: exit 1: [host 10:39:22] ERROR: no snapshot m0-branch-l10211038
+[10:39:22] FAIL branch_unlisted: exit 1: 
+[10:39:22] FAIL branch_overlay_gone: exit 1: 
+[10:39:23] PASS vm_up_after_probe
+[10:39:23] PASS vm_no_git_credentials
+verdict m0-host: FAIL failed=['revert_fresh_install', 'marker_absent_after_revert', 'branch_delete', 'branch_unlisted', 'branch_overlay_gone']

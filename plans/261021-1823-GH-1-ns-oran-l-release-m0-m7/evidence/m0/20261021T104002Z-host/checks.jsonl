@@ -1,0 +1,16 @@
+{"name":"host_free_ge_20g","pass":true,"detail":""}
+{"name":"fresh_install_present","pass":true,"detail":""}
+{"name":"harness_repo_public","pass":true,"detail":""}
+{"name":"harness_anonymous_clone","pass":true,"detail":""}
+{"name":"probe_create","pass":true,"detail":"[host 10:40:06] graceful shutdown of ubuntu24.04\n[host 10:40:09] creating external disk-only snapshot m0-probe-l10211040 (host free 118G)\n[host 10:40:18] snapshot m0-probe-l10211040 created; VM up"}
+{"name":"probe_marker_written","pass":true,"detail":""}
+{"name":"revert_fresh_install","pass":true,"detail":"[host 10:40:18] graceful shutdown of ubuntu24.04\n[host 10:40:24] reverting to fresh-install\n[host 10:40:33] reverted to fresh-install; VM up"}
+{"name":"marker_absent_after_revert","pass":true,"detail":""}
+{"name":"probe_still_listed","pass":true,"detail":""}
+{"name":"branch_create","pass":true,"detail":"[host 10:40:33] graceful shutdown of ubuntu24.04\n[host 10:40:39] creating external disk-only snapshot m0-branch-l10211040 (host free 118G)\n[host 10:40:48] snapshot m0-branch-l10211040 created; VM up"}
+{"name":"branch_overlay_exists","pass":true,"detail":""}
+{"name":"branch_delete","pass":true,"detail":"[host 10:40:48] deleted snapshot m0-branch-l10211040"}
+{"name":"branch_unlisted","pass":true,"detail":""}
+{"name":"branch_overlay_gone","pass":true,"detail":""}
+{"name":"vm_up_after_probe","pass":true,"detail":""}
+{"name":"vm_no_git_credentials","pass":true,"detail":""}
