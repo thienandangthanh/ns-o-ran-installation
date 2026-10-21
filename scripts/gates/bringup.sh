@@ -111,7 +111,8 @@ _bringup_ric() {
             if [ -z "$missing" ]; then
                 kc get pods -A -o wide >"$EVIDENCE_DIR/bringup-pods-wide-$tag.txt" 2>&1
                 log "bringup ric: all ricplt pods Ready"
-                return 0
+                _wait_e2t_registered
+                return
             fi
             log "bringup ric: pods missing:$missing"
         else
@@ -127,10 +128,12 @@ _bringup_ric() {
     done
 }
 
-# e2mgr_states: raw JSON of /v1/nodeb/states via the API-server service proxy.
-e2mgr_states() {
-    kc get --raw "/api/v1/namespaces/ricplt/services/http:service-ricplt-e2mgr-http:3800/proxy/v1/nodeb/states" 2>/dev/null
+# e2mgr_get <path>: raw JSON of e2mgr's /v1/<path> via the API-server service proxy.
+e2mgr_get() {
+    kc get --raw "/api/v1/namespaces/ricplt/services/http:service-ricplt-e2mgr-http:3800/proxy/v1/$1" 2>/dev/null
 }
+# e2mgr_states: raw JSON of /v1/nodeb/states.
+e2mgr_states() { e2mgr_get nodeb/states; }
 
 # e2_node_connected: rc 0 when at least one e2mgr node is CONNECTED.
 e2_node_connected() {
@@ -150,12 +153,47 @@ REFNODE_CONNECT_TIMEOUT_S="${REFNODE_CONNECT_TIMEOUT_S:-180}"
 # refnode: RIC up, then (re)start NIST's kpm_sim container through NIST's own script.
 # The script stops any previous oransim, starts a new one and loops until the
 # E2SetupResponse shows in its log, so it is bounded by nist_run. Truth is e2mgr.
+E2T_REGISTER_TIMEOUT_S="${E2T_REGISTER_TIMEOUT_S:-600}"
+E2T_ROLL_AFTER_S="${E2T_ROLL_AFTER_S:-300}"
+E2T_SETTLE_S="${E2T_SETTLE_S:-20}"
+# _wait_e2t_registered: pods Ready is not enough. Until e2term has registered
+# with e2mgr (an e2tAddress in /v1/e2t/list, after rtmgr is up), an E2 node's
+# E2SetupRequest is accepted on SCTP but never answered, and NIST's kpm_sim
+# never resends it (observed after cold boots, 2026-10-21). This is NIST's own
+# readiness condition from wait_for_ricplt_pods.sh, including its single e2term
+# roll when the list stays empty. A short settle lets rtmgr push routes.
+_wait_e2t_registered() {
+    local start now rolled=0 list
+    start=$(date +%s)
+    while :; do
+        list=$(e2mgr_get e2t/list)
+        if [[ "$list" == *'"e2tAddress"'* ]]; then
+            log "bringup ric: e2term registered with e2mgr: $list"
+            echo "$list" >"$EVIDENCE_DIR/bringup-e2t-list.json"
+            sleep "$E2T_SETTLE_S"
+            return 0
+        fi
+        now=$(date +%s)
+        if [ "$rolled" = 0 ] && [ $((now - start)) -ge "$E2T_ROLL_AFTER_S" ]; then
+            log "bringup ric: no e2term registered after ${E2T_ROLL_AFTER_S}s: rolling e2term once (NIST remedy)"
+            echo "$(date -u +%FT%TZ) e2term rolled: e2t/list empty for ${E2T_ROLL_AFTER_S}s" >>"$EVIDENCE_DIR/watchdog.log"
+            kc -n ricplt rollout restart deployment/deployment-ricplt-e2term-alpha &&
+                kc -n ricplt rollout status deployment/deployment-ricplt-e2term-alpha --timeout=300s
+            rolled=1
+        fi
+        if [ $((now - start)) -ge "$E2T_REGISTER_TIMEOUT_S" ]; then
+            log "bringup ric: e2term not registered with e2mgr after ${E2T_REGISTER_TIMEOUT_S}s"
+            return 1
+        fi
+        sleep 5
+    done
+}
+
 REFNODE_ATTEMPTS="${REFNODE_ATTEMPTS:-3}"
 # _bringup_refnode: start NIST's kpm_sim and wait until e2mgr lists it CONNECTED.
-# After a cold boot (every snapshot boundary reboots the VM) e2mgr can restart
-# after e2term registered with it; e2term then accepts the association but no
-# E2SetupResponse ever comes back (observed 2026-10-21). NIST's own remedy
-# (wait_for_ricplt_pods.sh) is to roll e2term, so attempts 2..N do that first.
+# kpm_sim sends its E2SetupRequest once and never resends it, so a setup lost
+# to a not-yet-routable RIC stalls forever; attempts 2..N restart kpm_sim after
+# re-checking RIC readiness (which includes e2term registration with e2mgr).
 # Every attempt is logged to bringup-refnode-attempts.log.
 _bringup_refnode() {
     local ric_dir="${RIC_DIR:-$HOME/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC}"
@@ -163,10 +201,8 @@ _bringup_refnode() {
     _bringup_ric || return 1
     for ((attempt = 1; attempt <= REFNODE_ATTEMPTS; attempt++)); do
         if ((attempt > 1)); then
-            log "bringup refnode: attempt $attempt: stop kpm_sim, roll e2term"
+            log "bringup refnode: attempt $attempt: restart kpm_sim"
             nist_run 180 "$ric_dir/install_scripts/stop_e2sim.sh" >>"$EVIDENCE_DIR/run_e2sim.log" 2>&1
-            kc -n ricplt rollout restart deployment/deployment-ricplt-e2term-alpha &&
-                kc -n ricplt rollout status deployment/deployment-ricplt-e2term-alpha --timeout=300s
             _bringup_ric || return 1
         fi
         log "bringup refnode: attempt $attempt: running NIST run_e2sim_and_connect_to_ric.sh (bound ${REFNODE_RUN_TIMEOUT_S}s)"
