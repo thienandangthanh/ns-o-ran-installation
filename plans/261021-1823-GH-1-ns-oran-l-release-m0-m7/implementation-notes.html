@@ -87,6 +87,14 @@ Its wire evidence already showed the probe passing.</li>
 <li>K10: two probe containers (172.17.0.3/.4) each held their own association from source port 36422 to the same ClusterIP for 300 s, at the same time as kpm_sim's. Each had 9 heartbeat/ack pairs, zero ABORT and a clean shutdown.</li>
 <li>Snapshot <code>l2-refnode</code> taken.</li>
 </ul></li>
+<li><span class="tag deviation">deviation</span><b>M3 attempt 1</b> (<code>evidence/m3/20261021T115718Z</code>):
+<ul>
+<li><code>regen-check</code> passed on the VM in a throwaway <code>ubuntu:24.04</code> container: 470/470 reproduced, the SIZE(8) footprint is <code>TimeStamp.c</code> only, and the shipped patch equals the regeneration. This settles K9 on the target.</li>
+<li>The gate then hung. Its <code>kubectl exec -it</code> probe targeted the InfluxDB pod before the installer creates it, so it wrongly chose a <code>script(1)</code> pty wrapper. With a tty, NIST's <code>start_sudo_refresh.sh</code> runs <code>sudo -v</code>, which prompts, because <code>uc</code> has both a password rule (sudo group) and a NOPASSWD rule.</li>
+<li>Verified on the VM: with no TTY, <code>kubectl exec -it</code> warns and runs (rc 0), and <code>sudo -v</code> fails fast without hanging.</li>
+<li>Fix: the installer always runs without a TTY, and the probe is a real check against the e2mgr pod.</li>
+<li>Reverted to <code>l2-refnode</code> and re-ran.</li>
+</ul></li>
 </ul>
 </body>
 </html>

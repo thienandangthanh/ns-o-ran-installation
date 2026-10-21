@@ -148,23 +148,19 @@ kpimon_uninstall() {
     echo "no kpimon-go pod left"
 }
 
-# kubectl_exec_it_probe: how does `kubectl exec -it` behave with non-TTY stdin that never
-# reaches EOF (the installer uses -it on the influxdb pod). Sets KPIMON_INSTALL_MODE.
-KPIMON_INSTALL_MODE=direct
 kubectl_exec_it_probe() {
-    local out="$EVIDENCE_DIR/kubectl-exec-it-probe.txt" rc
-    # shellcheck disable=SC2016  # expanded by the inner bash
-    timeout 90 bash -c 'source "$1"; kc exec -it -n ricplt "$2" -- sh -c "echo EXEC_IT_OK" < <(exec sleep 100)' \
-        _ "$HARNESS_DIR/scripts/gates/bringup.sh" "$INFLUX_POD" >"$out" 2>&1
+    # NIST's installer calls `kubectl exec -it` with no TTY. Verified on the VM:
+    # kubectl warns "Unable to use a TTY" and still runs the command (rc 0). A
+    # pty wrapper such as script(1) must NOT be used: with a tty, NIST's
+    # start_sudo_refresh.sh runs `sudo -v`, which prompts for a password (uc has
+    # both a password rule and a NOPASSWD rule) and hangs the gate forever.
+    # The probe targets e2mgr because InfluxDB is created by the installer itself.
+    local out="$EVIDENCE_DIR/kubectl-exec-it-probe.txt" pod rc
+    pod=$(kc -n ricplt get pods -o name | grep -m1 e2mgr)
+    timeout 90 kc exec -it -n ricplt "$pod" -- sh -c "echo EXEC_IT_OK" < <(exec sleep 100) >"$out" 2>&1
     rc=$?
-    echo "exit $rc: $(tr '\n' '|' <"$out")"
-    if [ "$rc" -eq 0 ] && grep -q EXEC_IT_OK "$out"; then
-        KPIMON_INSTALL_MODE=direct
-    else
-        KPIMON_INSTALL_MODE=script
-        command -v script >/dev/null 2>&1 || { echo "fallback needs script(1), missing"; return 1; }
-    fi
-    echo "install mode: $KPIMON_INSTALL_MODE"
+    echo "exit $rc on $pod: $(tr '\n' '|' <"$out")"
+    [ "$rc" -eq 0 ] && grep -q EXEC_IT_OK "$out"
 }
 
 # kpimon_install <size8:true|false> <logfile>
@@ -173,19 +169,14 @@ kpimon_install() {
     local envs="CLEAN_INSTALL=true KPIMON_TIMESTAMP_SIZE8=$size8"
     (
         cd "$RIC_DIR" || exit 1
-        if [ "$KPIMON_INSTALL_MODE" = script ]; then
-            # shellcheck disable=SC2086
-            nist_run 3600 script -qec "env $envs ./additional_scripts/install_xapp_kpi_monitor.sh" /dev/null
-        else
-            # shellcheck disable=SC2086
-            nist_run 3600 env $envs ./additional_scripts/install_xapp_kpi_monitor.sh
-        fi
+        # shellcheck disable=SC2086
+        nist_run 3600 env $envs ./additional_scripts/install_xapp_kpi_monitor.sh
     ) >"$log.raw" 2>&1
     # Never pipe NIST output (its chartmuseum daemon inherits stdout and would
     # hold a pipe open forever); redact the file afterwards instead.
     rc=$?
     redact_stream <"$log.raw" >"$log"; rm -f "$log.raw"
-    echo "installer exit $rc (mode $KPIMON_INSTALL_MODE, size8=$size8); log $log"
+    echo "installer exit $rc (size8=$size8); log $log"
     tail -n 8 "$log"
     return "$rc"
 }

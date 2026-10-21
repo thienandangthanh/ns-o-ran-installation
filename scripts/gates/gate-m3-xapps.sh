@@ -59,10 +59,7 @@ install_build_tools() {
     command -v tshark tcpdump >/dev/null && tshark --version | head -n 1
 }
 check m3_build_tools_installed install_build_tools
-# Run in this shell (not under check) so KPIMON_INSTALL_MODE is set for the installs below.
-kubectl_exec_it_probe >"$EVIDENCE_DIR/kubectl-exec-it-mode.txt" 2>&1
-record m3_kubectl_exec_it_probe_informational true "$(tr '\n' '|' <"$EVIDENCE_DIR/kubectl-exec-it-mode.txt" | cut -c1-500)"
-log "kpimon install mode: $KPIMON_INSTALL_MODE"
+check m3_kubectl_exec_it_works_without_tty kubectl_exec_it_probe
 
 ################################################################################
 # step 2: K9 regeneration proof (SIZE(8) patch is a regeneration, not a hand edit)
@@ -195,7 +192,7 @@ phase() {
         "sub_request_frames=$sub_req" "sub_response_frames=$sub_resp" \
         "kpimon_indications_logged=$k_ind" "kpimon_header_wmore_logged=$k_hw" "kpimon_msg_wmore_logged=$k_mw" \
         "kpimon_influx_writes_logged=$k_wrote" "influx_rows_5m=$rows" "kpimon_pod_restarts=$RESTARTS" \
-        "window_s=$WINDOW_S" "docker_image_id=$IMG_AFTER" "docker_image_id_before=$IMG_BEFORE" "install_mode=$KPIMON_INSTALL_MODE"
+        "window_s=$WINDOW_S" "docker_image_id=$IMG_AFTER" "docker_image_id_before=$IMG_BEFORE"
     cat "$e/m3-$tag-summary.json"
 
     local total hclean mclean hw mw hf mf

@@ -1,0 +1,12 @@
+[11:57:19] gate m3 start; evidence /home/uc/evidence/m3/20261021T115718Z; harness 00dbe586803016d7600e6ca18be315646dacbd2a
+[11:57:19] ric watchdog started (pid 9513, threshold 600s)
+[12:00:13] PASS m3_refnode_up
+[12:00:13] PASS m3_nist_tree_at_testbed_sha
+[12:00:13] PASS m3_build_tools_installed
+[12:00:13] PASS m3_kubectl_exec_it_probe_informational
+[12:00:13] kpimon install mode: script
+[12:01:19] PASS m3_regen_check_pass
+[12:01:19] ===== phase stock (KPIMON_TIMESTAMP_SIZE8=false) =====
+[12:01:30] PASS m3_stock_refnode_stopped_before_uninstall
+[12:01:32] PASS m3_stock_kpimon_uninstalled
+[12:01:33] PASS m3_stock_capture_started
