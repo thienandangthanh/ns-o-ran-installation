@@ -14,9 +14,11 @@ Pass 2 (-V text, only procedureCode 1 and 8 frames): E2Setup request/response
 and RICsubscription request/response details (RAN function ID, OID, short
 name, global gNB-ID, PLMN, accepted RAN functions, requestor/instance IDs).
 
-Facts: {"inits","aborts","shutdowns","pdus","setup_requests","setup_responses",
-"sub_requests","sub_responses","ind_times_by_src"}; every event carries
-frame, t (epoch s), src, dst, sport, dport.
+Facts: {"inits","init_acks","cookie_acks","aborts","shutdowns","pdus","setup_requests",
+"setup_responses","sub_requests","sub_responses","ind_times_by_src","ind_events"}; every event carries
+frame, t (epoch s), src, dst, sport, dport. init_acks / cookie_acks (SCTP chunks 2 / 11) and ind_events
+(one per RICindication frame) let e2-facts-query.py attribute traffic by association (agent ip, source
+port) instead of by IP: the container IPs are not stable across agent restarts.
 """
 import argparse
 import json
@@ -117,7 +119,7 @@ def main():
     ap.add_argument("--text-out")
     a = ap.parse_args()
 
-    facts = {"pcap": a.pcap, "frames": 0, "inits": [], "aborts": [], "shutdowns": [], "pdus": [],
+    facts = {"pcap": a.pcap, "frames": 0, "inits": [], "init_acks": [], "cookie_acks": [], "ind_events": [], "aborts": [], "shutdowns": [], "pdus": [],
              "setup_requests": [], "setup_responses": [], "sub_requests": [], "sub_responses": [],
              "ind_times_by_src": {}}
     by_frame = {}
@@ -127,6 +129,10 @@ def main():
         ev = {k: r[k] for k in ("frame", "t", "src", "dst", "sport", "dport")}
         if 1 in r["chunks"]:
             facts["inits"].append(ev)
+        if 2 in r["chunks"]:
+            facts["init_acks"].append(ev)
+        if 11 in r["chunks"]:
+            facts["cookie_acks"].append(ev)
         if 6 in r["chunks"]:
             facts["aborts"].append(ev)
         if r["chunks"] & {7, 8, 14}:
@@ -134,6 +140,7 @@ def main():
         for p in r["procs"][:1]:
             if p == 5:
                 facts["ind_times_by_src"].setdefault(r["src"], []).append(round(r["t"], 3))
+                facts["ind_events"].append(ev)
             else:
                 facts["pdus"].append(dict(ev, proc=p, procName=PROC.get(p, str(p)), kind=r["kind"]))
 

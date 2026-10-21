@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
-"""trace-facts.py <trace.jsonl>... [--require-clean] [--expect-nodes 1,2] [--out f.json]
+"""trace-facts.py <trace.jsonl>... [--require-clean | --reconnects-ok] [--expect-nodes 1,2] [--out f.json]
 
 Summarises ns-3 IPC trace files (e2-ipc-trace-<cellId>.jsonl: hello, sample and
 bye lines, written before every send so dropped samples are included).
 Per node: kind, hello count, samples, lastSeq, seq gaps, bye counters
 (built, sent, droppedDisconnected, droppedBackpressure) and the largest
 per-sample ipcDropped. --require-clean fails unless every node has exactly one
-hello and one bye, sent == built, zero drops and no seq gaps. --expect-nodes
+hello and one bye, sent == built, zero drops and no seq gaps. --reconnects-ok is for runs where the
+agents restart (the emitter reconnects and says hello again) and drops are expected: it needs exactly one bye,
+hello >= 1, no seq gaps, built == sent + droppedDisconnected + droppedBackpressure and last_seq == built - 1,
+and only reports the drop counts. --expect-nodes
 fails unless the node set matches exactly.
 """
 import argparse
@@ -42,6 +45,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("traces", nargs="+")
     ap.add_argument("--require-clean", action="store_true")
+    ap.add_argument("--reconnects-ok", action="store_true")
     ap.add_argument("--expect-nodes")
     ap.add_argument("--out")
     a = ap.parse_args()
@@ -62,6 +66,20 @@ def main():
             elif b["sent"] != b["built"] or b["droppedDisconnected"] or b["droppedBackpressure"] or n["ipc_dropped_max"]:
                 bad.append("node %s sent %s != built %s or drops %s/%s" % (
                     n["node"], b["sent"], b["built"], b["droppedDisconnected"], b["droppedBackpressure"]))
+            if n["seq_gaps"]:
+                bad.append("node %s has %d seq gaps" % (n["node"], n["seq_gaps"]))
+        if a.reconnects_ok:
+            b = n["bye_msg"] or {}
+            dd, db = b.get("droppedDisconnected") or 0, b.get("droppedBackpressure") or 0
+            print("node %s: hello=%d (reconnects %d) droppedDisconnected=%d droppedBackpressure=%d" % (
+                n["node"], n["hello"], max(n["hello"] - 1, 0), dd, db))
+            if n["bye"] != 1 or n["hello"] < 1:
+                bad.append("node %s hello=%d bye=%d (want hello >= 1, bye == 1)" % (n["node"], n["hello"], n["bye"]))
+            elif b.get("built") != (b.get("sent") or 0) + dd + db:
+                bad.append("node %s built %s != sent %s + droppedDisconnected %d + droppedBackpressure %d" % (
+                    n["node"], b.get("built"), b.get("sent"), dd, db))
+            elif n["last_seq"] != b["built"] - 1:
+                bad.append("node %s last_seq %s != built-1 (%d)" % (n["node"], n["last_seq"], b["built"] - 1))
             if n["seq_gaps"]:
                 bad.append("node %s has %d seq gaps" % (n["node"], n["seq_gaps"]))
     if a.out:

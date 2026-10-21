@@ -191,38 +191,12 @@ check m7_capture_stopped capture_stop m7
 # analysis
 ################################################################################
 check m7_pcap_facts_extracted pcap_facts "$e/m7.pcap" m7
-F="$e/m7-facts.json"; Q="$E2EV/e2-facts-query.py"
+F="$e/m7-facts.json"; Q="$E2EV/e2-facts-query.py"; W="$e"
 SERVICE_IP=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["agents"][0]["e2Term"].split(":")[0])' "$e/agents.json")
-check m7_pcap_one_association_per_agent_distinct_ips_no_sport_collision python3 -I "$Q" "$F" assoc-start \
-    --node-ips "$e/node-ips.json" --service-ip "$SERVICE_IP" --before "$T_DEL"
-check m7_no_sctp_abort_during_endurance_window python3 -I "$Q" "$F" no-abort --from "$NS3_START_EPOCH" --to "$T_DEL"
-record m7_sctp_abort_shutdown_around_delete_informational true "$(python3 -I "$Q" "$F" no-abort --from "$(python3 -c "print($T_DEL - 5)")" --to "$(python3 -c "print($T_DEL + 600)")" 2>&1 | head -c 1500 | tr '\n' ';')"
-check m7_wire_every_agent_init_goes_to_the_same_service_ip python3 -I "$Q" "$F" service-ip --node-ips "$e/node-ips.json" --service-ip "$SERVICE_IP"
-python3 -I "$Q" "$F" post-delete --node-ips "$e/node-ips.json" --service-ip "$SERVICE_IP" --after "$T_DEL" --func-id 2 \
-    --timeline-out "$e/m7-post-delete-timeline.json" >"$e/m7-post-delete-query.txt" 2>&1
-timeline_has() {
-    python3 -I - "$e/m7-post-delete-timeline.json" "$@" <<'PY'
-import json, sys
-t = json.load(open(sys.argv[1])); fields = sys.argv[2:]
-bad = [n for n, v in t.items() if any(v.get(f) is None for f in fields)]
-print("%s: %s" % (",".join(fields), {n: [v.get(f) for f in fields] for n, v in sorted(t.items())}))
-sys.exit(1 if bad or not t else 0)
-PY
-}
-new_ports() {
-    python3 -I - "$e/m7-post-delete-timeline.json" <<'PY'
-import json, sys
-t = json.load(open(sys.argv[1]))
-print({n: (v["new_sport"], v["old_sports"]) for n, v in sorted(t.items())})
-sys.exit(0 if t and all(v["new_sport"] is not None and v["new_sport"] not in v["old_sports"] for v in t.values()) else 1)
-PY
-}
-check m7_wire_new_association_per_node_new_source_port new_ports
-check m7_wire_new_e2setup_request_and_response_per_node timeline_has setup_request_s setup_response_s
-check m7_wire_new_ricsubscription_request_and_response_per_node timeline_has sub_request_s sub_response_s
-check m7_wire_first_indication_after_delete_per_node timeline_has first_indication_s
-record m7_per_node_time_to_connected_and_first_indication_informational true "wire (s after T_del): $(tr -d ' \n' <"$e/m7-post-delete-timeline.json"); poll bound: $(tr -d ' \n' <"$e/m7-recovery-poll-summary.json" 2>/dev/null)"
-check m7_per_node_ricindications_on_the_wire python3 -I "$Q" "$F" indications --node-ips "$e/node-ips.json"
+export F Q W SERVICE_IP   # read by the sourced m7-wire-trace-checks.sh
+# Wire and ns-3 trace checks live in a shared file so tools/e2-evidence/replay-m7-analysis.sh runs the very same ones offline.
+source "$E2EV/m7-wire-trace-checks.sh"
+m7_wire_trace_checks
 
 check m7_harness_ran_on_pcap harness_analyze m7 "$e/m7.pcap" "$SODIR" 8
 if [ -s "$e/m7-decode.json" ]; then
@@ -242,18 +216,6 @@ fi
 fresh_influx() { python3 -I "$E2EV/influx-node-rows.py" "$e/m7-influx-nodes-cell.csv" --after "$T_DEL" --nodes "$IDS" --out "$e/m7-influx-node-rows-cell.json"; }
 check m7_influx_fresh_cellmetrics_rows_per_nodeid_after_delete fresh_influx
 record m7_influx_ue_rows_per_nodeid_informational true "$(python3 -I "$E2EV/influx-node-rows.py" "$e/m7-influx-nodes-ue.csv" --after "$T_DEL" 2>&1 | tr '\n' ';')"
-trace_bye() {
-    python3 -I "$E2EV/trace-facts.py" $(for i in ${IDS//,/ }; do echo "$RUN/e2-ipc-trace-$i.jsonl"; done) --expect-nodes "$IDS" --out "$e/m7-trace-facts.json" || true
-    python3 -I - "$e/m7-trace-facts.json" <<'PY'
-import json, sys
-n = json.load(open(sys.argv[1]))
-drops = {x["node"]: ((x["bye_msg"] or {}).get("droppedDisconnected"), (x["bye_msg"] or {}).get("droppedBackpressure"), x["ipc_dropped_max"]) for x in n}
-print("ipcDropped (disconnected, backpressure, max per-sample): %s; total droppedDisconnected %s (expected > 0 around the delete)" % (
-    drops, sum((d[0] or 0) for d in drops.values())))
-sys.exit(0 if all(x["hello"] == 1 and x["bye"] == 1 for x in n) else 1)
-PY
-}
-check m7_ns3_bye_ipc_dropped_recorded_per_node trace_bye
 
 ################################################################################
 # teardown and hygiene
