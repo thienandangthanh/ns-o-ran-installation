@@ -44,8 +44,10 @@ else
         log "$NIST_DIR already at $TESTBED_SHA: reusing"
     fi
     ric_watchdog_bg
-    { cd "$RIC_DIR" && nist_run "$INSTALL_BUDGET_S" ./full_install.sh; } 2>&1 | tee "$EVIDENCE_DIR/full_install.log"
-    rc=${PIPESTATUS[0]}
+    # Never pipe NIST output: the installer leaves daemons (chartmuseum via helm
+    # servecm) that inherit stdout, so a reader such as tee would never see EOF.
+    (cd "$RIC_DIR" && nist_run "$INSTALL_BUDGET_S" ./full_install.sh) >"$EVIDENCE_DIR/full_install.log" 2>&1
+    rc=$?
     ric_watchdog_stop
     if [ "$rc" -eq 0 ]; then
         record full_install_exit_0 true "exit 0"

@@ -172,7 +172,7 @@ kubectl_exec_it_probe() {
 kpimon_install() {
     local size8="$1" log="$2" rc
     local envs="CLEAN_INSTALL=true KPIMON_TIMESTAMP_SIZE8=$size8"
-    {
+    (
         cd "$RIC_DIR" || exit 1
         if [ "$KPIMON_INSTALL_MODE" = script ]; then
             # shellcheck disable=SC2086
@@ -181,8 +181,11 @@ kpimon_install() {
             # shellcheck disable=SC2086
             nist_run 3600 env $envs ./additional_scripts/install_xapp_kpi_monitor.sh
         fi
-    } 2>&1 | redact_stream >"$log"
-    rc=${PIPESTATUS[0]}
+    ) >"$log.raw" 2>&1
+    # Never pipe NIST output (its chartmuseum daemon inherits stdout and would
+    # hold a pipe open forever); redact the file afterwards instead.
+    rc=$?
+    redact_stream <"$log.raw" >"$log"; rm -f "$log.raw"
     echo "installer exit $rc (mode $KPIMON_INSTALL_MODE, size8=$size8); log $log"
     tail -n 8 "$log"
     return "$rc"
