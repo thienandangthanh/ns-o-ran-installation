@@ -1,0 +1,3504 @@
+Frame 1: 82 bytes on wire (656 bits), 82 bytes captured (656 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:34:12.409032000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:34:12.409032000 UTC
+    Epoch Arrival Time: 1792582452.409032000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000000000 seconds]
+    [Time delta from previous displayed frame: 0.000000000 seconds]
+    [Time since reference or first frame: 0.000000000 seconds]
+    Frame Number: 1
+    Frame Length: 82 bytes (656 bits)
+    Capture Length: 82 bytes (656 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 68
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xda16 [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x00000000
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    INIT chunk (Outbound streams: 10, inbound streams: 65535)
+        Chunk type: INIT (1)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 36
+        Initiate tag: 0x31d19de7
+        Advertised receiver window credit (a_rwnd): 106496
+        Number of outbound streams: 10
+        Number of inbound streams: 65535
+        Initial TSN: 2665222270
+        Supported address types parameter (Supported types: IPv6, IPv4)
+            Parameter type: Supported address types (0x000c)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 8
+            Supported address type: IPv6 address (6)
+            Supported address type: IPv4 address (5)
+        ECN parameter
+            Parameter type: ECN (0x8000)
+                1... .... .... .... = Bit: Skip parameter and continue processing of the chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 4
+        Forward TSN supported parameter
+            Parameter type: Forward TSN supported (0xc000)
+                1... .... .... .... = Bit: Skip parameter and continue processing of the chunk
+                .1.. .... .... .... = Bit: Do report
+            Parameter length: 4
+
+Frame 2: 306 bytes on wire (2448 bits), 306 bytes captured (2448 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:34:12.409097000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:34:12.409097000 UTC
+    Epoch Arrival Time: 1792582452.409097000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000065000 seconds]
+    [Time delta from previous displayed frame: 0.000065000 seconds]
+    [Time since reference or first frame: 0.000065000 seconds]
+    Frame Number: 2
+    Frame Length: 306 bytes (2448 bits)
+    Capture Length: 306 bytes (2448 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 292
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xda36 [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x25cdb02d [unverified]
+    [Checksum Status: Unverified]
+    INIT_ACK chunk (Outbound streams: 2, inbound streams: 2)
+        Chunk type: INIT_ACK (2)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 260
+        Initiate tag: 0x5edc29e1
+        Advertised receiver window credit (a_rwnd): 106496
+        Number of outbound streams: 2
+        Number of inbound streams: 2
+        Initial TSN: 3868318678
+        State cookie parameter (Cookie length: 228 bytes)
+            Parameter type: State cookie (0x0007)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 232
+            State cookie [truncated]: d295b6d19b05aa808db22b4351cf7ca33dcb3bd000000000000000000000000000000000e129dc5ee79dd13100000000000000007884b82a4c88e01802000200d6db91e6020076460af400010000000000000000000000000000000000000000468e01000000000080020
+        ECN parameter
+            Parameter type: ECN (0x8000)
+                1... .... .... .... = Bit: Skip parameter and continue processing of the chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 4
+        Forward TSN supported parameter
+            Parameter type: Forward TSN supported (0xc000)
+                1... .... .... .... = Bit: Skip parameter and continue processing of the chunk
+                .1.. .... .... .... = Bit: Do report
+            Parameter length: 4
+
+Frame 3: 278 bytes on wire (2224 bits), 278 bytes captured (2224 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:34:12.409104000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:34:12.409104000 UTC
+    Epoch Arrival Time: 1792582452.409104000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000007000 seconds]
+    [Time delta from previous displayed frame: 0.000007000 seconds]
+    [Time since reference or first frame: 0.000072000 seconds]
+    Frame Number: 3
+    Frame Length: 278 bytes (2224 bits)
+    Capture Length: 278 bytes (2224 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 264
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd952 [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    COOKIE_ECHO chunk (Cookie length: 228 bytes)
+        Chunk type: COOKIE_ECHO (10)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 232
+        Cookie [truncated]: d295b6d19b05aa808db22b4351cf7ca33dcb3bd000000000000000000000000000000000e129dc5ee79dd13100000000000000007884b82a4c88e01802000200d6db91e6020076460af400010000000000000000000000000000000000000000468e01000000000080020024d6c
+
+Frame 4: 50 bytes on wire (400 bits), 50 bytes captured (400 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:34:12.409121000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:34:12.409121000 UTC
+    Epoch Arrival Time: 1792582452.409121000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000017000 seconds]
+    [Time delta from previous displayed frame: 0.000017000 seconds]
+    [Time since reference or first frame: 0.000089000 seconds]
+    Frame Number: 4
+    Frame Length: 50 bytes (400 bits)
+    Capture Length: 50 bytes (400 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 36
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdb36 [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0xe62928e8 [unverified]
+    [Checksum Status: Unverified]
+    COOKIE_ACK chunk
+        Chunk type: COOKIE_ACK (11)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 4
+
+Frame 5: 1770 bytes on wire (14160 bits), 1770 bytes captured (14160 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:34:12.410072000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:34:12.410072000 UTC
+    Epoch Arrival Time: 1792582452.410072000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000951000 seconds]
+    [Time delta from previous displayed frame: 0.000951000 seconds]
+    [Time since reference or first frame: 0.001040000 seconds]
+    Frame Number: 5
+    Frame Length: 1770 bytes (14160 bits)
+    Capture Length: 1770 bytes (14160 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp:e2ap:e2ap:ngap]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 1756
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd37e [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    DATA chunk (ordered, first segment, TSN: 0, SID: 0, SSN: 0, PPID: 0, payload length: 1432 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x02
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...0 = E-Bit: Not the last segment
+        Chunk length: 1448
+        Transmission sequence number (relative): 0
+        Transmission sequence number (absolute): 2665222270
+        Stream identifier: 0x0000
+        Stream sequence number: 0
+        Payload protocol identifier: not specified (0)
+Stream Control Transmission Protocol
+    DATA chunk (ordered, last segment, TSN: 1, SID: 0, SSN: 0, PPID: 0, payload length: 260 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x01
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..0. = B-Bit: Subsequent segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 276
+        Transmission sequence number (relative): 1
+        Transmission sequence number (absolute): 2665222271
+        Stream identifier: 0x0000
+        Stream sequence number: 0
+        Payload protocol identifier: not specified (0)
+        Reassembled SCTP Fragments (1692 bytes, 2 fragments): 
+            Frame: 5, payload: 1692-3123 (1432 bytes)
+            Frame: 5, payload: 3124-3383 (260 bytes)
+E2 Application Protocol
+    E2AP-PDU: initiatingMessage (0)
+        initiatingMessage
+            procedureCode: id-E2setup (1)
+            criticality: reject (0)
+            value
+                E2setupRequest
+                    protocolIEs: 4 items
+                        Item 0: id-TransactionID
+                            ProtocolIE-Field
+                                id: id-TransactionID (49)
+                                criticality: reject (0)
+                                value
+                                    TransactionID: 1
+                        Item 1: id-GlobalE2node-ID
+                            ProtocolIE-Field
+                                id: id-GlobalE2node-ID (3)
+                                criticality: reject (0)
+                                value
+                                    GlobalE2node-ID: gNB (0)
+                                        gNB
+                                            global-gNB-ID
+                                                plmn-id: 373437
+                                                gnb-id: gnb-ID (0)
+                                                    gnb-ID: b5c67788 [bit length 29, 3 LSB pad bits, 1011 0101  1100 0110  0111 0111  1000 1... decimal value 381210353]
+                        Item 2: id-RANfunctionsAdded
+                            ProtocolIE-Field
+                                id: id-RANfunctionsAdded (10)
+                                criticality: reject (0)
+                                value
+                                    RANfunctions-List: 1 item
+                                        Item 0: id-RANfunction-Item
+                                            ProtocolIE-SingleContainer
+                                                id: id-RANfunction-Item (8)
+                                                criticality: reject (0)
+                                                value
+                                                    RANfunction-Item
+                                                        ranFunctionID: 2
+                                                        ranFunctionDefinition [truncated]: 68304f52414e2d4532534d2d4b504d0000054f494431323305004b504d204d6f6e69746f7201010001010700506572696f646963205265706f7274010110010109004532204e6f6465204d6561737572656d656e740101000843804452422e526c6353647554
+                                                        E2SM-KPM-RANfunction-Description
+                                                            ranFunction-Name
+                                                                ranFunction-ShortName: ORAN-E2SM-KPM
+                                                                ranFunction-E2SM-OID: OID123
+                                                                [Version (frame): *** Malformed OID ***]
+                                                                ranFunction-Description: KPM Monitor
+                                                                ranFunction-Instance: 1
+                                                            ric-EventTriggerStyle-List: 1 item
+                                                                Item 0
+                                                                    RIC-EventTriggerStyle-Item
+                                                                        ric-EventTriggerStyle-Type: 1
+                                                                        ric-EventTriggerStyle-Name: Periodic Report
+                                                                        ric-EventTriggerFormat-Type: 1
+                                                            ric-ReportStyle-List: 5 items
+                                                                Item 0
+                                                                    RIC-ReportStyle-Item
+                                                                        ric-ReportStyle-Type: 1
+                                                                        ric-ReportStyle-Name: E2 Node Measurement
+                                                                        ric-ActionFormat-Type: 1
+                                                                        measInfo-Action-List: 9 items
+                                                                            Item 0
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.RlcSduTransmittedVolumeDL
+                                                                                    measID: 1
+                                                                            Item 1
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.RlcSduTransmittedVolumeUL
+                                                                                    measID: 2
+                                                                            Item 2
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.PerDataVolumeDLDist.Bin
+                                                                                    measID: 3
+                                                                            Item 3
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.PerDataVolumeULDist.Bin
+                                                                                    measID: 4
+                                                                            Item 4
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.RlcPacketDropRateDLDist
+                                                                                    measID: 5
+                                                                            Item 5
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.PacketLossRateULDist
+                                                                                    measID: 6
+                                                                            Item 6
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.DL-SS-RSRP.SSB
+                                                                                    measID: 7
+                                                                            Item 7
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.DL-SS-SINR.SSB
+                                                                                    measID: 8
+                                                                            Item 8
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.UL-SRS-RSRP
+                                                                                    measID: 9
+                                                                        ric-IndicationHeaderFormat-Type: 1
+                                                                        ric-IndicationMessageFormat-Type: 1
+                                                                Item 1
+                                                                    RIC-ReportStyle-Item
+                                                                        ric-ReportStyle-Type: 2
+                                                                        ric-ReportStyle-Name: E2 Node Measurement for a single UE
+                                                                        ric-ActionFormat-Type: 2
+                                                                        measInfo-Action-List: 9 items
+                                                                            Item 0
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.RlcSduTransmittedVolumeDL
+                                                                                    measID: 1
+                                                                            Item 1
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.RlcSduTransmittedVolumeUL
+                                                                                    measID: 2
+                                                                            Item 2
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.PerDataVolumeDLDist.Bin
+                                                                                    measID: 3
+                                                                            Item 3
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.PerDataVolumeULDist.Bin
+                                                                                    measID: 4
+                                                                            Item 4
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.RlcPacketDropRateDLDist
+                                                                                    measID: 5
+                                                                            Item 5
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.PacketLossRateULDist
+                                                                                    measID: 6
+                                                                            Item 6
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.DL-SS-RSRP.SSB
+                                                                                    measID: 7
+                                                                            Item 7
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.DL-SS-SINR.SSB
+                                                                                    measID: 8
+                                                                            Item 8
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.UL-SRS-RSRP
+                                                                                    measID: 9
+                                                                        ric-IndicationHeaderFormat-Type: 1
+                                                                        ric-IndicationMessageFormat-Type: 1
+                                                                Item 2
+                                                                    RIC-ReportStyle-Item
+                                                                        ric-ReportStyle-Type: 3
+                                                                        ric-ReportStyle-Name: Condition-based, UE-level E2 Node Measurement
+                                                                        ric-ActionFormat-Type: 3
+                                                                        measInfo-Action-List: 9 items
+                                                                            Item 0
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.RlcSduTransmittedVolumeDL
+                                                                                    measID: 1
+                                                                            Item 1
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.RlcSduTransmittedVolumeUL
+                                                                                    measID: 2
+                                                                            Item 2
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.PerDataVolumeDLDist.Bin
+                                                                                    measID: 3
+                                                                            Item 3
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.PerDataVolumeULDist.Bin
+                                                                                    measID: 4
+                                                                            Item 4
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.RlcPacketDropRateDLDist
+                                                                                    measID: 5
+                                                                            Item 5
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.PacketLossRateULDist
+                                                                                    measID: 6
+                                                                            Item 6
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.DL-SS-RSRP.SSB
+                                                                                    measID: 7
+                                                                            Item 7
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.DL-SS-SINR.SSB
+                                                                                    measID: 8
+                                                                            Item 8
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.UL-SRS-RSRP
+                                                                                    measID: 9
+                                                                        ric-IndicationHeaderFormat-Type: 1
+                                                                        ric-IndicationMessageFormat-Type: 2
+                                                                Item 3
+                                                                    RIC-ReportStyle-Item
+                                                                        ric-ReportStyle-Type: 4
+                                                                        ric-ReportStyle-Name: Common Condition-based, UE-level Measurement
+                                                                        ric-ActionFormat-Type: 4
+                                                                        measInfo-Action-List: 9 items
+                                                                            Item 0
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.RlcSduTransmittedVolumeDL
+                                                                                    measID: 1
+                                                                            Item 1
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.RlcSduTransmittedVolumeUL
+                                                                                    measID: 2
+                                                                            Item 2
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.PerDataVolumeDLDist.Bin
+                                                                                    measID: 3
+                                                                            Item 3
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.PerDataVolumeULDist.Bin
+                                                                                    measID: 4
+                                                                            Item 4
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.RlcPacketDropRateDLDist
+                                                                                    measID: 5
+                                                                            Item 5
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.PacketLossRateULDist
+                                                                                    measID: 6
+                                                                            Item 6
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.DL-SS-RSRP.SSB
+                                                                                    measID: 7
+                                                                            Item 7
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.DL-SS-SINR.SSB
+                                                                                    measID: 8
+                                                                            Item 8
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.UL-SRS-RSRP
+                                                                                    measID: 9
+                                                                        ric-IndicationHeaderFormat-Type: 1
+                                                                        ric-IndicationMessageFormat-Type: 3
+                                                                Item 4
+                                                                    RIC-ReportStyle-Item
+                                                                        ric-ReportStyle-Type: 5
+                                                                        ric-ReportStyle-Name: E2 Node Measurement for multiple UEs
+                                                                        ric-ActionFormat-Type: 5
+                                                                        measInfo-Action-List: 9 items
+                                                                            Item 0
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.RlcSduTransmittedVolumeDL
+                                                                                    measID: 1
+                                                                            Item 1
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.RlcSduTransmittedVolumeUL
+                                                                                    measID: 2
+                                                                            Item 2
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.PerDataVolumeDLDist.Bin
+                                                                                    measID: 3
+                                                                            Item 3
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.PerDataVolumeULDist.Bin
+                                                                                    measID: 4
+                                                                            Item 4
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.RlcPacketDropRateDLDist
+                                                                                    measID: 5
+                                                                            Item 5
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: DRB.PacketLossRateULDist
+                                                                                    measID: 6
+                                                                            Item 6
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.DL-SS-RSRP.SSB
+                                                                                    measID: 7
+                                                                            Item 7
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.DL-SS-SINR.SSB
+                                                                                    measID: 8
+                                                                            Item 8
+                                                                                MeasurementInfo-Action-Item
+                                                                                    measName: L1M.UL-SRS-RSRP
+                                                                                    measID: 9
+                                                                        ric-IndicationHeaderFormat-Type: 1
+                                                                        ric-IndicationMessageFormat-Type: 3
+                                                        ranFunctionRevision: 2
+                                                        ranFunctionOID: OID123
+                        Item 3: id-E2nodeComponentConfigAddition
+                            ProtocolIE-Field
+                                id: id-E2nodeComponentConfigAddition (50)
+                                criticality: reject (0)
+                                value
+                                    E2nodeComponentConfigAddition-List: 1 item
+                                        Item 0: id-E2nodeComponentConfigAddition-Item
+                                            ProtocolIE-SingleContainer
+                                                id: id-E2nodeComponentConfigAddition-Item (51)
+                                                criticality: reject (0)
+                                                value
+                                                    E2nodeComponentConfigAddition-Item
+                                                        e2nodeComponentInterfaceType: ng (0)
+                                                        e2nodeComponentID: e2nodeComponentInterfaceTypeNG (0)
+                                                            e2nodeComponentInterfaceTypeNG
+                                                                amf-name: nginterf
+                                                        e2nodeComponentConfiguration
+                                                            e2nodeComponentRequestPart: 72657170617274
+                                                            NG Application Protocol
+                                                                something unknown here [unknown extension root index in choice]
+                                                                    [Expert Info (Warning/Undecoded): something unknown here [unknown extension root index in choice]]
+                                                                        [something unknown here [unknown extension root index in choice]]
+                                                                        [Severity level: Warning]
+                                                                        [Group: Undecoded]
+[Malformed Packet: NGAP]
+    [Expert Info (Error/Malformed): Malformed Packet (Exception occurred)]
+        [Malformed Packet (Exception occurred)]
+        [Severity level: Error]
+        [Group: Malformed]
+
+Frame 6: 1494 bytes on wire (11952 bits), 1494 bytes captured (11952 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:34:15.434433000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:34:15.434433000 UTC
+    Epoch Arrival Time: 1792582455.434433000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 3.024361000 seconds]
+    [Time delta from previous displayed frame: 3.024361000 seconds]
+    [Time since reference or first frame: 3.025401000 seconds]
+    Frame Number: 6
+    Frame Length: 1494 bytes (11952 bits)
+    Capture Length: 1494 bytes (11952 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 1480
+    Identification: 0xd53b (54587)
+    000. .... = Flags: 0x0
+        0... .... = Reserved bit: Not set
+        .0.. .... = Don't fragment: Not set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0x3f57 [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x6f2f8b01 [unverified]
+    [Checksum Status: Unverified]
+    DATA chunk (ordered, first segment, TSN: 0, SID: 0, SSN: 0, PPID: 0, payload length: 1432 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x02
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...0 = E-Bit: Not the last segment
+        Chunk length: 1448
+        Transmission sequence number (relative): 0
+            [This TSN is a retransmission of one in frame: 5]
+                [Expert Info (Note/Sequence): Retransmitted TSN]
+                    [Retransmitted TSN]
+                    [Severity level: Note]
+                    [Group: Sequence]
+                [Retransmitted after: 3.024361000 seconds]
+        Transmission sequence number (absolute): 2665222270
+        Stream identifier: 0x0000
+        Stream sequence number: 0
+        Payload protocol identifier: not specified (0)
+
+Frame 7: 62 bytes on wire (496 bits), 62 bytes captured (496 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:34:15.434548000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:34:15.434548000 UTC
+    Epoch Arrival Time: 1792582455.434548000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000115000 seconds]
+    [Time delta from previous displayed frame: 0.000115000 seconds]
+    [Time since reference or first frame: 3.025516000 seconds]
+    Frame Number: 7
+    Frame Length: 62 bytes (496 bits)
+    Capture Length: 62 bytes (496 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 48
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdb2a [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0xef908fc3 [unverified]
+    [Checksum Status: Unverified]
+    SACK chunk (Cumulative TSN: 2665222270, a_rwnd: 105064, gaps: 0, duplicate TSNs: 0)
+        Chunk type: SACK (3)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+            .... ...0 = Nonce sum: 0
+        Chunk length: 16
+        Cumulative TSN ACK (relative): 0
+        Cumulative TSN ACK (absolute): 2665222270
+        Advertised receiver window credit (a_rwnd): 105064
+        Number of gap acknowledgement blocks: 0
+        Number of duplicated TSNs: 0
+
+Frame 8: 322 bytes on wire (2576 bits), 322 bytes captured (2576 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:34:15.434553000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:34:15.434553000 UTC
+    Epoch Arrival Time: 1792582455.434553000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000005000 seconds]
+    [Time delta from previous displayed frame: 0.000005000 seconds]
+    [Time since reference or first frame: 3.025521000 seconds]
+    Frame Number: 8
+    Frame Length: 322 bytes (2576 bits)
+    Capture Length: 322 bytes (2576 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 308
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd926 [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    DATA chunk (ordered, last segment, TSN: 1, SID: 0, SSN: 0, PPID: 0, payload length: 260 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x01
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..0. = B-Bit: Subsequent segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 276
+        Transmission sequence number (relative): 1
+            [This TSN is a retransmission of one in frame: 5]
+                [Expert Info (Note/Sequence): Retransmitted TSN]
+                    [Retransmitted TSN]
+                    [Severity level: Note]
+                    [Group: Sequence]
+                [Retransmitted after: 3.024481000 seconds]
+        Transmission sequence number (absolute): 2665222271
+        Stream identifier: 0x0000
+        Stream sequence number: 0
+        Payload protocol identifier: not specified (0)
+
+Frame 9: 138 bytes on wire (1104 bits), 138 bytes captured (1104 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:34:15.441980000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:34:15.441980000 UTC
+    Epoch Arrival Time: 1792582455.441980000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.007427000 seconds]
+    [Time delta from previous displayed frame: 0.007427000 seconds]
+    [Time since reference or first frame: 3.032948000 seconds]
+    Frame Number: 9
+    Frame Length: 138 bytes (1104 bits)
+    Capture Length: 138 bytes (1104 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp:e2ap:e2ap]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 124
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdade [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0xfd84079e [unverified]
+    [Checksum Status: Unverified]
+    SACK chunk (Cumulative TSN: 2665222271, a_rwnd: 106496, gaps: 0, duplicate TSNs: 0)
+        Chunk type: SACK (3)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+            .... ...0 = Nonce sum: 0
+        Chunk length: 16
+        Cumulative TSN ACK (relative): 1
+        Cumulative TSN ACK (absolute): 2665222271
+        Advertised receiver window credit (a_rwnd): 106496
+        Number of gap acknowledgement blocks: 0
+        Number of duplicated TSNs: 0
+    DATA chunk (ordered, complete segment, TSN: 0, SID: 0, SSN: 0, PPID: 70, payload length: 60 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x03
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 76
+        Transmission sequence number (relative): 0
+        Transmission sequence number (absolute): 3868318678
+        Stream identifier: 0x0000
+        Stream sequence number: 0
+        Payload protocol identifier: E2-CP (70)
+E2 Application Protocol
+    E2AP-PDU: successfulOutcome (1)
+        successfulOutcome
+            procedureCode: id-E2setup (1)
+            criticality: reject (0)
+            value
+                E2setupResponse
+                    protocolIEs: 4 items
+                        Item 0: id-TransactionID
+                            ProtocolIE-Field
+                                id: id-TransactionID (49)
+                                criticality: reject (0)
+                                value
+                                    TransactionID: 1
+                        Item 1: id-GlobalRIC-ID
+                            ProtocolIE-Field
+                                id: id-GlobalRIC-ID (4)
+                                criticality: reject (0)
+                                value
+                                    GlobalRIC-ID
+                                        pLMN-Identity: 131014
+                                        ric-ID: aacce0 [bit length 20, 4 LSB pad bits, 1010 1010  1100 1100  1110 .... decimal value 699598]
+                        Item 2: id-RANfunctionsAccepted
+                            ProtocolIE-Field
+                                id: id-RANfunctionsAccepted (9)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionsID-List: 1 item
+                                        Item 0: id-RANfunctionID-Item
+                                            ProtocolIE-SingleContainer
+                                                id: id-RANfunctionID-Item (6)
+                                                criticality: ignore (1)
+                                                value
+                                                    RANfunctionID-Item
+                                                        ranFunctionID: 2
+                                                        ranFunctionRevision: 2
+                        Item 3: id-E2nodeComponentConfigAdditionAck
+                            ProtocolIE-Field
+                                id: id-E2nodeComponentConfigAdditionAck (52)
+                                criticality: reject (0)
+                                value
+                                    E2nodeComponentConfigAdditionAck-List: 1 item
+                                        Item 0: id-E2nodeComponentConfigAdditionAck-Item
+                                            ProtocolIE-SingleContainer
+                                                id: id-E2nodeComponentConfigAdditionAck-Item (53)
+                                                criticality: reject (0)
+                                                value
+                                                    E2nodeComponentConfigAdditionAck-Item
+                                                        e2nodeComponentInterfaceType: ng (0)
+                                                        e2nodeComponentID: e2nodeComponentInterfaceTypeNG (0)
+                                                            e2nodeComponentInterfaceTypeNG
+                                                                amf-name: nginterf
+                                                        e2nodeComponentConfigurationAck
+                                                            updateOutcome: success (0)
+
+Frame 10: 62 bytes on wire (496 bits), 62 bytes captured (496 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:34:15.442012000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:34:15.442012000 UTC
+    Epoch Arrival Time: 1792582455.442012000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000032000 seconds]
+    [Time delta from previous displayed frame: 0.000032000 seconds]
+    [Time since reference or first frame: 3.032980000 seconds]
+    Frame Number: 10
+    Frame Length: 62 bytes (496 bits)
+    Capture Length: 62 bytes (496 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 48
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xda2a [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    SACK chunk (Cumulative TSN: 3868318678, a_rwnd: 106436, gaps: 0, duplicate TSNs: 0)
+        Chunk type: SACK (3)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+            .... ...0 = Nonce sum: 0
+        Chunk length: 16
+        Cumulative TSN ACK (relative): 0
+        Cumulative TSN ACK (absolute): 3868318678
+        Advertised receiver window credit (a_rwnd): 106436
+        Number of gap acknowledgement blocks: 0
+        Number of duplicated TSNs: 0
+
+Frame 11: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:34:18.442416000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:34:18.442416000 UTC
+    Epoch Arrival Time: 1792582458.442416000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 3.000404000 seconds]
+    [Time delta from previous displayed frame: 3.000404000 seconds]
+    [Time since reference or first frame: 6.033384000 seconds]
+    Frame Number: 11
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a0000000000000000000000000000000000000000000c3fdff0000000007ded1e38bca9c990000000000000000
+
+Frame 12: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:34:18.442491000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:34:18.442491000 UTC
+    Epoch Arrival Time: 1792582458.442491000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000075000 seconds]
+    [Time delta from previous displayed frame: 0.000075000 seconds]
+    [Time since reference or first frame: 6.033459000 seconds]
+    Frame Number: 12
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x579aed2e [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a0000000000000000000000000000000000000000000c3fdff0000000007ded1e38bca9c990000000000000000
+
+Frame 13: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:34:46.346477000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:34:46.346477000 UTC
+    Epoch Arrival Time: 1792582486.346477000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 27.903986000 seconds]
+    [Time delta from previous displayed frame: 27.903986000 seconds]
+    [Time since reference or first frame: 33.937445000 seconds]
+    Frame Number: 13
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0xded54f9d [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 020076460af4000100000000000000000000000000000000000000000030feff000000007bda932c83ecad400000000000000000
+
+Frame 14: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:34:46.346491000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:34:46.346491000 UTC
+    Epoch Arrival Time: 1792582486.346491000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000014000 seconds]
+    [Time delta from previous displayed frame: 0.000014000 seconds]
+    [Time since reference or first frame: 33.937459000 seconds]
+    Frame Number: 14
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 020076460af4000100000000000000000000000000000000000000000030feff000000007bda932c83ecad400000000000000000
+
+Frame 15: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:34:49.930432000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:34:49.930432000 UTC
+    Epoch Arrival Time: 1792582489.930432000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 3.583941000 seconds]
+    [Time delta from previous displayed frame: 3.583941000 seconds]
+    [Time since reference or first frame: 37.521400000 seconds]
+    Frame Number: 15
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a00000000000000000000000000000000000000000003efeff0000000007ded1e38bca9c990000000000000000
+
+Frame 16: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:34:49.930514000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:34:49.930514000 UTC
+    Epoch Arrival Time: 1792582489.930514000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000082000 seconds]
+    [Time delta from previous displayed frame: 0.000082000 seconds]
+    [Time since reference or first frame: 37.521482000 seconds]
+    Frame Number: 16
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x7fbcc939 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a00000000000000000000000000000000000000000003efeff0000000007ded1e38bca9c990000000000000000
+
+Frame 17: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:35:18.090434000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:35:18.090434000 UTC
+    Epoch Arrival Time: 1792582518.090434000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 28.159920000 seconds]
+    [Time delta from previous displayed frame: 28.159920000 seconds]
+    [Time since reference or first frame: 65.681402000 seconds]
+    Frame Number: 17
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x11cdf785 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 020076460af40001000000000000000000000000000000000000000000acfeff000000007bda932c83ecad400000000000000000
+
+Frame 18: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:35:18.090450000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:35:18.090450000 UTC
+    Epoch Arrival Time: 1792582518.090450000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000016000 seconds]
+    [Time delta from previous displayed frame: 0.000016000 seconds]
+    [Time since reference or first frame: 65.681418000 seconds]
+    Frame Number: 18
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 020076460af40001000000000000000000000000000000000000000000acfeff000000007bda932c83ecad400000000000000000
+
+Frame 19: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:35:21.162408000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:35:21.162408000 UTC
+    Epoch Arrival Time: 1792582521.162408000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 3.071958000 seconds]
+    [Time delta from previous displayed frame: 3.071958000 seconds]
+    [Time since reference or first frame: 68.753376000 seconds]
+    Frame Number: 19
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a0000000000000000000000000000000000000000000b8feff0000000007ded1e38bca9c990000000000000000
+
+Frame 20: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:35:21.162456000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:35:21.162456000 UTC
+    Epoch Arrival Time: 1792582521.162456000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000048000 seconds]
+    [Time delta from previous displayed frame: 0.000048000 seconds]
+    [Time since reference or first frame: 68.753424000 seconds]
+    Frame Number: 20
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x441dc72e [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a0000000000000000000000000000000000000000000b8feff0000000007ded1e38bca9c990000000000000000
+
+Frame 21: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:35:48.810445000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:35:48.810445000 UTC
+    Epoch Arrival Time: 1792582548.810445000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 27.647989000 seconds]
+    [Time delta from previous displayed frame: 27.647989000 seconds]
+    [Time since reference or first frame: 96.401413000 seconds]
+    Frame Number: 21
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x2cce4357 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 020076460af4000100000000000000000000000000000000000000000024ffff000000007bda932c83ecad400000000000000000
+
+Frame 22: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:35:48.810465000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:35:48.810465000 UTC
+    Epoch Arrival Time: 1792582548.810465000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000020000 seconds]
+    [Time delta from previous displayed frame: 0.000020000 seconds]
+    [Time since reference or first frame: 96.401433000 seconds]
+    Frame Number: 22
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 020076460af4000100000000000000000000000000000000000000000024ffff000000007bda932c83ecad400000000000000000
+
+Frame 23: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:35:51.882420000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:35:51.882420000 UTC
+    Epoch Arrival Time: 1792582551.882420000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 3.071955000 seconds]
+    [Time delta from previous displayed frame: 3.071955000 seconds]
+    [Time since reference or first frame: 99.473388000 seconds]
+    Frame Number: 23
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a000000000000000000000000000000000000000000030ffff0000000007ded1e38bca9c990000000000000000
+
+Frame 24: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:35:51.882497000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:35:51.882497000 UTC
+    Epoch Arrival Time: 1792582551.882497000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000077000 seconds]
+    [Time delta from previous displayed frame: 0.000077000 seconds]
+    [Time since reference or first frame: 99.473465000 seconds]
+    Frame Number: 24
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x791e73fc [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a000000000000000000000000000000000000000000030ffff0000000007ded1e38bca9c990000000000000000
+
+Frame 25: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:36:20.042460000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:36:20.042460000 UTC
+    Epoch Arrival Time: 1792582580.042460000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 28.159963000 seconds]
+    [Time delta from previous displayed frame: 28.159963000 seconds]
+    [Time since reference or first frame: 127.633428000 seconds]
+    Frame Number: 25
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x2c068bff [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 020076460af400010000000000000000000000000000000000000000009effff000000007bda932c83ecad400000000000000000
+
+Frame 26: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:36:20.042497000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:36:20.042497000 UTC
+    Epoch Arrival Time: 1792582580.042497000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000037000 seconds]
+    [Time delta from previous displayed frame: 0.000037000 seconds]
+    [Time since reference or first frame: 127.633465000 seconds]
+    Frame Number: 26
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 020076460af400010000000000000000000000000000000000000000009effff000000007bda932c83ecad400000000000000000
+
+Frame 27: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:36:23.626417000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:36:23.626417000 UTC
+    Epoch Arrival Time: 1792582583.626417000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 3.583920000 seconds]
+    [Time delta from previous displayed frame: 3.583920000 seconds]
+    [Time since reference or first frame: 131.217385000 seconds]
+    Frame Number: 27
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a0000000000000000000000000000000000000000000acffff0000000007ded1e38bca9c990000000000000000
+
+Frame 28: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:36:23.626463000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:36:23.626463000 UTC
+    Epoch Arrival Time: 1792582583.626463000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000046000 seconds]
+    [Time delta from previous displayed frame: 0.000046000 seconds]
+    [Time since reference or first frame: 131.217431000 seconds]
+    Frame Number: 28
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0xb606cbe4 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a0000000000000000000000000000000000000000000acffff0000000007ded1e38bca9c990000000000000000
+
+Frame 29: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:36:50.762552000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:36:50.762552000 UTC
+    Epoch Arrival Time: 1792582610.762552000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 27.136089000 seconds]
+    [Time delta from previous displayed frame: 27.136089000 seconds]
+    [Time since reference or first frame: 158.353520000 seconds]
+    Frame Number: 29
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x1feba460 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 020076460af40001000000000000000000000000000000000000000000160000010000007bda932c83ecad400000000000000000
+
+Frame 30: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:36:50.762580000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:36:50.762580000 UTC
+    Epoch Arrival Time: 1792582610.762580000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000028000 seconds]
+    [Time delta from previous displayed frame: 0.000028000 seconds]
+    [Time since reference or first frame: 158.353548000 seconds]
+    Frame Number: 30
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 020076460af40001000000000000000000000000000000000000000000160000010000007bda932c83ecad400000000000000000
+
+Frame 31: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:36:54.858459000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:36:54.858459000 UTC
+    Epoch Arrival Time: 1792582614.858459000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 4.095879000 seconds]
+    [Time delta from previous displayed frame: 4.095879000 seconds]
+    [Time since reference or first frame: 162.449427000 seconds]
+    Frame Number: 31
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a00000000000000000000000000000000000000000002600000100000007ded1e38bca9c990000000000000000
+
+Frame 32: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:36:54.858589000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:36:54.858589000 UTC
+    Epoch Arrival Time: 1792582614.858589000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000130000 seconds]
+    [Time delta from previous displayed frame: 0.000130000 seconds]
+    [Time since reference or first frame: 162.449557000 seconds]
+    Frame Number: 32
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0xf50b4390 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a00000000000000000000000000000000000000000002600000100000007ded1e38bca9c990000000000000000
+
+Frame 33: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:37:22.506551000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:37:22.506551000 UTC
+    Epoch Arrival Time: 1792582642.506551000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 27.647962000 seconds]
+    [Time delta from previous displayed frame: 27.647962000 seconds]
+    [Time since reference or first frame: 190.097519000 seconds]
+    Frame Number: 33
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x54aa0d9c [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 020076460af40001000000000000000000000000000000000000000000920000010000007bda932c83ecad400000000000000000
+
+Frame 34: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:37:22.506563000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:37:22.506563000 UTC
+    Epoch Arrival Time: 1792582642.506563000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000012000 seconds]
+    [Time delta from previous displayed frame: 0.000012000 seconds]
+    [Time since reference or first frame: 190.097531000 seconds]
+    Frame Number: 34
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 020076460af40001000000000000000000000000000000000000000000920000010000007bda932c83ecad400000000000000000
+
+Frame 35: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:37:26.603409000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:37:26.603409000 UTC
+    Epoch Arrival Time: 1792582646.603409000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 4.096846000 seconds]
+    [Time delta from previous displayed frame: 4.096846000 seconds]
+    [Time since reference or first frame: 194.194377000 seconds]
+    Frame Number: 35
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a0000000000000000000000000000000000000000001a200000100000007ded1e38bca9c990000000000000000
+
+Frame 36: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:37:26.603460000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:37:26.603460000 UTC
+    Epoch Arrival Time: 1792582646.603460000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000051000 seconds]
+    [Time delta from previous displayed frame: 0.000051000 seconds]
+    [Time since reference or first frame: 194.194428000 seconds]
+    Frame Number: 36
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x3088a5d6 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a0000000000000000000000000000000000000000001a200000100000007ded1e38bca9c990000000000000000
+
+Frame 37: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:37:53.738545000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:37:53.738545000 UTC
+    Epoch Arrival Time: 1792582673.738545000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 27.135085000 seconds]
+    [Time delta from previous displayed frame: 27.135085000 seconds]
+    [Time since reference or first frame: 221.329513000 seconds]
+    Frame Number: 37
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x5fbc0733 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 020076460af400010000000000000000000000000000000000000000000c0100010000007bda932c83ecad400000000000000000
+
+Frame 38: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:37:53.738578000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:37:53.738578000 UTC
+    Epoch Arrival Time: 1792582673.738578000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000033000 seconds]
+    [Time delta from previous displayed frame: 0.000033000 seconds]
+    [Time since reference or first frame: 221.329546000 seconds]
+    Frame Number: 38
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 020076460af400010000000000000000000000000000000000000000000c0100010000007bda932c83ecad400000000000000000
+
+Frame 39: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:37:57.834410000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:37:57.834410000 UTC
+    Epoch Arrival Time: 1792582677.834410000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 4.095832000 seconds]
+    [Time delta from previous displayed frame: 4.095832000 seconds]
+    [Time since reference or first frame: 225.425378000 seconds]
+    Frame Number: 39
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a00000000000000000000000000000000000000000001c01000100000007ded1e38bca9c990000000000000000
+
+Frame 40: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:37:57.834456000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:37:57.834456000 UTC
+    Epoch Arrival Time: 1792582677.834456000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000046000 seconds]
+    [Time delta from previous displayed frame: 0.000046000 seconds]
+    [Time since reference or first frame: 225.425424000 seconds]
+    Frame Number: 40
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x1bda944a [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a00000000000000000000000000000000000000000001c01000100000007ded1e38bca9c990000000000000000
+
+Frame 41: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:38:24.970486000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:38:24.970486000 UTC
+    Epoch Arrival Time: 1792582704.970486000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 27.136030000 seconds]
+    [Time delta from previous displayed frame: 27.136030000 seconds]
+    [Time since reference or first frame: 252.561454000 seconds]
+    Frame Number: 41
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0xa6b10156 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 020076460af40001000000000000000000000000000000000000000000860100010000007bda932c83ecad400000000000000000
+
+Frame 42: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:38:24.970516000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:38:24.970516000 UTC
+    Epoch Arrival Time: 1792582704.970516000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000030000 seconds]
+    [Time delta from previous displayed frame: 0.000030000 seconds]
+    [Time since reference or first frame: 252.561484000 seconds]
+    Frame Number: 42
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 020076460af40001000000000000000000000000000000000000000000860100010000007bda932c83ecad400000000000000000
+
+Frame 43: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:38:28.554454000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:38:28.554454000 UTC
+    Epoch Arrival Time: 1792582708.554454000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 3.583938000 seconds]
+    [Time delta from previous displayed frame: 3.583938000 seconds]
+    [Time since reference or first frame: 256.145422000 seconds]
+    Frame Number: 43
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a00000000000000000000000000000000000000000009401000100000007ded1e38bca9c990000000000000000
+
+Frame 44: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:38:28.554569000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:38:28.554569000 UTC
+    Epoch Arrival Time: 1792582708.554569000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000115000 seconds]
+    [Time delta from previous displayed frame: 0.000115000 seconds]
+    [Time since reference or first frame: 256.145537000 seconds]
+    Frame Number: 44
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x923735c4 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a00000000000000000000000000000000000000000009401000100000007ded1e38bca9c990000000000000000
+
+Frame 45: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:38:55.690436000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:38:55.690436000 UTC
+    Epoch Arrival Time: 1792582735.690436000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 27.135867000 seconds]
+    [Time delta from previous displayed frame: 27.135867000 seconds]
+    [Time since reference or first frame: 283.281404000 seconds]
+    Frame Number: 45
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x2115612c [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 020076460af40001000000000000000000000000000000000000000000fe0100010000007bda932c83ecad400000000000000000
+
+Frame 46: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:38:55.690472000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:38:55.690472000 UTC
+    Epoch Arrival Time: 1792582735.690472000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000036000 seconds]
+    [Time delta from previous displayed frame: 0.000036000 seconds]
+    [Time since reference or first frame: 283.281440000 seconds]
+    Frame Number: 46
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 020076460af40001000000000000000000000000000000000000000000fe0100010000007bda932c83ecad400000000000000000
+
+Frame 47: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:38:59.274408000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:38:59.274408000 UTC
+    Epoch Arrival Time: 1792582739.274408000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 3.583936000 seconds]
+    [Time delta from previous displayed frame: 3.583936000 seconds]
+    [Time since reference or first frame: 286.865376000 seconds]
+    Frame Number: 47
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1), Dst: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+    Destination: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.2, Dst: 10.106.169.160
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xd9fe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.2
+    Destination Address: 10.106.169.160
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x5edc29e1
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT (4)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a00000000000000000000000000000000000000000000c02000100000007ded1e38bca9c990000000000000000
+
+Frame 48: 106 bytes on wire (848 bits), 106 bytes captured (848 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 11:38:59.274458000 UTC
+    UTC Arrival Time: Oct 21, 2026 11:38:59.274458000 UTC
+    Epoch Arrival Time: 1792582739.274458000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000050000 seconds]
+    [Time delta from previous displayed frame: 0.000050000 seconds]
+    [Time since reference or first frame: 286.865426000 seconds]
+    Frame Number: 48
+    Frame Length: 106 bytes (848 bits)
+    Capture Length: 106 bytes (848 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp]
+Ethernet II, Src: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51), Dst: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+    Destination: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        Address: fa:bb:d0:65:37:a1 (fa:bb:d0:65:37:a1)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        Address: b6:d4:e1:40:69:51 (b6:d4:e1:40:69:51)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.106.169.160, Dst: 172.17.0.2
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 92
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xdafe [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.106.169.160
+    Destination Address: 172.17.0.2
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0x31d19de7
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x90aa10ea [unverified]
+    [Checksum Status: Unverified]
+    HEARTBEAT_ACK chunk (Information: 56 bytes)
+        Chunk type: HEARTBEAT_ACK (5)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+        Chunk length: 60
+        Heartbeat info parameter (Information: 52 bytes)
+            Parameter type: Heartbeat info (0x0001)
+                0... .... .... .... = Bit: Stop processing of chunk
+                .0.. .... .... .... = Bit: Do not report
+            Parameter length: 56
+            Heartbeat information: 02008e460a6aa9a00000000000000000000000000000000000000000000c02000100000007ded1e38bca9c990000000000000000
+

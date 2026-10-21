@@ -1,0 +1,37 @@
+[11:33:14] gate m2 start; evidence /home/uc/evidence/m2/20261021T113313Z; harness e9937efdd73b63cbb9bc2542f2d2c63065b416ea
+[11:33:23] PASS m2_tshark_installed
+[11:33:23] PASS m2_tshark_has_e2ap_dissector
+[11:33:23] PASS m2_tshark_kpm_dissector_informational
+[11:33:23] PASS m2_old_refnode_stopped
+[11:33:24] PASS m2_capture_started
+[11:34:19] PASS m2_refnode_up
+[11:38:19] PASS m2_fetch_connected_e2_nodes_shows_connected
+[11:38:19] PASS m2_check_e2ap_version_recorded_informational
+[11:39:19] PASS m2_e2mgr_stays_connected_during_hold
+[11:39:19] PASS m2_e2mgr_connected_at_end
+[11:39:20] PASS m2_golden_capture_stopped
+[11:39:20] PASS m2_sctp_init_present
+[11:39:20] PASS m2_sctp_init_ack_present
+[11:39:20] PASS m2_sctp_heartbeat_present
+[11:39:20] PASS m2_sctp_heartbeat_ack_present
+[11:39:21] PASS m2_sctp_sack_present
+[11:39:21] PASS m2_sctp_zero_abort
+[11:39:21] PASS m2_golden_decodes_e2ap
+[11:39:21] PASS m2_decodes_e2setup_request
+[11:39:21] PASS m2_decodes_e2setup_response
+[11:39:21] PASS m2_e2setup_facts_recorded
+[11:39:21] PASS m2_e2setup_ran_functions_informational
+[11:39:21] PASS m2_e2setup_node_id_informational
+[11:39:21] PASS m2_probe_e2term_service_resolved
+[11:39:21] FAIL m2_probe_image_ready: exit 1: timeout: failed to run command ‘dk’: No such file or directory
+[11:44:30] PASS m2_probe_both_containers_exit_0
+[11:44:30] PASS m2_probe_capture_stopped
+[11:44:30] FAIL m2_probe_two_distinct_associations: exit 1: m2probe-a: no IP
+m2probe-b: no IP
+distinct container IPs: 0
+[11:44:31] FAIL m2_probe_heartbeats_during_hold: exit 1: m2probe-a (): HEARTBEAT=0
+m2probe-b (): HEARTBEAT=0
+[11:44:31] PASS m2_probe_zero_abort
+[11:44:31] PASS m2_no_capture_left_running
+[11:44:31] PASS m2_pcaps_in_evidence
+verdict m2: FAIL failed=['m2_probe_image_ready', 'm2_probe_two_distinct_associations', 'm2_probe_heartbeats_during_hold']

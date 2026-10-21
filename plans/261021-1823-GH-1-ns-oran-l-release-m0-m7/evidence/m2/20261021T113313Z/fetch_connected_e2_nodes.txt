@@ -1,0 +1,12 @@
+Fetch connected IDs from submgr: curl -s "http://10.244.0.37:8080/ric/v1/get_all_e2nodes"
+Fetch known E2 nodes from e2mgr: curl -s "http://10.103.247.20:3800/v1/nodeb/states"
+[
+  {
+    "inventoryName": "gnb_734_373_16b8cef1",
+    "globalNbId": {
+      "plmnId": "373437",
+      "nbId": "10110101110001100111011110001"
+    },
+    "connectionStatus": "CONNECTED"
+  }
+]

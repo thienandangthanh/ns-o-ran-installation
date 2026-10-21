@@ -216,7 +216,8 @@ probe_run() {
     done
     : >"$EVIDENCE_DIR/probe-containers.txt"
     for n in $PROBE_NAMES; do
-        PROBE_IP[$n]=$(dk inspect -f '{{.NetworkSettings.IPAddress}}' "$n")
+        # Docker 29 dropped the top-level NetworkSettings.IPAddress; read the bridge network's.
+        PROBE_IP[$n]=$(dk inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$n")
         echo "$n ${PROBE_IP[$n]}" >>"$EVIDENCE_DIR/probe-containers.txt"
     done
     for n in $PROBE_NAMES; do
