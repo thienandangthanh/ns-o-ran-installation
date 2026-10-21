@@ -1,5 +1,73 @@
 # ns-O-RAN Installation
 
+## ns-O-RAN on the OSC Near-RT RIC L-release (NIST v1.8.0)
+
+This is the primary path of the repo. It runs the ns-O-RAN `scenario-zero` ns-3 simulation against the O-RAN Software Community Near-RT RIC **L release**, installed with the NIST O-RAN-Testbed-Automation v1.8.0 scripts (on our fork, branch `dev/l-release-nist180`). ns-3 no longer links asn1c or e2sim and no longer opens SCTP itself. Each simulated E2 node is served by its own small E2 agent that speaks E2AP and E2SM-KPM to the RIC. Gates M0 to M7 prove the chain from an empty VM to a multi-gNB run. Everything is scripted and reproducible from a VM snapshot. The control path (RC, M8) is not part of this scope yet.
+
+### Architecture
+
+```text
+ns-3 scenario-zero --NDJSON over TCP 127.0.0.1:(38470+cellId)--> one ns3-e2-agent container per E2 node
+   --E2AP/E2SM-KPM over SCTP--> e2term SCTP Service (ClusterIP, :36422) --> kpimon-go xApp --> InfluxDB
+```
+
+- ns-3 writes one JSON line per node per indication period to a local trace file and to the agent's TCP port.
+- Each agent runs in its own Docker container (own network namespace), connects to the e2term Service, and sends KPM indications.
+- kpimon-go decodes them with the TimeStamp `SIZE(8)` patch and writes InfluxDB points.
+- Details and rationale: [docs/system-architecture-l-release.md](docs/system-architecture-l-release.md).
+
+### Prerequisites
+
+- A libvirt/KVM VM `ubuntu24.04` (Ubuntu 24.04.5, at least 8 vCPU, 14 GiB RAM, 60 GB free on `/`) with an offline snapshot named `fresh-install`. The VM user `uc` needs passwordless sudo. Defaults live in `scripts/vm/vm-common.sh` and can be overridden with `VM_DOMAIN`, `VM_SSH`, `VM_IMAGE_DIR`.
+- An ssh alias for the VM (default `oran-kvm-2404`, key-based, no prompts). The host user manages `qemu:///system` without sudo.
+- About 70 GB of free host disk under `/home`: a 20 GB reserve plus the per-gate snapshot growth listed in `scripts/run-to-m7.sh`.
+- This repo pushed to a public GitHub repository. The VM clones it anonymously at the harness SHA you pass on the command line. The SHA must be on an `origin` branch.
+- Internet access from the VM (apt, Docker registries, GitHub, the Go module proxy).
+
+### Reproduce M0 to M7 with one command
+
+```bash
+git push origin HEAD                      # the harness SHA must be on origin
+scripts/vm/vm-snapshot.sh revert fresh-install
+scripts/run-to-m7.sh --harness-sha <pushed SHA> --run-prefix f
+```
+
+The chain runs each gate on the VM, copies the scrubbed evidence back, snapshots the VM, and stops at the first red gate. Per-gate timeouts are set in the `GATES` table of `scripts/run-to-m7.sh`. A green run ends with the snapshot `f7-rerun-green`. Use a run prefix that no existing snapshot uses (`l` for development runs, `f` for the re-run). The step-by-step guide, single-gate runs, and troubleshooting are in [docs/deployment-guide-l-release.md](docs/deployment-guide-l-release.md).
+
+### What each gate proves
+
+| Gate | Script | Proves |
+|---|---|---|
+| M0 | `gate-m0-host.sh`, `gate-m0-preflight.sh` | Host and VM facts, public harness repo, anonymous clone, snapshot revert semantics, package availability on noble, and that the NIST patches apply. |
+| M1 | `gate-m1-ric-up.sh` | The Near-RT RIC installs on the L pins, all ricplt pods are Ready, and they stay stable for 10 minutes. |
+| M2 | `gate-m2-refnode.sh` | NIST's reference node (kpm_sim) holds an SCTP association to the e2term ClusterIP for 5 minutes, and tshark decodes the E2 setup (the golden capture). |
+| M3 | `gate-m3-xapps.sh` | Stock kpimon fails to decode an 8-byte TimeStamp cleanly; the `SIZE(8)` build decodes every header and message, shown with kpimon's own decoder. |
+| M4 | `gate-m4-ns3-build.sh` | ns-3 builds from a clean pinned clone without e2sim or asn1c, the IPC emitter behaves, and the wall-time per simulated second is measured. |
+| M5 | `gate-m5-agent-setup.sh` | One agent registers with e2term (RAN function 2, real OID), e2mgr lists it CONNECTED, and a graceful stop leaves it DISCONNECTED. |
+| M6 | `gate-m6-kpm.sh` | Single-gNB KPM end to end: indications decode on the wire and through kpimon, and InfluxDB values equal the ns-3 trace bit for bit. |
+| M7 | `gate-m7-multignb.sh` | Five agents (eNB 1, gNB 2 to 5) run for 15 minutes, then survive an e2term pod delete, reconnect, and resume indications. |
+
+### Where evidence lands
+
+- Per gate on the host: `plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/<gate>/<UTC timestamp>/` (override with `EVIDENCE_HOST_ROOT`). The verdict is `verdict.json` in that directory; `.last-mN` in the evidence root points at the latest one.
+- Pcaps are not committed. Each evidence directory carries a `pcap-sha256.txt` manifest.
+- Layout and the scrubber are explained in the deployment guide.
+
+### Documents
+
+| Document | Read it for |
+|---|---|
+| [docs/deployment-guide-l-release.md](docs/deployment-guide-l-release.md) | VM preparation, running gates and the chain, manual agent and ns-3 runs, troubleshooting. |
+| [docs/system-architecture-l-release.md](docs/system-architecture-l-release.md) | Components, data flow, IPC schema, agent robustness, E2SM-KPM content, the kpimon patch, out-of-scope items. |
+| [docs/journals/2026-10-21-p3-e2-agent-design-checkpoint.md](docs/journals/2026-10-21-p3-e2-agent-design-checkpoint.md) | The signed-off design record (stateful, dated). |
+| [docs/linux-vm-setup-guide.md](docs/linux-vm-setup-guide.md) | Host-side libvirt/virtiofs setup. |
+
+---
+
+## Legacy (Bronze RIC)
+
+> Everything below, down to "Reference material", describes the original Bronze-RIC flow (Ubuntu 20.04, `colosseum-near-rt-ric`, `oran-e2sim` linked into ns-3). It is kept for reference and is not the maintained path. It is not used by the gates above.
+
 This repo helps you install and run **ns-O-RAN**: ns-3 5G simulation talking to an O-RAN near-real-time RIC (E2) over SCTP. It is based on the "5G ns-3 with O-RAN near-RT RIC bronze" tutorial and the Lacava et al. ns-O-RAN and Traffic Steering papers.
 
 ---
