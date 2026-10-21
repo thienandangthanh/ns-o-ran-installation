@@ -213,6 +213,13 @@ The orchestrator spot-checked the pcap: RAN function 2, the real OID, <code>ORAN
 <li>Failure (2): the kpimon restart baseline was read before kpimon's post-boot restart (container started 17:40:01Z; the previous instance ended via xApp-frame shutdown with boot-time DNS errors). The baseline is now taken after the subscription is seen.</li>
 <li>Finding: noble's tshark 4.2.2 throws "Malformed Packet" (epan/asn1.c:232 assertion) on E2SM-KPM REAL records. The PPA's tshark 4.6.6 decodes all 199 frames cleanly. M5–M7 now install tshark from <code>ppa:wireshark-dev/stable</code> (the plan's K15 fallback; tshark only, retried, because Launchpad returned 503s), and M6 requires zero malformed indication frames.</li>
 </ul></li>
+<li><span class="tag deviation">deviation</span><b>M6 attempt 2</b> (<code>evidence/m6/20261021T175851Z</code>):
+<ul>
+<li>The Launchpad wireshark PPA returned 503 for the whole run, so tshark stayed at 4.2.2. The new zero-malformed check then failed as designed (82 malformed indication frames).</li>
+<li>Fix: <code>tools/tshark-kpm</code> builds a Debian trixie image with tshark 4.4.19 from Debian's archive, and installs a <code>/usr/local/bin/tshark</code> wrapper (docker run, /home and /tmp mounted at the same paths, <code>--network none</code>). Every gate and Python tool keeps calling <code>tshark</code> unchanged.</li>
+<li>Verified on the M6 pcap: 199 indications and 0 malformed.</li>
+<li>This is a variant of the plan's K15 fallback: same intent (a newer dissector), and a more reliable archive than Launchpad for the unattended re-run.</li>
+</ul></li>
 <li><span class="tag deviation">deviation</span>Gate helper: after an InfluxDB pod restart the in-pod CLI config is gone (401). <code>influx_rows</code> now uses the pod's <code>DOCKER_INFLUXDB_INIT_ADMIN_TOKEN</code>, expanded inside the pod so it is never printed. Verified on the VM: 401 before, rows returned after.</li>
 </ul>
 </body>

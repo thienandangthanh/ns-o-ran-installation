@@ -59,26 +59,27 @@ agents_ensure_build_tools() {
     ensure_tshark_kpm
 }
 
-# ensure_tshark_kpm: noble's tshark 4.2 asserts while dissecting E2SM-KPM REAL
-# records (epan/asn1.c:232, "Malformed Packet"), observed 2026-10-22; 4.6 from
-# NIST's wireshark-dev/stable PPA (the plan's K15 fallback) decodes them
-# cleanly. Installs tshark only (not the GUI); Launchpad is flaky, so retry.
+# ensure_tshark_kpm: noble's tshark 4.2 throws "Malformed Packet" on E2SM-KPM
+# REAL records (epan/asn1.c:232), observed 2026-10-22. Builds tools/tshark-kpm
+# (Debian trixie, tshark 4.4.x) once and installs its wrapper as
+# /usr/local/bin/tshark. The plan's K15 fallback was the wireshark-dev PPA;
+# Launchpad returned 503s for whole gate runs, so the image uses Debian's archive.
 ensure_tshark_kpm() {
     local ver i
     ver=$(tshark --version 2>/dev/null | head -n 1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
     if [ -n "$ver" ] && [ "$(printf '%s\n4.4.0\n' "$ver" | sort -V | head -n 1)" = 4.4.0 ]; then
         echo "tshark $ver (>= 4.4)"; return 0
     fi
-    echo "wireshark-common wireshark-common/install-setuid boolean false" | sudo -n debconf-set-selections
-    sudo -n timeout 300 add-apt-repository -y ppa:wireshark-dev/stable </dev/null >/dev/null || return 1
-    for i in 1 2 3 4; do
-        sudo -n env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=l NEEDRESTART_SUSPEND=1 \
-            timeout 900 sh -c 'apt-get update -q && apt-get install -y -q tshark' </dev/null >/dev/null && break
-        echo "tshark PPA install try $i failed; retrying"; sleep 30
+    for i in 1 2 3; do
+        # shellcheck disable=SC2046
+        timeout 900 $(dk_cmd) build -q -t tshark-kpm:trixie "$HARNESS_DIR/tools/tshark-kpm" >/dev/null && break
+        echo "tshark-kpm image build try $i failed; retrying"; sleep 30
     done
-    tshark --version | head -n 1
+    sudo -n install -m 755 "$HARNESS_DIR/tools/tshark-kpm/tshark-wrapper.sh" /usr/local/bin/tshark || return 1
+    hash -r
     ver=$(tshark --version 2>/dev/null | head -n 1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
-    [ "$(printf '%s\n4.4.0\n' "$ver" | sort -V | head -n 1)" = 4.4.0 ]
+    echo "tshark $ver via $(command -v tshark) (tshark-kpm:trixie)"
+    [ -n "$ver" ] && [ "$(printf '%s\n4.4.0\n' "$ver" | sort -V | head -n 1)" = 4.4.0 ]
 }
 
 ################################################################################

@@ -1,0 +1,46 @@
+[17:58:53] gate m6 start; evidence /home/uc/evidence/m6/20261021T175851Z; harness 4ce3822c51f17f60c48823062111b3952df4a8ef
+[17:58:53] ric watchdog started (pid 8031, threshold 600s)
+[17:58:53] PASS m6_nist_tree_at_testbed_sha_with_agent_dir
+[18:02:29] FAIL m6_build_tools_present: exit 1: W: Failed to fetch https://ppa.launchpadcontent.net/wireshark-dev/stable/ubuntu/dists/noble/main/i18n/Translation-en  503  Service Unavailable [IP: 185.125.189.187 443]
+W: Some index files failed to download. They have been ignored, or old ones used instead.
+W: Failed to fetch https://ppa.launchpadcontent.net/wireshark-dev/stable/ubuntu/dists/noble/InRelease  503  Service Unavailable [IP: 185.125.189.188 443]
+W: Some index files failed to download. They have been ignored, or old ones used instead.
+TShark (Wireshark) 4.2.2 (Git v4.2.2 packaged as 4.2.2-1.1build3).
+[18:02:29] PASS m6_sctp_module_loaded_and_persisted
+[18:02:30] PASS m6_kpimon_so_extracted_from_image
+[18:02:30] PASS m6_kpimon_so_is_the_size8_patched_build
+[18:02:30] PASS m6_ns3_binary_located
+[18:02:30] PASS m6_capture_started_before_agents
+[18:03:33] PASS m6_bringup_agents_kpm_sim_stopped_connected_set_exact
+[18:03:34] PASS m6_agent_container_ip_recorded
+[18:03:37] PASS m6_wire_shows_kpimon_subscription_request_and_agent_response
+[18:03:37] PASS m6_pcap_subscription_facts
+[18:03:37] PASS m6_tshark_decodes_subscription_request_response_func2
+[18:03:39] PASS m6_ns3_started_single_gnb
+[18:03:53] PASS m6_ns3_completes_exit0
+[18:03:53] draining 8s
+[18:04:02] PASS m6_influx_exported
+[18:04:02] PASS m6_capture_stopped
+[18:04:03] PASS m6_pcap_facts_extracted
+[18:04:03] FAIL m6_tshark_decodes_ricindications_header_and_message: exit 1: 27
+tshark 4.2.2: malformed indication frames 82
+[18:04:04] PASS m6_harness_ran_on_pcap
+[18:04:04] PASS m6_wire_indications_gt0_no_rows_skipped
+[18:04:04] PASS m6_harness_every_header_clean_rc_ok_equals_wire
+[18:04:04] PASS m6_harness_every_message_clean_rc_ok_equals_wire
+[18:04:04] PASS m6_harness_zero_wmore_fail_other
+[18:04:04] PASS m6_harness_ts_len_8_everywhere
+[18:04:04] PASS m6_kpimon_log_indications_equal_wire_zero_wmore
+[18:04:04] PASS m6_agent_indtx_equals_wire
+[18:04:04] PASS m6_kpimon_pod_no_restart
+[18:04:04] PASS m6_emitter_bye_sent_equals_built_zero_drops
+[18:04:04] PASS m6_agent_counters_clean_samples_in_equal_forwarded_equal_trace
+[18:04:04] PASS m6_influx_three_samples_equal_trace_bit_exact
+[18:04:04] PASS m6_influx_all_samples_comparison_informational
+[18:04:07] PASS m6_agents_stopped_no_container_left
+[18:04:07] PASS m6_no_stray_ns3_agent_process_or_3847x_listener
+[18:04:07] PASS m6_no_capture_left_running
+[18:04:07] PASS m6_pcap_in_evidence
+Terminated
+[18:04:07] ric watchdog stopped (pid 8031)
+verdict m6: FAIL failed=['m6_build_tools_present', 'm6_tshark_decodes_ricindications_header_and_message']
