@@ -1,0 +1,130 @@
+{
+ "aborts": [],
+ "frames": 17,
+ "ind_times_by_src": {},
+ "inits": [
+  {
+   "dport": 36422,
+   "dst": "10.106.169.160",
+   "frame": 1,
+   "sport": 60923,
+   "src": "172.17.0.2",
+   "t": 1792603397.793665
+  }
+ ],
+ "pcap": "/home/uc/evidence/m5/20261021T171806Z/m5.pcap",
+ "pdus": [
+  {
+   "dport": 36422,
+   "dst": "10.106.169.160",
+   "frame": 6,
+   "kind": "initiating",
+   "proc": 1,
+   "procName": "E2setup",
+   "sport": 60923,
+   "src": "172.17.0.2",
+   "t": 1792603397.793811
+  },
+  {
+   "dport": 60923,
+   "dst": "172.17.0.2",
+   "frame": 9,
+   "kind": "successful",
+   "proc": 1,
+   "procName": "E2setup",
+   "sport": 36422,
+   "src": "10.106.169.160",
+   "t": 1792603400.851628
+  },
+  {
+   "dport": 60923,
+   "dst": "172.17.0.2",
+   "frame": 14,
+   "kind": "initiating",
+   "proc": 8,
+   "procName": "RICsubscription",
+   "sport": 36422,
+   "src": "10.106.169.160",
+   "t": 1792603405.372785
+  },
+  {
+   "dport": 36422,
+   "dst": "10.106.169.160",
+   "frame": 16,
+   "kind": "successful",
+   "proc": 8,
+   "procName": "RICsubscription",
+   "sport": 60923,
+   "src": "172.17.0.2",
+   "t": 1792603405.372973
+  }
+ ],
+ "setup_requests": [
+  {
+   "descriptions": [
+    "ns-O-RAN KPM map v1 ab81b639"
+   ],
+   "dport": 36422,
+   "dst": "10.106.169.160",
+   "frame": 6,
+   "gnb_id": 2,
+   "oids": [
+    "1.3.6.1.4.1.53148.1.3.2.2",
+    "1.3.6.1.4.1.53148.1.3.2.2"
+   ],
+   "plmn": "00f110",
+   "ran_function_ids": [
+    2
+   ],
+   "revisions": [
+    2
+   ],
+   "short_names": [
+    "ORAN-E2SM-KPM"
+   ],
+   "sport": 60923,
+   "src": "172.17.0.2",
+   "t": 1792603397.793811
+  }
+ ],
+ "setup_responses": [
+  {
+   "accepted": [
+    2
+   ],
+   "dport": 60923,
+   "dst": "172.17.0.2",
+   "frame": 9,
+   "sport": 36422,
+   "src": "10.106.169.160",
+   "t": 1792603400.851628
+  }
+ ],
+ "shutdowns": [],
+ "sub_requests": [
+  {
+   "dport": 60923,
+   "dst": "172.17.0.2",
+   "frame": 14,
+   "instance": 1,
+   "ran_function_id": 2,
+   "requestor": 123,
+   "sport": 36422,
+   "src": "10.106.169.160",
+   "t": 1792603405.372785
+  }
+ ],
+ "sub_responses": [
+  {
+   "dport": 36422,
+   "dst": "10.106.169.160",
+   "frame": 16,
+   "instance": 1,
+   "ran_function_id": 2,
+   "requestor": 123,
+   "sport": 60923,
+   "src": "172.17.0.2",
+   "t": 1792603405.372973
+  }
+ ]
+}

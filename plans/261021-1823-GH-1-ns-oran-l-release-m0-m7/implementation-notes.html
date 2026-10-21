@@ -190,6 +190,15 @@ The orchestrator spot-checked the pcap: RAN function 2, the real OID, <code>ORAN
 <li>Extra in-place fixes to NIST generator defects: uninitialised OCTET STRING contexts in the setup request, and the service update's RANfunctionID, OID, revision, Modified alternative and TransactionID. The wire bytes for setup are unchanged.</li>
 <li>tshark reports "Malformed NGAP" inside the setup, from NIST's dummy component-config bytes, which the agent carries unchanged.</li>
 </ul></li>
+<li><span class="tag deviation">deviation</span><b>M5 attempt 1</b> (<code>evidence/m5/20261021T171806Z</code>):
+<ul>
+<li>Every plan-required check passed: E2SetupRequest with function 2, the real OID, <code>ORAN-E2SM-KPM</code> and gNB-ID 2; RANfunctionsAccepted contains 2; e2mgr <code>gnb_001_001_00000002</code> CONNECTED; the RAN function definition decodes clean through kpimon with lists equal to the map.</li>
+<li>It failed one teardown check: e2mgr still showed the node CONNECTED 120 s after stop.</li>
+<li>Cause, seen on the wire: <code>docker rm -f</code> killed the agent together with its network namespace, so no SHUTDOWN or ABORT ever left, and e2term relies on slow heartbeat timeouts.</li>
+<li>Consequence, seen live: a stale CONNECTED node is never re-subscribed by kpimon. The next agent sat READY with 0 subscriptions; this is kongming's R2.</li>
+<li>Fix (Testbed <code>e3aacf8</code>+<code>725b167</code>): on SIGTERM the agent sends SCTP SHUTDOWN (<code>shutdown(SHUT_WR)</code>, bounded 2 s wait), and the stop script uses <code>docker stop -t 10</code> before <code>rm -f</code>.</li>
+<li>Verified on the VM: SHUTDOWN, SHUTDOWN-ACK and SHUTDOWN-COMPLETE on the wire, and e2mgr DISCONNECTED within 1 s.</li>
+</ul></li>
 <li><span class="tag deviation">deviation</span>Gate helper: after an InfluxDB pod restart the in-pod CLI config is gone (401). <code>influx_rows</code> now uses the pod's <code>DOCKER_INFLUXDB_INIT_ADMIN_TOKEN</code>, expanded inside the pod so it is never printed. Verified on the VM: 401 before, rows returned after.</li>
 </ul>
 </body>

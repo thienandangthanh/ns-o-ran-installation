@@ -1,0 +1,26 @@
+[17:18:08] gate m5 start; evidence /home/uc/evidence/m5/20261021T171806Z; harness e9244cb3b5d5d1128435f36fc373e387f9d02166
+[17:18:08] ric watchdog started (pid 11396, threshold 600s)
+[17:18:09] PASS m5_nist_tree_at_testbed_sha_with_agent_dir
+[17:18:09] PASS m5_build_tools_present
+[17:18:09] PASS m5_sctp_module_loaded_and_persisted
+[17:18:11] PASS m5_kpimon_so_extracted_from_image
+[17:18:11] PASS m5_kpimon_so_is_the_size8_patched_build
+[17:18:11] PASS m5_capture_started_before_agents
+[17:23:22] PASS m5_bringup_agents_kpm_sim_stopped_connected_set_exact
+[17:23:22] PASS m5_e2mgr_node_connected_name_plmn_gnbid
+[17:23:22] PASS m5_agent_image_informational
+[17:23:25] PASS m5_agent_stats_line_connected_ready_setup_accepted
+[17:23:25] PASS m5_ranfunc_definition_decodes_clean_via_kpimon_lists_equal_map_sha8
+[17:23:25] PASS m5_agents_stopped_no_container_left
+[17:25:27] FAIL m5_e2mgr_node_disconnected_or_removed_after_stop: exit 1: e2mgr still shows gnb_001_001_00000002: CONNECTED after 120s
+[17:25:30] PASS m5_capture_stopped
+[17:25:30] PASS m5_pcap_facts_extracted
+[17:25:30] PASS m5_tshark_setup_request_func2_oid_shortname_gnbid2_not_kpm_sim
+[17:25:30] PASS m5_tshark_setup_response_accepts_func2
+[17:25:31] PASS m5_gnb_id_differs_from_reference_node_b5c67788
+[17:25:31] PASS m5_no_capture_left_running
+[17:25:31] PASS m5_no_agent_container_left
+[17:25:31] PASS m5_pcap_in_evidence
+Terminated
+[17:25:31] ric watchdog stopped (pid 11396)
+verdict m5: FAIL failed=['m5_e2mgr_node_disconnected_or_removed_after_stop']

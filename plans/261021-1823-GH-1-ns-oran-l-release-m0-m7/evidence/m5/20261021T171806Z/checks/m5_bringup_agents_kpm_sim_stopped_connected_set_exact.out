@@ -1,0 +1,24 @@
+[17:18:11] bringup ric: waiting up to 1200s for ricplt pods
+[17:18:11] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj deployment-ricplt-rtmgr-74fb47b69d-dtbtl 
+[17:18:26] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[17:18:41] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[17:18:56] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[17:19:12] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[17:19:27] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[17:19:42] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[17:19:57] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[17:20:12] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[17:20:27] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[17:20:42] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[17:20:57] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[17:21:12] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-59d4746bc7-tftcj 
+[17:21:27] bringup ric: all ricplt pods Ready
+[17:21:32] bringup ric: e2term registered with e2mgr: [{"e2tAddress":"10.105.226.184:38000","ranNames":[]}]
+[17:21:52] bringup agents: stopping NIST kpm_sim so its node cannot mix into the CONNECTED set
+[17:21:53] bringup agents: stop_e2sim.sh exit 0
+[17:21:53] bringup agents: building the agent image (install_ns3_e2_agent.sh, bound 3600s)
+NS3_E2_AGENT_IMAGE=ns3-e2-agent:ca5be2eab505
+NS3_E2_AGENT_IMAGE_ID=sha256:927d5f960d4fcebea43fc4308c6115a023bf42c8af49684d8b86023cfd534401
+NS3_E2_AGENT_E2_INTERFACE=da6f82f286cdbb38af1178f82f85877b12c2f85b
+NS3_E2_AGENT_METRIC_MAP_SHA256=ab81b6392868b32ea26816a9d394c8b58403d1a41f652b30a3498cfa96a93b66
+[17:23:22] bringup agents: e2mgr CONNECTED set equals the expected agents: gnb_001_001_00000002 
