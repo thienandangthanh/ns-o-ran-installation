@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
 # Bring-up profiles for gates (sourced after lib.sh, never executed).
 #
-#   gate_bringup <ric|refnode|agents>
+#   gate_bringup <ric|refnode>
+#   gate_bringup agents <node-list>     e.g. gnb:2 or enb:1,gnb:2,gnb:3,gnb:4,gnb:5
 #
-# `ric` and `refnode` are implemented (`agents` is not): wait (bounded) until every ricplt pod is Running
+# `agents` = ric, then stop NIST's kpm_sim (K6), build the agent image if missing, start one
+# container per node (run_ns3_e2_agents.sh) and wait (bounded) until the e2mgr CONNECTED set equals
+# exactly the expected agent names. Implemented in agents.sh (sourced on first use; it needs
+# lib.sh, capture.sh and kpimon.sh sourced already).
+#
+# `ric`: wait (bounded) until every ricplt pod is Running
 # with all containers Ready (Completed job pods are fine), applying the gate
 # watchdog from plan.md K3 (delete e2term once if it is the only unready pod
 # for > 10 min). The watchdog is also exposed as ric_watchdog_bg/_stop so a
@@ -223,13 +229,17 @@ _bringup_refnode() {
     done
     return 1
 }
-_bringup_agents()  { log "bringup agents: not implemented yet"; return 1; }
+# agents.sh is sourced lazily so the ric/refnode gates do not need it.
+_bringup_agents() {
+    type agents_bringup >/dev/null 2>&1 || source "${BASH_SOURCE[0]%/*}/agents.sh"
+    agents_bringup "$@"
+}
 
 gate_bringup() {
     case "${1:-}" in
         ric) _bringup_ric ;;
         refnode) _bringup_refnode ;;
-        agents) _bringup_agents ;;
+        agents) _bringup_agents "${2:-}" ;;
         *) log "gate_bringup: unknown profile '${1:-}'"; return 2 ;;
     esac
 }

@@ -33,9 +33,9 @@ declare -A GATES=(
     [2]="gate-m2-refnode.sh|refnode|3600|3"
     [3]="gate-m3-xapps.sh|xapps|5400|8"
     [4]="gate-m4-ns3-build.sh|ns3-build|7200|10"
-    [5]="gate-m5-agent-setup.sh|agent-setup|3600|3"
+    [5]="gate-m5-agent-setup.sh|agent-setup|5400|3"
     [6]="gate-m6-kpm.sh|kpm|3600|2"
-    [7]="gate-m7-multignb.sh|multignb|5400|2"
+    [7]="gate-m7-multignb.sh|multignb|6000|2"
 )
 
 boundary() {
