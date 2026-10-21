@@ -111,6 +111,12 @@ Its wire evidence already showed the probe passing.</li>
 <li>Fix (<code>6d3a26b</code>): bring-up <code>ric</code> now waits for an <code>e2tAddress</code> in <code>/v1/e2t/list</code>, which is NIST's own condition from <code>wait_for_ricplt_pods.sh</code>. It rolls e2term once if the list stays empty for 300 s, logged in <code>watchdog.log</code>, then lets routes settle for 20 s. Refnode retries restart only kpm_sim.</li>
 <li>P5 consequence: the agent's SETUP_SENT timeout (exit, then restart and resend) already covers a lost setup.</li>
 </ul></li>
+<li><span class="tag deviation">deviation</span><b>M3 attempt 5</b> (<code>evidence/m3/20261021T140057Z</code>):
+<ul>
+<li>The registration-aware bring-up worked: refnode CONNECTED on its first try, and the exec-it probe passed.</li>
+<li>The stock kpimon image build then failed in <code>go build</code> on a transient <code>connection reset by peer</code> from the Go module proxy.</li>
+<li>Fix (<code>ad87b20</code>): the kpimon install retries up to 2 more times, only when the failed log shows a network-error signature. Each attempt keeps its own log, listed in <code>install-&lt;tag&gt;.log.attempts</code>.</li>
+</ul></li>
 </ul>
 </body>
 </html>

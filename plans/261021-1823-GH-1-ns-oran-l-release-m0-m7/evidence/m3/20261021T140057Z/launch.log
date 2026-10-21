@@ -1,0 +1,16 @@
+[14:00:59] gate m3 start; evidence /home/uc/evidence/m3/20261021T140057Z; harness 6d3a26b10182c2b42f62e9dd602c5e90077de23e
+[14:00:59] ric watchdog started (pid 7288, threshold 600s)
+[14:04:23] PASS m3_refnode_up
+[14:04:23] PASS m3_nist_tree_at_testbed_sha
+[14:04:23] PASS m3_build_tools_installed
+[14:04:23] PASS m3_kubectl_exec_it_works_without_tty
+[14:05:31] PASS m3_regen_check_pass
+[14:05:31] ===== phase stock (KPIMON_TIMESTAMP_SIZE8=false) =====
+[14:05:41] PASS m3_stock_refnode_stopped_before_uninstall
+[14:05:44] PASS m3_stock_kpimon_uninstalled
+[14:05:44] PASS m3_stock_capture_started
+[14:11:33] FAIL m3_stock_installer_ok: exit 1:   69 | >>> RUN go build ./kpimon.go
+  70 |     COPY f1apHelper/ f1apHelper/
+  71 |     RUN go build f1apHelper/f1apServer.go
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c go build ./kpimon.go" did not complete successfully: exit code: 1

@@ -1,0 +1,9 @@
+installer exit 1 (size8=false); log /home/uc/evidence/m3/20261021T140057Z/install-stock.log
+--------------------
+  67 |     
+  68 |     ENV GIT_SSL_NO_VERIFY=1
+  69 | >>> RUN go build ./kpimon.go
+  70 |     COPY f1apHelper/ f1apHelper/
+  71 |     RUN go build f1apHelper/f1apServer.go
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c go build ./kpimon.go" did not complete successfully: exit code: 1
