@@ -28,7 +28,7 @@ done
 [ -f "$REPO_ROOT/scripts/gates/$script" ] || die "no gate script $script"
 gate=$(sed -E 's/^gate-(m[0-9]+).*/\1/' <<<"$script")
 git -C "$REPO_ROOT" fetch -q origin 2>/dev/null || true
-git -C "$REPO_ROOT" branch -r --contains "$harness_sha" 2>/dev/null | grep -q . ||
+git -C "$REPO_ROOT" branch -r --contains "$harness_sha" 2>/dev/null | grep . >/dev/null ||
     die "harness $harness_sha is not on any origin branch; push it first"
 
 ts=$(date -u +%Y%m%dT%H%M%SZ)

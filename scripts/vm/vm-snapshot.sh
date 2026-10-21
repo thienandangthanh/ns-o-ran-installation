@@ -24,7 +24,8 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-snapshot_exists() { "${VIRSH[@]}" snapshot-list "$VM_DOMAIN" --name | grep -qx "$1"; }
+# grep without -q: an early grep exit would SIGPIPE virsh and fail under pipefail.
+snapshot_exists() { "${VIRSH[@]}" snapshot-list "$VM_DOMAIN" --name | grep -x "$1" >/dev/null; }
 
 case "$cmd" in
 create)
