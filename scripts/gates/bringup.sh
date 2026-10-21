@@ -150,26 +150,42 @@ REFNODE_CONNECT_TIMEOUT_S="${REFNODE_CONNECT_TIMEOUT_S:-180}"
 # refnode: RIC up, then (re)start NIST's kpm_sim container through NIST's own script.
 # The script stops any previous oransim, starts a new one and loops until the
 # E2SetupResponse shows in its log, so it is bounded by nist_run. Truth is e2mgr.
+REFNODE_ATTEMPTS="${REFNODE_ATTEMPTS:-3}"
+# _bringup_refnode: start NIST's kpm_sim and wait until e2mgr lists it CONNECTED.
+# After a cold boot (every snapshot boundary reboots the VM) e2mgr can restart
+# after e2term registered with it; e2term then accepts the association but no
+# E2SetupResponse ever comes back (observed 2026-10-21). NIST's own remedy
+# (wait_for_ricplt_pods.sh) is to roll e2term, so attempts 2..N do that first.
+# Every attempt is logged to bringup-refnode-attempts.log.
 _bringup_refnode() {
-    local ric_dir="${RIC_DIR:-$HOME/nist/O-RAN-Testbed-Automation/RAN_Intelligent_Controllers/Near-Real-Time-RIC}"
-    local deadline rc
+    local ric_dir="${RIC_DIR:-$HOME/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC}"
+    local deadline rc attempt
     _bringup_ric || return 1
-    log "bringup refnode: running NIST run_e2sim_and_connect_to_ric.sh (bound ${REFNODE_RUN_TIMEOUT_S}s)"
-    nist_run "$REFNODE_RUN_TIMEOUT_S" "$ric_dir/install_scripts/run_e2sim_and_connect_to_ric.sh" \
-        >"$EVIDENCE_DIR/run_e2sim.log" 2>&1
-    rc=$?
-    log "bringup refnode: run_e2sim script exit $rc"
-    deadline=$(($(date +%s) + REFNODE_CONNECT_TIMEOUT_S))
-    while ! e2_node_connected; do
-        if [ "$(date +%s)" -ge "$deadline" ]; then
-            log "bringup refnode: no CONNECTED node after ${REFNODE_CONNECT_TIMEOUT_S}s"
-            e2mgr_states >"$EVIDENCE_DIR/bringup-e2mgr-states.json"
-            return 1
+    for ((attempt = 1; attempt <= REFNODE_ATTEMPTS; attempt++)); do
+        if ((attempt > 1)); then
+            log "bringup refnode: attempt $attempt: stop kpm_sim, roll e2term"
+            nist_run 180 "$ric_dir/install_scripts/stop_e2sim.sh" >>"$EVIDENCE_DIR/run_e2sim.log" 2>&1
+            kc -n ricplt rollout restart deployment/deployment-ricplt-e2term-alpha &&
+                kc -n ricplt rollout status deployment/deployment-ricplt-e2term-alpha --timeout=300s
+            _bringup_ric || return 1
         fi
-        sleep 5
+        log "bringup refnode: attempt $attempt: running NIST run_e2sim_and_connect_to_ric.sh (bound ${REFNODE_RUN_TIMEOUT_S}s)"
+        nist_run "$REFNODE_RUN_TIMEOUT_S" "$ric_dir/install_scripts/run_e2sim_and_connect_to_ric.sh" \
+            >>"$EVIDENCE_DIR/run_e2sim.log" 2>&1
+        rc=$?
+        log "bringup refnode: run_e2sim script exit $rc"
+        deadline=$(($(date +%s) + REFNODE_CONNECT_TIMEOUT_S))
+        until e2_node_connected || [ "$(date +%s)" -ge "$deadline" ]; do sleep 5; done
+        e2mgr_states >"$EVIDENCE_DIR/bringup-e2mgr-states.json"
+        if e2_node_connected; then
+            echo "$(date -u +%FT%TZ) attempt $attempt CONNECTED" >>"$EVIDENCE_DIR/bringup-refnode-attempts.log"
+            log "bringup refnode: e2mgr shows a CONNECTED node (attempt $attempt)"
+            return 0
+        fi
+        echo "$(date -u +%FT%TZ) attempt $attempt no CONNECTED node after ${REFNODE_CONNECT_TIMEOUT_S}s" >>"$EVIDENCE_DIR/bringup-refnode-attempts.log"
+        log "bringup refnode: attempt $attempt: no CONNECTED node after ${REFNODE_CONNECT_TIMEOUT_S}s"
     done
-    e2mgr_states >"$EVIDENCE_DIR/bringup-e2mgr-states.json"
-    log "bringup refnode: e2mgr shows a CONNECTED node"
+    return 1
 }
 _bringup_agents()  { log "bringup agents: not implemented yet"; return 1; }
 
