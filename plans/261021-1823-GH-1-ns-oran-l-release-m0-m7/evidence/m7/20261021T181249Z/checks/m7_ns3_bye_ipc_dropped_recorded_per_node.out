@@ -1,0 +1,6 @@
+node 1 (enb): samples=420 last_seq=419 gaps=0 ipcDropped_max=9 ues_max=12 hello=10 bye=1 {"built": 420, "sent": 411, "droppedDisconnected": 9, "droppedBackpressure": 0, "lastSeq": 419}
+node 2 (gnb): samples=420 last_seq=419 gaps=0 ipcDropped_max=4 ues_max=8 hello=5 bye=1 {"built": 420, "sent": 416, "droppedDisconnected": 4, "droppedBackpressure": 0, "lastSeq": 419}
+node 3 (gnb): samples=420 last_seq=419 gaps=0 ipcDropped_max=4 ues_max=6 hello=5 bye=1 {"built": 420, "sent": 416, "droppedDisconnected": 4, "droppedBackpressure": 0, "lastSeq": 419}
+node 4 (gnb): samples=420 last_seq=419 gaps=0 ipcDropped_max=4 ues_max=5 hello=5 bye=1 {"built": 420, "sent": 416, "droppedDisconnected": 4, "droppedBackpressure": 0, "lastSeq": 419}
+node 5 (gnb): samples=420 last_seq=419 gaps=0 ipcDropped_max=4 ues_max=4 hello=5 bye=1 {"built": 420, "sent": 416, "droppedDisconnected": 4, "droppedBackpressure": 0, "lastSeq": 419}
+ipcDropped (disconnected, backpressure, max per-sample): {1: (9, 0, 9), 2: (4, 0, 4), 3: (4, 0, 4), 4: (4, 0, 4), 5: (4, 0, 4)}; total droppedDisconnected 25 (expected > 0 around the delete)

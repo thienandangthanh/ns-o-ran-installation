@@ -234,6 +234,26 @@ The orchestrator spot-checked the pcap: RAN function 2, the real OID, <code>ORAN
 <li>kpimon's own RICsubscriptionRequest. Its E2SM-KPM action definition (format 3) is encoded with kpimon's v2 schema plus NIST's MatchingCondItem patch, which Wireshark's v3 dissector cannot follow.</li>
 </ul>
 Neither is produced by our code. The agent accepts the subscription without interpreting the action definition (option A).</li>
+<li><span class="tag deviation">deviation</span><b>M7 attempt 1</b> (<code>evidence/m7/20261021T181249Z</code>), 50/52 checks.
+<ul>
+<li>Bring-up and endurance passed:
+<ul>
+<li>5 nodes CONNECTED with distinct names.</li>
+<li>A 15 min endurance window: ricplt restarts unchanged, agent RestartCount 0, all nodes CONNECTED in every sample, zero SCTP ABORT, max 1-min load 1.49 on 8 vCPU.</li>
+</ul></li>
+<li>The e2term pod delete passed:
+<ul>
+<li>The replacement pod became Ready. Every agent exited and restarted, reconnected and resumed indications, and ns-3 kept running and completed.</li>
+<li>Recovery took about 190 s (gNBs) and about 238 s (eNB) from delete to first indication. Agents INIT every 5 s while the Service has no endpoint, then restart on the 10 s setup timeout (RestartCount 4–9) until the new e2term has registered with e2mgr.</li>
+<li>4561 indications over the whole pcap, all clean RC_OK, and fresh Influx rows per node after the delete.</li>
+</ul></li>
+<li>Two checks failed on their own assumptions:
+<ul>
+<li>(1) Docker reassigned container IPs on the restarts (nodes 2↔3 and 4↔5). Attribution by IP therefore counted another node's post-delete INIT as a second "initial" INIT. On the wire there is exactly one INIT/INIT_ACK/COOKIE_ACK per agent before the delete, from 5 distinct IPs.</li>
+<li>(2) The trace check expected one hello per node. Each agent restart is a new IPC connection with a new hello, which the plan expects.</li>
+</ul></li>
+<li>Fix: attribute traffic by SCTP association, using the gNB-ID in that association's E2SetupRequest, not by container IP. Require hello ≥ 1 with consistent counters.</li>
+</ul></li>
 <li><span class="tag deviation">deviation</span>Gate helper: after an InfluxDB pod restart the in-pod CLI config is gone (401). <code>influx_rows</code> now uses the pod's <code>DOCKER_INFLUXDB_INIT_ADMIN_TOKEN</code>, expanded inside the pod so it is never printed. Verified on the VM: 401 before, rows returned after.</li>
 </ul>
 </body>
