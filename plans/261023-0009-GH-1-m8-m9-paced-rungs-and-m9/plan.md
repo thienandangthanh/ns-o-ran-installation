@@ -22,15 +22,15 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-23 02:38 KST (paused by the user at 02:40 KST; handoff plans/reports/handoff-261023-0240-GH-1-m8-m9-p1-paused-after-gate-s0.md)
-current phase: P1, in progress. Done: commits A-E pushed, pins.conf bumped (715ace6), gate S0 PASS (V1 V2 V3 V4 K23 V6). Remaining: V5 (M5, M6, M7 at the new pins), then the phase-exit checklist and the kongming go/no-go on P2.
+last-updated: 2026-10-23 03:16 KST (P1 exit; resumed by the user's /goal at 02:42 KST after the 02:40 pause)
+current phase: P1 done (exit checklist run 03:16 KST; kongming go/no-go on P2 pending). Next: P2 (S1).
 VM: expected domstate=running, snapshot-current=f7-rerun-green (no snapshot taken in P1)
 snapshots: fresh-install, f7-rerun-green
-host /home free: 68 G (2026-10-23 02:36 KST); VM / 54 G free; floor 20 GB; M9 projection to recompute at P1 exit
-fork SHAs (pushed): see scripts/pins.conf (ns-3 d3bc4d96, oran-interface 2817f7e4, Testbed 0fd195ed); P2 drafts on wip/p2-pacing (ns-3 c4646328, oran-interface fcd43ce, Testbed 5cf7df3), not pinned, not gated
-harness SHA (pushed): see git log (handoff commit)
+host /home free: 68 G (2026-10-23 03:15 KST); VM / 54 G free; floor 20 GB; M9 projection 68 − 13 − 48 − 20 = −13 GB (raised at Stop A, user frees at Stop B)
+fork SHAs (pushed): see scripts/pins.conf (ns-3 d3bc4d96, oran-interface 2817f7e4, Testbed 0fd195ed); P2 drafts on wip/p2-pacing (ns-3 c4646328, oran-interface fcd43ce, Testbed 8bdd248), not pinned, not gated
+harness SHA (pushed): see git log (P1 exit commit)
 in-flight background jobs: none (VM ~/m4-build is at the P1 pins; ~/s0-build-ref holds the P0 build)
-next action: run M5, M6, M7 through vm-exec.sh with EVIDENCE_HOST_ROOT set to this plan's evidence/ (P1 V5)
+next action: kongming go/no-go on P2; on GO, commit the P2 drafts on dev/l-release-nist180, bump pins.conf, run gate-s1-pacer-lockstep.sh --p1-ns3 d3bc4d964eeff78a7c10623facc24ac47cdc8052 --p1-oi 2817f7e4b827adf0e626173c70fe60384d700526, then M5–M7
 hold (user, 2026-10-23 02:30 KST): another Claude session loads the host CPU; no timing measurement (P3 T_ctl calibration of L, R2/R3 W calibration, any latency/slack figure used as a gate value) until it is done; check uptime/top before each
 ```
 On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`, `virsh -c qemu:///system snapshot-current --name ubuntu24.04` and `scripts/vm/vm-snapshot.sh list`, and compare them with this card. On a mismatch, print a PAUSE T3 line with the difference.
@@ -51,7 +51,7 @@ On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`
 | # | Phase | Exit gate | Snapshot | Status |
 |---|---|---|---|---|
 | P0 | [Harness generalization, RC wire decoder, disk baseline](phase-00-harness-generalization-rc-decoder-disk-baseline.md) | lint; decoder round-trips the committed PDU fixture | none | done (V1–V8 pass, 2026-10-23 01:55 KST) |
-| P1 | [S0: ns-3 D4 method, ledger, agent RC path, N5 request part](phase-01-s0-ns3-d4-ledger-agent-rc-path.md) | free-run digest unchanged; M5–M7 re-pass | none | pending |
+| P1 | [S0: ns-3 D4 method, ledger, agent RC path, N5 request part](phase-01-s0-ns3-d4-ledger-agent-rc-path.md) | free-run digest unchanged; M5–M7 re-pass | none | done (S0 PASS; M5–M7 PASS at the P1 pins, 2026-10-23 03:14 KST) |
 | P2 | [S1: pacer and barrier, Fallback-1, null-control, fault run (i)](phase-02-s1-pacer-barrier-fallback1-null-control.md) | scripted S1 gate | none | pending |
 | P3 | [R0 = M8: rc by scripted gRPC, D7 three paths, G4](phase-03-r0-m8-rc-scripted-grpc.md) | R0 C1 | `r0-green` | pending |
 | P4 | [R1: multi-control, unknown IMSI, fault run (ii); then Stop A](phase-04-r1-multi-control-fault-runs-stop-a.md) | R1 C1 | none (no `r1-green`) | pending |

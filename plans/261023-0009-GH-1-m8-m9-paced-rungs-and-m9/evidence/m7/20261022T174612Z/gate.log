@@ -1,0 +1,58 @@
+[17:46:12] gate m7 start; evidence /home/uc/evidence/m7/20261022T174612Z; harness 5ce2a0731a123211a501b1f3bd942cc811abd9bc
+[17:46:12] ric watchdog started (pid 128543, threshold 600s)
+[17:46:13] PASS m7_nist_tree_at_testbed_sha_with_agent_dir
+[17:46:13] PASS m7_build_tools_present
+[17:46:13] PASS m7_sctp_module_loaded_and_persisted
+[17:46:13] PASS m7_kpimon_so_extracted_from_image
+[17:46:13] PASS m7_kpimon_so_is_the_size8_patched_build
+[17:46:13] PASS m7_ns3_binary_located
+[17:46:13] PASS m7_simtime_from_m4_timing_informational
+[17:46:14] PASS m7_capture_started_before_agents
+[17:46:48] PASS m7_bringup_agents_kpm_sim_stopped_connected_set_exact
+[17:46:48] PASS m7_e2mgr_all_nodes_connected_with_distinct_names
+[17:46:48] PASS m7_agent_container_ips_recorded
+[17:46:48] PASS m7_each_agent_has_its_own_container_ip
+[17:46:59] PASS m7_every_agent_ready_and_subscribed_before_ns3
+[17:47:01] PASS m7_ns3_started_default_config
+[18:02:03] PASS m7_endurance_window_sampled
+[18:02:03] PASS m7_endurance_ricplt_pods_no_new_restarts
+[18:02:03] PASS m7_endurance_agents_restartcount_stays_zero
+[18:02:03] PASS m7_endurance_e2mgr_all_connected_every_sample
+[18:02:03] PASS m7_endurance_ns3_alive_every_sample
+[18:02:03] PASS m7_endurance_kpimon_pod_no_restart
+[18:02:03] PASS m7_endurance_agent_rss_informational
+[18:02:03] PASS m7_cpu_load_averages_informational
+[18:02:04] PASS m7_pre_delete_counts_recorded
+[18:02:35] PASS m7_e2term_pod_deleted_without_manual_ip_change
+[18:04:35] PASS m7_replacement_e2term_pod_ready_bounded
+[18:06:25] PASS m7_recovery_every_node_restarted_reconnected_and_indicating
+[18:06:25] PASS m7_ns3_still_running_after_recovery
+[18:06:25] PASS m7_agents_restartcount_ge1_after_delete
+[18:12:59] PASS m7_ns3_completes_exit0_through_the_delete
+[18:12:59] draining 10s
+[18:13:11] PASS m7_influx_node_series_exported
+[18:13:11] PASS m7_capture_stopped
+[18:13:19] PASS m7_pcap_facts_extracted
+[18:13:19] PASS m7_pcap_one_association_per_agent_distinct_ips_no_sport_collision
+[18:13:19] PASS m7_no_sctp_abort_during_endurance_window
+[18:13:20] PASS m7_sctp_abort_shutdown_around_delete_informational
+[18:13:20] PASS m7_wire_every_agent_init_goes_to_the_same_service_ip
+[18:13:20] PASS m7_wire_new_association_per_node_new_source_port
+[18:13:20] PASS m7_wire_new_e2setup_request_and_response_per_node
+[18:13:20] PASS m7_wire_new_ricsubscription_request_and_response_per_node
+[18:13:20] PASS m7_wire_first_indication_after_delete_per_node
+[18:13:20] PASS m7_per_node_time_to_connected_and_first_indication_informational
+[18:13:20] PASS m7_per_node_ricindications_on_the_wire
+[18:13:20] PASS m7_ns3_bye_ipc_dropped_recorded_per_node
+[18:13:24] PASS m7_harness_ran_on_pcap
+[18:13:24] PASS m7_harness_every_header_and_message_clean_rc_ok_whole_pcap
+[18:13:24] PASS m7_kpimon_log_counts_informational
+[18:13:24] PASS m7_influx_fresh_cellmetrics_rows_per_nodeid_after_delete
+[18:13:24] PASS m7_influx_ue_rows_per_nodeid_informational
+[18:13:27] PASS m7_agents_stopped_no_container_left
+[18:13:27] PASS m7_no_stray_ns3_agent_process_or_3847x_listener
+[18:13:27] PASS m7_no_capture_left_running
+[18:13:27] PASS m7_pcap_in_evidence
+Terminated
+[18:13:27] ric watchdog stopped (pid 128543)
+verdict m7: PASS failed=[]

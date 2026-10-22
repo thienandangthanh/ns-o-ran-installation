@@ -1,0 +1,126 @@
+{
+  "gate": "m5",
+  "ts": "20261022T174330Z",
+  "harness_sha": "5ce2a0731a123211a501b1f3bd942cc811abd9bc",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "0fd195ed393a890a1bd79fd18fe241b8a5b7a0bf",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "d3bc4d964eeff78a7c10623facc24ac47cdc8052",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "2817f7e4b827adf0e626173c70fe60384d700526",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+  },
+  "duration_s": 45,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "m5_nist_tree_at_testbed_sha_with_agent_dir",
+      "pass": true,
+      "detail": "nist HEAD 0fd195ed393a890a1bd79fd18fe241b8a5b7a0bf, want 0fd195ed393a890a1bd79fd18fe241b8a5b7a0bf\nalready at 0fd195ed393a890a1bd79fd18fe241b8a5b7a0bf\nns3_e2_agent matches 0fd195ed393a890a1bd79fd18fe241b8a5b7a0bf; metric-map sha256 ab81b6392868b32ea26816a9d394c8b58403d1a41f652b30a3498cfa96a93b66"
+    },
+    {
+      "name": "m5_build_tools_present",
+      "pass": true,
+      "detail": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\ntshark 4.4.19 (>= 4.4)"
+    },
+    {
+      "name": "m5_sctp_module_loaded_and_persisted",
+      "pass": true,
+      "detail": "sctp                  495616  43 sctp_diag\nsctp"
+    },
+    {
+      "name": "m5_kpimon_so_extracted_from_image",
+      "pass": true,
+      "detail": "timestamp_size: 8\nextracted_at: 2026-10-22T17:43:33+00:00\nTimeStamp SIZE in this .so: 8"
+    },
+    {
+      "name": "m5_kpimon_so_is_the_size8_patched_build",
+      "pass": true,
+      "detail": "TimeStamp SIZE in the extracted .so: 8"
+    },
+    {
+      "name": "m5_capture_started_before_agents",
+      "pass": true,
+      "detail": "[17:43:33] capture m5 started on docker0 (pid 119971, filter 'ip proto 132')"
+    },
+    {
+      "name": "m5_bringup_agents_kpm_sim_stopped_connected_set_exact",
+      "pass": true,
+      "detail": "NS3_E2_AGENT_E2_INTERFACE=da6f82f286cdbb38af1178f82f85877b12c2f85b\nNS3_E2_AGENT_METRIC_MAP_SHA256=ab81b6392868b32ea26816a9d394c8b58403d1a41f652b30a3498cfa96a93b66\n[17:44:07] bringup agents: e2mgr CONNECTED set equals the expected agents: gnb_001_001_00000002 "
+    },
+    {
+      "name": "m5_e2mgr_node_connected_name_plmn_gnbid",
+      "pass": true,
+      "detail": "ranName=gnb_001_001_00000002 status=CONNECTED plmnId=00F110 nbId=00000000000000000000000000010 (decimal 2) nodeType=GNB ranFunctions=[2]"
+    },
+    {
+      "name": "m5_agent_image_informational",
+      "pass": true,
+      "detail": "NS3_E2_AGENT_IMAGE=ns3-e2-agent:0fd195ed393a NS3_E2_AGENT_IMAGE_ID=sha256:53e58bc00a673b3f618a1cfc9156388ac9641c9ab2abb8c788ee571e06830d3d NS3_E2_AGENT_E2_INTERFACE=da6f82f286cdbb38af1178f82f85877b12c2f85b NS3_E2_AGENT_METRIC_MAP_SHA256=ab81b6392868b32ea26816a9d394c8b58403d1a41f652b30a3498cfa96a93b66 "
+    },
+    {
+      "name": "m5_agent_stats_line_connected_ready_setup_accepted",
+      "pass": true,
+      "detail": "{\"event\":\"stats\",\"unixMs\":1792691049985,\"nodeId\":2,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":-1,\"samplesIn\":0,\"samplesForwarded\":0,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":0,\"indTxCell\":0,\"indTxUe\":0,\"ipc\":{\"accepted\":0,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":0,\"helloRejected\":0,\"bye\":0,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":2,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":0,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":0,\"applied\":0,\"refused\":0,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0}}"
+    },
+    {
+      "name": "m5_ranfunc_definition_decodes_clean_via_kpimon_lists_equal_map_sha8",
+      "pass": true,
+      "detail": "octets 2271, strict RC_OK consumed 2271\nshort=ORAN-E2SM-KPM oid=1.3.6.1.4.1.53148.1.3.2.2 description='ns-O-RAN KPM map v1 ab81b639'\nkpimon cell=33 ue=58; map(gnb) cell=33 ue=58"
+    },
+    {
+      "name": "m5_agents_stopped_no_container_left",
+      "pass": true,
+      "detail": "# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/ns3_e2_agent/install_scripts/stop_ns3_e2_agents.sh \nns3-e2-agent-2 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1792691049985,\"nodeId\":2,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":-1,\"samplesIn\":0,\"samplesForwarded\":0,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":0,\"indTxCell\":0,\"indTxUe\":0,\"ipc\":{\"accepted\":0,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":0,\"helloRejected\":0,\"bye\":0,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":2,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":0,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":0,\"applied\":0,\"refused\":0,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0}}\nRemoved 1 ns3-e2-agent container(s)."
+    },
+    {
+      "name": "m5_e2mgr_node_disconnected_or_removed_after_stop",
+      "pass": true,
+      "detail": "e2mgr shows gnb_001_001_00000002: DISCONNECTED"
+    },
+    {
+      "name": "m5_capture_stopped",
+      "pass": true,
+      "detail": "[17:44:16] capture m5 stopped: 20 packets captured 20 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "m5_pcap_facts_extracted",
+      "pass": true,
+      "detail": "frames=20 inits=1 aborts=0 shutdowns=3 setup_req=1 setup_resp=1 sub_req=1 sub_resp=1 ind_srcs={}"
+    },
+    {
+      "name": "m5_tshark_setup_request_func2_oid_shortname_gnbid2_not_kpm_sim",
+      "pass": true,
+      "detail": "E2SetupRequests on the wire: 1\nframe 6 from 172.17.0.2: funcs=[2] oids=['1.3.6.1.4.1.53148.1.3.2.2'] short=['ORAN-E2SM-KPM'] gnbId=2 plmn=00f110 descr=['ns-O-RAN KPM map v1 ab81b639']"
+    },
+    {
+      "name": "m5_tshark_setup_response_accepts_func2",
+      "pass": true,
+      "detail": "E2SetupResponses: [(9, '172.17.0.2', [2])]"
+    },
+    {
+      "name": "m5_gnb_id_differs_from_reference_node_b5c67788",
+      "pass": true,
+      "detail": "gNB-IDs on the wire: [2] (reference node: 3049682824 / 381210353)"
+    },
+    {
+      "name": "m5_no_capture_left_running",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m5_no_agent_container_left",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m5_pcap_in_evidence",
+      "pass": true,
+      "detail": "7580 /home/uc/evidence/m5/20261022T174330Z/m5.pcap"
+    }
+  ]
+}

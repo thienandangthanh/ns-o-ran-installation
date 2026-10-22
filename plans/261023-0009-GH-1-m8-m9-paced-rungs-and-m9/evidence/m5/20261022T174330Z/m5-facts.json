@@ -1,0 +1,185 @@
+{
+ "aborts": [],
+ "cookie_acks": [
+  {
+   "dport": 55062,
+   "dst": "172.17.0.2",
+   "frame": 4,
+   "sport": 36422,
+   "src": "10.97.131.139",
+   "t": 1792691042.886149
+  }
+ ],
+ "frames": 20,
+ "ind_events": [],
+ "ind_times_by_src": {},
+ "init_acks": [
+  {
+   "dport": 55062,
+   "dst": "172.17.0.2",
+   "frame": 2,
+   "sport": 36422,
+   "src": "10.97.131.139",
+   "t": 1792691042.886126
+  }
+ ],
+ "inits": [
+  {
+   "dport": 36422,
+   "dst": "10.97.131.139",
+   "frame": 1,
+   "sport": 55062,
+   "src": "172.17.0.2",
+   "t": 1792691042.886068
+  }
+ ],
+ "pcap": "/home/uc/evidence/m5/20261022T174330Z/m5.pcap",
+ "pdus": [
+  {
+   "dport": 36422,
+   "dst": "10.97.131.139",
+   "frame": 6,
+   "kind": "initiating",
+   "proc": 1,
+   "procName": "E2setup",
+   "sport": 55062,
+   "src": "172.17.0.2",
+   "t": 1792691042.886253
+  },
+  {
+   "dport": 55062,
+   "dst": "172.17.0.2",
+   "frame": 9,
+   "kind": "successful",
+   "proc": 1,
+   "procName": "E2setup",
+   "sport": 36422,
+   "src": "10.97.131.139",
+   "t": 1792691045.937173
+  },
+  {
+   "dport": 55062,
+   "dst": "172.17.0.2",
+   "frame": 12,
+   "kind": "initiating",
+   "proc": 8,
+   "procName": "RICsubscription",
+   "sport": 36422,
+   "src": "10.97.131.139",
+   "t": 1792691046.720151
+  },
+  {
+   "dport": 36422,
+   "dst": "10.97.131.139",
+   "frame": 14,
+   "kind": "successful",
+   "proc": 8,
+   "procName": "RICsubscription",
+   "sport": 55062,
+   "src": "172.17.0.2",
+   "t": 1792691046.7203
+  }
+ ],
+ "setup_requests": [
+  {
+   "descriptions": [
+    "ns-O-RAN KPM map v1 ab81b639"
+   ],
+   "dport": 36422,
+   "dst": "10.97.131.139",
+   "frame": 6,
+   "gnb_id": 2,
+   "oids": [
+    "1.3.6.1.4.1.53148.1.3.2.2",
+    "1.3.6.1.4.1.53148.1.3.2.2"
+   ],
+   "plmn": "00f110",
+   "ran_function_ids": [
+    2
+   ],
+   "revisions": [
+    2
+   ],
+   "short_names": [
+    "ORAN-E2SM-KPM"
+   ],
+   "sport": 55062,
+   "src": "172.17.0.2",
+   "t": 1792691042.886253
+  }
+ ],
+ "setup_responses": [
+  {
+   "accepted": [
+    2
+   ],
+   "dport": 55062,
+   "dst": "172.17.0.2",
+   "frame": 9,
+   "sport": 36422,
+   "src": "10.97.131.139",
+   "t": 1792691045.937173
+  }
+ ],
+ "shutdowns": [
+  {
+   "chunks": [
+    7
+   ],
+   "dport": 36422,
+   "dst": "10.97.131.139",
+   "frame": 18,
+   "sport": 55062,
+   "src": "172.17.0.2",
+   "t": 1792691050.645885
+  },
+  {
+   "chunks": [
+    8
+   ],
+   "dport": 55062,
+   "dst": "172.17.0.2",
+   "frame": 19,
+   "sport": 36422,
+   "src": "10.97.131.139",
+   "t": 1792691050.645994
+  },
+  {
+   "chunks": [
+    14
+   ],
+   "dport": 36422,
+   "dst": "10.97.131.139",
+   "frame": 20,
+   "sport": 55062,
+   "src": "172.17.0.2",
+   "t": 1792691050.646028
+  }
+ ],
+ "sub_requests": [
+  {
+   "dport": 55062,
+   "dst": "172.17.0.2",
+   "frame": 12,
+   "instance": 4,
+   "ran_function_id": 2,
+   "requestor": 123,
+   "sport": 36422,
+   "src": "10.97.131.139",
+   "t": 1792691046.720151
+  }
+ ],
+ "sub_responses": [
+  {
+   "dport": 36422,
+   "dst": "10.97.131.139",
+   "frame": 14,
+   "instance": 4,
+   "ran_function_id": 2,
+   "requestor": 123,
+   "sport": 55062,
+   "src": "172.17.0.2",
+   "t": 1792691046.7203
+  }
+ ]
+}
