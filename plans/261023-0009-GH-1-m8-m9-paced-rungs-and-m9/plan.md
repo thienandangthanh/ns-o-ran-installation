@@ -22,15 +22,15 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-23 01:36 KST
-current phase: P0, in progress (step 1 done: VM state matches)
+last-updated: 2026-10-23 02:02 KST
+current phase: P1, in progress (P0 done e336af4; kongming P0 exit: GO after 4 must-do items)
 VM: expected domstate=running, snapshot-current=f7-rerun-green
 snapshots: fresh-install, f7-rerun-green
-host /home free: 76 G (2026-10-23 01:34 KST); floor 20 GB
-fork SHAs (pushed): see scripts/pins.conf; QP fork master=47a35ca
-harness SHA (pushed): 1dd16a5
+host /home free: 76 G (2026-10-23 01:55 KST); floor 20 GB; M9 projection -12 GB (Stop A)
+fork SHAs (pushed): see scripts/pins.conf; QP fork master=47a35ca; P1 work unpushed in scratch clones
+harness SHA (pushed): e336af4
 in-flight background jobs: none
-next action: P0 step 2 (pins check)
+next action: P1 must-do 3 (SHA-checked build/image reuse, ns3run gitignore), then V1 rule + 2 reference runs
 ```
 On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`, `virsh -c qemu:///system snapshot-current --name ubuntu24.04` and `scripts/vm/vm-snapshot.sh list`, and compare them with this card. On a mismatch, print a PAUSE T3 line with the difference.
 

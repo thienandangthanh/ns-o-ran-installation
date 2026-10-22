@@ -76,9 +76,11 @@ while :; do
 done
 hlog "gate $gate exit $code"
 
-# Scrub on the VM, then copy back; pcaps get a sha256 manifest (they stay out of git).
+# Scrub on the VM, then copy back; pcaps and ns-3 trace text files get sha256
+# manifests (they stay out of git).
 vm_ssh "bash /home/uc/harness/scripts/gates/scrub-evidence.sh $ev; \
-    cd $ev && find . -name '*.pcap*' -type f -exec sha256sum {} + >pcap-sha256.txt 2>/dev/null; true"
+    cd $ev && find . -name '*.pcap*' -type f -exec sha256sum {} + >pcap-sha256.txt 2>/dev/null; \
+    find . -path '*ns3run*' -name '*.txt' -type f -exec sha256sum {} + >ns3run-sha256.txt 2>/dev/null; true"
 dest="$EVIDENCE_HOST_ROOT/$gate/$ts"
 mkdir -p "$dest"
 # fresh-install has no rsync; tar over ssh needs nothing extra.

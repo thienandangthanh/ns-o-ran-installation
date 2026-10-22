@@ -161,19 +161,23 @@ _agents_wait_connected_exact() {
     done
 }
 
-# agents_install_image: build the agent image unless run/image.env names an existing image built from this map.
+# agents_install_image: build the agent image unless run/image.env names an existing image built from this
+# map at this Testbed commit (tag ns3-e2-agent:<short12 of the agent tree's HEAD>, the installer's convention).
 agents_install_image() {
-    local envf="$AGENT_DIR/run/image.env" image mapsha
+    local envf="$AGENT_DIR/run/image.env" image mapsha want
     image=$(sed -n 's/^NS3_E2_AGENT_IMAGE=//p' "$envf" 2>/dev/null)
     mapsha=$(sed -n 's/^NS3_E2_AGENT_METRIC_MAP_SHA256=//p' "$envf" 2>/dev/null)
-    if [ -n "$image" ] && dk image inspect "$image" >/dev/null 2>&1 &&
+    want="ns3-e2-agent:$(git -C "$AGENT_DIR" rev-parse --short=12 HEAD)"
+    if [ "$image" = "$want" ] && dk image inspect "$image" >/dev/null 2>&1 &&
         [ "$mapsha" = "$(sha256sum "$AGENT_DIR/schema/metric-map.v1.json" | cut -d' ' -f1)" ]; then
-        log "bringup agents: image $image exists (map sha matches); not rebuilding"
+        log "bringup agents: image $image exists (Testbed commit and map sha match); not rebuilding"
     else
         log "bringup agents: building the agent image (install_ns3_e2_agent.sh, bound 3600s)"
         nist_run 3600 "$AGENT_DIR/install_scripts/install_ns3_e2_agent.sh" >"$EVIDENCE_DIR/install-agent-image.log" 2>&1 || {
             tail -n 20 "$EVIDENCE_DIR/install-agent-image.log"; return 1; }
     fi
+    image=$(sed -n 's/^NS3_E2_AGENT_IMAGE=//p' "$envf" 2>/dev/null)
+    [ "$image" = "$want" ] || { log "bringup agents: image $image is not $want"; return 1; }
     cp "$envf" "$EVIDENCE_DIR/agent-image.env" && cat "$envf"
 }
 

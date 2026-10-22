@@ -6,9 +6,17 @@ JSON (schema ns3-e2-ipc v1, ns-3 -> agent only), counts lines per port and per
 node, validates required keys structurally (stdlib only; full JSON-Schema
 validation is added automatically when the `jsonschema` package is importable
 and the schema file is found), and writes DIR/summary.json on SIGTERM/SIGINT.
-Nothing is ever sent back to the emitter. Run with `python3 -I`.
+Nothing is sent back to the emitter unless --controls is given. Run with
+`python3 -I`.
 
-  ipc-null-sink.py --ports 38471-38475 --out DIR [--save-lines]
+  ipc-null-sink.py --ports 38471-38475 --out DIR [--save-lines] [--controls FILE]
+
+--controls FILE (scripted free-run control, no RIC): a JSON list of
+{"nodeId", "afterSeq", "imsi", "targetCellId"}. Right after receiving sample
+`afterSeq` of `nodeId`, the sink writes one ns3-e2-ipc v1 minor 1 `control`
+line on that node's connection (ctlId counts from 1 per node), as an agent
+does. Every `controlAck` received is kept in DIR/control-acks.jsonl and every
+control sent in DIR/controls-sent.jsonl.
 
 --ports accepts "38471-38475", "38472", "38471,38473", or a mix.
 --save-lines writes every valid received line, verbatim, to DIR/lines-<nodeId>.jsonl
@@ -92,6 +100,11 @@ def structural_errors(msg):
                     errs.append("ues not sorted by imsi")
                     break
                 prev = u["imsi"]
+    elif t == "controlAck":
+        need("nodeId", node_ok, "int 1..65535")
+        need("ctlId", nonneg, "int>=0")
+        need("outcome", lambda v: v in ("applied", "refused"), "applied|refused")
+        need("cause", lambda v: isinstance(v, str), "string")
     elif t == "bye":
         need("nodeId", node_ok, "int 1..65535")
         for k in ("lastSeq", "built", "sent", "droppedDisconnected", "droppedBackpressure"):
@@ -102,12 +115,18 @@ def structural_errors(msg):
 
 
 class Sink:
-    def __init__(self, ports, out_dir, save_lines, schema_path):
+    def __init__(self, ports, out_dir, save_lines, schema_path, controls=None):
         self.ports = ports
         self.out_dir = out_dir
         self.save_lines = save_lines
         self.port_stats = {p: {"connections": 0, "hello": 0, "sample": 0, "bye": 0,
-                               "invalid": 0, "bytes": 0} for p in ports}
+                               "controlAck": 0, "invalid": 0, "bytes": 0} for p in ports}
+        self.controls = {}  # (nodeId, afterSeq) -> [control spec, ...]
+        for c in controls or []:
+            self.controls.setdefault((c["nodeId"], c["afterSeq"]), []).append(c)
+        self.next_ctl = {}
+        self.sent_file = None
+        self.ack_file = None
         self.nodes = {}
         self.imsis = set()
         self.invalid_examples = []
@@ -133,7 +152,8 @@ class Sink:
             n = self.nodes[nid] = {
                 "port": port, "kind": None, "hello": 0, "sample": 0, "bye": 0,
                 "last_seq": None, "seq_gaps": 0, "ue_counts": {}, "ipc_dropped_last": 0,
-                "ipc_dropped_max": 0, "period_ns": None, "run_ids": [], "bye_msg": None}
+                "ipc_dropped_max": 0, "period_ns": None, "run_ids": [], "bye_msg": None,
+                "controlAck": 0, "controls_sent": 0}
         return n
 
     def invalid(self, port, reason, raw):
@@ -142,7 +162,26 @@ class Sink:
             self.invalid_examples.append({"port": port, "reason": reason,
                                           "line": raw[:200].decode("utf-8", "replace")})
 
-    def accept(self, port, raw):
+    def _append(self, attr, name, line):
+        f = getattr(self, attr)
+        if f is None:
+            f = open(os.path.join(self.out_dir, name), "w")
+            setattr(self, attr, f)
+        f.write(line + "\n")
+        f.flush()
+
+    def _inject(self, nid, seq, writer):
+        for c in self.controls.pop((nid, seq), []):
+            ctl = self.next_ctl.get(nid, 1)
+            self.next_ctl[nid] = ctl + 1
+            line = json.dumps({"type": "control", "v": 1, "nodeId": nid, "ctlId": ctl,
+                               "imsi": c["imsi"], "targetCellId": c["targetCellId"],
+                               "afterSeq": seq}, separators=(",", ":"))
+            writer.write(line.encode() + b"\n")
+            self.nodes[nid]["controls_sent"] += 1
+            self._append("sent_file", "controls-sent.jsonl", line)
+
+    def accept(self, port, raw, writer=None):
         """Process one received line (bytes without the trailing newline)."""
         try:
             msg = json.loads(raw.decode("utf-8"))
@@ -177,6 +216,10 @@ class Sink:
                 self.imsis.add(u["imsi"])
             if self.save_lines:
                 self._save(nid, raw)
+            if writer is not None:
+                self._inject(nid, seq, writer)
+        elif t == "controlAck":
+            self._append("ack_file", "control-acks.jsonl", raw.decode())
         elif t == "bye":
             n["bye_msg"] = {k: msg[k] for k in ("lastSeq", "built", "sent",
                                                 "droppedDisconnected", "droppedBackpressure")}
@@ -206,7 +249,7 @@ class Sink:
                 self.port_stats[port]["bytes"] += len(raw)
                 raw = raw.rstrip(b"\r\n")
                 if raw:
-                    self.accept(port, raw)
+                    self.accept(port, raw, writer)
         except (ConnectionError, OSError):
             pass
         finally:
@@ -215,7 +258,9 @@ class Sink:
 
     def summary(self):
         tot = {k: sum(s[k] for s in self.port_stats.values())
-               for k in ("hello", "sample", "bye", "invalid", "connections")}
+               for k in ("hello", "sample", "bye", "controlAck", "invalid", "connections")}
+        tot["controls_sent"] = sum(n["controls_sent"] for n in self.nodes.values())
+        tot["controls_never_sent"] = sum(len(v) for v in self.controls.values())
         tot["distinct_imsis"] = sorted(self.imsis)
         tot["n_distinct_imsis"] = len(self.imsis)
         return {"schema": "ipc-null-sink-summary.v1", "validation": self.validation,
@@ -225,7 +270,11 @@ class Sink:
 
 
 async def main_async(args):
-    sink = Sink(parse_ports(args.ports), args.out, args.save_lines, args.schema)
+    controls = None
+    if args.controls:
+        with open(args.controls) as f:
+            controls = json.load(f)
+    sink = Sink(parse_ports(args.ports), args.out, args.save_lines, args.schema, controls)
     os.makedirs(args.out, exist_ok=True)
     servers = []
     for p in sink.ports:
@@ -243,8 +292,9 @@ async def main_async(args):
     for w in list(sink.writers):
         w.close()
     await asyncio.sleep(0.05)
-    for f in sink.line_files.values():
-        f.close()
+    for f in list(sink.line_files.values()) + [sink.sent_file, sink.ack_file]:
+        if f is not None:
+            f.close()
     tmp = os.path.join(args.out, "summary.json.tmp")
     with open(tmp, "w") as f:
         json.dump(sink.summary(), f, indent=2)
@@ -257,6 +307,7 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--save-lines", action="store_true")
     ap.add_argument("--schema", default=DEFAULT_SCHEMA)
+    ap.add_argument("--controls", help="JSON list of scripted controls (see the module doc)")
     args = ap.parse_args()
     try:
         asyncio.run(main_async(args))

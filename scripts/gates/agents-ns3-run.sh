@@ -27,16 +27,34 @@ iso_utc() { date -u -d "@${1%.*}" +%Y-%m-%dT%H:%M:%SZ; }
 ################################################################################
 # ns-3
 ################################################################################
+# ns3_build_at_pins: true when $M4_WORKDIR's sources are exactly the pins.conf
+# SHAs (a build at older pins must never be reused by a later gate).
+ns3_build_at_pins() {
+    local src="$M4_WORKDIR/ns-3"
+    [ "$(git -C "$src" rev-parse HEAD 2>/dev/null)" = "$NS3_SHA" ] &&
+        [ "$(git -C "$src/contrib/oran-interface" rev-parse HEAD 2>/dev/null)" = "$ORAN_INTERFACE_SHA" ]
+}
+
 agents_ns3_locate() {
     local lib="$M4_WORKDIR/ns-3/build/lib"
     NS3_BIN=$(find "$M4_WORKDIR/ns-3/build/scratch" -maxdepth 1 -type f -perm -u+x -name '*-scenario-zero-*' 2>/dev/null | head -n 1)
+    if [ -n "$NS3_BIN" ] && ! ns3_build_at_pins; then
+        log "ns-3 build under $M4_WORKDIR is not at the pins (ns-3 $NS3_SHA, oran-interface $ORAN_INTERFACE_SHA): rebuilding"
+        NS3_BIN=""
+    fi
     if [ -z "$NS3_BIN" ]; then
         log "ns-3 binary missing under $M4_WORKDIR: rebuilding with build-ns3.sh (bound 5400s)"
         timeout --kill-after=60 5400 bash "$HARNESS_DIR/scripts/build-ns3.sh" "$M4_WORKDIR" \
             >"$EVIDENCE_DIR/build-ns3.stdout" 2>"$EVIDENCE_DIR/build-ns3.stderr" </dev/null || return 1
         NS3_BIN=$(tail -n 1 "$EVIDENCE_DIR/build-ns3.stdout")
     fi
-    [ -x "$NS3_BIN" ] || return 1
+    [ -x "$NS3_BIN" ] && ns3_build_at_pins || return 1
+    {
+        echo "binary $NS3_BIN"
+        echo "ns3 $(git -C "$M4_WORKDIR/ns-3" rev-parse HEAD)"
+        echo "oran-interface $(git -C "$M4_WORKDIR/ns-3/contrib/oran-interface" rev-parse HEAD)"
+        sha256sum "$NS3_BIN"
+    } >"$EVIDENCE_DIR/ns3-binary-provenance.txt"
     NS3_BIN_RE="^$(printf '%s' "$NS3_BIN" | sed 's/[][\.*^$+?(){}|/]/\\&/g')( |\$)"
     [ -d "$lib" ] && export LD_LIBRARY_PATH="$lib:${LD_LIBRARY_PATH:-}"
     echo "$NS3_BIN"

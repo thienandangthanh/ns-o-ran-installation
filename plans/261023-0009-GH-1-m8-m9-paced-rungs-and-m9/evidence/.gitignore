@@ -7,3 +7,7 @@
 *-full-trace*
 influx-dump*/
 *.lp.gz
+# ns-3 trace text files (X2Stats.txt, EnbSchedAllocTraces.txt, ... up to ~50 MB
+# each); ns3run-sha256.txt keeps their digests. IPC traces (*.jsonl) are kept.
+**/ns3run/*.txt
+**/ns3run/**/*.txt
