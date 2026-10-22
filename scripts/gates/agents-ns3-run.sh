@@ -164,10 +164,28 @@ influx_node_csv() {
     return "$rc"
 }
 
+# kpimon_logs_since <epoch> <out>: the kpimon pod's log from the epoch, across kubelet log rotation
+# (`kubectl logs` serves only the newest file, so a rotation inside a gate's window dropped lines).
+# Reads /var/log/pods as root (read-only, sudo -n like the other gate helpers); <out>.manifest.json
+# lists the files read and the coverage. Exit 3: the window start was rotated away.
 kpimon_logs_since() {
-    local pod
+    local pod uid node
     read -r pod _ < <(kpimon_pod_info) || return 1
-    kc logs -n "$KPIMON_NS" "$pod" --all-containers --since-time="$(iso_utc "$1")" >"$2" 2>&1
+    uid=$(kc get pod -n "$KPIMON_NS" "$pod" -o jsonpath='{.metadata.uid}') || return 1
+    node=$(kc get pod -n "$KPIMON_NS" "$pod" -o jsonpath='{.spec.nodeName}') || return 1
+    [ "$node" = "$(hostname)" ] || { echo "kpimon pod is on $node, not on this host"; return 1; }
+    # SC2024: the redirect is meant to run as the gate user, so the evidence file is not root-owned
+    # shellcheck disable=SC2024
+    sudo -n python3 -I "$HARNESS_DIR/scripts/gates/pod-log-window.py" "/var/log/pods/${KPIMON_NS}_${pod}_${uid}" \
+        --since "${1%.*}" --manifest "$2.manifest.json" >"$2"
+}
+
+# kpimon_log_window_summary <out>: files, rotations and coverage of the last kpimon_logs_since.
+kpimon_log_window_summary() {
+    python3 -I -c 'import json,sys
+m = json.load(open(sys.argv[1] + ".manifest.json"))
+fs = [e["file"] for es in m.get("containers", {}).values() for e in es]
+print("files %d, rotations in window %s, coverage %s, retries %s" % (len(fs), m.get("rotationsInWindow"), m.get("coverage"), m.get("retries")))' "$1"
 }
 
 ################################################################################

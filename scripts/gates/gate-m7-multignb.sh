@@ -182,7 +182,7 @@ agents_stats_all >"$e/final-agents.txt"
 for c in $(dk ps -aq --filter label=ns3e2.agent=1); do dk logs "$c" >"$e/agent-$(dk inspect --format '{{index .Config.Labels "ns3e2.nodeId"}}' "$c").log" 2>&1; done
 dk inspect $(dk ps -aq --filter label=ns3e2.agent=1) >"$e/agents-inspect.json" 2>&1
 e2mgr_states >"$e/final-e2mgr-states.json"
-kpimon_logs_since "$CAP_T0" "$e/m7-kpimon.log"
+kpimon_logs_since "$CAP_T0" "$e/m7-kpimon.log"; m7_log_window="$(kpimon_log_window_summary "$e/m7-kpimon.log" 2>&1)"
 counts=$(kpimon_log_counts "$e/m7-kpimon.log")
 check m7_influx_node_series_exported influx_node_csv m7 "$NS3_START_EPOCH"
 check m7_capture_stopped capture_stop m7
@@ -209,7 +209,7 @@ if [ -s "$e/m7-decode.json" ]; then
         [ "$wire" -gt 0 ] && [ "$total" -eq "$wire" ] && [ "$hclean" -eq "$total" ] && [ "$mclean" -eq "$total" ] && [ "$bad_sum" -eq 0 ] && [ "$skipped" -eq 0 ]
     }
     check m7_harness_every_header_and_message_clean_rc_ok_whole_pcap whole_pcap
-    record m7_kpimon_log_counts_informational true "wire $wire; kpimon log: $(echo "$counts" | tr '\n' ' ')"
+    record m7_kpimon_log_counts_informational true "wire $wire; kpimon log: $(echo "$counts" | tr '\n' ' '); window: $m7_log_window"
 else
     record m7_harness_outputs_missing false "no m7-decode.json"
 fi

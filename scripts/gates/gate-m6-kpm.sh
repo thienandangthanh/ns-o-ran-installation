@@ -83,7 +83,9 @@ log "draining ${DRAIN_S}s"; sleep "$DRAIN_S"
 agents_stats_last ns3-e2-agent-2 >"$e/agent-stats-final.json"
 KPIMON_RESTARTS1=""
 read -r _ _ _ KPIMON_RESTARTS1 < <(pod_info ricxapp kpimon-go) || true
-kpimon_logs_since "$CAP_T0" "$e/m6-kpimon.log"
+kpimon_window() { kpimon_logs_since "$CAP_T0" "$e/m6-kpimon.log" && kpimon_log_window_summary "$e/m6-kpimon.log"; }
+check m6_pod_log_reader_self_test python3 -I "$HARNESS_DIR/scripts/gates/pod-log-window.py" --self-test
+check m6_kpimon_log_window_complete_across_rotations kpimon_window
 counts=$(kpimon_log_counts "$e/m6-kpimon.log")
 check m6_influx_exported influx_export m6 "$INFLUX_FROM"
 dk inspect ns3-e2-agent-2 >"$e/agent-inspect.json" 2>&1

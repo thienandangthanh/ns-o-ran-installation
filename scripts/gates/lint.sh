@@ -25,5 +25,6 @@ ids=$(for s in gate-m5-agent-setup.sh gate-r0-rc-scripted.sh gate-s1-pacer-locks
     gate_id "$s"; done | paste -sd' ')
 echo "gate ids: $ids"
 [ "$ids" = "m5 r0 s1 q7" ] || { echo "gate-id regex broken"; rc=1; }
+python3 -I scripts/gates/pod-log-window.py --self-test || rc=1
 [ "$rc" = 0 ] && echo "lint: ok"
 exit "$rc"

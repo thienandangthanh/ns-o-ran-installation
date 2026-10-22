@@ -22,15 +22,15 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-23 05:10 KST (S1 run 2 PASS; V5: M5 PASS, M7 PASS, M6 red on the kpimon log count after a kubelet log rotation; Failure Protocol: kongming counsel pending)
+last-updated: 2026-10-23 07:05 KST (resumed; kpimon log reader fix per kongming 05:08; V5 re-run starting at the fix SHA)
 current phase: P2 (S1), in progress. P1 done. Kongming P1 exit: plans/reports/kongming-261023-0320-GH-1-p1-exit-go-no-go-p2.md
 VM: expected domstate=running, snapshot-current=f7-rerun-green (no snapshot in P2)
 snapshots: fresh-install, f7-rerun-green
 host /home free: 68 G (2026-10-23 03:15 KST); VM / 54 G free; floor 20 GB; M9 projection −13 GB (Stop A / Stop B)
 fork SHAs (pushed, pinned in scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, Testbed 4c8397d0 (P1 pins were d3bc4d96 / 2817f7e4 / 0fd195ed)
 harness SHA (pushed): see git log (P2 gate commit)
-in-flight background jobs: none on the VM
-next action: V5 first failure: M6 evidence/m6/20261022T193317Z failed only m6_kpimon_log_indications_equal_wire_zero_wmore (kpimon log 104 vs wire 199; kubelet rotated kpimon's log at 19:34:10 and kubectl logs reads only the current file; Influx and wire complete); apply kongming's counsel, commit, re-run V5; a second V5 failure is PAUSE T6
+in-flight background jobs: V5 M5 -> M6 -> M7 fresh through vm-exec.sh at the fix SHA (started ~07:10 KST, ~31 min)
+next action: check M5, M6 (new checks m6_pod_log_reader_self_test, m6_kpimon_log_window_complete_across_rotations, indications = wire = 199) and M7 all exit 0; any red check is PAUSE T6; then the P2 phase exit and a kongming go/no-go on P3; carry forward: M3 kpimon-log fix before P9/Stop B, one log window per rung run, T_ctl slack must not come from aborted steps (pacer.py slackS)
 hold (user, 2026-10-23 02:30 KST): another Claude session loads the host CPU; no timing calibration (P3 T_ctl of L, R2/R3 W, any latency/slack used as a gate value) until it is done; S1's bounds (T_gate + 5 s, T_ctl 30 s run-out) are contract values, its slack is recorded only
 ```
 On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`, `virsh -c qemu:///system snapshot-current --name ubuntu24.04` and `scripts/vm/vm-snapshot.sh list`, and compare them with this card. On a mismatch, print a PAUSE T3 line with the difference.
