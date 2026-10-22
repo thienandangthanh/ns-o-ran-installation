@@ -1,0 +1,31 @@
+[22:59:05] gate q8 start; evidence /home/uc/evidence/q8/20261022T225843Z; harness 5b137aa44d475266bc0dcd4b677134a6eb9c8ba5
+[22:59:05] PASS q8_args
+[22:59:05] ric watchdog started (pid 649137, threshold 600s)
+[22:59:06] PASS q8_nist_tree_at_testbed_sha_with_agent_dir
+[22:59:10] PASS q8_build_tools_present
+[22:59:10] PASS q8_sctp_module_loaded
+[22:59:10] PASS q8_ns3_binary_located_at_pins
+[22:59:10] PASS q8_pod_log_reader_self_test
+[22:59:12] PASS q8_grpcurl_fetched_and_checksum_verified
+[23:02:39] PASS q8_rc_installed_at_pin_and_ready
+[23:02:39] PASS q8_influx_bucket_reset
+[23:02:39] PASS q8_rc_ready_describe_and_12040_route
+[23:02:40] PASS q8_route_dump_start
+[23:02:40] PASS q8_capture_started_before_agents
+[23:03:14] PASS q8_bringup_agents_connected_set_exact
+[23:03:14] PASS q8_agent_container_ips_recorded
+[23:03:18] PASS q8_every_agent_ready_and_subscribed
+[23:03:19] PASS q8_pod_snapshot_before
+[23:03:19] PASS q8_route_dump_agents_subscribed
+[23:04:36] PASS q8_lockstep_run_with_two_rc_controls
+[23:04:37] PASS q8_pod_snapshot_after
+[23:04:37] PASS q8_route_dump_end
+[23:04:37] FAIL q8_restart_counts_zero: exit 1: restart count 8 for pod ricxapp-hw-go-c84579888-hfszg
+restart count 6 for pod ricxapp-kpimon-go-85dc5fdf8b-rtfvc
+[23:04:40] PASS q8_agents_stopped
+[23:04:41] PASS q8_capture_stopped
+[23:05:51] PASS q8_wire_extractor_joins_requests_answers_and_ledger
+[23:05:52] PASS q8_two_controls_one_ack_format1_one_failure_matching_ledger
+[23:05:52] PASS q8_kpimon_wrote_to_the_fresh_bucket
+verdict q8: FAIL failed=['q8_restart_counts_zero']
+[23:05:56] ric watchdog stopped (pid 649137)

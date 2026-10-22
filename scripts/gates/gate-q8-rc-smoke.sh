@@ -41,8 +41,7 @@ check q8_ns3_binary_located_at_pins agents_ns3_locate
 check q8_pod_log_reader_self_test python3 -I "$HARNESS_DIR/scripts/gates/pod-log-window.py" --self-test
 check q8_grpcurl_fetched_and_checksum_verified rc_grpcurl_fetch
 check q8_rc_installed_at_pin_and_ready rc_install
-check q8_influx_bucket_reset rc_influx_bucket_reset
-check q8_rc_ready_describe_and_12040_route rc_ready
+check q8_ric_reset_fresh_bucket_and_pods rc_ric_reset
 check q8_route_dump_start rc_route_dump start
 fact routeOwner12041Start "$(json_str "${ROUTE_OWNER_12041:-}")"
 

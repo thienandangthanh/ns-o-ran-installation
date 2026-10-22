@@ -120,20 +120,26 @@ rc_influx_bucket_reset() {
     [ -s "$EVIDENCE_DIR/influx-bucket-id.txt" ]
 }
 
+# rc_ric_reset: a fresh Influx bucket, then fresh rc, kpimon and hw-go pods (new pod names, restart
+# count 0), each waited for. The contract's "RestartCount = 0" then holds literally: the pods that stay
+# deployed carry restarts from earlier VM boots, so they are recreated per run. Agents are restarted by
+# their own bring-up (ctlId starts at 1 in every run). kpimon is back before the agents subscribe.
 rc_ric_reset() {
-    local pod ready name deadline
-    read -r pod _ < <(pod_info ricxapp xapp-rc-) || return 1
-    kc -n ricxapp delete pod "$pod" --wait=true >/dev/null || return 1
+    local x pod name ready deadline old
     rc_influx_bucket_reset || return 1
-    deadline=$(($(date +%s) + 300))
-    while [ "$(date +%s)" -lt "$deadline" ]; do
-        if read -r name ready _ < <(pod_info ricxapp xapp-rc-) && [ "$ready" = true ] && [ "$name" != "$pod" ]; then
-            sleep 10
-            rc_ready; return $?
-        fi
-        sleep 5
+    for x in xapp-rc- ricxapp-kpimon-go- ricxapp-hw-go-; do
+        read -r old _ < <(pod_info ricxapp "$x") || { echo "no pod $x"; return 1; }
+        kc -n ricxapp delete pod "$old" --wait=true >/dev/null || return 1
+        deadline=$(($(date +%s) + 300))
+        while :; do
+            if read -r name ready _ < <(pod_info ricxapp "$x") && [ "$ready" = true ] && [ "$name" != "$old" ]; then break; fi
+            [ "$(date +%s)" -lt "$deadline" ] || { echo "$x did not come back"; return 1; }
+            sleep 5
+        done
+        echo "$x: $old -> $name"
     done
-    echo "rc did not come back"; return 1
+    sleep 15
+    rc_ready
 }
 
 # rc_send_control <viaNodeId> <imsi> <targetKey10hex> [ackReq]: one control through rc (see rc-send.sh).

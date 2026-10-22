@@ -1,0 +1,660 @@
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/additional_scripts/install_xapp_ric_control.sh 
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/start_sudo_refresh.sh 
+sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+Sudo refresh process started with PID 649585
+Registering the Chart Museum URL...
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/register_chart_museum_url.sh 
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/run_chart_museum.sh 
+Starting container 'chartmuseum'...
+a0ca7b39ee5a898bb1328f5c319d0f21b365eb32393dbe1274bf001923d9538d
+Creating and modifying the configuration file xapp-descriptor/config_updated.json
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.28kB 0.0s done
+#1 WARN: FromAsCasing: 'as' and 'FROM' keywords' casing do not match (line 1)
+#1 DONE 0.1s
+
+#2 [internal] load metadata for nexus3.o-ran-sc.org:10002/o-ran-sc/bldr-ubuntu18-c-go:1.9.0
+#2 ...
+
+#3 [internal] load metadata for docker.io/library/ubuntu:18.04
+#3 DONE 2.0s
+
+#2 [internal] load metadata for nexus3.o-ran-sc.org:10002/o-ran-sc/bldr-ubuntu18-c-go:1.9.0
+#2 DONE 3.3s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.1s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [rcbuild  1/24] FROM nexus3.o-ran-sc.org:10002/o-ran-sc/bldr-ubuntu18-c-go:1.9.0@sha256:f9c41a15dc8d55b758a9ff3886426099e616b9a83ec5fe09ed9b07f1d7fab6cd
+#6 resolve nexus3.o-ran-sc.org:10002/o-ran-sc/bldr-ubuntu18-c-go:1.9.0@sha256:f9c41a15dc8d55b758a9ff3886426099e616b9a83ec5fe09ed9b07f1d7fab6cd 0.1s done
+#6 sha256:cdcad96bd1285535e6d19ea758ef1f9c16d7d79e61845e5cd76aef5185a6a90d 8.76kB / 8.76kB done
+#6 sha256:f9c41a15dc8d55b758a9ff3886426099e616b9a83ec5fe09ed9b07f1d7fab6cd 3.06kB / 3.06kB done
+#6 sha256:f22ccc0b8772d8e1bcb40f137b373686bc27427a70c0e41dd22b38016e09e7e0 0B / 26.71MB 0.1s
+#6 sha256:e80c964ece6a3edf0db1cfc72ae0e6f0699fb776bbfcc92b708fbb945b0b9547 0B / 162B 0.2s
+#6 sha256:3cf8fb62ba5ffb221a2edb2208741346eb4d2d99a174138e4afbb69ce1fd9966 0B / 850B 0.2s
+#6 sha256:2d489c440bae7a0ad69b4c46418838c2093a6ffe5d28c8999e6f60ee31c65355 0B / 144B 0.2s
+#6 sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec 0B / 71.95MB 0.3s
+#6 sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 0B / 120.16MB 0.3s
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 0B / 227.37MB 0.3s
+#6 ...
+
+#7 [stage-1 1/5] FROM docker.io/library/ubuntu:18.04@sha256:152dc042452c496007f07ca9127571cb9c29697f42acbfad72324b2bb2e43c98
+#7 resolve docker.io/library/ubuntu:18.04@sha256:152dc042452c496007f07ca9127571cb9c29697f42acbfad72324b2bb2e43c98 0.1s done
+#7 sha256:152dc042452c496007f07ca9127571cb9c29697f42acbfad72324b2bb2e43c98 1.33kB / 1.33kB done
+#7 sha256:dca176c9663a7ba4c1f0e710986f5a25e672842963d95b960191e2d9f7185ebe 424B / 424B done
+#7 sha256:f9a80a55f492e823bf5d51f1bd5f87ea3eed1cb31788686aa99a2fb61a27af6a 2.30kB / 2.30kB done
+#7 DONE 0.6s
+
+#5 [internal] load build context
+#5 transferring context: 4.05MB 0.4s done
+#5 DONE 0.6s
+
+#6 [rcbuild  1/24] FROM nexus3.o-ran-sc.org:10002/o-ran-sc/bldr-ubuntu18-c-go:1.9.0@sha256:f9c41a15dc8d55b758a9ff3886426099e616b9a83ec5fe09ed9b07f1d7fab6cd
+#6 sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b 0B / 126.73MB 0.5s
+#6 sha256:6cdcae3380c6eef4a6b0d59f6ddcc1df6c0dd8414da85067b82df062e966102c 0B / 37.93MB 0.5s
+#6 sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 0B / 123.71MB 0.5s
+#6 sha256:2d489c440bae7a0ad69b4c46418838c2093a6ffe5d28c8999e6f60ee31c65355 144B / 144B 1.3s done
+#6 sha256:6dbdb1c3e5fdc1fb01f94c9df7186bd321d10f00ca9e05c6e9fbaaeed7eb3570 0B / 42.84MB 1.3s
+#6 sha256:e80c964ece6a3edf0db1cfc72ae0e6f0699fb776bbfcc92b708fbb945b0b9547 162B / 162B 1.4s done
+#6 sha256:3cf8fb62ba5ffb221a2edb2208741346eb4d2d99a174138e4afbb69ce1fd9966 850B / 850B 1.4s done
+#6 sha256:d44308ed4b3eb5b7d7d582498af31150059a91afbe0c7aa1347c5685e158f055 0B / 24.34MB 1.5s
+#6 sha256:1710cd1faa0ec501b5c0bd2318172a7948d74afb988b77613cb50801c4d5a0d4 0B / 8.47MB 1.5s
+#6 sha256:f22ccc0b8772d8e1bcb40f137b373686bc27427a70c0e41dd22b38016e09e7e0 2.10MB / 26.71MB 2.9s
+#6 sha256:f22ccc0b8772d8e1bcb40f137b373686bc27427a70c0e41dd22b38016e09e7e0 7.34MB / 26.71MB 4.1s
+#6 sha256:6cdcae3380c6eef4a6b0d59f6ddcc1df6c0dd8414da85067b82df062e966102c 3.15MB / 37.93MB 4.2s
+#6 sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 6.29MB / 120.16MB 4.3s
+#6 sha256:6dbdb1c3e5fdc1fb01f94c9df7186bd321d10f00ca9e05c6e9fbaaeed7eb3570 3.15MB / 42.84MB 4.3s
+#6 sha256:1710cd1faa0ec501b5c0bd2318172a7948d74afb988b77613cb50801c4d5a0d4 1.05MB / 8.47MB 4.3s
+#6 sha256:f22ccc0b8772d8e1bcb40f137b373686bc27427a70c0e41dd22b38016e09e7e0 10.49MB / 26.71MB 4.5s
+#6 sha256:d44308ed4b3eb5b7d7d582498af31150059a91afbe0c7aa1347c5685e158f055 3.15MB / 24.34MB 4.5s
+#6 sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec 6.29MB / 71.95MB 4.7s
+#6 sha256:6cdcae3380c6eef4a6b0d59f6ddcc1df6c0dd8414da85067b82df062e966102c 6.29MB / 37.93MB 4.7s
+#6 sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 6.29MB / 123.71MB 4.7s
+#6 sha256:6dbdb1c3e5fdc1fb01f94c9df7186bd321d10f00ca9e05c6e9fbaaeed7eb3570 6.29MB / 42.84MB 4.7s
+#6 sha256:1710cd1faa0ec501b5c0bd2318172a7948d74afb988b77613cb50801c4d5a0d4 3.15MB / 8.47MB 4.7s
+#6 sha256:f22ccc0b8772d8e1bcb40f137b373686bc27427a70c0e41dd22b38016e09e7e0 13.63MB / 26.71MB 5.0s
+#6 sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b 7.34MB / 126.73MB 5.0s
+#6 sha256:6cdcae3380c6eef4a6b0d59f6ddcc1df6c0dd8414da85067b82df062e966102c 8.39MB / 37.93MB 5.0s
+#6 sha256:d44308ed4b3eb5b7d7d582498af31150059a91afbe0c7aa1347c5685e158f055 7.34MB / 24.34MB 5.0s
+#6 sha256:1710cd1faa0ec501b5c0bd2318172a7948d74afb988b77613cb50801c4d5a0d4 6.29MB / 8.47MB 5.1s
+#6 sha256:f22ccc0b8772d8e1bcb40f137b373686bc27427a70c0e41dd22b38016e09e7e0 17.83MB / 26.71MB 5.3s
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 11.53MB / 227.37MB 5.3s
+#6 sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 13.63MB / 120.16MB 5.5s
+#6 sha256:1710cd1faa0ec501b5c0bd2318172a7948d74afb988b77613cb50801c4d5a0d4 8.47MB / 8.47MB 5.5s
+#6 sha256:f22ccc0b8772d8e1bcb40f137b373686bc27427a70c0e41dd22b38016e09e7e0 20.97MB / 26.71MB 5.8s
+#6 sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec 10.49MB / 71.95MB 5.8s
+#6 sha256:6cdcae3380c6eef4a6b0d59f6ddcc1df6c0dd8414da85067b82df062e966102c 11.53MB / 37.93MB 5.8s
+#6 sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 12.58MB / 123.71MB 5.8s
+#6 sha256:6dbdb1c3e5fdc1fb01f94c9df7186bd321d10f00ca9e05c6e9fbaaeed7eb3570 10.49MB / 42.84MB 5.8s
+#6 sha256:d44308ed4b3eb5b7d7d582498af31150059a91afbe0c7aa1347c5685e158f055 9.44MB / 24.34MB 5.8s
+#6 sha256:1710cd1faa0ec501b5c0bd2318172a7948d74afb988b77613cb50801c4d5a0d4 8.47MB / 8.47MB 5.6s done
+#6 sha256:6cdcae3380c6eef4a6b0d59f6ddcc1df6c0dd8414da85067b82df062e966102c 13.63MB / 37.93MB 6.0s
+#6 sha256:d44308ed4b3eb5b7d7d582498af31150059a91afbe0c7aa1347c5685e158f055 11.53MB / 24.34MB 6.0s
+#6 sha256:f22ccc0b8772d8e1bcb40f137b373686bc27427a70c0e41dd22b38016e09e7e0 25.17MB / 26.71MB 6.2s
+#6 sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec 14.68MB / 71.95MB 6.2s
+#6 sha256:6cdcae3380c6eef4a6b0d59f6ddcc1df6c0dd8414da85067b82df062e966102c 17.83MB / 37.93MB 6.2s
+#6 sha256:6dbdb1c3e5fdc1fb01f94c9df7186bd321d10f00ca9e05c6e9fbaaeed7eb3570 14.68MB / 42.84MB 6.2s
+#6 sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 19.92MB / 120.16MB 6.3s
+#6 sha256:d44308ed4b3eb5b7d7d582498af31150059a91afbe0c7aa1347c5685e158f055 15.73MB / 24.34MB 6.3s
+#6 sha256:f22ccc0b8772d8e1bcb40f137b373686bc27427a70c0e41dd22b38016e09e7e0 26.71MB / 26.71MB 6.4s
+#6 sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b 15.76MB / 126.73MB 6.4s
+#6 sha256:f22ccc0b8772d8e1bcb40f137b373686bc27427a70c0e41dd22b38016e09e7e0 26.71MB / 26.71MB 7.2s done
+#6 sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec 18.87MB / 71.95MB 7.2s
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 23.07MB / 227.37MB 7.2s
+#6 extracting sha256:f22ccc0b8772d8e1bcb40f137b373686bc27427a70c0e41dd22b38016e09e7e0 0.1s
+#6 sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 18.87MB / 123.71MB 7.3s
+#6 sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec 23.07MB / 71.95MB 7.5s
+#6 sha256:6cdcae3380c6eef4a6b0d59f6ddcc1df6c0dd8414da85067b82df062e966102c 20.97MB / 37.93MB 7.5s
+#6 sha256:6dbdb1c3e5fdc1fb01f94c9df7186bd321d10f00ca9e05c6e9fbaaeed7eb3570 18.87MB / 42.84MB 7.5s
+#6 sha256:d44308ed4b3eb5b7d7d582498af31150059a91afbe0c7aa1347c5685e158f055 18.87MB / 24.34MB 7.5s
+#6 sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b 23.07MB / 126.73MB 7.7s
+#6 sha256:6cdcae3380c6eef4a6b0d59f6ddcc1df6c0dd8414da85067b82df062e966102c 23.07MB / 37.93MB 7.7s
+#6 sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 26.21MB / 120.16MB 7.9s
+#6 sha256:6dbdb1c3e5fdc1fb01f94c9df7186bd321d10f00ca9e05c6e9fbaaeed7eb3570 22.02MB / 42.84MB 7.9s
+#6 sha256:d44308ed4b3eb5b7d7d582498af31150059a91afbe0c7aa1347c5685e158f055 20.97MB / 24.34MB 7.9s
+#6 extracting sha256:f22ccc0b8772d8e1bcb40f137b373686bc27427a70c0e41dd22b38016e09e7e0 0.6s done
+#6 extracting sha256:3cf8fb62ba5ffb221a2edb2208741346eb4d2d99a174138e4afbb69ce1fd9966 done
+#6 sha256:6cdcae3380c6eef4a6b0d59f6ddcc1df6c0dd8414da85067b82df062e966102c 25.17MB / 37.93MB 8.1s
+#6 sha256:d44308ed4b3eb5b7d7d582498af31150059a91afbe0c7aa1347c5685e158f055 23.27MB / 24.34MB 8.1s
+#6 extracting sha256:e80c964ece6a3edf0db1cfc72ae0e6f0699fb776bbfcc92b708fbb945b0b9547 done
+#6 sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec 27.26MB / 71.95MB 8.2s
+#6 sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 25.17MB / 123.71MB 8.2s
+#6 sha256:d44308ed4b3eb5b7d7d582498af31150059a91afbe0c7aa1347c5685e158f055 24.34MB / 24.34MB 9.6s done
+#6 sha256:6cdcae3380c6eef4a6b0d59f6ddcc1df6c0dd8414da85067b82df062e966102c 27.26MB / 37.93MB 9.8s
+#6 sha256:6dbdb1c3e5fdc1fb01f94c9df7186bd321d10f00ca9e05c6e9fbaaeed7eb3570 24.80MB / 42.84MB 9.9s
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 34.60MB / 227.37MB 10.1s
+#6 sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b 30.41MB / 126.73MB 10.1s
+#6 sha256:6cdcae3380c6eef4a6b0d59f6ddcc1df6c0dd8414da85067b82df062e966102c 30.41MB / 37.93MB 10.1s
+#6 sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 31.46MB / 123.71MB 10.1s
+#6 sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec 31.46MB / 71.95MB 10.2s
+#6 sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 32.51MB / 120.16MB 10.2s
+#6 sha256:6cdcae3380c6eef4a6b0d59f6ddcc1df6c0dd8414da85067b82df062e966102c 32.51MB / 37.93MB 10.2s
+#6 sha256:6dbdb1c3e5fdc1fb01f94c9df7186bd321d10f00ca9e05c6e9fbaaeed7eb3570 27.26MB / 42.84MB 10.2s
+#6 sha256:6cdcae3380c6eef4a6b0d59f6ddcc1df6c0dd8414da85067b82df062e966102c 34.60MB / 37.93MB 10.4s
+#6 sha256:6dbdb1c3e5fdc1fb01f94c9df7186bd321d10f00ca9e05c6e9fbaaeed7eb3570 30.41MB / 42.84MB 10.4s
+#6 sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 38.80MB / 120.16MB 10.6s
+#6 sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b 40.89MB / 126.73MB 10.6s
+#6 sha256:6cdcae3380c6eef4a6b0d59f6ddcc1df6c0dd8414da85067b82df062e966102c 37.93MB / 37.93MB 10.6s
+#6 sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 38.87MB / 123.71MB 10.6s
+#6 sha256:6dbdb1c3e5fdc1fb01f94c9df7186bd321d10f00ca9e05c6e9fbaaeed7eb3570 33.66MB / 42.84MB 10.6s
+#6 sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec 36.19MB / 71.95MB 11.5s
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 46.33MB / 227.37MB 12.3s
+#6 sha256:6dbdb1c3e5fdc1fb01f94c9df7186bd321d10f00ca9e05c6e9fbaaeed7eb3570 36.04MB / 42.84MB 12.3s
+#6 sha256:6cdcae3380c6eef4a6b0d59f6ddcc1df6c0dd8414da85067b82df062e966102c 37.93MB / 37.93MB 12.1s done
+#6 sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec 41.94MB / 71.95MB 12.7s
+#6 sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 46.14MB / 120.16MB 12.7s
+#6 sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b 50.33MB / 126.73MB 12.7s
+#6 sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 48.23MB / 123.71MB 12.7s
+#6 sha256:6dbdb1c3e5fdc1fb01f94c9df7186bd321d10f00ca9e05c6e9fbaaeed7eb3570 40.89MB / 42.84MB 12.7s
+#6 sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec 46.14MB / 71.95MB 13.8s
+#6 sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 54.53MB / 123.71MB 13.8s
+#6 sha256:6dbdb1c3e5fdc1fb01f94c9df7186bd321d10f00ca9e05c6e9fbaaeed7eb3570 42.84MB / 42.84MB 13.8s done
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 58.72MB / 227.37MB 13.9s
+#6 sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec 50.33MB / 71.95MB 14.0s
+#6 sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 53.48MB / 120.16MB 14.0s
+#6 sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b 57.67MB / 126.73MB 14.0s
+#6 sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec 54.53MB / 71.95MB 14.2s
+#6 sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 63.96MB / 123.71MB 14.2s
+#6 sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec 59.77MB / 71.95MB 14.4s
+#6 sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 62.91MB / 120.16MB 14.4s
+#6 sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b 65.01MB / 126.73MB 14.4s
+#6 sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec 65.01MB / 71.95MB 14.6s
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 76.55MB / 227.37MB 14.6s
+#6 sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b 72.35MB / 126.73MB 14.6s
+#6 sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 72.35MB / 123.71MB 14.6s
+#6 sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 78.64MB / 123.71MB 15.3s
+#6 sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec 71.30MB / 71.95MB 15.4s
+#6 sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 69.21MB / 120.16MB 15.4s
+#6 sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b 79.69MB / 126.73MB 15.5s
+#6 sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec 71.95MB / 71.95MB 17.0s done
+#6 sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 85.98MB / 123.71MB 17.0s
+#6 sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 79.69MB / 120.16MB 17.2s
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 92.27MB / 227.37MB 17.2s
+#6 sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b 88.08MB / 126.73MB 17.2s
+#6 sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 95.42MB / 123.71MB 17.4s
+#6 sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 89.13MB / 120.16MB 17.7s
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 103.81MB / 227.37MB 17.7s
+#6 sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b 97.52MB / 126.73MB 17.7s
+#6 sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 102.76MB / 123.71MB 17.7s
+#6 sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 95.42MB / 120.16MB 18.4s
+#6 sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 109.05MB / 123.71MB 18.4s
+#6 sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b 105.91MB / 126.73MB 18.5s
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 116.39MB / 227.37MB 18.8s
+#6 sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 102.76MB / 120.16MB 19.2s
+#6 sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 118.49MB / 123.71MB 19.2s
+#6 sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b 113.25MB / 126.73MB 19.4s
+#6 sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 109.92MB / 120.16MB 19.8s
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 127.93MB / 227.37MB 19.9s
+#6 sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 116.39MB / 120.16MB 23.0s
+#6 sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b 121.56MB / 126.73MB 23.0s
+#6 sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 123.71MB / 123.71MB 22.9s done
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 140.51MB / 227.37MB 23.2s
+#6 sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 120.16MB / 120.16MB 28.0s done
+#6 sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b 126.73MB / 126.73MB 27.9s done
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 157.29MB / 227.37MB 28.2s
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 168.82MB / 227.37MB 29.4s
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 180.36MB / 227.37MB 30.5s
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 192.94MB / 227.37MB 31.6s
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 204.47MB / 227.37MB 32.8s
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 217.06MB / 227.37MB 33.9s
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 227.37MB / 227.37MB 39.0s
+#6 sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 227.37MB / 227.37MB 40.7s done
+#6 extracting sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 0.1s
+#6 extracting sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 5.1s
+#6 extracting sha256:d4194511dbdcaa8b4bfe8a395779a5b2b6bb59f5c8ba01e0544252d93632df3d 8.6s done
+#6 extracting sha256:2d489c440bae7a0ad69b4c46418838c2093a6ffe5d28c8999e6f60ee31c65355
+#6 extracting sha256:2d489c440bae7a0ad69b4c46418838c2093a6ffe5d28c8999e6f60ee31c65355 done
+#6 extracting sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b
+#6 extracting sha256:33ee3c77506bacdd07b62e2cbf90927011ff369570afee73c9a9f05a0901e20b 3.8s done
+#6 extracting sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2
+#6 extracting sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 5.8s
+#6 extracting sha256:7cdf3f1d17d0bb689ca6c429a9440a26a5b24d6bf7bcd566656f3c47fff772c2 7.8s done
+#6 extracting sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf
+#6 extracting sha256:cf153de296b0dcc6cbb9046bf9b7bce5a4e0cd6b5b767a3b9a2badd5f7446cbf 3.2s done
+#6 extracting sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec
+#6 extracting sha256:e1920709a3af0671bb3c78e12cb007099b6b9552ba6f0754466d69a16fa388ec 1.0s done
+#6 extracting sha256:6cdcae3380c6eef4a6b0d59f6ddcc1df6c0dd8414da85067b82df062e966102c
+#6 extracting sha256:6cdcae3380c6eef4a6b0d59f6ddcc1df6c0dd8414da85067b82df062e966102c 1.2s done
+#6 extracting sha256:6dbdb1c3e5fdc1fb01f94c9df7186bd321d10f00ca9e05c6e9fbaaeed7eb3570
+#6 extracting sha256:6dbdb1c3e5fdc1fb01f94c9df7186bd321d10f00ca9e05c6e9fbaaeed7eb3570 0.8s done
+#6 extracting sha256:1710cd1faa0ec501b5c0bd2318172a7948d74afb988b77613cb50801c4d5a0d4 0.1s
+#6 extracting sha256:1710cd1faa0ec501b5c0bd2318172a7948d74afb988b77613cb50801c4d5a0d4 0.1s done
+#6 extracting sha256:d44308ed4b3eb5b7d7d582498af31150059a91afbe0c7aa1347c5685e158f055
+#6 extracting sha256:d44308ed4b3eb5b7d7d582498af31150059a91afbe0c7aa1347c5685e158f055 1.8s done
+#6 DONE 94.4s
+
+#8 [rcbuild  2/24] RUN echo /opt/go/1.14/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/go/1.12/bin:/root/go/bin:/usr/local/bin
+#8 0.127 /opt/go/1.14/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/go/1.12/bin:/root/go/bin:/usr/local/bin
+#8 DONE 21.6s
+
+#9 [rcbuild  3/24] RUN go version
+#9 0.356 go version go1.14.4 linux/amd64
+#9 DONE 0.4s
+
+#10 [rcbuild  4/24] RUN wget --content-disposition https://packagecloud.io/o-ran-sc/release/packages/debian/stretch/rmr_4.8.3_amd64.deb/download.deb && dpkg -i rmr_4.8.3_amd64.deb
+#10 0.222 --2026-10-22 23:01:14--  https://packagecloud.io/o-ran-sc/release/packages/debian/stretch/rmr_4.8.3_amd64.deb/download.deb
+#10 0.224 Resolving packagecloud.io (packagecloud.io)... 52.52.223.74, 52.9.116.233, 2600:1f1c:2e5:6901:b6fe:4fb4:bf1d:d907, ...
+#10 0.232 Connecting to packagecloud.io (packagecloud.io)|52.52.223.74|:443... connected.
+#10 0.566 HTTP request sent, awaiting response... 302 Found
+#10 0.741 Location: https://d3fo0g5hm7lbuv.cloudfront.net/20756/10598/debian/package_files/3513836.deb?Expires=1792710974&Signature=czakTedVRuVtA8I~0axDRRb~omhFv3ptkhkNJNuaHWpsleYBz2FwR2JNiRzfjvOoQvB57irUGpmGIeZnfr7osGhkBwwjfSeRHHc12rt47GOdpS9qAlg6i-r0eMm-jXqTs1q63ZcEfgECx0e~1ZBfYP1fnZrlvQg1e8Wys2AgEzNah0MaeTa4SOCrLExpEq3QvR0xEoTEsB8FCVu9RIGwSaATYKU1OU3b4Ux6ssC12AL~vNdNVfMhqMrn~lp3q5QGkXu73DhzJDVYSUT07u3UFX9KhVyJFQHfcZbmCr9c4G9DF3HZvAsViDR2mXDYwXvLvFo6n9iKj87jjsTzOBOiCQ__&Key-Pair-Id=K1ZMSF1EKC3AZL [following]
+#10 0.741 --2026-10-22 23:01:15--  https://d3fo0g5hm7lbuv.cloudfront.net/20756/10598/debian/package_files/3513836.deb?Expires=1792710974&Signature=czakTedVRuVtA8I~0axDRRb~omhFv3ptkhkNJNuaHWpsleYBz2FwR2JNiRzfjvOoQvB57irUGpmGIeZnfr7osGhkBwwjfSeRHHc12rt47GOdpS9qAlg6i-r0eMm-jXqTs1q63ZcEfgECx0e~1ZBfYP1fnZrlvQg1e8Wys2AgEzNah0MaeTa4SOCrLExpEq3QvR0xEoTEsB8FCVu9RIGwSaATYKU1OU3b4Ux6ssC12AL~vNdNVfMhqMrn~lp3q5QGkXu73DhzJDVYSUT07u3UFX9KhVyJFQHfcZbmCr9c4G9DF3HZvAsViDR2mXDYwXvLvFo6n9iKj87jjsTzOBOiCQ__&Key-Pair-Id=K1ZMSF1EKC3AZL
+#10 0.741 Resolving d3fo0g5hm7lbuv.cloudfront.net (d3fo0g5hm7lbuv.cloudfront.net)... 3.168.176.18, 3.168.176.229, 3.168.176.209, ...
+#10 0.754 Connecting to d3fo0g5hm7lbuv.cloudfront.net (d3fo0g5hm7lbuv.cloudfront.net)|3.168.176.18|:443... connected.
+#10 0.763 HTTP request sent, awaiting response... 200 OK
+#10 0.774 Length: 241842 (236K) [application/x-debian-package]
+#10 0.774 Saving to: 'rmr_4.8.3_amd64.deb'
+#10 0.774 
+#10 0.774      0K .......... .......... .......... .......... .......... 21% 31.8M 0s
+#10 0.776     50K .......... .......... .......... .......... .......... 42% 22.3M 0s
+#10 0.778    100K .......... .......... .......... .......... .......... 63%  148M 0s
+#10 0.778    150K .......... .......... .......... .......... .......... 84% 50.0M 0s
+#10 0.779    200K .......... .......... .......... ......               100% 60.6M=0.006s
+#10 0.780 
+#10 0.780 2026-10-22 23:01:15 (41.1 MB/s) - 'rmr_4.8.3_amd64.deb' saved [241842/241842]
+#10 0.780 
+#10 0.844 Selecting previously unselected package rmr.
+#10 0.856 (Reading database ... 24853 files and directories currently installed.)
+#10 0.856 Preparing to unpack rmr_4.8.3_amd64.deb ...
+#10 0.889 Unpacking rmr (4.8.3) ...
+#10 0.963 Setting up rmr (4.8.3) ...
+#10 DONE 1.3s
+
+#11 [rcbuild  5/24] RUN wget --content-disposition https://packagecloud.io/o-ran-sc/release/packages/debian/stretch/rmr-dev_4.8.3_amd64.deb/download.deb && dpkg -i rmr-dev_4.8.3_amd64.deb
+#11 0.161 --2026-10-22 23:01:15--  https://packagecloud.io/o-ran-sc/release/packages/debian/stretch/rmr-dev_4.8.3_amd64.deb/download.deb
+#11 0.161 Resolving packagecloud.io (packagecloud.io)... 52.52.223.74, 52.9.116.233, 2600:1f1c:2e5:6901:b6fe:4fb4:bf1d:d907, ...
+#11 0.162 Connecting to packagecloud.io (packagecloud.io)|52.52.223.74|:443... connected.
+#11 0.446 HTTP request sent, awaiting response... 302 Found
+#11 0.625 Location: https://d3fo0g5hm7lbuv.cloudfront.net/20756/10598/debian/package_files/3513835.deb?Expires=1792710976&Signature=JBK493B~Th36fhWIZzElvQO2BdTz6DB-v9q1nEhtC5qfYEM1-ExX-fqY-VVt5i5X9QO-xHzpmHuGjYG6OuI3yg~G1u~IOg09vaVrIsa1wsSsdBVsKBhYzQepS3d58FYKdzcfNBoZB3Zmp0KNAGOQeJBc4c5pzRATsRNLAETvopkvrBsTBtQzdM3CpKdrekyus8fa36iNt2n6UuLnwgDMJ12OWUFrS-Of30Qe55VEmTUReJDcLx9b0I94T0D-TAdSYmeBhM9A0-ySN-fP6G03sacTavu-8Sf8tHoySL2g5BGncJCfEmCqwsEnJHz3intA-m0NZptUqry~X9JHd~CBlw__&Key-Pair-Id=K1ZMSF1EKC3AZL [following]
+#11 0.625 --2026-10-22 23:01:16--  https://d3fo0g5hm7lbuv.cloudfront.net/20756/10598/debian/package_files/3513835.deb?Expires=1792710976&Signature=JBK493B~Th36fhWIZzElvQO2BdTz6DB-v9q1nEhtC5qfYEM1-ExX-fqY-VVt5i5X9QO-xHzpmHuGjYG6OuI3yg~G1u~IOg09vaVrIsa1wsSsdBVsKBhYzQepS3d58FYKdzcfNBoZB3Zmp0KNAGOQeJBc4c5pzRATsRNLAETvopkvrBsTBtQzdM3CpKdrekyus8fa36iNt2n6UuLnwgDMJ12OWUFrS-Of30Qe55VEmTUReJDcLx9b0I94T0D-TAdSYmeBhM9A0-ySN-fP6G03sacTavu-8Sf8tHoySL2g5BGncJCfEmCqwsEnJHz3intA-m0NZptUqry~X9JHd~CBlw__&Key-Pair-Id=K1ZMSF1EKC3AZL
+#11 0.625 Resolving d3fo0g5hm7lbuv.cloudfront.net (d3fo0g5hm7lbuv.cloudfront.net)... 3.168.176.18, 3.168.176.229, 3.168.176.209, ...
+#11 0.626 Connecting to d3fo0g5hm7lbuv.cloudfront.net (d3fo0g5hm7lbuv.cloudfront.net)|3.168.176.18|:443... connected.
+#11 0.634 HTTP request sent, awaiting response... 200 OK
+#11 0.642 Length: 125752 (123K) [application/x-debian-package]
+#11 0.642 Saving to: 'rmr-dev_4.8.3_amd64.deb'
+#11 0.642 
+#11 0.642      0K .......... .......... .......... .......... .......... 40% 19.8M 0s
+#11 0.645     50K .......... .......... .......... .......... .......... 81% 39.9M 0s
+#11 0.646    100K .......... .......... ..                              100%  489M=0.004s
+#11 0.646 
+#11 0.646 2026-10-22 23:01:16 (32.1 MB/s) - 'rmr-dev_4.8.3_amd64.deb' saved [125752/125752]
+#11 0.646 
+#11 0.695 Selecting previously unselected package rmr-dev.
+#11 0.703 (Reading database ... 24861 files and directories currently installed.)
+#11 0.703 Preparing to unpack rmr-dev_4.8.3_amd64.deb ...
+#11 0.714 Unpacking rmr-dev (4.8.3) ...
+#11 0.785 Setting up rmr-dev (4.8.3) ...
+#11 DONE 0.9s
+
+#12 [rcbuild  6/24] RUN rm -f rmr_4.8.3_amd64.deb rmr-dev_4.8.3_amd64.deb
+#12 DONE 0.2s
+
+#13 [rcbuild  7/24] WORKDIR /go/src/gerrit.o-ran-sc.org/r/ric-plt
+#13 DONE 0.3s
+
+#14 [rcbuild  8/24] RUN git clone -b v0.8.3 "https://gerrit.o-ran-sc.org/r/ric-plt/xapp-frame"
+#14 0.159 Cloning into 'xapp-frame'...
+#14 2.021 Note: checking out '1f555883dfe854ff50b26a2e677278360283d88a'.
+#14 2.021 
+#14 2.021 You are in 'detached HEAD' state. You can look around, make experimental
+#14 2.021 changes and commit them, and you can discard any commits you make in this
+#14 2.021 state without impacting any branches by performing another checkout.
+#14 2.021 
+#14 2.021 If you want to create a new branch to retain commits you create, you may
+#14 2.021 do so (now or later) by using -b with the checkout command again. Example:
+#14 2.021 
+#14 2.021   git checkout -b <new-branch-name>
+#14 2.021 
+#14 DONE 2.1s
+
+#15 [rcbuild  9/24] RUN cd xapp-frame &&     GO111MODULE=on go mod vendor -v &&     cp -r vendor/* /go/src/ &&     rm -rf vendor
+#15 3.963 go: downloading github.com/go-openapi/runtime v0.19.4
+#15 3.963 go: downloading github.com/go-openapi/errors v0.19.3
+#15 3.963 go: downloading github.com/go-openapi/loads v0.19.4
+#15 3.964 go: downloading gerrit.o-ran-sc.org/r/ric-plt/nodeb-rnib.git/reader v1.0.35
+#15 3.965 go: downloading gerrit.o-ran-sc.org/r/ric-plt/alarm-go.git/alarm v0.5.0
+#15 3.967 go: downloading github.com/jessevdk/go-flags v1.4.0
+#15 3.973 go: downloading golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297
+#15 4.079 go: downloading gerrit.o-ran-sc.org/r/com/golog.git v0.0.2
+#15 4.119 go: downloading github.com/stretchr/testify v1.5.1
+#15 4.147 go: downloading github.com/spf13/viper v1.4.0
+#15 4.231 go: downloading github.com/prometheus/client_golang v0.9.3
+#15 4.304 go: downloading github.com/fsnotify/fsnotify v1.4.7
+#15 4.323 go: downloading github.com/go-openapi/swag v0.19.7
+#15 4.329 go: downloading github.com/magiconair/properties v1.8.0
+#15 4.329 go: downloading github.com/pelletier/go-toml v1.2.0
+#15 4.340 go: downloading github.com/spf13/jwalterweatherman v1.0.0
+#15 4.340 go: downloading github.com/hashicorp/hcl v1.0.0
+#15 4.342 go: downloading k8s.io/utils v0.0.0-20201110183641-67b214c5f920
+#15 4.482 go: downloading gerrit.o-ran-sc.org/r/ric-plt/nodeb-rnib.git/entities v1.0.35
+#15 4.508 go: downloading github.com/golang/protobuf v1.3.4
+#15 4.509 go: downloading golang.org/x/sys v0.0.0-20190616124812-15dcb6c0061f
+#15 4.510 go: downloading github.com/prometheus/common v0.4.0
+#15 4.510 go: downloading github.com/stretchr/objx v0.2.0
+#15 4.511 go: downloading github.com/go-openapi/analysis v0.19.5
+#15 4.516 go: downloading github.com/gorilla/mux v1.7.1
+#15 4.530 go: downloading github.com/davecgh/go-spew v1.1.1
+#15 4.579 go: downloading github.com/go-openapi/strfmt v0.19.4
+#15 4.593 go: downloading github.com/spf13/pflag v1.0.3
+#15 4.685 go: downloading github.com/docker/go-units v0.4.0
+#15 4.695 go: downloading github.com/spf13/cast v1.3.0
+#15 4.695 go: downloading github.com/mailru/easyjson v0.7.0
+#15 4.712 go: downloading go.mongodb.org/mongo-driver v1.1.2
+#15 4.731 go: downloading github.com/mitchellh/mapstructure v1.1.2
+#15 4.783 go: downloading github.com/prometheus/client_model v0.0.0-20190129233127-fd36f4220a90
+#15 4.811 go: downloading github.com/matttproud/golang_protobuf_extensions v1.0.1
+#15 4.824 go: downloading gerrit.o-ran-sc.org/r/ric-plt/nodeb-rnib.git/common v1.0.35
+#15 4.917 go: downloading github.com/beorn7/perks v1.0.0
+#15 4.938 go: downloading github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a
+#15 4.944 go: downloading github.com/prometheus/procfs v0.0.0-20190507164030-5867b95ac084
+#15 4.945 go: downloading github.com/go-openapi/validate v0.19.6
+#15 4.947 go: downloading github.com/go-openapi/spec v0.19.3
+#15 4.984 go: downloading github.com/pmezard/go-difflib v1.0.0
+#15 5.016 go: downloading github.com/spf13/afero v1.2.2
+#15 5.024 go: downloading gerrit.o-ran-sc.org/r/ric-plt/sdlgo.git v0.5.2
+#15 5.046 go: downloading github.com/go-openapi/jsonpointer v0.19.3
+#15 5.088 go: downloading gopkg.in/yaml.v2 v2.2.4
+#15 5.111 go: downloading github.com/go-openapi/jsonreference v0.19.3
+#15 5.286 go: downloading github.com/PuerkitoBio/purell v1.1.1
+#15 5.292 go: downloading github.com/go-redis/redis v6.15.3+incompatible
+#15 5.299 go: downloading golang.org/x/text v0.3.2
+#15 5.391 go: downloading github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578
+#15 5.406 go: downloading github.com/go-stack/stack v1.8.0
+#15 6.645 # gerrit.o-ran-sc.org/r/com/golog v0.0.2 => gerrit.o-ran-sc.org/r/com/golog.git v0.0.2
+#15 6.645 gerrit.o-ran-sc.org/r/com/golog
+#15 6.645 # gerrit.o-ran-sc.org/r/ric-plt/alarm-go.git/alarm v0.5.0 => gerrit.o-ran-sc.org/r/ric-plt/alarm-go.git/alarm v0.5.0
+#15 6.645 gerrit.o-ran-sc.org/r/ric-plt/alarm-go.git/alarm
+#15 6.646 # gerrit.o-ran-sc.org/r/ric-plt/nodeb-rnib.git/common v1.0.35 => gerrit.o-ran-sc.org/r/ric-plt/nodeb-rnib.git/common v1.0.35
+#15 6.646 gerrit.o-ran-sc.org/r/ric-plt/nodeb-rnib.git/common
+#15 6.646 # gerrit.o-ran-sc.org/r/ric-plt/nodeb-rnib.git/entities v1.0.35 => gerrit.o-ran-sc.org/r/ric-plt/nodeb-rnib.git/entities v1.0.35
+#15 6.646 gerrit.o-ran-sc.org/r/ric-plt/nodeb-rnib.git/entities
+#15 6.647 # gerrit.o-ran-sc.org/r/ric-plt/nodeb-rnib.git/reader v1.0.35 => gerrit.o-ran-sc.org/r/ric-plt/nodeb-rnib.git/reader v1.0.35
+#15 6.647 gerrit.o-ran-sc.org/r/ric-plt/nodeb-rnib.git/reader
+#15 6.647 # gerrit.o-ran-sc.org/r/ric-plt/sdlgo v0.5.0 => gerrit.o-ran-sc.org/r/ric-plt/sdlgo.git v0.5.2
+#15 6.647 gerrit.o-ran-sc.org/r/ric-plt/sdlgo
+#15 6.648 gerrit.o-ran-sc.org/r/ric-plt/sdlgo/internal/sdlgoredis
+#15 6.648 # github.com/PuerkitoBio/purell v1.1.1
+#15 6.648 github.com/PuerkitoBio/purell
+#15 6.649 # github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578
+#15 6.649 github.com/PuerkitoBio/urlesc
+#15 6.650 # github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a
+#15 6.650 github.com/asaskevich/govalidator
+#15 6.650 # github.com/beorn7/perks v1.0.0
+#15 6.650 github.com/beorn7/perks/quantile
+#15 6.651 # github.com/davecgh/go-spew v1.1.1
+#15 6.651 github.com/davecgh/go-spew/spew
+#15 6.652 # github.com/docker/go-units v0.4.0
+#15 6.652 github.com/docker/go-units
+#15 6.652 # github.com/fsnotify/fsnotify v1.4.7
+#15 6.652 github.com/fsnotify/fsnotify
+#15 6.653 # github.com/go-openapi/analysis v0.19.5
+#15 6.653 github.com/go-openapi/analysis
+#15 6.654 github.com/go-openapi/analysis/internal
+#15 6.655 # github.com/go-openapi/errors v0.19.3
+#15 6.655 github.com/go-openapi/errors
+#15 6.655 # github.com/go-openapi/jsonpointer v0.19.3
+#15 6.655 github.com/go-openapi/jsonpointer
+#15 6.655 # github.com/go-openapi/jsonreference v0.19.3
+#15 6.655 github.com/go-openapi/jsonreference
+#15 6.656 # github.com/go-openapi/loads v0.19.4
+#15 6.656 github.com/go-openapi/loads
+#15 6.656 # github.com/go-openapi/runtime v0.19.4
+#15 6.656 github.com/go-openapi/runtime
+#15 6.658 github.com/go-openapi/runtime/client
+#15 6.658 github.com/go-openapi/runtime/flagext
+#15 6.658 github.com/go-openapi/runtime/logger
+#15 6.658 github.com/go-openapi/runtime/middleware
+#15 6.659 github.com/go-openapi/runtime/middleware/denco
+#15 6.659 github.com/go-openapi/runtime/middleware/header
+#15 6.659 github.com/go-openapi/runtime/middleware/untyped
+#15 6.660 github.com/go-openapi/runtime/security
+#15 6.660 # github.com/go-openapi/spec v0.19.3
+#15 6.660 github.com/go-openapi/spec
+#15 6.661 # github.com/go-openapi/strfmt v0.19.4
+#15 6.661 github.com/go-openapi/strfmt
+#15 6.662 # github.com/go-openapi/swag v0.19.7
+#15 6.662 github.com/go-openapi/swag
+#15 6.663 # github.com/go-openapi/validate v0.19.6
+#15 6.663 github.com/go-openapi/validate
+#15 6.666 # github.com/go-redis/redis v6.15.3+incompatible
+#15 6.666 github.com/go-redis/redis
+#15 6.667 github.com/go-redis/redis/internal
+#15 6.667 github.com/go-redis/redis/internal/consistenthash
+#15 6.667 github.com/go-redis/redis/internal/hashtag
+#15 6.667 github.com/go-redis/redis/internal/pool
+#15 6.667 github.com/go-redis/redis/internal/proto
+#15 6.668 github.com/go-redis/redis/internal/util
+#15 6.668 # github.com/go-stack/stack v1.8.0
+#15 6.668 github.com/go-stack/stack
+#15 6.668 # github.com/golang/protobuf v1.3.4
+#15 6.668 github.com/golang/protobuf/proto
+#15 6.669 # github.com/gorilla/mux v1.7.1
+#15 6.669 github.com/gorilla/mux
+#15 6.670 # github.com/hashicorp/hcl v1.0.0
+#15 6.670 github.com/hashicorp/hcl
+#15 6.671 github.com/hashicorp/hcl/hcl/ast
+#15 6.671 github.com/hashicorp/hcl/hcl/parser
+#15 6.671 github.com/hashicorp/hcl/hcl/printer
+#15 6.671 github.com/hashicorp/hcl/hcl/scanner
+#15 6.671 github.com/hashicorp/hcl/hcl/strconv
+#15 6.671 github.com/hashicorp/hcl/hcl/token
+#15 6.672 github.com/hashicorp/hcl/json/parser
+#15 6.672 github.com/hashicorp/hcl/json/scanner
+#15 6.672 github.com/hashicorp/hcl/json/token
+#15 6.672 # github.com/jessevdk/go-flags v1.4.0
+#15 6.672 github.com/jessevdk/go-flags
+#15 6.674 # github.com/magiconair/properties v1.8.0
+#15 6.674 github.com/magiconair/properties
+#15 6.674 # github.com/mailru/easyjson v0.7.0
+#15 6.674 github.com/mailru/easyjson/buffer
+#15 6.674 github.com/mailru/easyjson/jlexer
+#15 6.675 github.com/mailru/easyjson/jwriter
+#15 6.675 # github.com/matttproud/golang_protobuf_extensions v1.0.1
+#15 6.675 github.com/matttproud/golang_protobuf_extensions/pbutil
+#15 6.675 # github.com/mitchellh/mapstructure v1.1.2
+#15 6.675 github.com/mitchellh/mapstructure
+#15 6.675 # github.com/pelletier/go-toml v1.2.0
+#15 6.675 github.com/pelletier/go-toml
+#15 6.677 # github.com/pmezard/go-difflib v1.0.0
+#15 6.677 github.com/pmezard/go-difflib/difflib
+#15 6.677 # github.com/prometheus/client_golang v0.9.3
+#15 6.677 github.com/prometheus/client_golang/prometheus
+#15 6.678 github.com/prometheus/client_golang/prometheus/internal
+#15 6.678 github.com/prometheus/client_golang/prometheus/promauto
+#15 6.678 github.com/prometheus/client_golang/prometheus/promhttp
+#15 6.679 # github.com/prometheus/client_model v0.0.0-20190129233127-fd36f4220a90
+#15 6.679 github.com/prometheus/client_model/go
+#15 6.679 # github.com/prometheus/common v0.4.0
+#15 6.679 github.com/prometheus/common/expfmt
+#15 6.679 github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg
+#15 6.679 github.com/prometheus/common/model
+#15 6.680 # github.com/prometheus/procfs v0.0.0-20190507164030-5867b95ac084
+#15 6.680 github.com/prometheus/procfs
+#15 6.682 github.com/prometheus/procfs/internal/fs
+#15 6.684 # github.com/spf13/afero v1.2.2
+#15 6.684 github.com/spf13/afero
+#15 6.684 github.com/spf13/afero/mem
+#15 6.684 # github.com/spf13/cast v1.3.0
+#15 6.684 github.com/spf13/cast
+#15 6.684 # github.com/spf13/jwalterweatherman v1.0.0
+#15 6.684 github.com/spf13/jwalterweatherman
+#15 6.684 # github.com/spf13/pflag v1.0.3
+#15 6.684 github.com/spf13/pflag
+#15 6.686 # github.com/spf13/viper v1.4.0
+#15 6.686 github.com/spf13/viper
+#15 6.686 # github.com/stretchr/objx v0.2.0
+#15 6.686 github.com/stretchr/objx
+#15 6.687 # github.com/stretchr/testify v1.5.1
+#15 6.687 github.com/stretchr/testify/assert
+#15 6.687 github.com/stretchr/testify/mock
+#15 6.688 # go.mongodb.org/mongo-driver v1.1.2
+#15 6.688 go.mongodb.org/mongo-driver/bson
+#15 6.688 go.mongodb.org/mongo-driver/bson/bsoncodec
+#15 6.689 go.mongodb.org/mongo-driver/bson/bsonrw
+#15 6.690 go.mongodb.org/mongo-driver/bson/bsontype
+#15 6.690 go.mongodb.org/mongo-driver/bson/primitive
+#15 6.690 go.mongodb.org/mongo-driver/x/bsonx/bsoncore
+#15 6.691 # golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297
+#15 6.691 golang.org/x/net/idna
+#15 6.692 golang.org/x/net/netutil
+#15 6.692 # golang.org/x/sys v0.0.0-20190616124812-15dcb6c0061f
+#15 6.692 golang.org/x/sys/unix
+#15 6.758 # golang.org/x/text v0.3.2
+#15 6.758 golang.org/x/text/secure/bidirule
+#15 6.759 golang.org/x/text/transform
+#15 6.759 golang.org/x/text/unicode/bidi
+#15 6.760 golang.org/x/text/unicode/norm
+#15 6.761 golang.org/x/text/width
+#15 6.761 # gopkg.in/yaml.v2 v2.2.4
+#15 6.761 gopkg.in/yaml.v2
+#15 6.762 # k8s.io/utils v0.0.0-20201110183641-67b214c5f920
+#15 6.762 k8s.io/utils/inotify
+#15 DONE 9.2s
+
+#16 [rcbuild 10/24] WORKDIR /go/src/gerrit.o-ran-sc.org/r/ric-app/rc
+#16 DONE 0.2s
+
+#17 [rcbuild 11/24] COPY go.mod .
+#17 DONE 0.2s
+
+#18 [rcbuild 12/24] COPY go.sum .
+#18 DONE 0.2s
+
+#19 [rcbuild 13/24] COPY cmd cmd
+#19 DONE 0.1s
+
+#20 [rcbuild 14/24] COPY control control
+#20 DONE 0.2s
+
+#21 [rcbuild 15/24] COPY e2ap e2ap
+#21 DONE 0.3s
+
+#22 [rcbuild 16/24] COPY e2sm e2sm
+#22 DONE 0.3s
+
+#23 [rcbuild 17/24] COPY protocol protocol
+#23 DONE 0.2s
+
+#24 [rcbuild 18/24] COPY xapp-descriptor xapp-descriptor
+#24 DONE 0.2s
+
+#25 [rcbuild 19/24] RUN ls
+#25 0.172 cmd
+#25 0.172 control
+#25 0.172 e2ap
+#25 0.172 e2sm
+#25 0.172 go.mod
+#25 0.172 go.sum
+#25 0.172 protocol
+#25 0.172 xapp-descriptor
+#25 DONE 0.2s
+
+#26 [rcbuild 20/24] RUN go get golang.org/x/net@v0.0.0-20210614182718-04defd469f4e
+#26 1.906 go: downloading golang.org/x/net v0.0.0-20210614182718-04defd469f4e
+#26 DONE 2.6s
+
+#27 [rcbuild 21/24] RUN go get google.golang.org/grpc@v1.39.0
+#27 0.336 go: downloading google.golang.org/grpc v1.39.0
+#27 0.920 go: downloading google.golang.org/protobuf v1.28.0
+#27 0.920 go: downloading github.com/golang/protobuf v1.5.2
+#27 0.924 go: downloading golang.org/x/sys v0.0.0-20210423082822-04245dca01da
+#27 0.924 go: downloading google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013
+#27 0.933 go: downloading golang.org/x/text v0.3.6
+#27 DONE 9.3s
+
+#28 [rcbuild 22/24] RUN cd e2ap &&     gcc -c -fPIC -Iheaders/ lib/*.c wrapper.c &&     gcc *.o -shared -o libe2apwrapper.so &&     cp libe2apwrapper.so /usr/local/lib/ &&     mkdir /usr/local/include/e2ap &&     cp wrapper.h headers/*.h /usr/local/include/e2ap &&     ldconfig
+#28 DONE 4.1s
+
+#29 [rcbuild 23/24] RUN cd e2sm &&     gcc -c -fPIC -Iheaders/ lib/*.c wrapper.c &&     gcc *.o -shared -o libe2smwrapper.so &&     cp libe2smwrapper.so /usr/local/lib/ &&     mkdir /usr/local/include/e2sm &&     cp wrapper.h headers/*.h /usr/local/include/e2sm &&     ldconfig
+#29 4.221 lib/REAL.c:835:1: warning: 'no_sanitize' attribute directive ignored [-Wattributes]
+#29 4.221  asn_double2float(double d, float *outcome) {
+#29 4.221  ^~~~~~~~~~~~~~~~
+#29 DONE 6.2s
+
+#30 [rcbuild 24/24] RUN go build ./cmd/rc.go && pwd && ls -lat
+#30 0.208 go: found gerrit.o-ran-sc.org/r/ric-app/rc/control in gerrit.o-ran-sc.org/r/ric-app/rc/control v0.0.0-00010101000000-000000000000
+#30 0.214 go: downloading gerrit.o-ran-sc.org/r/ric-plt/xapp-frame.git v0.8.3
+#30 0.816 go: downloading github.com/fsnotify/fsnotify v1.4.9
+#30 0.816 go: downloading gerrit.o-ran-sc.org/r/ric-plt/sdlgo.git v0.7.0
+#30 0.818 go: downloading github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4
+#30 0.820 go: downloading k8s.io/utils v0.0.0-20210629042839-4a2b36d8d73f
+#30 0.820 go: downloading gopkg.in/yaml.v2 v2.3.0
+#30 1.159 go: downloading github.com/go-redis/redis v6.15.9+incompatible
+#30 1.934 go: found gerrit.o-ran-sc.org/r/ric-app/rc/protocol/grpc/ricmsgcommrpc/rc in gerrit.o-ran-sc.org/r/ric-app/rc/protocol/grpc/ricmsgcommrpc/rc v0.0.0-00010101000000-000000000000
+#30 13.27 /go/src/gerrit.o-ran-sc.org/r/ric-app/rc
+#30 13.27 total 25380
+#30 13.27 drwxr-xr-x 1 root root     4096 Oct 22 23:02 .
+#30 13.27 -rwxr-xr-x 1 root root 25878256 Oct 22 23:02 rc
+#30 13.27 -rw-r--r-- 1 root root     1573 Oct 22 23:01 go.mod
+#30 13.27 -rw-r--r-- 1 root root    38618 Oct 22 23:01 go.sum
+#30 13.27 drwxr-xr-x 1 root root    20480 Oct 22 23:01 e2sm
+#30 13.27 drwxr-xr-x 1 root root    12288 Oct 22 23:01 e2ap
+#30 13.27 drwxr-xr-x 1 root root     4096 Oct 22 23:01 ..
+#30 13.27 drwxr-xr-x 2 root root     4096 Oct 22 22:59 xapp-descriptor
+#30 13.27 drwxr-xr-x 3 root root     4096 Oct 21 21:42 protocol
+#30 13.27 drwxr-xr-x 2 root root     4096 Oct 21 21:42 cmd
+#30 13.27 drwxr-xr-x 2 root root     4096 Oct 21 21:42 control
+#30 DONE 14.8s
+
+#31 [stage-1 2/5] COPY --from=rcbuild /usr/local/lib /usr/local/lib
+#31 DONE 0.2s
+
+#32 [stage-1 3/5] RUN ldconfig
+#32 DONE 0.3s
+
+#33 [stage-1 4/5] WORKDIR /go/src/gerrit.o-ran-sc.org/r/ric-app/rc
+#33 DONE 0.2s
+
+#34 [stage-1 5/5] COPY --from=rcbuild /go/src/gerrit.o-ran-sc.org/r/ric-app/rc/rc .
+#34 DONE 0.7s
+
+#35 exporting to image
+#35 exporting layers
+#35 exporting layers 0.3s done
+#35 writing image sha256:9ab8064699c9265b972aed3e0d2cc67ea34e44f3349fbdf03f8466a31f8d45e1 0.0s done
+#35 naming to 127.0.0.1:80/rc:latest 0.0s done
+#35 DONE 0.4s
+
+ [33m7 warnings found (use docker --debug to expand):
+[0m - FromAsCasing: 'as' and 'FROM' keywords' casing do not match (line 1)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 4)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 7)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 8)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 9)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 62)
+ - JSONArgsRecommended: JSON arguments recommended for CMD to prevent unintended behavior related to OS signals (line 67)
+127.0.0.1:80/rc:latest                  	saved	
+application/vnd.oci.image.manifest.v1+json sha256:376a40c7cac9f758fc05e6c0aa6c1a39c7ce5ad6040661e6b4f0946b647e2470
+Importing	elapsed: 2.8 s	total:   0.0 B	(0.0 B/s)	
+Onboarding the RIC Control xApp (rc)...
+/home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/appmgr/xapp_orchestrater/dev/xapp_onboarder/venv/lib/python3.12/site-packages/xapp_onboarder/server/cli.py:21: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+httpGet: path: '{{ index .Values "readinessProbe" "httpGet" "path" | toJson }}' port: '{{ index .Values "readinessProbe" "httpGet" "port" | toJson }}' initialDelaySeconds: '{{ index .Values "readinessProbe" "initialDelaySeconds" | toJson }}' periodSeconds: '{{ index .Values "readinessProbe" "periodSeconds" | toJson }}' httpGet: path: '{{ index .Values "livenessProbe" "httpGet" "path" | toJson }}' port: '{{ index .Values "livenessProbe" "httpGet" "port" | toJson }}' initialDelaySeconds: '{{ index .Values "livenessProbe" "initialDelaySeconds" | toJson }}' periodSeconds: '{{ index .Values "livenessProbe" "periodSeconds" | toJson }}' { "status": "Created" }
+Onboarding successful: status is 'Created'.
+Checking if namespace 'ricxapp' exists...
+Uninstalling application 'rc' if it exists...
+Application rc not found or already uninstalled.
+/home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/appmgr/xapp_orchestrater/dev/xapp_onboarder/venv/lib/python3.12/site-packages/xapp_onboarder/server/cli.py:21: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+Installing application 'rc'...
+/home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/appmgr/xapp_orchestrater/dev/xapp_onboarder/venv/lib/python3.12/site-packages/xapp_onboarder/server/cli.py:21: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+status: OK
+Application successfully deployed.
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/stop_sudo_refresh.sh 
+Sudo refresh process stopped or was not running.
+stty: 'standard input': Inappropriate ioctl for device
+
+
+################################################################################
+# Successfully installed RIC Control xApp (rc)                                 #
+################################################################################
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/stop_sudo_refresh.sh 
+No process found to stop.
+Sudo refresh process stopped or was not running.
