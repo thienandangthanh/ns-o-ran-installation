@@ -62,4 +62,4 @@ Source: `plans/reports/kongming-261023-0020-GH-1-m8-m9-plan-collect-only-review.
   3. Regenerate and commit the reference.
   - "Differs" means the fork pins plus the gate inputs that R3 reads: pacer, scenario, schedule and rung-config.
 - **K2 (step 4).** Use the corrected projection formula from P0.
-- **Snapshot rule (01:03 KST).** If the budget needs space, the run may delete `r0-green` and/or `r2-green` (only after their evidence is archived; each deletion logged with the space it freed), never `fresh-install`, `f7-rerun-green` or `r3-green`. A shortfall that this cannot cover is ruled at Stop B.
+- **Snapshot rule (01:03 KST).** If the budget needs space, the run may delete `r0-green` and/or `r2-green` (only after their evidence is archived; each deletion logged with the space it freed), never `fresh-install`, `f7-rerun-green` or `r3-green`. A shortfall that this cannot cover is ruled at Stop B: the Stop B report states the exact number of GB the user must free before P10 (user, 01:30 KST), and P10 starts only once the projection is ≥ 0.

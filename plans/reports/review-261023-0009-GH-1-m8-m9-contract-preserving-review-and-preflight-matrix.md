@@ -1,6 +1,6 @@
 # M8–M9 goal warmup: contract-preserving review and preflight matrix (2026-10-23 01:15 KST)
 
-**Outcome.** I classified all 27 findings of the collect-only kongming review (`kongming-261023-0020-GH-1-m8-m9-plan-collect-only-review.md`, Opus 5.5 xhigh) before any plan edit, and I did not use the default red-team apply. The user's rulings at 00:46–01:03 KST resolved the one blocker (K1) and the three items that needed a user decision (K2, K4, K11). I folded the 21 contract-preserving mitigations into the phase files as binding "Review amendments" blocks. **Five preflight items remain for the user before `/goal`.** Until they are done, the warmup state is **Blocked**, not Ready.
+**Outcome.** I classified all 27 findings of the collect-only kongming review (`kongming-261023-0020-GH-1-m8-m9-plan-collect-only-review.md`, Opus 5.5 xhigh) before any plan edit, and I did not use the default red-team apply. The user's rulings at 00:46–01:03 KST resolved the one blocker (K1) and the three items that needed a user decision (K2, K4, K11). I folded the 21 contract-preserving mitigations into the phase files as binding "Review amendments" blocks. **Update 01:30 KST: every blocking preflight row is cleared, and the warmup state is Ready.** The PDCP specs were added. The user removed the rules file, so the run uses auto mode as in M0–M7. The M9 disk shortfall is measured from P0 and freed by the user at Stop B. The locked inputs are committed (3183326), and a single VM owner is confirmed.
 
 ## 1. Classification
 
@@ -40,11 +40,11 @@ There is no open outcome-change request. The user approved the contract edits as
 
 | Phase | Requirement | Check method | Status | Owner / unblock action | Blocking? |
 |---|---|---|---|---|---|
-| all | ≥ 40 GB freed on `/home` outside the VM images (K2) | `df -h /home` | **missing** (75 G free now; target ≥ 115 G) | user frees space | yes |
-| P6 | 3GPP TS 38.323 and 3GPP TS 36.323 in Zotero with PDFs (K4) | zotero-mcp search | **missing** | user adds both | yes |
-| all | Permission rules match the plan's command forms (K3) | rule names in `.claude/settings.local.json` | **partial**: 23 allow and 2 deny rules exist, but the `virsh` rules are bare, and bare `virsh` resolves to `qemu:///session` | user edits rules (see "Rule edits" below) | yes |
-| all | Locked inputs committed and pushed (K22): the decision-record amendments, the scout, the plan dir, `goal-packet.md`, both review reports | `git status` | **missing** (1 modified, 4 untracked paths) | user approves the commit; the controller commits and pushes | yes |
-| all | Exactly one session owns the VM | user confirmation | unknown | user | yes |
+| P0–P9 / Stop B | Disk (K2): ≥ 20 GB floor at all times; the M9 shortfall freed at Stop B (user, 01:30) | `df -BG /home` | available (76 G free at 01:30); the shortfall is scheduled for Stop B | user frees the measured GB at Stop B | no (scheduled) |
+| P6 | 3GPP TS 38.323 and 3GPP TS 36.323 in Zotero with PDFs (K4) | zotero-mcp attachment paths | available (`MSNDDXJH` V19.1.0, `DZFZCTGR` V19.0.0) | — | no |
+| all | Permission mode (K3) | user statement (the classifier refuses Claude reading the settings path) | auto mode, no rules file (user removed it, 01:30), as in M0–M7; T8 on any refusal | — | no |
+| all | Locked inputs committed and pushed (K22) | `git log`, `git status` | available (3183326 pushed; the 01:30 updates are committed with this report) | — | no |
+| all | Exactly one session owns the VM | user confirmation | available (confirmed ~01:20) | — | no |
 | all | Claude Code ≥ 2.1.269; `disableAllHooks` unset; auto mode | `claude --version`; settings key names | available (2.1.308; unset; `defaultMode` auto) | — | no |
 | all | zotero-mcp reachable; E2SM-RC v03.00 `XRWZU3SS`, E2SM common v07.00 `QW6VJ83M`, E2SM-KPM v03.00 `F82PYZVK` (PDF), E2AP v03.00 `WEE5IEXF`, 3GPP TS 28.552 V20.2.0 `5SZUBP6M`, 3GPP TS 37.340 V18.7.0 `E6VYJPXJ` | attachment paths resolved, text read | available | — | no |
 | all | kongming on opus | this review ran | available (one rate-limit interruption, resumed) | — | no |
@@ -55,7 +55,7 @@ There is no open outcome-change request. The user approved the contract edits as
 | P0 | Host tools: grpcurl, docker (podman shim), python3, tshark, virsh, gh | `command -v` | available | — | no |
 | P7 | No deployed Influx token in the public trees | name/location checks only | available as baseline: the literal in `kpimon-go/control/control.go.patch:37` comes from NIST's upstream `v1.8.0` tag commit (public placeholder); the P7 gate checks the deployed token by count | — | no |
 
-**Rule edits needed (K3).** Add allow rules for the exact forms the plan uses:
+**Rule edits (K3), superseded 01:30 KST.** The user removed the rules file instead of editing it. The list below is kept for the record. Original advice: add allow rules for the exact forms the plan uses:
 - `Bash(virsh -c qemu:///system domstate *)`, `…snapshot-current *`, `…snapshot-list *`, `…domblklist *`, `…dumpxml *`, `…snapshot-dumpxml *`;
 - `Bash(scripts/vm/host-disk-watchdog.sh *)`, `Bash(scripts/gates/lint.sh*)`, `Bash(python3 scripts/*)`, `Bash(tools/rc-decode/*)`, `Bash(docker build *)` / `Bash(podman build *)`, `Bash(gh repo view *)`, `Bash(gh auth status*)`.
 
@@ -67,4 +67,4 @@ Under the 01:03 snapshot rule, replace the deny `Bash(*vm-snapshot.sh delete*)` 
 
 ## Unresolved questions
 
-None open for the user beyond the five must-provide items above.
+None. Scheduled user action: free the measured M9 disk shortfall at Stop B.

@@ -1,6 +1,6 @@
 ---
 title: ns-O-RAN on the L-release RIC, M8–M9 (paced rungs R0=M8, R1, R2, R3, then M9 unattended from fresh-install)
-status: warmup (contract approved 2026-10-23 ~00:05 KST; edit to In scope 4 chosen 00:13 KST; Ready pending final summary)
+status: ready (goal-warmup 2026-10-23 01:30 KST; contract approved ~00:05, edits 00:13 and 01:03, final summary confirmed ~01:20)
 created: 2026-10-23
 contract: goal-packet.md in this directory (LOCKED, verbatim). Sources: plans/reports/brainstorm-261022-2105-GH-1-m8-m9-goal-warmup-route-contract.md §(a) as amended by plans/reports/kongming-261022-2105-GH-1-m8-m9-goal-warmup-route-advice-checkpoint.md §4 and the user's P4–P6 rulings
 advice: --advice (kongming always model: opus, xhigh; its counsel never counts as user approval)
@@ -121,7 +121,8 @@ Q1/D7 → P3, P4 (P8 records P1). Q2 → P3. N1 (gate on the wire) → all. N2, 
 - **Capture, NIST calls, bring-up, process hygiene:** unchanged from the M0–M7 plan (K3, K6, K10, K14 in `plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/plan.md`).
 - **RIC state is a measured precondition.** Each run: reset rc, the TS xApp, QP and a fresh Influx bucket; restart the TS xApp only after every agent is CONNECTED, then set the A1 threshold; dump rtmgr routes at start and end; record the 12041/12042 −1 owner in `verdict.json`; RestartCount = 0 for rc, TS xApp, QP, kpimon, hw-go and every agent. Bounded, logged retries only for bring-up preconditions, never for C1.
 - **Snapshots.** `scripts/vm/vm-snapshot.sh create <name> --need-gb <n>` only after the free-space check. Deletions only under the snapshot rule in the invariants card. `r3-green` must exist before P10 reverts.
-- **Disk.** Host free ≥ 20 GB at all times. Every phase exit updates the M9 projection. A negative projection is raised at Stop A (or earlier as T2).
+- **Disk.** Host free ≥ 20 GB at all times. Every phase exit updates the M9 projection. A negative projection is reported at Stop A and settled at Stop B, where the user frees the measured shortfall (user, 01:30 KST). T2 fires only when actual free space would cross the floor.
+- **Permissions.** Auto mode with no rules file, as in M0–M7 (user, 01:30 KST). A classifier refusal is T8.
 - **Background VM jobs** run through `vm-exec.sh` (detached unit, polled), each with a hard timeout.
 - **Standards.** Every new technical decision gets a ledger row (decision → document, version, section → Zotero key → read date), read through zotero-mcp, before its code lands. References: E2SM-RC v03.00 `XRWZU3SS`, E2SM common v07.00 `QW6VJ83M`, E2SM-KPM v03.00 `F82PYZVK`, E2AP v03.00 `WEE5IEXF`, 3GPP TS 28.552 V20.2.0 `5SZUBP6M`, 3GPP TS 36.423 `83VGITYK`/`M8YTSAQS`. A missing document is T4.
 - **Code delivery.** Branch `dev/l-release-nist180` on ns-3, oran-interface, the Testbed (agent, installer) and the QP fork; WIP pushes allowed. Gate runs clone at the `scripts/pins.conf` SHAs. Conventional commits, no AI references, never `chore`/`docs` for `.claude` changes, no bare `git stash`.
