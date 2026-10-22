@@ -22,7 +22,7 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-23 02:55 KST
+last-updated: 2026-10-23 02:20 KST
 current phase: P1, in progress (fork commits pushed: ns-3 786527b3 A + d3bc4d96 B, oran-interface 2817f7e4, Testbed 9e7d85f D + 0fd195e E; pins.conf bumped)
 VM: expected domstate=running, snapshot-current=f7-rerun-green
 snapshots: fresh-install, f7-rerun-green

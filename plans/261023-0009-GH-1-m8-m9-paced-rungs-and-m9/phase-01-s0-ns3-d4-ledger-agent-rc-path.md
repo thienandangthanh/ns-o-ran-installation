@@ -41,7 +41,10 @@ In scope 1:
 | Decision | Document, version, section | Zotero | Read |
 |---|---|---|---|
 | Agent-local reject causes | E2AP v03.00 §9.2.1 CauseRICrequest | `WEE5IEXF` | 2026-10-22 |
-| ACK carries ControlOutcome Format 1 | E2SM-RC v03.00 control outcome Format 1 (ranP-List `SIZE(0..)`) | `XRWZU3SS` | read in this phase |
+| ACK carries ControlOutcome Format 1 | E2SM-RC v03.00 §7.6.4.5 (style 3 uses Outcome Format 1), §9.2.1.8.1 (sequence 0..maxnoofRANOutcomeParameters = 255, so an empty list is valid) | `XRWZU3SS` | 2026-10-23 |
+| Accept only style 3 / action 1; target = RAN parameters 1 > 2 > 3 > 4 (NR CGI) | E2SM-RC v03.00 §7.6.4.1 (action 1 = Handover Control), §8.4.4.1 (IDs 1–4; NR CGI is an ELEMENT); rc carries it as 9 raw octets `00`+PLMN+key, not an NR CGI encoding (N5/P2) | `XRWZU3SS` | 2026-10-23 |
+| ACK/FAILURE IEs and criticalities; NoAck suppresses the ACK on success | E2AP v03.00 §9.1.1.9 (Request ID, RAN Function ID, Call Process ID, Control Outcome: reject), §9.1.1.10 (Cause: ignore), §8.2.4.2–8.2.4.3 | `WEE5IEXF` | 2026-10-23 |
+| Accepting RAN function 3 although the agents do not announce it in E2 Setup | E2AP v03.00 §8.2.4.3 says a function not announced gets a FAILURE; the design (decision record, erratum) accepts 3 and rejects others. Raised for the user at Stop A, not fixed here | `WEE5IEXF` | 2026-10-23 |
 | UE ID mapping AMF-UE-NGAP-ID → IMSI | E2SM common v07.00 §6.2.2.6 — **recorded deviation P4** | `QW6VJ83M` | 2026-10-22 |
 | E2 node type `gNB` for all agents | E2AP v03.00 §9.2.6 — **recorded deviation P5** | `WEE5IEXF` | 2026-10-22 |
 | Request part = 5 raw bytes | E2AP v03.00 §9.2.27; 3GPP TS 36.423 §9.1.2.31 — **recorded deviation N5/P2** | `WEE5IEXF`, `83VGITYK` | 2026-10-22 |

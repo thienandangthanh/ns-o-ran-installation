@@ -1,4 +1,4 @@
-# P1 V1 rule: free-run output unchanged by S0 (written 2026-10-23 02:45 KST, before any reference run)
+# P1 V1 rule: free-run output unchanged by S0 (written 2026-10-23 02:15 KST, before any reference run)
 
 Applies to P1 V1 (phase file and review amendment K19) and to the free-run part of `scripts/gates/gate-s0-free-control.sh`. Written down before the reference runs so the comparison cannot be narrowed after a result (kongming P0 exit, must-do 4).
 
