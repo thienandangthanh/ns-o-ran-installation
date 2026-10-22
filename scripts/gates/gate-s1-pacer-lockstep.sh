@@ -101,11 +101,26 @@ _wait_ready() {
     echo "$2 did not start: $(cat "$1")"; return 1
 }
 
-# _pacer_finish <pid>: waits (bounded) for the pacer, which exits once ns-3 ends; prints its exit code.
+# _pacer_finish <pid>: waits (bounded) for the pacer, which exits once ns-3 ends, and sets
+# PACER_RC to its exit status. Call it in the shell that started the pacer, never inside
+# $(...): that subshell is not the pacer's parent, and when the pacer is still running at
+# the fork, `wait` there cannot see its status (bash 5.2: -1, bash 5.3: 127).
 _pacer_finish() {
     for _ in $(seq 150); do kill -0 "$1" 2>/dev/null || break; sleep 0.2; done
-    kill "$1" 2>/dev/null; wait "$1"; echo $?
+    kill "$1" 2>/dev/null; wait "$1"; PACER_RC=$?
 }
+
+# The exit-status read must hold when the pacer outlives ns-3 (an abort the pacer sent
+# itself): stand-ins in that order, on this VM's bash.
+pacer_exit_read_after_ns3_reaped() {
+    local fake ns rc
+    sh -c 'sleep 1; exit 3' & fake=$!
+    sh -c 'sleep 0.2; exit 5' & ns=$!
+    wait "$ns"; rc=$?; _pacer_finish "$fake"
+    echo "stand-in ns-3 $rc; stand-in pacer exiting after ns-3 is reaped read as $PACER_RC (want 3); bash $BASH_VERSION"
+    [ "$rc" = 5 ] && [ "$PACER_RC" = 3 ]
+}
+check s1_pacer_exit_read_when_pacer_outlives_ns3 pacer_exit_read_after_ns3_reaped
 
 # s1_run <label> <free|lockstep> <want-ns3-exit> [ns-3 args...]: one run with the null sink
 # (and, lock-step, the pacer, which must exit 0 after a clean run and 3 after an abort);
@@ -129,7 +144,7 @@ s1_run() {
     _wait_ready "$rd/sink.log" "null sink" || { kill "$sp" $pp; return 1; }
     ns3_start "$rd/ns3run" "${nargs[@]}" || { kill "$sp" $pp; return 1; }
     ns3_wait; rc=$NS3_RC
-    [ -z "$pp" ] || prc=$(_pacer_finish "$pp")
+    [ -z "$pp" ] || { _pacer_finish "$pp"; prc=$PACER_RC; }
     sleep 1; kill -TERM "$sp"; wait "$sp"
     echo "$rc" >"$rd/ns3-exit"
     if [ "$want" = 0 ]; then wantp=0; else wantp=3; fi
@@ -438,7 +453,7 @@ s1_agent_fault_run() {
     ns3_start "$rd/ns3run" "${CLI[@]}" "--simStartEpochMs=$EPOCH_MS" --e2AgentHost=127.0.0.1 --e2TraceDir="$rd/trace" \
         --e2Pacing=lockstep "--e2PacerPort=$PACER_PORT" "--e2GateTimeout=$T_GATE_S" || { kill "$pp"; return 1; }
     ns3_wait; rc=$NS3_RC
-    prc=$(_pacer_finish "$pp")
+    _pacer_finish "$pp"; prc=$PACER_RC
     echo "$rc" >"$rd/ns3-exit"
     echo "faultagent: ns-3 exit $rc (want 5); pacer exit $prc (want 3)"
     [ "$rc" = 5 ] && [ "$prc" = 3 ]

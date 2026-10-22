@@ -22,15 +22,15 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-23 03:52 KST (P2 started after kongming's P1-exit GO-with-must-do; must-do 1-6 done)
+last-updated: 2026-10-23 04:22 KST (S1 run 1 red on the harness's pacer exit read; fixed per kongming 04:10; S1 run 2 starting)
 current phase: P2 (S1), in progress. P1 done. Kongming P1 exit: plans/reports/kongming-261023-0320-GH-1-p1-exit-go-no-go-p2.md
 VM: expected domstate=running, snapshot-current=f7-rerun-green (no snapshot in P2)
 snapshots: fresh-install, f7-rerun-green
 host /home free: 68 G (2026-10-23 03:15 KST); VM / 54 G free; floor 20 GB; M9 projection −13 GB (Stop A / Stop B)
 fork SHAs (pushed, pinned in scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, Testbed 4c8397d0 (P1 pins were d3bc4d96 / 2817f7e4 / 0fd195ed)
 harness SHA (pushed): see git log (P2 gate commit)
-in-flight background jobs: gate S1 through vm-exec.sh (started ~03:53 KST, timeout 7200 s), then M5 -> M6 -> M7 at the P2 pins (P2 V5)
-next action: check S1's verdict.json and each Verify V1-V4/V6; on any failed Verify follow phase-02's Failure Protocol (kongming first); then M5-M7, then the P2 phase exit
+in-flight background jobs: gate S1 run 2 through vm-exec.sh (started ~04:23 KST, timeout 7200 s, ~20 min incl. a P1-pins rebuild), then M5 -> M6 -> M7 at the P2 pins
+next action: check S1 run 2 (every check PASS, tctl pacer exit 3, nullControlDigestEqualsFreeRun true, abortStep 30); any red check is PAUSE T6 (no second self-fix); then M5-M7 (V5), then the P2 phase exit and a kongming go/no-go on P3 (R0 must not take T_ctl slack from aborted steps)
 hold (user, 2026-10-23 02:30 KST): another Claude session loads the host CPU; no timing calibration (P3 T_ctl of L, R2/R3 W, any latency/slack used as a gate value) until it is done; S1's bounds (T_gate + 5 s, T_ctl 30 s run-out) are contract values, its slack is recorded only
 ```
 On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`, `virsh -c qemu:///system snapshot-current --name ubuntu24.04` and `scripts/vm/vm-snapshot.sh list`, and compare them with this card. On a mismatch, print a PAUSE T3 line with the difference.
