@@ -1,0 +1,28 @@
+{
+  "_comment": "Values every R-rung gate and run-to-m9.sh read. Each value carries its provenance; a re-set value names the evidence dir that measured it.",
+  "deadlines": {
+    "T_start_s": {"value": 120, "provenance": "D1 start value, docs/journals/2026-10-22-pre-m8-pacing-plan-checkpoint.md section 6"},
+    "T_gate_s": {"value": 10, "provenance": "D1 start value, same section"},
+    "T_ctl_s": {"value": 30, "provenance": "start value max(30 s, 20 x L_max); re-set from R0's measured L at P3"},
+    "W_s": {"value": 1, "provenance": "start value max(1 s, 3 x p99.9 of L); re-set at R2 and R3 from calibration runs"}
+  },
+  "substitutions": {
+    "outage_threshold_minus_1000": {"applied": false, "provenance": "substitution 1; decided by the R0-config null-control run at P3"},
+    "ts_xapp_default_rmr_handler": {"applied": false, "provenance": "substitution 2; decided by the stray-ack probe at P5"}
+  },
+  "scenario": {
+    "nMmWaveEnbNodes": {"value": 2, "provenance": "D9"},
+    "handoverMode": {"value": "NoAuto", "provenance": "D3"},
+    "outageThreshold_dB": {"value": -5, "provenance": "ns-3 default, checked first by the R0 null-control run (Q2)"},
+    "simStartEpochMs": {"value": null, "provenance": "D10; pinned at P2"},
+    "RngRun": {"value": 1, "nonVacuity": 2, "provenance": "C1"}
+  },
+  "a1_threshold": {"value": null, "provenance": "set at P5 from the R2 schedule"},
+  "ul_rate": {"value": null, "provenance": "set at P6 (N4)"},
+  "schedules": {
+    "r0": {"path": null, "provenance": "written at P3"},
+    "r1": {"path": null, "provenance": "written at P4"},
+    "r2": {"path": null, "provenance": "written at P5"},
+    "r3": {"path": null, "provenance": "written at P8 from the UL-on dry run"}
+  }
+}

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L-release M8–M9 notes</title>
+<style>
+:root { --bg:#fff; --fg:#1d1d1f; --muted:#5f6368; --line:#e3e3e3; --ok:#137333; --warn:#b06000; --bad:#c5221f; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#16181c; --fg:#e8eaed; --muted:#9aa0a6; --line:#33363b; --ok:#81c995; --warn:#fdd663; --bad:#f28b82; } }
+:root[data-theme="dark"] { --bg:#16181c; --fg:#e8eaed; --muted:#9aa0a6; --line:#33363b; --ok:#81c995; --warn:#fdd663; --bad:#f28b82; }
+body { background:var(--bg); color:var(--fg); font:15px/1.55 system-ui, sans-serif; max-width:960px; margin:0 auto; padding:24px 16px; }
+h1 { font-size:1.5rem; } h2 { border-bottom:1px solid var(--line); padding-bottom:4px; margin-top:2rem; }
+code { font-size:.9em; overflow-wrap:anywhere; } .muted { color:var(--muted); }
+.tag { display:inline-block; font-size:.75rem; padding:0 6px; border:1px solid currentColor; border-radius:4px; margin-right:6px; }
+.decision { color:var(--ok); } .deviation { color:var(--warn); } .question { color:var(--bad); } .tradeoff { color:var(--muted); }
+li { margin:.35rem 0; }
+table { border-collapse:collapse; width:100%; } td, th { border:1px solid var(--line); padding:4px 8px; text-align:left; vertical-align:top; }
+</style>
+</head>
+<body>
+<h1>Implementation notes: ns-O-RAN on L-release (NIST v1.8.0), M8–M9</h1>
+<p class="muted">Plan: <code>plan.md</code> in this directory; contract: <code>goal-packet.md</code>. Updated as work proceeds. Tags: decision (spec ambiguous), deviation (differs from plan, with reason), tradeoff, question (open for the user).</p>
+
+<h2>Disk budget (host <code>/home</code>, per phase exit)</h2>
+<table>
+<tr><th>Point</th><th>Host free</th><th>Image chain</th><th>M9 projection</th></tr>
+<tr><td>P0 baseline (2026-10-23 01:35 KST)</td><td>76 G</td><td>base 3.3 G + f7 merged overlay 37 G + active 1.1 G</td><td>76 − 20 dev − 48 M9 − 20 = <b>−12 GB</b> (reported for Stop A; user frees at Stop B)</td></tr>
+</table>
+
+<h2>P0: harness generalization, RC wire decoder, disk baseline</h2>
+<ul>
+<li><span class="tag decision">decision</span>Gate id = <code>^gate-([a-z]+[0-9]+)</code> through one <code>gate_id</code> helper in <code>vm-common.sh</code>, used by <code>vm-exec.sh</code> and self-tested in <code>lint.sh</code> (<code>m5 r0 s1 q7</code>).</li>
+<li><span class="tag decision">decision</span>Protected snapshots live in one list, <code>VM_NEVER_DELETE=(fresh-install f7-rerun-green r3-green)</code>; <code>vm-snapshot.sh delete</code> refuses them before any virsh call and <code>check-protected</code> exposes the rule.</li>
+<li><span class="tag decision">decision</span>The disk watchdog keeps the minimum free space seen in <code>min-host-free-gb.txt</code>, so the M9 verdict reports <code>minHostFreeGb</code> from the watchdog, not from point samples. On a trip it kills the runner's foreground child first: bash defers a TERM trap until the foreground child exits, and a stopped VM unit never writes <code>exit_code</code>, so <code>vm-exec.sh</code> would otherwise wait ~20 min for ssh.</li>
+<li><span class="tag decision">decision</span><code>run-to-m9.sh</code> step names: <code>i0</code> (decoder + rc install), <code>r0</code>, <code>r1</code>, <code>i2</code> (TS xApp + stub QP), <code>r2</code>, <code>i3</code> (stub down + QP fork), <code>r3</code>. Install steps are gates of their own so each has a verdict and evidence. The runner writes <code>evidence/m9/&lt;ts&gt;/verdict.json</code> on every exit path.</li>
+<li><span class="tag decision">decision</span>RC decoder <code>tools/rc-decode/</code>: asn1c mouse07410@584d86e (−O0) over rc@a2282ee <code>e2sm-common.asn</code> + <code>e2sm-rc-2.0.asn</code>, APER, XER out. "ok" = RC_OK and every octet consumed (the M0–M7 decoder rule). It never calls <code>asn_check_constraints</code> (loops on RANParameter-bearing PDUs).</li>
+<li><span class="tag decision">decision</span>Fixture: 30 RICcontrolRequest PDUs from the probe pcap (sha256 <code>e57c5713…</code>), tshark 4.7.4 fields <code>e2ap.RICcontrolHeader</code>/<code>e2ap.RICcontrolMessage</code>. Every header decodes 22/22 octets with style 3, action 1, UEID = gNB-UEID; every message 36/36 octets with the NR CGI as <code>valueOctS</code> of RAN parameter 4 nested under parameters 1/2/3. A synthesized ControlOutcome Format 1 with an empty <code>ranP-List</code> encodes to <code>0000</code> and round-trips.</li>
+<li><span class="tag decision">decision</span>The probe's NR CGI octet string is 9 bytes (<code>00 00F110 0000000003</code>). That is the APER encoding of the E2SM common <code>NR-CGI</code> SEQUENCE (extension/preamble octet, 3-byte PLMN, 36-bit cell identity padded to 5 octets) carried as <code>valueOctS</code>. The agent (P1) decodes it as NR-CGI; the gate compares decoded bytes.</li>
+<li><span class="tag tradeoff">tradeoff</span>The watchdog test (V3) shut the VM down gracefully; it was started again at the same snapshot (<code>f7-rerun-green</code>), so no state changed.</li>
+</ul>
+</body>
+</html>

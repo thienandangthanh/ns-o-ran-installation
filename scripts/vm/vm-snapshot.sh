@@ -5,11 +5,12 @@
 #   vm-snapshot.sh revert <name>
 #   vm-snapshot.sh delete <name>
 #   vm-snapshot.sh list
+#   vm-snapshot.sh check-protected <name>   # prints protected|deletable
 #
 # create: graceful shutdown -> snapshot-create-as --disk-only --atomic -> start
 #         -> wait for ssh. Refuses when host /home has < 20 GB + N free.
 # revert: graceful shutdown -> snapshot-revert -> start -> wait for ssh.
-# delete: refuses fresh-install; records the image dir before and after.
+# delete: refuses fresh-install, f7-rerun-green and r3-green before any virsh call.
 
 source "$(dirname "$0")/vm-common.sh"
 
@@ -61,10 +62,14 @@ revert)
     ;;
 delete)
     [ -n "$name" ] || die "delete needs a name"
-    [ "$name" != "$VM_PROTECTED_SNAPSHOT" ] || die "refusing to delete $VM_PROTECTED_SNAPSHOT"
+    is_protected "$name" && die "refusing to delete protected snapshot $name"
     snapshot_exists "$name" || die "no snapshot $name"
     "${VIRSH[@]}" snapshot-delete "$VM_DOMAIN" "$name" || die "libvirt refused to delete $name: STOP and ask the user"
     hlog "deleted snapshot $name"
+    ;;
+check-protected)
+    [ -n "$name" ] || die "check-protected needs a name"
+    if is_protected "$name"; then echo protected; else echo deletable; fi
     ;;
 list)
     "${VIRSH[@]}" snapshot-list "$VM_DOMAIN" --tree
@@ -72,5 +77,5 @@ list)
     echo "host /home free: $(host_free_gb)G"
     ;;
 *)
-    sed -n '2,13p' "$0"; exit 2 ;;
+    sed -n '2,14p' "$0"; exit 2 ;;
 esac

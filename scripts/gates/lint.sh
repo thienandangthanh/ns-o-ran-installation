@@ -19,5 +19,11 @@ if grep -nE "(^|[;&|(]|\s)(timeout|nist_run|sudo|env|xargs)( +-[-a-zA-Z=0-9]+| +
     scripts/gates/*.sh scripts/vm/*.sh | grep -vE ':\s*#'; then
     echo "an external wrapper calls a shell function (see above)"; rc=1
 fi
+# Gate-id self-test: vm-exec.sh names evidence dirs and .last-<id> files by it.
+source scripts/vm/vm-common.sh
+ids=$(for s in gate-m5-agent-setup.sh gate-r0-rc-scripted.sh gate-s1-pacer-lockstep.sh gate-q7-qp-token-check.sh; do
+    gate_id "$s"; done | paste -sd' ')
+echo "gate ids: $ids"
+[ "$ids" = "m5 r0 s1 q7" ] || { echo "gate-id regex broken"; rc=1; }
 [ "$rc" = 0 ] && echo "lint: ok"
 exit "$rc"

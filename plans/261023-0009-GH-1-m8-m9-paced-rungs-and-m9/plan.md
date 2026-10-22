@@ -22,15 +22,15 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: <KST timestamp>
-current phase: P0, not started
+last-updated: 2026-10-23 01:36 KST
+current phase: P0, in progress (step 1 done: VM state matches)
 VM: expected domstate=running, snapshot-current=f7-rerun-green
 snapshots: fresh-install, f7-rerun-green
-host /home free: 75 G (kongming-2105 §1, 2026-10-22); floor 20 GB
+host /home free: 76 G (2026-10-23 01:34 KST); floor 20 GB
 fork SHAs (pushed): see scripts/pins.conf; QP fork master=47a35ca
-harness SHA (pushed): 7db96e7 + warmup commits
+harness SHA (pushed): 1dd16a5
 in-flight background jobs: none
-next action: P0 step 1
+next action: P0 step 2 (pins check)
 ```
 On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`, `virsh -c qemu:///system snapshot-current --name ubuntu24.04` and `scripts/vm/vm-snapshot.sh list`, and compare them with this card. On a mismatch, print a PAUSE T3 line with the difference.
 
@@ -49,7 +49,7 @@ On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`
 
 | # | Phase | Exit gate | Snapshot | Status |
 |---|---|---|---|---|
-| P0 | [Harness generalization, RC wire decoder, disk baseline](phase-00-harness-generalization-rc-decoder-disk-baseline.md) | lint; decoder round-trips the committed PDU fixture | none | pending |
+| P0 | [Harness generalization, RC wire decoder, disk baseline](phase-00-harness-generalization-rc-decoder-disk-baseline.md) | lint; decoder round-trips the committed PDU fixture | none | done (V1–V8 pass, 2026-10-23 01:55 KST) |
 | P1 | [S0: ns-3 D4 method, ledger, agent RC path, N5 request part](phase-01-s0-ns3-d4-ledger-agent-rc-path.md) | free-run digest unchanged; M5–M7 re-pass | none | pending |
 | P2 | [S1: pacer and barrier, Fallback-1, null-control, fault run (i)](phase-02-s1-pacer-barrier-fallback1-null-control.md) | scripted S1 gate | none | pending |
 | P3 | [R0 = M8: rc by scripted gRPC, D7 three paths, G4](phase-03-r0-m8-rc-scripted-grpc.md) | R0 C1 | `r0-green` | pending |

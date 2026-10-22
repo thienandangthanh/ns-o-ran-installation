@@ -9,8 +9,12 @@ VM_SSH="${VM_SSH:-oran-kvm-2404}"
 VM_IMAGE_DIR="${VM_IMAGE_DIR:-/home/andang/VMs}"
 # shellcheck disable=SC2034  # used by the scripts that source this file
 VM_PROTECTED_SNAPSHOT=fresh-install
+# Never deleted by any script (user snapshot rule, 2026-10-23 01:03 KST).
+VM_NEVER_DELETE=(fresh-install f7-rerun-green r3-green)
 HOST_MIN_FREE_GB="${HOST_MIN_FREE_GB:-20}"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+# Default is the M0-M7 plan; run-to-m9.sh and the R-rung gates export the M8-M9
+# plan's evidence/ dir instead.
 EVIDENCE_HOST_ROOT="${EVIDENCE_HOST_ROOT:-$REPO_ROOT/plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence}"
 
 VIRSH=(virsh -q -c qemu:///system)
@@ -53,6 +57,16 @@ vm_shutdown() {
 vm_start() {
     [ "$(vm_state)" = "running" ] || "${VIRSH[@]}" start "$VM_DOMAIN" >/dev/null || return 1
     wait_ssh 300
+}
+
+# gate_id <gate-script>: gate-m5-agent-setup.sh -> m5, gate-r0-rc-scripted.sh -> r0.
+gate_id() { sed -E 's/^gate-([a-z]+[0-9]+).*/\1/' <<<"$1"; }
+
+# is_protected <snapshot>: true for the snapshots no script may delete.
+is_protected() {
+    local s
+    for s in "${VM_NEVER_DELETE[@]}"; do [ "$1" = "$s" ] && return 0; done
+    return 1
 }
 
 host_free_gb() { df -BG --output=avail /home | tail -1 | tr -dc '0-9'; }

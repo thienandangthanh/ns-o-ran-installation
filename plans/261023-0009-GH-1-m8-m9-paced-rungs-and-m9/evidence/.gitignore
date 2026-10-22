@@ -1,0 +1,9 @@
+# Pcaps, large ns-3 traces and raw Influx dumps stay out of git; each evidence
+# dir carries a sha256 manifest instead.
+*.pcap
+*.pcapng
+*.pcap.gz
+*.tr.gz
+*-full-trace*
+influx-dump*/
+*.lp.gz
