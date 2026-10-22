@@ -1,0 +1,15 @@
+rc pod IP 10.244.0.154
+rc.MsgComm is a service:
+service MsgComm {
+  rpc SendRICControlReqServiceGrpc ( .rc.RicControlGrpcReq ) returns ( .rc.RicControlGrpcRsp );
+}
+rc.RicControlGrpcReq is a message:
+message RicControlGrpcReq {
+  string e2NodeID = 1;
+  string plmnID = 2;
+  string ranName = 3;
+  .rc.RICE2APHeader RICE2APHeaderData = 4;
+  .rc.RICControlHeader RICControlHeaderData = 5;
+  .rc.RICControlMessage RICControlMessageData = 6;
+  .rc.RICControlAckEnum RICControlAckReqVal = 7;
+}

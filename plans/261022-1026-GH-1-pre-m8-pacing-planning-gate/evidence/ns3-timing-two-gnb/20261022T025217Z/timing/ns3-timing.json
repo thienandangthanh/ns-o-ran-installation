@@ -1,0 +1,79 @@
+{
+  "binary": "/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default",
+  "simTime_s": 10.0,
+  "indicationPeriodicity_s": 0.1,
+  "expected_samples_per_node": 100,
+  "commits": {
+    "ns3_mmwave": "ace321688130834fb79cf724050178a661ed4cf8",
+    "oran_interface": "438a839aad69854acca41ef435ff681ee7bd3134",
+    "harness": "d87effa9d1cda229124c215f55c8f1d40ad25354"
+  },
+  "nproc": 8,
+  "load_avg_before": "0.23 0.05 0.02",
+  "load_avg_after": "1.04 0.67 0.29",
+  "started": "2026-10-22T11:52:24+09:00",
+  "finished": "2026-10-22T11:55:37+09:00",
+  "timezone": "Asia/Seoul",
+  "method": "wall time via python time.monotonic() around the direct binary call, own process group, emitter active against ipc-null-sink; includes process startup and scenario setup",
+  "configs": {
+    "two": {
+      "repeats": 3,
+      "mean": 6.359521211700001,
+      "min": 6.321544646000001,
+      "max": 6.4105083671,
+      "stdev": 0.045886735569725674,
+      "cv": 0.007215438716566436,
+      "runs": [
+        {
+          "wall_s": 64.105083671,
+          "rc": 0,
+          "timed_out": false,
+          "pgid": 5526,
+          "leftover_killed": false,
+          "dir": "/home/uc/evidence/probes/ns3-timing-two-gnb/20261022T025217Z/timing/two/r1",
+          "idx": 1,
+          "real_s_per_sim_s": 6.4105083671,
+          "samples_per_node": {
+            "1": 100,
+            "2": 100,
+            "3": 100
+          },
+          "invalid_lines": 0
+        },
+        {
+          "wall_s": 63.21544646000001,
+          "rc": 0,
+          "timed_out": false,
+          "pgid": 11430,
+          "leftover_killed": false,
+          "dir": "/home/uc/evidence/probes/ns3-timing-two-gnb/20261022T025217Z/timing/two/r2",
+          "idx": 2,
+          "real_s_per_sim_s": 6.321544646000001,
+          "samples_per_node": {
+            "1": 100,
+            "2": 100,
+            "3": 100
+          },
+          "invalid_lines": 0
+        },
+        {
+          "wall_s": 63.465106219999996,
+          "rc": 0,
+          "timed_out": false,
+          "pgid": 12801,
+          "leftover_killed": false,
+          "dir": "/home/uc/evidence/probes/ns3-timing-two-gnb/20261022T025217Z/timing/two/r3",
+          "idx": 3,
+          "real_s_per_sim_s": 6.346510621999999,
+          "samples_per_node": {
+            "1": 100,
+            "2": 100,
+            "3": 100
+          },
+          "invalid_lines": 0
+        }
+      ]
+    }
+  },
+  "ok": true
+}

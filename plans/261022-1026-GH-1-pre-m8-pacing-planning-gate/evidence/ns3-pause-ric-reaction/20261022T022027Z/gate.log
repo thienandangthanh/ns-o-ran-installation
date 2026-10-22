@@ -1,0 +1,44 @@
+[02:20:35] gate pause-ric-reaction start; evidence /home/uc/evidence/probes/ns3-pause-ric-reaction/20261022T022027Z; harness d87effa9d1cda229124c215f55c8f1d40ad25354
+[02:20:35] PASS pause_nist_tree_at_testbed_sha_with_agent_dir
+[02:20:45] PASS pause_build_tools_present
+[02:20:45] PASS pause_sctp_module_loaded
+[02:20:45] PASS pause_ns3_binary_located
+[02:20:46] PASS pause_capture_started_before_agents
+[02:24:16] PASS pause_bringup_agents_connected_set_exact
+[02:24:20] PASS pause_every_agent_ready_and_subscribed_before_ns3
+[02:24:23] PASS pause_ns3_started_default_config
+[02:24:26] PASS pause_first_indications_from_every_node
+[02:24:26] pause 60 s: SIGSTOP pgid 20249 at 1792635866.625946725
+[02:25:27] pause 60 s: SIGCONT at 1792635927.607585258
+[02:25:27] FAIL pause_60s_no_indication_sent_while_stopped: exit 1: > 1 9
+> 2 5
+> 3 5
+> 4 5
+> 5 5
+[02:25:27] PASS pause_60s_ric_state_unchanged_every_sample
+[02:25:30] PASS pause_60s_indications_resume_on_every_node
+[02:26:31] pause 300 s: SIGSTOP pgid 20249 at 1792635991.105197711
+[02:31:32] pause 300 s: SIGCONT at 1792636292.087767033
+[02:31:32] FAIL pause_300s_no_indication_sent_while_stopped: exit 1: > 1 105
+> 2 67
+> 3 53
+> 4 53
+> 5 53
+[02:31:32] PASS pause_300s_ric_state_unchanged_every_sample
+[02:31:40] PASS pause_300s_indications_resume_on_every_node
+[02:32:40] pause 900 s: SIGSTOP pgid 20249 at 1792636360.506445526
+[02:47:41] pause 900 s: SIGCONT at 1792637261.534194630
+[02:47:41] FAIL pause_900s_no_indication_sent_while_stopped: exit 1: > 1 201
+> 2 123
+> 3 104
+> 4 101
+> 5 101
+[02:47:41] PASS pause_900s_ric_state_unchanged_every_sample
+[02:47:49] PASS pause_900s_indications_resume_on_every_node
+[02:48:50] PASS pause_final_agent_state_recorded
+[02:48:51] PASS pause_ric_component_logs_collected
+[02:48:54] PASS pause_agents_stopped
+[02:48:54] PASS pause_capture_stopped
+[02:48:55] PASS pause_wire_no_abort_shutdown_resubscribe_delete_or_error_and_heartbeats_continue
+[02:48:55] PASS pause_hygiene
+verdict pause-ric-reaction: FAIL failed=['pause_60s_no_indication_sent_while_stopped', 'pause_300s_no_indication_sent_while_stopped', 'pause_900s_no_indication_sent_while_stopped']

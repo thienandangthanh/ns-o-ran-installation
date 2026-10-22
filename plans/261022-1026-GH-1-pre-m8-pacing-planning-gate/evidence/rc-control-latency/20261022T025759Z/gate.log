@@ -1,0 +1,21 @@
+[02:58:12] gate rc-control-latency start; evidence /home/uc/evidence/probes/rc-control-latency/20261022T025759Z; harness d87effa9d1cda229124c215f55c8f1d40ad25354
+[02:58:12] PASS rc_nist_tree_at_testbed_sha_with_agent_dir
+[02:58:16] PASS rc_build_tools_present
+[02:58:16] PASS rc_sctp_module_loaded
+[02:58:16] PASS rc_ns3_binary_located
+[03:01:06] PASS rc_xapp_installed_and_ready
+[03:01:07] PASS rc_grpcurl_fetched_and_checksum_verified
+[03:01:07] PASS rc_grpc_reflection_describe
+[03:01:08] PASS rc_capture_started_before_agents
+[03:01:42] PASS rc_bringup_agents_connected_set_exact
+[03:01:42] PASS rc_agent_container_ips_recorded
+[03:01:49] PASS rc_every_agent_ready_and_subscribed_before_ns3
+[03:01:51] PASS rc_ns3_started_default_config
+[03:03:12] PASS rc_grpc_calls_sent
+[03:03:17] PASS rc_pod_after_calls_recorded
+[03:03:17] PASS rc_xapp_log_collected
+[03:03:20] PASS rc_agents_stopped
+[03:03:21] PASS rc_capture_stopped
+[03:03:21] PASS rc_every_call_reached_its_agent_on_the_wire
+[03:03:21] PASS rc_hygiene
+verdict rc-control-latency: PASS failed=[]

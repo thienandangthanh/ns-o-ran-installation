@@ -1,0 +1,48 @@
+ric-e2term.log pause 60s: 67 lines, 0 non-RMR-stat lines, 0 matching error/fail/timeout/delete/disconnect/reset/warn
+ric-e2term.log pause 300s: 76 lines, 0 non-RMR-stat lines, 0 matching error/fail/timeout/delete/disconnect/reset/warn
+ric-e2term.log pause 900s: 422 lines, 0 non-RMR-stat lines, 0 matching error/fail/timeout/delete/disconnect/reset/warn
+ric-submgr.log pause 60s: 5 lines, 0 non-RMR-stat lines, 0 matching error/fail/timeout/delete/disconnect/reset/warn
+ric-submgr.log pause 300s: 5 lines, 0 non-RMR-stat lines, 0 matching error/fail/timeout/delete/disconnect/reset/warn
+ric-submgr.log pause 900s: 15 lines, 0 non-RMR-stat lines, 0 matching error/fail/timeout/delete/disconnect/reset/warn
+ric-e2mgr.log pause 60s: 20 lines, 6 non-RMR-stat lines, 0 matching error/fail/timeout/delete/disconnect/reset/warn
+      2x [Client -> E2 Manager] #NodebController.GetNodebIdList - req
+      2x #ranListManagerInstance.GetNbIdentityList - 5 identity retur
+      2x [E2 Manager -> Client] #NodebController.handleRequest - resp
+ric-e2mgr.log pause 300s: 37 lines, 30 non-RMR-stat lines, 0 matching error/fail/timeout/delete/disconnect/reset/warn
+      10x [Client -> E2 Manager] #NodebController.GetNodebIdList - req
+      10x #ranListManagerInstance.GetNbIdentityList - 5 identity retur
+      10x [E2 Manager -> Client] #NodebController.handleRequest - resp
+ric-e2mgr.log pause 900s: 111 lines, 90 non-RMR-stat lines, 0 matching error/fail/timeout/delete/disconnect/reset/warn
+      30x [Client -> E2 Manager] #NodebController.GetNodebIdList - req
+      30x #ranListManagerInstance.GetNbIdentityList - 5 identity retur
+      30x [E2 Manager -> Client] #NodebController.handleRequest - resp
+ric-rtmgr.log pause 60s: 121 lines, 121 non-RMR-stat lines, 0 matching error/fail/timeout/delete/disconnect/reset/warn
+      10x xApp UUID: service-ricxapp-kpimon-go-rmr.ricxapp:4560
+      10x name: service-ricxapp-kpimon-go-rmr.ricxapp:4560
+      10x ep: &{service-ricxapp-kpimon-go-rmr.ricxapp:4560 kpimon-go k
+      5x xApp UUID is matched for selected xApp.UUID: service-ricxapp
+ric-rtmgr.log pause 300s: 499 lines, 499 non-RMR-stat lines, 0 matching error/fail/timeout/delete/disconnect/reset/warn
+      40x xApp UUID: service-ricxapp-kpimon-go-rmr.ricxapp:4560
+      40x name: service-ricxapp-kpimon-go-rmr.ricxapp:4560
+      40x ep: &{service-ricxapp-kpimon-go-rmr.ricxapp:4560 kpimon-go k
+      20x restapi: method=GET url=/ric/v1/health/alive
+ric-rtmgr.log pause 900s: 1589 lines, 1589 non-RMR-stat lines, 0 matching error/fail/timeout/delete/disconnect/reset/warn
+      130x xApp UUID: service-ricxapp-kpimon-go-rmr.ricxapp:4560
+      130x name: service-ricxapp-kpimon-go-rmr.ricxapp:4560
+      130x ep: &{service-ricxapp-kpimon-go-rmr.ricxapp:4560 kpimon-go k
+      65x xApp UUID is matched for selected xApp.UUID: service-ricxapp
+kpimon.log pause 60s: 44 lines, 32 non-RMR-stat lines, 0 matching error/fail/timeout/delete/disconnect/reset/warn
+      12x List for connected eNBs: []
+      12x List for connected gNBs: [gnb_001_001_00000003, gnb_001_001_
+      4x restapi: method=GET url=/ric/v1/health/ready
+      4x restapi: method=GET url=/ric/v1/health/alive
+kpimon.log pause 300s: 166 lines, 160 non-RMR-stat lines, 0 matching error/fail/timeout/delete/disconnect/reset/warn
+      60x List for connected eNBs: []
+      60x List for connected gNBs: [gnb_001_001_00000003, gnb_001_001_
+      20x restapi: method=GET url=/ric/v1/health/ready
+      20x restapi: method=GET url=/ric/v1/health/alive
+kpimon.log pause 900s: 498 lines, 480 non-RMR-stat lines, 0 matching error/fail/timeout/delete/disconnect/reset/warn
+      180x List for connected eNBs: []
+      180x List for connected gNBs: [gnb_001_001_00000003, gnb_001_001_
+      60x restapi: method=GET url=/ric/v1/health/ready
+      60x restapi: method=GET url=/ric/v1/health/alive

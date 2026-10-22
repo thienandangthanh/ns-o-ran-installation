@@ -1,0 +1,200 @@
+{
+ "calls": 30,
+ "matched": 30,
+ "control_frames_on_wire": 30,
+ "wire_latency_s": {
+  "min": 0.0056,
+  "p50": 0.0065,
+  "p90": 0.0077,
+  "p99": 0.0099,
+  "max": 0.0099,
+  "mean": 0.0067666666666666665
+ },
+ "grpcurl_call_s": {
+  "p50": 0.0074,
+  "max": 0.0114
+ },
+ "note": "wire = first RICcontrol initiatingMessage to the node's container IP after the grpcurl start; includes grpcurl process start",
+ "rows": [
+  {
+   "i": 0,
+   "node": 1,
+   "grpc_s": 0.0074,
+   "wire_s": 0.0063
+  },
+  {
+   "i": 1,
+   "node": 2,
+   "grpc_s": 0.0072,
+   "wire_s": 0.0063
+  },
+  {
+   "i": 2,
+   "node": 3,
+   "grpc_s": 0.0075,
+   "wire_s": 0.0074
+  },
+  {
+   "i": 3,
+   "node": 4,
+   "grpc_s": 0.0078,
+   "wire_s": 0.0062
+  },
+  {
+   "i": 4,
+   "node": 5,
+   "grpc_s": 0.0074,
+   "wire_s": 0.0066
+  },
+  {
+   "i": 5,
+   "node": 1,
+   "grpc_s": 0.0072,
+   "wire_s": 0.0059
+  },
+  {
+   "i": 6,
+   "node": 2,
+   "grpc_s": 0.0087,
+   "wire_s": 0.0074
+  },
+  {
+   "i": 7,
+   "node": 3,
+   "grpc_s": 0.0074,
+   "wire_s": 0.0065
+  },
+  {
+   "i": 8,
+   "node": 4,
+   "grpc_s": 0.0098,
+   "wire_s": 0.0087
+  },
+  {
+   "i": 9,
+   "node": 5,
+   "grpc_s": 0.0089,
+   "wire_s": 0.0069
+  },
+  {
+   "i": 10,
+   "node": 1,
+   "grpc_s": 0.0078,
+   "wire_s": 0.0061
+  },
+  {
+   "i": 11,
+   "node": 2,
+   "grpc_s": 0.007,
+   "wire_s": 0.0057
+  },
+  {
+   "i": 12,
+   "node": 3,
+   "grpc_s": 0.0073,
+   "wire_s": 0.0067
+  },
+  {
+   "i": 13,
+   "node": 4,
+   "grpc_s": 0.0114,
+   "wire_s": 0.0099
+  },
+  {
+   "i": 14,
+   "node": 5,
+   "grpc_s": 0.0085,
+   "wire_s": 0.0075
+  },
+  {
+   "i": 15,
+   "node": 1,
+   "grpc_s": 0.007,
+   "wire_s": 0.0064
+  },
+  {
+   "i": 16,
+   "node": 2,
+   "grpc_s": 0.0066,
+   "wire_s": 0.0061
+  },
+  {
+   "i": 17,
+   "node": 3,
+   "grpc_s": 0.0071,
+   "wire_s": 0.0059
+  },
+  {
+   "i": 18,
+   "node": 4,
+   "grpc_s": 0.0082,
+   "wire_s": 0.0071
+  },
+  {
+   "i": 19,
+   "node": 5,
+   "grpc_s": 0.0074,
+   "wire_s": 0.0068
+  },
+  {
+   "i": 20,
+   "node": 1,
+   "grpc_s": 0.0075,
+   "wire_s": 0.0061
+  },
+  {
+   "i": 21,
+   "node": 2,
+   "grpc_s": 0.0073,
+   "wire_s": 0.0061
+  },
+  {
+   "i": 22,
+   "node": 3,
+   "grpc_s": 0.0097,
+   "wire_s": 0.0077
+  },
+  {
+   "i": 23,
+   "node": 4,
+   "grpc_s": 0.0072,
+   "wire_s": 0.0056
+  },
+  {
+   "i": 24,
+   "node": 5,
+   "grpc_s": 0.0071,
+   "wire_s": 0.0059
+  },
+  {
+   "i": 25,
+   "node": 1,
+   "grpc_s": 0.0083,
+   "wire_s": 0.0069
+  },
+  {
+   "i": 26,
+   "node": 2,
+   "grpc_s": 0.0065,
+   "wire_s": 0.0058
+  },
+  {
+   "i": 27,
+   "node": 3,
+   "grpc_s": 0.0087,
+   "wire_s": 0.0067
+  },
+  {
+   "i": 28,
+   "node": 4,
+   "grpc_s": 0.0097,
+   "wire_s": 0.0088
+  },
+  {
+   "i": 29,
+   "node": 5,
+   "grpc_s": 0.0073,
+   "wire_s": 0.007
+  }
+ ]
+}
