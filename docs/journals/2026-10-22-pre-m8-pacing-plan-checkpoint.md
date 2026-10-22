@@ -220,14 +220,17 @@ These add to the contract's acceptance criteria; nothing is removed.
 | D8 | Repeat count | **3 live runs + 1 replay** per paced rung | 2 + 1 (C) |
 | D9 | M8 config | **`--nMmWaveEnbNodes=2`** (6.36 wall s per sim s, probe) | default config (32 s per sim s) |
 | D10 | Pin `simStartEpochMs` in gated runs so KPM header bytes also repeat | **Yes** | compare decoded content only |
-| D11 | Snapshots `f0`–`f6` (housekeeping; not deleted, see below) | **Keep them.** Deleting them frees almost nothing, because their data is still in `f7-rerun-green`'s chain. The f2 merge would also take `/home` to about 6 GB at peak, well under the 20 GB floor. | delete the small ones only (f1, f3–f6); delete all after freeing space first |
-| D12 | Delete `ubuntu24.1792610322` (39.55 GB). No snapshot and not the active chain references it; it looks like a P8 attempt-1 leftover. | **Delete** (needs your go-ahead; outside this gate's deletion list) | keep |
 
 **P5 housekeeping as run** (`plans/261022-1026-GH-1-pre-m8-pacing-planning-gate/evidence/p5-snapshot-housekeeping/20261022T030653Z/README.md`):
-- `m0-probe-f10212128` was deleted.
-- libvirt also removed the overlay recorded in `fresh-install`'s metadata. A revert of `fresh-install` was then checked: rc 0, and it booted clean.
-- `f7-rerun-green` reverts and boots, with all 14 `ricplt` pods Ready.
-- The f0–f6 deletes stopped before the first one, for D11. libvirt did not refuse.
+- Deleted one at a time with the VM shut off, every libvirt delete rc 0: `m0-probe-f10212128`, then `f5`, `f4`, `f6`, `f3`, `f1`, `f0`.
+  - A guard kept the estimated peak free space ≥ 20 GiB.
+  - Each non-leaf delete commits its overlay into the backing image, so the peak need is about the overlay's size.
+- `f2-refnode` would have peaked at about 12 GiB free, so the user was asked.
+  - The user chose to delete the unreferenced 39.55 GB image `ubuntu24.1792610322` first, then `f2`.
+- Kept: `fresh-install` and `f7-rerun-green`.
+  - `fresh-install` reverts and boots clean, and its raw base is unchanged.
+  - `f7-rerun-green` reverts and boots with all 14 `ricplt` pods Ready.
+- `/home` free space went from 31.9 GB to 77 G.
 
 **Unresolved questions**
 1. Field-level mapping from kpimon's `UeMetrics`/`cellMetrics` to QP's `UEReports`/`CellReports` (G1); not designed.
