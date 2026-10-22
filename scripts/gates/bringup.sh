@@ -2,7 +2,8 @@
 # Bring-up profiles for gates (sourced after lib.sh, never executed).
 #
 #   gate_bringup <ric|refnode>
-#   gate_bringup agents <node-list>     e.g. gnb:2 or enb:1,gnb:2,gnb:3,gnb:4,gnb:5
+#   gate_bringup agents <node-list> [run_ns3_e2_agents.sh args, e.g. --env K=V]
+#                                       node list e.g. gnb:2 or enb:1,gnb:2,gnb:3,gnb:4,gnb:5
 #
 # `agents` = ric, then stop NIST's kpm_sim (K6), build the agent image if missing, start one
 # container per node (run_ns3_e2_agents.sh) and wait (bounded) until the e2mgr CONNECTED set equals
@@ -239,7 +240,7 @@ gate_bringup() {
     case "${1:-}" in
         ric) _bringup_ric ;;
         refnode) _bringup_refnode ;;
-        agents) _bringup_agents "${2:-}" ;;
+        agents) _bringup_agents "${2:-}" "${@:3}" ;;
         *) log "gate_bringup: unknown profile '${1:-}'"; return 2 ;;
     esac
 }

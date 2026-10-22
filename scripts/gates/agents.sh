@@ -192,7 +192,7 @@ agents_bringup() {
     log "bringup agents: stop_e2sim.sh exit $?"
     [ -z "$(dk ps -q --filter name=oransim)" ] || { log "bringup agents: oransim still running"; return 1; }
     agents_install_image || return 1
-    nist_run 600 "$AGENT_DIR/install_scripts/run_ns3_e2_agents.sh" --nodes "$nodes" >"$EVIDENCE_DIR/run-agents.log" 2>&1 || {
+    nist_run 600 "$AGENT_DIR/install_scripts/run_ns3_e2_agents.sh" --nodes "$nodes" "${@:2}" >"$EVIDENCE_DIR/run-agents.log" 2>&1 || {
         tail -n 20 "$EVIDENCE_DIR/run-agents.log"; return 1; }
     cp "$AGENT_DIR/run/agents.json" "$EVIDENCE_DIR/agents.json"
     _agents_wait_connected_exact
