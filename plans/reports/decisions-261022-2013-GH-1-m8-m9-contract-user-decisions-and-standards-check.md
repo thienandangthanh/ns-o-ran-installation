@@ -146,3 +146,34 @@ E2SM common **v07.00 is therefore a sound reference** for the UE identity questi
 | E2SM-RC | v03.00 | `XRWZU3SS` | v02.00 withdrawn; rc's ASN lacks the RIC Query types |
 | E2SM common (UEID, CGI and other common IEs) | v07.00 | `QW6VJ83M` | rc's file is 02.01–03.00; it lacks Beam ID, C-RNTI and `cell-RNTI` |
 | E2SM-KPM | v03.00 (wire); v2.0 also held | `F82PYZVK`, `ZL929XRL` | none known |
+
+## Amendment (2026-10-23 00:05 KST): deviations P4–P6, ruled inside the goal-warmup contract
+
+The goal-warmup light scout (`scout-261022-2252-GH-1-m8-m9-warmup-standards-light-scout.md`) found one new deviation and two older ones. At contract approval the user ruled that all three are **recorded, not fixed, in M8–M9**. Each must be corrected faithfully in the post-M9 realism pass before publication, like P1–P3 (§6).
+
+| # | Deviation in M8–M9 | Faithful target | Standard | Zotero |
+|---|---|---|---|---|
+| P4 | rc and the TS xApp send `gNB-UEID` (the 5GC form) with the IMSI in AMF-UE-NGAP-ID. The agent maps it back to the IMSI. | For a control to a gNB agent, `en-gNB-UEID` (MeNB UE X2AP ID + Global eNB ID); for one to the eNB agent, `eNB-UEID` (MME UE S1AP ID + GUMMEI). Needs an rc change plus ns-3 X2AP/S1AP UE IDs. | E2SM common v07.00 §6.2.2.6, §6.2.3.16/.23/.26; E2SM-RC v03.00 (UE ID → common §6.2.2.6); 3GPP TS 38.413 §9.3.3.1 | `QW6VJ83M`, `XRWZU3SS` |
+| P5 | Every agent, the eNB included, registers with the `gNB` choice of Global E2 Node ID and only a Global gNB ID (since M5). | The `en-gNB` choice for the gNB agents and the `eNB` choice for the eNB agent. The TS xApp key path (N5) and e2mgr naming must still work. | E2AP v03.00 §9.2.6 | `WEE5IEXF` |
+| P6 | The DL volume row is sent as `QosFlow.PdcpPduVolumeDL`, REAL, in bytes per period (since M6). | INTEGER in kbit. | E2SM-KPM v03.00 §7.9.1; 3GPP TS 28.552 §5.1.3.6.1.1 | `F82PYZVK`, `5SZUBP6M` |
+
+**The UL metric (N4) is faithful, with no deviation:** the wire name is `DRB.PdcpSduVolumeUL` (the 3GPP TS 28.552 V20.2.0 §5.1.2.1.2.1 name with the `_Filter` placeholder left unfiltered, as E2SM-KPM v03.00 §8.3.9 PrintableString requires), legacyName `DRB.PdcpSduVolumeUL_Filter`, INTEGER, in kbit (E2SM-KPM v03.00 §7.9.1). The version gap to record: KPM v03.00 cites the older 3GPP TS 28.552 clause number 5.1.2.1.2.2.
+
+## Amendment (2026-10-23 00:14 KST): QP's DL input, a contract edit during warmup planning
+
+**Finding.** The gNB cell field `QosFlow.PdcpPduVolumeDL_Filter`, which M6 sends as `QosFlow.PdcpPduVolumeDL` (P6), is ns-O-RAN's sum of per-UE **MAC** volume (`mmwave-enb-net-device.cc:1087-1130, 1406-1421` @ace32168). It is not a PDCP count. The PDCP DL counter (`cellDlTxVolume`, `:648-670`) is written only to the CSV. P6 is widened to record this MAC source.
+
+**Decision (user, 00:13 KST): contract edit, In scope 4.** The agent also sends a faithful DL row, `DRB.PdcpSduVolumeDL` (3GPP TS 28.552 V20.2.0 §5.1.2.1.1.1; INTEGER, kbit, E2SM-KPM v03.00 §7.9.1). It is computed in the same ns-3 loop as the UL row, at the PDCP SDU level. QP's two inputs are `DRB.PdcpSduVolumeDL` and `DRB.PdcpSduVolumeUL`, with one definition and one unit. The existing MAC-sourced row is unchanged. Both new rows are appended to the metric map.
+
+## Amendment (2026-10-23 01:03 KST): rulings on the goal-warmup plan review
+
+These rulings follow the collect-only review `kongming-261023-0020-GH-1-m8-m9-plan-collect-only-review.md`.
+
+- **K1, snapshot deletion rule relaxed (user, 00:52 and 01:03 KST).** This follows M0–M7 warmup decision D2 (`plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/plan.md`, Decisions §2).
+  - The run may delete **its own intermediate snapshots**: `m0-probe-*`, `m0-branch-*` (including the create-and-delete inside `gate-m0-host.sh:40-49`), `r0-green`, `r2-green`, and any snapshot the M9 run itself creates. It may do so only after that snapshot's evidence is archived on the host, and only when the disk budget requires it (the M0 probe pair is always allowed).
+  - **`fresh-install` and `f7-rerun-green` are never deleted.** `r3-green` is kept until M9 is green.
+  - If libvirt refuses a delete, stop and ask. Every deletion is logged in `implementation-notes.html` with the space it freed.
+  - This replaces "never delete a snapshot without asking" (§1) for M8–M9.
+- **K2, disk (user, 00:46 KST).** Before `/goal`, the user frees ≥ 40 GB on `/home` outside the VM images. P0 recomputes the M9 projection from the new number.
+- **K4, PDCP specs and deviation P7 (user, 00:46 KST).** The user adds 3GPP TS 38.323 and 3GPP TS 36.323 to Zotero before `/goal`. New recorded deviation **P7**: ns-3 puts an E-UTRA (LTE) PDCP header on its EN-DC bearer, whereas 3GPP TS 37.340 V18.7.0 §4.2.2 (Zotero `E6VYJPXJ`) says NR PDCP is always used for EN-DC bearers other than MN-terminated MCG bearers. P6 strips the header ns-3 actually adds (3GPP TS 36.323 format) and records that. P7 is to be fixed faithfully post-M9, before publication.
+- **K11, C1 replay reading (user, 01:03 KST).** The 3 live runs are byte-equal on all components: ledger, IPC samples, traces, the per-step RC multiset, KPM headers and colletStartTime. The RIC-free replay is compared with the live runs on the first three only: ledger, IPC samples and traces.
