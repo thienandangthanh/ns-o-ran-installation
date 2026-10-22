@@ -1,0 +1,62 @@
+{
+  "decode": {
+    "expect_ts_len": 8,
+    "hdr_clean": 505,
+    "hdr_fail": 0,
+    "hdr_ok_exact": 505,
+    "hdr_other": 0,
+    "hdr_wmore": 0,
+    "msg_clean": 505,
+    "msg_fail": 0,
+    "msg_other": 0,
+    "msg_wmore": 0,
+    "total": 505
+  },
+  "extract": {
+    "indications_seen": 505,
+    "retransmissions_dropped": 0,
+    "rows_skipped": 0,
+    "unique": 505
+  },
+  "facts": {
+    "docker_image_id": "sha256:05dcbff1c01ad42771648265830eaa09513a37821eebf2d9f2a7a0eff42bee18",
+    "docker_image_id_before": "sha256:0935d57218833027448e3e34e23311e15e9ae7e4861736258dc2500df697ff9d",
+    "expect_ts_len": 8,
+    "extractor_rows_skipped": 0,
+    "influx_rows_since_install": 2970,
+    "kpimon_header_wmore_logged": 0,
+    "kpimon_indications_logged": 505,
+    "kpimon_influx_writes_logged": 330,
+    "kpimon_msg_wmore_logged": 0,
+    "kpimon_pod_restarts": 0,
+    "size8_install": "true",
+    "sub_request_frames": 1,
+    "sub_response_frames": 1,
+    "tag": "patched",
+    "window_s": 600,
+    "wire_indications": 505
+  },
+  "harness": {
+    "hdr": {
+      "RC_FAIL": 0,
+      "RC_OK": 505,
+      "RC_WMORE": 0
+    },
+    "hdr_ok_with_trailing_bytes": 0,
+    "hdr_other": {},
+    "msg": {
+      "RC_FAIL": 0,
+      "RC_OK": 505,
+      "RC_WMORE": 0
+    },
+    "msg_format_hist": {
+      "1": 505
+    },
+    "msg_ok_with_trailing_bytes": 0,
+    "msg_other": {},
+    "total": 505,
+    "ts_len_hist": {
+      "8": 505
+    }
+  }
+}

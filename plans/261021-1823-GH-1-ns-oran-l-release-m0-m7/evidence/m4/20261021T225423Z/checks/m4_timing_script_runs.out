@@ -1,0 +1,23 @@
+[08:00:02] single r1: {"wall_s": 16.541300660000047, "rc": 0, "timed_out": false, "pgid": 21551, "leftover_killed": false}
+[08:00:19] single r2: {"wall_s": 16.395053699000016, "rc": 0, "timed_out": false, "pgid": 21940, "leftover_killed": false}
+[08:00:36] single r3: {"wall_s": 16.397874333999994, "rc": 0, "timed_out": false, "pgid": 22274, "leftover_killed": false}
+[08:05:34] default r1: {"wall_s": 297.15072902, "rc": 0, "timed_out": false, "pgid": 22667, "leftover_killed": false}
+[08:10:32] default r2: {"wall_s": 297.2115976, "rc": 0, "timed_out": false, "pgid": 28851, "leftover_killed": false}
+[08:15:29] default r3: {"wall_s": 297.13108842099996, "rc": 0, "timed_out": false, "pgid": 35092, "leftover_killed": false}
+ns-3 scenario-zero timing (real seconds per simulated second)
+date 2026-10-22T07:59:44+09:00 .. 2026-10-22T08:15:29+09:00 (Asia/Seoul)
+simTime 10s, indicationPeriodicity 0.1s, expected samples/node 100
+commits: ns3-mmwave ace321688130834fb79cf724050178a661ed4cf8, oran-interface 438a839aad69854acca41ef435ff681ee7bd3134, harness 8ed1d9f8eb7c45f7d9e6f9ede448496e791e1ec9
+nproc 8, load avg before [1.48 2.43 1.26] after [1.00 1.10 1.12]
+binary /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default
+
+single   repeats=3 mean=1.644 min=1.640 max=1.654 stdev=0.008 cv=0.5%
+  r1 wall=16.54s rc=0 samples/node={'2': 100} invalid=0
+  r2 wall=16.40s rc=0 samples/node={'2': 100} invalid=0
+  r3 wall=16.40s rc=0 samples/node={'2': 100} invalid=0
+default  repeats=3 mean=29.716 min=29.713 max=29.721 stdev=0.004 cv=0.0%
+  r1 wall=297.15s rc=0 samples/node={'1': 100, '2': 100, '3': 100, '4': 100, '5': 100} invalid=0
+  r2 wall=297.21s rc=0 samples/node={'1': 100, '2': 100, '3': 100, '4': 100, '5': 100} invalid=0
+  r3 wall=297.13s rc=0 samples/node={'1': 100, '2': 100, '3': 100, '4': 100, '5': 100} invalid=0
+
+result: ok

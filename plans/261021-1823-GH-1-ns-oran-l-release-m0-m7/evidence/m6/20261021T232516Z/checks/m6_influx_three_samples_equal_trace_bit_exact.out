@@ -1,0 +1,4 @@
+pick first_with_ues  seq=1 fallback_from=None ues=1 cell_row=True ue_rows=1 fields=91 differ=0 
+pick middle          seq=50 fallback_from=None ues=2 cell_row=True ue_rows=2 fields=149 differ=0 
+pick last            seq=99 fallback_from=None ues=2 cell_row=True ue_rows=2 fields=149 differ=0 
+all samples: {"all_fields_compared": 14494, "all_fields_differ": 0, "all_first_diffs": [], "all_samples_complete": 100, "duplicate_keys": 0, "influx_cell_rows": 100, "influx_ue_rows": 193, "kind": "gnb", "node": 2, "trace_samples": 100, "trace_ue_rows": 193}

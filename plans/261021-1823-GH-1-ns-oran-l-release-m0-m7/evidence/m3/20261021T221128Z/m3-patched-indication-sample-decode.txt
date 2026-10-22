@@ -1,0 +1,1963 @@
+Frame 14: 1054 bytes on wire (8432 bits), 1054 bytes captured (8432 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 22:42:53.733035000 UTC
+    UTC Arrival Time: Oct 21, 2026 22:42:53.733035000 UTC
+    Epoch Arrival Time: 1792622573.733035000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000037000 seconds]
+    [Time delta from previous displayed frame: 0.000000000 seconds]
+    [Time since reference or first frame: 4.336858000 seconds]
+    Frame Number: 14
+    Frame Length: 1054 bytes (8432 bits)
+    Capture Length: 1054 bytes (8432 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp:e2ap:e2ap:e2ap:e2ap:e2ap:e2ap:e2ap:e2ap]
+Ethernet II, Src: 82:1b:04:b2:ab:93 (82:1b:04:b2:ab:93), Dst: e2:dc:78:1e:9b:b0 (e2:dc:78:1e:9b:b0)
+    Destination: e2:dc:78:1e:9b:b0 (e2:dc:78:1e:9b:b0)
+        Address: e2:dc:78:1e:9b:b0 (e2:dc:78:1e:9b:b0)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: 82:1b:04:b2:ab:93 (82:1b:04:b2:ab:93)
+        Address: 82:1b:04:b2:ab:93 (82:1b:04:b2:ab:93)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.3, Dst: 10.97.131.139
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 1040
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xfc67 [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.3
+    Destination Address: 10.97.131.139
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0xf9c82e9c
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    DATA chunk (ordered, complete segment, TSN: 3, SID: 0, SSN: 2, PPID: 0, payload length: 234 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x03
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 250
+        Transmission sequence number (relative): 3
+        Transmission sequence number (absolute): 521536654
+        Stream identifier: 0x0000
+        Stream sequence number: 2
+        Payload protocol identifier: not specified (0)
+        Chunk padding: 0000
+    DATA chunk (ordered, complete segment, TSN: 4, SID: 0, SSN: 3, PPID: 0, payload length: 234 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x03
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 250
+        Transmission sequence number (relative): 4
+        Transmission sequence number (absolute): 521536655
+        Stream identifier: 0x0000
+        Stream sequence number: 3
+        Payload protocol identifier: not specified (0)
+        Chunk padding: 0000
+    DATA chunk (ordered, complete segment, TSN: 5, SID: 0, SSN: 4, PPID: 0, payload length: 234 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x03
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 250
+        Transmission sequence number (relative): 5
+        Transmission sequence number (absolute): 521536656
+        Stream identifier: 0x0000
+        Stream sequence number: 4
+        Payload protocol identifier: not specified (0)
+        Chunk padding: 0000
+    DATA chunk (ordered, complete segment, TSN: 6, SID: 0, SSN: 5, PPID: 0, payload length: 234 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x03
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 250
+        Transmission sequence number (relative): 6
+        Transmission sequence number (absolute): 521536657
+        Stream identifier: 0x0000
+        Stream sequence number: 5
+        Payload protocol identifier: not specified (0)
+        Chunk padding: 0000
+E2 Application Protocol
+    E2AP-PDU: initiatingMessage (0)
+        initiatingMessage
+            procedureCode: id-RICindication (5)
+            criticality: ignore (1)
+            value
+                RICindication
+                    protocolIEs: 8 items
+                        Item 0: id-RICrequestID
+                            ProtocolIE-Field
+                                id: id-RICrequestID (29)
+                                criticality: reject (0)
+                                value
+                                    RICrequestID
+                                        ricRequestorID: 123
+                                        ricInstanceID: 2
+                        Item 1: id-RANfunctionID
+                            ProtocolIE-Field
+                                id: id-RANfunctionID (5)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionID: 2
+                        Item 2: id-RICactionID
+                            ProtocolIE-Field
+                                id: id-RICactionID (15)
+                                criticality: reject (0)
+                                value
+                                    RICactionID: 1
+                        Item 3: id-RICindicationSN
+                            ProtocolIE-Field
+                                id: id-RICindicationSN (27)
+                                criticality: reject (0)
+                                value
+                                    RICindicationSN: 1
+                        Item 4: id-RICindicationType
+                            ProtocolIE-Field
+                                id: id-RICindicationType (28)
+                                criticality: reject (0)
+                                value
+                                    RICindicationType: report (0)
+                        Item 5: id-RICindicationHeader
+                            ProtocolIE-Field
+                                id: id-RICindicationHeader (25)
+                                criticality: reject (0)
+                                value
+                                    RICindicationHeader: 0e32303230303631330000074f52414e53696d800973696d756c61746f720e4f52414e2d5343
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationHeader
+                                        indicationHeader-formats: indicationHeader-Format1 (0)
+                                            indicationHeader-Format1
+                                                colletStartTime: 3230323030363133
+                                                [Timestamp string: Oct 13, 2062 20:44:32 UTC]
+                                                senderName: ORANSim
+                                                senderType: simulator
+                                                vendorName: ORAN-SC
+                        Item 6: id-RICindicationMessage
+                            ProtocolIE-Field
+                                id: id-RICindicationMessage (26)
+                                criticality: reject (0)
+                                value
+                                    RICindicationMessage [truncated]: 0c0000400900010001000100010001000100010001000100000830065f2db24513100120000030065f2db24516500120000030065f2db24519900120000030065f2db2451cd00120000030065f2db24520100120000030065f2db24523700120000030065f2db
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationMessage
+                                        indicationMessage-formats: indicationMessage-Format1 (0)
+                                            indicationMessage-Format1
+                                                measData: 1 item
+                                                    Item 0
+                                                        MeasurementDataItem
+                                                            measRecord: 9 items
+                                                                Item 0
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 1
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 2
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 3
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 4
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 5
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 6
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 7
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 8
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                            incompleteFlag: true (0)
+                                                measInfoList: 9 items
+                                                    Item 0
+                                                        MeasurementInfoItem
+                                                            measType: measID (1)
+                                                                something unknown here [too long integer(per_integer)]
+                                                                    [Expert Info (Warning/Undecoded): something unknown here [too long integer(per_integer)]]
+                                                                        [something unknown here [too long integer(per_integer)]]
+                                                                        [Severity level: Warning]
+                                                                        [Group: Undecoded]
+[Malformed Packet: E2AP]
+    [Expert Info (Error/Malformed): Malformed Packet (Exception occurred)]
+        [Malformed Packet (Exception occurred)]
+        [Severity level: Error]
+        [Group: Malformed]
+E2 Application Protocol
+    E2AP-PDU: initiatingMessage (0)
+        initiatingMessage
+            procedureCode: id-RICindication (5)
+            criticality: ignore (1)
+            value
+                RICindication
+                    protocolIEs: 8 items
+                        Item 0: id-RICrequestID
+                            ProtocolIE-Field
+                                id: id-RICrequestID (29)
+                                criticality: reject (0)
+                                value
+                                    RICrequestID
+                                        ricRequestorID: 123
+                                        ricInstanceID: 2
+                        Item 1: id-RANfunctionID
+                            ProtocolIE-Field
+                                id: id-RANfunctionID (5)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionID: 2
+                        Item 2: id-RICactionID
+                            ProtocolIE-Field
+                                id: id-RICactionID (15)
+                                criticality: reject (0)
+                                value
+                                    RICactionID: 1
+                        Item 3: id-RICindicationSN
+                            ProtocolIE-Field
+                                id: id-RICindicationSN (27)
+                                criticality: reject (0)
+                                value
+                                    RICindicationSN: 2
+                        Item 4: id-RICindicationType
+                            ProtocolIE-Field
+                                id: id-RICindicationType (28)
+                                criticality: reject (0)
+                                value
+                                    RICindicationType: report (0)
+                        Item 5: id-RICindicationHeader
+                            ProtocolIE-Field
+                                id: id-RICindicationHeader (25)
+                                criticality: reject (0)
+                                value
+                                    RICindicationHeader: 0e32303230303631330000074f52414e53696d800973696d756c61746f720e4f52414e2d5343
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationHeader
+                                        indicationHeader-formats: indicationHeader-Format1 (0)
+                                            indicationHeader-Format1
+                                                colletStartTime: 3230323030363133
+                                                [Timestamp string: Oct 13, 2062 20:44:32 UTC]
+                                                senderName: ORANSim
+                                                senderType: simulator
+                                                vendorName: ORAN-SC
+                        Item 6: id-RICindicationMessage
+                            ProtocolIE-Field
+                                id: id-RICindicationMessage (26)
+                                criticality: reject (0)
+                                value
+                                    RICindicationMessage [truncated]: 0c0000400900010001000100010001000100010001000100000830065f2db2452ca00120000030065f2db24545400120000030065f2db24547f00120000030065f2db2454aa00120000030065f2db2454d500120000030065f2db24550500120000030065f2db
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationMessage
+                                        indicationMessage-formats: indicationMessage-Format1 (0)
+                                            indicationMessage-Format1
+                                                measData: 1 item
+                                                    Item 0
+                                                        MeasurementDataItem
+                                                            measRecord: 9 items
+                                                                Item 0
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 1
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 2
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 3
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 4
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 5
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 6
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 7
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 8
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                            incompleteFlag: true (0)
+                                                measInfoList: 9 items
+                                                    Item 0
+                                                        MeasurementInfoItem
+                                                            measType: measID (1)
+                                                                something unknown here [too long integer(per_integer)]
+                                                                    [Expert Info (Warning/Undecoded): something unknown here [too long integer(per_integer)]]
+                                                                        [something unknown here [too long integer(per_integer)]]
+                                                                        [Severity level: Warning]
+                                                                        [Group: Undecoded]
+[Malformed Packet: E2AP]
+    [Expert Info (Error/Malformed): Malformed Packet (Exception occurred)]
+        [Malformed Packet (Exception occurred)]
+        [Severity level: Error]
+        [Group: Malformed]
+E2 Application Protocol
+    E2AP-PDU: initiatingMessage (0)
+        initiatingMessage
+            procedureCode: id-RICindication (5)
+            criticality: ignore (1)
+            value
+                RICindication
+                    protocolIEs: 8 items
+                        Item 0: id-RICrequestID
+                            ProtocolIE-Field
+                                id: id-RICrequestID (29)
+                                criticality: reject (0)
+                                value
+                                    RICrequestID
+                                        ricRequestorID: 123
+                                        ricInstanceID: 2
+                        Item 1: id-RANfunctionID
+                            ProtocolIE-Field
+                                id: id-RANfunctionID (5)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionID: 2
+                        Item 2: id-RICactionID
+                            ProtocolIE-Field
+                                id: id-RICactionID (15)
+                                criticality: reject (0)
+                                value
+                                    RICactionID: 1
+                        Item 3: id-RICindicationSN
+                            ProtocolIE-Field
+                                id: id-RICindicationSN (27)
+                                criticality: reject (0)
+                                value
+                                    RICindicationSN: 3
+                        Item 4: id-RICindicationType
+                            ProtocolIE-Field
+                                id: id-RICindicationType (28)
+                                criticality: reject (0)
+                                value
+                                    RICindicationType: report (0)
+                        Item 5: id-RICindicationHeader
+                            ProtocolIE-Field
+                                id: id-RICindicationHeader (25)
+                                criticality: reject (0)
+                                value
+                                    RICindicationHeader: 0e32303230303631330000074f52414e53696d800973696d756c61746f720e4f52414e2d5343
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationHeader
+                                        indicationHeader-formats: indicationHeader-Format1 (0)
+                                            indicationHeader-Format1
+                                                colletStartTime: 3230323030363133
+                                                [Timestamp string: Oct 13, 2062 20:44:32 UTC]
+                                                senderName: ORANSim
+                                                senderType: simulator
+                                                vendorName: ORAN-SC
+                        Item 6: id-RICindicationMessage
+                            ProtocolIE-Field
+                                id: id-RICindicationMessage (26)
+                                criticality: reject (0)
+                                value
+                                    RICindicationMessage [truncated]: 0c0000400900010001000100010001000100010001000100000830065f2db24546f00120000030065f2db24547c00120000030065f2db2453eb00120000030065f2db2453f800120000030065f2db24555b00120000030065f2db24529300120000030065f2db
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationMessage
+                                        indicationMessage-formats: indicationMessage-Format1 (0)
+                                            indicationMessage-Format1
+                                                measData: 1 item
+                                                    Item 0
+                                                        MeasurementDataItem
+                                                            measRecord: 9 items
+                                                                Item 0
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 1
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 2
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 3
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 4
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 5
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 6
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 7
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 8
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                            incompleteFlag: true (0)
+                                                measInfoList: 9 items
+                                                    Item 0
+                                                        MeasurementInfoItem
+                                                            measType: measID (1)
+                                                                something unknown here [too long integer(per_integer)]
+                                                                    [Expert Info (Warning/Undecoded): something unknown here [too long integer(per_integer)]]
+                                                                        [something unknown here [too long integer(per_integer)]]
+                                                                        [Severity level: Warning]
+                                                                        [Group: Undecoded]
+[Malformed Packet: E2AP]
+    [Expert Info (Error/Malformed): Malformed Packet (Exception occurred)]
+        [Malformed Packet (Exception occurred)]
+        [Severity level: Error]
+        [Group: Malformed]
+E2 Application Protocol
+    E2AP-PDU: initiatingMessage (0)
+        initiatingMessage
+            procedureCode: id-RICindication (5)
+            criticality: ignore (1)
+            value
+                RICindication
+                    protocolIEs: 8 items
+                        Item 0: id-RICrequestID
+                            ProtocolIE-Field
+                                id: id-RICrequestID (29)
+                                criticality: reject (0)
+                                value
+                                    RICrequestID
+                                        ricRequestorID: 123
+                                        ricInstanceID: 2
+                        Item 1: id-RANfunctionID
+                            ProtocolIE-Field
+                                id: id-RANfunctionID (5)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionID: 2
+                        Item 2: id-RICactionID
+                            ProtocolIE-Field
+                                id: id-RICactionID (15)
+                                criticality: reject (0)
+                                value
+                                    RICactionID: 1
+                        Item 3: id-RICindicationSN
+                            ProtocolIE-Field
+                                id: id-RICindicationSN (27)
+                                criticality: reject (0)
+                                value
+                                    RICindicationSN: 4
+                        Item 4: id-RICindicationType
+                            ProtocolIE-Field
+                                id: id-RICindicationType (28)
+                                criticality: reject (0)
+                                value
+                                    RICindicationType: report (0)
+                        Item 5: id-RICindicationHeader
+                            ProtocolIE-Field
+                                id: id-RICindicationHeader (25)
+                                criticality: reject (0)
+                                value
+                                    RICindicationHeader: 0e32303230303631330000074f52414e53696d800973696d756c61746f720e4f52414e2d5343
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationHeader
+                                        indicationHeader-formats: indicationHeader-Format1 (0)
+                                            indicationHeader-Format1
+                                                colletStartTime: 3230323030363133
+                                                [Timestamp string: Oct 13, 2062 20:44:32 UTC]
+                                                senderName: ORANSim
+                                                senderType: simulator
+                                                vendorName: ORAN-SC
+                        Item 6: id-RICindicationMessage
+                            ProtocolIE-Field
+                                id: id-RICindicationMessage (26)
+                                criticality: reject (0)
+                                value
+                                    RICindicationMessage [truncated]: 0c0000400900010001000100010001000100010001000100000830065f2db24545100120000030065f2db24547200120000030065f2db2456ff00120000030065f2db24542800120000030065f2db2456af00120000030065f2db24572d00120000030065f2db
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationMessage
+                                        indicationMessage-formats: indicationMessage-Format1 (0)
+                                            indicationMessage-Format1
+                                                measData: 1 item
+                                                    Item 0
+                                                        MeasurementDataItem
+                                                            measRecord: 9 items
+                                                                Item 0
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 1
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 2
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 3
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 4
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 5
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 6
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 7
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 8
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                            incompleteFlag: true (0)
+                                                measInfoList: 9 items
+                                                    Item 0
+                                                        MeasurementInfoItem
+                                                            measType: measID (1)
+                                                                something unknown here [too long integer(per_integer)]
+                                                                    [Expert Info (Warning/Undecoded): something unknown here [too long integer(per_integer)]]
+                                                                        [something unknown here [too long integer(per_integer)]]
+                                                                        [Severity level: Warning]
+                                                                        [Group: Undecoded]
+[Malformed Packet: E2AP]
+    [Expert Info (Error/Malformed): Malformed Packet (Exception occurred)]
+        [Malformed Packet (Exception occurred)]
+        [Severity level: Error]
+        [Group: Malformed]
+
+Frame 16: 1306 bytes on wire (10448 bits), 1306 bytes captured (10448 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 22:42:53.941033000 UTC
+    UTC Arrival Time: Oct 21, 2026 22:42:53.941033000 UTC
+    Epoch Arrival Time: 1792622573.941033000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000017000 seconds]
+    [Time delta from previous displayed frame: 0.207998000 seconds]
+    [Time since reference or first frame: 4.544856000 seconds]
+    Frame Number: 16
+    Frame Length: 1306 bytes (10448 bits)
+    Capture Length: 1306 bytes (10448 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp:e2ap:e2ap:e2ap:e2ap:e2ap:e2ap:e2ap:e2ap:e2ap:e2ap]
+Ethernet II, Src: 82:1b:04:b2:ab:93 (82:1b:04:b2:ab:93), Dst: e2:dc:78:1e:9b:b0 (e2:dc:78:1e:9b:b0)
+    Destination: e2:dc:78:1e:9b:b0 (e2:dc:78:1e:9b:b0)
+        Address: e2:dc:78:1e:9b:b0 (e2:dc:78:1e:9b:b0)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: 82:1b:04:b2:ab:93 (82:1b:04:b2:ab:93)
+        Address: 82:1b:04:b2:ab:93 (82:1b:04:b2:ab:93)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.3, Dst: 10.97.131.139
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 1292
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xfb6b [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.3
+    Destination Address: 10.97.131.139
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0xf9c82e9c
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    DATA chunk (ordered, complete segment, TSN: 7, SID: 0, SSN: 6, PPID: 0, payload length: 234 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x03
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 250
+        Transmission sequence number (relative): 7
+        Transmission sequence number (absolute): 521536658
+        Stream identifier: 0x0000
+        Stream sequence number: 6
+        Payload protocol identifier: not specified (0)
+        Chunk padding: 0000
+    DATA chunk (ordered, complete segment, TSN: 8, SID: 0, SSN: 7, PPID: 0, payload length: 234 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x03
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 250
+        Transmission sequence number (relative): 8
+        Transmission sequence number (absolute): 521536659
+        Stream identifier: 0x0000
+        Stream sequence number: 7
+        Payload protocol identifier: not specified (0)
+        Chunk padding: 0000
+    DATA chunk (ordered, complete segment, TSN: 9, SID: 0, SSN: 8, PPID: 0, payload length: 234 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x03
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 250
+        Transmission sequence number (relative): 9
+        Transmission sequence number (absolute): 521536660
+        Stream identifier: 0x0000
+        Stream sequence number: 8
+        Payload protocol identifier: not specified (0)
+        Chunk padding: 0000
+    DATA chunk (ordered, complete segment, TSN: 10, SID: 0, SSN: 9, PPID: 0, payload length: 234 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x03
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 250
+        Transmission sequence number (relative): 10
+        Transmission sequence number (absolute): 521536661
+        Stream identifier: 0x0000
+        Stream sequence number: 9
+        Payload protocol identifier: not specified (0)
+        Chunk padding: 0000
+    DATA chunk (ordered, complete segment, TSN: 11, SID: 0, SSN: 10, PPID: 0, payload length: 234 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x03
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 250
+        Transmission sequence number (relative): 11
+        Transmission sequence number (absolute): 521536662
+        Stream identifier: 0x0000
+        Stream sequence number: 10
+        Payload protocol identifier: not specified (0)
+        Chunk padding: 0000
+E2 Application Protocol
+    E2AP-PDU: initiatingMessage (0)
+        initiatingMessage
+            procedureCode: id-RICindication (5)
+            criticality: ignore (1)
+            value
+                RICindication
+                    protocolIEs: 8 items
+                        Item 0: id-RICrequestID
+                            ProtocolIE-Field
+                                id: id-RICrequestID (29)
+                                criticality: reject (0)
+                                value
+                                    RICrequestID
+                                        ricRequestorID: 123
+                                        ricInstanceID: 2
+                        Item 1: id-RANfunctionID
+                            ProtocolIE-Field
+                                id: id-RANfunctionID (5)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionID: 2
+                        Item 2: id-RICactionID
+                            ProtocolIE-Field
+                                id: id-RICactionID (15)
+                                criticality: reject (0)
+                                value
+                                    RICactionID: 1
+                        Item 3: id-RICindicationSN
+                            ProtocolIE-Field
+                                id: id-RICindicationSN (27)
+                                criticality: reject (0)
+                                value
+                                    RICindicationSN: 5
+                        Item 4: id-RICindicationType
+                            ProtocolIE-Field
+                                id: id-RICindicationType (28)
+                                criticality: reject (0)
+                                value
+                                    RICindicationType: report (0)
+                        Item 5: id-RICindicationHeader
+                            ProtocolIE-Field
+                                id: id-RICindicationHeader (25)
+                                criticality: reject (0)
+                                value
+                                    RICindicationHeader: 0e32303230303631330000074f52414e53696d800973696d756c61746f720e4f52414e2d5343
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationHeader
+                                        indicationHeader-formats: indicationHeader-Format1 (0)
+                                            indicationHeader-Format1
+                                                colletStartTime: 3230323030363133
+                                                [Timestamp string: Oct 13, 2062 20:44:32 UTC]
+                                                senderName: ORANSim
+                                                senderType: simulator
+                                                vendorName: ORAN-SC
+                        Item 6: id-RICindicationMessage
+                            ProtocolIE-Field
+                                id: id-RICindicationMessage (26)
+                                criticality: reject (0)
+                                value
+                                    RICindicationMessage [truncated]: 0c0000400900010001000100010001000100010001000100000830065f2db24556200120000030065f2db24545b00120000030065f2db24545e00120000030065f2db2457ae00120000030065f2db24578300120000030065f2db2457d300120000030065f2db
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationMessage
+                                        indicationMessage-formats: indicationMessage-Format1 (0)
+                                            indicationMessage-Format1
+                                                measData: 1 item
+                                                    Item 0
+                                                        MeasurementDataItem
+                                                            measRecord: 9 items
+                                                                Item 0
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 1
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 2
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 3
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 4
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 5
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 6
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 7
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 8
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                            incompleteFlag: true (0)
+                                                measInfoList: 9 items
+                                                    Item 0
+                                                        MeasurementInfoItem
+                                                            measType: measID (1)
+                                                                something unknown here [too long integer(per_integer)]
+                                                                    [Expert Info (Warning/Undecoded): something unknown here [too long integer(per_integer)]]
+                                                                        [something unknown here [too long integer(per_integer)]]
+                                                                        [Severity level: Warning]
+                                                                        [Group: Undecoded]
+[Malformed Packet: E2AP]
+    [Expert Info (Error/Malformed): Malformed Packet (Exception occurred)]
+        [Malformed Packet (Exception occurred)]
+        [Severity level: Error]
+        [Group: Malformed]
+E2 Application Protocol
+    E2AP-PDU: initiatingMessage (0)
+        initiatingMessage
+            procedureCode: id-RICindication (5)
+            criticality: ignore (1)
+            value
+                RICindication
+                    protocolIEs: 8 items
+                        Item 0: id-RICrequestID
+                            ProtocolIE-Field
+                                id: id-RICrequestID (29)
+                                criticality: reject (0)
+                                value
+                                    RICrequestID
+                                        ricRequestorID: 123
+                                        ricInstanceID: 2
+                        Item 1: id-RANfunctionID
+                            ProtocolIE-Field
+                                id: id-RANfunctionID (5)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionID: 2
+                        Item 2: id-RICactionID
+                            ProtocolIE-Field
+                                id: id-RICactionID (15)
+                                criticality: reject (0)
+                                value
+                                    RICactionID: 1
+                        Item 3: id-RICindicationSN
+                            ProtocolIE-Field
+                                id: id-RICindicationSN (27)
+                                criticality: reject (0)
+                                value
+                                    RICindicationSN: 6
+                        Item 4: id-RICindicationType
+                            ProtocolIE-Field
+                                id: id-RICindicationType (28)
+                                criticality: reject (0)
+                                value
+                                    RICindicationType: report (0)
+                        Item 5: id-RICindicationHeader
+                            ProtocolIE-Field
+                                id: id-RICindicationHeader (25)
+                                criticality: reject (0)
+                                value
+                                    RICindicationHeader: 0e32303230303631330000074f52414e53696d800973696d756c61746f720e4f52414e2d5343
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationHeader
+                                        indicationHeader-formats: indicationHeader-Format1 (0)
+                                            indicationHeader-Format1
+                                                colletStartTime: 3230323030363133
+                                                [Timestamp string: Oct 13, 2062 20:44:32 UTC]
+                                                senderName: ORANSim
+                                                senderType: simulator
+                                                vendorName: ORAN-SC
+                        Item 6: id-RICindicationMessage
+                            ProtocolIE-Field
+                                id: id-RICindicationMessage (26)
+                                criticality: reject (0)
+                                value
+                                    RICindicationMessage [truncated]: 0c0000400900010001000100010001000100010001000100000830065f2db24575b00120000030065f2db244fb800120000030065f2db24573000120000030065f2db24583600120000030065f2db24586b00120000030065f2db2458a400120000030065f2db
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationMessage
+                                        indicationMessage-formats: indicationMessage-Format1 (0)
+                                            indicationMessage-Format1
+                                                measData: 1 item
+                                                    Item 0
+                                                        MeasurementDataItem
+                                                            measRecord: 9 items
+                                                                Item 0
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 1
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 2
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 3
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 4
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 5
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 6
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 7
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 8
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                            incompleteFlag: true (0)
+                                                measInfoList: 9 items
+                                                    Item 0
+                                                        MeasurementInfoItem
+                                                            measType: measID (1)
+                                                                something unknown here [too long integer(per_integer)]
+                                                                    [Expert Info (Warning/Undecoded): something unknown here [too long integer(per_integer)]]
+                                                                        [something unknown here [too long integer(per_integer)]]
+                                                                        [Severity level: Warning]
+                                                                        [Group: Undecoded]
+[Malformed Packet: E2AP]
+    [Expert Info (Error/Malformed): Malformed Packet (Exception occurred)]
+        [Malformed Packet (Exception occurred)]
+        [Severity level: Error]
+        [Group: Malformed]
+E2 Application Protocol
+    E2AP-PDU: initiatingMessage (0)
+        initiatingMessage
+            procedureCode: id-RICindication (5)
+            criticality: ignore (1)
+            value
+                RICindication
+                    protocolIEs: 8 items
+                        Item 0: id-RICrequestID
+                            ProtocolIE-Field
+                                id: id-RICrequestID (29)
+                                criticality: reject (0)
+                                value
+                                    RICrequestID
+                                        ricRequestorID: 123
+                                        ricInstanceID: 2
+                        Item 1: id-RANfunctionID
+                            ProtocolIE-Field
+                                id: id-RANfunctionID (5)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionID: 2
+                        Item 2: id-RICactionID
+                            ProtocolIE-Field
+                                id: id-RICactionID (15)
+                                criticality: reject (0)
+                                value
+                                    RICactionID: 1
+                        Item 3: id-RICindicationSN
+                            ProtocolIE-Field
+                                id: id-RICindicationSN (27)
+                                criticality: reject (0)
+                                value
+                                    RICindicationSN: 7
+                        Item 4: id-RICindicationType
+                            ProtocolIE-Field
+                                id: id-RICindicationType (28)
+                                criticality: reject (0)
+                                value
+                                    RICindicationType: report (0)
+                        Item 5: id-RICindicationHeader
+                            ProtocolIE-Field
+                                id: id-RICindicationHeader (25)
+                                criticality: reject (0)
+                                value
+                                    RICindicationHeader: 0e32303230303631330000074f52414e53696d800973696d756c61746f720e4f52414e2d5343
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationHeader
+                                        indicationHeader-formats: indicationHeader-Format1 (0)
+                                            indicationHeader-Format1
+                                                colletStartTime: 3230323030363133
+                                                [Timestamp string: Oct 13, 2062 20:44:32 UTC]
+                                                senderName: ORANSim
+                                                senderType: simulator
+                                                vendorName: ORAN-SC
+                        Item 6: id-RICindicationMessage
+                            ProtocolIE-Field
+                                id: id-RICindicationMessage (26)
+                                criticality: reject (0)
+                                value
+                                    RICindicationMessage [truncated]: 0c0000400900010001000100010001000100010001000100000830065f2db24575e00120000030065f2db2457d600120000030065f2db24568500120000030065f2db2458fe00120000030065f2db24583000120000030065f2db24583300120000030065f2db
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationMessage
+                                        indicationMessage-formats: indicationMessage-Format1 (0)
+                                            indicationMessage-Format1
+                                                measData: 1 item
+                                                    Item 0
+                                                        MeasurementDataItem
+                                                            measRecord: 9 items
+                                                                Item 0
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 1
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 2
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 3
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 4
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 5
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 6
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 7
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 8
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                            incompleteFlag: true (0)
+                                                measInfoList: 9 items
+                                                    Item 0
+                                                        MeasurementInfoItem
+                                                            measType: measID (1)
+                                                                something unknown here [too long integer(per_integer)]
+                                                                    [Expert Info (Warning/Undecoded): something unknown here [too long integer(per_integer)]]
+                                                                        [something unknown here [too long integer(per_integer)]]
+                                                                        [Severity level: Warning]
+                                                                        [Group: Undecoded]
+[Malformed Packet: E2AP]
+    [Expert Info (Error/Malformed): Malformed Packet (Exception occurred)]
+        [Malformed Packet (Exception occurred)]
+        [Severity level: Error]
+        [Group: Malformed]
+E2 Application Protocol
+    E2AP-PDU: initiatingMessage (0)
+        initiatingMessage
+            procedureCode: id-RICindication (5)
+            criticality: ignore (1)
+            value
+                RICindication
+                    protocolIEs: 8 items
+                        Item 0: id-RICrequestID
+                            ProtocolIE-Field
+                                id: id-RICrequestID (29)
+                                criticality: reject (0)
+                                value
+                                    RICrequestID
+                                        ricRequestorID: 123
+                                        ricInstanceID: 2
+                        Item 1: id-RANfunctionID
+                            ProtocolIE-Field
+                                id: id-RANfunctionID (5)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionID: 2
+                        Item 2: id-RICactionID
+                            ProtocolIE-Field
+                                id: id-RICactionID (15)
+                                criticality: reject (0)
+                                value
+                                    RICactionID: 1
+                        Item 3: id-RICindicationSN
+                            ProtocolIE-Field
+                                id: id-RICindicationSN (27)
+                                criticality: reject (0)
+                                value
+                                    RICindicationSN: 8
+                        Item 4: id-RICindicationType
+                            ProtocolIE-Field
+                                id: id-RICindicationType (28)
+                                criticality: reject (0)
+                                value
+                                    RICindicationType: report (0)
+                        Item 5: id-RICindicationHeader
+                            ProtocolIE-Field
+                                id: id-RICindicationHeader (25)
+                                criticality: reject (0)
+                                value
+                                    RICindicationHeader: 0e32303230303631330000074f52414e53696d800973696d756c61746f720e4f52414e2d5343
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationHeader
+                                        indicationHeader-formats: indicationHeader-Format1 (0)
+                                            indicationHeader-Format1
+                                                colletStartTime: 3230323030363133
+                                                [Timestamp string: Oct 13, 2062 20:44:32 UTC]
+                                                senderName: ORANSim
+                                                senderType: simulator
+                                                vendorName: ORAN-SC
+                        Item 6: id-RICindicationMessage
+                            ProtocolIE-Field
+                                id: id-RICindicationMessage (26)
+                                criticality: reject (0)
+                                value
+                                    RICindicationMessage [truncated]: 0c0000400900010001000100010001000100010001000100000830065f2db24568c00120000030065f2db2459c000120000030065f2db2459c300120000030065f2db24597000120000030065f2db2458f800120000030065f2db2458fb00120000030065f2db
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationMessage
+                                        indicationMessage-formats: indicationMessage-Format1 (0)
+                                            indicationMessage-Format1
+                                                measData: 1 item
+                                                    Item 0
+                                                        MeasurementDataItem
+                                                            measRecord: 9 items
+                                                                Item 0
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 1
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 2
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 3
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 4
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 5
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 6
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 7
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 8
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                            incompleteFlag: true (0)
+                                                measInfoList: 9 items
+                                                    Item 0
+                                                        MeasurementInfoItem
+                                                            measType: measID (1)
+                                                                something unknown here [too long integer(per_integer)]
+                                                                    [Expert Info (Warning/Undecoded): something unknown here [too long integer(per_integer)]]
+                                                                        [something unknown here [too long integer(per_integer)]]
+                                                                        [Severity level: Warning]
+                                                                        [Group: Undecoded]
+[Malformed Packet: E2AP]
+    [Expert Info (Error/Malformed): Malformed Packet (Exception occurred)]
+        [Malformed Packet (Exception occurred)]
+        [Severity level: Error]
+        [Group: Malformed]
+E2 Application Protocol
+    E2AP-PDU: initiatingMessage (0)
+        initiatingMessage
+            procedureCode: id-RICindication (5)
+            criticality: ignore (1)
+            value
+                RICindication
+                    protocolIEs: 8 items
+                        Item 0: id-RICrequestID
+                            ProtocolIE-Field
+                                id: id-RICrequestID (29)
+                                criticality: reject (0)
+                                value
+                                    RICrequestID
+                                        ricRequestorID: 123
+                                        ricInstanceID: 2
+                        Item 1: id-RANfunctionID
+                            ProtocolIE-Field
+                                id: id-RANfunctionID (5)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionID: 2
+                        Item 2: id-RICactionID
+                            ProtocolIE-Field
+                                id: id-RICactionID (15)
+                                criticality: reject (0)
+                                value
+                                    RICactionID: 1
+                        Item 3: id-RICindicationSN
+                            ProtocolIE-Field
+                                id: id-RICindicationSN (27)
+                                criticality: reject (0)
+                                value
+                                    RICindicationSN: 9
+                        Item 4: id-RICindicationType
+                            ProtocolIE-Field
+                                id: id-RICindicationType (28)
+                                criticality: reject (0)
+                                value
+                                    RICindicationType: report (0)
+                        Item 5: id-RICindicationHeader
+                            ProtocolIE-Field
+                                id: id-RICindicationHeader (25)
+                                criticality: reject (0)
+                                value
+                                    RICindicationHeader: 0e32303230303631330000074f52414e53696d800973696d756c61746f720e4f52414e2d5343
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationHeader
+                                        indicationHeader-formats: indicationHeader-Format1 (0)
+                                            indicationHeader-Format1
+                                                colletStartTime: 3230323030363133
+                                                [Timestamp string: Oct 13, 2062 20:44:32 UTC]
+                                                senderName: ORANSim
+                                                senderType: simulator
+                                                vendorName: ORAN-SC
+                        Item 6: id-RICindicationMessage
+                            ProtocolIE-Field
+                                id: id-RICindicationMessage (26)
+                                criticality: reject (0)
+                                value
+                                    RICindicationMessage [truncated]: 0c0000400900010001000100010001000100010001000100000830065f2db24510100120000030065f2db24510400120000030065f2db244ef400120000030065f2db244f2100120000030065f2db244f4e00120000030065f2db245a8a00120000030065f2db
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationMessage
+                                        indicationMessage-formats: indicationMessage-Format1 (0)
+                                            indicationMessage-Format1
+                                                measData: 1 item
+                                                    Item 0
+                                                        MeasurementDataItem
+                                                            measRecord: 9 items
+                                                                Item 0
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 1
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 2
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 3
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 4
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 5
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 6
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 7
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 8
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                            incompleteFlag: true (0)
+                                                measInfoList: 9 items
+                                                    Item 0
+                                                        MeasurementInfoItem
+                                                            measType: measID (1)
+                                                                something unknown here [too long integer(per_integer)]
+                                                                    [Expert Info (Warning/Undecoded): something unknown here [too long integer(per_integer)]]
+                                                                        [something unknown here [too long integer(per_integer)]]
+                                                                        [Severity level: Warning]
+                                                                        [Group: Undecoded]
+[Malformed Packet: E2AP]
+    [Expert Info (Error/Malformed): Malformed Packet (Exception occurred)]
+        [Malformed Packet (Exception occurred)]
+        [Severity level: Error]
+        [Group: Malformed]
+
+Frame 18: 1054 bytes on wire (8432 bits), 1054 bytes captured (8432 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 22:42:54.148946000 UTC
+    UTC Arrival Time: Oct 21, 2026 22:42:54.148946000 UTC
+    Epoch Arrival Time: 1792622574.148946000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000020000 seconds]
+    [Time delta from previous displayed frame: 0.207913000 seconds]
+    [Time since reference or first frame: 4.752769000 seconds]
+    Frame Number: 18
+    Frame Length: 1054 bytes (8432 bits)
+    Capture Length: 1054 bytes (8432 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp:e2ap:e2ap:e2ap:e2ap:e2ap:e2ap:e2ap:e2ap]
+Ethernet II, Src: 82:1b:04:b2:ab:93 (82:1b:04:b2:ab:93), Dst: e2:dc:78:1e:9b:b0 (e2:dc:78:1e:9b:b0)
+    Destination: e2:dc:78:1e:9b:b0 (e2:dc:78:1e:9b:b0)
+        Address: e2:dc:78:1e:9b:b0 (e2:dc:78:1e:9b:b0)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: 82:1b:04:b2:ab:93 (82:1b:04:b2:ab:93)
+        Address: 82:1b:04:b2:ab:93 (82:1b:04:b2:ab:93)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.3, Dst: 10.97.131.139
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 1040
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0xfc67 [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.3
+    Destination Address: 10.97.131.139
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0xf9c82e9c
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    DATA chunk (ordered, complete segment, TSN: 12, SID: 0, SSN: 11, PPID: 0, payload length: 234 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x03
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 250
+        Transmission sequence number (relative): 12
+        Transmission sequence number (absolute): 521536663
+        Stream identifier: 0x0000
+        Stream sequence number: 11
+        Payload protocol identifier: not specified (0)
+        Chunk padding: 0000
+    DATA chunk (ordered, complete segment, TSN: 13, SID: 0, SSN: 12, PPID: 0, payload length: 234 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x03
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 250
+        Transmission sequence number (relative): 13
+        Transmission sequence number (absolute): 521536664
+        Stream identifier: 0x0000
+        Stream sequence number: 12
+        Payload protocol identifier: not specified (0)
+        Chunk padding: 0000
+    DATA chunk (ordered, complete segment, TSN: 14, SID: 0, SSN: 13, PPID: 0, payload length: 234 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x03
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 250
+        Transmission sequence number (relative): 14
+        Transmission sequence number (absolute): 521536665
+        Stream identifier: 0x0000
+        Stream sequence number: 13
+        Payload protocol identifier: not specified (0)
+        Chunk padding: 0000
+    DATA chunk (ordered, complete segment, TSN: 15, SID: 0, SSN: 14, PPID: 0, payload length: 234 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x03
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 250
+        Transmission sequence number (relative): 15
+        Transmission sequence number (absolute): 521536666
+        Stream identifier: 0x0000
+        Stream sequence number: 14
+        Payload protocol identifier: not specified (0)
+        Chunk padding: 0000
+E2 Application Protocol
+    E2AP-PDU: initiatingMessage (0)
+        initiatingMessage
+            procedureCode: id-RICindication (5)
+            criticality: ignore (1)
+            value
+                RICindication
+                    protocolIEs: 8 items
+                        Item 0: id-RICrequestID
+                            ProtocolIE-Field
+                                id: id-RICrequestID (29)
+                                criticality: reject (0)
+                                value
+                                    RICrequestID
+                                        ricRequestorID: 123
+                                        ricInstanceID: 2
+                        Item 1: id-RANfunctionID
+                            ProtocolIE-Field
+                                id: id-RANfunctionID (5)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionID: 2
+                        Item 2: id-RICactionID
+                            ProtocolIE-Field
+                                id: id-RICactionID (15)
+                                criticality: reject (0)
+                                value
+                                    RICactionID: 1
+                        Item 3: id-RICindicationSN
+                            ProtocolIE-Field
+                                id: id-RICindicationSN (27)
+                                criticality: reject (0)
+                                value
+                                    RICindicationSN: 10
+                        Item 4: id-RICindicationType
+                            ProtocolIE-Field
+                                id: id-RICindicationType (28)
+                                criticality: reject (0)
+                                value
+                                    RICindicationType: report (0)
+                        Item 5: id-RICindicationHeader
+                            ProtocolIE-Field
+                                id: id-RICindicationHeader (25)
+                                criticality: reject (0)
+                                value
+                                    RICindicationHeader: 0e32303230303631330000074f52414e53696d800973696d756c61746f720e4f52414e2d5343
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationHeader
+                                        indicationHeader-formats: indicationHeader-Format1 (0)
+                                            indicationHeader-Format1
+                                                colletStartTime: 3230323030363133
+                                                [Timestamp string: Oct 13, 2062 20:44:32 UTC]
+                                                senderName: ORANSim
+                                                senderType: simulator
+                                                vendorName: ORAN-SC
+                        Item 6: id-RICindicationMessage
+                            ProtocolIE-Field
+                                id: id-RICindicationMessage (26)
+                                criticality: reject (0)
+                                value
+                                    RICindicationMessage [truncated]: 0c0000400900010001000100010001000100010001000100000830065f2db2469c000120000030065f2db2469f400120000030065f2db246a2800120000030065f2db246a5c00120000030065f2db246a9000120000030065f2db246ac600120000030065f2db
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationMessage
+                                        indicationMessage-formats: indicationMessage-Format1 (0)
+                                            indicationMessage-Format1
+                                                measData: 1 item
+                                                    Item 0
+                                                        MeasurementDataItem
+                                                            measRecord: 9 items
+                                                                Item 0
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 1
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 2
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 3
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 4
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 5
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 6
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 7
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 8
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                            incompleteFlag: true (0)
+                                                measInfoList: 9 items
+                                                    Item 0
+                                                        MeasurementInfoItem
+                                                            measType: measID (1)
+                                                                something unknown here [too long integer(per_integer)]
+                                                                    [Expert Info (Warning/Undecoded): something unknown here [too long integer(per_integer)]]
+                                                                        [something unknown here [too long integer(per_integer)]]
+                                                                        [Severity level: Warning]
+                                                                        [Group: Undecoded]
+[Malformed Packet: E2AP]
+    [Expert Info (Error/Malformed): Malformed Packet (Exception occurred)]
+        [Malformed Packet (Exception occurred)]
+        [Severity level: Error]
+        [Group: Malformed]
+E2 Application Protocol
+    E2AP-PDU: initiatingMessage (0)
+        initiatingMessage
+            procedureCode: id-RICindication (5)
+            criticality: ignore (1)
+            value
+                RICindication
+                    protocolIEs: 8 items
+                        Item 0: id-RICrequestID
+                            ProtocolIE-Field
+                                id: id-RICrequestID (29)
+                                criticality: reject (0)
+                                value
+                                    RICrequestID
+                                        ricRequestorID: 123
+                                        ricInstanceID: 2
+                        Item 1: id-RANfunctionID
+                            ProtocolIE-Field
+                                id: id-RANfunctionID (5)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionID: 2
+                        Item 2: id-RICactionID
+                            ProtocolIE-Field
+                                id: id-RICactionID (15)
+                                criticality: reject (0)
+                                value
+                                    RICactionID: 1
+                        Item 3: id-RICindicationSN
+                            ProtocolIE-Field
+                                id: id-RICindicationSN (27)
+                                criticality: reject (0)
+                                value
+                                    RICindicationSN: 11
+                        Item 4: id-RICindicationType
+                            ProtocolIE-Field
+                                id: id-RICindicationType (28)
+                                criticality: reject (0)
+                                value
+                                    RICindicationType: report (0)
+                        Item 5: id-RICindicationHeader
+                            ProtocolIE-Field
+                                id: id-RICindicationHeader (25)
+                                criticality: reject (0)
+                                value
+                                    RICindicationHeader: 0e32303230303631330000074f52414e53696d800973696d756c61746f720e4f52414e2d5343
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationHeader
+                                        indicationHeader-formats: indicationHeader-Format1 (0)
+                                            indicationHeader-Format1
+                                                colletStartTime: 3230323030363133
+                                                [Timestamp string: Oct 13, 2062 20:44:32 UTC]
+                                                senderName: ORANSim
+                                                senderType: simulator
+                                                vendorName: ORAN-SC
+                        Item 6: id-RICindicationMessage
+                            ProtocolIE-Field
+                                id: id-RICindicationMessage (26)
+                                criticality: reject (0)
+                                value
+                                    RICindicationMessage [truncated]: 0c0000400900010001000100010001000100010001000100000830065f2db246a7700120000030065f2db246a5100120000030065f2db246b2400120000030065f2db246b2700120000030065f2db246a8400120000030065f2db246b5500120000030065f2db
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationMessage
+                                        indicationMessage-formats: indicationMessage-Format1 (0)
+                                            indicationMessage-Format1
+                                                measData: 1 item
+                                                    Item 0
+                                                        MeasurementDataItem
+                                                            measRecord: 9 items
+                                                                Item 0
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 1
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 2
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 3
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 4
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 5
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 6
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 7
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 8
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                            incompleteFlag: true (0)
+                                                measInfoList: 9 items
+                                                    Item 0
+                                                        MeasurementInfoItem
+                                                            measType: measID (1)
+                                                                something unknown here [too long integer(per_integer)]
+                                                                    [Expert Info (Warning/Undecoded): something unknown here [too long integer(per_integer)]]
+                                                                        [something unknown here [too long integer(per_integer)]]
+                                                                        [Severity level: Warning]
+                                                                        [Group: Undecoded]
+[Malformed Packet: E2AP]
+    [Expert Info (Error/Malformed): Malformed Packet (Exception occurred)]
+        [Malformed Packet (Exception occurred)]
+        [Severity level: Error]
+        [Group: Malformed]
+E2 Application Protocol
+    E2AP-PDU: initiatingMessage (0)
+        initiatingMessage
+            procedureCode: id-RICindication (5)
+            criticality: ignore (1)
+            value
+                RICindication
+                    protocolIEs: 8 items
+                        Item 0: id-RICrequestID
+                            ProtocolIE-Field
+                                id: id-RICrequestID (29)
+                                criticality: reject (0)
+                                value
+                                    RICrequestID
+                                        ricRequestorID: 123
+                                        ricInstanceID: 2
+                        Item 1: id-RANfunctionID
+                            ProtocolIE-Field
+                                id: id-RANfunctionID (5)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionID: 2
+                        Item 2: id-RICactionID
+                            ProtocolIE-Field
+                                id: id-RICactionID (15)
+                                criticality: reject (0)
+                                value
+                                    RICactionID: 1
+                        Item 3: id-RICindicationSN
+                            ProtocolIE-Field
+                                id: id-RICindicationSN (27)
+                                criticality: reject (0)
+                                value
+                                    RICindicationSN: 12
+                        Item 4: id-RICindicationType
+                            ProtocolIE-Field
+                                id: id-RICindicationType (28)
+                                criticality: reject (0)
+                                value
+                                    RICindicationType: report (0)
+                        Item 5: id-RICindicationHeader
+                            ProtocolIE-Field
+                                id: id-RICindicationHeader (25)
+                                criticality: reject (0)
+                                value
+                                    RICindicationHeader: 0e32303230303631330000074f52414e53696d800973696d756c61746f720e4f52414e2d5343
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationHeader
+                                        indicationHeader-formats: indicationHeader-Format1 (0)
+                                            indicationHeader-Format1
+                                                colletStartTime: 3230323030363133
+                                                [Timestamp string: Oct 13, 2062 20:44:32 UTC]
+                                                senderName: ORANSim
+                                                senderType: simulator
+                                                vendorName: ORAN-SC
+                        Item 6: id-RICindicationMessage
+                            ProtocolIE-Field
+                                id: id-RICindicationMessage (26)
+                                criticality: reject (0)
+                                value
+                                    RICindicationMessage [truncated]: 0c0000400900010001000100010001000100010001000100000830065f2db2469db00120000030065f2db2469de00120000030065f2db246bc700120000030065f2db246c1700120000030065f2db246c6700120000030065f2db2469e100120000030065f2db
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationMessage
+                                        indicationMessage-formats: indicationMessage-Format1 (0)
+                                            indicationMessage-Format1
+                                                measData: 1 item
+                                                    Item 0
+                                                        MeasurementDataItem
+                                                            measRecord: 9 items
+                                                                Item 0
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 1
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 2
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 3
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 4
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 5
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 6
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 7
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 8
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                            incompleteFlag: true (0)
+                                                measInfoList: 9 items
+                                                    Item 0
+                                                        MeasurementInfoItem
+                                                            measType: measID (1)
+                                                                something unknown here [too long integer(per_integer)]
+                                                                    [Expert Info (Warning/Undecoded): something unknown here [too long integer(per_integer)]]
+                                                                        [something unknown here [too long integer(per_integer)]]
+                                                                        [Severity level: Warning]
+                                                                        [Group: Undecoded]
+[Malformed Packet: E2AP]
+    [Expert Info (Error/Malformed): Malformed Packet (Exception occurred)]
+        [Malformed Packet (Exception occurred)]
+        [Severity level: Error]
+        [Group: Malformed]
+E2 Application Protocol
+    E2AP-PDU: initiatingMessage (0)
+        initiatingMessage
+            procedureCode: id-RICindication (5)
+            criticality: ignore (1)
+            value
+                RICindication
+                    protocolIEs: 8 items
+                        Item 0: id-RICrequestID
+                            ProtocolIE-Field
+                                id: id-RICrequestID (29)
+                                criticality: reject (0)
+                                value
+                                    RICrequestID
+                                        ricRequestorID: 123
+                                        ricInstanceID: 2
+                        Item 1: id-RANfunctionID
+                            ProtocolIE-Field
+                                id: id-RANfunctionID (5)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionID: 2
+                        Item 2: id-RICactionID
+                            ProtocolIE-Field
+                                id: id-RICactionID (15)
+                                criticality: reject (0)
+                                value
+                                    RICactionID: 1
+                        Item 3: id-RICindicationSN
+                            ProtocolIE-Field
+                                id: id-RICindicationSN (27)
+                                criticality: reject (0)
+                                value
+                                    RICindicationSN: 13
+                        Item 4: id-RICindicationType
+                            ProtocolIE-Field
+                                id: id-RICindicationType (28)
+                                criticality: reject (0)
+                                value
+                                    RICindicationType: report (0)
+                        Item 5: id-RICindicationHeader
+                            ProtocolIE-Field
+                                id: id-RICindicationHeader (25)
+                                criticality: reject (0)
+                                value
+                                    RICindicationHeader: 0e32303230303631330000074f52414e53696d800973696d756c61746f720e4f52414e2d5343
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationHeader
+                                        indicationHeader-formats: indicationHeader-Format1 (0)
+                                            indicationHeader-Format1
+                                                colletStartTime: 3230323030363133
+                                                [Timestamp string: Oct 13, 2062 20:44:32 UTC]
+                                                senderName: ORANSim
+                                                senderType: simulator
+                                                vendorName: ORAN-SC
+                        Item 6: id-RICindicationMessage
+                            ProtocolIE-Field
+                                id: id-RICindicationMessage (26)
+                                criticality: reject (0)
+                                value
+                                    RICindicationMessage [truncated]: 0c0000400900010001000100010001000100010001000100000830065f2db246b7700120000030065f2db246b7a00120000030065f2db246b7d00120000030065f2db246cc600120000030065f2db246d1600120000030065f2db246cc900120000030065f2db
+                                    [RANfunction setup frame: 5 (2 -> KPM)]
+                                    [Version (frame): *** Malformed OID ***]
+                                    [Version (dissector): KPM v3]
+                                        [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                            [Severity level: Warning]
+                                            [Group: Protocol]
+                                    E2SM-KPM-IndicationMessage
+                                        indicationMessage-formats: indicationMessage-Format1 (0)
+                                            indicationMessage-Format1
+                                                measData: 1 item
+                                                    Item 0
+                                                        MeasurementDataItem
+                                                            measRecord: 9 items
+                                                                Item 0
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 1
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 2
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 3
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 4
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 5
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 6
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 7
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                                Item 8
+                                                                    MeasurementRecordItem: integer (0)
+                                                                        integer: 1
+                                                            incompleteFlag: true (0)
+                                                measInfoList: 9 items
+                                                    Item 0
+                                                        MeasurementInfoItem
+                                                            measType: measID (1)
+                                                                something unknown here [too long integer(per_integer)]
+                                                                    [Expert Info (Warning/Undecoded): something unknown here [too long integer(per_integer)]]
+                                                                        [something unknown here [too long integer(per_integer)]]
+                                                                        [Severity level: Warning]
+                                                                        [Group: Undecoded]
+[Malformed Packet: E2AP]
+    [Expert Info (Error/Malformed): Malformed Packet (Exception occurred)]
+        [Malformed Packet (Exception occurred)]
+        [Severity level: Error]
+        [Group: Malformed]
+

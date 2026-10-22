@@ -1,0 +1,41 @@
+[23:25:17] gate m6 start; evidence /home/uc/evidence/m6/20261021T232516Z; harness 8ed1d9f8eb7c45f7d9e6f9ede448496e791e1ec9
+[23:25:17] ric watchdog started (pid 2331, threshold 600s)
+[23:25:17] PASS m6_nist_tree_at_testbed_sha_with_agent_dir
+[23:25:17] PASS m6_build_tools_present
+[23:25:17] PASS m6_sctp_module_loaded_and_persisted
+[23:25:18] PASS m6_kpimon_so_extracted_from_image
+[23:25:18] PASS m6_kpimon_so_is_the_size8_patched_build
+[23:25:18] PASS m6_ns3_binary_located
+[23:25:18] PASS m6_capture_started_before_agents
+[23:30:08] PASS m6_bringup_agents_kpm_sim_stopped_connected_set_exact
+[23:30:08] PASS m6_agent_container_ip_recorded
+[23:30:08] PASS m6_wire_shows_kpimon_subscription_request_and_agent_response
+[23:30:09] PASS m6_pcap_subscription_facts
+[23:30:09] PASS m6_tshark_decodes_subscription_request_response_func2
+[23:30:11] PASS m6_ns3_started_single_gnb
+[23:30:26] PASS m6_ns3_completes_exit0
+[23:30:26] draining 8s
+[23:30:34] PASS m6_influx_exported
+[23:30:35] PASS m6_capture_stopped
+[23:30:36] PASS m6_pcap_facts_extracted
+[23:30:38] PASS m6_tshark_decodes_ricindications_header_and_message
+[23:30:39] PASS m6_harness_ran_on_pcap
+[23:30:39] PASS m6_wire_indications_gt0_no_rows_skipped
+[23:30:39] PASS m6_harness_every_header_clean_rc_ok_equals_wire
+[23:30:39] PASS m6_harness_every_message_clean_rc_ok_equals_wire
+[23:30:39] PASS m6_harness_zero_wmore_fail_other
+[23:30:39] PASS m6_harness_ts_len_8_everywhere
+[23:30:39] PASS m6_kpimon_log_indications_equal_wire_zero_wmore
+[23:30:39] PASS m6_agent_indtx_equals_wire
+[23:30:39] PASS m6_kpimon_pod_no_restart
+[23:30:39] PASS m6_emitter_bye_sent_equals_built_zero_drops
+[23:30:39] PASS m6_agent_counters_clean_samples_in_equal_forwarded_equal_trace
+[23:30:39] PASS m6_influx_three_samples_equal_trace_bit_exact
+[23:30:39] PASS m6_influx_all_samples_comparison_informational
+[23:30:41] PASS m6_agents_stopped_no_container_left
+[23:30:42] PASS m6_no_stray_ns3_agent_process_or_3847x_listener
+[23:30:42] PASS m6_no_capture_left_running
+[23:30:42] PASS m6_pcap_in_evidence
+Terminated
+[23:30:42] ric watchdog stopped (pid 2331)
+verdict m6: PASS failed=[]

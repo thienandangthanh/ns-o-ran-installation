@@ -1,0 +1,28 @@
+ file   disk    vda   /home/andang/VMs/ubuntu24.04-f5-agent-setup.qcow2
+ file   cdrom   sda   -
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='/home/andang/VMs/ubuntu24.04-f5-agent-setup.qcow2'/>
+      <target dev='vda' bus='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
+    </disk>
+apparent 107390828544	/home/andang/VMs/ubuntu24.04
+apparent 14188478464	/home/andang/VMs/ubuntu24.04-f0-preflight.qcow2
+apparent 728367104	/home/andang/VMs/ubuntu24.04-f1-ric-up.qcow2
+apparent 25473646592	/home/andang/VMs/ubuntu24.04-f2-refnode.qcow2
+apparent 2530541568	/home/andang/VMs/ubuntu24.04-f3-xapps.qcow2
+apparent 908525568	/home/andang/VMs/ubuntu24.04-f4-ns3-build.qcow2
+apparent 198208	/home/andang/VMs/ubuntu24.04-f5-agent-setup.qcow2
+apparent 39554711552	/home/andang/VMs/ubuntu24.1792610322
+apparent 18415616	/home/andang/VMs/ubuntu24.1792618108
+apparent 1403518976	/home/andang/VMs/ubuntu24.1792618143
+allocated 3488784384	/home/andang/VMs/ubuntu24.04
+allocated 14188457984	/home/andang/VMs/ubuntu24.04-f0-preflight.qcow2
+allocated 728309760	/home/andang/VMs/ubuntu24.04-f1-ric-up.qcow2
+allocated 25473761280	/home/andang/VMs/ubuntu24.04-f2-refnode.qcow2
+allocated 2530512896	/home/andang/VMs/ubuntu24.04-f3-xapps.qcow2
+allocated 908480512	/home/andang/VMs/ubuntu24.04-f4-ns3-build.qcow2
+allocated 200704	/home/andang/VMs/ubuntu24.04-f5-agent-setup.qcow2
+allocated 39554871296	/home/andang/VMs/ubuntu24.1792610322
+allocated 18358272	/home/andang/VMs/ubuntu24.1792618108
+allocated 1403461632	/home/andang/VMs/ubuntu24.1792618143

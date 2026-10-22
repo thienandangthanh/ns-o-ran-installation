@@ -1,0 +1,219 @@
+[
+    {
+        "Id": "cdf0582bf817d4ff82afa7ba9efba8cd595da14a25f5a53d7b97af3cbfed082f",
+        "Created": "2026-10-21T23:29:55.751593166Z",
+        "Path": "/usr/local/bin/ns3-e2-agent",
+        "Args": [],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 17720,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-21T23:29:55.8889857Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:18c47341fb8f3297fd3f96634d508a1d0941633248d2ffbe37637063be741b6e",
+        "ResolvConfPath": "/var/lib/docker/containers/cdf0582bf817d4ff82afa7ba9efba8cd595da14a25f5a53d7b97af3cbfed082f/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/cdf0582bf817d4ff82afa7ba9efba8cd595da14a25f5a53d7b97af3cbfed082f/hostname",
+        "HostsPath": "/var/lib/docker/containers/cdf0582bf817d4ff82afa7ba9efba8cd595da14a25f5a53d7b97af3cbfed082f/hosts",
+        "LogPath": "/var/lib/docker/containers/cdf0582bf817d4ff82afa7ba9efba8cd595da14a25f5a53d7b97af3cbfed082f/cdf0582bf817d4ff82afa7ba9efba8cd595da14a25f5a53d7b97af3cbfed082f-json.log",
+        "Name": "/ns3-e2-agent-2",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "docker-default",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {
+                    "max-file": "3",
+                    "max-size": "20m"
+                }
+            },
+            "NetworkMode": "bridge",
+            "PortBindings": {
+                "38472/tcp": [
+                    {
+                        "HostIp": "127.0.0.1",
+                        "HostPort": "38472"
+                    }
+                ]
+            },
+            "RestartPolicy": {
+                "Name": "always",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": [],
+            "BlkioDeviceWriteBps": [],
+            "BlkioDeviceReadIOps": [],
+            "BlkioDeviceWriteIOps": [],
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ],
+            "Init": true
+        },
+        "GraphDriver": {
+            "Data": {
+                "ID": "cdf0582bf817d4ff82afa7ba9efba8cd595da14a25f5a53d7b97af3cbfed082f",
+                "LowerDir": "/var/lib/docker/overlay2/507f30f0f1a29ae302e6b416e06481737c425ce11b048fba4254b357f57a5907-init/diff:/var/lib/docker/overlay2/m7go475c613ie3dadbvj8weav/diff:/var/lib/docker/overlay2/y8ieeqc64vxi0k0i1qzz3a37v/diff:/var/lib/docker/overlay2/tgvo147t3jw410vb6jbo32iir/diff:/var/lib/docker/overlay2/jxavfipszshermbm6ufxgk6od/diff:/var/lib/docker/overlay2/a9q0vx7l9npc0pr3qpg4p5frp/diff:/var/lib/docker/overlay2/8tqisbbszk48aceb8yywjaqt2/diff:/var/lib/docker/overlay2/rjbt9gxwiu0sjswzeb2in7f7o/diff:/var/lib/docker/overlay2/vy8eehzd8cqh5qlwq0xiqg7rc/diff:/var/lib/docker/overlay2/wodovpi5kzemmy2k66cvx1nyb/diff:/var/lib/docker/overlay2/iu4j3l7vkp7kb3pq055813coo/diff:/var/lib/docker/overlay2/29b23lepv4qiq2gi9ktww4ibk/diff:/var/lib/docker/overlay2/879czhbjxtinf5nur5p0lcui8/diff:/var/lib/docker/overlay2/zquh0wc2wn9nw1polmxtwx5b7/diff:/var/lib/docker/overlay2/ff25bf7d83686bec24f3707030cead20ae4bcaf375f49e4accb91dcf716a4202/diff:/var/lib/docker/overlay2/0a6a7e297bda537dc96d07c3b81e78f8cd9b7060f2d2fe0582517640f5d76f71/diff:/var/lib/docker/overlay2/01cb9768a9ae00a81373965bd12c349d8f888ae32dda8ad8571d9ae1a9663eeb/diff:/var/lib/docker/overlay2/870e414fa8311b1d608cf34b9e271a94413163cafc332e10a8921bf75e45c35b/diff:/var/lib/docker/overlay2/d6701fd00ab56931638d489d0f42fa83f8955d77dca4b5f5c48040597b70e1f8/diff:/var/lib/docker/overlay2/371e92ac02426e9c0fd8e477e445e7b2808b9d07026aa70446b1a54baf4455d0/diff:/var/lib/docker/overlay2/5b418ba20189b74085270439cd1996285005f00e12f8c5567722ace3de25ab4b/diff:/var/lib/docker/overlay2/3894b4ee587fe03fe42db756f2033b7a640c39efbaf9042e3ba27729ed722524/diff:/var/lib/docker/overlay2/5d445e6c4cf7aa918b55fc720898c861e43dff40cd09fe6bcc8324cf09afcad4/diff",
+                "MergedDir": "/var/lib/docker/overlay2/507f30f0f1a29ae302e6b416e06481737c425ce11b048fba4254b357f57a5907/merged",
+                "UpperDir": "/var/lib/docker/overlay2/507f30f0f1a29ae302e6b416e06481737c425ce11b048fba4254b357f57a5907/diff",
+                "WorkDir": "/var/lib/docker/overlay2/507f30f0f1a29ae302e6b416e06481737c425ce11b048fba4254b357f57a5907/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [],
+        "Config": {
+            "Hostname": "cdf0582bf817",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "38472/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "E2_NODE_KIND=gnb",
+                "E2_PLMN=00101",
+                "E2_TERM_ADDR=10.97.131.139",
+                "E2_TERM_PORT=36422",
+                "E2_IPC_PORT=38472",
+                "E2_NODE_ID=2",
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/go/bin:/opt/go/1.18/bin:/root/go/bin",
+                "GOPATH=/root/go",
+                "DEFAULTPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": null,
+            "Image": "ns3-e2-agent:725b167e53b6",
+            "Volumes": null,
+            "WorkingDir": "/playpen",
+            "Entrypoint": [
+                "/usr/local/bin/ns3-e2-agent"
+            ],
+            "Labels": {
+                "ns3e2.agent": "1",
+                "ns3e2.kind": "gnb",
+                "ns3e2.nodeId": "2",
+                "org.opencontainers.image.ref.name": "ubuntu",
+                "org.opencontainers.image.version": "22.04"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "207596a1e6452effcd0f7405e64254159c4a7b58624e2f6b26af0de9e297caf4",
+            "SandboxKey": "/var/run/docker/netns/207596a1e645",
+            "Ports": {
+                "38472/tcp": [
+                    {
+                        "HostIp": "127.0.0.1",
+                        "HostPort": "38472"
+                    }
+                ]
+            },
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "66fa6d71711bf406778b9f27376c79c694665bfc0be7f1ea713bd1df7a638ca7",
+                    "EndpointID": "444efe82d0c49344b2e6a9c79ec75d5d3f8012a722104e786474fb8254bbb62e",
+                    "Gateway": "172.17.0.1",
+                    "IPAddress": "172.17.0.2",
+                    "MacAddress": "12:4a:3e:61:11:27",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": null
+                }
+            }
+        }
+    }
+]

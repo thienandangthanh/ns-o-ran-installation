@@ -1,0 +1,19 @@
+[22:11:28] bringup ric: waiting up to 1200s for ricplt pods
+[22:11:28] bringup ric: rc=0 unready: deployment-ricplt-e2mgr-9b6b8f99f-qms4v deployment-ricplt-e2term-alpha-88fd95787-wmwm4 statefulset-ricplt-dbaas-server-0 
+[22:11:43] bringup ric: rc=0 unready: deployment-ricplt-a1mediator-78f79cbb6b-dt774 deployment-ricplt-e2mgr-9b6b8f99f-qms4v deployment-ricplt-e2term-alpha-88fd95787-wmwm4 deployment-ricplt-submgr-858956fbdc-55dwq r4-infrastructure-kong-78657d8f48-dxr5n r4-infrastructure-prometheus-alertmanager-b9cc56766-8hqk9 r4-infrastructure-prometheus-server-6476958975-r9nfv statefulset-ricplt-dbaas-server-0 
+[22:11:58] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 deployment-ricplt-rtmgr-74fb47b69d-2r847 r4-infrastructure-prometheus-alertmanager-b9cc56766-8hqk9 r4-infrastructure-prometheus-server-6476958975-r9nfv 
+[22:12:13] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[22:12:28] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[22:12:43] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[22:12:58] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[22:13:13] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[22:13:28] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[22:13:43] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[22:13:58] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[22:14:14] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[22:14:29] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[22:14:44] bringup ric: all ricplt pods Ready
+[22:14:59] bringup ric: e2term registered with e2mgr: [{"e2tAddress":"10.101.123.229:38000","ranNames":[]}]
+[22:15:19] bringup refnode: attempt 1: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)
+[22:15:22] bringup refnode: run_e2sim script exit 0
+[22:15:27] bringup refnode: e2mgr shows a CONNECTED node (attempt 1)

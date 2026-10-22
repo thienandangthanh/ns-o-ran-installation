@@ -1,0 +1,16 @@
+[21:31:04] gate m1 start; evidence /home/uc/evidence/m1/20261021T213103Z; harness 8ed1d9f8eb7c45f7d9e6f9ede448496e791e1ec9
+[21:31:06] PASS testbed_clone
+[21:31:06] ric watchdog started (pid 1109, threshold 600s)
+Terminated
+[21:44:36] ric watchdog stopped (pid 1109)
+[21:44:36] PASS full_install_exit_0
+[21:44:36] PASS ricdep_sha
+[21:44:36] PASS appmgr_sha
+[21:44:57] PASS ric_bringup
+[21:44:57] PASS versions_recorded
+[21:44:57] PASS image_tags_recorded
+[21:44:57] PASS image_tags_match_l_recipe
+[21:54:58] PASS ricplt_stable_10min
+[21:54:58] PASS watchdog_interventions_informational
+[21:54:58] PASS kpm_sim_connected_informational
+verdict m1: PASS failed=[]

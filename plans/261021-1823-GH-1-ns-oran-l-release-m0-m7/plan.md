@@ -34,7 +34,7 @@ P7 (RC) of the original contract is deferred; numbering is kept so "P3 sign-off 
 | P4 | [ns-3 decouple, IPC emitter, scripted build, timing](phase-04-ns3-decouple-ipc-emitter-build-timing-m4.md) | M4 | `l4-ns3-build` | **done** (M4 green) |
 | P5 | [Agent + single-gNB KPM](phase-05-e2-agent-single-gnb-kpm-m5-m6.md) | M5, M6 | `l5-agent-setup`, `l6-kpm` | **done** (M5, M6 green) |
 | P6 | [Multi-gNB robustness](phase-06-multi-gnb-robustness-m7.md) | M7 | `l7-multignb` | **done** (M7 green) |
-| P8 | [Unattended re-run from fresh-install to M7; docs; pre-M8 gate](phase-08-unattended-rerun-to-m7-and-handoff.md) | M0–M7 again | `f7-rerun-green` | in progress |
+| P8 | [Unattended re-run from fresh-install to M7; docs; pre-M8 gate](phase-08-unattended-rerun-to-m7-and-handoff.md) | M0–M7 again | `f7-rerun-green` | done 2026-10-22 (attempt 2, harness `8ed1d9f`; pre-M8 gate open) |
 
 Dependencies: strictly sequential P0→P1→P2→P3→P4→P5→P6→P8. P3 needs P2's
 golden pcap, and P4 starts only after P3 sign-off. Idle time during long

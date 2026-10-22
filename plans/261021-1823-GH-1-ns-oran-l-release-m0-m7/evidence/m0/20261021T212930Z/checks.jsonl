@@ -1,0 +1,52 @@
+{"name":"os_is_24_04","pass":true,"detail":"24.04"}
+{"name":"cgroup_v2","pass":true,"detail":"cgroup2fs"}
+{"name":"ram_ge_14g","pass":true,"detail":"MemTotal_kB=16375616"}
+{"name":"cpus_ge_8","pass":true,"detail":"nproc=8"}
+{"name":"root_free_ge_60g","pass":true,"detail":"root_avail_G=84"}
+{"name":"swap_state_informational","pass":true,"detail":"swap expected on at M0, NIST disables it later: NAME      TYPE SIZE USED PRIO;/swap.img file   4G   0B   -2;"}
+{"name":"sctp_module","pass":true,"detail":"sctp                  495616  4"}
+{"name":"egress_github.com","pass":true,"detail":"https://github.com -> HTTP 200"}
+{"name":"egress_registry-1.docker.io_v2_","pass":true,"detail":"https://registry-1.docker.io/v2/ -> HTTP 401"}
+{"name":"egress_pkgs.k8s.io","pass":true,"detail":"https://pkgs.k8s.io -> HTTP 302"}
+{"name":"egress_gerrit.o-ran-sc.org","pass":true,"detail":"https://gerrit.o-ran-sc.org -> HTTP 302"}
+{"name":"egress_nexus3.o-ran-sc.org_10002_v2_","pass":true,"detail":"https://nexus3.o-ran-sc.org:10002/v2/ -> HTTP 401"}
+{"name":"egress_packagecloud.io","pass":true,"detail":"https://packagecloud.io -> HTTP 200"}
+{"name":"egress_dl.google.com","pass":true,"detail":"https://dl.google.com -> HTTP 302"}
+{"name":"egress_proxy.golang.org","pass":true,"detail":"https://proxy.golang.org -> HTTP 200"}
+{"name":"egress_ppa.launchpadcontent.net","pass":true,"detail":"https://ppa.launchpadcontent.net -> HTTP 503"}
+{"name":"egress_download.docker.com","pass":true,"detail":"https://download.docker.com -> HTTP 200"}
+{"name":"egress_packages.buildkite.com","pass":true,"detail":"https://packages.buildkite.com -> HTTP 404"}
+{"name":"egress_nexus3.o-ran-sc.org","pass":true,"detail":"https://nexus3.o-ran-sc.org -> HTTP 200"}
+{"name":"testbed_clone","pass":true,"detail":""}
+{"name":"testbed_commit_hashes","pass":true,"detail":"https://gerrit.o-ran-sc.org/r/ric-plt/ric-dep.git pinned ee47a347314aa0749881de367e8fedc4a1bba13a OK\nhttps://gerrit.o-ran-sc.org/r/ric-plt/appmgr.git pinned 4c05932dce72e98db23eaff2b72b58816e1f2d55 OK"}
+{"name":"index_k8s","pass":true,"detail":""}
+{"name":"index_docker","pass":true,"detail":""}
+{"name":"index_helm","pass":true,"detail":""}
+{"name":"pkg_kubeadm","pass":true,"detail":"1.33.7-1.1\n1.33.8-1.1\n1.33.9-1.1"}
+{"name":"pkg_kubelet","pass":true,"detail":"1.33.7-1.1\n1.33.8-1.1\n1.33.9-1.1"}
+{"name":"pkg_kubectl","pass":true,"detail":"1.33.7-1.1\n1.33.8-1.1\n1.33.9-1.1"}
+{"name":"pkg_docker_ce","pass":true,"detail":"5:29.5.1-1~ubuntu.24.04~noble\n5:29.5.2-1~ubuntu.24.04~noble\n5:29.5.3-1~ubuntu.24.04~noble"}
+{"name":"pkg_containerd_io","pass":true,"detail":"2.4.2-1~ubuntu.24.04~noble\n2.4.2-2~ubuntu.24.04~noble\n2.4.2-3~ubuntu.24.04~noble"}
+{"name":"pkg_helm","pass":true,"detail":"helm prefix 3.20: 2 match(es)\n3.20.0-1\n3.20.2-1"}
+{"name":"ricdep_clone","pass":true,"detail":""}
+{"name":"kpimon_clone","pass":true,"detail":""}
+{"name":"apply_ricdep_getConfigmap_go","pass":true,"detail":"Checking patch depRicKubernetesOperator/internal/controller/getConfigmap.go..."}
+{"name":"apply_ricdep_e2mgr_configmap","pass":true,"detail":"Checking patch helm/e2mgr/templates/configmap.yaml..."}
+{"name":"apply_ricdep_ni_e2mgr_configmap","pass":true,"detail":"Checking patch new-installer/helm/charts/nearrtric/e2mgr/templates/configmap.yaml..."}
+{"name":"apply_ricdep_rtmgr_config","pass":true,"detail":"Checking patch helm/rtmgr/templates/config.yaml..."}
+{"name":"apply_ricdep_rtmgr_deployment","pass":true,"detail":"Checking patch helm/rtmgr/templates/deployment.yaml..."}
+{"name":"apply_ricdep_ni_rtmgr_config","pass":true,"detail":"Checking patch new-installer/helm/charts/nearrtric/rtmgr/templates/config.yaml..."}
+{"name":"apply_ricdep_ni_rtmgr_deployment","pass":true,"detail":"Checking patch new-installer/helm/charts/nearrtric/rtmgr/templates/deployment.yaml..."}
+{"name":"apply_kpimon_wrapper_c","pass":true,"detail":"Checking patch e2sm/wrapper.c..."}
+{"name":"apply_kpimon_kpm2_0_asn","pass":true,"detail":"Checking patch e2sm/asn1/kpm2_0.asn..."}
+{"name":"apply_kpimon_LogicalOR_h","pass":true,"detail":"Checking patch e2sm/headers/LogicalOR.h..."}
+{"name":"apply_kpimon_MatchingCondItemChoice_h","pass":true,"detail":"Checking patch e2sm/headers/MatchingCondItem-Choice.h..."}
+{"name":"apply_kpimon_MatchingCondItem_h","pass":true,"detail":"Checking patch e2sm/headers/MatchingCondItem.h..."}
+{"name":"apply_kpimon_LogicalOR_c","pass":true,"detail":"Checking patch e2sm/lib/LogicalOR.c..."}
+{"name":"apply_kpimon_MatchingCondItemChoice_c","pass":true,"detail":"Checking patch e2sm/lib/MatchingCondItem-Choice.c..."}
+{"name":"apply_kpimon_MatchingCondItem_c","pass":true,"detail":"Checking patch e2sm/lib/MatchingCondItem.c..."}
+{"name":"apply_kpimon_control_go","pass":true,"detail":"Checking patch control/control.go..."}
+{"name":"fetch_testbed_sha","pass":true,"detail":"fetched 725b167e53b6aca9ce55b3725f16c98108e12851 from https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git"}
+{"name":"fetch_ns3_sha","pass":true,"detail":"fetched ace321688130834fb79cf724050178a661ed4cf8 from https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git"}
+{"name":"fetch_oran_interface_sha","pass":true,"detail":"fetched 438a839aad69854acca41ef435ff681ee7bd3134 from https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git"}
+{"name":"fetch_e2sim_sha","pass":true,"detail":"fetched 2209995a84412b5178f2a49cb92125fd23cb7553 from https://github.com/thienandangthanh/o-ran-e2sim.git"}

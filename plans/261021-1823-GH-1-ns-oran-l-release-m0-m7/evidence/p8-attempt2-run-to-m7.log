@@ -1,0 +1,113 @@
+P8 attempt 2 start 2026-10-21T21:26:55Z harness 8ed1d9f8eb7c45f7d9e6f9ede448496e791e1ec9
+# Fork branch SHAs that gate runs clone (anonymous HTTPS). Shell-sourceable.
+# The harness SHA is passed to run-to-m7.sh as an argument: a file cannot pin
+TESTBED_SHA=725b167e53b6aca9ce55b3725f16c98108e12851
+NS3_SHA=ace321688130834fb79cf724050178a661ed4cf8
+ORAN_INTERFACE_SHA=438a839aad69854acca41ef435ff681ee7bd3134
+E2SIM_SHA=2209995a84412b5178f2a49cb92125fd23cb7553
+[host 21:26:55] graceful shutdown of ubuntu24.04
+[host 21:28:28] reverting to fresh-install
+[host 21:28:37] reverted to fresh-install; VM up
+[21:28:37] gate m0-host start; evidence /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m0/20261021T212837Z-host; harness 8ed1d9f8eb7c45f7d9e6f9ede448496e791e1ec9
+[21:28:37] PASS host_free_ge_20g
+[21:28:37] PASS fresh_install_present
+[21:28:37] PASS harness_repo_public
+[21:28:45] PASS harness_anonymous_clone
+[21:28:57] PASS probe_create
+[21:28:57] PASS probe_marker_written
+[21:29:12] PASS revert_fresh_install
+[21:29:12] PASS marker_absent_after_revert
+[21:29:12] PASS probe_still_listed
+[21:29:27] PASS branch_create
+[21:29:27] PASS branch_overlay_exists
+[21:29:27] PASS branch_delete
+[21:29:27] PASS branch_unlisted
+[21:29:27] PASS branch_overlay_gone
+[21:29:27] PASS vm_up_after_probe
+[21:29:28] PASS vm_no_git_credentials
+verdict m0-host: PASS failed=[]
+[host 21:29:30] gate m0 (gate-m0-preflight.sh) harness 8ed1d9f8eb -> unit gate-m0-20261021T212930Z
+debconf: delaying package configuration, since apt-utils is not installed
+
+Running kernel seems to be up-to-date.
+
+No services need to be restarted.
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+[host 21:30:49] gate m0 exit 0
+scrub: 0 file(s) redacted, 0 known secret(s)
+[host 21:30:50] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m0/20261021T212930Z
+verdict m0 PASS []
+[host 21:30:50] graceful shutdown of ubuntu24.04
+[host 21:30:53] creating external disk-only snapshot f0-preflight (host free 78G)
+[host 21:31:01] snapshot f0-preflight created; VM up
+[host 21:31:01] m0 green
+[host 21:31:03] gate m1 (gate-m1-ric-up.sh) harness 8ed1d9f8eb -> unit gate-m1-20261021T213103Z
+[host 21:55:29] gate m1 exit 0
+scrub: 0 file(s) redacted, 0 known secret(s)
+[host 21:55:29] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m1/20261021T213103Z
+verdict m1 PASS []
+[host 21:55:29] graceful shutdown of ubuntu24.04
+[host 21:55:48] creating external disk-only snapshot f1-ric-up (host free 65G)
+[host 21:55:56] snapshot f1-ric-up created; VM up
+[host 21:55:56] m1 green
+[host 21:55:58] gate m2 (gate-m2-refnode.sh) harness 8ed1d9f8eb -> unit gate-m2-20261021T215558Z
+[host 22:10:13] gate m2 exit 0
+scrub: 0 file(s) redacted, 0 known secret(s)
+[host 22:10:13] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m2/20261021T215558Z
+verdict m2 PASS []
+[host 22:10:14] graceful shutdown of ubuntu24.04
+[host 22:11:17] creating external disk-only snapshot f2-refnode (host free 64G)
+[host 22:11:26] snapshot f2-refnode created; VM up
+[host 22:11:26] m2 green
+[host 22:11:28] gate m3 (gate-m3-xapps.sh) harness 8ed1d9f8eb -> unit gate-m3-20261021T221128Z
+[host 22:53:05] gate m3 exit 0
+scrub: 0 file(s) redacted, 44 known secret(s)
+[host 22:53:05] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m3/20261021T221128Z
+verdict m3 PASS []
+[host 22:53:05] graceful shutdown of ubuntu24.04
+[host 22:54:12] creating external disk-only snapshot f3-xapps (host free 40G)
+[host 22:54:20] snapshot f3-xapps created; VM up
+[host 22:54:20] m3 green
+[host 22:54:23] gate m4 (gate-m4-ns3-build.sh) harness 8ed1d9f8eb -> unit gate-m4-20261021T225423Z
+[host 23:15:44] gate m4 exit 0
+scrub: 0 file(s) redacted, 44 known secret(s)
+[host 23:15:47] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m4/20261021T225423Z
+verdict m4 PASS []
+[host 23:15:47] graceful shutdown of ubuntu24.04
+[host 23:17:21] creating external disk-only snapshot f4-ns3-build (host free 38G)
+[host 23:17:30] snapshot f4-ns3-build created; VM up
+[host 23:17:30] m4 green
+[host 23:17:33] gate m5 (gate-m5-agent-setup.sh) harness 8ed1d9f8eb -> unit gate-m5-20261021T231733Z
+[host 23:24:40] gate m5 exit 0
+scrub: 0 file(s) redacted, 44 known secret(s)
+[host 23:24:40] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m5/20261021T231733Z
+verdict m5 PASS []
+[host 23:24:40] graceful shutdown of ubuntu24.04
+[host 23:25:04] creating external disk-only snapshot f5-agent-setup (host free 37G)
+[host 23:25:14] snapshot f5-agent-setup created; VM up
+[host 23:25:14] m5 green
+[host 23:25:16] gate m6 (gate-m6-kpm.sh) harness 8ed1d9f8eb -> unit gate-m6-20261021T232516Z
+[host 23:30:52] gate m6 exit 0
+scrub: 0 file(s) redacted, 44 known secret(s)
+[host 23:30:54] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m6/20261021T232516Z
+verdict m6 PASS []
+[host 23:30:54] graceful shutdown of ubuntu24.04
+[host 23:31:18] creating external disk-only snapshot f6-kpm (host free 37G)
+[host 23:31:26] snapshot f6-kpm created; VM up
+[host 23:31:26] m6 green
+[host 23:31:29] gate m7 (gate-m7-multignb.sh) harness 8ed1d9f8eb -> unit gate-m7-20261021T233129Z
+[host 23:59:55] gate m7 exit 0
+scrub: 0 file(s) redacted, 44 known secret(s)
+[host 00:00:38] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m7/20261021T233129Z
+verdict m7 PASS []
+[host 00:00:38] graceful shutdown of ubuntu24.04
+[host 00:02:08] creating external disk-only snapshot f7-rerun-green (host free 36G)
+[host 00:02:17] snapshot f7-rerun-green created; VM up
+[host 00:02:17] m7 green
+[host 00:02:17] gates m0..m7 green
+P8 exit 0 at 2026-10-22T00:02:17Z

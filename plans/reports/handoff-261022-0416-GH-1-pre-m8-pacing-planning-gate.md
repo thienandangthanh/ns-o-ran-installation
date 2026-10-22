@@ -2,7 +2,7 @@
 
 Date: 2026-10-22. Plan: `plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/`. Contract: `plans/reports/brainstorm-261017-0308-GH-1-ns-oran-l-release-nist-1-8-0-contract.md`, section "User answers — pacing".
 
-**Status.** M0–M7 are green in the dev run, and every gate is backed by decoded wire evidence. The unattended re-run from `fresh-install` (P8) is reported in section 6.
+**Status.** M0–M7 are green in the dev run, and every gate is backed by decoded wire evidence. The unattended re-run from `fresh-install` (P8) is also green, M0 to M7 in one invocation (section 6).
 
 The contract imposes a hard stop before M8. **M8 (RC), the closed-loop ladder R0–R3 and M9 have not started, and they must not start until the steps in section 5 are done and the user approves the pacing plan.**
 
@@ -70,7 +70,31 @@ The contract imposes a hard stop before M8. **M8 (RC), the closed-loop ladder R0
 
 ## 6. P8 unattended re-run
 
-(Filled in when the re-run completes.)
+**Result: green.** P8 attempt 2 was one unattended invocation of `scripts/run-to-m7.sh --harness-sha 8ed1d9f8eb7c45f7d9e6f9ede448496e791e1ec9 --run-prefix f` after `vm-snapshot.sh revert fresh-install`. It started 2026-10-21 21:26:55Z and ended at 2026-10-22 00:02:17Z with exit 0, which is 2 h 35 min. The snapshot `f7-rerun-green` was taken, and `fresh-install` was untouched.
+
+All 8 verdicts pass. Each records the harness SHA above and pins equal to `scripts/pins.conf`.
+
+| Gate | Evidence (`evidence/…`) | Checks | Orchestrator re-check of the decoded bytes |
+|---|---|---|---|
+| M0 | `m0/20261021T212837Z-host`, `m0/20261021T212930Z` | 16 + 52 | (facts gate) |
+| M1 | `m1/20261021T213103Z` | 11 | version drift vs dev: none (12 packages, 16 images identical; `version-drift-vs-dev.json`) |
+| M2 | `m2/20261021T215558Z` | 32 | E2SetupRequest/Response decoded, 19 heartbeats, 0 ABORT; probe: 2 distinct associations |
+| M3 | `m3/20261021T221128Z` | 50 | harness JSONL recounted: stock 505/505 header RC_WMORE; patched 505/505 fully clean (ts_len 8); regen 470/470, footprint `TimeStamp.c` |
+| M4 | `m4/20261021T225423Z` | 18 | timing 1.644 (1 gNB) / 29.716 (default) wall s per sim s, CV ≤ 0.5 % |
+| M5 | `m5/20261021T231733Z` | 21 | gNB-ID 2, func 2, real OID, CONNECTED then DISCONNECTED after stop |
+| M6 | `m6/20261021T232516Z` | 35 | host tshark 4.7.4: 199 unique RICindications, 0 malformed; 8-octet colletStartTime; Influx vs trace 14,494 fields equal |
+| M7 | `m7/20261021T233129Z` | 52 | host tshark: 5187 indication PDUs (gate: 5187) over 10 associations, two per gNB-ID 1–5 (new source port after the delete), 0 malformed indications, 0 ABORT |
+
+**M7 differences from the dev run (none a regression).**
+- The replacement e2term pod was Ready after 137 s, and every node indicated again at +146 s after the delete (dev: +194 s / +237 s).
+- Agent RestartCount was 1 after the delete (dev: 3).
+- The maximum 1-minute load was 1.36 (dev: 2.45). simTime was 45, set from this run's M4 timing.
+
+**Flakiness.** No in-gate retry fired (both kpimon installs passed on try 1, and neither the bring-up retries nor the e2term watchdog acted). The only retry lines are the ones the tests provoke on purpose: M4's agent-down run and the agents' reconnect during M7's e2term delete.
+
+**Attempt 1** (harness `b94622d`) was M0–M4 green, then the disk guard stopped it before f4 (29 G free, 30 G needed). Under D2 the run's own snapshots were deleted, and P8 was restarted from `fresh-install` so that all 8 verdicts come from one invocation. Log: `evidence/p8-attempt1-run-to-m7.log`.
+
+**Host disk after the run:** 36 G free on `/home`. Snapshots kept: `fresh-install`, f0…f6, `f7-rerun-green`, and `m0-probe-f10212128` (M0's sibling-snapshot proof, kept by design).
 
 ## 7. Known issues carried forward (none blocks M0–M7)
 

@@ -1,0 +1,338 @@
+Frame 11: 394 bytes on wire (3152 bits), 394 bytes captured (3152 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 22:42:53.530936000 UTC
+    UTC Arrival Time: Oct 21, 2026 22:42:53.530936000 UTC
+    Epoch Arrival Time: 1792622573.530936000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 1.114139000 seconds]
+    [Time delta from previous displayed frame: 0.000000000 seconds]
+    [Time since reference or first frame: 4.134759000 seconds]
+    Frame Number: 11
+    Frame Length: 394 bytes (3152 bits)
+    Capture Length: 394 bytes (3152 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp:e2ap:e2ap]
+Ethernet II, Src: e2:dc:78:1e:9b:b0 (e2:dc:78:1e:9b:b0), Dst: 82:1b:04:b2:ab:93 (82:1b:04:b2:ab:93)
+    Destination: 82:1b:04:b2:ab:93 (82:1b:04:b2:ab:93)
+        Address: 82:1b:04:b2:ab:93 (82:1b:04:b2:ab:93)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: e2:dc:78:1e:9b:b0 (e2:dc:78:1e:9b:b0)
+        Address: e2:dc:78:1e:9b:b0 (e2:dc:78:1e:9b:b0)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 10.97.131.139, Dst: 172.17.0.3
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 380
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 63
+    Protocol: SCTP (132)
+    Header Checksum: 0xfffb [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 10.97.131.139
+    Destination Address: 172.17.0.3
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0xed1e2a7f
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0xb8e396a3 [unverified]
+    [Checksum Status: Unverified]
+    DATA chunk (ordered, complete segment, TSN: 1, SID: 1, SSN: 0, PPID: 70, payload length: 332 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x03
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 348
+        Transmission sequence number (relative): 1
+        Transmission sequence number (absolute): 874720973
+        Stream identifier: 0x0001
+        Stream sequence number: 0
+        Payload protocol identifier: E2-CP (70)
+E2 Application Protocol
+    E2AP-PDU: initiatingMessage (0)
+        initiatingMessage
+            procedureCode: id-RICsubscription (8)
+            criticality: ignore (1)
+            value
+                RICsubscriptionRequest
+                    protocolIEs: 3 items
+                        Item 0: id-RICrequestID
+                            ProtocolIE-Field
+                                id: id-RICrequestID (29)
+                                criticality: reject (0)
+                                value
+                                    RICrequestID
+                                        ricRequestorID: 123
+                                        ricInstanceID: 2
+                        Item 1: id-RANfunctionID
+                            ProtocolIE-Field
+                                id: id-RANfunctionID (5)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionID: 2
+                        Item 2: id-RICsubscriptionDetails
+                            ProtocolIE-Field
+                                id: id-RICsubscriptionDetails (30)
+                                criticality: reject (0)
+                                value
+                                    RICsubscriptionDetails
+                                        ricEventTriggerDefinition: 08270f
+                                        [RANfunction setup frame: 5 (2 -> KPM)]
+                                        [Version (frame): *** Malformed OID ***]
+                                        [Version (dissector): KPM v3]
+                                            [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                                [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                                [Severity level: Warning]
+                                                [Group: Protocol]
+                                        E2SM-KPM-EventTriggerDefinition
+                                            eventDefinition-formats: eventDefinition-Format1 (0)
+                                                eventDefinition-Format1
+                                                    reportingPeriod: 10000
+                                        ricAction-ToBeSetup-List: 1 item
+                                            Item 0: id-RICaction-ToBeSetup-Item
+                                                ProtocolIE-SingleContainer
+                                                    id: id-RICaction-ToBeSetup-Item (19)
+                                                    criticality: ignore (1)
+                                                    value
+                                                        RICaction-ToBeSetup-Item
+                                                            ricActionID: 1
+                                                            ricActionType: report (0)
+                                                            ricActionDefinition [truncated]: 00010340000801c04452422e526c635364755472616e736d6974746564566f6c756d65444c000004000000384452422e526c635364755472616e736d6974746564566f6c756d65554c000004000000344452422e50657244617461566f6c756d65444c44697374
+                                                            [RANfunction setup frame: 5 (2 -> KPM)]
+                                                            [Version (frame): *** Malformed OID ***]
+                                                            [Version (dissector): KPM v3]
+                                                                [Expert Info (Warning/Protocol): Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                                                    [Dissector version mismatch - frame is *** Malformed OID *** but dissector is KPM v3]
+                                                                    [Severity level: Warning]
+                                                                    [Group: Protocol]
+                                                            E2SM-KPM-ActionDefinition
+                                                                ric-Style-Type: 3
+                                                                actionDefinition-formats: actionDefinition-Format3 (2)
+                                                                    actionDefinition-Format3
+                                                                        measCondList: 9 items
+                                                                            Item 0
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: DRB.RlcSduTransmittedVolumeDL
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 1
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: DRB.RlcSduTransmittedVolumeUL
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 2
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: DRB.PerDataVolumeDLDist.Bin
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 3
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: DRB.PerDataVolumeULDist.Bin
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 4
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: DRB.RlcPacketDropRateDLDist
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 5
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: DRB.PacketLossRateULDist
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 6
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: L1M.DL-SS-RSRP.SSB
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 7
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: L1M.DL-SS-SINR.SSB
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                            Item 8
+                                                                                MeasurementCondItem
+                                                                                    measType: measName (0)
+                                                                                        measName: L1M.UL-SRS-RSRP
+                                                                                    matchingCond: 1 item
+                                                                                        Item 0
+                                                                                            MatchingCondItem
+                                                                                                matchingCondChoice: measLabel (0)
+                                                                                                    measLabel
+                                                                                                        noLabel: true (0)
+                                                                        granulPeriod: 10000
+                                                            ricSubsequentAction
+                                                                ricSubsequentActionType: continue (0)
+                                                                ricTimeToWait: w20ms (4)
+
+Frame 12: 114 bytes on wire (912 bits), 114 bytes captured (912 bits)
+    Encapsulation type: Ethernet (1)
+    Arrival Time: Oct 21, 2026 22:42:53.531395000 UTC
+    UTC Arrival Time: Oct 21, 2026 22:42:53.531395000 UTC
+    Epoch Arrival Time: 1792622573.531395000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000459000 seconds]
+    [Time delta from previous displayed frame: 0.000459000 seconds]
+    [Time since reference or first frame: 4.135218000 seconds]
+    Frame Number: 12
+    Frame Length: 114 bytes (912 bits)
+    Capture Length: 114 bytes (912 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: eth:ethertype:ip:sctp:e2ap:e2ap]
+Ethernet II, Src: 82:1b:04:b2:ab:93 (82:1b:04:b2:ab:93), Dst: e2:dc:78:1e:9b:b0 (e2:dc:78:1e:9b:b0)
+    Destination: e2:dc:78:1e:9b:b0 (e2:dc:78:1e:9b:b0)
+        Address: e2:dc:78:1e:9b:b0 (e2:dc:78:1e:9b:b0)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Source: 82:1b:04:b2:ab:93 (82:1b:04:b2:ab:93)
+        Address: 82:1b:04:b2:ab:93 (82:1b:04:b2:ab:93)
+        .... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+        .... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+    Type: IPv4 (0x0800)
+Internet Protocol Version 4, Src: 172.17.0.3, Dst: 10.97.131.139
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x02 (DSCP: CS0, ECN: ECT(0))
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..10 = Explicit Congestion Notification: ECN-Capable Transport codepoint '10' (2)
+    Total Length: 100
+    Identification: 0x0000 (0)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: SCTP (132)
+    Header Checksum: 0x0014 [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 172.17.0.3
+    Destination Address: 10.97.131.139
+Stream Control Transmission Protocol, Src Port: 36422 (36422), Dst Port: 36422 (36422)
+    Source port: 36422
+    Destination port: 36422
+    Verification tag: 0xf9c82e9c
+    [Association index: disabled (enable in preferences)]
+    Checksum: 0x00000000 [unverified]
+    [Checksum Status: Unverified]
+    SACK chunk (Cumulative TSN: 874720973, a_rwnd: 106496, gaps: 0, duplicate TSNs: 0)
+        Chunk type: SACK (3)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x00
+            .... ...0 = Nonce sum: 0
+        Chunk length: 16
+        Cumulative TSN ACK (relative): 1
+        Cumulative TSN ACK (absolute): 874720973
+        Advertised receiver window credit (a_rwnd): 106496
+        Number of gap acknowledgement blocks: 0
+        Number of duplicated TSNs: 0
+    DATA chunk (ordered, complete segment, TSN: 2, SID: 0, SSN: 1, PPID: 0, payload length: 33 bytes)
+        Chunk type: DATA (0)
+            0... .... = Bit: Stop processing of the packet
+            .0.. .... = Bit: Do not report
+        Chunk flags: 0x03
+            .... 0... = I-Bit: Possibly delay SACK
+            .... .0.. = U-Bit: Ordered delivery
+            .... ..1. = B-Bit: First segment
+            .... ...1 = E-Bit: Last segment
+        Chunk length: 49
+        Transmission sequence number (relative): 2
+        Transmission sequence number (absolute): 521536653
+        Stream identifier: 0x0000
+        Stream sequence number: 1
+        Payload protocol identifier: not specified (0)
+        Chunk padding: 000000
+E2 Application Protocol
+    E2AP-PDU: successfulOutcome (1)
+        successfulOutcome
+            procedureCode: id-RICsubscription (8)
+            criticality: reject (0)
+            value
+                RICsubscriptionResponse
+                    protocolIEs: 3 items
+                        Item 0: id-RICrequestID
+                            ProtocolIE-Field
+                                id: id-RICrequestID (29)
+                                criticality: reject (0)
+                                value
+                                    RICrequestID
+                                        ricRequestorID: 123
+                                        ricInstanceID: 2
+                        Item 1: id-RANfunctionID
+                            ProtocolIE-Field
+                                id: id-RANfunctionID (5)
+                                criticality: reject (0)
+                                value
+                                    RANfunctionID: 147
+                        Item 2: id-RICactions-Admitted
+                            ProtocolIE-Field
+                                id: id-RICactions-Admitted (17)
+                                criticality: reject (0)
+                                value
+                                    RICaction-Admitted-List: 1 item
+                                        Item 0: id-RICaction-Admitted-Item
+                                            ProtocolIE-SingleContainer
+                                                id: id-RICaction-Admitted-Item (14)
+                                                criticality: reject (0)
+                                                value
+                                                    RICaction-Admitted-Item
+                                                        ricActionID: 1
+

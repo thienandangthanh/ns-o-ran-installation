@@ -1,0 +1,211 @@
+{
+  "schema": "ipc-null-sink-summary.v1",
+  "validation": "structural",
+  "ports": {
+    "38471": {
+      "connections": 1,
+      "hello": 1,
+      "sample": 20,
+      "bye": 1,
+      "invalid": 0,
+      "bytes": 95705
+    },
+    "38472": {
+      "connections": 1,
+      "hello": 1,
+      "sample": 20,
+      "bye": 1,
+      "invalid": 0,
+      "bytes": 109358
+    },
+    "38473": {
+      "connections": 1,
+      "hello": 1,
+      "sample": 20,
+      "bye": 1,
+      "invalid": 0,
+      "bytes": 78688
+    },
+    "38474": {
+      "connections": 1,
+      "hello": 1,
+      "sample": 20,
+      "bye": 1,
+      "invalid": 0,
+      "bytes": 53630
+    },
+    "38475": {
+      "connections": 1,
+      "hello": 1,
+      "sample": 20,
+      "bye": 1,
+      "invalid": 0,
+      "bytes": 84694
+    }
+  },
+  "nodes": {
+    "1": {
+      "port": 38471,
+      "kind": "enb",
+      "hello": 1,
+      "sample": 20,
+      "bye": 1,
+      "last_seq": 19,
+      "seq_gaps": 0,
+      "ue_counts": {
+        "0": 1,
+        "12": 19
+      },
+      "ipc_dropped_last": 0,
+      "ipc_dropped_max": 0,
+      "period_ns": 100000000,
+      "run_ids": [
+        "1792623533791-20367"
+      ],
+      "bye_msg": {
+        "lastSeq": 19,
+        "built": 20,
+        "sent": 20,
+        "droppedDisconnected": 0,
+        "droppedBackpressure": 0
+      }
+    },
+    "2": {
+      "port": 38472,
+      "kind": "gnb",
+      "hello": 1,
+      "sample": 20,
+      "bye": 1,
+      "last_seq": 19,
+      "seq_gaps": 0,
+      "ue_counts": {
+        "0": 1,
+        "3": 4,
+        "4": 7,
+        "2": 1,
+        "5": 5,
+        "6": 2
+      },
+      "ipc_dropped_last": 0,
+      "ipc_dropped_max": 0,
+      "period_ns": 100000000,
+      "run_ids": [
+        "1792623533791-20367"
+      ],
+      "bye_msg": {
+        "lastSeq": 19,
+        "built": 20,
+        "sent": 20,
+        "droppedDisconnected": 0,
+        "droppedBackpressure": 0
+      }
+    },
+    "3": {
+      "port": 38473,
+      "kind": "gnb",
+      "hello": 1,
+      "sample": 20,
+      "bye": 1,
+      "last_seq": 19,
+      "seq_gaps": 0,
+      "ue_counts": {
+        "0": 1,
+        "1": 1,
+        "2": 6,
+        "3": 8,
+        "4": 4
+      },
+      "ipc_dropped_last": 0,
+      "ipc_dropped_max": 0,
+      "period_ns": 100000000,
+      "run_ids": [
+        "1792623533791-20367"
+      ],
+      "bye_msg": {
+        "lastSeq": 19,
+        "built": 20,
+        "sent": 20,
+        "droppedDisconnected": 0,
+        "droppedBackpressure": 0
+      }
+    },
+    "4": {
+      "port": 38474,
+      "kind": "gnb",
+      "hello": 1,
+      "sample": 20,
+      "bye": 1,
+      "last_seq": 19,
+      "seq_gaps": 0,
+      "ue_counts": {
+        "0": 1,
+        "2": 12,
+        "1": 7
+      },
+      "ipc_dropped_last": 0,
+      "ipc_dropped_max": 0,
+      "period_ns": 100000000,
+      "run_ids": [
+        "1792623533791-20367"
+      ],
+      "bye_msg": {
+        "lastSeq": 19,
+        "built": 20,
+        "sent": 20,
+        "droppedDisconnected": 0,
+        "droppedBackpressure": 0
+      }
+    },
+    "5": {
+      "port": 38475,
+      "kind": "gnb",
+      "hello": 1,
+      "sample": 20,
+      "bye": 1,
+      "last_seq": 19,
+      "seq_gaps": 0,
+      "ue_counts": {
+        "0": 1,
+        "4": 5,
+        "3": 10,
+        "2": 4
+      },
+      "ipc_dropped_last": 0,
+      "ipc_dropped_max": 0,
+      "period_ns": 100000000,
+      "run_ids": [
+        "1792623533791-20367"
+      ],
+      "bye_msg": {
+        "lastSeq": 19,
+        "built": 20,
+        "sent": 20,
+        "droppedDisconnected": 0,
+        "droppedBackpressure": 0
+      }
+    }
+  },
+  "totals": {
+    "hello": 5,
+    "sample": 100,
+    "bye": 5,
+    "invalid": 0,
+    "connections": 5,
+    "distinct_imsis": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "n_distinct_imsis": 12
+  },
+  "invalid_examples": []
+}

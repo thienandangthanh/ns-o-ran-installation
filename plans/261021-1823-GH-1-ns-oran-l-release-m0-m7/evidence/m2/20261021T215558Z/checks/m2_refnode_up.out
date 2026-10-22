@@ -1,0 +1,16 @@
+[21:56:45] bringup ric: waiting up to 1200s for ricplt pods
+[21:56:45] bringup ric: rc=0 unready: deployment-ricplt-e2mgr-9b6b8f99f-qms4v deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[21:57:00] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[21:57:15] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 deployment-ricplt-rtmgr-74fb47b69d-2r847 
+[21:57:30] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[21:57:45] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[21:58:00] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[21:58:15] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[21:58:30] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[21:58:45] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[21:59:01] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-wmwm4 
+[21:59:16] bringup ric: all ricplt pods Ready
+[21:59:26] bringup ric: e2term registered with e2mgr: [{"e2tAddress":"10.101.123.229:38000","ranNames":[]}]
+[21:59:46] bringup refnode: attempt 1: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)
+[21:59:49] bringup refnode: run_e2sim script exit 0
+[21:59:54] bringup refnode: e2mgr shows a CONNECTED node (attempt 1)
