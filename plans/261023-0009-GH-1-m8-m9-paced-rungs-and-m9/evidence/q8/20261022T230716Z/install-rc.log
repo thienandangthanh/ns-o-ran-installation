@@ -1,0 +1,37 @@
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/additional_scripts/install_xapp_ric_control.sh 
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/start_sudo_refresh.sh 
+sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+Sudo refresh process started with PID 686647
+Registering the Chart Museum URL...
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/register_chart_museum_url.sh 
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/run_chart_museum.sh 
+Container 'chartmuseum' is already running.
+Creating and modifying the configuration file xapp-descriptor/config_updated.json
+RIC Control xApp (rc) is already built, skipping.
+Onboarding the RIC Control xApp (rc)...
+/home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/appmgr/xapp_orchestrater/dev/xapp_onboarder/venv/lib/python3.12/site-packages/xapp_onboarder/server/cli.py:21: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+httpGet: path: '{{ index .Values "readinessProbe" "httpGet" "path" | toJson }}' port: '{{ index .Values "readinessProbe" "httpGet" "port" | toJson }}' initialDelaySeconds: '{{ index .Values "readinessProbe" "initialDelaySeconds" | toJson }}' periodSeconds: '{{ index .Values "readinessProbe" "periodSeconds" | toJson }}' httpGet: path: '{{ index .Values "livenessProbe" "httpGet" "path" | toJson }}' port: '{{ index .Values "livenessProbe" "httpGet" "port" | toJson }}' initialDelaySeconds: '{{ index .Values "livenessProbe" "initialDelaySeconds" | toJson }}' periodSeconds: '{{ index .Values "livenessProbe" "periodSeconds" | toJson }}' { "status": "Created" }
+Onboarding successful: status is 'Created'.
+Checking if namespace 'ricxapp' exists...
+Uninstalling application 'rc' if it exists...
+Application rc not found or already uninstalled.
+/home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/appmgr/xapp_orchestrater/dev/xapp_onboarder/venv/lib/python3.12/site-packages/xapp_onboarder/server/cli.py:21: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+Installing application 'rc'...
+/home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/appmgr/xapp_orchestrater/dev/xapp_onboarder/venv/lib/python3.12/site-packages/xapp_onboarder/server/cli.py:21: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+status: OK
+Application successfully deployed.
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/stop_sudo_refresh.sh 
+Sudo refresh process stopped or was not running.
+stty: 'standard input': Inappropriate ioctl for device
+
+
+################################################################################
+# Successfully installed RIC Control xApp (rc)                                 #
+################################################################################
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/stop_sudo_refresh.sh 
+No process found to stop.
+Sudo refresh process stopped or was not running.

@@ -1,0 +1,34 @@
+[23:07:17] gate q8 start; evidence /home/uc/evidence/q8/20261022T230716Z; harness d2588924966ed50a546a369725f4cd1678ef5633
+[23:07:18] PASS q8_args
+[23:07:18] ric watchdog started (pid 686243, threshold 600s)
+[23:07:18] PASS q8_nist_tree_at_testbed_sha_with_agent_dir
+[23:07:18] PASS q8_build_tools_present
+[23:07:18] PASS q8_sctp_module_loaded
+[23:07:18] PASS q8_ns3_binary_located_at_pins
+[23:07:18] PASS q8_pod_log_reader_self_test
+[23:07:18] PASS q8_grpcurl_fetched_and_checksum_verified
+[23:07:40] PASS q8_rc_installed_at_pin_and_ready
+[23:09:29] PASS q8_ric_reset_fresh_bucket_and_pods
+[23:09:29] PASS q8_route_dump_start
+[23:09:30] PASS q8_capture_started_before_agents
+[23:10:03] PASS q8_bringup_agents_connected_set_exact
+[23:10:04] PASS q8_agent_container_ips_recorded
+[23:10:07] PASS q8_every_agent_ready_and_subscribed
+[23:10:08] PASS q8_pod_snapshot_before
+[23:10:08] PASS q8_route_dump_agents_subscribed
+[23:10:56] FAIL q8_lockstep_run_with_two_rc_controls: exit 1: ns-3 started pid/pgid 696282 at 1792710609.084921577: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --outageThreshold=-1000 --simStartEpochMs=1767225600000 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/q8/20261022T230716Z/run/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10
+ns-3 exit code 5
+q8 run: ns-3 exit 5, pacer exit 3 (want 0 and 0)
+[23:10:56] PASS q8_pod_snapshot_after
+[23:10:57] PASS q8_route_dump_end
+[23:10:57] FAIL q8_restart_counts_zero: exit 1: restart count 1 for pod ricxapp-rc-6db9dcd964-h4kxg
+[23:11:00] PASS q8_agents_stopped
+[23:11:00] PASS q8_capture_stopped
+[23:12:07] PASS q8_wire_extractor_joins_requests_answers_and_ledger
+[23:12:07] FAIL q8_two_controls_one_ack_format1_one_failure_matching_ledger: exit 1: Traceback (most recent call last):
+  File "<stdin>", line 4, in <module>
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/q8/20261022T230716Z/run/trace/e2-control-ledger.jsonl'
+[23:12:07] PASS q8_kpimon_wrote_to_the_fresh_bucket
+verdict q8: FAIL failed=['q8_lockstep_run_with_two_rc_controls', 'q8_restart_counts_zero', 'q8_two_controls_one_ack_format1_one_failure_matching_ledger']
+Terminated
+[23:12:08] ric watchdog stopped (pid 686243)

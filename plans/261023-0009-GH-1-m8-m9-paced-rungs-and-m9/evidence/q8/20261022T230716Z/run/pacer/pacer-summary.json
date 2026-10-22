@@ -1,0 +1,48 @@
+{
+  "tCtlS": 30.0,
+  "wS": 1.0,
+  "steps": {
+    "20": {
+      "seq": 20,
+      "injected": 0,
+      "triggerRc": 78,
+      "triggerOut": "ERROR:\n  Code: Unavailable\n  Message: error reading from server: EOF\n",
+      "window": "T_ctl",
+      "controls": 0,
+      "L": [],
+      "slackS": null
+    }
+  },
+  "acks": [],
+  "applied": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 0,
+    "10": 0,
+    "11": 0,
+    "12": 0,
+    "13": 0,
+    "14": 0,
+    "15": 0,
+    "16": 0,
+    "17": 0,
+    "18": 0,
+    "19": 0
+  },
+  "readyCount": 22,
+  "aborted": true,
+  "abortStep": 20,
+  "ended": false,
+  "pacerAbortReason": "step 20: 0 control(s) within T_ctl (want 1), trigger rc 78",
+  "minSlackS": {
+    "T_ctl": null,
+    "W": null
+  }
+}
