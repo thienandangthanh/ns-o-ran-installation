@@ -1,0 +1,37 @@
+[19:18:54] gate s1 start; evidence /home/uc/evidence/s1/20261022T191853Z; harness ca65920bf29150c095ef3cb1cfabd9b26e5e6b78
+[19:18:54] PASS s1_args
+[19:18:55] PASS s1_pacer_exit_read_when_pacer_outlives_ns3
+[19:22:15] PASS s1_build_p1_pins
+[19:23:19] PASS s1_run_p1_free
+[19:23:19] PASS s1_build_new_at_pins
+[19:24:24] PASS s1_run_free0_free
+[19:24:24] PASS s1_v6_free_run_at_new_pins_equals_p1
+[19:25:28] PASS s1_run_free_pinned_epoch
+[19:26:29] PASS s1_run_null_lockstep_empty_schedule
+[19:26:30] PASS s1_v1_null_control_digest_equals_free_run
+[19:26:30] PASS s1_null_run_passed_barriers_exactly_minus1_to_last_seq
+[19:27:30] PASS s1_run_fb1_scripted_lockstep
+[19:27:30] PASS s1_v2_fb1_ledger_c2_checks
+[19:27:30] PASS s1_v2_fb1_one_ack_per_line_and_expected_outcomes_incl_precheck_order
+[19:28:30] PASS s1_run_replay_of_fb1_ledger
+[19:28:30] PASS s1_v2_replay_digest_equals_fb1
+[19:29:30] PASS s1_run_midlate_lockstep
+[19:29:31] PASS s1_v4_midrun_late_control_refused_late_and_not_applied
+[19:29:31] PASS s1_v4_control_after_final_barrier_ledger_late_and_ack_refused_late
+[19:29:31] PASS s1_noop_trigger_starts_only_after_steps
+[19:30:13] PASS s1_run_tctl_runout_aborts_exit5
+[19:30:13] PASS s1_tctl_runout_abort_names_step_15
+[19:30:43] PASS s1_run_faultsink_withheld_step_aborts_exit5
+[19:30:43] PASS s1_v3_faultsink_abort_names_k_and_node_in_bound_no_ledger_from_k
+[19:30:43] PASS s1_nist_tree_at_testbed_sha_with_agent_dir
+[19:30:44] PASS s1_build_tools_present
+[19:30:44] PASS s1_sctp_module_loaded
+[19:31:18] PASS s1_bringup_agents_node_withholding_step_k
+[19:31:28] PASS s1_every_agent_ready_and_subscribed_before_ns3
+[19:31:58] PASS s1_run_faultagent_withheld_step_aborts_exit5
+[19:31:58] PASS s1_v3_faultagent_abort_names_k_and_node_in_bound_no_ledger_from_k
+[19:31:59] PASS s1_v4_agent_unit_test_late_refusal_fails_control
+[19:32:02] PASS s1_agents_stopped
+[19:32:02] PASS s1_no_ipc_drop_no_nosub_drop_slack_recorded
+[19:32:02] PASS s1_no_stray_process
+verdict s1: PASS failed=[]

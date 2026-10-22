@@ -1,0 +1,6 @@
+{"steps": {
+  "15": {"trigger": {"cmd": ["true"]}, "expect": 0},
+  "20": {"inject": [{"nodeId": 1, "ctlId": 1, "imsi": 6, "targetCellId": 3, "afterSeq": 19}]},
+  "21": {"inject": [{"nodeId": 1, "ctlId": 2, "imsi": 6, "targetCellId": 3, "afterSeq": 21}]}
+ },
+ "late": []}
