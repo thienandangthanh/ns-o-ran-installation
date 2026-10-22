@@ -103,3 +103,19 @@ The agent-local cause values come from E2AP v03.00 §9.2.1. The same enumerated 
 - `ricRequest: control-message-invalid` when the E2SM-RC header or message cannot be decoded ("RAN Function has detected invalid RIC CONTROL REQUEST message").
 
 Gated runs require 0 agent-local rejects (contract C6), so this changes no gate.
+
+## Amendment (2026-10-22 22:30 KST): spec versions for the standards checks
+
+**E2SM-RC: use v03.00; do not look for v02.00.** E2SM-RC v09.00 (Zotero `59S65JXL`), Annex "Change history", p. 400, has the row "2022.11.21 02.00 November 2022 Publication Withdrawn". It then lists the minor CR "NOK.AO-2023.01.11-WG3-CR-0022-E2SM-RC-ASN1-correction-v03" under 02.00 (2023.01.18), and "2023.02.08 03.00 Final version for November 2022 Publication". So v03.00 is v02.00's content republished with that ASN.1 correction. The changes from v01.03 are the CRs listed under 01.03.01–01.03.03 on the same page (policy enhancements, mMIMO non-GoB, RIC Query, UE-group control, E1AP reference and others). Decision (user, 22:29 KST): every RC check cites **v03.00** (Zotero `XRWZU3SS`). Where v02.00 matters, use this change history.
+
+**How rc's ASN.1 compares with v03.00** (checked 22:30 KST against the ASN.1 module extracted from the v03.00 PDF):
+- The control-path types the agent uses have identical field lists in both:
+  - `E2SM-RC-ControlHeader-Format1` = {ueID, ric-Style-Type, ric-ControlAction-ID, ric-ControlDecision};
+  - `E2SM-RC-ControlMessage-Format1` = {ranP-List};
+  - `E2SM-RC-ControlOutcome-Format1` = {ranP-List}.
+- The file as a whole (`ric-app-rc@a2282ee e2sm/e2sm-rc-2.0.asn`) is **not** identical to v03.00. For example, it lacks the RIC Query definitions that v03.00 contains. Record this as a version gap whenever a check depends on types outside the control path.
+- The UE ID types (`UEID`, `UEID-GNB`, `UEID-EN-GNB`, `UEID-ENB`) are **not** defined in E2SM-RC. They come from the common E2SM spec, which rc ships as `e2sm-common.asn`. Zotero holds only "O-RAN E2SM 8.0" (`AIBI24NH`).
+
+**Evidence for the G6 question.** The common E2SM types define a separate `UEID-EN-GNB` (m-eNB-UE-X2AP-ID, globalENB-ID, gNB-CU-UE-F1AP-ID, ...) for a UE served by an en-gNB in EN-DC. rc and the TS xApp use `UEID-GNB` with an AMF-UE-NGAP-ID, the NR standalone form. That looks like a new deviation for our EN-DC scenario. The warmup scout must confirm it against the common E2SM spec, and the user then decides whether it is recorded as an accepted deviation.
+
+**E2SM-KPM v03.00.** It was added to Zotero as item `F82PYZVK` ("O-RAN E2 Service Model (E2SM) KPM 3.0", March 2023). At 22:30 KST the item had **no PDF attachment**, so it cannot be read yet.
