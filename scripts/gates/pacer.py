@@ -13,7 +13,8 @@ targetCellId, afterSeq}, endAck.
 Per `ready` k the pacer looks k up in the schedule:
   - no entry: `go` k at once (every step that cannot produce a control);
   - "inject": send those control lines (scripted lock-step, Fallback-1), then go;
-  - "trigger": wait for `steps` k (before it an agent may not have read sample
+  - "trigger" (with "goBeforeTrigger": true the pacer sends `go` k first, so the control misses
+    barrier k and is refused late at k + 1): wait for `steps` k (before it an agent may not have read sample
     k and would stamp a control afterSeq k-1), run the command (an rc gRPC
     call, a TS xApp trigger), then wait until ns-3 has reported "expect"
     controlRx lines for k, at most T_ctl from the trigger (else abort); with
@@ -80,6 +81,7 @@ class Pacer:
         self.w = w
         self.rx = {}         # seq -> [(wall, msg)] controlRx
         self.steps_in = set()  # seqs whose `steps` arrived
+        self.ready_q = []      # `ready` seen while a trigger waited (goBeforeTrigger steps)
         self.summary = {"tCtlS": t_ctl, "wS": w, "steps": {}, "acks": [], "applied": {},
                         "readyCount": 0, "aborted": False, "abortStep": None, "ended": False}
 
@@ -114,7 +116,9 @@ class Pacer:
     def handle_async(self, msg):
         """Messages that can arrive at any time; True when the run is over."""
         t = msg.get("type")
-        if t == "steps":
+        if t == "ready":
+            self.ready_q.append(msg)
+        elif t == "steps":
             self.steps_in.add(msg["seq"])
         elif t == "controlRx":
             self.rx.setdefault(msg["seq"], []).append((time.time(), msg))
@@ -148,8 +152,12 @@ class Pacer:
         self.send({"type": "abort", "reason": reason})
         self.summary["pacerAbortReason"] = reason
 
+    def rx_from(self, seq):
+        """controlRx lines tagged seq or later (a goBeforeTrigger control arrives tagged seq + 1)."""
+        return [x for k, v in sorted(self.rx.items()) if k >= seq for x in v]
+
     def wait_controls(self, seq, expect, deadline):
-        while len(self.rx.get(seq, [])) < expect and time.time() < deadline:
+        while len(self.rx_from(seq)) < expect and time.time() < deadline:
             msg = self.recv(deadline - time.time())
             if msg is not None and self.handle_async(msg):
                 return True
@@ -173,6 +181,11 @@ class Pacer:
                 self.summary["steps"][str(seq)] = rec
                 self.abort("step %d: no `steps` from ns-3 within %s s" % (seq, self.t_ctl))
                 return False
+            went = bool(entry.get("goBeforeTrigger"))
+            if went:
+                # the control must miss barrier `seq`: it is sent after `go`, so the agent stamps
+                # afterSeq = seq and ns-3 refuses it late at the next barrier (never the final one)
+                self.send({"type": "go", "seq": seq})
             self.note("pacer", {"type": "trigger", "seq": seq, "cmd": trig["cmd"]})
             t0 = time.time()
             try:
@@ -193,15 +206,19 @@ class Pacer:
                 rec["window"] = "T_ctl"
             if over:
                 return True
-            got = self.rx.get(seq, [])
+            got = self.rx_from(seq)
             rec["controls"] = len(got)
             rec["L"] = [round(t - t0, 6) for t, _ in got]
             budget = self.w if entry.get("absence") else self.t_ctl
-            rec["slackS"] = round(budget - max(rec["L"] or [0]), 6)
+            complete = len(got) == expect and p.returncode == 0
+            # slack only for a complete step: an aborted or empty one has no measured latency
+            rec["slackS"] = round(budget - max(rec["L"] or [0]), 6) if complete and rec["L"] else None
             self.summary["steps"][str(seq)] = rec
-            if len(got) != expect or p.returncode != 0:
+            if not complete:
                 self.abort("step %d: %d control(s) within %s (want %d), trigger rc %d" % (
                     seq, len(got), rec["window"], expect, p.returncode))
+                return False
+            if went:
                 return False
         self.summary["steps"].setdefault(str(seq), rec)
         self.send({"type": "go", "seq": seq})
@@ -210,7 +227,7 @@ class Pacer:
     def run(self):
         try:
             while True:
-                msg = self.recv(3600)
+                msg = self.ready_q.pop(0) if self.ready_q else self.recv(3600)
                 if msg is None:
                     self.summary["error"] = "ns-3 silent for an hour"
                     break
@@ -223,6 +240,12 @@ class Pacer:
         except EOFError:
             self.summary["eof"] = True
         self.log.close()
+        slack = {"T_ctl": None, "W": None}
+        for rec in self.summary["steps"].values():
+            if rec.get("slackS") is not None:
+                key = "W" if rec.get("window") == "W" else "T_ctl"
+                slack[key] = rec["slackS"] if slack[key] is None else min(slack[key], rec["slackS"])
+        self.summary["minSlackS"] = slack  # over complete trigger steps only
         with open(os.path.join(self.out_dir, "pacer-summary.json"), "w") as f:
             json.dump(self.summary, f, indent=2)
         return 3 if self.summary["aborted"] or not self.summary["ended"] else 0

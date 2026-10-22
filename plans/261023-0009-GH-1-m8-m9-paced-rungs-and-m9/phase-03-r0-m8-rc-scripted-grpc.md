@@ -44,7 +44,7 @@ R0: `--nMmWaveEnbNodes=2`, `--handoverMode=NoAuto`, real rc driven by scripted g
 | D7: control at the node holding the UE context (eNB/MN, serving gNB) plus the TS xApp's target path | 3GPP TS 38.300 §9.2.3.1, §9.2.3.2.1; 3GPP TS 37.340 §10.5.1, §3; E2SM-RC v03.00 §7.6.4.2 | per decision record §2; `XRWZU3SS` | 2026-10-22 |
 | Outage fallback stands in for SCG failure (−5 dB kept) | 3GPP TS 37.340 §7.7 | per decision record §2 | 2026-10-22 |
 | Control Header UE ID — **recorded deviation P4** | E2SM common v07.00 §6.2.2.6 | `QW6VJ83M` | 2026-10-22 |
-| Target NR CGI in the control message | E2SM-RC v03.00 (Target Primary Cell → NR CGI); E2SM common v07.00 NR CGI | `XRWZU3SS`, `QW6VJ83M` | read in this phase |
+| Target NR CGI in the control message | E2SM-RC v03.00 §8.4.4.1 (Handover Control, RAN parameter 1 Target Primary Cell ID → 2 CHOICE Target Cell → 3 NR Cell → 4 NR CGI, an ELEMENT, "NR CGI IE in 3GPP TS 38.423 §9.2.2.7"; a missing Target Primary Cell ID gets a RIC CONTROL FAILURE); E2SM common v07.00 §6.2.3.7 (NR CGI = PLMN Identity + NR Cell Identity BIT STRING (SIZE(36))). rc carries the element as 9 raw octets `00‖PLMN‖5-byte key`, not the 36-bit encoding: this is covered by the recorded deviation N5/P2 (P1 ledger), nothing new; anything found beyond N5 is T4 | `XRWZU3SS`, `QW6VJ83M` | 2026-10-23 |
 
 ## Failure Protocol
 If any Verify step does not meet its stated pass condition, STOP this phase.
