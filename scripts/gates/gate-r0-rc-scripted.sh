@@ -74,7 +74,6 @@ check r0_sctp_module_loaded agents_sctp_module
 check r0_ns3_binary_located_at_pins agents_ns3_locate
 check r0_pod_log_reader_self_test python3 -I "$HARNESS_DIR/scripts/gates/pod-log-window.py" --self-test
 check r0_grpcurl_fetched_and_checksum_verified rc_grpcurl_fetch
-rc_at_pin() { [ "$(git -C "$RIC_DIR/xApps/rc" rev-parse HEAD)" = "$RC_SHA" ] && rc_ready; }
 check r0_rc_installed_at_pin_and_ready rc_at_pin
 RC_DEC_TAG=$(bash "$HARNESS_DIR/tools/rc-decode/build.sh" 2>/dev/null | tail -n 1)
 check r0_rc_decoder_built test -n "$RC_DEC_TAG"
@@ -157,6 +156,8 @@ r0_live() {
     check "r0_${label}_route_dump_end" rc_route_dump "$label-end"
     fact "routeOwner12041_$label" "$(json_str "${ROUTE_OWNER_12041:-}")"
     fact "routeOwner12042_$label" "$(json_str "${ROUTE_OWNER_12042:-}")"
+    fact "routeOwnerE2term12041_$label" "$(json_str "${ROUTE_OWNER_E2TERM_12041:-}")"
+    fact "routeOwnerE2term12042_$label" "$(json_str "${ROUTE_OWNER_E2TERM_12042:-}")"
     check "r0_${label}_restart_counts_zero_rc_kpimon_hw_go_agents" rc_restarts_zero "$label-after"
     local c
     for c in $(dk ps -aq --filter label=ns3e2.agent=1); do

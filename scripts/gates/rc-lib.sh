@@ -11,7 +11,13 @@
 #   rc_pod_snapshot <label>       "<pod> <uid> <restarts>" of rc, kpimon, hw-go and the agents -> $e/<label>-pods.tsv
 #   rc_restarts_zero <label>      every restart count in that file is 0
 #   rc_influx_bucket_reset        delete and re-create the kpimon bucket; its id -> $e/influx-bucket-id.txt
-#   rc_ric_reset                  restart rc (fresh pod), fresh Influx bucket, wait for readiness
+#   rc_ric_reset                  fresh Influx bucket, fresh rc/kpimon/hw-go pods, rtmgr restarted, rc RMR ready
+#   rc_restart_rtmgr              delete rtmgr's pod and wait for the new one (it only opens a connection to an xApp
+#                                 the first time it sees the endpoint, and never reconnects to a replaced pod)
+#   rc_rmr_ready                  rc's own `RMR is ready after` log line in its current container (bounded wait)
+#   rc_at_pin                     rc's source tree at RC_SHA and rc ready; install nothing
+# rc_install is NOT part of any per-run path: NIST's script always runs `dms_cli uninstall` first, which deletes
+# rc's Services and leaves rtmgr holding a dead connection to the old pod. Use it once (gate i0), then rc_restart_rtmgr.
 #   rc_send_control <args...>     one control through rc's gRPC (see below)
 #
 # Pins: RC_SHA is the commit rc is built from (the P0 decoder and the agent's codec use the same one).
@@ -31,7 +37,8 @@ rc_install() {
     deadline=$(($(date +%s) + 300))
     while [ "$(date +%s)" -lt "$deadline" ]; do
         if read -r name ready _ < <(pod_info ricxapp xapp-rc-) && [ "$ready" = true ]; then
-            pod_info ricxapp xapp-rc- | tee "$e/rc-pod-after-install.txt"; return 0
+            pod_info ricxapp xapp-rc- | tee "$e/rc-pod-after-install.txt"
+            rc_restart_rtmgr && rc_rmr_ready; return $?
         fi
         sleep 5
     done
@@ -69,6 +76,41 @@ rc_ready() {
     rc_route_dump ready-probe >/dev/null || return 1
     grep -q '^mse|12040,service-ricxapp-rc-rmr' "$EVIDENCE_DIR/ready-probe-routetable.txt" || { echo "no 12040 route to rc"; return 1; }
     echo "gRPC describe ok, 12040 route to rc present"
+    rc_rmr_ready
+}
+
+# A Ready pod, the gRPC server and the 12040 row of rtmgr's table are not enough: rc's gRPC server starts before
+# its RMR does, and a control that arrives first panics it (gControlData is set only when RMR is ready).
+rc_rmr_ready() {
+    local pod deadline
+    read -r pod _ < <(pod_info ricxapp xapp-rc-) || return 1
+    deadline=$(($(date +%s) + ${RC_RMR_READY_TIMEOUT_S:-90}))
+    while [ "$(date +%s)" -lt "$deadline" ]; do
+        if kc -n ricxapp logs "$pod" 2>/dev/null | grep -q 'rmrClient: RMR is ready after'; then
+            kc -n ricxapp logs "$pod" 2>/dev/null | grep -o 'rmrClient: RMR is ready after[^"]*' | head -n 1
+            return 0
+        fi
+        sleep 3
+    done
+    echo "rc $pod: no 'RMR is ready' line within ${RC_RMR_READY_TIMEOUT_S:-90} s"; return 1
+}
+
+rc_at_pin() {
+    [ "$(git -C "$RIC_DIR/xApps/rc" rev-parse HEAD)" = "$RC_SHA" ] && rc_ready
+}
+
+rc_restart_rtmgr() {
+    local old name deadline
+    old=$(kc -n ricplt get pods --no-headers | awk '/rtmgr/ { print $1 }' | head -n 1)
+    [ -n "$old" ] || { echo "no rtmgr pod"; return 1; }
+    kc -n ricplt delete pod "$old" --wait=true >/dev/null || return 1
+    deadline=$(($(date +%s) + 180))
+    while [ "$(date +%s)" -lt "$deadline" ]; do
+        name=$(kc -n ricplt get pods --no-headers | awk '/rtmgr/ && $2 == "1/1" && $3 == "Running" { print $1 }' | head -n 1)
+        [ -n "$name" ] && [ "$name" != "$old" ] && { echo "rtmgr $old -> $name"; sleep 5; return 0; }
+        sleep 3
+    done
+    echo "rtmgr did not come back"; return 1
 }
 
 rc_route_dump() {
@@ -82,7 +124,11 @@ rc_route_dump() {
     # RMR keeps the last `-1` line of a message type: that service gets the acks that match no exact key
     ROUTE_OWNER_12041=$(grep -E '^mse\|12041\|-1\|' "$e/$p-routetable.txt" | tail -n 1 | cut -d'|' -f4)
     ROUTE_OWNER_12042=$(grep -E '^mse\|12042\|-1\|' "$e/$p-routetable.txt" | tail -n 1 | cut -d'|' -f4)
-    echo "route owner 12041|-1 = $ROUTE_OWNER_12041; 12042|-1 = $ROUTE_OWNER_12042"
+    # e2term's stash is what routes the acks; delta updates overwrite it, so it may hold no `-1` line at all
+    ROUTE_OWNER_E2TERM_12041=$(grep -E '^mse\|12041\|-1\|' "$e/$p-e2term-stash.txt" 2>/dev/null | tail -n 1 | cut -d'|' -f4)
+    ROUTE_OWNER_E2TERM_12042=$(grep -E '^mse\|12042\|-1\|' "$e/$p-e2term-stash.txt" 2>/dev/null | tail -n 1 | cut -d'|' -f4)
+    : "${ROUTE_OWNER_E2TERM_12041:=unknown}" "${ROUTE_OWNER_E2TERM_12042:=unknown}"
+    echo "route owner 12041|-1 = $ROUTE_OWNER_12041 (rtmgr) / $ROUTE_OWNER_E2TERM_12041 (e2term stash); 12042|-1 = $ROUTE_OWNER_12042 / $ROUTE_OWNER_E2TERM_12042"
 }
 
 # rc_pod_snapshot <label>: pod name, uid, restart count of rc, kpimon, hw-go; agent containers by node id.
@@ -120,25 +166,30 @@ rc_influx_bucket_reset() {
     [ -s "$EVIDENCE_DIR/influx-bucket-id.txt" ]
 }
 
-# rc_ric_reset: a fresh Influx bucket, then fresh rc, kpimon and hw-go pods (new pod names, restart
-# count 0), each waited for. The contract's "RestartCount = 0" then holds literally: the pods that stay
-# deployed carry restarts from earlier VM boots, so they are recreated per run. Agents are restarted by
-# their own bring-up (ctlId starts at 1 in every run). kpimon is back before the agents subscribe.
+# rc_ric_reset: a fresh Influx bucket, then fresh rc, kpimon and hw-go pods (new names, restart count 0)
+# deleted together, then rtmgr restarted so it opens new connections to them (it never reconnects to a replaced
+# pod), then rc's own RMR-ready line. The contract's "RestartCount = 0" holds literally: the pods that stay
+# deployed carry restarts from earlier VM boots, so they are recreated per run. rc never gets SIGTERM (PID 7 under
+# sh), so a short grace period costs nothing. Agents are restarted by their own bring-up (ctlId starts at 1).
 rc_ric_reset() {
-    local x pod name ready deadline old
+    local x old name deadline
+    declare -A OLD
     rc_influx_bucket_reset || return 1
     for x in xapp-rc- ricxapp-kpimon-go- ricxapp-hw-go-; do
         read -r old _ < <(pod_info ricxapp "$x") || { echo "no pod $x"; return 1; }
-        kc -n ricxapp delete pod "$old" --wait=true >/dev/null || return 1
+        OLD[$x]=$old
+        kc -n ricxapp delete pod "$old" --grace-period=5 --wait=false >/dev/null || return 1
+    done
+    for x in xapp-rc- ricxapp-kpimon-go- ricxapp-hw-go-; do
         deadline=$(($(date +%s) + 300))
         while :; do
-            if read -r name ready _ < <(pod_info ricxapp "$x") && [ "$ready" = true ] && [ "$name" != "$old" ]; then break; fi
+            if read -r name ready _ < <(pod_info ricxapp "$x") && [ "$ready" = true ] && [ "$name" != "${OLD[$x]}" ]; then break; fi
             [ "$(date +%s)" -lt "$deadline" ] || { echo "$x did not come back"; return 1; }
-            sleep 5
+            sleep 3
         done
-        echo "$x: $old -> $name"
+        echo "$x: ${OLD[$x]} -> $name"
     done
-    sleep 15
+    rc_restart_rtmgr || return 1
     rc_ready
 }
 

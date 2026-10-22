@@ -40,7 +40,7 @@ check q8_sctp_module_loaded agents_sctp_module
 check q8_ns3_binary_located_at_pins agents_ns3_locate
 check q8_pod_log_reader_self_test python3 -I "$HARNESS_DIR/scripts/gates/pod-log-window.py" --self-test
 check q8_grpcurl_fetched_and_checksum_verified rc_grpcurl_fetch
-check q8_rc_installed_at_pin_and_ready rc_install
+check q8_rc_at_pin_and_ready rc_at_pin
 check q8_ric_reset_fresh_bucket_and_pods rc_ric_reset
 check q8_route_dump_start rc_route_dump start
 fact routeOwner12041Start "$(json_str "${ROUTE_OWNER_12041:-}")"
@@ -88,6 +88,8 @@ check q8_pod_snapshot_after rc_pod_snapshot after
 check q8_route_dump_end rc_route_dump end
 fact routeOwner12041 "$(json_str "${ROUTE_OWNER_12041:-}")"
 fact routeOwner12042 "$(json_str "${ROUTE_OWNER_12042:-}")"
+fact routeOwnerE2term12041 "$(json_str "${ROUTE_OWNER_E2TERM_12041:-}")"
+fact routeOwnerE2term12042 "$(json_str "${ROUTE_OWNER_E2TERM_12042:-}")"
 check q8_restart_counts_zero rc_restarts_zero after
 for c in $(dk ps -aq --filter label=ns3e2.agent=1); do
     dk logs "$c" >"$e/agent-$(dk inspect --format '{{index .Config.Labels "ns3e2.nodeId"}}' "$c").log" 2>&1

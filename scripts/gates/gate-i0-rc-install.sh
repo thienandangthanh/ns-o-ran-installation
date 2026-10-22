@@ -17,5 +17,7 @@ check i0_rc_ready_describe_and_12040_route rc_ready
 check i0_route_dump rc_route_dump i0
 fact routeOwner12041 "$(json_str "${ROUTE_OWNER_12041:-}")"
 fact routeOwner12042 "$(json_str "${ROUTE_OWNER_12042:-}")"
+fact routeOwnerE2term12041 "$(json_str "${ROUTE_OWNER_E2TERM_12041:-}")"
+fact routeOwnerE2term12042 "$(json_str "${ROUTE_OWNER_E2TERM_12042:-}")"
 check i0_pod_snapshot rc_pod_snapshot i0
 gate_finish
