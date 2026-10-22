@@ -22,15 +22,16 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-23 02:20 KST
-current phase: P1, in progress (fork commits pushed: ns-3 786527b3 A + d3bc4d96 B, oran-interface 2817f7e4, Testbed 9e7d85f D + 0fd195e E; pins.conf bumped)
-VM: expected domstate=running, snapshot-current=f7-rerun-green
+last-updated: 2026-10-23 02:38 KST (paused by the user at 02:40 KST; handoff plans/reports/handoff-261023-0240-GH-1-m8-m9-p1-paused-after-gate-s0.md)
+current phase: P1, in progress. Done: commits A-E pushed, pins.conf bumped (715ace6), gate S0 PASS (V1 V2 V3 V4 K23 V6). Remaining: V5 (M5, M6, M7 at the new pins), then the phase-exit checklist and the kongming go/no-go on P2.
+VM: expected domstate=running, snapshot-current=f7-rerun-green (no snapshot taken in P1)
 snapshots: fresh-install, f7-rerun-green
-host /home free: 76 G (2026-10-23 01:55 KST); floor 20 GB; M9 projection -12 GB (Stop A)
-fork SHAs (pushed): see scripts/pins.conf; QP fork master=47a35ca
-harness SHA (pushed): see git log (gate-s0 commit)
-in-flight background jobs: gate s0 via vm-exec.sh (V1 ref1/ref2/a/new, V3, V2, V4), timeout 7200 s; builds ~/s0-build-ref, ~/s0-build-a (deleted after), ~/m4-build at new pins
-next action: read gate s0 verdict; then M5, M6, M7 at the new pins (V5)
+host /home free: 68 G (2026-10-23 02:36 KST); VM / 54 G free; floor 20 GB; M9 projection to recompute at P1 exit
+fork SHAs (pushed): see scripts/pins.conf (ns-3 d3bc4d96, oran-interface 2817f7e4, Testbed 0fd195ed); P2 drafts on wip/p2-pacing (ns-3 c4646328, oran-interface fcd43ce, Testbed 5cf7df3), not pinned, not gated
+harness SHA (pushed): see git log (handoff commit)
+in-flight background jobs: none (VM ~/m4-build is at the P1 pins; ~/s0-build-ref holds the P0 build)
+next action: run M5, M6, M7 through vm-exec.sh with EVIDENCE_HOST_ROOT set to this plan's evidence/ (P1 V5)
+hold (user, 2026-10-23 02:30 KST): another Claude session loads the host CPU; no timing measurement (P3 T_ctl calibration of L, R2/R3 W calibration, any latency/slack figure used as a gate value) until it is done; check uptime/top before each
 ```
 On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`, `virsh -c qemu:///system snapshot-current --name ubuntu24.04` and `scripts/vm/vm-snapshot.sh list`, and compare them with this card. On a mismatch, print a PAUSE T3 line with the difference.
 

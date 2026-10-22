@@ -1,0 +1,16 @@
+PASS fixture-loaded: 30 PDUs
+PASS fixture-decodes: 30/30
+PASS target-key-0000000202
+PASS ran-function-id-invalid
+PASS control-message-invalid
+PASS action-not-supported
+PASS ipc-down-control-failed-to-execute
+PASS forward-control-line: {"type":"control","v":1,"nodeId":2,"ctlId":1,"ric":{"requestorId":15,"instanceId":2,"ranFuncId":3},"style":3,"action":1,"imsi":1,"targetCellId":2,"afterSeq":41,"diag":{"targetGnbId":2,"rxUnixMs":1792690442444}}
+PASS format1-on-ack
+OUTCOME_HEX 0000
+ACK_PDU_HEX 20040019000003001d000500000f000200050002000300200003020000
+PASS control-failed-to-execute
+PASS bye-fails-all-pending
+PASS noack-applied-sends-nothing
+PASS exactly-one-answer
+rc-control-test: ok

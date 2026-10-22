@@ -1,0 +1,121 @@
+{
+  "gate": "s0",
+  "ts": "20261022T171920Z",
+  "harness_sha": "715ace6b94ad63f8a3a276b5f49ff1489bc86770",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "0fd195ed393a890a1bd79fd18fe241b8a5b7a0bf",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "d3bc4d964eeff78a7c10623facc24ac47cdc8052",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "2817f7e4b827adf0e626173c70fe60384d700526",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+  },
+  "duration_s": 942,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "s0_args",
+      "pass": true,
+      "detail": "ref ns-3 ace321688130834fb79cf724050178a661ed4cf8 oi 438a839aad69854acca41ef435ff681ee7bd3134; a ns-3 786527b3cc2e25b8b738b2f1be0bf88330e7b64d; new ns-3 d3bc4d964eeff78a7c10623facc24ac47cdc8052 oi 2817f7e4b827adf0e626173c70fe60384d700526; cli --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1"
+    },
+    {
+      "name": "s0_build_ref_at_p0_pins",
+      "pass": true,
+      "detail": "ns3 ace321688130834fb79cf724050178a661ed4cf8\noran-interface 438a839aad69854acca41ef435ff681ee7bd3134\n90942ee6d9a6f3abab7a3d645746f43570254d9363dc55f14e35f12c3e80c1ba  /home/uc/s0-build-ref/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"
+    },
+    {
+      "name": "s0_run_ref1",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 53578 at 1792689568.979091997: /home/uc/s0-build-ref/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --e2TraceDir=/home/uc/evidence/s0/20261022T171920Z/runs/ref1/trace\nns-3 exit code 0\nref1: ns-3 exit 0; sink {'hello': 3, 'sample': 300, 'bye': 3, 'controlAck': 0, 'invalid': 0, 'connections': 3, 'controls_sent': 0, 'controls_never_sent': 0, 'distinct_imsis': [1, 2, 3, 4, 5, 6], 'n_distinct_imsis': 6}"
+    },
+    {
+      "name": "s0_run_ref2",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 54814 at 1792689627.662448594: /home/uc/s0-build-ref/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --e2TraceDir=/home/uc/evidence/s0/20261022T171920Z/runs/ref2/trace\nns-3 exit code 0\nref2: ns-3 exit 0; sink {'hello': 3, 'sample': 300, 'bye': 3, 'controlAck': 0, 'invalid': 0, 'connections': 3, 'controls_sent': 0, 'controls_never_sent': 0, 'distinct_imsis': [1, 2, 3, 4, 5, 6], 'n_distinct_imsis': 6}"
+    },
+    {
+      "name": "s0_build_a_commit_a_with_ref_oi",
+      "pass": true,
+      "detail": "ns3 786527b3cc2e25b8b738b2f1be0bf88330e7b64d\noran-interface 438a839aad69854acca41ef435ff681ee7bd3134\ne0ef1b21b343b9559b5d912186aeb930d6af4ae037c499a82f248373b337d948  /home/uc/s0-build-a/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"
+    },
+    {
+      "name": "s0_run_a",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 64968 at 1792689894.086867205: /home/uc/s0-build-a/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --e2TraceDir=/home/uc/evidence/s0/20261022T171920Z/runs/a/trace\nns-3 exit code 0\na: ns-3 exit 0; sink {'hello': 3, 'sample': 300, 'bye': 3, 'controlAck': 0, 'invalid': 0, 'connections': 3, 'controls_sent': 0, 'controls_never_sent': 0, 'distinct_imsis': [1, 2, 3, 4, 5, 6], 'n_distinct_imsis': 6}"
+    },
+    {
+      "name": "s0_build_new_at_pins",
+      "pass": true,
+      "detail": "ns3 d3bc4d964eeff78a7c10623facc24ac47cdc8052\noran-interface 2817f7e4b827adf0e626173c70fe60384d700526\n095b33207ca80229f3e3ca89775c2eab83aadae546a8226bfbd445a342f146db  /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"
+    },
+    {
+      "name": "s0_run_new",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 76037 at 1792690212.023884590: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --e2TraceDir=/home/uc/evidence/s0/20261022T171920Z/runs/new/trace\nns-3 exit code 0\nnew: ns-3 exit 0; sink {'hello': 3, 'sample': 300, 'bye': 3, 'controlAck': 0, 'invalid': 0, 'connections': 3, 'controls_sent': 0, 'controls_never_sent': 0, 'distinct_imsis': [1, 2, 3, 4, 5, 6], 'n_distinct_imsis': 6}"
+    },
+    {
+      "name": "s0_v1_free_run_digest_unchanged_ref2_a_new",
+      "pass": true,
+      "detail": "{'ref2': True, 'a': True, 'new': True} all_pass True"
+    },
+    {
+      "name": "s0_run_ctl_scripted_controls",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 77261 at 1792690271.718723598: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --e2TraceDir=/home/uc/evidence/s0/20261022T171920Z/runs/ctl/trace\nns-3 exit code 0\nctl: ns-3 exit 0; sink {'hello': 3, 'sample': 300, 'bye': 3, 'controlAck': 9, 'invalid': 0, 'connections': 3, 'controls_sent': 9, 'controls_never_sent': 0, 'distinct_imsis': [1, 2, 3, 4, 5, 6], 'n_distinct_imsis': 6}"
+    },
+    {
+      "name": "s0_v3_one_ledger_line_per_control_d0_c4_sorted_acks_match",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "s0_nist_tree_at_testbed_sha_with_agent_dir",
+      "pass": true,
+      "detail": "nist HEAD 725b167e53b6aca9ce55b3725f16c98108e12851, want 0fd195ed393a890a1bd79fd18fe241b8a5b7a0bf\nclean tree: detached checkout of 0fd195ed393a890a1bd79fd18fe241b8a5b7a0bf\nns3_e2_agent matches 0fd195ed393a890a1bd79fd18fe241b8a5b7a0bf; metric-map sha256 ab81b6392868b32ea26816a9d394c8b58403d1a41f652b30a3498cfa96a93b66"
+    },
+    {
+      "name": "s0_build_tools_present",
+      "pass": true,
+      "detail": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\ntshark 4.4.19 (>= 4.4)"
+    },
+    {
+      "name": "s0_sctp_module_loaded",
+      "pass": true,
+      "detail": "sctp                  495616  42\nsctp"
+    },
+    {
+      "name": "s0_bringup_agents_enb1_gnb2_gnb3",
+      "pass": true,
+      "detail": "NS3_E2_AGENT_E2_INTERFACE=da6f82f286cdbb38af1178f82f85877b12c2f85b\nNS3_E2_AGENT_METRIC_MAP_SHA256=ab81b6392868b32ea26816a9d394c8b58403d1a41f652b30a3498cfa96a93b66\n[17:34:02] bringup agents: e2mgr CONNECTED set equals the expected agents: gnb_001_001_00000001 gnb_001_001_00000002 gnb_001_001_00000003 "
+    },
+    {
+      "name": "s0_v2_agent_unit_test_all_cause_paths_pass",
+      "pass": true,
+      "detail": "PASS noack-applied-sends-nothing\nPASS exactly-one-answer\nrc-control-test: ok"
+    },
+    {
+      "name": "s0_k23_agent_outcome_decodes_with_independent_decoder",
+      "pass": true,
+      "detail": "agent ACK outcome decodes as Format 1 with an empty ranP-List"
+    },
+    {
+      "name": "gnb_001_001_00000003",
+      "pass": true,
+      "detail": "gnb_001_001_00000001 request part: base64 NzI2NTcxNzA2MTcyNzQ= -> \"72657170617274\" (want suffix 72657170617274)\ngnb_001_001_00000002 request part: base64 MDAwMDAwMDIwMg== -> \"0000000202\" (want suffix 0000000202)\ngnb_001_001_00000003 request part: base64 MDAwMDAwMDMwMw== -> \"0000000303\" (want suffix 0000000303)"
+    },
+    {
+      "name": "s0_agents_stopped",
+      "pass": true,
+      "detail": "ns3-e2-agent-2 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1792690504547,\"nodeId\":2,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":-1,\"samplesIn\":0,\"samplesForwarded\":0,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":0,\"indTxCell\":0,\"indTxUe\":0,\"ipc\":{\"accepted\":0,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":0,\"helloRejected\":0,\"bye\":0,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":2,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":0,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":0,\"applied\":0,\"refused\":0,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0}}\nns3-e2-agent-1 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1792690504313,\"nodeId\":1,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":-1,\"samplesIn\":0,\"samplesForwarded\":0,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":0,\"indTxCell\":0,\"indTxUe\":0,\"ipc\":{\"accepted\":0,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":0,\"helloRejected\":0,\"bye\":0,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":2,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":0,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":0,\"applied\":0,\"refused\":0,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0}}\nRemoved 3 ns3-e2-agent container(s)."
+    },
+    {
+      "name": "s0_v6_no_stray_process",
+      "pass": true,
+      "detail": "no ns-3, sink, agent or SCTP/3847x leftovers"
+    }
+  ]
+}

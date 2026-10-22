@@ -18,6 +18,11 @@ line on that node's connection (ctlId counts from 1 per node), as an agent
 does. Every `controlAck` received is kept in DIR/control-acks.jsonl and every
 control sent in DIR/controls-sent.jsonl.
 
+--lockstep (ns3-e2-ipc v1 minor 2, an agent stand-in without the RIC): when a
+hello says pacing "lockstep" the sink answers `step` -1 at once (ready) and
+`step` k after every sample k, as an agent does; --withhold-step K never sends
+step K (fault run i).
+
 --ports accepts "38471-38475", "38472", "38471,38473", or a mix.
 --save-lines writes every valid received line, verbatim, to DIR/lines-<nodeId>.jsonl
 so it can be byte-compared with the emitter's local trace.
@@ -115,7 +120,8 @@ def structural_errors(msg):
 
 
 class Sink:
-    def __init__(self, ports, out_dir, save_lines, schema_path, controls=None):
+    def __init__(self, ports, out_dir, save_lines, schema_path, controls=None, lockstep=False,
+                 withhold_step=None):
         self.ports = ports
         self.out_dir = out_dir
         self.save_lines = save_lines
@@ -125,6 +131,9 @@ class Sink:
         for c in controls or []:
             self.controls.setdefault((c["nodeId"], c["afterSeq"]), []).append(c)
         self.next_ctl = {}
+        self.lockstep = lockstep
+        self.withhold_step = withhold_step
+        self.paced = set()  # nodes whose hello said lockstep
         self.sent_file = None
         self.ack_file = None
         self.nodes = {}
@@ -181,6 +190,14 @@ class Sink:
             self.nodes[nid]["controls_sent"] += 1
             self._append("sent_file", "controls-sent.jsonl", line)
 
+    def _step(self, nid, seq, writer):
+        if seq == self.withhold_step:
+            return
+        line = json.dumps({"type": "step", "v": 1, "nodeId": nid, "seq": seq, "forwarded": 0,
+                           "droppedNoSub": 0, "controls": self.nodes[nid]["controls_sent"]},
+                          separators=(",", ":"))
+        writer.write(line.encode() + b"\n")
+
     def accept(self, port, raw, writer=None):
         """Process one received line (bytes without the trailing newline)."""
         try:
@@ -199,6 +216,9 @@ class Sink:
         n = self.node(nid, port)
         n[t] += 1
         if t == "hello":
+            if self.lockstep and msg.get("pacing") == "lockstep" and writer is not None:
+                self.paced.add(nid)
+                self._step(nid, -1, writer)
             n["kind"] = msg["kind"]
             n["period_ns"] = msg["periodNs"]
             if msg["runId"] not in n["run_ids"]:
@@ -218,6 +238,8 @@ class Sink:
                 self._save(nid, raw)
             if writer is not None:
                 self._inject(nid, seq, writer)
+                if nid in self.paced:
+                    self._step(nid, seq, writer)
         elif t == "controlAck":
             self._append("ack_file", "control-acks.jsonl", raw.decode())
         elif t == "bye":
@@ -274,7 +296,8 @@ async def main_async(args):
     if args.controls:
         with open(args.controls) as f:
             controls = json.load(f)
-    sink = Sink(parse_ports(args.ports), args.out, args.save_lines, args.schema, controls)
+    sink = Sink(parse_ports(args.ports), args.out, args.save_lines, args.schema, controls,
+                args.lockstep, args.withhold_step)
     os.makedirs(args.out, exist_ok=True)
     servers = []
     for p in sink.ports:
@@ -308,6 +331,8 @@ def main():
     ap.add_argument("--save-lines", action="store_true")
     ap.add_argument("--schema", default=DEFAULT_SCHEMA)
     ap.add_argument("--controls", help="JSON list of scripted controls (see the module doc)")
+    ap.add_argument("--lockstep", action="store_true", help="answer step lines when paced")
+    ap.add_argument("--withhold-step", type=int, help="never send this step (fault run i)")
     args = ap.parse_args()
     try:
         asyncio.run(main_async(args))

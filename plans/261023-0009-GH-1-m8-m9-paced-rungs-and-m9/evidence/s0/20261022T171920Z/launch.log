@@ -1,0 +1,22 @@
+[17:19:28] gate s0 start; evidence /home/uc/evidence/s0/20261022T171920Z; harness 715ace6b94ad63f8a3a276b5f49ff1489bc86770
+[17:19:28] PASS s0_args
+[17:19:28] PASS s0_build_ref_at_p0_pins
+[17:20:27] PASS s0_run_ref1
+[17:21:25] PASS s0_run_ref2
+[17:24:53] PASS s0_build_a_commit_a_with_ref_oi
+[17:25:57] PASS s0_run_a
+[17:30:11] PASS s0_build_new_at_pins
+[17:31:11] PASS s0_run_new
+[17:31:11] PASS s0_v1_free_run_digest_unchanged_ref2_a_new
+[17:32:08] PASS s0_run_ctl_scripted_controls
+[17:32:08] PASS s0_v3_one_ledger_line_per_control_d0_c4_sorted_acks_match
+[17:32:10] PASS s0_nist_tree_at_testbed_sha_with_agent_dir
+[17:32:11] PASS s0_build_tools_present
+[17:32:12] PASS s0_sctp_module_loaded
+[17:34:02] PASS s0_bringup_agents_enb1_gnb2_gnb3
+[17:34:02] PASS s0_v2_agent_unit_test_all_cause_paths_pass
+[17:35:07] PASS s0_k23_agent_outcome_decodes_with_independent_decoder
+[17:35:07] PASS gnb_001_001_00000003
+[17:35:09] PASS s0_agents_stopped
+[17:35:09] PASS s0_v6_no_stray_process
+verdict s0: PASS failed=[]
