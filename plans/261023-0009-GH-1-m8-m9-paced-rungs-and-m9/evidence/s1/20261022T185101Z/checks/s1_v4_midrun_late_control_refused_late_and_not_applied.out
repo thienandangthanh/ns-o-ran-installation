@@ -1,0 +1,21 @@
+{
+  "lines": 2,
+  "late": 1,
+  "barriers": 101,
+  "outcomes": [
+    [
+      "applied",
+      ""
+    ],
+    [
+      "refused",
+      "late"
+    ]
+  ],
+  "problems": [],
+  "pass": true
+}
+seq 20 node 1 ctl 1 imsi 6 0->3 refused late
+seq 21 node 1 ctl 2 imsi 6 2->3 applied 
+problems: []
+late {'rxSeq': 20, 'rxSimTimeNs': 2000800000, 'applySimTimeNs': 2000800000, 'viaNodeId': 1, 'ctlId': 1, 'afterSeq': 19, 'imsi': 6, 'sourceCell': 0, 'targetCell': 3, 'outcome': 'refused', 'cause': 'late'}; on time {'rxSeq': 21, 'rxSimTimeNs': 2100800000, 'applySimTimeNs': 2100800000, 'viaNodeId': 1, 'ctlId': 2, 'afterSeq': 21, 'imsi': 6, 'sourceCell': 2, 'targetCell': 3, 'outcome': 'applied', 'cause': ''}

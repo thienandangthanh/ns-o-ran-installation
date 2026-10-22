@@ -1,0 +1,38 @@
+[18:51:03] gate s1 start; evidence /home/uc/evidence/s1/20261022T185101Z; harness 0e821fb8c78b5ed781189ec320df757a45449a79
+[18:51:03] PASS s1_args
+[18:51:03] PASS s1_build_p1_pins
+[18:52:09] PASS s1_run_p1_free
+[18:56:04] PASS s1_build_new_at_pins
+[18:57:05] PASS s1_run_free0_free
+[18:57:05] PASS s1_v6_free_run_at_new_pins_equals_p1
+[18:58:10] PASS s1_run_free_pinned_epoch
+[18:59:12] PASS s1_run_null_lockstep_empty_schedule
+[18:59:12] PASS s1_v1_null_control_digest_equals_free_run
+[18:59:12] PASS s1_null_run_passed_barriers_exactly_minus1_to_last_seq
+[19:00:13] PASS s1_run_fb1_scripted_lockstep
+[19:00:13] PASS s1_v2_fb1_ledger_c2_checks
+[19:00:13] PASS s1_v2_fb1_one_ack_per_line_and_expected_outcomes_incl_precheck_order
+[19:01:22] PASS s1_run_replay_of_fb1_ledger
+[19:01:22] PASS s1_v2_replay_digest_equals_fb1
+[19:02:34] PASS s1_run_midlate_lockstep
+[19:02:34] PASS s1_v4_midrun_late_control_refused_late_and_not_applied
+[19:02:34] PASS s1_v4_control_after_final_barrier_ledger_late_and_ack_refused_late
+[19:02:34] PASS s1_noop_trigger_starts_only_after_steps
+[19:03:16] FAIL s1_run_tctl_runout_aborts_exit5: exit 1: ns-3 started pid/pgid 270259 at 1792695754.819263187: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --simStartEpochMs=1767225600000 --e2TraceDir=/home/uc/evidence/s1/20261022T185101Z/runs/tctl/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10
+ns-3 exit code 5
+tctl (lockstep): ns-3 exit 5 (want 5); pacer exit -1 (want 3); sink {'hello': 3, 'sample': 48, 'bye': 0, 'controlAck': 0, 'invalid': 0, 'connections': 3, 'controls_sent': 0, 'controls_never_sent': 0, 'distinct_imsis': [1, 2, 3, 4, 5, 6], 'n_distinct_imsis': 6}
+[19:03:16] PASS s1_tctl_runout_abort_names_step_15
+[19:03:46] PASS s1_run_faultsink_withheld_step_aborts_exit5
+[19:03:46] PASS s1_v3_faultsink_abort_names_k_and_node_in_bound_no_ledger_from_k
+[19:03:51] PASS s1_nist_tree_at_testbed_sha_with_agent_dir
+[19:03:55] PASS s1_build_tools_present
+[19:03:55] PASS s1_sctp_module_loaded
+[19:06:20] PASS s1_bringup_agents_node_withholding_step_k
+[19:06:23] PASS s1_every_agent_ready_and_subscribed_before_ns3
+[19:06:53] PASS s1_run_faultagent_withheld_step_aborts_exit5
+[19:06:53] PASS s1_v3_faultagent_abort_names_k_and_node_in_bound_no_ledger_from_k
+[19:06:54] PASS s1_v4_agent_unit_test_late_refusal_fails_control
+[19:06:57] PASS s1_agents_stopped
+[19:06:57] PASS s1_no_ipc_drop_no_nosub_drop_slack_recorded
+[19:06:57] PASS s1_no_stray_process
+verdict s1: FAIL failed=['s1_run_tctl_runout_aborts_exit5']

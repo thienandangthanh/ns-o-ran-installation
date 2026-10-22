@@ -1,0 +1,9 @@
+seq 20 node 3 ctl 1 imsi 1 3->2 refused lteFallback
+seq 20 node 1 ctl 1 imsi 6 2->3 applied 
+seq 20 node 2 ctl 1 imsi 6 2->2 refused inHandover
+seq 30 node 2 ctl 2 imsi 6 3->3 refused alreadyOnTarget
+seq 30 node 3 ctl 2 imsi 99 0->2 refused unknownImsi
+seq 40 node 2 ctl 3 imsi 3 2->1 refused unknownTarget
+seq 40 node 2 ctl 4 imsi 3 2->7 refused unknownTarget
+seq 99 node 2 ctl 9 imsi 4 0->3 refused late
+problems: []

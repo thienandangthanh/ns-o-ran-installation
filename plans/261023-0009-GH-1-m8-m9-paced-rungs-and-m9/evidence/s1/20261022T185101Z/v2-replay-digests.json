@@ -1,0 +1,22 @@
+{
+  "reference": "fb1",
+  "components": [
+    "ledger",
+    "ipc",
+    "traces"
+  ],
+  "runs": {
+    "replay": {
+      "equal": true,
+      "differing": [],
+      "detail": {},
+      "ipcDroppedMax": 0
+    }
+  },
+  "ipcDroppedMaxAll": 0,
+  "overall": {
+    "fb1": "c615e7c13c5129c7b51fa0ac4290947ae26dd443a7ff2423f98deb3fcf280225",
+    "replay": "c615e7c13c5129c7b51fa0ac4290947ae26dd443a7ff2423f98deb3fcf280225"
+  },
+  "all_equal": true
+}

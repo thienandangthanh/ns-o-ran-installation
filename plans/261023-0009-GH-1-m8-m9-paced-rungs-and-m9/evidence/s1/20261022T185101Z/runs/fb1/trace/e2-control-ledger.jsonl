@@ -1,0 +1,9 @@
+{"type":"ledgerHeader","v":1,"delta-model":"fixed 0"}
+{"rxSeq":20,"rxSimTimeNs":2000800000,"applySimTimeNs":2000800000,"viaNodeId":3,"ctlId":1,"afterSeq":20,"imsi":1,"sourceCell":3,"targetCell":2,"outcome":"refused","cause":"lteFallback"}
+{"rxSeq":20,"rxSimTimeNs":2000800000,"applySimTimeNs":2000800000,"viaNodeId":1,"ctlId":1,"afterSeq":20,"imsi":6,"sourceCell":2,"targetCell":3,"outcome":"applied","cause":""}
+{"rxSeq":20,"rxSimTimeNs":2000800000,"applySimTimeNs":2000800000,"viaNodeId":2,"ctlId":1,"afterSeq":20,"imsi":6,"sourceCell":2,"targetCell":2,"outcome":"refused","cause":"inHandover"}
+{"rxSeq":30,"rxSimTimeNs":3000800000,"applySimTimeNs":3000800000,"viaNodeId":2,"ctlId":2,"afterSeq":30,"imsi":6,"sourceCell":3,"targetCell":3,"outcome":"refused","cause":"alreadyOnTarget"}
+{"rxSeq":30,"rxSimTimeNs":3000800000,"applySimTimeNs":3000800000,"viaNodeId":3,"ctlId":2,"afterSeq":30,"imsi":99,"sourceCell":0,"targetCell":2,"outcome":"refused","cause":"unknownImsi"}
+{"rxSeq":40,"rxSimTimeNs":4000800000,"applySimTimeNs":4000800000,"viaNodeId":2,"ctlId":3,"afterSeq":40,"imsi":3,"sourceCell":2,"targetCell":1,"outcome":"refused","cause":"unknownTarget"}
+{"rxSeq":40,"rxSimTimeNs":4000800000,"applySimTimeNs":4000800000,"viaNodeId":2,"ctlId":4,"afterSeq":40,"imsi":3,"sourceCell":2,"targetCell":7,"outcome":"refused","cause":"unknownTarget"}
+{"rxSeq":99,"rxSimTimeNs":10000000000,"applySimTimeNs":10000000000,"viaNodeId":2,"ctlId":9,"afterSeq":99,"imsi":4,"sourceCell":0,"targetCell":3,"outcome":"refused","cause":"late"}

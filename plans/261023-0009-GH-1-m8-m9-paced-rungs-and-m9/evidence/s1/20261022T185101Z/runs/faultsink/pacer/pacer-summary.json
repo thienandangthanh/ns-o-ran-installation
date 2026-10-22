@@ -1,0 +1,85 @@
+{
+  "tCtlS": 30.0,
+  "wS": 1.0,
+  "steps": {
+    "20": {
+      "seq": 20,
+      "injected": 3
+    },
+    "30": {
+      "seq": 30,
+      "injected": 2
+    }
+  },
+  "acks": [
+    {
+      "type": "controlAck",
+      "v": 1,
+      "nodeId": 3,
+      "ctlId": 1,
+      "outcome": "refused",
+      "cause": "lteFallback",
+      "seq": 20,
+      "applySimTimeNs": 2000800000,
+      "sourceCellId": 3
+    },
+    {
+      "type": "controlAck",
+      "v": 1,
+      "nodeId": 1,
+      "ctlId": 1,
+      "outcome": "applied",
+      "cause": "",
+      "seq": 20,
+      "applySimTimeNs": 2000800000,
+      "sourceCellId": 2
+    },
+    {
+      "type": "controlAck",
+      "v": 1,
+      "nodeId": 2,
+      "ctlId": 1,
+      "outcome": "refused",
+      "cause": "inHandover",
+      "seq": 20,
+      "applySimTimeNs": 2000800000,
+      "sourceCellId": 2
+    }
+  ],
+  "applied": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 0,
+    "10": 0,
+    "11": 0,
+    "12": 0,
+    "13": 0,
+    "14": 0,
+    "15": 0,
+    "16": 0,
+    "17": 0,
+    "18": 0,
+    "19": 0,
+    "20": 3,
+    "21": 0,
+    "22": 0,
+    "23": 0,
+    "24": 0,
+    "25": 0,
+    "26": 0,
+    "27": 0,
+    "28": 0,
+    "29": 0
+  },
+  "readyCount": 32,
+  "aborted": true,
+  "abortStep": 30,
+  "ended": false
+}
