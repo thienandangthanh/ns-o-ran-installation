@@ -22,16 +22,16 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-23 07:05 KST (resumed; kpimon log reader fix per kongming 05:08; V5 re-run starting at the fix SHA)
-current phase: P2 (S1), in progress. P1 done. Kongming P1 exit: plans/reports/kongming-261023-0320-GH-1-p1-exit-go-no-go-p2.md
+last-updated: 2026-10-23 07:30 KST (P2 exit; kongming go/no-go on P3 pending)
+current phase: P2 done (S1 evidence/s1/20261022T191853Z PASS 35/35; V5 M5/M6/M7 PASS at harness e97ed53). Next: P3 (R0 = M8).
 VM: expected domstate=running, snapshot-current=f7-rerun-green (no snapshot in P2)
 snapshots: fresh-install, f7-rerun-green
-host /home free: 68 G (2026-10-23 03:15 KST); VM / 54 G free; floor 20 GB; M9 projection −13 GB (Stop A / Stop B)
-fork SHAs (pushed, pinned in scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, Testbed 4c8397d0 (P1 pins were d3bc4d96 / 2817f7e4 / 0fd195ed)
-harness SHA (pushed): see git log (P2 gate commit)
-in-flight background jobs: V5 M5 -> M6 -> M7 fresh through vm-exec.sh at the fix SHA (started ~07:10 KST, ~31 min)
-next action: check M5, M6 (new checks m6_pod_log_reader_self_test, m6_kpimon_log_window_complete_across_rotations, indications = wire = 199) and M7 all exit 0; any red check is PAUSE T6; then the P2 phase exit and a kongming go/no-go on P3; carry forward: M3 kpimon-log fix before P9/Stop B, one log window per rung run, T_ctl slack must not come from aborted steps (pacer.py slackS)
-hold (user, 2026-10-23 02:30 KST): another Claude session loads the host CPU; no timing calibration (P3 T_ctl of L, R2/R3 W, any latency/slack used as a gate value) until it is done; S1's bounds (T_gate + 5 s, T_ctl 30 s run-out) are contract values, its slack is recorded only
+host /home free: 60 G (2026-10-23 07:28 KST); VM / 52 G free; floor 20 GB; M9 projection 60 - 11 remaining dev - 48 M9 - 20 = -19 GB (raised at Stop A, user frees at Stop B)
+fork SHAs (pushed, pinned in scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, Testbed 4c8397d0
+harness SHA (pushed): see git log (P2 exit commit); gates ran at ca65920 (S1) and e97ed53 (V5)
+in-flight background jobs: none (VM ~/m4-build is at the P2 pins; ~/s0-build-ref holds the P0 build)
+next action: kongming go/no-go on P3; then P3 per phase-03 (build the C1 wire extractor first; Q2 null-control outage count; T_ctl calibration is blocked while the user's CPU hold lasts); carry forward: M3 kpimon log fix + M3 re-run before P9/Stop B; one kpimon log window per rung run; T_ctl slack must not come from aborted steps (pacer.py slackS); agent-fault departures + stop-handshake drain for P4
+hold (user, 2026-10-23 02:30 KST): another Claude session loads the host CPU; no timing calibration (P3 T_ctl of L, R2/R3 W, any latency/slack used as a gate value) until it is done; check uptime/top first (host load was 0.8-1.8 during 06:55-07:25)
 ```
 On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`, `virsh -c qemu:///system snapshot-current --name ubuntu24.04` and `scripts/vm/vm-snapshot.sh list`, and compare them with this card. On a mismatch, print a PAUSE T3 line with the difference.
 
@@ -52,7 +52,7 @@ On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`
 |---|---|---|---|---|
 | P0 | [Harness generalization, RC wire decoder, disk baseline](phase-00-harness-generalization-rc-decoder-disk-baseline.md) | lint; decoder round-trips the committed PDU fixture | none | done (V1–V8 pass, 2026-10-23 01:55 KST) |
 | P1 | [S0: ns-3 D4 method, ledger, agent RC path, N5 request part](phase-01-s0-ns3-d4-ledger-agent-rc-path.md) | free-run digest unchanged; M5–M7 re-pass | none | done (S0 PASS; M5–M7 PASS at the P1 pins, 2026-10-23 03:14 KST) |
-| P2 | [S1: pacer and barrier, Fallback-1, null-control, fault run (i)](phase-02-s1-pacer-barrier-fallback1-null-control.md) | scripted S1 gate | none | pending |
+| P2 | [S1: pacer and barrier, Fallback-1, null-control, fault run (i)](phase-02-s1-pacer-barrier-fallback1-null-control.md) | scripted S1 gate | none | done (S1 PASS 35/35 at ca65920; M5-M7 PASS at e97ed53, 2026-10-23 07:25 KST) |
 | P3 | [R0 = M8: rc by scripted gRPC, D7 three paths, G4](phase-03-r0-m8-rc-scripted-grpc.md) | R0 C1 | `r0-green` | pending |
 | P4 | [R1: multi-control, unknown IMSI, fault run (ii); then Stop A](phase-04-r1-multi-control-fault-runs-stop-a.md) | R1 C1 | none (no `r1-green`) | pending |
 | P5 | [R2: TS xApp + stub QP, stray-ack probe first](phase-05-r2-ts-xapp-stub-qp-stray-ack-probe.md) | R2 C1 | `r2-green` | pending |
