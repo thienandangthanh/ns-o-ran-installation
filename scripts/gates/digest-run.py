@@ -9,8 +9,11 @@ and ns3run/ (ns-3 trace text files). Components:
           `ipcDropped` dropped (it must be 0 and is asserted separately);
   traces  every ns3run/*.txt except the stdout/stderr logs, with
           DlE2RlcStatsLte.txt columns 5-6 removed (contract C1);
-  live-only components (per-step RC multiset, KPM headers and colletStartTime)
-  are added by the rung gates from the decoded wire under extra/<name>.json.
+  extra   live-only components from the decoded wire, written by the rung gates
+          as extra/rc-multiset.json (per-step RC multiset), extra/kpm-headers.json
+          and extra/collet-start-time.json; when `extra` is a compared component,
+          a run without all three fails the comparison (two empty sets never
+          compare equal).
 
   digest-run.py RUN                         -> JSON digests of RUN
   digest-run.py --compare [--components ledger,ipc,traces[,extra]] A=RUN B=RUN ...
@@ -35,6 +38,7 @@ def _module(name, path):
 
 
 FREE = _module("compare_free_run", HERE / "compare-free-run.py")
+EXTRA_EXPECTED = ("rc-multiset", "kpm-headers", "collet-start-time")
 IPC = _module("ipc_digests", HERE.parent / "probes" / "compare-ns3-ipc-sample-digests.py")
 
 
@@ -80,6 +84,12 @@ def main():
     ref = labelled[0][0]
     report = {"reference": ref, "components": comps, "runs": {}}
     ok = True
+    if "extra" in comps:
+        missing = {label: [n for n in EXTRA_EXPECTED if n not in d[label]["extra"]] for label in d}
+        missing = {k: v for k, v in missing.items() if v}
+        if missing:
+            report["extraMissing"] = missing
+            ok = False
     for label, _, _ in labelled[1:]:
         diff = [c for c in comps if d[label][c] != d[ref][c]]
         detail = {}

@@ -35,7 +35,8 @@ Acceptance: C2 (ledger checks), C7 (deadline run-out names the step; margins), C
 | Decision | Document, version, section | Zotero | Read |
 |---|---|---|---|
 | Late control → RICcontrolFailure `control-failed-to-execute` | E2AP v03.00 §9.2.1 | `WEE5IEXF` | 2026-10-22 |
-| Exactly one terminal answer per RICcontrolRequest | E2AP v03.00 RIC Control procedure (successful / unsuccessful outcome) | `WEE5IEXF` | read in this phase |
+| Exactly one terminal answer per RICcontrolRequest | E2AP v03.00 §8.2.4.2 (successful: ACK, or no message when RIC Control Ack Request = NoAck), §8.2.4.3 (unsuccessful: RIC CONTROL FAILURE with a cause); the Near-RT RIC terminates the procedure on either, so one answer each, never both | `WEE5IEXF` | 2026-10-23 |
+| A control that misses its barrier mid-run (lock-step, `afterSeq < seq`) is refused `late`, not applied | E2AP v03.00 §8.2.4.3 ("fails to execute the requested … action" → FAILURE) and §9.2.1 CauseRICrequest "Control failed to execute"; "Control timer expired" is not used: it covers only an expired RIC Time to Wait for a RIC Call Process ID, which rc never sends. Design D2(a), contract C3 | `WEE5IEXF` | 2026-10-23 |
 | d = 0 actuation — **recorded deviation P3** | decided in D5 | — | — |
 
 ## Failure Protocol

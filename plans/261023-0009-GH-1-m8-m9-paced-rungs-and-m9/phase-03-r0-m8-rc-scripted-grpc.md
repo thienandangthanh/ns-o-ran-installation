@@ -74,3 +74,4 @@ Source: `plans/reports/kongming-261023-0020-GH-1-m8-m9-plan-collect-only-review.
   - the `--RngRun=2` run exits cleanly, with C2 and C7 holding;
   - `ipcDropped = 0`, `droppedNoSub = 0`, `minSlack`.
 - **K11.** C1 as read on 01:03 KST: the replay is compared on the ledger, IPC samples and traces.
+- **P1-exit review (kongming 03:20, sequence-only move).** The wire extractor for C1's live-only components (per-step RC multiset, KPM headers, colletStartTime) is built here, before R0's first C1, not in P2. It writes `extra/rc-multiset.json`, `extra/kpm-headers.json` and `extra/collet-start-time.json` per live run; `digest-run.py --components ledger,ipc,traces,extra` fails when a run lacks any of them. Fixture-test it on an M7 pcap and the P0 probe fixture first. Triggers start only after the pacer has `steps k` (ns-3's notice that every agent has read sample k).

@@ -1,27 +1,32 @@
 #!/usr/bin/env python3
-"""pacer.py: the lock-step pacer (D1) that ns-3 connects to when run with
+"""pacer.py: the lock-step pacer that ns-3 connects to when run with
 --e2Pacing=lockstep. ns-3 is the only time base and the only party that
 blocks; the pacer grants every step.
 
-ns-3 -> pacer: ready{seq, simTimeNs, buffered}, controlRx{seq, viaNodeId, ctlId,
-buffered}, applied{seq, controls}, controlAck{...} (for pacer-injected
-controls), stopping{seq}, end{seq}, abort{seq}.
+ns-3 -> pacer: ready{seq, simTimeNs, buffered}, steps{seq} (every agent has sent
+step seq, so has read sample seq), controlRx{seq, viaNodeId, ctlId, buffered},
+applied{seq, controls, late}, controlAck{...} (for pacer-injected controls),
+stopping{seq}, end{seq}, abort{seq}.
 pacer -> ns-3: go{seq}, abort{reason}, control{nodeId, ctlId, imsi,
 targetCellId, afterSeq}, endAck.
 
 Per `ready` k the pacer looks k up in the schedule:
   - no entry: `go` k at once (every step that cannot produce a control);
   - "inject": send those control lines (scripted lock-step, Fallback-1), then go;
-  - "trigger": run the command (an rc gRPC call, a TS xApp trigger), then
-    wait until ns-3 has reported "expect" controlRx lines for k, at most T_ctl
-    from the trigger (else abort, D2); with "absence": true it waits W after
-    the trigger and requires exactly "expect" controls (statistical negatives).
+  - "trigger": wait for `steps` k (before it an agent may not have read sample
+    k and would stamp a control afterSeq k-1), run the command (an rc gRPC
+    call, a TS xApp trigger), then wait until ns-3 has reported "expect"
+    controlRx lines for k, at most T_ctl from the trigger (else abort); with
+    "absence": true it waits W after the trigger and requires exactly "expect"
+    controls (statistical negatives). A command still running at T_ctl aborts.
 At `stopping` it sends the schedule's "late" controls (forced-late case: ns-3
 answers them refused/late) and then endAck.
 
 --replay LEDGER builds the schedule from a control ledger: every line is
 injected at its rxSeq with its viaNodeId, ctlId, imsi, targetCell and
-afterSeq, so a replay reproduces the run without the RIC.
+afterSeq, so a replay reproduces the run without the RIC (a line refused late
+mid-run, afterSeq < rxSeq, is injected at its rxSeq and refused again; one
+refused late at the stop is sent at the stop handshake).
 
 Outputs in --out: pacer-log.jsonl (every message with wall time) and
 pacer-summary.json (per trigger step: L of each control = trigger start ->
@@ -50,7 +55,7 @@ def load_schedule(args):
                     continue
                 c = {"nodeId": m["viaNodeId"], "ctlId": m["ctlId"], "imsi": m["imsi"],
                      "targetCellId": m["targetCell"], "afterSeq": m["afterSeq"]}
-                if m["cause"] == "late":
+                if m["cause"] == "late" and m["afterSeq"] >= m["rxSeq"]:
                     late.append(c)  # arrived after the last barrier: replayed at the stop handshake
                 else:
                     steps.setdefault(str(m["rxSeq"]), {"inject": []})["inject"].append(c)
@@ -74,6 +79,7 @@ class Pacer:
         self.t_ctl = t_ctl
         self.w = w
         self.rx = {}         # seq -> [(wall, msg)] controlRx
+        self.steps_in = set()  # seqs whose `steps` arrived
         self.summary = {"tCtlS": t_ctl, "wS": w, "steps": {}, "acks": [], "applied": {},
                         "readyCount": 0, "aborted": False, "abortStep": None, "ended": False}
 
@@ -108,7 +114,9 @@ class Pacer:
     def handle_async(self, msg):
         """Messages that can arrive at any time; True when the run is over."""
         t = msg.get("type")
-        if t == "controlRx":
+        if t == "steps":
+            self.steps_in.add(msg["seq"])
+        elif t == "controlRx":
             self.rx.setdefault(msg["seq"], []).append((time.time(), msg))
         elif t == "controlAck":
             self.summary["acks"].append(msg)
@@ -127,6 +135,18 @@ class Pacer:
             self.summary["abortStep"] = msg.get("seq")
             return True
         return False
+
+    def wait_steps(self, seq, deadline):
+        """Waits for `steps` seq; True when the run is over."""
+        while seq not in self.steps_in and time.time() < deadline:
+            msg = self.recv(deadline - time.time())
+            if msg is not None and self.handle_async(msg):
+                return True
+        return False
+
+    def abort(self, reason):
+        self.send({"type": "abort", "reason": reason})
+        self.summary["pacerAbortReason"] = reason
 
     def wait_controls(self, seq, expect, deadline):
         while len(self.rx.get(seq, [])) < expect and time.time() < deadline:
@@ -147,10 +167,24 @@ class Pacer:
         trig = entry.get("trigger")
         if trig:
             expect = entry.get("expect", 0)
+            if self.wait_steps(seq, time.time() + self.t_ctl):
+                return True
+            if seq not in self.steps_in:
+                self.summary["steps"][str(seq)] = rec
+                self.abort("step %d: no `steps` from ns-3 within %s s" % (seq, self.t_ctl))
+                return False
+            self.note("pacer", {"type": "trigger", "seq": seq, "cmd": trig["cmd"]})
             t0 = time.time()
-            p = subprocess.run(trig["cmd"], capture_output=True, text=True, timeout=self.t_ctl)
-            rec["triggerRc"] = p.returncode
-            rec["triggerOut"] = (p.stdout + p.stderr)[-400:]
+            try:
+                p = subprocess.run(trig["cmd"], capture_output=True, text=True, timeout=self.t_ctl)
+                rec["triggerRc"] = p.returncode
+                rec["triggerOut"] = (p.stdout + p.stderr)[-400:]
+            except subprocess.TimeoutExpired as ex:
+                rec["triggerRc"] = None
+                rec["triggerOut"] = "still running at T_ctl: %r" % (ex.cmd,)
+                self.summary["steps"][str(seq)] = rec
+                self.abort("step %d: trigger still running at T_ctl %s s" % (seq, self.t_ctl))
+                return False
             if entry.get("absence"):
                 over = self.wait_controls(seq, expect + 1, t0 + self.w)
                 rec["window"] = "W"
@@ -166,10 +200,8 @@ class Pacer:
             rec["slackS"] = round(budget - max(rec["L"] or [0]), 6)
             self.summary["steps"][str(seq)] = rec
             if len(got) != expect or p.returncode != 0:
-                reason = "step %d: %d control(s) within %s (want %d), trigger rc %d" % (
-                    seq, len(got), rec["window"], expect, p.returncode)
-                self.send({"type": "abort", "reason": reason})
-                self.summary["pacerAbortReason"] = reason
+                self.abort("step %d: %d control(s) within %s (want %d), trigger rc %d" % (
+                    seq, len(got), rec["window"], expect, p.returncode))
                 return False
         self.summary["steps"].setdefault(str(seq), rec)
         self.send({"type": "go", "seq": seq})

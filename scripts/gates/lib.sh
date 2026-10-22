@@ -47,16 +47,24 @@ record() {
 }
 
 # check <name> <command...>: run the command, record pass/fail with the last
-# lines of its output. Full output goes to checks/<name>.out.
+# lines of its output. Full output goes to checks/<name>.out. The locals carry
+# a prefix: bash scoping is dynamic, so a command assigning a plain `name`
+# would otherwise rename the check.
 check() {
-    local name="$1"; shift
+    local _check_name="$1"; shift
     mkdir -p "$EVIDENCE_DIR/checks"
-    local out="$EVIDENCE_DIR/checks/${name//[^A-Za-z0-9_.-]/_}.out"
-    if "$@" >"$out" 2>&1; then
-        record "$name" true "$(tail -n 3 "$out")"
+    local _check_out="$EVIDENCE_DIR/checks/${_check_name//[^A-Za-z0-9_.-]/_}.out"
+    if "$@" >"$_check_out" 2>&1; then
+        record "$_check_name" true "$(tail -n 3 "$_check_out")"
     else
-        record "$name" false "exit $?: $(tail -n 5 "$out")"
+        record "$_check_name" false "exit $?: $(tail -n 5 "$_check_out")"
     fi
+}
+
+# fact <key> <json-value>: a top-level verdict.json field (the last value of a key
+# wins; it never replaces the fields gate_finish writes itself).
+fact() {
+    printf '{"key":%s,"value":%s}\n' "$(json_str "$1")" "$2" >>"$EVIDENCE_DIR/facts.jsonl"
 }
 
 # retry <attempts> <delay-s> <command...>: each retry is logged.
@@ -111,7 +119,7 @@ gate_finish() {
     [ -n "${GATE_SKIP_DISK_GUARD:-}" ] || disk_guard || record disk_guard false "VM / above 75 % used: $(tail -1 "$EVIDENCE_DIR/disk.txt")"
     python3 - "$CHECKS_FILE" "$EVIDENCE_DIR/verdict.json" "$GATE" "$GATE_TS" \
         "${HARNESS_SHA:-unknown}" "$GATE_START_EPOCH" "$HARNESS_DIR/scripts/pins.conf" <<'PY'
-import json, sys, time
+import json, os, sys, time
 checks_file, out, gate, ts, harness, start, pins = sys.argv[1:]
 checks = [json.loads(l) for l in open(checks_file) if l.strip()]
 pin_map = {}
@@ -127,6 +135,13 @@ verdict = {
     "failed": [c["name"] for c in checks if not c["pass"]],
     "checks": checks,
 }
+facts = os.path.join(os.path.dirname(out), "facts.jsonl")
+if os.path.exists(facts):
+    for line in open(facts):
+        if line.strip():
+            f = json.loads(line)
+            if f["key"] not in ("gate", "ts", "harness_sha", "pins", "duration_s", "pass", "failed", "checks"):
+                verdict[f["key"]] = f["value"]
 json.dump(verdict, open(out, "w"), indent=2)
 print(f"verdict {gate}: {'PASS' if verdict['pass'] else 'FAIL'} failed={verdict['failed']}")
 PY
