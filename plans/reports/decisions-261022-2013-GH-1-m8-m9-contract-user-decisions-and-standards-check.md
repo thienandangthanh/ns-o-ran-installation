@@ -119,3 +119,30 @@ Gated runs require 0 agent-local rejects (contract C6), so this changes no gate.
 **Evidence for the G6 question.** The common E2SM types define a separate `UEID-EN-GNB` (m-eNB-UE-X2AP-ID, globalENB-ID, gNB-CU-UE-F1AP-ID, ...) for a UE served by an en-gNB in EN-DC. rc and the TS xApp use `UEID-GNB` with an AMF-UE-NGAP-ID, the NR standalone form. That looks like a new deviation for our EN-DC scenario. The warmup scout must confirm it against the common E2SM spec, and the user then decides whether it is recorded as an accepted deviation.
 
 **E2SM-KPM v03.00.** It was added to Zotero as item `F82PYZVK` ("O-RAN E2 Service Model (E2SM) KPM 3.0", March 2023). At 22:30 KST the item had **no PDF attachment**, so it cannot be read yet.
+
+## Amendment (2026-10-22 22:50 KST): E2SM common and E2SM-KPM versions
+
+**Withdrawals.**
+- **E2SM common:** none. Its change history (v07.00, Zotero `QW6VJ83M`, "Annex (informative): Change History"; v08.00 `AIBI24NH` has the same annex) lists 01.00, 01.01, 02.00, 02.01, 03.00, 03.01, 04.00, 05.00, 06.00 and 07.00. None is marked withdrawn.
+- **E2SM-KPM:** none. The v03.00 "Revision history" and "History" (Zotero `F82PYZVK`, PDF now attached) list 01.00, 02.00, 02.01, 02.02 and 02.03 as "Published as Final version". The KPM v07.00 text has no "withdrawn" entry either.
+
+So the older versions were published and later superseded; they were not withdrawn. The user could not obtain them. Decision (user, 22:48 KST): the checks cite the oldest version held in Zotero and record the version gap.
+
+**Which E2SM common version rc's `e2sm-common.asn` matches** (ric-app-rc@a2282ee):
+- The file contains the O-RAN UEID choice. That arrived in 02.01 (2022.02.07, "Additional common IEs including O-RAN agreed UEID").
+- It lacks the Beam ID (CR-0005, 03.01.01, 2023.05.15) and C-RNTI (CR-0002, 03.01.02, 2023.06.27) additions. Grep counts are 0 in rc's file against 4 each in v07.00.
+- So rc's common ASN.1 is from **02.01–03.00** (inferred from the change history).
+
+**`UEID-EN-GNB` and `UEID-GNB` match v07.00** in rc's file field for field, except for the later `cell-RNTI` extension. The check used the order of the field names; the PDF's comment words were ignored.
+- `UEID-EN-GNB` = m-eNB-UE-X2AP-ID, m-eNB-UE-X2AP-ID-Extension, globalENB-ID, gNB-CU-UE-F1AP-ID, gNB-CU-CP-UE-E1AP-ID-List, ran-UEID.
+- `UEID-GNB` = amf-UE-NGAP-ID, guami, gNB-CU-UE-F1AP-ID-List, gNB-CU-CP-UE-E1AP-ID-List, ran-UEID, m-NG-RAN-UE-XnAP-ID, globalGNB-ID, globalNG-RANNode-ID.
+
+E2SM common **v07.00 is therefore a sound reference** for the UE identity question (G6). The only gap to record is `cell-RNTI`.
+
+**Reference versions for M8–M9 standards checks:**
+
+| Spec | Cite | Zotero item | Gap to record |
+|---|---|---|---|
+| E2SM-RC | v03.00 | `XRWZU3SS` | v02.00 withdrawn; rc's ASN lacks the RIC Query types |
+| E2SM common (UEID, CGI and other common IEs) | v07.00 | `QW6VJ83M` | rc's file is 02.01–03.00; it lacks Beam ID, C-RNTI and `cell-RNTI` |
+| E2SM-KPM | v03.00 (wire); v2.0 also held | `F82PYZVK`, `ZL929XRL` | none known |
