@@ -22,15 +22,15 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-23 02:02 KST
-current phase: P1, in progress (P0 done e336af4; kongming P0 exit: GO after 4 must-do items)
+last-updated: 2026-10-23 02:55 KST
+current phase: P1, in progress (fork commits pushed: ns-3 786527b3 A + d3bc4d96 B, oran-interface 2817f7e4, Testbed 9e7d85f D + 0fd195e E; pins.conf bumped)
 VM: expected domstate=running, snapshot-current=f7-rerun-green
 snapshots: fresh-install, f7-rerun-green
 host /home free: 76 G (2026-10-23 01:55 KST); floor 20 GB; M9 projection -12 GB (Stop A)
-fork SHAs (pushed): see scripts/pins.conf; QP fork master=47a35ca; P1 work unpushed in scratch clones
-harness SHA (pushed): e336af4
-in-flight background jobs: none
-next action: P1 must-do 3 (SHA-checked build/image reuse, ns3run gitignore), then V1 rule + 2 reference runs
+fork SHAs (pushed): see scripts/pins.conf; QP fork master=47a35ca
+harness SHA (pushed): see git log (gate-s0 commit)
+in-flight background jobs: gate s0 via vm-exec.sh (V1 ref1/ref2/a/new, V3, V2, V4), timeout 7200 s; builds ~/s0-build-ref, ~/s0-build-a (deleted after), ~/m4-build at new pins
+next action: read gate s0 verdict; then M5, M6, M7 at the new pins (V5)
 ```
 On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`, `virsh -c qemu:///system snapshot-current --name ubuntu24.04` and `scripts/vm/vm-snapshot.sh list`, and compare them with this card. On a mismatch, print a PAUSE T3 line with the difference.
 
