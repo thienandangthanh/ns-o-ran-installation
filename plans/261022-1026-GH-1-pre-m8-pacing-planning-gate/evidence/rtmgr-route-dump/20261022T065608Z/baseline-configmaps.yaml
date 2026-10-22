@@ -1,0 +1,208 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  data:
+    RMR_RTG_SVC: "4561"
+    RMR_SEED_RT: router.txt
+    RMR_SRC_ID: service-ricplt-e2term-rmr-alpha.ricplt
+    RMR_VCTL_FILE: /tmp/rmr_verbose
+    nano: "38000"
+    print: "1"
+    sctp: "36422"
+    volume: /data/outgoing/
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: r4-e2term
+      meta.helm.sh/release-namespace: ricplt
+    creationTimestamp: "2026-10-21T21:34:33Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: configmap-ricplt-e2term-env-alpha
+    namespace: ricplt
+    resourceVersion: "942"
+    uid: 4ba57a88-b828-4217-bf34-371f79cf1690
+- apiVersion: v1
+  data:
+    rmr_verbose: |
+      0
+    router.txt: |
+      newrt|start
+      rte|1080|service-ricplt-e2mgr-rmr.ricplt:3801
+      rte|1090|service-ricplt-e2term-rmr-alpha.ricplt:38000
+      rte|1100|service-ricplt-e2mgr-rmr.ricplt:3801
+      rte|10020|service-ricplt-e2mgr-rmr.ricplt:3801
+      rte|10060|service-ricplt-e2term-rmr-alpha.ricplt:38000
+      rte|10061|service-ricplt-e2mgr-rmr.ricplt:3801
+      rte|10062|service-ricplt-e2mgr-rmr.ricplt:3801
+      rte|10030|service-ricplt-e2mgr-rmr.ricplt:3801
+      rte|10070|service-ricplt-e2mgr-rmr.ricplt:3801
+      rte|10071|service-ricplt-e2mgr-rmr.ricplt:3801
+      rte|10080|service-ricplt-e2mgr-rmr.ricplt:3801
+      rte|10091|service-ricplt-rsm-rmr.ricplt:4801
+      rte|10092|service-ricplt-rsm-rmr.ricplt:4801
+      rte|10360|service-ricplt-e2term-rmr-alpha.ricplt:38000
+      rte|10361|service-ricplt-e2mgr-rmr.ricplt:3801
+      rte|10362|service-ricplt-e2mgr-rmr.ricplt:3801
+      rte|10370|service-ricplt-e2mgr-rmr.ricplt:3801
+      rte|10371|service-ricplt-e2term-rmr-alpha.ricplt:38000
+      rte|12010|service-ricplt-e2term-rmr-alpha.ricplt:38000
+      rte|12020|service-ricplt-e2term-rmr-alpha.ricplt:38000
+      rte|20001|service-ricplt-a1mediator-rmr.ricplt:4562
+      rte|12011|service-ricxapp-ueec-rmr.ricxapp:4560;service-admission-ctrl-xapp-rmr.ricxapp:4560
+      rte|12050|service-ricxapp-ueec-rmr.ricxapp:4560;service-admission-ctrl-xapp-rmr.ricxapp:4560
+      rte|12012|service-ricxapp-ueec-rmr.ricxapp:4560;service-admission-ctrl-xapp-rmr.ricxapp:4560
+      rte|12021|service-ricxapp-ueec-rmr.ricxapp:4560;service-admission-ctrl-xapp-rmr.ricxapp:4560
+      rte|12022|service-ricxapp-ueec-rmr.ricxapp:4560;service-admission-ctrl-xapp-rmr.ricxapp:4560
+      rte|12041|service-ricxapp-ueec-rmr.ricxapp:4560;service-admission-ctrl-xapp-rmr.ricxapp:4560
+      rte|12042|service-ricxapp-ueec-rmr.ricxapp:4560;service-admission-ctrl-xapp-rmr.ricxapp:4560
+      rte|12050|service-ricxapp-ueec-rmr.ricxapp:4560;service-admission-ctrl-xapp-rmr.ricxapp:4560
+      rte|20000|service-ricxapp-ueec-rmr.ricxapp:4560;service-admission-ctrl-xapp-rmr.ricxapp:4560
+      newrt|end
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: r4-e2term
+      meta.helm.sh/release-namespace: ricplt
+    creationTimestamp: "2026-10-21T21:34:33Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: configmap-ricplt-e2term-router-configmap
+    namespace: ricplt
+    resourceVersion: "944"
+    uid: ded1f69f-49cb-46f5-8f69-8703f4842c3c
+- apiVersion: v1
+  data:
+    CFGFILE: /cfg/rtmgr-config.yaml
+    RMR_RTG_SVC: "4561"
+    RMR_SEED_RT: /uta_rtg_ric.rt
+    RMR_SRC_ID: service-ricplt-rtmgr-rmr.ricplt
+    XMURL: http://service-ricplt-appmgr-http:8080/ric/v1/xapps
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: r4-rtmgr
+      meta.helm.sh/release-namespace: ricplt
+    creationTimestamp: "2026-10-21T21:34:16Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: configmap-ricplt-rtmgr-env
+    namespace: ricplt
+    resourceVersion: "816"
+    uid: 95262750-a5d0-4270-a3f1-12d34e3ec2a5
+- apiVersion: v1
+  data:
+    rtmgrcfg: "\"PlatformComponents\":\n  -\n    \"name\": \"SUBMAN\"\n    \"fqdn\":
+      \"service-ricplt-submgr-rmr.ricplt\"\n    \"port\": 4560\n  -\n    \"name\":
+      \"E2MAN\"\n    \"fqdn\": \"service-ricplt-e2mgr-rmr.ricplt\"\n    \"port\":
+      3801\n  -\n    \"name\": \"E2TERM\"\n    \"fqdn\": \"service-ricplt-e2term-rmr-alpha.ricplt\"\n
+      \   \"port\": 38000\n  -\n    \"name\": \"A1MEDIATOR\"\n    \"fqdn\": \"service-ricplt-a1mediator-rmr.ricplt\"\n
+      \   \"port\": 4562\n\n\"XMURL\":\n  \"http://service-ricplt-appmgr-http:8080/ric/v1/xapps\"\n\"E2MURL\":\n
+      \ \"http://service-ricplt-e2mgr-http:3800/v1/e2t/list\"\n\"RTFILE\":\n  \"/db/rt.json\"\n\"CFGFILE\":\n
+      \ \"/cfg/rtmgr-config.yaml\"\n\"RPE\":\n  \"rmrpush\"\n\"SBI\":\n  \"rmrpush\"\n\"SBIURL\":\n
+      \ \"0.0.0.0\"\n\"NBI\":\n  \"httpRESTful\"\n\"NBIURL\":\n  \"http://service-ricplt-rtmgr-http:3800\"\n\"SDL\":\n
+      \ \"file\"\n\"local\":\n  \"host\": \":8080\"\n\"logger\":\n  \"level\": 4\n\"periodicRoutes\":\n
+      \ \"enable\"\t\t   \n\"rmr\":\n  \"protPort\": \"tcp:4560\"\n  \"maxSize\":
+      1024\n  \"numWorkers\": 1\n  \"threadType\": 1\n\"messagetypes\": [\n   \"RIC_HEALTH_CHECK_REQ=100\",\n
+      \  \"RIC_HEALTH_CHECK_RESP=101\",\n   \"RIC_ALARM=110\",\n   \"RIC_ALARM_QUERY=111\",\n
+      \  \"RIC_SCTP_CONNECTION_FAILURE=1080\",\n   \"E2_TERM_INIT=1100\",\n   \"E2_TERM_KEEP_ALIVE_REQ=1101\",\n
+      \  \"E2_TERM_KEEP_ALIVE_RESP=1102\",\n   \"RIC_SCTP_CLEAR_ALL=1090\",\n   \"RAN_CONNECTED=1200\",\n
+      \  \"RAN_RESTARTED=1210\",\n   \"RAN_RECONFIGURED=1220\",\n   \"RIC_ENB_LOAD_INFORMATION=10020\",\n
+      \  \"RIC_SN_STATUS_TRANSFER=10040\",\n   \"RIC_UE_CONTEXT_RELEASE=10050\",\n
+      \  \"RIC_X2_SETUP_REQ=10060\",\n   \"RIC_X2_SETUP_RESP=10061\",\n   \"RIC_X2_SETUP_FAILURE=10062\",\n
+      \  \"RIC_X2_RESET=10070\",\n   \"RIC_X2_RESET_RESP=10071\",\n   \"RIC_ENB_CONF_UPDATE=10080\",\n
+      \  \"RIC_ENB_CONF_UPDATE_ACK=10081\",\n   \"RIC_ENB_CONF_UPDATE_FAILURE=10082\",\n
+      \  \"RIC_RES_STATUS_REQ=10090\",\n   \"RIC_RES_STATUS_RESP=10091\",\n   \"RIC_RES_STATUS_FAILURE=10092\",\n
+      \  \"RIC_SGNB_ADDITION_REQ=10270\",\n   \"RIC_SGNB_ADDITION_ACK=10271\",\n   \"RIC_SGNB_ADDITION_REJECT=10272\",\n
+      \  \"RIC_SGNB_RECONF_COMPLETE=10280\",\n   \"RIC_SGNB_MOD_REQUEST=10290\",\n
+      \  \"RIC_SGNB_MOD_REQUEST_ACK=10291\",\n   \"RIC_SGNB_MOD_REQUEST_REJ=10292\",\n
+      \  \"RIC_SGNB_MOD_REQUIRED=10300\",\n   \"RIC_SGNB_MOD_CONFIRM=10301\",\n   \"RIC_SGNB_MOD_REFUSE=10302\",\n
+      \  \"RIC_SGNB_RELEASE_REQUEST=10310\",\n   \"RIC_SGNB_RELEASE_REQUEST_ACK=10311\",\n
+      \  \"RIC_SGNB_RELEASE_REQUIRED=10320\",\n   \"RIC_SGNB_RELEASE_CONFIRM=10321\",\n
+      \  \"RIC_RRC_TRANSFER=10350\",\n   \"RIC_ENDC_X2_SETUP_REQ=10360\",\n   \"RIC_ENDC_X2_SETUP_RESP=10361\",\n
+      \  \"RIC_ENDC_X2_SETUP_FAILURE=10362\",\n   \"RIC_ENDC_CONF_UPDATE=10370\",\n
+      \  \"RIC_ENDC_CONF_UPDATE_ACK=10371\",\n   \"RIC_ENDC_CONF_UPDATE_FAILURE=10372\",\n
+      \  \"RIC_SECONDARY_RAT_DATA_USAGE_REPORT=10380\",\n   \"RIC_E2_SETUP_REQ=12001\",\n
+      \  \"RIC_E2_SETUP_RESP=12002\",\n   \"RIC_E2_SETUP_FAILURE=12003\",\n   \"RIC_ERROR_INDICATION=12007\",\n
+      \  \"RIC_SUB_REQ=12010\",\n   \"RIC_SUB_RESP=12011\",\n   \"RIC_SUB_FAILURE=12012\",\n
+      \  \"RIC_SUB_DEL_REQ=12020\",\n   \"RIC_SUB_DEL_RESP=12021\",\n   \"RIC_SUB_DEL_FAILURE=12022\",\n
+      \  \"RIC_SUB_DEL_REQUIRED=12023\",\n   \"RIC_CONTROL_REQ=12040\",\n   \"RIC_CONTROL_ACK=12041\",\n
+      \  \"RIC_CONTROL_FAILURE=12042\",\n   \"RIC_INDICATION=12050\",\n   \"A1_POLICY_REQ=20010\",\n
+      \  \"A1_POLICY_RESP=20011\",\n   \"A1_POLICY_QUERY=20012\",\n   \"TS_UE_LIST=30000\",\n
+      \  \"TS_QOE_PRED_REQ=30001\",\n   \"TS_QOE_PREDICTION=30002\",\n   \"TS_ANOMALY_UPDATE=30003\",\n
+      \  \"TS_ANOMALY_ACK=30004\",\n   \"MC_REPORT=30010\",\n   \"DCAPTERM_RTPM_RMR_MSGTYPE=33001\",\n
+      \  \"DCAPTERM_GEO_RMR_MSGTYPE=33002\",\n   \"RIC_SERVICE_UPDATE=12030\",\n   \"RIC_SERVICE_UPDATE_ACK=12031\",\n
+      \  \"RIC_SERVICE_UPDATE_FAILURE=12032\",\n   \"RIC_E2NODE_CONFIG_UPDATE=12070\",\n
+      \  \"RIC_E2NODE_CONFIG_UPDATE_ACK=12071\",\n   \"RIC_E2NODE_CONFIG_UPDATE_FAILURE=12072\",\n
+      \  \"RIC_E2_RESET_REQ=12004\",\n   \"RIC_E2_RESET_RESP=12005\",\n   ]\n\n\"PlatformRoutes\":
+      [\n  { 'messagetype': 'RIC_SUB_REQ', 'senderendpoint': 'SUBMAN', 'subscriptionid':
+      -1, 'endpoint': '', 'meid': '%meid'},\n  { 'messagetype': 'RIC_SUB_DEL_REQ',
+      'senderendpoint': 'SUBMAN', 'subscriptionid': -1,'endpoint': '', 'meid': '%meid'},\n
+      \ { 'messagetype': 'RIC_SUB_RESP', 'senderendpoint': '', 'subscriptionid': -1,
+      'endpoint': 'SUBMAN', 'meid': ''},\n  { 'messagetype': 'RIC_SUB_DEL_RESP', 'senderendpoint':
+      '', 'subscriptionid': -1, 'endpoint': 'SUBMAN', 'meid': ''},\n  { 'messagetype':
+      'RIC_SUB_FAILURE', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint': 'SUBMAN',
+      'meid': ''},\n  { 'messagetype': 'RIC_SUB_DEL_FAILURE', 'senderendpoint': '',
+      'subscriptionid': -1, 'endpoint': 'SUBMAN', 'meid': ''},\n  { 'messagetype':
+      'RIC_SUB_DEL_REQUIRED', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint':
+      'SUBMAN', 'meid': ''},\n  { 'messagetype': 'RIC_X2_SETUP_REQ', 'senderendpoint':
+      'E2MAN', 'subscriptionid': -1, 'endpoint': '', 'meid': '%meid'},\n  { 'messagetype':
+      'RIC_X2_RESET', 'senderendpoint': 'E2MAN', 'subscriptionid': -1, 'endpoint':
+      '', 'meid': '%meid'},\n  { 'messagetype': 'RIC_X2_RESET_RESP', 'senderendpoint':
+      'E2MAN', 'subscriptionid': -1, 'endpoint': '', 'meid': '%meid'},\n  { 'messagetype':
+      'RIC_ENDC_X2_SETUP_REQ', 'senderendpoint': 'E2MAN', 'subscriptionid': -1, 'endpoint':
+      '', 'meid': '%meid'},\n  { 'messagetype': 'RIC_ENB_CONF_UPDATE_ACK', 'senderendpoint':
+      'E2MAN', 'subscriptionid': -1, 'endpoint': '', 'meid': '%meid'},\n  { 'messagetype':
+      'RIC_ENB_CONF_UPDATE_FAILURE', 'senderendpoint': 'E2MAN', 'subscriptionid':
+      -1, 'endpoint': '', 'meid': '%meid'},\n  { 'messagetype': 'RIC_ENDC_CONF_UPDATE_ACK',
+      'senderendpoint': 'E2MAN', 'subscriptionid': -1, 'endpoint': '', 'meid': '%meid'},\n
+      \ { 'messagetype': 'RIC_ENDC_CONF_UPDATE_FAILURE', 'senderendpoint': 'E2MAN',
+      'subscriptionid': -1, 'endpoint': '', 'meid': '%meid'},\n  { 'messagetype':
+      'RIC_E2_SETUP_REQ', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint':
+      'E2MAN', 'meid': ''},\n  { 'messagetype': 'E2_TERM_INIT', 'senderendpoint':
+      '', 'subscriptionid': -1, 'endpoint': 'E2MAN', 'meid': ''},\n  { 'messagetype':
+      'RIC_E2_SETUP_RESP', 'senderendpoint': 'E2MAN', 'subscriptionid': -1, 'endpoint':
+      'E2TERM', 'meid': ''},\n  { 'messagetype': 'RIC_E2_SETUP_FAILURE', 'senderendpoint':
+      'E2MAN', 'subscriptionid': -1, 'endpoint': 'E2TERM', 'meid': ''},\n  { 'messagetype':
+      'E2_TERM_KEEP_ALIVE_REQ', 'senderendpoint': 'E2MAN', 'subscriptionid': -1, 'endpoint':
+      'E2TERM', 'meid': ''},\n  { 'messagetype': 'RIC_X2_SETUP_RESP', 'senderendpoint':
+      '', 'subscriptionid': -1, 'endpoint': 'E2MAN', 'meid': ''},\n  { 'messagetype':
+      'RIC_X2_SETUP_FAILURE', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint':
+      'E2MAN', 'meid': ''},\n  { 'messagetype': 'RIC_X2_RESET', 'senderendpoint':
+      '', 'subscriptionid': -1, 'endpoint': 'E2MAN', 'meid': ''},\n  { 'messagetype':
+      'RIC_X2_RESET_RESP', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint':
+      'E2MAN', 'meid': ''},\n  { 'messagetype': 'RIC_ENDC_X2_SETUP_RESP', 'senderendpoint':
+      '', 'subscriptionid': -1, 'endpoint': 'E2MAN', 'meid': ''},\n  { 'messagetype':
+      'RIC_ENDC_X2_SETUP_FAILURE', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint':
+      'E2MAN', 'meid': ''},\n  { 'messagetype': 'RIC_ENDC_CONF_UPDATE', 'senderendpoint':
+      '', 'subscriptionid': -1, 'endpoint': 'E2MAN', 'meid': ''},\n  { 'messagetype':
+      'RIC_SCTP_CONNECTION_FAILURE', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint':
+      'E2MAN', 'meid': ''},\n  { 'messagetype': 'RIC_ERROR_INDICATION', 'senderendpoint':
+      '', 'subscriptionid': -1, 'endpoint': 'E2MAN', 'meid': ''},\n  { 'messagetype':
+      'RIC_ENB_CONF_UPDATE', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint':
+      'E2MAN', 'meid': ''},\n  { 'messagetype': 'RIC_ENB_LOAD_INFORMATION', 'senderendpoint':
+      '', 'subscriptionid': -1, 'endpoint': 'E2MAN', 'meid': ''},\n  { 'messagetype':
+      'E2_TERM_KEEP_ALIVE_RESP', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint':
+      'E2MAN', 'meid': ''},\n  { 'messagetype': 'A1_POLICY_QUERY', 'senderendpoint':
+      '', 'subscriptionid': -1, 'endpoint': 'A1MEDIATOR', 'meid': ''},\n  { 'messagetype':
+      'A1_POLICY_RESP', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint': 'A1MEDIATOR',
+      'meid': ''},\n  { 'messagetype': 'RIC_SERVICE_UPDATE', 'senderendpoint': '',
+      'subscriptionid': -1, 'endpoint': 'E2MAN', 'meid': ''},\n  { 'messagetype':
+      'RIC_E2NODE_CONFIG_UPDATE', 'senderendpoint': '', 'subscriptionid': -1, 'endpoint':
+      'E2MAN', 'meid': ''},\n  { 'messagetype': 'RIC_E2_RESET_REQ', 'senderendpoint':
+      '', 'subscriptionid': -1, 'endpoint': 'E2MAN', 'meid': ''},\n   ]\n"
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: r4-rtmgr
+      meta.helm.sh/release-namespace: ricplt
+    creationTimestamp: "2026-10-21T21:34:16Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: configmap-ricplt-rtmgr-rtmgrcfg
+    namespace: ricplt
+    resourceVersion: "817"
+    uid: 7bb30d4d-aaff-4d04-8c75-3f7d20d4086a
+kind: List
+metadata:
+  resourceVersion: ""

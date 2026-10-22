@@ -1,0 +1,1702 @@
+{"ts":1792652932700,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:52"},"msg":"SendRICControlReqServiceGrpc Enter "}
+{"ts":1792652932700,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:52"},"msg":"GRPC Control request validated, initiate Control Request to RAN"}
+{"ts":1792652932700,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:52"},"msg":"RICHOCONTROL_EVENT: Response sent with  RspCode:0, Description:Success Response"}
+{"ts":1792652932700,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:52"},"msg":"SendRicControlRequest Enter for RanName = gnb_001_001_00000001"}
+{"ts":1792652932700,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:52"},"msg":"SetRicControlHeader Enter \n"}
+[0 241 16]
+00 f1 10{"ts":1792652932700,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:52"},"msg":"lOutByte Len:3\n"}
+{"ts":1792652932700,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:52"},"msg":"lOutByte = 00F110\n"}
+e2SM wrapper function Entered
+plmn Size = 6 and aMFRegionID Size = 1 and aMFSetID_size = 2 and aMFPointer_size = 1 
+e2sm_encode_ric_control_header amf_UE_NGAP_ID encoded 
+e2smrc_encode_ric_control_header pLMNIdentity encoded 
+F1AP_id 0 =0
+showing xer of asn_DEF_E2SM_RC_ControlHeader data
+<E2SM-RC-ControlHeader>
+    <ric-controlHeader-formats>
+        <controlHeader-Format1>
+            <ueID>
+                <gNB-UEID>
+                    <amf-UE-NGAP-ID>1</amf-UE-NGAP-ID>
+                    <guami>
+                        <pLMNIdentity>00 F1 10</pLMNIdentity>
+                        <aMFRegionID>
+                            00000001
+                        </aMFRegionID>
+                        <aMFSetID>
+                            0000000000
+                        </aMFSetID>
+                        <aMFPointer>
+                            000000
+                        </aMFPointer>
+                    </guami>
+                    <gNB-CU-UE-F1AP-ID-List>
+                        <UEID-GNB-CU-CP-F1AP-ID-Item>
+                            <gNB-CU-UE-F1AP-ID>1</gNB-CU-UE-F1AP-ID>
+                        </UEID-GNB-CU-CP-F1AP-ID-Item>
+                    </gNB-CU-UE-F1AP-ID-List>
+                    <gNB-CU-CP-UE-E1AP-ID-List>
+                        <UEID-GNB-CU-CP-E1AP-ID-Item>
+                            <gNB-CU-CP-UE-E1AP-ID>1</gNB-CU-CP-UE-E1AP-ID>
+                        </UEID-GNB-CU-CP-E1AP-ID-Item>
+                    </gNB-CU-CP-UE-E1AP-ID-List>
+                </gNB-UEID>
+            </ueID>
+            <ric-Style-Type>3</ric-Style-Type>
+            <ric-ControlAction-ID>1</ric-ControlAction-ID>
+        </controlHeader-Format1>
+    </ric-controlHeader-formats>
+</E2SM-RC-ControlHeader>
+
+After xer of asn_DEF_E2SM_RC_ControlHeader data
+Encoded RIC Control Header PDU:
+ 00 60 00 01 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00
+encoded length = 288 
+<E2SM-RC-ControlMessage>
+    <ric-controlMessage-formats>
+        <controlMessage-Format1>
+            <ranP-List>
+                <E2SM-RC-ControlMessage-Format1-Item>
+                    <ranParameter-ID>1</ranParameter-ID>
+                    <ranParameter-valueType>
+                        <ranP-Choice-Structure>
+                            <ranParameter-Structure>
+                                <sequence-of-ranParameters>
+                                    <RANParameter-STRUCTURE-Item>
+                                        <ranParameter-ID>2</ranParameter-ID>
+                                        <ranParameter-valueType>
+                                            <ranP-Choice-Structure>
+                                                <ranParameter-Structure>
+                                                    <sequence-of-ranParameters>
+                                                        <RANParameter-STRUCTURE-Item>
+                                                            <ranParameter-ID>3</ranParameter-ID>
+                                                            <ranParameter-valueType>
+                                                                <ranP-Choice-Structure>
+                                                                    <ranParameter-Structure>
+                                                                        <sequence-of-ranParameters>
+                                                                            <RANParameter-STRUCTURE-Item>
+                                                                                <ranParameter-ID>4</ranParameter-ID>
+                                                                                <ranParameter-valueType>
+                                                                                    <ranP-Choice-ElementFalse>
+                                                                                        <ranParameter-value>
+                                                                                            <valueOctS>00 00 F1 10 00 00 00 00 03</valueOctS>
+                                                                                        </ranParameter-value>
+                                                                                    </ranP-Choice-ElementFalse>
+                                                                                </ranParameter-valueType>
+                                                                            </RANParameter-STRUCTURE-Item>
+                                                                        </sequence-of-ranParameters>
+                                                                    </ranParameter-Structure>
+                                                                </ranP-Choice-Structure>
+                                                            </ranParameter-valueType>
+                                                        </RANParameter-STRUCTURE-Item>
+                                                    </sequence-of-ranParameters>
+                                                </ranParameter-Structure>
+                                            </ranP-Choice-Structure>
+                                        </ranParameter-valueType>
+                                    </RANParameter-STRUCTURE-Item>
+                                </sequence-of-ranParameters>
+                            </ranParameter-Structure>
+                        </ranP-Choice-Structure>
+                    </ranParameter-valueType>
+                </E2SM-RC-ControlMessage-Format1-Item>
+            </ranP-List>
+        </controlMessage-Format1>
+    </ric-controlMessage-formats>
+</E2SM-RC-ControlMessage>
+{"ts":1792652932700,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:52"},"msg":"E2sm SetRicControlHeader is success"}
+{"ts":1792652932700,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:52"},"msg":"SetRicControlHeader is success: 006000010000f1100100000001000000010103000000"}
+{"ts":1792652932700,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:52"},"msg":"SetRicControlMessagei Enter  "}
+Encoded RIC Control Message PDU:
+ 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+{"ts":1792652932701,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:52"},"msg":"E2sm SetRicControlMessage is success"}
+showing xer of asn_DEF_E2AP_PDU data
+<E2AP-PDU>
+    <initiatingMessage>
+        <procedureCode>4</procedureCode>
+        <criticality><reject/></criticality>
+        <value>
+            <RICcontrolRequest>
+                <protocolIEs>
+                    <RICcontrolRequest-IEs>
+                        <id>29</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICrequestID>
+                                <ricRequestorID>1</ricRequestorID>
+                                <ricInstanceID>2</ricInstanceID>
+                            </RICrequestID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>5</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RANfunctionID>3</RANfunctionID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>22</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolHeader>
+                                00 60 00 01 00 00 F1 10 01 00 00 00 01 00 00 00 
+                                01 01 03 00 00 00
+                            </RICcontrolHeader>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>23</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolMessage>
+                                00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 
+                                01 03 44 00 00 00 01 04 2A 00 09 00 00 F1 10 00 
+                                00 00 00 03
+                            </RICcontrolMessage>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                </protocolIEs>
+            </RICcontrolRequest>
+        </value>
+    </initiatingMessage>
+</E2AP-PDU>
+
+After xer of asn_DEF_E2AP_PDU data
+{"ts":1792652932701,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:52"},"msg":"SetRicControlHeader is success"}
+Encoded RIC Control Req PDU:
+ 00 04 00 56 00 00 04 00 1d 00 05 00 00 01 00 02 00 05 00 02 00 03 00 16 00 17 16 00 60 00 01 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00 00 17 00 25 24 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+{"ts":1792652932701,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:52"},"msg":"lParams params(Src= Mtype=12040 SubId=-1 Xid= Meid=meid(PlmnID=00F110 EnbID=gnb_001_001_00000001 RanName=gnb_001_001_00000001) Paylens=90/90 Paymd5=deed4badb6795b515766218af781f07c) "}
+{"ts":1792652932702,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:52"},"msg":"Sending RIC Control message to RanName: gnb_001_001_00000001, UEID: GnbUEID:<amfUENGAPID:1 guami:<pLMNIdentity:\"00F110\" aMFRegionID:\"128\" aMFSetID:\"1\" aMFPointer:\"0\" > gNBCUUEF1APID:1 gNBCUCPUEE1APID:1 >   Success"}
+{"ts":1792652935712,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:55"},"msg":"SendRICControlReqServiceGrpc Enter "}
+{"ts":1792652935712,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:55"},"msg":"GRPC Control request validated, initiate Control Request to RAN"}
+{"ts":1792652935712,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:55"},"msg":"RICHOCONTROL_EVENT: Response sent with  RspCode:0, Description:Success Response"}
+{"ts":1792652935712,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:55"},"msg":"SendRicControlRequest Enter for RanName = gnb_001_001_00000002"}
+{"ts":1792652935712,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:55"},"msg":"SetRicControlHeader Enter \n"}
+[0 241 16]
+00 f1 10{"ts":1792652935712,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:55"},"msg":"lOutByte Len:3\n"}
+{"ts":1792652935712,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:55"},"msg":"lOutByte = 00F110\n"}
+e2SM wrapper function Entered
+plmn Size = 6 and aMFRegionID Size = 1 and aMFSetID_size = 2 and aMFPointer_size = 1 
+e2sm_encode_ric_control_header amf_UE_NGAP_ID encoded 
+e2smrc_encode_ric_control_header pLMNIdentity encoded 
+F1AP_id 0 =0
+showing xer of asn_DEF_E2SM_RC_ControlHeader data
+<E2SM-RC-ControlHeader>
+    <ric-controlHeader-formats>
+        <controlHeader-Format1>
+            <ueID>
+                <gNB-UEID>
+                    <amf-UE-NGAP-ID>2</amf-UE-NGAP-ID>
+                    <guami>
+                        <pLMNIdentity>00 F1 10</pLMNIdentity>
+                        <aMFRegionID>
+                            00000001
+                        </aMFRegionID>
+                        <aMFSetID>
+                            0000000000
+                        </aMFSetID>
+                        <aMFPointer>
+                            000000
+                        </aMFPointer>
+                    </guami>
+                    <gNB-CU-UE-F1AP-ID-List>
+                        <UEID-GNB-CU-CP-F1AP-ID-Item>
+                            <gNB-CU-UE-F1AP-ID>1</gNB-CU-UE-F1AP-ID>
+                        </UEID-GNB-CU-CP-F1AP-ID-Item>
+                    </gNB-CU-UE-F1AP-ID-List>
+                    <gNB-CU-CP-UE-E1AP-ID-List>
+                        <UEID-GNB-CU-CP-E1AP-ID-Item>
+                            <gNB-CU-CP-UE-E1AP-ID>1</gNB-CU-CP-UE-E1AP-ID>
+                        </UEID-GNB-CU-CP-E1AP-ID-Item>
+                    </gNB-CU-CP-UE-E1AP-ID-List>
+                </gNB-UEID>
+            </ueID>
+            <ric-Style-Type>3</ric-Style-Type>
+            <ric-ControlAction-ID>1</ric-ControlAction-ID>
+        </controlHeader-Format1>
+    </ric-controlHeader-formats>
+</E2SM-RC-ControlHeader>
+
+After xer of asn_DEF_E2SM_RC_ControlHeader data
+{"ts":1792652935712,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:55"},"msg":"E2sm SetRicControlHeader is success"}
+{"ts":1792652935712,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:55"},"msg":"SetRicControlHeader is success: 006000020000f1100100000001000000010103000000"}
+{"ts":1792652935712,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:55"},"msg":"SetRicControlMessagei Enter  "}
+{"ts":1792652935712,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:55"},"msg":"E2sm SetRicControlMessage is success"}
+Encoded RIC Control Header PDU:
+ 00 60 00 02 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00
+encoded length = 288 
+<E2SM-RC-ControlMessage>
+    <ric-controlMessage-formats>
+        <controlMessage-Format1>
+            <ranP-List>
+                <E2SM-RC-ControlMessage-Format1-Item>
+                    <ranParameter-ID>1</ranParameter-ID>
+                    <ranParameter-valueType>
+                        <ranP-Choice-Structure>
+                            <ranParameter-Structure>
+                                <sequence-of-ranParameters>
+                                    <RANParameter-STRUCTURE-Item>
+                                        <ranParameter-ID>2</ranParameter-ID>
+                                        <ranParameter-valueType>
+                                            <ranP-Choice-Structure>
+                                                <ranParameter-Structure>
+                                                    <sequence-of-ranParameters>
+                                                        <RANParameter-STRUCTURE-Item>
+                                                            <ranParameter-ID>3</ranParameter-ID>
+                                                            <ranParameter-valueType>
+                                                                <ranP-Choice-Structure>
+                                                                    <ranParameter-Structure>
+                                                                        <sequence-of-ranParameters>
+                                                                            <RANParameter-STRUCTURE-Item>
+                                                                                <ranParameter-ID>4</ranParameter-ID>
+                                                                                <ranParameter-valueType>
+                                                                                    <ranP-Choice-ElementFalse>
+                                                                                        <ranParameter-value>
+                                                                                            <valueOctS>00 00 F1 10 00 00 00 00 03</valueOctS>
+                                                                                        </ranParameter-value>
+                                                                                    </ranP-Choice-ElementFalse>
+                                                                                </ranParameter-valueType>
+                                                                            </RANParameter-STRUCTURE-Item>
+                                                                        </sequence-of-ranParameters>
+                                                                    </ranParameter-Structure>
+                                                                </ranP-Choice-Structure>
+                                                            </ranParameter-valueType>
+                                                        </RANParameter-STRUCTURE-Item>
+                                                    </sequence-of-ranParameters>
+                                                </ranParameter-Structure>
+                                            </ranP-Choice-Structure>
+                                        </ranParameter-valueType>
+                                    </RANParameter-STRUCTURE-Item>
+{"ts":1792652935713,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:55"},"msg":"SetRicControlHeader is success"}
+                                </sequence-of-ranParameters>
+                            </ranParameter-Structure>
+                        </ranP-Choice-Structure>
+                    </ranParameter-valueType>
+                </E2SM-RC-ControlMessage-Format1-Item>
+            </ranP-List>
+        </controlMessage-Format1>
+    </ric-controlMessage-formats>
+</E2SM-RC-ControlMessage>
+Encoded RIC Control Message PDU:
+ 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+showing xer of asn_DEF_E2AP_PDU data
+<E2AP-PDU>
+    <initiatingMessage>
+        <procedureCode>4</procedureCode>
+        <criticality><reject/></criticality>
+        <value>
+            <RICcontrolRequest>
+                <protocolIEs>
+                    <RICcontrolRequest-IEs>
+                        <id>29</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICrequestID>
+                                <ricRequestorID>1</ricRequestorID>
+                                <ricInstanceID>4</ricInstanceID>
+                            </RICrequestID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>5</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RANfunctionID>3</RANfunctionID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>22</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolHeader>
+                                00 60 00 02 00 00 F1 10 01 00 00 00 01 00 00 00 
+                                01 01 03 00 00 00
+                            </RICcontrolHeader>
+                        </value>
+{"ts":1792652935713,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:55"},"msg":"lParams params(Src= Mtype=12040 SubId=-1 Xid= Meid=meid(PlmnID=00F110 EnbID=gnb_001_001_00000002 RanName=gnb_001_001_00000002) Paylens=90/90 Paymd5=ac347e19df80a499c5c8f4f298aab5ae) "}
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>23</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolMessage>
+                                00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 
+                                01 03 44 00 00 00 01 04 2A 00 09 00 00 F1 10 00 
+                                00 00 00 03
+                            </RICcontrolMessage>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                </protocolIEs>
+            </RICcontrolRequest>
+        </value>
+    </initiatingMessage>
+</E2AP-PDU>
+
+After xer of asn_DEF_E2AP_PDU data
+Encoded RIC Control Req PDU:
+ 00 04 00 56 00 00 04 00 1d 00 05 00 00 01 00 04 00 05 00 02 00 03 00 16 00 17 16 00 60 00 02 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00 00 17 00 25 24 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+{"ts":1792652935713,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:55"},"msg":"Sending RIC Control message to RanName: gnb_001_001_00000002, UEID: GnbUEID:<amfUENGAPID:2 guami:<pLMNIdentity:\"00F110\" aMFRegionID:\"128\" aMFSetID:\"1\" aMFPointer:\"0\" > gNBCUUEF1APID:1 gNBCUCPUEE1APID:1 >   Success"}
+{"ts":1792652938722,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:58"},"msg":"SendRICControlReqServiceGrpc Enter "}
+{"ts":1792652938722,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:58"},"msg":"GRPC Control request validated, initiate Control Request to RAN"}
+{"ts":1792652938722,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:58"},"msg":"RICHOCONTROL_EVENT: Response sent with  RspCode:0, Description:Success Response"}
+{"ts":1792652938722,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:58"},"msg":"SendRicControlRequest Enter for RanName = gnb_001_001_00000003"}
+{"ts":1792652938722,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:58"},"msg":"SetRicControlHeader Enter \n"}
+[0 241 16]
+00 f1 10{"ts":1792652938722,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:58"},"msg":"lOutByte Len:3\n"}
+{"ts":1792652938722,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:58"},"msg":"lOutByte = 00F110\n"}
+e2SM wrapper function Entered
+plmn Size = 6 and aMFRegionID Size = 1 and aMFSetID_size = 2 and aMFPointer_size = 1 
+e2sm_encode_ric_control_header amf_UE_NGAP_ID encoded 
+e2smrc_encode_ric_control_header pLMNIdentity encoded 
+F1AP_id 0 =0
+showing xer of asn_DEF_E2SM_RC_ControlHeader data
+<E2SM-RC-ControlHeader>
+    <ric-controlHeader-formats>
+        <controlHeader-Format1>
+            <ueID>
+                <gNB-UEID>
+                    <amf-UE-NGAP-ID>3</amf-UE-NGAP-ID>
+                    <guami>
+                        <pLMNIdentity>00 F1 10</pLMNIdentity>
+                        <aMFRegionID>
+                            00000001
+                        </aMFRegionID>
+                        <aMFSetID>
+                            0000000000
+                        </aMFSetID>
+                        <aMFPointer>
+                            000000
+                        </aMFPointer>
+                    </guami>
+                    <gNB-CU-UE-F1AP-ID-List>
+                        <UEID-GNB-CU-CP-F1AP-ID-Item>
+                            <gNB-CU-UE-F1AP-ID>1</gNB-CU-UE-F1AP-ID>
+                        </UEID-GNB-CU-CP-F1AP-ID-Item>
+                    </gNB-CU-UE-F1AP-ID-List>
+                    <gNB-CU-CP-UE-E1AP-ID-List>
+                        <UEID-GNB-CU-CP-E1AP-ID-Item>
+                            <gNB-CU-CP-UE-E1AP-ID>1</gNB-CU-CP-UE-E1AP-ID>
+                        </UEID-GNB-CU-CP-E1AP-ID-Item>
+                    </gNB-CU-CP-UE-E1AP-ID-List>
+                </gNB-UEID>
+            </ueID>
+            <ric-Style-Type>3</ric-Style-Type>
+            <ric-ControlAction-ID>1</ric-ControlAction-ID>
+        </controlHeader-Format1>
+    </ric-controlHeader-formats>
+</E2SM-RC-ControlHeader>
+
+After xer of asn_DEF_E2SM_RC_ControlHeader data
+{"ts":1792652938722,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:58"},"msg":"E2sm SetRicControlHeader is success"}
+{"ts":1792652938722,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:58"},"msg":"SetRicControlHeader is success: 006000030000f1100100000001000000010103000000"}
+Encoded RIC Control Header PDU:
+ 00 60 00 03 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00
+{"ts":1792652938722,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:58"},"msg":"SetRicControlMessagei Enter  "}
+encoded length = 288 
+<E2SM-RC-ControlMessage>
+    <ric-controlMessage-formats>
+        <controlMessage-Format1>
+            <ranP-List>
+                <E2SM-RC-ControlMessage-Format1-Item>
+                    <ranParameter-ID>1</ranParameter-ID>
+                    <ranParameter-valueType>
+                        <ranP-Choice-Structure>
+                            <ranParameter-Structure>
+                                <sequence-of-ranParameters>
+                                    <RANParameter-STRUCTURE-Item>
+                                        <ranParameter-ID>2</ranParameter-ID>
+                                        <ranParameter-valueType>
+                                            <ranP-Choice-Structure>
+                                                <ranParameter-Structure>
+                                                    <sequence-of-ranParameters>
+                                                        <RANParameter-STRUCTURE-Item>
+                                                            <ranParameter-ID>3</ranParameter-ID>
+                                                            <ranParameter-valueType>
+                                                                <ranP-Choice-Structure>
+                                                                    <ranParameter-Structure>
+                                                                        <sequence-of-ranParameters>
+                                                                            <RANParameter-STRUCTURE-Item>
+                                                                                <ranParameter-ID>4</ranParameter-ID>
+                                                                                <ranParameter-valueType>
+                                                                                    <ranP-Choice-ElementFalse>
+                                                                                        <ranParameter-value>
+                                                                                            <valueOctS>00 00 F1 10 00 00 00 00 03</valueOctS>
+                                                                                        </ranParameter-value>
+                                                                                    </ranP-Choice-ElementFalse>
+                                                                                </ranParameter-valueType>
+                                                                            </RANParameter-STRUCTURE-Item>
+                                                                        </sequence-of-ranParameters>
+                                                                    </ranParameter-Structure>
+                                                                </ranP-Choice-Structure>
+                                                            </ranParameter-valueType>
+                                                        </RANParameter-STRUCTURE-Item>
+                                                    </sequence-of-ranParameters>
+                                                </ranParameter-Structure>
+                                            </ranP-Choice-Structure>
+                                        </ranParameter-valueType>
+                                    </RANParameter-STRUCTURE-Item>
+                                </sequence-of-ranParameters>
+                            </ranParameter-Structure>
+                        </ranP-Choice-Structure>
+                    </ranParameter-valueType>
+                </E2SM-RC-ControlMessage-Format1-Item>
+            </ranP-List>
+        </controlMessage-Format1>
+    </ric-controlMessage-formats>
+</E2SM-RC-ControlMessage>
+Encoded RIC Control Message PDU:
+ 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+showing xer of asn_DEF_E2AP_PDU data
+<E2AP-PDU>
+    <initiatingMessage>
+        <procedureCode>4</procedureCode>
+        <criticality><reject/></criticality>
+        <value>
+            <RICcontrolRequest>
+                <protocolIEs>
+                    <RICcontrolRequest-IEs>
+                        <id>29</id>
+{"ts":1792652938722,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:58"},"msg":"E2sm SetRicControlMessage is success"}
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICrequestID>
+                                <ricRequestorID>1</ricRequestorID>
+                                <ricInstanceID>6</ricInstanceID>
+                            </RICrequestID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>5</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RANfunctionID>3</RANfunctionID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>22</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolHeader>
+                                00 60 00 03 00 00 F1 10 01 00 00 00 01 00 00 00 
+                                01 01 03 00 00 00
+                            </RICcontrolHeader>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>23</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolMessage>
+                                00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 
+                                01 03 44 00 00 00 01 04 2A 00 09 00 00 F1 10 00 
+                                00 00 00 03
+                            </RICcontrolMessage>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                </protocolIEs>
+            </RICcontrolRequest>
+        </value>
+    </initiatingMessage>
+</E2AP-PDU>
+
+After xer of asn_DEF_E2AP_PDU data
+Encoded RIC Control Req PDU:
+{"ts":1792652938722,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:58"},"msg":"SetRicControlHeader is success"}
+{"ts":1792652938722,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:58"},"msg":"lParams params(Src= Mtype=12040 SubId=-1 Xid= Meid=meid(PlmnID=00F110 EnbID=gnb_001_001_00000003 RanName=gnb_001_001_00000003) Paylens=90/90 Paymd5=79da95b6ed7e2256570b3547641c396a) "}
+{"ts":1792652938722,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:58"},"msg":"Sending RIC Control message to RanName: gnb_001_001_00000003, UEID: GnbUEID:<amfUENGAPID:3 guami:<pLMNIdentity:\"00F110\" aMFRegionID:\"128\" aMFSetID:\"1\" aMFPointer:\"0\" > gNBCUUEF1APID:1 gNBCUCPUEE1APID:1 >   Success"}
+ 00 04 00 56 00 00 04 00 1d 00 05 00 00 01 00 06 00 05 00 02 00 03 00 16 00 17 16 00 60 00 03 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00 00 17 00 25 24 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+{"ts":1792652939505,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:08:59"},"msg":"restapi: method=GET url=/ric/v1/health/alive"}
+{"ts":1792652941355,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:01"},"msg":"restapi: method=GET url=/ric/v1/health/ready"}
+{"ts":1792652941732,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:01"},"msg":"SendRICControlReqServiceGrpc Enter "}
+{"ts":1792652941732,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:01"},"msg":"GRPC Control request validated, initiate Control Request to RAN"}
+{"ts":1792652941732,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:01"},"msg":"RICHOCONTROL_EVENT: Response sent with  RspCode:0, Description:Success Response"}
+{"ts":1792652941732,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:01"},"msg":"SendRicControlRequest Enter for RanName = gnb_001_001_00000004"}
+{"ts":1792652941732,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:01"},"msg":"SetRicControlHeader Enter \n"}
+[0 241 16]
+e2SM wrapper function Entered
+plmn Size = 6 and aMFRegionID Size = 1 and aMFSetID_size = 2 and aMFPointer_size = 1 
+e2sm_encode_ric_control_header amf_UE_NGAP_ID encoded 
+e2smrc_encode_ric_control_header pLMNIdentity encoded 
+F1AP_id 0 =0
+showing xer of asn_DEF_E2SM_RC_ControlHeader data
+<E2SM-RC-ControlHeader>
+    <ric-controlHeader-formats>
+        <controlHeader-Format1>
+            <ueID>
+                <gNB-UEID>
+                    <amf-UE-NGAP-ID>4</amf-UE-NGAP-ID>
+                    <guami>
+                        <pLMNIdentity>00 F1 10</pLMNIdentity>
+                        <aMFRegionID>
+                            00000001
+                        </aMFRegionID>
+                        <aMFSetID>
+                            0000000000
+                        </aMFSetID>
+                        <aMFPointer>
+                            000000
+                        </aMFPointer>
+                    </guami>
+                    <gNB-CU-UE-F1AP-ID-List>
+                        <UEID-GNB-CU-CP-F1AP-ID-Item>
+                            <gNB-CU-UE-F1AP-ID>1</gNB-CU-UE-F1AP-ID>
+                        </UEID-GNB-CU-CP-F1AP-ID-Item>
+                    </gNB-CU-UE-F1AP-ID-List>
+                    <gNB-CU-CP-UE-E1AP-ID-List>
+                        <UEID-GNB-CU-CP-E1AP-ID-Item>
+                            <gNB-CU-CP-UE-E1AP-ID>1</gNB-CU-CP-UE-E1AP-ID>
+                        </UEID-GNB-CU-CP-E1AP-ID-Item>
+                    </gNB-CU-CP-UE-E1AP-ID-List>
+                </gNB-UEID>
+            </ueID>
+            <ric-Style-Type>3</ric-Style-Type>
+            <ric-ControlAction-ID>1</ric-ControlAction-ID>
+        </controlHeader-Format1>
+    </ric-controlHeader-formats>
+</E2SM-RC-ControlHeader>
+
+After xer of asn_DEF_E2SM_RC_ControlHeader data
+00 f1 10{"ts":1792652941732,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:01"},"msg":"lOutByte Len:3\n"}
+{"ts":1792652941732,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:01"},"msg":"lOutByte = 00F110\n"}
+{"ts":1792652941732,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:01"},"msg":"E2sm SetRicControlHeader is success"}
+{"ts":1792652941732,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:01"},"msg":"SetRicControlHeader is success: 006000040000f1100100000001000000010103000000"}
+{"ts":1792652941732,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:01"},"msg":"SetRicControlMessagei Enter  "}
+Encoded RIC Control Header PDU:
+ 00 60 00 04 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00
+encoded length = 288 
+<E2SM-RC-ControlMessage>
+    <ric-controlMessage-formats>
+        <controlMessage-Format1>
+            <ranP-List>
+                <E2SM-RC-ControlMessage-Format1-Item>
+                    <ranParameter-ID>1</ranParameter-ID>
+                    <ranParameter-valueType>
+                        <ranP-Choice-Structure>
+                            <ranParameter-Structure>
+                                <sequence-of-ranParameters>
+                                    <RANParameter-STRUCTURE-Item>
+                                        <ranParameter-ID>2</ranParameter-ID>
+                                        <ranParameter-valueType>
+                                            <ranP-Choice-Structure>
+                                                <ranParameter-Structure>
+                                                    <sequence-of-ranParameters>
+                                                        <RANParameter-STRUCTURE-Item>
+                                                            <ranParameter-ID>3</ranParameter-ID>
+                                                            <ranParameter-valueType>
+                                                                <ranP-Choice-Structure>
+                                                                    <ranParameter-Structure>
+                                                                        <sequence-of-ranParameters>
+                                                                            <RANParameter-STRUCTURE-Item>
+                                                                                <ranParameter-ID>4</ranParameter-ID>
+                                                                                <ranParameter-valueType>
+                                                                                    <ranP-Choice-ElementFalse>
+                                                                                        <ranParameter-value>
+                                                                                            <valueOctS>00 00 F1 10 00 00 00 00 03</valueOctS>
+                                                                                        </ranParameter-value>
+                                                                                    </ranP-Choice-ElementFalse>
+                                                                                </ranParameter-valueType>
+                                                                            </RANParameter-STRUCTURE-Item>
+                                                                        </sequence-of-ranParameters>
+                                                                    </ranParameter-Structure>
+                                                                </ranP-Choice-Structure>
+                                                            </ranParameter-valueType>
+                                                        </RANParameter-STRUCTURE-Item>
+                                                    </sequence-of-ranParameters>
+                                                </ranParameter-Structure>
+                                            </ranP-Choice-Structure>
+                                        </ranParameter-valueType>
+                                    </RANParameter-STRUCTURE-Item>
+                                </sequence-of-ranParameters>
+                            </ranParameter-Structure>
+                        </ranP-Choice-Structure>
+                    </ranParameter-valueType>
+                </E2SM-RC-ControlMessage-Format1-Item>
+            </ranP-List>
+        </controlMessage-Format1>
+    </ric-controlMessage-formats>
+</E2SM-RC-ControlMessage>
+Encoded RIC Control Message PDU:
+ 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+showing xer of asn_DEF_E2AP_PDU data
+<E2AP-PDU>
+{"ts":1792652941732,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:01"},"msg":"E2sm SetRicControlMessage is success"}
+    <initiatingMessage>
+        <procedureCode>4</procedureCode>
+        <criticality><reject/></criticality>
+        <value>
+            <RICcontrolRequest>
+                <protocolIEs>
+                    <RICcontrolRequest-IEs>
+                        <id>29</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICrequestID>
+                                <ricRequestorID>1</ricRequestorID>
+                                <ricInstanceID>8</ricInstanceID>
+                            </RICrequestID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>5</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RANfunctionID>3</RANfunctionID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>22</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolHeader>
+                                00 60 00 04 00 00 F1 10 01 00 00 00 01 00 00 00 
+                                01 01 03 00 00 00
+                            </RICcontrolHeader>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>23</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolMessage>
+                                00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 
+                                01 03 44 00 00 00 01 04 2A 00 09 00 00 F1 10 00 
+                                00 00 00 03
+                            </RICcontrolMessage>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                </protocolIEs>
+            </RICcontrolRequest>
+        </value>
+    </initiatingMessage>
+</E2AP-PDU>
+
+After xer of asn_DEF_E2AP_PDU data
+{"ts":1792652941733,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:01"},"msg":"SetRicControlHeader is success"}
+{"ts":1792652941733,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:01"},"msg":"lParams params(Src= Mtype=12040 SubId=-1 Xid= Meid=meid(PlmnID=00F110 EnbID=gnb_001_001_00000004 RanName=gnb_001_001_00000004) Paylens=90/90 Paymd5=a02fa56a7735bf292d4099fbc955459f) "}
+{"ts":1792652941733,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:01"},"msg":"Sending RIC Control message to RanName: gnb_001_001_00000004, UEID: GnbUEID:<amfUENGAPID:4 guami:<pLMNIdentity:\"00F110\" aMFRegionID:\"128\" aMFSetID:\"1\" aMFPointer:\"0\" > gNBCUUEF1APID:1 gNBCUCPUEE1APID:1 >   Success"}
+Encoded RIC Control Req PDU:
+ 00 04 00 56 00 00 04 00 1d 00 05 00 00 01 00 08 00 05 00 02 00 03 00 16 00 17 16 00 60 00 04 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00 00 17 00 25 24 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+{"ts":1792652944741,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:04"},"msg":"SendRICControlReqServiceGrpc Enter "}
+{"ts":1792652944741,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:04"},"msg":"GRPC Control request validated, initiate Control Request to RAN"}
+{"ts":1792652944741,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:04"},"msg":"RICHOCONTROL_EVENT: Response sent with  RspCode:0, Description:Success Response"}
+{"ts":1792652944741,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:04"},"msg":"SendRicControlRequest Enter for RanName = gnb_001_001_00000005"}
+{"ts":1792652944741,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:04"},"msg":"SetRicControlHeader Enter \n"}
+[0 241 16]
+00 f1 10{"ts":1792652944741,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:04"},"msg":"lOutByte Len:3\n"}
+{"ts":1792652944741,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:04"},"msg":"lOutByte = 00F110\n"}
+e2SM wrapper function Entered
+plmn Size = 6 and aMFRegionID Size = 1 and aMFSetID_size = 2 and aMFPointer_size = 1 
+e2sm_encode_ric_control_header amf_UE_NGAP_ID encoded 
+e2smrc_encode_ric_control_header pLMNIdentity encoded 
+F1AP_id 0 =0
+showing xer of asn_DEF_E2SM_RC_ControlHeader data
+<E2SM-RC-ControlHeader>
+    <ric-controlHeader-formats>
+        <controlHeader-Format1>
+            <ueID>
+                <gNB-UEID>
+                    <amf-UE-NGAP-ID>5</amf-UE-NGAP-ID>
+                    <guami>
+                        <pLMNIdentity>00 F1 10</pLMNIdentity>
+                        <aMFRegionID>
+                            00000001
+                        </aMFRegionID>
+                        <aMFSetID>
+                            0000000000
+                        </aMFSetID>
+                        <aMFPointer>
+                            000000
+                        </aMFPointer>
+                    </guami>
+                    <gNB-CU-UE-F1AP-ID-List>
+                        <UEID-GNB-CU-CP-F1AP-ID-Item>
+                            <gNB-CU-UE-F1AP-ID>1</gNB-CU-UE-F1AP-ID>
+                        </UEID-GNB-CU-CP-F1AP-ID-Item>
+                    </gNB-CU-UE-F1AP-ID-List>
+                    <gNB-CU-CP-UE-E1AP-ID-List>
+                        <UEID-GNB-CU-CP-E1AP-ID-Item>
+                            <gNB-CU-CP-UE-E1AP-ID>1</gNB-CU-CP-UE-E1AP-ID>
+                        </UEID-GNB-CU-CP-E1AP-ID-Item>
+                    </gNB-CU-CP-UE-E1AP-ID-List>
+                </gNB-UEID>
+            </ueID>
+            <ric-Style-Type>3</ric-Style-Type>
+            <ric-ControlAction-ID>1</ric-ControlAction-ID>
+        </controlHeader-Format1>
+    </ric-controlHeader-formats>
+</E2SM-RC-ControlHeader>
+
+After xer of asn_DEF_E2SM_RC_ControlHeader data
+Encoded RIC Control Header PDU:
+ 00 60 00 05 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00
+encoded length = 288 
+<E2SM-RC-ControlMessage>
+    <ric-controlMessage-formats>
+        <controlMessage-Format1>
+{"ts":1792652944742,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:04"},"msg":"E2sm SetRicControlHeader is success"}
+{"ts":1792652944742,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:04"},"msg":"SetRicControlHeader is success: 006000050000f1100100000001000000010103000000"}
+{"ts":1792652944742,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:04"},"msg":"SetRicControlMessagei Enter  "}
+            <ranP-List>
+                <E2SM-RC-ControlMessage-Format1-Item>
+                    <ranParameter-ID>1</ranParameter-ID>
+                    <ranParameter-valueType>
+                        <ranP-Choice-Structure>
+                            <ranParameter-Structure>
+                                <sequence-of-ranParameters>
+                                    <RANParameter-STRUCTURE-Item>
+                                        <ranParameter-ID>2</ranParameter-ID>
+                                        <ranParameter-valueType>
+                                            <ranP-Choice-Structure>
+                                                <ranParameter-Structure>
+                                                    <sequence-of-ranParameters>
+                                                        <RANParameter-STRUCTURE-Item>
+                                                            <ranParameter-ID>3</ranParameter-ID>
+                                                            <ranParameter-valueType>
+                                                                <ranP-Choice-Structure>
+                                                                    <ranParameter-Structure>
+                                                                        <sequence-of-ranParameters>
+                                                                            <RANParameter-STRUCTURE-Item>
+                                                                                <ranParameter-ID>4</ranParameter-ID>
+                                                                                <ranParameter-valueType>
+                                                                                    <ranP-Choice-ElementFalse>
+                                                                                        <ranParameter-value>
+                                                                                            <valueOctS>00 00 F1 10 00 00 00 00 03</valueOctS>
+                                                                                        </ranParameter-value>
+                                                                                    </ranP-Choice-ElementFalse>
+                                                                                </ranParameter-valueType>
+                                                                            </RANParameter-STRUCTURE-Item>
+                                                                        </sequence-of-ranParameters>
+                                                                    </ranParameter-Structure>
+                                                                </ranP-Choice-Structure>
+                                                            </ranParameter-valueType>
+                                                        </RANParameter-STRUCTURE-Item>
+                                                    </sequence-of-ranParameters>
+                                                </ranParameter-Structure>
+                                            </ranP-Choice-Structure>
+                                        </ranParameter-valueType>
+                                    </RANParameter-STRUCTURE-Item>
+                                </sequence-of-ranParameters>
+                            </ranParameter-Structure>
+                        </ranP-Choice-Structure>
+                    </ranParameter-valueType>
+                </E2SM-RC-ControlMessage-Format1-Item>
+            </ranP-List>
+        </controlMessage-Format1>
+    </ric-controlMessage-formats>
+</E2SM-RC-ControlMessage>
+Encoded RIC Control Message PDU:
+ 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+showing xer of asn_DEF_E2AP_PDU data
+<E2AP-PDU>
+    <initiatingMessage>
+        <procedureCode>4</procedureCode>
+        <criticality><reject/></criticality>
+        <value>
+{"ts":1792652944742,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:04"},"msg":"E2sm SetRicControlMessage is success"}
+{"ts":1792652944742,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:04"},"msg":"SetRicControlHeader is success"}
+{"ts":1792652944742,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:04"},"msg":"lParams params(Src= Mtype=12040 SubId=-1 Xid= Meid=meid(PlmnID=00F110 EnbID=gnb_001_001_00000005 RanName=gnb_001_001_00000005) Paylens=90/90 Paymd5=408f5a046f06502e21fd330823df2730) "}
+{"ts":1792652944742,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:04"},"msg":"Sending RIC Control message to RanName: gnb_001_001_00000005, UEID: GnbUEID:<amfUENGAPID:5 guami:<pLMNIdentity:\"00F110\" aMFRegionID:\"128\" aMFSetID:\"1\" aMFPointer:\"0\" > gNBCUUEF1APID:1 gNBCUCPUEE1APID:1 >   Success"}
+            <RICcontrolRequest>
+                <protocolIEs>
+                    <RICcontrolRequest-IEs>
+                        <id>29</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICrequestID>
+                                <ricRequestorID>1</ricRequestorID>
+                                <ricInstanceID>10</ricInstanceID>
+                            </RICrequestID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>5</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RANfunctionID>3</RANfunctionID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>22</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolHeader>
+                                00 60 00 05 00 00 F1 10 01 00 00 00 01 00 00 00 
+                                01 01 03 00 00 00
+                            </RICcontrolHeader>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>23</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolMessage>
+                                00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 
+                                01 03 44 00 00 00 01 04 2A 00 09 00 00 F1 10 00 
+                                00 00 00 03
+                            </RICcontrolMessage>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                </protocolIEs>
+            </RICcontrolRequest>
+        </value>
+    </initiatingMessage>
+</E2AP-PDU>
+
+After xer of asn_DEF_E2AP_PDU data
+Encoded RIC Control Req PDU:
+ 00 04 00 56 00 00 04 00 1d 00 05 00 00 01 00 0a 00 05 00 02 00 03 00 16 00 17 16 00 60 00 05 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00 00 17 00 25 24 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+{"ts":1792652947751,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:07"},"msg":"SendRICControlReqServiceGrpc Enter "}
+{"ts":1792652947751,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:07"},"msg":"GRPC Control request validated, initiate Control Request to RAN"}
+{"ts":1792652947751,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:07"},"msg":"RICHOCONTROL_EVENT: Response sent with  RspCode:0, Description:Success Response"}
+{"ts":1792652947751,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:07"},"msg":"SendRicControlRequest Enter for RanName = gnb_001_001_00000001"}
+{"ts":1792652947751,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:07"},"msg":"SetRicControlHeader Enter \n"}
+[0 241 16]
+00 f1 10{"ts":1792652947751,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:07"},"msg":"lOutByte Len:3\n"}
+{"ts":1792652947751,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:07"},"msg":"lOutByte = 00F110\n"}
+e2SM wrapper function Entered
+plmn Size = 6 and aMFRegionID Size = 1 and aMFSetID_size = 2 and aMFPointer_size = 1 
+e2sm_encode_ric_control_header amf_UE_NGAP_ID encoded 
+e2smrc_encode_ric_control_header pLMNIdentity encoded 
+F1AP_id 0 =0
+showing xer of asn_DEF_E2SM_RC_ControlHeader data
+<E2SM-RC-ControlHeader>
+    <ric-controlHeader-formats>
+        <controlHeader-Format1>
+            <ueID>
+                <gNB-UEID>
+                    <amf-UE-NGAP-ID>6</amf-UE-NGAP-ID>
+                    <guami>
+                        <pLMNIdentity>00 F1 10</pLMNIdentity>
+                        <aMFRegionID>
+                            00000001
+                        </aMFRegionID>
+                        <aMFSetID>
+                            0000000000
+                        </aMFSetID>
+                        <aMFPointer>
+                            000000
+                        </aMFPointer>
+                    </guami>
+                    <gNB-CU-UE-F1AP-ID-List>
+                        <UEID-GNB-CU-CP-F1AP-ID-Item>
+                            <gNB-CU-UE-F1AP-ID>1</gNB-CU-UE-F1AP-ID>
+                        </UEID-GNB-CU-CP-F1AP-ID-Item>
+                    </gNB-CU-UE-F1AP-ID-List>
+                    <gNB-CU-CP-UE-E1AP-ID-List>
+                        <UEID-GNB-CU-CP-E1AP-ID-Item>
+                            <gNB-CU-CP-UE-E1AP-ID>1</gNB-CU-CP-UE-E1AP-ID>
+                        </UEID-GNB-CU-CP-E1AP-ID-Item>
+                    </gNB-CU-CP-UE-E1AP-ID-List>
+                </gNB-UEID>
+{"ts":1792652947751,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:07"},"msg":"E2sm SetRicControlHeader is success"}
+            </ueID>
+            <ric-Style-Type>3</ric-Style-Type>
+            <ric-ControlAction-ID>1</ric-ControlAction-ID>
+        </controlHeader-Format1>
+    </ric-controlHeader-formats>
+</E2SM-RC-ControlHeader>
+
+After xer of asn_DEF_E2SM_RC_ControlHeader data
+Encoded RIC Control Header PDU:
+ 00 60 00 06 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00
+encoded length = 288 
+<E2SM-RC-ControlMessage>
+    <ric-controlMessage-formats>
+        <controlMessage-Format1>
+            <ranP-List>
+                <E2SM-RC-ControlMessage-Format1-Item>
+{"ts":1792652947751,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:07"},"msg":"SetRicControlHeader is success: 006000060000f1100100000001000000010103000000"}
+{"ts":1792652947751,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:07"},"msg":"SetRicControlMessagei Enter  "}
+                    <ranParameter-ID>1</ranParameter-ID>
+                    <ranParameter-valueType>
+                        <ranP-Choice-Structure>
+                            <ranParameter-Structure>
+                                <sequence-of-ranParameters>
+                                    <RANParameter-STRUCTURE-Item>
+                                        <ranParameter-ID>2</ranParameter-ID>
+                                        <ranParameter-valueType>
+                                            <ranP-Choice-Structure>
+                                                <ranParameter-Structure>
+                                                    <sequence-of-ranParameters>
+                                                        <RANParameter-STRUCTURE-Item>
+                                                            <ranParameter-ID>3</ranParameter-ID>
+                                                            <ranParameter-valueType>
+                                                                <ranP-Choice-Structure>
+                                                                    <ranParameter-Structure>
+                                                                        <sequence-of-ranParameters>
+                                                                            <RANParameter-STRUCTURE-Item>
+                                                                                <ranParameter-ID>4</ranParameter-ID>
+                                                                                <ranParameter-valueType>
+                                                                                    <ranP-Choice-ElementFalse>
+                                                                                        <ranParameter-value>
+                                                                                            <valueOctS>00 00 F1 10 00 00 00 00 03</valueOctS>
+                                                                                        </ranParameter-value>
+                                                                                    </ranP-Choice-ElementFalse>
+                                                                                </ranParameter-valueType>
+                                                                            </RANParameter-STRUCTURE-Item>
+                                                                        </sequence-of-ranParameters>
+                                                                    </ranParameter-Structure>
+                                                                </ranP-Choice-Structure>
+                                                            </ranParameter-valueType>
+                                                        </RANParameter-STRUCTURE-Item>
+                                                    </sequence-of-ranParameters>
+                                                </ranParameter-Structure>
+                                            </ranP-Choice-Structure>
+                                        </ranParameter-valueType>
+                                    </RANParameter-STRUCTURE-Item>
+                                </sequence-of-ranParameters>
+                            </ranParameter-Structure>
+                        </ranP-Choice-Structure>
+                    </ranParameter-valueType>
+                </E2SM-RC-ControlMessage-Format1-Item>
+            </ranP-List>
+        </controlMessage-Format1>
+    </ric-controlMessage-formats>
+</E2SM-RC-ControlMessage>
+Encoded RIC Control Message PDU:
+ 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+showing xer of asn_DEF_E2AP_PDU data
+<E2AP-PDU>
+    <initiatingMessage>
+        <procedureCode>4</procedureCode>
+        <criticality><reject/></criticality>
+        <value>
+            <RICcontrolRequest>
+                <protocolIEs>
+                    <RICcontrolRequest-IEs>
+                        <id>29</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICrequestID>
+                                <ricRequestorID>1</ricRequestorID>
+                                <ricInstanceID>12</ricInstanceID>
+                            </RICrequestID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>5</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RANfunctionID>3</RANfunctionID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>22</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolHeader>
+                                00 60 00 06 00 00 F1 10 01 00 00 00 01 00 00 00 
+                                01 01 03 00 00 00
+                            </RICcontrolHeader>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>23</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolMessage>
+                                00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 
+                                01 03 44 00 00 00 01 04 2A 00 09 00 00 F1 10 00 
+                                00 00 00 03
+                            </RICcontrolMessage>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                </protocolIEs>
+            </RICcontrolRequest>
+        </value>
+    </initiatingMessage>
+</E2AP-PDU>
+
+After xer of asn_DEF_E2AP_PDU data
+Encoded RIC Control Req PDU:
+ 00 04 00 56 00 00 04 00 1d 00 05 00 00 01 00 0c 00 05 00 02 00 03 00 16 00 17 16 00 60 00 06 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00 00 17 00 25 24 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+{"ts":1792652947752,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:07"},"msg":"E2sm SetRicControlMessage is success"}
+{"ts":1792652947752,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:07"},"msg":"SetRicControlHeader is success"}
+{"ts":1792652947752,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:07"},"msg":"lParams params(Src= Mtype=12040 SubId=-1 Xid= Meid=meid(PlmnID=00F110 EnbID=gnb_001_001_00000001 RanName=gnb_001_001_00000001) Paylens=90/90 Paymd5=3b012dbd871e05f1a58c1690fecf437a) "}
+{"ts":1792652947752,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:07"},"msg":"Sending RIC Control message to RanName: gnb_001_001_00000001, UEID: GnbUEID:<amfUENGAPID:6 guami:<pLMNIdentity:\"00F110\" aMFRegionID:\"128\" aMFSetID:\"1\" aMFPointer:\"0\" > gNBCUUEF1APID:1 gNBCUCPUEE1APID:1 >   Success"}
+{"ts":1792652950761,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:10"},"msg":"SendRICControlReqServiceGrpc Enter "}
+{"ts":1792652950761,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:10"},"msg":"GRPC Control request validated, initiate Control Request to RAN"}
+{"ts":1792652950761,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:10"},"msg":"RICHOCONTROL_EVENT: Response sent with  RspCode:0, Description:Success Response"}
+e2SM wrapper function Entered
+plmn Size = 6 and aMFRegionID Size = 1 and aMFSetID_size = 2 and aMFPointer_size = 1 
+e2sm_encode_ric_control_header amf_UE_NGAP_ID encoded 
+e2smrc_encode_ric_control_header pLMNIdentity encoded 
+{"ts":1792652950761,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:10"},"msg":"SendRicControlRequest Enter for RanName = gnb_001_001_00000002"}
+F1AP_id 0 =0
+{"ts":1792652950761,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:10"},"msg":"SetRicControlHeader Enter \n"}
+[0 241 16]
+00 f1 10{"ts":1792652950761,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:10"},"msg":"lOutByte Len:3\n"}
+{"ts":1792652950761,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:10"},"msg":"lOutByte = 00F110\n"}
+showing xer of asn_DEF_E2SM_RC_ControlHeader data
+<E2SM-RC-ControlHeader>
+    <ric-controlHeader-formats>
+        <controlHeader-Format1>
+            <ueID>
+                <gNB-UEID>
+                    <amf-UE-NGAP-ID>7</amf-UE-NGAP-ID>
+                    <guami>
+                        <pLMNIdentity>00 F1 10</pLMNIdentity>
+                        <aMFRegionID>
+                            00000001
+                        </aMFRegionID>
+                        <aMFSetID>
+                            0000000000
+                        </aMFSetID>
+                        <aMFPointer>
+                            000000
+                        </aMFPointer>
+                    </guami>
+                    <gNB-CU-UE-F1AP-ID-List>
+                        <UEID-GNB-CU-CP-F1AP-ID-Item>
+                            <gNB-CU-UE-F1AP-ID>1</gNB-CU-UE-F1AP-ID>
+                        </UEID-GNB-CU-CP-F1AP-ID-Item>
+                    </gNB-CU-UE-F1AP-ID-List>
+                    <gNB-CU-CP-UE-E1AP-ID-List>
+                        <UEID-GNB-CU-CP-E1AP-ID-Item>
+                            <gNB-CU-CP-UE-E1AP-ID>1</gNB-CU-CP-UE-E1AP-ID>
+                        </UEID-GNB-CU-CP-E1AP-ID-Item>
+                    </gNB-CU-CP-UE-E1AP-ID-List>
+                </gNB-UEID>
+            </ueID>
+            <ric-Style-Type>3</ric-Style-Type>
+            <ric-ControlAction-ID>1</ric-ControlAction-ID>
+        </controlHeader-Format1>
+    </ric-controlHeader-formats>
+</E2SM-RC-ControlHeader>
+
+After xer of asn_DEF_E2SM_RC_ControlHeader data
+{"ts":1792652950761,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:10"},"msg":"E2sm SetRicControlHeader is success"}
+Encoded RIC Control Header PDU:
+ 00 60 00 07 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00
+{"ts":1792652950761,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:10"},"msg":"SetRicControlHeader is success: 006000070000f1100100000001000000010103000000"}
+{"ts":1792652950761,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:10"},"msg":"SetRicControlMessagei Enter  "}
+encoded length = 288 
+<E2SM-RC-ControlMessage>
+    <ric-controlMessage-formats>
+        <controlMessage-Format1>
+            <ranP-List>
+                <E2SM-RC-ControlMessage-Format1-Item>
+                    <ranParameter-ID>1</ranParameter-ID>
+                    <ranParameter-valueType>
+                        <ranP-Choice-Structure>
+                            <ranParameter-Structure>
+                                <sequence-of-ranParameters>
+                                    <RANParameter-STRUCTURE-Item>
+                                        <ranParameter-ID>2</ranParameter-ID>
+                                        <ranParameter-valueType>
+                                            <ranP-Choice-Structure>
+                                                <ranParameter-Structure>
+                                                    <sequence-of-ranParameters>
+                                                        <RANParameter-STRUCTURE-Item>
+                                                            <ranParameter-ID>3</ranParameter-ID>
+                                                            <ranParameter-valueType>
+                                                                <ranP-Choice-Structure>
+                                                                    <ranParameter-Structure>
+                                                                        <sequence-of-ranParameters>
+                                                                            <RANParameter-STRUCTURE-Item>
+                                                                                <ranParameter-ID>4</ranParameter-ID>
+                                                                                <ranParameter-valueType>
+                                                                                    <ranP-Choice-ElementFalse>
+                                                                                        <ranParameter-value>
+                                                                                            <valueOctS>00 00 F1 10 00 00 00 00 03</valueOctS>
+                                                                                        </ranParameter-value>
+                                                                                    </ranP-Choice-ElementFalse>
+                                                                                </ranParameter-valueType>
+                                                                            </RANParameter-STRUCTURE-Item>
+                                                                        </sequence-of-ranParameters>
+                                                                    </ranParameter-Structure>
+                                                                </ranP-Choice-Structure>
+                                                            </ranParameter-valueType>
+                                                        </RANParameter-STRUCTURE-Item>
+                                                    </sequence-of-ranParameters>
+                                                </ranParameter-Structure>
+                                            </ranP-Choice-Structure>
+                                        </ranParameter-valueType>
+                                    </RANParameter-STRUCTURE-Item>
+                                </sequence-of-ranParameters>
+                            </ranParameter-Structure>
+                        </ranP-Choice-Structure>
+                    </ranParameter-valueType>
+                </E2SM-RC-ControlMessage-Format1-Item>
+            </ranP-List>
+        </controlMessage-Format1>
+    </ric-controlMessage-formats>
+</E2SM-RC-ControlMessage>
+{"ts":1792652950762,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:10"},"msg":"E2sm SetRicControlMessage is success"}
+Encoded RIC Control Message PDU:
+ 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+showing xer of asn_DEF_E2AP_PDU data
+<E2AP-PDU>
+    <initiatingMessage>
+        <procedureCode>4</procedureCode>
+        <criticality><reject/></criticality>
+        <value>
+            <RICcontrolRequest>
+                <protocolIEs>
+                    <RICcontrolRequest-IEs>
+                        <id>29</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICrequestID>
+                                <ricRequestorID>1</ricRequestorID>
+                                <ricInstanceID>14</ricInstanceID>
+                            </RICrequestID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>5</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RANfunctionID>3</RANfunctionID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>22</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolHeader>
+                                00 60 00 07 00 00 F1 10 01 00 00 00 01 00 00 00 
+                                01 01 03 00 00 00
+                            </RICcontrolHeader>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>23</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolMessage>
+                                00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 
+                                01 03 44 00 00 00 01 04 2A 00 09 00 00 F1 10 00 
+                                00 00 00 03
+                            </RICcontrolMessage>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                </protocolIEs>
+            </RICcontrolRequest>
+        </value>
+    </initiatingMessage>
+</E2AP-PDU>
+
+After xer of asn_DEF_E2AP_PDU data
+{"ts":1792652950762,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:10"},"msg":"SetRicControlHeader is success"}
+Encoded RIC Control Req PDU:
+ 00 04 00 56 00 00 04 00 1d 00 05 00 00 01 00 0e 00 05 00 02 00 03 00 16 00 17 16 00 60 00 07 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00 00 17 00 25 24 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+{"ts":1792652950762,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:10"},"msg":"lParams params(Src= Mtype=12040 SubId=-1 Xid= Meid=meid(PlmnID=00F110 EnbID=gnb_001_001_00000002 RanName=gnb_001_001_00000002) Paylens=90/90 Paymd5=65fee7e1f00910e7b0b4304296b5a4ac) "}
+{"ts":1792652950762,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:10"},"msg":"Sending RIC Control message to RanName: gnb_001_001_00000002, UEID: GnbUEID:<amfUENGAPID:7 guami:<pLMNIdentity:\"00F110\" aMFRegionID:\"128\" aMFSetID:\"1\" aMFPointer:\"0\" > gNBCUUEF1APID:1 gNBCUCPUEE1APID:1 >   Success"}
+{"ts":1792652953770,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:13"},"msg":"SendRICControlReqServiceGrpc Enter "}
+{"ts":1792652953770,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:13"},"msg":"GRPC Control request validated, initiate Control Request to RAN"}
+{"ts":1792652953770,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:13"},"msg":"RICHOCONTROL_EVENT: Response sent with  RspCode:0, Description:Success Response"}
+{"ts":1792652953770,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:13"},"msg":"SendRicControlRequest Enter for RanName = gnb_001_001_00000003"}
+{"ts":1792652953770,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:13"},"msg":"SetRicControlHeader Enter \n"}
+[0 241 16]
+00 f1 10{"ts":1792652953770,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:13"},"msg":"lOutByte Len:3\n"}
+{"ts":1792652953770,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:13"},"msg":"lOutByte = 00F110\n"}
+e2SM wrapper function Entered
+plmn Size = 6 and aMFRegionID Size = 1 and aMFSetID_size = 2 and aMFPointer_size = 1 
+e2sm_encode_ric_control_header amf_UE_NGAP_ID encoded 
+e2smrc_encode_ric_control_header pLMNIdentity encoded 
+F1AP_id 0 =0
+showing xer of asn_DEF_E2SM_RC_ControlHeader data
+<E2SM-RC-ControlHeader>
+    <ric-controlHeader-formats>
+        <controlHeader-Format1>
+            <ueID>
+                <gNB-UEID>
+                    <amf-UE-NGAP-ID>8</amf-UE-NGAP-ID>
+                    <guami>
+                        <pLMNIdentity>00 F1 10</pLMNIdentity>
+                        <aMFRegionID>
+                            00000001
+                        </aMFRegionID>
+                        <aMFSetID>
+                            0000000000
+                        </aMFSetID>
+                        <aMFPointer>
+                            000000
+                        </aMFPointer>
+                    </guami>
+                    <gNB-CU-UE-F1AP-ID-List>
+                        <UEID-GNB-CU-CP-F1AP-ID-Item>
+                            <gNB-CU-UE-F1AP-ID>1</gNB-CU-UE-F1AP-ID>
+                        </UEID-GNB-CU-CP-F1AP-ID-Item>
+                    </gNB-CU-UE-F1AP-ID-List>
+                    <gNB-CU-CP-UE-E1AP-ID-List>
+                        <UEID-GNB-CU-CP-E1AP-ID-Item>
+                            <gNB-CU-CP-UE-E1AP-ID>1</gNB-CU-CP-UE-E1AP-ID>
+                        </UEID-GNB-CU-CP-E1AP-ID-Item>
+                    </gNB-CU-CP-UE-E1AP-ID-List>
+                </gNB-UEID>
+            </ueID>
+            <ric-Style-Type>3</ric-Style-Type>
+            <ric-ControlAction-ID>1</ric-ControlAction-ID>
+        </controlHeader-Format1>
+    </ric-controlHeader-formats>
+</E2SM-RC-ControlHeader>
+
+After xer of asn_DEF_E2SM_RC_ControlHeader data
+Encoded RIC Control Header PDU:
+ 00 60 00 08 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00
+encoded length = 288 
+<E2SM-RC-ControlMessage>
+    <ric-controlMessage-formats>
+        <controlMessage-Format1>
+            <ranP-List>
+                <E2SM-RC-ControlMessage-Format1-Item>
+                    <ranParameter-ID>1</ranParameter-ID>
+                    <ranParameter-valueType>
+                        <ranP-Choice-Structure>
+                            <ranParameter-Structure>
+                                <sequence-of-ranParameters>
+                                    <RANParameter-STRUCTURE-Item>
+                                        <ranParameter-ID>2</ranParameter-ID>
+                                        <ranParameter-valueType>
+                                            <ranP-Choice-Structure>
+                                                <ranParameter-Structure>
+                                                    <sequence-of-ranParameters>
+                                                        <RANParameter-STRUCTURE-Item>
+                                                            <ranParameter-ID>3</ranParameter-ID>
+{"ts":1792652953770,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:13"},"msg":"E2sm SetRicControlHeader is success"}
+{"ts":1792652953770,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:13"},"msg":"SetRicControlHeader is success: 006000080000f1100100000001000000010103000000"}
+{"ts":1792652953770,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:13"},"msg":"SetRicControlMessagei Enter  "}
+                                                            <ranParameter-valueType>
+                                                                <ranP-Choice-Structure>
+                                                                    <ranParameter-Structure>
+                                                                        <sequence-of-ranParameters>
+                                                                            <RANParameter-STRUCTURE-Item>
+                                                                                <ranParameter-ID>4</ranParameter-ID>
+                                                                                <ranParameter-valueType>
+                                                                                    <ranP-Choice-ElementFalse>
+                                                                                        <ranParameter-value>
+                                                                                            <valueOctS>00 00 F1 10 00 00 00 00 03</valueOctS>
+                                                                                        </ranParameter-value>
+                                                                                    </ranP-Choice-ElementFalse>
+                                                                                </ranParameter-valueType>
+                                                                            </RANParameter-STRUCTURE-Item>
+                                                                        </sequence-of-ranParameters>
+                                                                    </ranParameter-Structure>
+                                                                </ranP-Choice-Structure>
+                                                            </ranParameter-valueType>
+                                                        </RANParameter-STRUCTURE-Item>
+                                                    </sequence-of-ranParameters>
+                                                </ranParameter-Structure>
+                                            </ranP-Choice-Structure>
+                                        </ranParameter-valueType>
+                                    </RANParameter-STRUCTURE-Item>
+                                </sequence-of-ranParameters>
+                            </ranParameter-Structure>
+                        </ranP-Choice-Structure>
+                    </ranParameter-valueType>
+                </E2SM-RC-ControlMessage-Format1-Item>
+            </ranP-List>
+        </controlMessage-Format1>
+    </ric-controlMessage-formats>
+</E2SM-RC-ControlMessage>
+Encoded RIC Control Message PDU:
+ 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+showing xer of asn_DEF_E2AP_PDU data
+<E2AP-PDU>
+    <initiatingMessage>
+        <procedureCode>4</procedureCode>
+{"ts":1792652953770,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:13"},"msg":"E2sm SetRicControlMessage is success"}
+        <criticality><reject/></criticality>
+        <value>
+            <RICcontrolRequest>
+                <protocolIEs>
+                    <RICcontrolRequest-IEs>
+                        <id>29</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICrequestID>
+                                <ricRequestorID>1</ricRequestorID>
+                                <ricInstanceID>16</ricInstanceID>
+                            </RICrequestID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>5</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RANfunctionID>3</RANfunctionID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>22</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolHeader>
+                                00 60 00 08 00 00 F1 10 01 00 00 00 01 00 00 00 
+                                01 01 03 00 00 00
+                            </RICcontrolHeader>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>23</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolMessage>
+                                00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 
+                                01 03 44 00 00 00 01 04 2A 00 09 00 00 F1 10 00 
+                                00 00 00 03
+                            </RICcontrolMessage>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                </protocolIEs>
+            </RICcontrolRequest>
+        </value>
+    </initiatingMessage>
+</E2AP-PDU>
+
+After xer of asn_DEF_E2AP_PDU data
+{"ts":1792652953771,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:13"},"msg":"SetRicControlHeader is success"}
+Encoded RIC Control Req PDU:
+ 00 04 00 56 00 00 04 00 1d 00 05 00 00 01 00 10 00 05 00 02 00 03 00 16 00 17 16 00 60 00 08 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00 00 17 00 25 24 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+{"ts":1792652953771,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:13"},"msg":"lParams params(Src= Mtype=12040 SubId=-1 Xid= Meid=meid(PlmnID=00F110 EnbID=gnb_001_001_00000003 RanName=gnb_001_001_00000003) Paylens=90/90 Paymd5=051f722b64d07b2c80c19d01d9d4eb0c) "}
+{"ts":1792652953771,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:13"},"msg":"Sending RIC Control message to RanName: gnb_001_001_00000003, UEID: GnbUEID:<amfUENGAPID:8 guami:<pLMNIdentity:\"00F110\" aMFRegionID:\"128\" aMFSetID:\"1\" aMFPointer:\"0\" > gNBCUUEF1APID:1 gNBCUCPUEE1APID:1 >   Success"}
+{"ts":1792652954505,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:14"},"msg":"restapi: method=GET url=/ric/v1/health/alive"}
+{"ts":1792652956356,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:16"},"msg":"restapi: method=GET url=/ric/v1/health/ready"}
+{"ts":1792652956780,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:16"},"msg":"SendRICControlReqServiceGrpc Enter "}
+{"ts":1792652956780,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:16"},"msg":"GRPC Control request validated, initiate Control Request to RAN"}
+{"ts":1792652956780,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:16"},"msg":"RICHOCONTROL_EVENT: Response sent with  RspCode:0, Description:Success Response"}
+{"ts":1792652956780,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:16"},"msg":"SendRicControlRequest Enter for RanName = gnb_001_001_00000004"}
+{"ts":1792652956780,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:16"},"msg":"SetRicControlHeader Enter \n"}
+[0 241 16]
+00 f1 10{"ts":1792652956780,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:16"},"msg":"lOutByte Len:3\n"}
+{"ts":1792652956780,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:16"},"msg":"lOutByte = 00F110\n"}
+e2SM wrapper function Entered
+plmn Size = 6 and aMFRegionID Size = 1 and aMFSetID_size = 2 and aMFPointer_size = 1 
+e2sm_encode_ric_control_header amf_UE_NGAP_ID encoded 
+e2smrc_encode_ric_control_header pLMNIdentity encoded 
+F1AP_id 0 =0
+showing xer of asn_DEF_E2SM_RC_ControlHeader data
+<E2SM-RC-ControlHeader>
+    <ric-controlHeader-formats>
+        <controlHeader-Format1>
+            <ueID>
+                <gNB-UEID>
+                    <amf-UE-NGAP-ID>9</amf-UE-NGAP-ID>
+                    <guami>
+                        <pLMNIdentity>00 F1 10</pLMNIdentity>
+                        <aMFRegionID>
+                            00000001
+                        </aMFRegionID>
+                        <aMFSetID>
+                            0000000000
+                        </aMFSetID>
+                        <aMFPointer>
+                            000000
+                        </aMFPointer>
+                    </guami>
+                    <gNB-CU-UE-F1AP-ID-List>
+                        <UEID-GNB-CU-CP-F1AP-ID-Item>
+                            <gNB-CU-UE-F1AP-ID>1</gNB-CU-UE-F1AP-ID>
+                        </UEID-GNB-CU-CP-F1AP-ID-Item>
+                    </gNB-CU-UE-F1AP-ID-List>
+                    <gNB-CU-CP-UE-E1AP-ID-List>
+                        <UEID-GNB-CU-CP-E1AP-ID-Item>
+                            <gNB-CU-CP-UE-E1AP-ID>1</gNB-CU-CP-UE-E1AP-ID>
+                        </UEID-GNB-CU-CP-E1AP-ID-Item>
+                    </gNB-CU-CP-UE-E1AP-ID-List>
+                </gNB-UEID>
+            </ueID>
+            <ric-Style-Type>3</ric-Style-Type>
+            <ric-ControlAction-ID>1</ric-ControlAction-ID>
+        </controlHeader-Format1>
+    </ric-controlHeader-formats>
+</E2SM-RC-ControlHeader>
+
+After xer of asn_DEF_E2SM_RC_ControlHeader data
+Encoded RIC Control Header PDU:
+{"ts":1792652956780,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:16"},"msg":"E2sm SetRicControlHeader is success"}
+ 00 60 00 09 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00
+{"ts":1792652956780,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:16"},"msg":"SetRicControlHeader is success: 006000090000f1100100000001000000010103000000"}
+encoded length = 288 
+<E2SM-RC-ControlMessage>
+    <ric-controlMessage-formats>
+        <controlMessage-Format1>
+            <ranP-List>
+                <E2SM-RC-ControlMessage-Format1-Item>
+                    <ranParameter-ID>1</ranParameter-ID>
+                    <ranParameter-valueType>
+                        <ranP-Choice-Structure>
+                            <ranParameter-Structure>
+                                <sequence-of-ranParameters>
+                                    <RANParameter-STRUCTURE-Item>
+                                        <ranParameter-ID>2</ranParameter-ID>
+                                        <ranParameter-valueType>
+                                            <ranP-Choice-Structure>
+                                                <ranParameter-Structure>
+                                                    <sequence-of-ranParameters>
+                                                        <RANParameter-STRUCTURE-Item>
+                                                            <ranParameter-ID>3</ranParameter-ID>
+                                                            <ranParameter-valueType>
+                                                                <ranP-Choice-Structure>
+                                                                    <ranParameter-Structure>
+                                                                        <sequence-of-ranParameters>
+                                                                            <RANParameter-STRUCTURE-Item>
+                                                                                <ranParameter-ID>4</ranParameter-ID>
+                                                                                <ranParameter-valueType>
+                                                                                    <ranP-Choice-ElementFalse>
+                                                                                        <ranParameter-value>
+                                                                                            <valueOctS>00 00 F1 10 00 00 00 00 03</valueOctS>
+                                                                                        </ranParameter-value>
+                                                                                    </ranP-Choice-ElementFalse>
+                                                                                </ranParameter-valueType>
+                                                                            </RANParameter-STRUCTURE-Item>
+{"ts":1792652956780,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:16"},"msg":"SetRicControlMessagei Enter  "}
+                                                                        </sequence-of-ranParameters>
+                                                                    </ranParameter-Structure>
+                                                                </ranP-Choice-Structure>
+                                                            </ranParameter-valueType>
+                                                        </RANParameter-STRUCTURE-Item>
+                                                    </sequence-of-ranParameters>
+                                                </ranParameter-Structure>
+                                            </ranP-Choice-Structure>
+                                        </ranParameter-valueType>
+                                    </RANParameter-STRUCTURE-Item>
+                                </sequence-of-ranParameters>
+                            </ranParameter-Structure>
+                        </ranP-Choice-Structure>
+                    </ranParameter-valueType>
+                </E2SM-RC-ControlMessage-Format1-Item>
+            </ranP-List>
+        </controlMessage-Format1>
+    </ric-controlMessage-formats>
+</E2SM-RC-ControlMessage>
+Encoded RIC Control Message PDU:
+ 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+showing xer of asn_DEF_E2AP_PDU data
+<E2AP-PDU>
+    <initiatingMessage>
+        <procedureCode>4</procedureCode>
+        <criticality><reject/></criticality>
+        <value>
+            <RICcontrolRequest>
+                <protocolIEs>
+                    <RICcontrolRequest-IEs>
+                        <id>29</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICrequestID>
+                                <ricRequestorID>1</ricRequestorID>
+                                <ricInstanceID>18</ricInstanceID>
+                            </RICrequestID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>5</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RANfunctionID>3</RANfunctionID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>22</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolHeader>
+                                00 60 00 09 00 00 F1 10 01 00 00 00 01 00 00 00 
+                                01 01 03 00 00 00
+                            </RICcontrolHeader>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>23</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolMessage>
+                                00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 
+{"ts":1792652956780,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:16"},"msg":"E2sm SetRicControlMessage is success"}
+                                01 03 44 00 00 00 01 04 2A 00 09 00 00 F1 10 00 
+                                00 00 00 03
+                            </RICcontrolMessage>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                </protocolIEs>
+            </RICcontrolRequest>
+        </value>
+    </initiatingMessage>
+</E2AP-PDU>
+
+After xer of asn_DEF_E2AP_PDU data
+Encoded RIC Control Req PDU:
+ 00 04 00 56 00 00 04 00 1d 00 05 00 00 01 00 12 00 05 00 02 00 03 00 16 00 17 16 00 60 00 09 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00 00 17 00 25 24 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+{"ts":1792652956780,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:16"},"msg":"SetRicControlHeader is success"}
+{"ts":1792652956780,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:16"},"msg":"lParams params(Src= Mtype=12040 SubId=-1 Xid= Meid=meid(PlmnID=00F110 EnbID=gnb_001_001_00000004 RanName=gnb_001_001_00000004) Paylens=90/90 Paymd5=284a909fc3af7f2fbea998a38675b70d) "}
+{"ts":1792652956781,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:16"},"msg":"Sending RIC Control message to RanName: gnb_001_001_00000004, UEID: GnbUEID:<amfUENGAPID:9 guami:<pLMNIdentity:\"00F110\" aMFRegionID:\"128\" aMFSetID:\"1\" aMFPointer:\"0\" > gNBCUUEF1APID:1 gNBCUCPUEE1APID:1 >   Success"}
+{"ts":1792652959791,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:19"},"msg":"SendRICControlReqServiceGrpc Enter "}
+{"ts":1792652959791,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:19"},"msg":"GRPC Control request validated, initiate Control Request to RAN"}
+{"ts":1792652959791,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:19"},"msg":"RICHOCONTROL_EVENT: Response sent with  RspCode:0, Description:Success Response"}
+{"ts":1792652959791,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:19"},"msg":"SendRicControlRequest Enter for RanName = gnb_001_001_00000005"}
+{"ts":1792652959791,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:19"},"msg":"SetRicControlHeader Enter \n"}
+[0 241 16]
+00 f1 10{"ts":1792652959791,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:19"},"msg":"lOutByte Len:3\n"}
+{"ts":1792652959791,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:19"},"msg":"lOutByte = 00F110\n"}
+e2SM wrapper function Entered
+plmn Size = 6 and aMFRegionID Size = 1 and aMFSetID_size = 2 and aMFPointer_size = 1 
+e2sm_encode_ric_control_header amf_UE_NGAP_ID encoded 
+e2smrc_encode_ric_control_header pLMNIdentity encoded 
+F1AP_id 0 =0
+showing xer of asn_DEF_E2SM_RC_ControlHeader data
+<E2SM-RC-ControlHeader>
+    <ric-controlHeader-formats>
+        <controlHeader-Format1>
+            <ueID>
+                <gNB-UEID>
+                    <amf-UE-NGAP-ID>10</amf-UE-NGAP-ID>
+                    <guami>
+                        <pLMNIdentity>00 F1 10</pLMNIdentity>
+                        <aMFRegionID>
+                            00000001
+                        </aMFRegionID>
+                        <aMFSetID>
+                            0000000000
+                        </aMFSetID>
+                        <aMFPointer>
+                            000000
+                        </aMFPointer>
+                    </guami>
+                    <gNB-CU-UE-F1AP-ID-List>
+                        <UEID-GNB-CU-CP-F1AP-ID-Item>
+                            <gNB-CU-UE-F1AP-ID>1</gNB-CU-UE-F1AP-ID>
+                        </UEID-GNB-CU-CP-F1AP-ID-Item>
+                    </gNB-CU-UE-F1AP-ID-List>
+                    <gNB-CU-CP-UE-E1AP-ID-List>
+                        <UEID-GNB-CU-CP-E1AP-ID-Item>
+                            <gNB-CU-CP-UE-E1AP-ID>1</gNB-CU-CP-UE-E1AP-ID>
+                        </UEID-GNB-CU-CP-E1AP-ID-Item>
+                    </gNB-CU-CP-UE-E1AP-ID-List>
+                </gNB-UEID>
+            </ueID>
+            <ric-Style-Type>3</ric-Style-Type>
+            <ric-ControlAction-ID>1</ric-ControlAction-ID>
+        </controlHeader-Format1>
+    </ric-controlHeader-formats>
+</E2SM-RC-ControlHeader>
+
+After xer of asn_DEF_E2SM_RC_ControlHeader data
+Encoded RIC Control Header PDU:
+ 00 60 00 0a 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00
+encoded length = 288 
+<E2SM-RC-ControlMessage>
+    <ric-controlMessage-formats>
+{"ts":1792652959791,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:19"},"msg":"E2sm SetRicControlHeader is success"}
+{"ts":1792652959791,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:19"},"msg":"SetRicControlHeader is success: 0060000a0000f1100100000001000000010103000000"}
+{"ts":1792652959791,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:19"},"msg":"SetRicControlMessagei Enter  "}
+        <controlMessage-Format1>
+            <ranP-List>
+                <E2SM-RC-ControlMessage-Format1-Item>
+                    <ranParameter-ID>1</ranParameter-ID>
+                    <ranParameter-valueType>
+                        <ranP-Choice-Structure>
+                            <ranParameter-Structure>
+                                <sequence-of-ranParameters>
+                                    <RANParameter-STRUCTURE-Item>
+                                        <ranParameter-ID>2</ranParameter-ID>
+                                        <ranParameter-valueType>
+                                            <ranP-Choice-Structure>
+                                                <ranParameter-Structure>
+                                                    <sequence-of-ranParameters>
+                                                        <RANParameter-STRUCTURE-Item>
+                                                            <ranParameter-ID>3</ranParameter-ID>
+                                                            <ranParameter-valueType>
+                                                                <ranP-Choice-Structure>
+                                                                    <ranParameter-Structure>
+                                                                        <sequence-of-ranParameters>
+                                                                            <RANParameter-STRUCTURE-Item>
+                                                                                <ranParameter-ID>4</ranParameter-ID>
+                                                                                <ranParameter-valueType>
+                                                                                    <ranP-Choice-ElementFalse>
+                                                                                        <ranParameter-value>
+                                                                                            <valueOctS>00 00 F1 10 00 00 00 00 03</valueOctS>
+                                                                                        </ranParameter-value>
+                                                                                    </ranP-Choice-ElementFalse>
+                                                                                </ranParameter-valueType>
+                                                                            </RANParameter-STRUCTURE-Item>
+                                                                        </sequence-of-ranParameters>
+                                                                    </ranParameter-Structure>
+                                                                </ranP-Choice-Structure>
+                                                            </ranParameter-valueType>
+                                                        </RANParameter-STRUCTURE-Item>
+                                                    </sequence-of-ranParameters>
+                                                </ranParameter-Structure>
+                                            </ranP-Choice-Structure>
+                                        </ranParameter-valueType>
+                                    </RANParameter-STRUCTURE-Item>
+                                </sequence-of-ranParameters>
+                            </ranParameter-Structure>
+                        </ranP-Choice-Structure>
+                    </ranParameter-valueType>
+                </E2SM-RC-ControlMessage-Format1-Item>
+            </ranP-List>
+        </controlMessage-Format1>
+    </ric-controlMessage-formats>
+</E2SM-RC-ControlMessage>
+Encoded RIC Control Message PDU:
+ 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+{"ts":1792652959791,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:19"},"msg":"E2sm SetRicControlMessage is success"}
+showing xer of asn_DEF_E2AP_PDU data
+<E2AP-PDU>
+    <initiatingMessage>
+        <procedureCode>4</procedureCode>
+        <criticality><reject/></criticality>
+        <value>
+            <RICcontrolRequest>
+                <protocolIEs>
+                    <RICcontrolRequest-IEs>
+                        <id>29</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICrequestID>
+                                <ricRequestorID>1</ricRequestorID>
+                                <ricInstanceID>20</ricInstanceID>
+                            </RICrequestID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>5</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RANfunctionID>3</RANfunctionID>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>22</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolHeader>
+                                00 60 00 0A 00 00 F1 10 01 00 00 00 01 00 00 00 
+                                01 01 03 00 00 00
+                            </RICcontrolHeader>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                    <RICcontrolRequest-IEs>
+                        <id>23</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICcontrolMessage>
+                                00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 
+                                01 03 44 00 00 00 01 04 2A 00 09 00 00 F1 10 00 
+                                00 00 00 03
+                            </RICcontrolMessage>
+                        </value>
+                    </RICcontrolRequest-IEs>
+                </protocolIEs>
+            </RICcontrolRequest>
+        </value>
+    </initiatingMessage>
+</E2AP-PDU>
+
+After xer of asn_DEF_E2AP_PDU data
+Encoded RIC Control Req PDU:
+ 00 04 00 56 00 00 04 00 1d 00 05 00 00 01 00 14 00 05 00 02 00 03 00 16 00 17 16 00 60 00 0a 00 00 f1 10 01 00 00 00 01 00 00 00 01 01 03 00 00 00 00 17 00 25 24 00 00 01 00 01 01 44 00 00 00 01 02 44 00 00 00 01 03 44 00 00 00 01 04 2a 00 09 00 00 f1 10 00 00 00 00 03
+{"ts":1792652959792,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:19"},"msg":"SetRicControlHeader is success"}
+{"ts":1792652959792,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:19"},"msg":"lParams params(Src= Mtype=12040 SubId=-1 Xid= Meid=meid(PlmnID=00F110 EnbID=gnb_001_001_00000005 RanName=gnb_001_001_00000005) Paylens=90/90 Paymd5=d7dcaebca44d07387daead19a2f297e2) "}
+{"ts":1792652959792,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:19"},"msg":"Sending RIC Control message to RanName: gnb_001_001_00000005, UEID: GnbUEID:<amfUENGAPID:10 guami:<pLMNIdentity:\"00F110\" aMFRegionID:\"128\" aMFSetID:\"1\" aMFPointer:\"0\" > gNBCUUEF1APID:1 gNBCUCPUEE1APID:1 >   Success"}
+1792652959852 7/RMR [INFO] sends: ts=1792652959 src=service-ricxapp-rc-rmr.ricxapp:4560 target=10.101.123.229:38000 open=1 succ=10 fail=0 (hard=0 soft=0)
+1792652959852 7/RMR [INFO] sends: ts=1792652959 src=service-ricxapp-rc-rmr.ricxapp:4560 target=service-ricxapp-hw-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792652959852 7/RMR [INFO] sends: ts=1792652959 src=service-ricxapp-rc-rmr.ricxapp:4560 target=service-ricxapp-kpimon-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792652959852 7/RMR [INFO] sends: ts=1792652959 src=service-ricxapp-rc-rmr.ricxapp:4560 target=service-ricplt-submgr-rmr.ricplt:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792652959852 7/RMR [INFO] sends: ts=1792652959 src=service-ricxapp-rc-rmr.ricxapp:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792652959852 7/RMR [INFO] sends: ts=1792652959 src=service-ricxapp-rc-rmr.ricxapp:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+{"ts":1792652969506,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:29"},"msg":"restapi: method=GET url=/ric/v1/health/alive"}
+{"ts":1792652971356,"crit":"INFO","id":"rc","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-22T07:09:31"},"msg":"restapi: method=GET url=/ric/v1/health/ready"}

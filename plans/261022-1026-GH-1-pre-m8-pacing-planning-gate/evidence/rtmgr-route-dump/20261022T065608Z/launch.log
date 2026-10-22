@@ -1,0 +1,20 @@
+[07:04:43] gate rtmgr-route-dump start; evidence /home/uc/evidence/probes/rtmgr-route-dump/20261022T065608Z; harness c6db1ee
+[07:04:43] PASS route_tree
+[07:04:44] PASS route_tools
+[07:04:44] PASS route_sctp
+[07:07:34] PASS route_rc_installed
+[07:07:36] PASS route_grpcurl
+[07:07:57] PASS route_dump_p1_rc_installed
+[07:07:58] PASS route_capture_rmr
+[07:07:58] PASS route_capture_e2ap
+[07:08:32] PASS route_agents_connected
+[07:08:32] PASS route_agent_ips
+[07:08:36] PASS route_all_subscribed
+[07:08:52] PASS route_dump_p2_subscribed
+[07:09:22] PASS route_controls_sent
+[07:09:33] PASS route_dump_p3_after_controls
+[07:09:34] PASS route_logs
+[07:09:37] PASS route_agents_stopped
+[07:09:37] PASS route_capture_e2ap_stopped
+[07:09:38] PASS route_capture_rmr_stopped
+verdict rtmgr-route-dump: PASS failed=[]
