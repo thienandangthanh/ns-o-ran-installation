@@ -6,6 +6,8 @@
 # --indicationPeriodicity=0.1 and the default UE/traffic load:
 #   single   --nMmWaveEnbNodes=1 --e2lteEnabled=false   (gNB 2, port 38472)
 #   default  no node args                                (eNB 1 + gNB 2..5, ports 38471-38475)
+#   two      --nMmWaveEnbNodes=2                         (eNB 1 + gNB 2..3, ports 38471-38473); opt-in
+# TIMING_CONFIGS selects and orders the configs (default "single default").
 # Per repeat: fresh null sink -> assert no stray scenario process / listener ->
 # run the compiled binary DIRECTLY in its own process group (python
 # time.monotonic() around the call, never `./ns3 run`) -> stop sink -> kill our
@@ -162,8 +164,15 @@ rc=0
 if [ -n "$(stray_scenario)" ] || [ -n "$(listeners)" ]; then
     log "stray scenario process or listener on 3847x before start"; exit 1
 fi
-measure_cfg single 38472 --nMmWaveEnbNodes=1 --e2lteEnabled=false || rc=1
-if [ $rc -eq 0 ]; then measure_cfg default 38471-38475 || rc=1; fi
+for cfg in ${TIMING_CONFIGS:-single default}; do
+    [ $rc -eq 0 ] || break
+    case "$cfg" in
+        single) measure_cfg single 38472 --nMmWaveEnbNodes=1 --e2lteEnabled=false || rc=1 ;;
+        default) measure_cfg default 38471-38475 || rc=1 ;;
+        two) measure_cfg two 38471-38473 --nMmWaveEnbNodes=2 || rc=1 ;;
+        *) log "unknown timing config $cfg"; rc=1 ;;
+    esac
+done
 cleanup
 LOAD_AFTER="$(cut -d' ' -f1-3 /proc/loadavg)"
 
@@ -191,7 +200,7 @@ rep = {"binary": binary, "simTime_s": simtime, "indicationPeriodicity_s": float(
                  "own process group, emitter active against ipc-null-sink; includes process "
                  "startup and scenario setup",
        "configs": {}, "ok": rc == "0"}
-for cfg in ("single", "default"):
+for cfg in ("single", "default", "two"):
     path = os.path.join(out, cfg, "runs.jsonl")
     if not os.path.exists(path):
         continue
