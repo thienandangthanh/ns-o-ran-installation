@@ -1,0 +1,33 @@
+03:09:24 pods=14 not-ready=12
+03:09:39 pods=14 not-ready=8
+03:09:55 pods=14 not-ready=4
+03:10:10 pods=14 not-ready=3
+03:10:25 pods=14 not-ready=2
+03:10:41 pods=14 not-ready=1
+03:10:56 pods=14 not-ready=1
+03:11:12 pods=14 not-ready=1
+03:11:27 pods=14 not-ready=1
+03:11:42 pods=14 not-ready=1
+03:11:58 pods=14 not-ready=1
+03:12:13 pods=14 not-ready=0
+ 03:12:13 up 3 min,  1 user,  load average: 0.40, 0.51, 0.23
+NAME            STATUS   ROLES           AGE     VERSION
+oran-kvm-2404   Ready    control-plane   5h39m   v1.33.13
+NAME                                                        READY   STATUS    RESTARTS         AGE
+deployment-ricplt-a1mediator-78f79cbb6b-dt774               1/1     Running   7 (3m4s ago)     5h37m
+deployment-ricplt-alarmmanager-5b49476676-nwxvm             1/1     Running   7 (3m4s ago)     5h36m
+deployment-ricplt-appmgr-5564b65869-dg6px                   1/1     Running   7 (3m4s ago)     5h37m
+deployment-ricplt-e2mgr-9b6b8f99f-qms4v                     1/1     Running   11 (2m34s ago)   5h37m
+deployment-ricplt-e2term-alpha-88fd95787-kksq8              1/1     Running   1 (3m4s ago)     3h20m
+deployment-ricplt-o1mediator-bf4fb5758-cjjcz                1/1     Running   7 (3m4s ago)     5h37m
+deployment-ricplt-rtmgr-74fb47b69d-2r847                    1/1     Running   11 (3m4s ago)    5h37m
+deployment-ricplt-submgr-858956fbdc-55dwq                   1/1     Running   7 (3m4s ago)     5h37m
+deployment-ricplt-vespamgr-848f7bb874-mmbd5                 1/1     Running   7 (3m4s ago)     5h37m
+r4-influxdb-influxdb2-0                                     1/1     Running   5 (3m4s ago)     4h54m
+r4-infrastructure-kong-78657d8f48-dxr5n                     2/2     Running   14 (3m4s ago)    5h38m
+r4-infrastructure-prometheus-alertmanager-b9cc56766-8hqk9   2/2     Running   14 (3m4s ago)    5h38m
+r4-infrastructure-prometheus-server-6476958975-r9nfv        1/1     Running   7 (3m4s ago)     5h38m
+statefulset-ricplt-dbaas-server-0                           1/1     Running   7 (3m4s ago)     5h38m
+NAME                                 READY   STATUS    RESTARTS       AGE
+ricxapp-hw-go-c84579888-hfszg        1/1     Running   7 (3m4s ago)   5h27m
+ricxapp-kpimon-go-85dc5fdf8b-rtfvc   1/1     Running   5 (3m4s ago)   4h30m

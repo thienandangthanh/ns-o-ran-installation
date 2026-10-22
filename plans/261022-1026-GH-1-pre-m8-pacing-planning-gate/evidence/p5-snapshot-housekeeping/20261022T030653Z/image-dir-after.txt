@@ -1,0 +1,55 @@
+2026-10-22T03:12:23Z
+total 87254792
+-rw------- 1 958 958 107390828544 Oct 21 16:04 ubuntu24.04
+-rw------- 1 958 958  14188478464 Oct 22 06:55 ubuntu24.04-f0-preflight.qcow2
+-rw------- 1 958 958    728367104 Oct 22 07:11 ubuntu24.04-f1-ric-up.qcow2
+-rw------- 1 958 958  25473646592 Oct 22 07:54 ubuntu24.04-f2-refnode.qcow2
+-rw------- 1 958 958   2530541568 Oct 22 08:17 ubuntu24.04-f3-xapps.qcow2
+-rw------- 1 958 958    908525568 Oct 22 08:25 ubuntu24.04-f4-ns3-build.qcow2
+-rw------- 1 958 958    165609472 Oct 22 08:31 ubuntu24.04-f5-agent-setup.qcow2
+-rw------- 1 958 958    204800000 Oct 22 12:12 ubuntu24.04-f6-kpm.1792638545
+-rw------- 1 958 958    702021632 Oct 22 09:02 ubuntu24.04-f6-kpm.qcow2
+-rw------- 1   0   0  39554711552 Oct 22 06:28 ubuntu24.1792610322
+-rw------- 1 958 958   1403518976 Oct 22 06:30 ubuntu24.1792618143
+3488784384	/home/andang/VMs/ubuntu24.04
+14188457984	/home/andang/VMs/ubuntu24.04-f0-preflight.qcow2
+728309760	/home/andang/VMs/ubuntu24.04-f1-ric-up.qcow2
+25473761280	/home/andang/VMs/ubuntu24.04-f2-refnode.qcow2
+2530512896	/home/andang/VMs/ubuntu24.04-f3-xapps.qcow2
+908480512	/home/andang/VMs/ubuntu24.04-f4-ns3-build.qcow2
+165552128	/home/andang/VMs/ubuntu24.04-f5-agent-setup.qcow2
+204746752	/home/andang/VMs/ubuntu24.04-f6-kpm.1792638545
+701968384	/home/andang/VMs/ubuntu24.04-f6-kpm.qcow2
+39554871296	/home/andang/VMs/ubuntu24.1792610322
+1403461632	/home/andang/VMs/ubuntu24.1792618143
+Filesystem        1B-blocks         Used   Available Use% Mounted on
+/dev/nvme0n1p4 350544556032 296013725696 36649099264  89% /home
+fresh-install
+  |
+  +- f0-preflight
+      |
+      +- f1-ric-up
+          |
+          +- f2-refnode
+              |
+              +- f3-xapps
+                  |
+                  +- f4-ns3-build
+                      |
+                      +- f5-agent-setup
+                          |
+                          +- f6-kpm
+                              |
+                              +- f7-rerun-green
+                                
+
+      <source file='/home/andang/VMs/ubuntu24.04-f6-kpm.1792638545' index='2'/>
+        <source file='/home/andang/VMs/ubuntu24.04-f6-kpm.qcow2'/>
+          <source file='/home/andang/VMs/ubuntu24.04-f5-agent-setup.qcow2'/>
+            <source file='/home/andang/VMs/ubuntu24.04-f4-ns3-build.qcow2'/>
+              <source file='/home/andang/VMs/ubuntu24.04-f3-xapps.qcow2'/>
+                <source file='/home/andang/VMs/ubuntu24.04-f2-refnode.qcow2'/>
+                  <source file='/home/andang/VMs/ubuntu24.04-f1-ric-up.qcow2'/>
+                    <source file='/home/andang/VMs/ubuntu24.04-f0-preflight.qcow2'/>
+                      <source file='/home/andang/VMs/ubuntu24.1792618143'/>
+                        <source file='/home/andang/VMs/ubuntu24.04'/>

@@ -1,0 +1,25 @@
+== revert f7-rerun-green
+[host 03:09:02] graceful shutdown of ubuntu24.04
+[host 03:09:05] reverting to f7-rerun-green
+[host 03:09:13] reverted to f7-rerun-green; VM up
+rc=0
+ vda      /home/andang/VMs/ubuntu24.04-f6-kpm.1792638545
+03:09:14 pods=14 not-ready=0
+NAME                                                        READY   STATUS    RESTARTS         AGE     IP             NODE            NOMINATED NODE   READINESS GATES
+deployment-ricplt-a1mediator-78f79cbb6b-dt774               1/1     Running   6 (3h37m ago)    5h34m   10.244.0.121   oran-kvm-2404   <none>           <none>
+deployment-ricplt-alarmmanager-5b49476676-nwxvm             1/1     Running   6 (3h37m ago)    5h33m   10.244.0.128   oran-kvm-2404   <none>           <none>
+deployment-ricplt-appmgr-5564b65869-dg6px                   1/1     Running   6 (3h37m ago)    5h34m   10.244.0.130   oran-kvm-2404   <none>           <none>
+deployment-ricplt-e2mgr-9b6b8f99f-qms4v                     1/1     Running   9 (3h37m ago)    5h34m   10.244.0.119   oran-kvm-2404   <none>           <none>
+deployment-ricplt-e2term-alpha-88fd95787-kksq8              1/1     Running   0                3h17m   10.244.0.134   oran-kvm-2404   <none>           <none>
+deployment-ricplt-o1mediator-bf4fb5758-cjjcz                1/1     Running   6 (3h37m ago)    5h34m   10.244.0.132   oran-kvm-2404   <none>           <none>
+deployment-ricplt-rtmgr-74fb47b69d-2r847                    1/1     Running   10 (3h37m ago)   5h34m   10.244.0.124   oran-kvm-2404   <none>           <none>
+deployment-ricplt-submgr-858956fbdc-55dwq                   1/1     Running   6 (3h37m ago)    5h34m   10.244.0.126   oran-kvm-2404   <none>           <none>
+deployment-ricplt-vespamgr-848f7bb874-mmbd5                 1/1     Running   6 (3h37m ago)    5h34m   10.244.0.127   oran-kvm-2404   <none>           <none>
+r4-influxdb-influxdb2-0                                     1/1     Running   4 (3h37m ago)    4h51m   10.244.0.116   oran-kvm-2404   <none>           <none>
+r4-infrastructure-kong-78657d8f48-dxr5n                     2/2     Running   12 (3h37m ago)   5h35m   10.244.0.118   oran-kvm-2404   <none>           <none>
+r4-infrastructure-prometheus-alertmanager-b9cc56766-8hqk9   2/2     Running   12 (3h37m ago)   5h35m   10.244.0.122   oran-kvm-2404   <none>           <none>
+r4-infrastructure-prometheus-server-6476958975-r9nfv        1/1     Running   6 (3h37m ago)    5h35m   10.244.0.120   oran-kvm-2404   <none>           <none>
+statefulset-ricplt-dbaas-server-0                           1/1     Running   6 (3h37m ago)    5h35m   10.244.0.115   oran-kvm-2404   <none>           <none>
+NAME                                 READY   STATUS    RESTARTS        AGE
+ricxapp-hw-go-c84579888-hfszg        1/1     Running   6 (3h37m ago)   5h24m
+ricxapp-kpimon-go-85dc5fdf8b-rtfvc   1/1     Running   4 (3h37m ago)   4h27m
