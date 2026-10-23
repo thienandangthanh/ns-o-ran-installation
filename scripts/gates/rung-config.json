@@ -20,8 +20,8 @@
   },
   "substitutions": {
     "outage_threshold_minus_1000": {
-      "applied": false,
-      "provenance": "substitution 1; decided by the R0-config null-control run at P3"
+      "applied": true,
+      "provenance": "substitution 1 applied: Q2 = 5 LTE outage switches at -5 dB in the R0-config null-control run (evidence/r0/20261023T073520Z q2OutageSwitches 5); reported in the run report"
     },
     "ts_xapp_default_rmr_handler": {
       "applied": false,
@@ -38,8 +38,8 @@
       "provenance": "D3"
     },
     "outageThreshold_dB": {
-      "value": -5,
-      "provenance": "ns-3 default, checked first by the R0 null-control run (Q2)"
+      "value": -1000,
+      "provenance": "substitution 1: the R0-config null-control run at the default -5 dB counted 5 LTE outage switches (evidence/r0/20261023T073520Z q2OutageSwitches 5; also 065002Z, 065551Z); gated runs use --outageThreshold=-1000"
     },
     "simStartEpochMs": {
       "value": 1767225600000,
@@ -61,12 +61,12 @@
   },
   "schedules": {
     "r0": {
-      "path": null,
-      "provenance": "written at P3"
+      "path": "scripts/gates/r0-scenario.json",
+      "provenance": "P3: the R0 scenario gated green at evidence/r0/20261023T073520Z"
     },
     "r1": {
-      "path": null,
-      "provenance": "written at P4"
+      "path": "scripts/gates/r1-scenario.json",
+      "provenance": "P4: cases (a)-(d) and the faultStop block (kongming-261023-1705 section 3.2, 4.2)"
     },
     "r2": {
       "path": null,
