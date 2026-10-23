@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 """r0-checks.py: schedule building and ledger checks for gate r0.
 
-  r0-checks.py schedule SCENARIO ENDPOINT [--forced-late | --calibrate] [--rc-send PATH]
+  r0-checks.py schedule SCENARIO ENDPOINT [--forced-late | --calibrate | --fault-stop] [--rc-send PATH]
+                        [--confirm CMD...]
         the pacer schedule for the scenario: one rc-send trigger per control, each expecting one control
-        at ns-3; with --forced-late only the forced-late control, sent after `go` (goBeforeTrigger); with
-        --calibrate the ten calibration controls
+        at ns-3 (several controls in one step become a "triggers" list, sent in scenario order); with
+        --forced-late only the forced-late control, sent after `go` (goBeforeTrigger); with --calibrate the
+        ten calibration controls; with --fault-stop the scenario's faultStop controls plus its stopTrigger,
+        confirmed by CMD (the rest of the arguments)
   r0-checks.py tctl PACER_SUMMARY [--steps N]
         T_ctl from a calibration run: needs a run that ended without an abort and exactly N (10) complete
         trigger steps (one control, trigger rc 0, slack recorded); L = the largest per-control latency
         (pacer wall time at controlRx minus the time just before the trigger started: an upper bound on
         trigger-to-read); T_ctl = max(30, ceil(20 x L)), rounded up
-  r0-checks.py expect SCENARIO LEDGER [--forced-late]
+  r0-checks.py expect SCENARIO LEDGER [--forced-late | --fault-stop]
         every control's ledger line has the expected outcome/cause, found by (via, imsi, target) in order
   r0-checks.py d7 LEDGER
         D7 counters from the applied lines: viaEnb, viaServingGnb, viaTargetGnb, distinctImsis, targetGnbs
@@ -32,20 +35,37 @@ def cmd_schedule(a):
     send = a[a.index("--rc-send") + 1] if "--rc-send" in a else "rc-send.sh"
     steps = {}
     todo = sc["calibration"] if "--calibrate" in a else (
-        [dict(sc["forcedLate"], goBeforeTrigger=True)] if "--forced-late" in a else sc["controls"])
+        [dict(sc["forcedLate"], goBeforeTrigger=True)] if "--forced-late" in a else (
+            sc["faultStop"]["controls"] if "--fault-stop" in a else sc["controls"]))
+    by_step = {}
     for c in todo:
-        e = {"trigger": {"cmd": ["bash", send, ep, str(c["via"]), str(c["imsi"]), c["key"]]}, "expect": 1}
-        if c.get("goBeforeTrigger"):
-            e["goBeforeTrigger"] = True
-        steps[str(c["step"])] = e
-    print(json.dumps({"steps": steps, "late": []}, indent=1))
+        by_step.setdefault(str(c["step"]), []).append(c)
+    for k, cs in by_step.items():
+        cmds = [["bash", send, ep, str(c["via"]), str(c["imsi"]), c["key"]] for c in cs]
+        if len(cs) == 1:
+            e = {"trigger": {"cmd": cmds[0]}, "expect": 1}
+            if cs[0].get("goBeforeTrigger"):
+                e["goBeforeTrigger"] = True
+        else:  # several controls in one step: sent one at a time, in list order
+            if any(c.get("goBeforeTrigger") for c in cs):
+                sys.exit("step %s: goBeforeTrigger needs a single control" % k)
+            e = {"triggers": [{"cmd": cmd, "expect": 1} for cmd in cmds]}
+        steps[k] = e
+    out = {"steps": steps, "late": []}
+    st = sc["faultStop"].get("stopTrigger") if "--fault-stop" in a else None
+    if st:  # a control sent after the final barrier; endAck waits until the agent has forwarded it
+        confirm = a[a.index("--confirm") + 1:] if "--confirm" in a else []
+        out["stopTrigger"] = {"cmd": ["bash", send, ep, str(st["via"]), str(st["imsi"]), st["key"]],
+                              "confirm": confirm, "timeoutS": st.get("timeoutS", 6)}
+    print(json.dumps(out, indent=1))
     return 0
 
 
 def cmd_expect(a):
     sc = load(a[0])
     lines = ledger_lines(a[1])
-    todo = [sc["forcedLate"]] if "--forced-late" in a else sc["controls"]
+    todo = [sc["forcedLate"]] if "--forced-late" in a else (
+        sc["faultStop"]["controls"] if "--fault-stop" in a else sc["controls"])
     problems = []
     for c in todo:
         hit = [x for x in lines if x["viaNodeId"] == c["via"] and x["imsi"] == c["imsi"] and x["targetCell"] == c["targetCell"]]

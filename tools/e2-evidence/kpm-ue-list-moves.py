@@ -12,12 +12,15 @@ k <= 1 is not judged. gNB node n serves cell n.
 
 An applied ledger line (imsi i, source s, target t, barrier k) has moved when i is in U(s) and not in U(t)
 at sample k, and not in U(s) and in U(t) at sample k + 1. A refused or late line must leave i's gNB
-membership unchanged between k and k + 1. Problems (exit 1): a missing report, k <= 1, a frame whose
+membership unchanged between k and k + 1, unless the same IMSI has an applied line in the same step (a
+same-step pair: the applied line's move judges it). A missing ledger is no lines. --self-test runs the
+judge on synthetic lists. Problems (exit 1): a missing report, k <= 1, a frame whose
 indications carry different times, a Format 2 indication without UE IDs, a UE ID that is not gNB-UEID,
 an applied line that did not move, a refused or late line that did.
 """
 import argparse
 import json
+import os
 import subprocess
 import sys
 
@@ -81,27 +84,20 @@ def ue_lists(pcap, ip2node, t0, t1):
     return lists, n_f2, problems
 
 
-def main():
-    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("pcap")
-    ap.add_argument("--node-ips", required=True)
-    ap.add_argument("--ledger", required=True)
-    ap.add_argument("--epoch-ms", type=int, required=True)
-    ap.add_argument("--period-ms", type=int, default=100)
-    ap.add_argument("--out", required=True)
-    ap.add_argument("--t0", type=float)
-    ap.add_argument("--t1", type=float)
-    a = ap.parse_args()
-    ip2node = {ip: int(n) for n, ips in json.load(open(a.node_ips)).items() for ip in ips}
-    lists, n_f2, problems = ue_lists(a.pcap, ip2node, a.t0, a.t1)
-    gnbs = sorted({n for n, _ in lists if n != 1})
-
-    def at(node, k):
-        key = (node, a.epoch_ms + max(0, k - 1) * a.period_ms)
-        return lists.get(key)
-
-    lines = [json.loads(l) for l in open(a.ledger) if l.strip()][1:]
-    results, moved = [], {}
+def judge(lines, at, gnbs):
+    """lines: ledger lines; at(node, k): the UE-ID set of node n's report of sample k, or None.
+    Judged per (imsi, barrier k): with exactly one applied line, that line must move the IMSI from its source
+    to its target gNB between k and k + 1 (a refused line of the same IMSI and step is covered by that
+    move); with none, every refused or late line must leave the IMSI's gNB membership unchanged; two
+    applied lines for one IMSI in one step are a problem. Returns (per-line records, moved, problems)."""
+    problems, results, moved = [], [], {}
+    applied_in = {}
+    for x in lines:
+        if x["outcome"] == "applied":
+            applied_in[(x["imsi"], x["rxSeq"])] = applied_in.get((x["imsi"], x["rxSeq"]), 0) + 1
+    for (i, k), n in sorted(applied_in.items()):
+        if n > 1:
+            problems.append("imsi %d at k %d: %d applied lines in one step" % (i, k, n))
     for x in lines:
         i, k, s, t = x["imsi"], x["rxSeq"], x["sourceCell"], x["targetCell"]
         r = {"imsi": i, "rxSeq": k, "outcome": x["outcome"], "cause": x.get("cause", ""), "source": s, "target": t}
@@ -124,6 +120,8 @@ def main():
                     problems.append("applied imsi %d %d->%d at k %d did not move: %r -> %r" % (
                         i, s, t, k, r["before"], r["after"]))
             moved[str(i)] = moved.get(str(i), True) and r["moved"]
+        elif applied_in.get((i, k)):
+            r["judgedBy"] = "the applied line of the same imsi and step"
         else:
             # a refusal or a late answer: i's gNB membership is the same in the reports of k and k + 1
             missing = [(n, kk) for n in gnbs for kk in (k, k + 1) if at(n, kk) is None]
@@ -137,6 +135,49 @@ def main():
                     problems.append("%s imsi %d at k %d changed gNB: %r -> %r" % (
                         r["cause"], i, k, r["membershipK"], r["membershipK1"]))
         results.append(r)
+    return results, moved, problems
+
+
+def self_test():
+    """The judge on synthetic UE lists: a same-step pair for one IMSI, an unknown IMSI, a wrong move."""
+    lists = {(2, 30): {3, 4}, (3, 30): {1, 2}, (2, 31): {2, 3, 4}, (3, 31): {1}}   # imsi 2: 3 -> 2 at k 30
+
+    def at(n, k):
+        return lists.get((n, k))
+    pair = [{"imsi": 2, "rxSeq": 30, "sourceCell": 3, "targetCell": 2, "outcome": "applied"},
+            {"imsi": 2, "rxSeq": 30, "sourceCell": 3, "targetCell": 3, "outcome": "refused", "cause": "inHandover"},
+            {"imsi": 99, "rxSeq": 30, "sourceCell": 0, "targetCell": 2, "outcome": "refused", "cause": "unknownImsi"}]
+    bad = [dict(pair[0], imsi=1, targetCell=2)]                                       # imsi 1 stays on 3
+    twice = [pair[0], dict(pair[0], targetCell=2)]
+    lonely = [dict(pair[1], imsi=2)]                                                   # a refusal whose imsi moved
+    checks = [("pair", judge(pair, at, [2, 3]), True), ("wrong move", judge(bad, at, [2, 3]), False),
+              ("two applied", judge(twice, at, [2, 3]), False), ("refusal that moved", judge(lonely, at, [2, 3]), False)]
+    fails = [n for n, (_, _, p), want in checks if (not p) != want]
+    print("kpm-ue-list-moves self-test: " + ("ok" if not fails else "FAIL " + ", ".join(fails)))
+    return 0 if not fails else 1
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("pcap")
+    ap.add_argument("--node-ips", required=True)
+    ap.add_argument("--ledger", required=True)
+    ap.add_argument("--epoch-ms", type=int, required=True)
+    ap.add_argument("--period-ms", type=int, default=100)
+    ap.add_argument("--out", required=True)
+    ap.add_argument("--t0", type=float)
+    ap.add_argument("--t1", type=float)
+    a = ap.parse_args()
+    ip2node = {ip: int(n) for n, ips in json.load(open(a.node_ips)).items() for ip in ips}
+    lists, n_f2, problems = ue_lists(a.pcap, ip2node, a.t0, a.t1)
+    gnbs = sorted({n for n, _ in lists if n != 1})
+
+    def at(node, k):
+        return lists.get((node, a.epoch_ms + max(0, k - 1) * a.period_ms))
+
+    lines = [json.loads(l) for l in open(a.ledger) if l.strip()][1:] if os.path.exists(a.ledger) else []
+    results, moved, p = judge(lines, at, gnbs)
+    problems += p
     out = {"format2Indications": n_f2, "reports": len(lists), "gnbNodes": gnbs, "lines": results,
            "kpmUeListMoved": moved, "problems": problems, "pass": not problems}
     with open(a.out, "w") as f:
@@ -149,4 +190,4 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(self_test() if sys.argv[1:] == ["--self-test"] else main())

@@ -20,8 +20,17 @@ Per `ready` k the pacer looks k up in the schedule:
     controlRx lines for k, at most T_ctl from the trigger (else abort); with
     "absence": true it waits W after the trigger and requires exactly "expect"
     controls (statistical negatives). A command still running at T_ctl aborts.
+  - "triggers": [{"cmd", "expect"}, ...] (several controls in one step, sent in this order): wait for
+    `steps` k, then run each command in turn and wait until ns-3 has reported that command's controlRx
+    lines before the next one starts (rc sends every control in its own goroutine, so two quick calls
+    could reach the agent in either order and swap its ctlIds); each control's L is measured from its
+    own command's start, each within T_ctl.
 At `stopping` it sends the schedule's "late" controls (forced-late case: ns-3
-answers them refused/late) and then endAck.
+answers them refused/late), runs the schedule's "stopTrigger" if any, and then
+endAck. "stopTrigger": {"cmd", "confirm", "timeoutS"} sends a control after the
+final barrier and holds endAck until "confirm" exits 0 (it waits for the agent to
+have forwarded the control), all within timeoutS (keep it under ns-3's gate
+timeout); the result goes to pacer-summary.json "stopTrigger".
 
 --replay LEDGER builds the schedule from a control ledger: every line is
 injected at its rxSeq with its viaNodeId, ctlId, imsi, targetCell and
@@ -130,6 +139,8 @@ class Pacer:
             for c in self.schedule.get("late", []):
                 self.send(dict({"type": "control", "afterSeq": msg["seq"]}, **c))
             self.summary["lateSent"] = len(self.schedule.get("late", []))
+            if self.schedule.get("stopTrigger"):
+                self.summary["stopTrigger"] = self.stop_trigger(self.schedule["stopTrigger"], msg["seq"])
             self.send({"type": "endAck"})
         elif t == "end":
             self.summary["ended"] = True
@@ -146,6 +157,69 @@ class Pacer:
             msg = self.recv(deadline - time.time())
             if msg is not None and self.handle_async(msg):
                 return True
+        return False
+
+    def stop_trigger(self, st, seq):
+        """Runs the stop trigger's command, then its confirm command, within timeoutS in all."""
+        deadline = time.time() + float(st.get("timeoutS", 6))
+        rec = {"seq": seq, "cmdRc": None, "confirmRc": None}
+        self.note("pacer", {"type": "stopTrigger", "seq": seq, "cmd": st["cmd"]})
+        for key, cmd in (("cmd", st["cmd"]), ("confirm", st.get("confirm"))):
+            if not cmd:
+                continue
+            try:
+                p = subprocess.run(cmd, capture_output=True, text=True, timeout=max(0.1, deadline - time.time()))
+                rec[key + "Rc"] = p.returncode
+                rec[key + "Out"] = (p.stdout + p.stderr)[-400:]
+            except subprocess.TimeoutExpired:
+                rec[key + "Out"] = "still running at the stop trigger's timeout"
+                break
+            if p.returncode != 0:
+                break
+        rec["wallS"] = round(time.time() - (deadline - float(st.get("timeoutS", 6))), 6)
+        rec["ok"] = rec["cmdRc"] == 0 and (not st.get("confirm") or rec["confirmRc"] == 0)
+        return rec
+
+    def step_triggers(self, seq, rec, trigs):
+        """Several triggers in one step, one at a time; True when the run is over."""
+        if self.wait_steps(seq, time.time() + self.t_ctl):
+            return True
+        if seq not in self.steps_in:
+            self.summary["steps"][str(seq)] = rec
+            self.abort("step %d: no `steps` from ns-3 within %s s" % (seq, self.t_ctl))
+            return False
+        want, rec["L"], rec["triggerRcs"], rec["window"] = 0, [], [], "T_ctl"
+        for i, trig in enumerate(trigs):
+            self.note("pacer", {"type": "trigger", "seq": seq, "index": i, "cmd": trig["cmd"]})
+            t0 = time.time()
+            try:
+                p = subprocess.run(trig["cmd"], capture_output=True, text=True, timeout=self.t_ctl)
+            except subprocess.TimeoutExpired as ex:
+                rec["triggerRcs"].append(None)
+                rec["triggerOut"] = "still running at T_ctl: %r" % (ex.cmd,)
+                self.summary["steps"][str(seq)] = rec
+                self.abort("step %d: trigger %d still running at T_ctl %s s" % (seq, i, self.t_ctl))
+                return False
+            rec["triggerRcs"].append(p.returncode)
+            rec["triggerOut"] = (p.stdout + p.stderr)[-400:]
+            want += trig.get("expect", 1)
+            if self.wait_controls(seq, want, t0 + self.t_ctl):
+                return True
+            got = self.rx_from(seq)
+            if len(got) != want or p.returncode != 0:
+                rec["controls"] = len(got)
+                self.summary["steps"][str(seq)] = rec
+                self.abort("step %d: trigger %d: %d control(s) within T_ctl (want %d), trigger rc %d" % (
+                    seq, i, len(got), want, p.returncode))
+                return False
+            rec["L"] += [round(t - t0, 6) for t, _ in got[want - trig.get("expect", 1):want]]
+        got = self.rx_from(seq)
+        rec["controls"] = len(got)
+        rec["rxOrder"] = [[m.get("viaNodeId"), m.get("ctlId")] for _, m in got]
+        rec["triggerRc"] = 0
+        rec["slackS"] = round(self.t_ctl - max(rec["L"]), 6) if rec["L"] else None
+        self.summary["steps"][str(seq)] = rec
+        self.send({"type": "go", "seq": seq})
         return False
 
     def abort(self, reason):
@@ -172,6 +246,8 @@ class Pacer:
         for c in entry.get("inject", []):
             self.send(dict({"type": "control"}, **c))
         rec["injected"] = len(entry.get("inject", []))
+        if entry.get("triggers"):
+            return self.step_triggers(seq, rec, entry["triggers"])
         trig = entry.get("trigger")
         if trig:
             expect = entry.get("expect", 0)
