@@ -1,0 +1,24 @@
+[18:03:02] gate i2 start; evidence /home/uc/evidence/i2/20261023T180301Z; harness 59968bfd2ad0f60275e0f3f277eb5755c849f538
+[18:03:02] PASS i2_args
+[18:03:02] PASS i2_nist_tree_at_testbed_sha_with_agent_dir
+[18:03:03] PASS i2_ts_installer_at_testbed_sha
+[18:03:03] PASS i2_rc_installed_at_pin_and_ready
+[18:03:41] PASS i2_ts_installed_at_pin_switched_to_grpc
+[18:03:41] PASS i2_a1_policy_type_20008_present
+[18:03:41] PASS i2_ts_ready_listening_no_control_api_error
+[18:03:42] PASS i2_ts_xapp_registered_with_appmgr
+[18:03:42] PASS i2_appmgr_xapp_list_saved
+[18:04:06] PASS i2_rtmgr_restarted_after_registration
+[18:04:06] PASS i2_rtmgr_session_to_every_xapp_and_a1mediator
+[18:04:06] PASS i2_rc_rmr_ready_after_rtmgr_restart
+[18:04:07] PASS i2_route_dump
+[18:04:07] PASS i2_route_20010_20008_to_ts
+[18:05:09] FAIL i2_a1_threshold_reaches_ts_xapp: exit 1: policy instance i2-20261023T180301Z-2 threshold 10: HTTP 202
+[18:04:48] ts_policy_set: no threshold line in ricxapp-trafficxapp-7c46768578-d57pz 20 s after instance i2-20261023T180301Z-2 (attempt 2/3)
+policy instance i2-20261023T180301Z-3 threshold 10: HTTP 202
+[18:05:09] ts_policy_set: no threshold line in ricxapp-trafficxapp-7c46768578-d57pz 20 s after instance i2-20261023T180301Z-3 (attempt 3/3)
+the TS xApp never logged the threshold
+[18:05:09] PASS i2_xapp_image_ids
+[18:05:09] PASS i2_pod_snapshot
+[18:05:10] PASS i2_restart_counts_zero
+verdict i2: FAIL failed=['i2_a1_threshold_reaches_ts_xapp']
