@@ -22,12 +22,12 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-23 18:12 KST (STOP A: segment 1 done; R0 = M8 and R1 green; milestone plans/reports/milestone-261023-1810-GH-1-m8-m9-segment-1-stop-a.md; journal docs/journals/2026-10-23-m8-m9-stop-a.md)
+last-updated: 2026-10-23 19:40 KST (kongming segment review done: plans/reports/kongming-261023-1815-...; milestone corrected) 18:12 KST (STOP A: segment 1 done; R0 = M8 and R1 green; milestone plans/reports/milestone-261023-1810-GH-1-m8-m9-segment-1-stop-a.md; journal docs/journals/2026-10-23-m8-m9-stop-a.md)
 earlier: 18:04 R1 C1 PASS evidence/r1/20261023T084654Z (1b6e4ea, 123/123, V1-V6); 17:46 R1 rehearsal PASS 082845Z; 17:26 gate i0 first run PASS i0/20261023T082556Z; 16:57 r0-green; 16:54 R0 C1 PASS 073520Z
 current phase: P5 next (R2: TS xApp + stub QP, stray-ack probe first); P0-P4 done. Segment 2 = P5-P9, ending at Stop B. Kongming notes: -0735 (P2 exit), -0830 (rc RMR), -1000 (pause), -1615 (P3 V7/V9), -1705 (P3 exit, P4 design), -1815 (Stop A segment review).
 VM: expected domstate=running, snapshot-current=r0-green; boot time 2026-10-23 07:56:59 UTC; rc installed at a2282ee by gate i0 (17:26 KST); no agent containers; a different boot time means a reboot or revert: run gate i0 first
 snapshots: fresh-install, f7-rerun-green, r0-green
-host /home free: 55 G (2026-10-23 18:05 KST); VM / 51 G free; floor 20 GB; chain base 3.3 G + f7 37 G + P1-P3 14 G + r0-green active 2.1 G; M9 projection about -23 GB (55 - ~10 remaining dev - ~48 M9 - 20); the user frees the shortfall at Stop B
+host /home free: 54 G (2026-10-23 19:32 KST); VM / 51 G free; floor 20 GB; chain base 3.3 G + f7 37 G + P1-P3 14 G + r0-green active 2.1 G; M9 projection about -24 to -26 GB (54 - 10..12 remaining dev - ~48 M9 - 20); the user frees the shortfall at Stop B; /mnt/data 21 G free
 fork SHAs (pushed, scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, Testbed 4c8397d0 (unchanged since P2)
 harness SHA (pushed): see git log (the Stop A commit); R1 gate ran at 1b6e4ea, R0 gate at cfc6ef4
 in-flight background jobs: none
