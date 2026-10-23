@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 """r0-checks.py: schedule building and ledger checks for gate r0.
 
-  r0-checks.py schedule SCENARIO ENDPOINT [--forced-late] [--rc-send PATH]
+  r0-checks.py schedule SCENARIO ENDPOINT [--forced-late | --calibrate] [--rc-send PATH]
         the pacer schedule for the scenario: one rc-send trigger per control, each expecting one control
-        at ns-3; with --forced-late only the forced-late control, sent after `go` (goBeforeTrigger)
+        at ns-3; with --forced-late only the forced-late control, sent after `go` (goBeforeTrigger); with
+        --calibrate the ten calibration controls
+  r0-checks.py tctl PACER_SUMMARY [--steps N]
+        T_ctl from a calibration run: needs a run that ended without an abort and exactly N (10) complete
+        trigger steps (one control, trigger rc 0, slack recorded); L = the largest per-control latency
+        (pacer wall time at controlRx minus the time just before the trigger started: an upper bound on
+        trigger-to-read); T_ctl = max(30, ceil(20 x L)), rounded up
   r0-checks.py expect SCENARIO LEDGER [--forced-late]
         every control's ledger line has the expected outcome/cause, found by (via, imsi, target) in order
   r0-checks.py d7 LEDGER
@@ -25,7 +31,8 @@ def cmd_schedule(a):
     sc, ep = load(a[0]), a[1]
     send = a[a.index("--rc-send") + 1] if "--rc-send" in a else "rc-send.sh"
     steps = {}
-    todo = [dict(sc["forcedLate"], goBeforeTrigger=True)] if "--forced-late" in a else sc["controls"]
+    todo = sc["calibration"] if "--calibrate" in a else (
+        [dict(sc["forcedLate"], goBeforeTrigger=True)] if "--forced-late" in a else sc["controls"])
     for c in todo:
         e = {"trigger": {"cmd": ["bash", send, ep, str(c["via"]), str(c["imsi"]), c["key"]]}, "expect": 1}
         if c.get("goBeforeTrigger"):
@@ -72,8 +79,31 @@ def cmd_d7(a):
     return 0 if ok else 1
 
 
+def cmd_tctl(a):
+    import math
+    summary = load(a[0])
+    want = int(a[a.index("--steps") + 1]) if "--steps" in a else 10
+    problems, ls = [], []
+    if not summary.get("ended") or summary.get("aborted"):
+        problems.append("the calibration run did not end cleanly (ended %r, aborted %r)" % (summary.get("ended"), summary.get("aborted")))
+    steps = summary.get("steps", {})
+    for k, rec in sorted(steps.items(), key=lambda kv: int(kv[0])):
+        if "L" not in rec:
+            continue  # an inject-only or untriggered step
+        if rec.get("controls") != 1 or rec.get("triggerRc") != 0 or rec.get("slackS") is None or len(rec["L"]) != 1:
+            problems.append("step %s is not a complete trigger step: %r" % (k, rec))
+            continue
+        ls.append(rec["L"][0])
+    if len(ls) != want:
+        problems.append("%d complete trigger steps, expected %d" % (len(ls), want))
+    l_max = max(ls) if ls else None
+    t_ctl = max(30, math.ceil(20 * l_max)) if l_max is not None else None
+    print(json.dumps({"lMaxS": l_max, "lS": sorted(ls), "tCtlSeconds": t_ctl, "problems": problems, "pass": not problems}, indent=1))
+    return 0 if not problems else 1
+
+
 if __name__ == "__main__":
-    cmds = {"schedule": cmd_schedule, "expect": cmd_expect, "d7": cmd_d7}
+    cmds = {"schedule": cmd_schedule, "expect": cmd_expect, "d7": cmd_d7, "tctl": cmd_tctl}
     if len(sys.argv) < 3 or sys.argv[1] not in cmds:
         print(__doc__, file=sys.stderr)
         sys.exit(2)

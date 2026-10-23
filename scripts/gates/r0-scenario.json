@@ -1,10 +1,130 @@
 {
  "_comment": "R0 scripted rc controls. Layout at RngRun 1, outageThreshold -1000: IMSIs 1,2 on cell 3 (gNB 3); IMSIs 3,4,5,6 on cell 2 (gNB 2). Steps are 10 periods apart (one handover takes ~2 ms of simulated time). via = the E2 node whose agent receives the control: 1 = the eNB (MN), 2 and 3 = gNB agents. key = N5 cell key %08X%02X (gNB id, cell id). Each control is stamped afterSeq = step by the pacer's `steps` gating.",
  "controls": [
-  {"step": 20, "via": 1, "imsi": 6, "key": "0000000303", "targetCell": 3, "path": "viaEnb",         "expect": "applied"},
-  {"step": 30, "via": 2, "imsi": 3, "key": "0000000303", "targetCell": 3, "path": "viaServingGnb",  "expect": "applied"},
-  {"step": 40, "via": 2, "imsi": 1, "key": "0000000202", "targetCell": 2, "path": "viaTargetGnb",   "expect": "applied"},
-  {"step": 50, "via": 3, "imsi": 6, "key": "0000000303", "targetCell": 3, "path": "alreadyOnTarget", "expect": "alreadyOnTarget"}
+  {
+   "step": 20,
+   "via": 1,
+   "imsi": 6,
+   "key": "0000000303",
+   "targetCell": 3,
+   "path": "viaEnb",
+   "expect": "applied"
+  },
+  {
+   "step": 30,
+   "via": 2,
+   "imsi": 3,
+   "key": "0000000303",
+   "targetCell": 3,
+   "path": "viaServingGnb",
+   "expect": "applied"
+  },
+  {
+   "step": 40,
+   "via": 2,
+   "imsi": 1,
+   "key": "0000000202",
+   "targetCell": 2,
+   "path": "viaTargetGnb",
+   "expect": "applied"
+  },
+  {
+   "step": 50,
+   "via": 3,
+   "imsi": 6,
+   "key": "0000000303",
+   "targetCell": 3,
+   "path": "alreadyOnTarget",
+   "expect": "alreadyOnTarget"
+  }
  ],
- "forcedLate": {"step": 60, "via": 2, "imsi": 4, "key": "0000000303", "targetCell": 3, "expect": "late"}
+ "forcedLate": {
+  "step": 60,
+  "via": 2,
+  "imsi": 4,
+  "key": "0000000303",
+  "targetCell": 3,
+  "expect": "late"
+ },
+ "calibration": [
+  {
+   "step": 20,
+   "via": 1,
+   "imsi": 6,
+   "key": "0000000303",
+   "targetCell": 3,
+   "path": "viaEnb",
+   "expect": "applied"
+  },
+  {
+   "step": 30,
+   "via": 2,
+   "imsi": 3,
+   "key": "0000000303",
+   "targetCell": 3,
+   "path": "viaServingGnb",
+   "expect": "applied"
+  },
+  {
+   "step": 40,
+   "via": 2,
+   "imsi": 1,
+   "key": "0000000202",
+   "targetCell": 2,
+   "path": "viaTargetGnb",
+   "expect": "applied"
+  },
+  {
+   "step": 50,
+   "via": 3,
+   "imsi": 6,
+   "key": "0000000303",
+   "targetCell": 3,
+   "path": "alreadyOnTarget",
+   "expect": "alreadyOnTarget"
+  },
+  {
+   "step": 60,
+   "via": 1,
+   "imsi": 2,
+   "key": "0000000303",
+   "targetCell": 3
+  },
+  {
+   "step": 66,
+   "via": 2,
+   "imsi": 4,
+   "key": "0000000202",
+   "targetCell": 2
+  },
+  {
+   "step": 72,
+   "via": 3,
+   "imsi": 3,
+   "key": "0000000303",
+   "targetCell": 3
+  },
+  {
+   "step": 78,
+   "via": 1,
+   "imsi": 5,
+   "key": "0000000202",
+   "targetCell": 2
+  },
+  {
+   "step": 84,
+   "via": 2,
+   "imsi": 1,
+   "key": "0000000202",
+   "targetCell": 2
+  },
+  {
+   "step": 90,
+   "via": 3,
+   "imsi": 6,
+   "key": "0000000303",
+   "targetCell": 3
+  }
+ ],
+ "_calibration": "T_ctl calibration: the four R0 controls plus six already-on-target refusals, ten complete trigger steps. A refusal still produces a controlRx and L ends before the outcome is decided, so the outcome cannot change L."
 }

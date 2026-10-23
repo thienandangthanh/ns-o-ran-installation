@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 # Gate R0 = M8 (VM side): the real rc driven by scripted gRPC, lock-step pacing, agents enb:1, gnb:2, gnb:3.
 #
-#   gate-r0-rc-scripted.sh [--mode c1|single] [--dev] [--tctl SECONDS --tctl-provenance TEXT]
+#   gate-r0-rc-scripted.sh [--mode c1|single|calibrate] [--dev] [--tctl SECONDS --tctl-provenance TEXT]
 #
 # --mode single (the M9 chain): Q2, C8 and one live run with its per-run checks. --mode c1 (default): all of it.
+# --mode calibrate: Q2, then ONE live run of ten scripted controls (the four R0 controls and six already-on-target
+# refusals) through the same per-run path as the gated runs; r0-checks.py tctl turns its per-control latencies L into
+# T_ctl = max(30 s, ceil(20 x L_max)), written to calibration.json and the verdict. It measures time, so it needs the
+# user's release of the CPU hold; its numbers feed nothing else (no slack, no barrier wait, no log time).
 #
 # Order (plan phase 03):
 #   Q2   null-control free run in the R0 config at the default -5 dB; the LTE outage switches
@@ -46,7 +50,10 @@ e="$EVIDENCE_DIR"; RUNS="$e/runs"; mkdir -p "$RUNS"
 CFG="$HARNESS_DIR/scripts/gates/rung-config.py"
 EPOCH_MS=$(python3 -I "$CFG" get scenario.simStartEpochMs)
 T_GATE_S=$(python3 -I "$CFG" get deadlines.T_gate_s)
-if [ -z "$TCTL_S" ]; then TCTL_S=$(python3 -I "$CFG" get deadlines.T_ctl_s); TCTL_PROV="contract start value (not calibrated)"; fi
+if [ -z "$TCTL_S" ]; then
+    TCTL_S=$(python3 -I "$CFG" get deadlines.T_ctl_s)
+    TCTL_PROV=$(python3 -I "$CFG" get deadlines.T_ctl_s.provenance)
+fi
 T_CTL_S="$TCTL_S"
 PACER_PORT=38499
 NODES="enb:1,gnb:2,gnb:3"
@@ -57,14 +64,17 @@ PACER="$HARNESS_DIR/scripts/gates/pacer.py"
 CLI=(--nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10)
 SINKX=(); PACERX=()
 N_CTL=$(python3 -I -c 'import json,sys; print(len(json.load(open(sys.argv[1]))["controls"]))' "$SCEN")
-case "$MODE" in c1|single) ;; *) log "bad --mode $MODE"; exit 2 ;; esac
+case "$MODE" in c1|single|calibrate) ;; *) log "bad --mode $MODE"; exit 2 ;; esac
 fact mode "$(json_str "$MODE")"
 fact dev "$([ "$DEV" = 1 ] && echo true || echo false)"
 fact tCtlSeconds "$T_CTL_S"
 fact tCtlProvenance "$(json_str "$TCTL_PROV")"
 fact vmLoadStart "$(json_str "$(uptime)")"
 record r0_args true "dev $DEV; T_ctl $T_CTL_S s ($TCTL_PROV); T_gate $T_GATE_S s; epoch $EPOCH_MS; rc pin $RC_SHA"
-tctl_ok() { [ "$DEV" = 1 ] || { [ -n "$TCTL_S" ] && [ "$TCTL_PROV" != "contract start value (not calibrated)" ]; }; }
+# a gated run needs a T_ctl whose provenance names its calibration evidence (evidence/r0/<ts>) or the user's ruling
+tctl_ok() {
+    [ "$DEV" = 1 ] || [ "$MODE" = calibrate ] || { [ -n "$TCTL_S" ] && case "$TCTL_PROV" in *evidence/r0/*|*"user ruling"*) true ;; *) false ;; esac; }
+}
 check r0_t_ctl_is_calibrated_or_run_is_dev tctl_ok
 ric_watchdog_bg
 
@@ -95,11 +105,15 @@ fact q2OutageSwitches "$Q2_N"
 fact substitution1Applied "$SUBST"
 fact outageThresholdDb "$THRESH"
 CLI+=("--outageThreshold=$THRESH")
+if [ "$MODE" != calibrate ]; then
 check r0_c8_free_run_at_gated_threshold paced_null_run c8free free 0 --RngRun=1
 check r0_c8_lockstep_null_control paced_null_run c8null lockstep 0 --RngRun=1
+fi
 c8() { python3 -I "$HARNESS_DIR/scripts/gates/digest-run.py" --compare c8free="$RUNS/c8free" c8null="$RUNS/c8null" >"$e/c8-digests.json"; local rc=$?; python3 -I -c 'import json,sys; d=json.load(open(sys.argv[1])); print("all_equal", d["all_equal"])' "$e/c8-digests.json"; return $rc; }
+if [ "$MODE" != calibrate ]; then
 check r0_c8_null_control_equals_free_run c8
 fact c8NullEqualsFree "$(python3 -I -c 'import json,sys; print(json.dumps(json.load(open(sys.argv[1]))["all_equal"]))' "$e/c8-digests.json" 2>/dev/null || echo null)"
+fi
 
 ################################################################################
 # live runs
@@ -107,6 +121,15 @@ fact c8NullEqualsFree "$(python3 -I -c 'import json,sys; print(json.dumps(json.l
 RC_EP=$(rc_endpoint)
 python3 -I "$CHK" schedule "$SCEN" "$RC_EP" --rc-send "$HARNESS_DIR/scripts/gates/rc-send.sh" >"$e/r0-schedule.json"
 python3 -I "$CHK" schedule "$SCEN" "$RC_EP" --rc-send "$HARNESS_DIR/scripts/gates/rc-send.sh" --forced-late >"$e/k9-schedule.json"
+
+no_stray_calib() {
+    local bad=0
+    pgrep -f "scenario-zero" && bad=1
+    pgrep -f "gates/pacer.py" && bad=1
+    [ -z "$(dk ps -aq --filter label=ns3e2.agent=1)" ] || { echo "agent container left"; bad=1; }
+    [ "$bad" = 0 ] && echo "no leftovers"
+    return $bad
+}
 
 all_subscribed() {
     local deadline=$(($(date +%s) + 180)) rows
@@ -180,6 +203,19 @@ r0_live() {
     check "r0_${label}_c9_handover_rows_match_applied_lines" python3 -I "$HARNESS_DIR/scripts/gates/check-c9-handover-trace.py" "$rd"
 }
 
+if [ "$MODE" = calibrate ]; then
+    python3 -I "$CHK" schedule "$SCEN" "$RC_EP" --rc-send "$HARNESS_DIR/scripts/gates/rc-send.sh" --calibrate >"$e/calibrate-schedule.json"
+    r0_live calib "$e/calibrate-schedule.json" 10
+    calib_tctl() { python3 -I "$CHK" tctl "$RUNS/calib/pacer/pacer-summary.json" | tee "$e/calibration.json"; }
+    check r0_calibration_ten_complete_trigger_steps_and_t_ctl calib_tctl
+    fact calibration "$(cat "$e/calibration.json" 2>/dev/null || echo null)"
+    fact calibratedTCtlSeconds "$(python3 -I -c 'import json,sys; print(json.dumps(json.load(open(sys.argv[1]))["tCtlSeconds"]))' "$e/calibration.json" 2>/dev/null || echo null)"
+    fact loadAtCalibration "$(json_str "$(uptime)")"
+    check r0_no_stray_process_after_calibration no_stray_calib
+    fact vmLoadEnd "$(json_str "$(uptime)")"
+    gate_finish
+    exit $?
+fi
 NLIVE=3; [ "$MODE" = single ] && NLIVE=1
 for i in $(seq "$NLIVE"); do
     if [ "$i" = 1 ]; then r0_live "live$i" "$e/r0-schedule.json" "$N_CTL" --first; else r0_live "live$i" "$e/r0-schedule.json" "$N_CTL"; fi
