@@ -41,3 +41,9 @@ My recommendation is option 1. It keeps the A1 path real and the n2 proof intact
 2. Apply the user's ruling.
 3. Re-run gate i2 `--part ts` fresh.
 4. Run gate p5, then i2 `--part stub`, then gate r2: `--mode calibrate`, then commit W and `a1_threshold`, then `--dev`, then C1.
+
+## 6. After the resume (2026-10-24, 08:25–09:10 KST)
+- **User ruling, 08:25 KST:** "allow a third substitution", i.e. option 1 (`plans/reports/decisions-261024-0825-GH-1-substitution-3-a1-payload-ruling.md`). Testbed `c7628145` carries the patch; harness `8670eb9` checks it.
+- **Gate i2 run 3** (`evidence/i2/20261023T233300Z`) was red on the threshold only. Substitution 3 worked: the patch applied and the image was rebuilt. But a1mediator still held its run-2 connection to the deleted TS Service's ClusterIP, so the three 20010s were retransmitted into nothing. This is the L7 risk, now observed, recorded as **L finding 4**.
+- **kongming** (`plans/reports/kongming-261024-0840-GH-1-p5-i2-a1mediator-stale-ts-connection.md`) confirmed the cause (RMR 4.9.1 reconnects only after a read error; kube-proxy IPVS expires idle entries after 900 s, so the FIN was lost). Remedy: delete the a1mediator pod after the TS/stub pods are replaced and before rtmgr restarts, in gate i2 and in r2's per-run reset, with new freshness and connection checks.
+- **Trade-off, written down as kongming asked:** I treat this as an extension of Stop A ruling 6 (the rtmgr restart) and report it rather than pause. The plan does not list L-only remedies, and T5 literally reads "an L-release failure", so the user ratifies L finding 4 at Stop B. A red re-run of i2 is PAUSE T6.

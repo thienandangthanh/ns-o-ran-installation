@@ -26,6 +26,15 @@
 #   ts_stub_pods_reset <label>    delete the TS xApp and stub pods (their Services stay), wait for new Ready pods,
 #                                 ensure both are registered, restart rtmgr, check its sessions (a1mediator too);
 #                                 $e/<label>-ts-reset.json proves freshness, $e/<label>-appmgr-xapps.json the list
+#   a1mediator_restart <label>    replace the a1mediator pod (deleted, not rolled), wait for a new Ready pod, prove it
+#                                 fresh and policy type 20008 still present ($e/<label>-a1mediator-restart.json). Its
+#                                 RMR keeps one TCP connection per endpoint and notices a dead peer only on a read
+#                                 error; behind kube-proxy IPVS (idle entries expire after 900 s) a replaced TS pod
+#                                 or Service leaves that connection black-holed, so 20010 is "sent" and lost
+#   a1mediator_restart_count      restart count of the running a1mediator pod (recorded, never judged)
+#   a1_ts_connection_check <label>  after the threshold line: a1mediator holds an ESTABLISHED connection to the TS
+#                                 xApp's rmr ClusterIP:4560 with an empty send queue, and no :4560 connection with a
+#                                 non-empty one ($e/<label>-a1mediator-proc-net-tcp.txt)
 #   ts_nodeb_list_check           the TS log's nodeb list (read once at start-up, gRPC mode only) names every
 #                                 CONNECTED E2 node e2mgr knows, and cell mapping did not fail
 #   ts_policy_type_ensure         A1 policy type 20008 exists at a1mediator
@@ -262,6 +271,7 @@ ts_stub_pods_reset() {
     # registrations survive a pod replacement (the Services stay) but not an appmgr restart
     xapp_ensure_registered trafficxapp && xapp_ensure_registered "$STUB_NAME" || return 1
     xapp_list_save "$EVIDENCE_DIR/$1-appmgr-xapps.json" || return 1
+    a1mediator_restart "$1" || return 1
     rc_restart_rtmgr || return 1
     kc -n ricxapp get pods -o json >"$r-pods-after.json" || return 1
     python3 -I "$HARNESS_DIR/scripts/gates/check-ts-stub-reset.py" "$r" || return 1
@@ -294,6 +304,51 @@ ts_nodeb_list_check() {
     echo "all $n CONNECTED nodes are in the TS xApp's nodeb list"
 }
 
+_a1_pod() { kc -n ricplt get pods --no-headers | awk '/a1mediator/ && $3 == "Running" { print $1 }' | head -n 1; }
+
+a1mediator_restart() {
+    local r="$EVIDENCE_DIR/$1-a1mediator-restart" old name deadline base code
+    date -u +%Y-%m-%dT%H:%M:%SZ >"$r-start.txt"
+    kc -n ricplt get pods -o json >"$r-pods-before.json" || return 1
+    old=$(kc -n ricplt get pods --no-headers | awk '/a1mediator/ { print $1 }' | head -n 1)
+    [ -n "$old" ] || { echo "no a1mediator pod"; return 1; }
+    kc -n ricplt delete pod "$old" --wait=true >/dev/null || return 1
+    deadline=$(($(date +%s) + 180))
+    while [ "$(date +%s)" -lt "$deadline" ]; do
+        name=$(kc -n ricplt get pods --no-headers | awk '/a1mediator/ && $2 == "1/1" && $3 == "Running" { print $1 }' | head -n 1)
+        [ -n "$name" ] && [ "$name" != "$old" ] && break
+        sleep 3
+    done
+    [ -n "$name" ] && [ "$name" != "$old" ] || { echo "a1mediator did not come back"; return 1; }
+    echo "a1mediator $old -> $name"
+    kc -n ricplt get pods -o json >"$r-pods-after.json" || return 1
+    python3 -I "$HARNESS_DIR/scripts/gates/check-ts-stub-reset.py" "$r" deployment-ricplt-a1mediator || return 1
+    # the policy types live in SDL, so they survive the restart; GET only
+    base=$(_a1) || return 1
+    for _ in $(seq 20); do
+        code=$(curl -s -m 5 -o /dev/null -w '%{http_code}' "$base/policytypes/$TS_POLICY_TYPE")
+        [ "$code" = 200 ] && break
+        sleep 2
+    done
+    echo "policy type $TS_POLICY_TYPE after the restart: HTTP $code"
+    [ "$code" = 200 ]
+}
+
+a1mediator_restart_count() { kc -n ricplt get pod "$(_a1_pod)" -o jsonpath='{.status.containerStatuses[0].restartCount}'; }
+
+a1_ts_connection_check() {
+    local f="$EVIDENCE_DIR/$1-a1mediator-proc-net-tcp.txt" ip hex
+    kc -n ricplt exec "$(_a1_pod)" -- cat /proc/net/tcp >"$f" || return 1
+    ip=$(svc_ip ricxapp service-ricxapp-trafficxapp-rmr) || return 1
+    hex=$(echo "$ip" | awk -F. '{ printf "%02X%02X%02X%02X:11D0", $4, $3, $2, $1 }')
+    # column 5 is tx_queue:rx_queue in hex
+    awk -v d="$hex" '
+        $3 == d && $4 == "01" && substr($5, 1, 8) == "00000000" { ok = 1 }
+        $3 ~ /:11D0$/ && substr($5, 1, 8) != "00000000" { print "send queue not empty: " $2 " -> " $3 " state " $4 " queue " $5; bad = 1 }
+        END { exit !(ok && !bad) }' "$f" || { echo "a1mediator has no clean ESTABLISHED connection to the TS xApp $ip:4560"; return 1; }
+    echo "a1mediator -> TS xApp $ip:4560 ESTABLISHED, send queue empty; no :4560 connection with queued data"
+}
+
 _a1() { local ip; ip=$(svc_ip ricplt service-ricplt-a1mediator-http) || return 1; echo "http://$ip:10000/A1-P/v2"; }
 
 ts_policy_type_ensure() {
@@ -324,7 +379,8 @@ ts_policy_set() {
         [ "$code" = 202 ] || [ "$code" = 201 ] || [ "$code" = 200 ] || return 1
         for _ in $(seq 20); do
             kc -n ricxapp logs "$pod" 2>&1 | grep -q "Setting Threshold for A1-P value: $th%" &&
-                { kc -n ricxapp logs "$pod" 2>&1 | grep 'Setting Threshold'; return 0; }
+                { kc -n ricxapp logs "$pod" 2>&1 | grep 'Setting Threshold'; echo "$i" >"$EVIDENCE_DIR/$id-a1-attempt.txt"
+                  echo "threshold logged after attempt $i"; return 0; }
             sleep 1
         done
         log "ts_policy_set: no threshold line in $pod 20 s after instance $id-$i (attempt $i/3)"

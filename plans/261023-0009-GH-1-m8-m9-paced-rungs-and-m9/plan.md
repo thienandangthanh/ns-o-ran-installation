@@ -22,16 +22,16 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-24 08:45 KST (segment 2 resumed after PAUSE T5: user allowed substitution 3, plans/reports/decisions-261024-0825-GH-1-substitution-3-a1-payload-ruling.md; Testbed c7628145 adds the TS xApp A1 payload patch, agent dir unchanged vs 4c8397d0)
+last-updated: 2026-10-24 09:10 KST (i2 run 3 red on the A1 threshold only: a1mediator held a stale RMR connection to the deleted TS Service, L finding 4; kongming-261024-0840 remedy a1mediator_restart in i2 and ts_stub_pods_reset; re-running i2 --part ts fresh)
 earlier: 2026-10-24 03:25 PAUSE T5 (A1 payload string; journal docs/journals/2026-10-24-m8-m9-p5-pause-a1-payload.md); 02:04 user accepted every Stop A default (plans/reports/decisions-261024-0204-GH-1-stop-a-user-rulings.md; ruling 4 = recorded deviation P8); 2026-10-23 18:12 STOP A (R0 = M8 and R1 green); 18:04 R1 C1 PASS evidence/r1/20261023T084654Z; 16:57 r0-green; 16:54 R0 C1 PASS 073520Z
 current phase: P5 (R2: TS xApp + stub QP). Done in P5: rmr-peer image (stub QP + injector, self-test green on the VM), ts-lib.sh, gate i2, gate p5 (probe), probe fixtures, substitution 3 (patch + i2/r2 checks). Next: gate i2 --part ts with the patched build (>10 min), gate p5 probe, i2 --part stub, gate r2 (calibrate, --dev, C1). Kongming notes: -1815 (Stop A review, P5 must-do list in section 3.3), -0320 (A1 payload, section 5 checklist).
-VM: expected domstate=running, snapshot-current=r0-green; boot time 2026-10-23 07:56:59 UTC; rc installed at a2282ee by gate i0; no agent containers; TS xApp installed at 19e169b unpatched (image sha256:d12fd514...) in gRPC mode and registered with appmgr (gate i2 run 2, 18:03 UTC); stub not installed; rmr-peer image not built (only stubqp-dev:test from a manual build); a different boot time means a reboot or revert: run gate i0 first
+VM: expected domstate=running, snapshot-current=r0-green; boot time 2026-10-23 07:56:59 UTC; rc installed at a2282ee by gate i0; no agent containers; TS xApp installed at 19e169b + substitution 3 (image sha256:dc28062f..., i2 run 3) in gRPC mode and registered with appmgr (gate i2 run 2, 18:03 UTC); stub not installed; rmr-peer image not built (only stubqp-dev:test from a manual build); a different boot time means a reboot or revert: run gate i0 first
 snapshots: fresh-install, f7-rerun-green, r0-green
 host /home free: 53 G (2026-10-24 08:25 KST); VM / 50 G free; floor 20 GB; M9 projection about -23 to -25 GB (milestone-261023-1810); the user frees the shortfall at Stop B
 fork SHAs (pushed, scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, Testbed c7628145 (was 4c8397d0; only the TS installer and its patch changed)
 harness SHA (pushed): see git log
-in-flight background jobs: gate i2 --part ts (patched TS build), started 2026-10-24 ~08:50 KST
-next action: when i2 is green, gate p5 probe, then i2 --part stub, then gate r2 calibrate. For Stop B: L findings 2 (appmgr registration) and 3 (A1 payload string).
+in-flight background jobs: gate i2 --part ts run 4 (a1mediator restart), started 2026-10-24 ~09:12 KST
+next action: when i2 is green, gate p5 probe, then i2 --part stub, then gate r2 calibrate. For Stop B: L findings 2 (appmgr registration), 3 (A1 payload string) and 4 (a1mediator stale RMR connection; restart remedy).
 hold: none.
 ```
 On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`, `virsh -c qemu:///system snapshot-current --name ubuntu24.04` and `scripts/vm/vm-snapshot.sh list`, and compare them with this card. On a mismatch, print a PAUSE T3 line with the difference.

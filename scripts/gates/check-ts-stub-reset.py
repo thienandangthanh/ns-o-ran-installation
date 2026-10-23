@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""check-ts-stub-reset.py PREFIX: were the TS xApp and stub QP pods recreated for this run?
+"""check-ts-stub-reset.py PREFIX [POD-PREFIX...]: were the TS xApp and stub QP pods (or the named pods) recreated?
 
 Reads PREFIX-start.txt (UTC time the pod reset began) and PREFIX-pods-before.json / -after.json
-(`kubectl -n ricxapp get pods -o json`). Fresh means: the TS xApp and the stub QP each a different pod (name
+(`kubectl -n <namespace> get pods -o json`). Fresh means: the TS xApp and the stub QP (by default) each a different pod (name
 and uid) whose pod start time and container start times are not before the reset began, and a restart count
 of 0. Writes PREFIX.json; exit 1 when the reset was not fresh.
 """
@@ -12,13 +12,13 @@ import sys
 PODS = ("ricxapp-trafficxapp", "ricxapp-stubqp")
 
 
-def pods(path):
+def pods(path, prefixes):
     out = {}
     for p in json.load(open(path))["items"]:
         name = p["metadata"]["name"]
         if p["metadata"].get("deletionTimestamp"):
             continue
-        for k in PODS:
+        for k in prefixes:
             if name.startswith(k + "-"):
                 cs = p["status"].get("containerStatuses", [])
                 out[k] = {"name": name, "uid": p["metadata"]["uid"], "startTime": p["status"].get("startTime"),
@@ -28,11 +28,11 @@ def pods(path):
     return out
 
 
-def main(r):
+def main(r, prefixes):
     start = open(r + "-start.txt").read().strip()
-    before, after = pods(r + "-pods-before.json"), pods(r + "-pods-after.json")
+    before, after = pods(r + "-pods-before.json", prefixes), pods(r + "-pods-after.json", prefixes)
     problems = []
-    for k in PODS:
+    for k in prefixes:
         b, a = before.get(k), after.get(k)
         if a is None:
             problems.append("%s: no pod after the reset" % k)
@@ -53,4 +53,4 @@ def main(r):
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1]))
+    sys.exit(main(sys.argv[1], tuple(sys.argv[2:]) or PODS))

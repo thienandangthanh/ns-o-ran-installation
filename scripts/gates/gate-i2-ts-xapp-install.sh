@@ -58,6 +58,9 @@ fi
 check i2_ts_xapp_registered_with_appmgr xapp_ensure_registered trafficxapp
 [ "$PART" = ts ] || check i2_stub_qp_registered_with_appmgr xapp_ensure_registered "$STUB_NAME"
 check i2_appmgr_xapp_list_saved xapp_list_save "$EVIDENCE_DIR/i2-appmgr-xapps.json"
+# a1mediator's RMR connection to a replaced TS pod or Service is black-holed, never reconnected in time
+check i2_a1mediator_restarted_fresh_policy_type_kept a1mediator_restart i2
+fact a1mediatorRestart "$(jq -c '{fresh, problems, after}' "$EVIDENCE_DIR/i2-a1mediator-restart.json" 2>/dev/null || echo null)"
 check i2_rtmgr_restarted_after_registration rc_restart_rtmgr
 sessions() { for _ in $(seq 20); do rtmgr_sessions "${SVCS[@]}" >/dev/null && break; sleep 3; done; rtmgr_sessions "${SVCS[@]}"; }
 check i2_rtmgr_session_to_every_xapp_and_a1mediator sessions
@@ -74,6 +77,9 @@ else
 fi
 A1_TH=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["threshold"])' "$HARNESS_DIR/scripts/gates/r2-scenario.json")
 check i2_a1_threshold_reaches_ts_xapp ts_policy_set "$A1_TH" "i2-$GATE_TS"
+fact a1ThresholdAttempt "$(cat "$EVIDENCE_DIR/i2-$GATE_TS-a1-attempt.txt" 2>/dev/null || echo null)"
+check i2_a1mediator_connection_to_ts_xapp_clean a1_ts_connection_check i2
+fact a1mediatorRestartCountAtEnd "$(a1mediator_restart_count 2>/dev/null || echo null)"
 fact xappRegistration "$(jq -c '[.[] | {name, instances: [.instances[]? | {name, ip, port}]}]' "$EVIDENCE_DIR/i2-appmgr-xapps.json" 2>/dev/null || echo null)"
 check i2_xapp_image_ids ts_image_ids
 fact xappImageIds "$(cat "$EVIDENCE_DIR/xapp-image-ids.json" 2>/dev/null || echo null)"
