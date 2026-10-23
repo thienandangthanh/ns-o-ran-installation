@@ -22,7 +22,8 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-23 17:30 KST (gate i0 FIRST RUN PASS evidence/i0/20261023T082556Z at 17:26 KST; gate r1 --dev rehearsal launched 17:29 KST at cc017a1, about 20 min, timeout 10800 s)
+last-updated: 2026-10-23 17:48 KST (gate r1 --dev rehearsal PASS evidence/r1/20261023T082845Z, 123/123, V1-V6 met, 17 min; the GATED r1 run launched 17:48 KST at the commit after 57be9f0, timeout 10800 s; red on any V = Failure Protocol)
+earlier: 2026-10-23 17:30 KST (gate i0 FIRST RUN PASS evidence/i0/20261023T082556Z at 17:26 KST)
 earlier: 2026-10-23 17:24 KST (P4 started: kongming P3-exit GO (kongming-261023-1705), 11 harness-only must-do items done host-side and pushed)
 previous: 2026-10-23 17:02 KST (P3 exit: R0 = M8 GREEN at evidence/r0/20261023T073520Z; r0-green taken 16:57 KST)
 earlier: 16:35 KST R0 run 1 evidence/r0/20261023T065551Z C1 green but V7/V9 failed (first failed Verify, kongming-261023-1615; gate fixed db2e314); 15:57 calibration PASS 065002Z (L_max 12.9 ms, T_ctl 30 s at 1ec2493); 15:44 the user released the CPU hold; 12:55 PAUSE T3 (journal docs/journals/2026-10-23-m8-m9-p3-pause-cpu-hold.md)
