@@ -22,17 +22,17 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-23 19:40 KST (kongming segment review done: plans/reports/kongming-261023-1815-...; milestone corrected) 18:12 KST (STOP A: segment 1 done; R0 = M8 and R1 green; milestone plans/reports/milestone-261023-1810-GH-1-m8-m9-segment-1-stop-a.md; journal docs/journals/2026-10-23-m8-m9-stop-a.md)
-earlier: 18:04 R1 C1 PASS evidence/r1/20261023T084654Z (1b6e4ea, 123/123, V1-V6); 17:46 R1 rehearsal PASS 082845Z; 17:26 gate i0 first run PASS i0/20261023T082556Z; 16:57 r0-green; 16:54 R0 C1 PASS 073520Z
-current phase: P5 next (R2: TS xApp + stub QP, stray-ack probe first); P0-P4 done. Segment 2 = P5-P9, ending at Stop B. Kongming notes: -0735 (P2 exit), -0830 (rc RMR), -1000 (pause), -1615 (P3 V7/V9), -1705 (P3 exit, P4 design), -1815 (Stop A segment review).
-VM: expected domstate=running, snapshot-current=r0-green; boot time 2026-10-23 07:56:59 UTC; rc installed at a2282ee by gate i0 (17:26 KST); no agent containers; a different boot time means a reboot or revert: run gate i0 first
+last-updated: 2026-10-24 02:55 KST (segment 2 started; P5 in progress: gate i2 --part ts next)
+earlier: 2026-10-24 02:04 user accepted every Stop A default (plans/reports/decisions-261024-0204-GH-1-stop-a-user-rulings.md; ruling 4 = recorded deviation P8); 2026-10-23 19:40 kongming segment review; 18:12 STOP A (R0 = M8 and R1 green); 18:04 R1 C1 PASS evidence/r1/20261023T084654Z; 16:57 r0-green; 16:54 R0 C1 PASS 073520Z
+current phase: P5 (R2: TS xApp + stub QP). Done in P5: rmr-peer image (stub QP + injector, self-test green on the VM), ts-lib.sh, gate i2, gate p5 (probe), probe fixtures. Next: gate i2 --part ts (first TS xApp build from nexus3; >10 min), gate p5 probe, i2 --part stub, gate r2 (calibrate, --dev, C1). Kongming notes: -1815 (Stop A review, P5 must-do list in section 3.3).
+VM: expected domstate=running, snapshot-current=r0-green; boot time 2026-10-23 07:56:59 UTC; rc installed at a2282ee by gate i0; no agent containers; TS xApp and stub not yet installed; a different boot time means a reboot or revert: run gate i0 first
 snapshots: fresh-install, f7-rerun-green, r0-green
-host /home free: 54 G (2026-10-23 19:32 KST); VM / 51 G free; floor 20 GB; chain base 3.3 G + f7 37 G + P1-P3 14 G + r0-green active 2.1 G; M9 projection about -24 to -26 GB (54 - 10..12 remaining dev - ~48 M9 - 20); the user frees the shortfall at Stop B; /mnt/data 21 G free
+host /home free: 54 G (2026-10-24 02:05 KST); VM / 50 G free; floor 20 GB; M9 projection about -23 to -25 GB (milestone-261023-1810); the user frees the shortfall at Stop B
 fork SHAs (pushed, scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, Testbed 4c8397d0 (unchanged since P2)
-harness SHA (pushed): see git log (the Stop A commit); R1 gate ran at 1b6e4ea, R0 gate at cfc6ef4
+harness SHA (pushed): see git log
 in-flight background jobs: none
-next action (after the user re-issues the goal): read the user's rulings on the milestone report's items 1-9; pre-flight (3 resume checks + boot time); then P5 per phase-05 (kongming's Stop A review lists the P5 must-do items).
-hold: RELEASED by the user 2026-10-23 15:44 KST ("Released": the other session is done). Was: 02:30 KST, re-confirmed 12:40 KST.
+next action: run gate i2 --part ts through vm-exec.sh, then gate p5.
+hold: none.
 ```
 On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`, `virsh -c qemu:///system snapshot-current --name ubuntu24.04` and `scripts/vm/vm-snapshot.sh list`, and compare them with this card. On a mismatch, print a PAUSE T3 line with the difference.
 
@@ -56,7 +56,7 @@ On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`
 | P2 | [S1: pacer and barrier, Fallback-1, null-control, fault run (i)](phase-02-s1-pacer-barrier-fallback1-null-control.md) | scripted S1 gate | none | done (S1 PASS 35/35 at ca65920; M5-M7 PASS at e97ed53, 2026-10-23 07:25 KST) |
 | P3 | [R0 = M8: rc by scripted gRPC, D7 three paths, G4](phase-03-r0-m8-rc-scripted-grpc.md) | R0 C1 | `r0-green` | done (R0 C1 PASS, V1-V9, evidence/r0/20261023T073520Z; r0-green 2026-10-23 16:57 KST) |
 | P4 | [R1: multi-control, unknown IMSI, fault run (ii); then Stop A](phase-04-r1-multi-control-fault-runs-stop-a.md) | R1 C1 | none (no `r1-green`) | done (R1 C1 PASS, V1-V6, evidence/r1/20261023T084654Z, 2026-10-23 18:04 KST); Stop A 18:10 KST |
-| P5 | [R2: TS xApp + stub QP, stray-ack probe first](phase-05-r2-ts-xapp-stub-qp-stray-ack-probe.md) | R2 C1 | `r2-green` | pending |
+| P5 | [R2: TS xApp + stub QP, stray-ack probe first](phase-05-r2-ts-xapp-stub-qp-stray-ack-probe.md) | R2 C1 | `r2-green` | in progress (2026-10-24) |
 | P6 | [N4: opt-in UL traffic and the UL PDCP SDU volume counter](phase-06-n4-ul-traffic-and-ul-pdcp-volume-counter.md) | free-run digest (UL off) unchanged; M5–M7; R0/R1/R2 one live run each; UL-on dump | none | pending |
 | P7 | [QP fork and Testbed pickup](phase-07-qp-fork-and-testbed-pickup.md) | unit tests and forecast hash in the image; token gate | none | pending |
 | P8 | [R3: TS xApp + QP fork, UL on](phase-08-r3-ts-xapp-qp-fork-ul-on.md) | R3 C1 | `r3-green` | pending |

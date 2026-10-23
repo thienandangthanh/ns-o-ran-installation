@@ -22,6 +22,7 @@ In scope 6 and 7; R2:
 - Create: `scripts/gates/ts-xapp-install.sh`, `scripts/gates/stub-qp-rmr-peer.py` (or a small C++/Go peer if Python RMR bindings are unavailable on the pinned image), `scripts/gates/send-rmr.sh` (30003, 12041 injection), `scripts/gates/gate-r2-ts-stub-qp.sh`, `scripts/gates/r2-scenario.json`, `scripts/gates/stray-ack-probe.sh`.
 - Conditional (substitution 2 only): Testbed fork, the TS xApp install patch with the default handler.
 - Modify: `scripts/run-to-m9.sh` (add gate r2).
+- **Names as built (2026-10-24, kongming-1815 §3.3 step 2; they follow `run-to-m9.sh:63-64`):** `ts-xapp-install.sh` is `scripts/gates/gate-i2-ts-xapp-install.sh` (TS xApp with the gRPC override, A1 type 20008, stub, routes; M9 runs it with `--part all`). `stray-ack-probe.sh` is `scripts/gates/gate-p5-stray-ack-probe.sh`, a one-time dev run with its own evidence dir (gate id `p5`); M9 does not re-probe and inherits substitution 2 through the Testbed pin. The stub and the injector are one image, `tools/rmr-peer/` (stub `stub-qp-rmr-peer.py`, deployed as xApp `stubqp`; a persistent host-network injector `rmr-injector.py` with a static seed route, driven by `scripts/gates/send-rmr.sh`). Shared VM-side helpers: `scripts/gates/ts-lib.sh`.
 
 ## Steps
 1. Install the TS xApp at the pinned SHA via `ts-xapp-install.sh`, configured for gRPC to rc:7777.
@@ -46,6 +47,9 @@ In scope 6 and 7; R2:
 | The TS xApp addresses the target node — **recorded deviation P1** | 3GPP TS 38.300 §9.2.3.1, §9.2.3.2.1; 3GPP TS 37.340 §10.5.1 | per decision record §2 | 2026-10-22 |
 | UE ID on the wire — **recorded deviation P4** | E2SM common v07.00 §6.2.2.6 | `QW6VJ83M` | 2026-10-22 |
 | A1 policy for the threshold | O-RAN A1 policy type 20008 as defined by the TS xApp (no 3GPP/O-RAN spec decision) | — | — |
+| The TS xApp's control header: `gNB-UEID` with AMF UE NGAP ID = IMSI, GUAMI fixed by the TS xApp (region `10100000`, set `0000000000`, pointer `000001`), gNB-CU UE F1AP ID and gNB-CU-CP UE E1AP ID both = IMSI. rc's encoder ignores the gRPC cell type and AckRequest. The E2SM-RC message equals rc-send's (same NR CGI, PLMN from e2mgr); only the header's GUAMI and the F1AP/E1AP IDs differ. Inside **recorded deviation P4** (the gNB choice is the deviation); the F1AP and E1AP lists are conditional (ifCUDUseparated, ifCPUPseparated) and "may not be included" from the RIC, so including them is allowed | E2SM common v07.00 §6.2.2.6 (UE ID table, pp. 13–14, conditions ifCUDUseparated, ifCPUPseparated) | `QW6VJ83M` | 2026-10-24 |
+| Stray acks: 12041/12042 at subid −1 reach the TS xApp through rtmgr's catch-all route | No spec decision: O-RAN SC RMR and rtmgr behaviour, not E2AP (E2AP v03.00 defines the RICcontrolAcknowledge/Failure PDUs, not their RIC-internal routing) | — | 2026-10-24 |
+| RAN function 3 (RC) is not announced in E2 Setup; the agents accept RC controls anyway | **Recorded deviation P8** (user ruling 4, 2026-10-24): E2AP v03.00 §8.2.4.3 expects a FAILURE for an unannounced function. Recorded, not fixed | `WEE5IEXF` | 2026-10-23 |
 
 ## Failure Protocol
 If any Verify step does not meet its stated pass condition, STOP this phase.
