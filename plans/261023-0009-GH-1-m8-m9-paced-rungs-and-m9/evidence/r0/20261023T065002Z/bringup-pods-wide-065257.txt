@@ -1,0 +1,27 @@
+NAMESPACE      NAME                                                        READY   STATUS    RESTARTS         AGE   IP                NODE            NOMINATED NODE   READINESS GATES
+kube-flannel   kube-flannel-ds-wpvrn                                       1/1     Running   8 (14h ago)      33h   192.168.122.137   oran-kvm-2404   <none>           <none>
+kube-system    coredns-674b8bbfcf-mqhjk                                    1/1     Running   8 (14h ago)      33h   10.244.0.163      oran-kvm-2404   <none>           <none>
+kube-system    coredns-674b8bbfcf-qwtvx                                    1/1     Running   8 (14h ago)      33h   10.244.0.159      oran-kvm-2404   <none>           <none>
+kube-system    etcd-oran-kvm-2404                                          1/1     Running   8 (14h ago)      33h   192.168.122.137   oran-kvm-2404   <none>           <none>
+kube-system    kube-apiserver-oran-kvm-2404                                1/1     Running   8 (14h ago)      33h   192.168.122.137   oran-kvm-2404   <none>           <none>
+kube-system    kube-controller-manager-oran-kvm-2404                       1/1     Running   19 (7h52m ago)   33h   192.168.122.137   oran-kvm-2404   <none>           <none>
+kube-system    kube-proxy-c8tc5                                            1/1     Running   8 (14h ago)      33h   192.168.122.137   oran-kvm-2404   <none>           <none>
+kube-system    kube-scheduler-oran-kvm-2404                                1/1     Running   20 (7h51m ago)   33h   192.168.122.137   oran-kvm-2404   <none>           <none>
+ricinfra       deployment-tiller-ricxapp-84b87b8c64-2kk4v                  1/1     Running   8 (14h ago)      33h   10.244.0.158      oran-kvm-2404   <none>           <none>
+ricplt         deployment-ricplt-a1mediator-78f79cbb6b-dt774               1/1     Running   9 (14h ago)      33h   10.244.0.171      oran-kvm-2404   <none>           <none>
+ricplt         deployment-ricplt-alarmmanager-5b49476676-nwxvm             1/1     Running   8 (14h ago)      33h   10.244.0.169      oran-kvm-2404   <none>           <none>
+ricplt         deployment-ricplt-appmgr-5564b65869-dg6px                   1/1     Running   8 (14h ago)      33h   10.244.0.172      oran-kvm-2404   <none>           <none>
+ricplt         deployment-ricplt-e2mgr-9b6b8f99f-qms4v                     1/1     Running   12 (14h ago)     33h   10.244.0.154      oran-kvm-2404   <none>           <none>
+ricplt         deployment-ricplt-e2term-alpha-88fd95787-5fwkg              1/1     Running   0                8h    10.244.0.175      oran-kvm-2404   <none>           <none>
+ricplt         deployment-ricplt-o1mediator-bf4fb5758-cjjcz                1/1     Running   8 (14h ago)      33h   10.244.0.168      oran-kvm-2404   <none>           <none>
+ricplt         deployment-ricplt-rtmgr-74fb47b69d-q75c6                    1/1     Running   0                25s   10.244.0.233      oran-kvm-2404   <none>           <none>
+ricplt         deployment-ricplt-submgr-858956fbdc-55dwq                   1/1     Running   8 (14h ago)      33h   10.244.0.157      oran-kvm-2404   <none>           <none>
+ricplt         deployment-ricplt-vespamgr-848f7bb874-mmbd5                 1/1     Running   8 (14h ago)      33h   10.244.0.170      oran-kvm-2404   <none>           <none>
+ricplt         r4-influxdb-influxdb2-0                                     1/1     Running   6 (14h ago)      32h   10.244.0.161      oran-kvm-2404   <none>           <none>
+ricplt         r4-infrastructure-kong-78657d8f48-dxr5n                     2/2     Running   16 (14h ago)     33h   10.244.0.162      oran-kvm-2404   <none>           <none>
+ricplt         r4-infrastructure-prometheus-alertmanager-b9cc56766-8hqk9   2/2     Running   16 (14h ago)     33h   10.244.0.166      oran-kvm-2404   <none>           <none>
+ricplt         r4-infrastructure-prometheus-server-6476958975-r9nfv        1/1     Running   8 (14h ago)      33h   10.244.0.164      oran-kvm-2404   <none>           <none>
+ricplt         statefulset-ricplt-dbaas-server-0                           1/1     Running   8 (14h ago)      33h   10.244.0.156      oran-kvm-2404   <none>           <none>
+ricxapp        ricxapp-hw-go-c84579888-47gb7                               1/1     Running   0                44s   10.244.0.232      oran-kvm-2404   <none>           <none>
+ricxapp        ricxapp-kpimon-go-85dc5fdf8b-dscj9                          1/1     Running   0                44s   10.244.0.231      oran-kvm-2404   <none>           <none>
+ricxapp        ricxapp-rc-6db9dcd964-cwsld                                 1/1     Running   0                44s   10.244.0.230      oran-kvm-2404   <none>           <none>

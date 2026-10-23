@@ -1,0 +1,47 @@
+[06:43:25] gate r0 start; evidence /home/uc/evidence/r0/20261023T064324Z; harness 538a0f268a3766100c89255f007692ae01ac3af5
+[06:43:26] PASS r0_args
+[06:43:26] PASS r0_t_ctl_is_calibrated_or_run_is_dev
+[06:43:26] ric watchdog started (pid 1401146, threshold 600s)
+[06:43:26] PASS r0_nist_tree_at_testbed_sha_with_agent_dir
+[06:43:26] PASS r0_build_tools_present
+[06:43:26] PASS r0_sctp_module_loaded
+[06:43:26] PASS r0_ns3_binary_located_at_pins
+[06:43:26] PASS r0_pod_log_reader_self_test
+[06:43:26] PASS r0_grpcurl_fetched_and_checksum_verified
+[06:43:27] PASS r0_rc_installed_at_pin_and_ready
+[06:44:48] PASS r0_rc_decoder_built
+[06:45:45] PASS r0_q2_null_control_free_run_default_threshold
+[06:45:45] PASS r0_q2_count_lte_outage_switches
+[06:46:28] PASS r0_calib_ric_reset_fresh_pods_and_bucket
+[06:46:28] PASS r0_calib_route_dump_start
+[06:46:29] PASS r0_calib_capture_started_before_agents
+[06:47:02] PASS r0_calib_agents_connected_set_exact
+[06:47:02] PASS r0_calib_agent_ips_recorded
+[06:47:13] PASS r0_calib_every_agent_ready_and_subscribed
+[06:47:13] PASS r0_calib_pods_snapshot_before
+[06:48:25] PASS r0_calib_lockstep_run_exits_clean
+[06:48:26] PASS r0_calib_pods_snapshot_after
+[06:48:26] PASS r0_calib_route_dump_end
+[06:48:26] PASS r0_calib_restart_counts_zero_rc_kpimon_hw_go_agents
+[06:48:29] PASS r0_calib_agents_stopped
+[06:48:29] PASS r0_calib_capture_stopped
+[06:48:30] PASS r0_calib_kpimon_log_window_complete
+[06:48:30] PASS r0_calib_kpimon_zero_rc_wmore
+[06:48:32] PASS r0_calib_wire_one_terminal_answer_per_request_joined_to_ledger
+[06:48:32] PASS r0_calib_c2_ledger
+[06:48:32] PASS r0_calib_c9_handover_rows_match_applied_lines
+[06:48:32] PASS r0_calibration_ten_complete_trigger_steps_and_t_ctl
+[06:48:32] PASS r0_no_stray_process_after_calibration
+Traceback (most recent call last):
+  File "<stdin>", line 21, in <module>
+  File "/usr/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+json.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 2 column 1 (char 31)
+Terminated
