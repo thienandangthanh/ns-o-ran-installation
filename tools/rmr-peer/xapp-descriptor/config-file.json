@@ -1,0 +1,47 @@
+{
+  "name": "stubqp",
+  "version": "0.1.0",
+  "containers": [
+    {
+      "name": "stubqp",
+      "image": {
+        "registry": "127.0.0.1:80",
+        "name": "stubqp",
+        "tag": "SET-AT-INSTALL"
+      }
+    }
+  ],
+  "messaging": {
+    "ports": [
+      {
+        "name": "http",
+        "container": "stubqp",
+        "port": 8080,
+        "description": "table load and log (gate r2)"
+      },
+      {
+        "name": "rmr-data",
+        "container": "stubqp",
+        "port": 4560,
+        "rxMessages": ["TS_UE_LIST"],
+        "txMessages": ["TS_QOE_PREDICTION"],
+        "policies": [],
+        "description": "rmr receive data port for the stub QP"
+      },
+      {
+        "name": "rmr-route",
+        "container": "stubqp",
+        "port": 4561,
+        "description": "rmr route port for the stub QP"
+      }
+    ]
+  },
+  "rmr": {
+    "protPort": "tcp:4560",
+    "maxSize": 2072,
+    "numWorkers": 1,
+    "rxMessages": ["TS_UE_LIST"],
+    "txMessages": ["TS_QOE_PREDICTION"],
+    "policies": []
+  }
+}

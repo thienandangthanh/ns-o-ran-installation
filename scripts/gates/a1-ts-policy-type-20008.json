@@ -1,0 +1,13 @@
+{
+  "name": "tsapolicy",
+  "description": "TS xApp policy (O-RAN SC traffic steering use case): hand a UE over when a neighbour's predicted downlink throughput exceeds the serving cell's by more than threshold percent",
+  "policy_type_id": 20008,
+  "create_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "threshold": {"type": "integer", "default": 0}
+    },
+    "additionalProperties": false
+  }
+}
