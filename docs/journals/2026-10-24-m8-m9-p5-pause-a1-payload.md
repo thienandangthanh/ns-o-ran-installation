@@ -19,8 +19,12 @@ The L-release a1mediator delivers A1 policy type 20008 to the TS xApp (route `ms
 - **Gate i2 run 2** (`evidence/i2/20261023T180301Z`, harness `59968bf`): every check passes except A1. Registration, rtmgr sessions to every xApp and a1mediator, and the 20010|20008 route all work.
 - **Not run yet:** the stray-ack probe, i2 `--part stub`, and gate r2 (calibrate, `--dev`, C1).
 
-## 3. Options for the user (kongming's pause note: `plans/reports/kongming-261024-0320-GH-1-p5-pause-a1-payload-string-ts-xapp.md`, still being written when the usage limit hit)
-1. **A third allowed substitution:** a minimal TS xApp patch, through the Testbed fork like substitution 2, that also parses a string `payload`. A1 stays end to end. This is a TS xApp change, so it needs your ruling.
+## 3. Options for the user (kongming's pause note: `plans/reports/kongming-261024-0320-GH-1-p5-pause-a1-payload-string-ts-xapp.md`)
+Kongming verified the cause at the pins (`ric-plt/a1` 3.2.2 `540cb28`, `ric-app-ts` `19e169b`). In the Go a1mediator, every 20010 carries `payload` (and `policy_type_id`) as a string: `pkg/rmr/messages.go:32-37` builds the message from a `map[string]string`. The Python a1mediator 2.5.2 sent an object, and the TS xApp was written for that shape. Kongming found no L-only, no-code remedy: a different API path, the policy-type schema, the a1mediator config, another a1mediator version and the TS xApp config were all ruled out. It confirms PAUSE T5 (T3 and T6 also apply) and records this as **L finding 3** for Stop B. It recommends option 1, rejects option 3 as narrowing a test, and lists a fourth option, an a1mediator patch, as rejected.
+1. **A third allowed substitution:** a minimal TS xApp patch of about 8 lines, through the Testbed fork installer's `sed` step like substitution 2, that also parses a string `payload`, applied always. A1 stays end to end. This is a TS xApp change, so it needs your ruling. Pitfalls:
+   - The installer's "already built, skipping" check could deploy the old, unpatched image; i2 must assert that the image changed.
+   - Moving the Testbed pin needs proof that the agent directory is unchanged.
+   - Every verdict carries `substitution3Applied`, and a standards row records that the 20010 payload shape is an O-RAN SC internal format, not an A1 spec decision.
 2. **Send 20010 from the harness injector straight to the TS xApp,** with an object payload. This bypasses A1 and the a1mediator.
 3. **Run R2/R3 at threshold 0** and drop or re-shape the n2 negative. This narrows a test, so it needs your ruling.
 
