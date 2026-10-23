@@ -43,6 +43,7 @@ R1, scripted through rc gRPC, lock-step, R0 config:
 | Decision | Document, version, section | Zotero | Read |
 |---|---|---|---|
 | Refusal and post-bye answers are RICcontrolFailure with a cause | E2AP v03.00 §9.2.1; RIC Control procedure | `WEE5IEXF` | 2026-10-22 |
+| R1 refusals (inHandover, unknownImsi) and the fault-run (ii) control pending at ns-3's bye are each answered RIC CONTROL FAILURE, cause RIC Request "Control failed to execute" | E2AP v03.00 §8.2.4.3 ("If the E2 Node fails to execute the requested RIC Control procedure E2SM specific action, then the E2 Node shall respond with the RIC CONTROL FAILURE message with an appropriate cause value"), §9.2.1 (Cause, RIC Request: "Control failed to execute: Requested control procedure initiated by RIC Control Request failed to be executed in the E2 Node"); as decided in P1 (erratum), nothing new | `WEE5IEXF` | 2026-10-23 |
 | D7 paths (as in P3) | 3GPP TS 38.300 §9.2.3; 3GPP TS 37.340 §10.5.1 | per decision record §2 | 2026-10-22 |
 
 ## Failure Protocol

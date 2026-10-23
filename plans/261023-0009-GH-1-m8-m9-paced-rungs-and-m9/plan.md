@@ -22,16 +22,17 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-23 17:02 KST (P3 exit: R0 = M8 GREEN at evidence/r0/20261023T073520Z (harness cfc6ef4, 109/109, V1-V9 met); r0-green taken 16:57 KST; kongming go/no-go on P4 requested)
+last-updated: 2026-10-23 17:55 KST (P4 started: kongming P3-exit GO (kongming-261023-1705), 11 harness-only must-do items done host-side and pushed; next on the VM: pre-flight, gate i0 (first run ever), one --dev rehearsal of gate r1, then the gated r1 run, each with timeout 10800 s)
+previous: 2026-10-23 17:02 KST (P3 exit: R0 = M8 GREEN at evidence/r0/20261023T073520Z; r0-green taken 16:57 KST)
 earlier: 16:35 KST R0 run 1 evidence/r0/20261023T065551Z C1 green but V7/V9 failed (first failed Verify, kongming-261023-1615; gate fixed db2e314); 15:57 calibration PASS 065002Z (L_max 12.9 ms, T_ctl 30 s at 1ec2493); 15:44 the user released the CPU hold; 12:55 PAUSE T3 (journal docs/journals/2026-10-23-m8-m9-p3-pause-cpu-hold.md)
-current phase: P4 (R1) next, pending kongming's P3-exit go/no-go; P0-P3 done. Kongming notes: plans/reports/kongming-261023-0735-... (P2 exit), -0830-... (rc RMR), -1000-... (pause), -1615-... (P3 V7/V9).
+current phase: P4 (R1) in progress; P0-P3 done. Kongming notes: plans/reports/kongming-261023-0735-... (P2 exit), -0830-... (rc RMR), -1000-... (pause), -1615-... (P3 V7/V9), -1705-... (P3 exit, P4 design).
 VM: expected domstate=running, snapshot-current=r0-green (taken 2026-10-23 07:56 UTC, a clean state after the R0 gate: rc at a2282ee installed, no agent containers); boot time 2026-10-23 07:56:59 UTC (a different boot time means a reboot or revert: run gate i0 or a reset before P4's rc_at_pin precheck)
 snapshots: fresh-install, f7-rerun-green, r0-green
 host /home free: 57 G (2026-10-23 16:58 KST); VM / 51 G free; floor 20 GB; chain base 3.3 G + f7 merged 37 G + P1-P3 overlay 14.2 G + r0-green active 0.07 G; M9 projection about -19 GB (57 - ~8 remaining dev - 48 M9 - 20; raised at Stop A, user frees at Stop B)
 fork SHAs (pushed, scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, Testbed 4c8397d0
 harness SHA (pushed): see git log; the R0 gate ran at cfc6ef4; calibration at 02846b7
 in-flight background jobs: none
-next action: kongming P3-exit go/no-go on P4; then P4 (phase-04): gate-r1-rc-multi-control.sh, r1-scenario.json (cases a-d), fault run (ii), influx-dump.sh, the two P2-deferred barrier items (node departure inside a barrier; stop handshake polling agents), then Stop A.
+next action: (1) pre-flight (3 resume checks + boot time 2026-10-23 07:56:59 UTC); (2) vm-exec.sh gate-i0-rc-install.sh (first run; record the date); (3) vm-exec.sh gate-r1-rc-multi-control.sh -- --dev (rehearsal, labelled dev); (4) vm-exec.sh gate-r1-rc-multi-control.sh --timeout 10800 (the gate), then V1-V6 under the Failure Protocol; (5) P4 exit and Stop A. The P2-deferred fork items are DROPPED (kongming-1705 section 4.3: DrainAll in the stop loop would break V4).
 hold: RELEASED by the user 2026-10-23 15:44 KST ("Released": the other session is done). Was: 02:30 KST, re-confirmed 12:40 KST.
 ```
 On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`, `virsh -c qemu:///system snapshot-current --name ubuntu24.04` and `scripts/vm/vm-snapshot.sh list`, and compare them with this card. On a mismatch, print a PAUSE T3 line with the difference.
