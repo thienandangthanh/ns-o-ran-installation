@@ -1,0 +1,600 @@
+{
+  "gate": "r0",
+  "ts": "20261023T002614Z",
+  "harness_sha": "e67641adb746c61fb09d191a84800e2b05e02c63",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "4c8397d0608f6eb98af47cc4d24f672c5a4600fe",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "962fabc724ccc26d0aab3fe25c2b8cac95d45884",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "63155c4946b5b1180f8f69d259509505b8388e18",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+  },
+  "duration_s": 1259,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "r0_args",
+      "pass": true,
+      "detail": "dev 1; T_ctl 30 s (contract start value (not calibrated)); T_gate 10 s; epoch 1767225600000; rc pin a2282eedc9e32f60298bf530456ad367bef0824b"
+    },
+    {
+      "name": "r0_t_ctl_is_calibrated_or_run_is_dev",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r0_nist_tree_at_testbed_sha_with_agent_dir",
+      "pass": true,
+      "detail": "nist HEAD 4c8397d0608f6eb98af47cc4d24f672c5a4600fe, want 4c8397d0608f6eb98af47cc4d24f672c5a4600fe\nalready at 4c8397d0608f6eb98af47cc4d24f672c5a4600fe\nns3_e2_agent matches 4c8397d0608f6eb98af47cc4d24f672c5a4600fe; metric-map sha256 ab81b6392868b32ea26816a9d394c8b58403d1a41f652b30a3498cfa96a93b66"
+    },
+    {
+      "name": "r0_build_tools_present",
+      "pass": true,
+      "detail": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\ntshark 4.4.19 (>= 4.4)"
+    },
+    {
+      "name": "r0_sctp_module_loaded",
+      "pass": true,
+      "detail": "sctp                  495616  47 sctp_diag\nsctp"
+    },
+    {
+      "name": "r0_ns3_binary_located_at_pins",
+      "pass": true,
+      "detail": "/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"
+    },
+    {
+      "name": "r0_pod_log_reader_self_test",
+      "pass": true,
+      "detail": "self-test rotation: rc 0, indications 5 (want 5), WMORE 1 (want 1), rotations 1 (want 1)\nself-test uncovered start: rc 3 (want 3)\npod-log-window self-test: ok"
+    },
+    {
+      "name": "r0_grpcurl_fetched_and_checksum_verified",
+      "pass": true,
+      "detail": "grpcurl v1.9.1"
+    },
+    {
+      "name": "r0_rc_installed_at_pin_and_ready",
+      "pass": true,
+      "detail": "rc ricxapp-rc-6db9dcd964-f78p7 ready, gRPC endpoint 10.99.49.54:7777\ngRPC describe ok, 12040 route to rc present\nrmrClient: RMR is ready after 31 seconds waiting..."
+    },
+    {
+      "name": "r0_rc_decoder_built",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r0_q2_null_control_free_run_default_threshold",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 954731 at 1792715378.053823558: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --simStartEpochMs=1767225600000 --RngRun=1 --e2TraceDir=/home/uc/evidence/r0/20261023T002614Z/runs/q2/trace\nns-3 exit code 0\nq2 (free): ns-3 exit 0 (want 0)"
+    },
+    {
+      "name": "r0_q2_count_lte_outage_switches",
+      "pass": true,
+      "detail": "LTE outage switches at the default -5 dB: 5"
+    },
+    {
+      "name": "r0_c8_free_run_at_gated_threshold",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 956087 at 1792715438.723862350: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --simStartEpochMs=1767225600000 --RngRun=1 --e2TraceDir=/home/uc/evidence/r0/20261023T002614Z/runs/c8free/trace\nns-3 exit code 0\nc8free (free): ns-3 exit 0 (want 0)"
+    },
+    {
+      "name": "r0_c8_lockstep_null_control",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 958035 at 1792715525.304443635: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --simStartEpochMs=1767225600000 --RngRun=1 --e2TraceDir=/home/uc/evidence/r0/20261023T002614Z/runs/c8null/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nc8null (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "r0_c8_null_control_equals_free_run",
+      "pass": true,
+      "detail": "all_equal True"
+    },
+    {
+      "name": "r0_live1_ric_reset_fresh_pods_and_bucket",
+      "pass": true,
+      "detail": "rc ricxapp-rc-6db9dcd964-nmkj8 ready, gRPC endpoint 10.99.49.54:7777\ngRPC describe ok, 12040 route to rc present\nrmrClient: RMR is ready after 31 seconds waiting..."
+    },
+    {
+      "name": "r0_live1_route_dump_start",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-hw-go-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-hw-go-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-hw-go-rmr.ricxapp:4560 / service-ricxapp-hw-go-rmr.ricxapp:4560"
+    },
+    {
+      "name": "r0_live1_capture_started_before_agents",
+      "pass": true,
+      "detail": "[00:34:15] capture live1 started on docker0 (pid 963691, filter 'ip proto 132')"
+    },
+    {
+      "name": "r0_live1_agents_connected_set_exact",
+      "pass": true,
+      "detail": "NS3_E2_AGENT_E2_INTERFACE=da6f82f286cdbb38af1178f82f85877b12c2f85b\nNS3_E2_AGENT_METRIC_MAP_SHA256=ab81b6392868b32ea26816a9d394c8b58403d1a41f652b30a3498cfa96a93b66\n[00:34:49] bringup agents: e2mgr CONNECTED set equals the expected agents: gnb_001_001_00000001 gnb_001_001_00000002 gnb_001_001_00000003 "
+    },
+    {
+      "name": "r0_live1_agent_ips_recorded",
+      "pass": true,
+      "detail": "{\"1\": [\"172.17.0.3\"], \"2\": [\"172.17.0.4\"], \"3\": [\"172.17.0.5\"]}"
+    },
+    {
+      "name": "r0_live1_every_agent_ready_and_subscribed",
+      "pass": true,
+      "detail": "1 0 true READY 1 0\n2 0 true READY 1 0\n3 0 true READY 1 0"
+    },
+    {
+      "name": "r0_g4_nodeb_keys_and_ts_cell_map_replay",
+      "pass": true,
+      "detail": "  ]\n }\n}"
+    },
+    {
+      "name": "r0_live1_pods_snapshot_before",
+      "pass": true,
+      "detail": "agent\t3\t91a1ff02b951\t0\nagent\t2\tc8823ff2928e\t0\nagent\t1\tec4a3dfde842\t0"
+    },
+    {
+      "name": "r0_live1_lockstep_run_exits_clean",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 966889 at 1792715694.226623401: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --RngRun=1 --simStartEpochMs=1767225600000 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/r0/20261023T002614Z/runs/live1/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nlive1: ns-3 exit 0, pacer exit 0 (want 0 and 0)"
+    },
+    {
+      "name": "r0_live1_pods_snapshot_after",
+      "pass": true,
+      "detail": "agent\t3\t91a1ff02b951\t0\nagent\t2\tc8823ff2928e\t0\nagent\t1\tec4a3dfde842\t0"
+    },
+    {
+      "name": "r0_live1_route_dump_end",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-hw-go-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-hw-go-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-hw-go-rmr.ricxapp:4560 / service-ricxapp-hw-go-rmr.ricxapp:4560"
+    },
+    {
+      "name": "r0_live1_restart_counts_zero_rc_kpimon_hw_go_agents",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r0_live1_agents_stopped",
+      "pass": true,
+      "detail": "ns3-e2-agent-2 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1792715766987,\"nodeId\":2,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":95,\"samplesIn\":96,\"samplesForwarded\":96,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":191,\"indTxCell\":96,\"indTxUe\":95,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":0,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":4,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":2,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":2,\"applied\":2,\"refused\":0,\"failedOnBye\":0,\"ackTx\":2,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":97}\nns3-e2-agent-1 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1792715766870,\"nodeId\":1,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":95,\"samplesIn\":96,\"samplesForwarded\":96,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":286,\"indTxCell\":96,\"indTxUe\":190,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":0,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":3,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":1,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":1,\"applied\":1,\"refused\":0,\"failedOnBye\":0,\"ackTx\":1,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":97}\nRemoved 3 ns3-e2-agent container(s)."
+    },
+    {
+      "name": "r0_live1_capture_stopped",
+      "pass": true,
+      "detail": "[00:36:14] capture live1 stopped: 1533 packets captured 1533 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "r0_live1_kpimon_log_window_complete",
+      "pass": true,
+      "detail": "files 1, rotations in window 0, coverage True, retries 0"
+    },
+    {
+      "name": "r0_live1_kpimon_zero_rc_wmore",
+      "pass": true,
+      "detail": "indications=696 hdr_wmore=0 msg_wmore=0 influx_wrote_ue=1188 influx_wrote_cell=300 "
+    },
+    {
+      "name": "r0_live1_wire_one_terminal_answer_per_request_joined_to_ledger",
+      "pass": true,
+      "detail": "{\"rcRequests\": 4, \"rcAnswers\": 4, \"acks\": 3, \"failures\": 1, \"kpmHeadersByNode\": {\"1\": 298, \"2\": 199, \"3\": 199}, \"pass\": true}"
+    },
+    {
+      "name": "r0_live1_c2_ledger",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "r0_live1_c9_handover_rows_match_applied_lines",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r0_live1_expected_outcomes_and_afterseq",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r0_live2_ric_reset_fresh_pods_and_bucket",
+      "pass": true,
+      "detail": "rc ricxapp-rc-6db9dcd964-h6czd ready, gRPC endpoint 10.99.49.54:7777\ngRPC describe ok, 12040 route to rc present\nrmrClient: RMR is ready after 31 seconds waiting..."
+    },
+    {
+      "name": "r0_live2_route_dump_start",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-hw-go-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-hw-go-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-hw-go-rmr.ricxapp:4560 / service-ricxapp-hw-go-rmr.ricxapp:4560"
+    },
+    {
+      "name": "r0_live2_capture_started_before_agents",
+      "pass": true,
+      "detail": "[00:37:01] capture live2 started on docker0 (pid 974749, filter 'ip proto 132')"
+    },
+    {
+      "name": "r0_live2_agents_connected_set_exact",
+      "pass": true,
+      "detail": "NS3_E2_AGENT_E2_INTERFACE=da6f82f286cdbb38af1178f82f85877b12c2f85b\nNS3_E2_AGENT_METRIC_MAP_SHA256=ab81b6392868b32ea26816a9d394c8b58403d1a41f652b30a3498cfa96a93b66\n[00:37:34] bringup agents: e2mgr CONNECTED set equals the expected agents: gnb_001_001_00000001 gnb_001_001_00000002 gnb_001_001_00000003 "
+    },
+    {
+      "name": "r0_live2_agent_ips_recorded",
+      "pass": true,
+      "detail": "{\"1\": [\"172.17.0.3\"], \"2\": [\"172.17.0.4\"], \"3\": [\"172.17.0.5\"]}"
+    },
+    {
+      "name": "r0_live2_every_agent_ready_and_subscribed",
+      "pass": true,
+      "detail": "1 0 true READY 1 0\n2 0 true READY 1 0\n3 0 true READY 1 0"
+    },
+    {
+      "name": "r0_live2_pods_snapshot_before",
+      "pass": true,
+      "detail": "agent\t3\te36e024cf1b3\t0\nagent\t2\t4739733b8f13\t0\nagent\t1\te9ce86a6608b\t0"
+    },
+    {
+      "name": "r0_live2_lockstep_run_exits_clean",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 977896 at 1792715859.494629080: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --RngRun=1 --simStartEpochMs=1767225600000 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/r0/20261023T002614Z/runs/live2/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nlive2: ns-3 exit 0, pacer exit 0 (want 0 and 0)"
+    },
+    {
+      "name": "r0_live2_pods_snapshot_after",
+      "pass": true,
+      "detail": "agent\t3\te36e024cf1b3\t0\nagent\t2\t4739733b8f13\t0\nagent\t1\te9ce86a6608b\t0"
+    },
+    {
+      "name": "r0_live2_route_dump_end",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-kpimon-go-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-rc-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-kpimon-go-rmr.ricxapp:4560 / service-ricxapp-rc-rmr.ricxapp:4560"
+    },
+    {
+      "name": "r0_live2_restart_counts_zero_rc_kpimon_hw_go_agents",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r0_live2_agents_stopped",
+      "pass": true,
+      "detail": "ns3-e2-agent-2 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1792715932336,\"nodeId\":2,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":95,\"samplesIn\":96,\"samplesForwarded\":96,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":191,\"indTxCell\":96,\"indTxUe\":95,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":0,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":4,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":2,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":2,\"applied\":2,\"refused\":0,\"failedOnBye\":0,\"ackTx\":2,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":97}\nns3-e2-agent-1 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1792715932118,\"nodeId\":1,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":95,\"samplesIn\":96,\"samplesForwarded\":96,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":286,\"indTxCell\":96,\"indTxUe\":190,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":0,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":3,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":1,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":1,\"applied\":1,\"refused\":0,\"failedOnBye\":0,\"ackTx\":1,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":97}\nRemoved 3 ns3-e2-agent container(s)."
+    },
+    {
+      "name": "r0_live2_capture_stopped",
+      "pass": true,
+      "detail": "[00:38:59] capture live2 stopped: 1534 packets captured 1534 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "r0_live2_kpimon_log_window_complete",
+      "pass": true,
+      "detail": "files 1, rotations in window 0, coverage True, retries 0"
+    },
+    {
+      "name": "r0_live2_kpimon_zero_rc_wmore",
+      "pass": true,
+      "detail": "indications=696 hdr_wmore=0 msg_wmore=0 influx_wrote_ue=1188 influx_wrote_cell=300 "
+    },
+    {
+      "name": "r0_live2_wire_one_terminal_answer_per_request_joined_to_ledger",
+      "pass": true,
+      "detail": "{\"rcRequests\": 4, \"rcAnswers\": 4, \"acks\": 3, \"failures\": 1, \"kpmHeadersByNode\": {\"1\": 298, \"2\": 199, \"3\": 199}, \"pass\": true}"
+    },
+    {
+      "name": "r0_live2_c2_ledger",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "r0_live2_c9_handover_rows_match_applied_lines",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r0_live2_expected_outcomes_and_afterseq",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r0_live3_ric_reset_fresh_pods_and_bucket",
+      "pass": true,
+      "detail": "rc ricxapp-rc-6db9dcd964-c8ff6 ready, gRPC endpoint 10.99.49.54:7777\ngRPC describe ok, 12040 route to rc present\nrmrClient: RMR is ready after 31 seconds waiting..."
+    },
+    {
+      "name": "r0_live3_route_dump_start",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-hw-go-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-hw-go-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-hw-go-rmr.ricxapp:4560 / service-ricxapp-hw-go-rmr.ricxapp:4560"
+    },
+    {
+      "name": "r0_live3_capture_started_before_agents",
+      "pass": true,
+      "detail": "[00:39:45] capture live3 started on docker0 (pid 985514, filter 'ip proto 132')"
+    },
+    {
+      "name": "r0_live3_agents_connected_set_exact",
+      "pass": true,
+      "detail": "NS3_E2_AGENT_E2_INTERFACE=da6f82f286cdbb38af1178f82f85877b12c2f85b\nNS3_E2_AGENT_METRIC_MAP_SHA256=ab81b6392868b32ea26816a9d394c8b58403d1a41f652b30a3498cfa96a93b66\n[00:40:19] bringup agents: e2mgr CONNECTED set equals the expected agents: gnb_001_001_00000001 gnb_001_001_00000002 gnb_001_001_00000003 "
+    },
+    {
+      "name": "r0_live3_agent_ips_recorded",
+      "pass": true,
+      "detail": "{\"1\": [\"172.17.0.3\"], \"2\": [\"172.17.0.4\"], \"3\": [\"172.17.0.5\"]}"
+    },
+    {
+      "name": "r0_live3_every_agent_ready_and_subscribed",
+      "pass": true,
+      "detail": "1 0 true READY 1 0\n2 0 true READY 1 0\n3 0 true READY 1 0"
+    },
+    {
+      "name": "r0_live3_pods_snapshot_before",
+      "pass": true,
+      "detail": "agent\t3\tcd57a35959ca\t0\nagent\t2\tcbcd8d00baea\t0\nagent\t1\te16b924e540f\t0"
+    },
+    {
+      "name": "r0_live3_lockstep_run_exits_clean",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 989568 at 1792716030.621626402: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --RngRun=1 --simStartEpochMs=1767225600000 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/r0/20261023T002614Z/runs/live3/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nlive3: ns-3 exit 0, pacer exit 0 (want 0 and 0)"
+    },
+    {
+      "name": "r0_live3_pods_snapshot_after",
+      "pass": true,
+      "detail": "agent\t3\tcd57a35959ca\t0\nagent\t2\tcbcd8d00baea\t0\nagent\t1\te16b924e540f\t0"
+    },
+    {
+      "name": "r0_live3_route_dump_end",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-hw-go-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-hw-go-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-hw-go-rmr.ricxapp:4560 / service-ricxapp-hw-go-rmr.ricxapp:4560"
+    },
+    {
+      "name": "r0_live3_restart_counts_zero_rc_kpimon_hw_go_agents",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r0_live3_agents_stopped",
+      "pass": true,
+      "detail": "ns3-e2-agent-2 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1792716106705,\"nodeId\":2,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":99,\"samplesIn\":100,\"samplesForwarded\":100,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":199,\"indTxCell\":100,\"indTxUe\":99,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":1,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":4,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":2,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":2,\"applied\":2,\"refused\":0,\"failedOnBye\":0,\"ackTx\":2,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":101}\nns3-e2-agent-1 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1792716106483,\"nodeId\":1,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":99,\"samplesIn\":100,\"samplesForwarded\":100,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":298,\"indTxCell\":100,\"indTxUe\":198,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":1,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":3,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":1,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":1,\"applied\":1,\"refused\":0,\"failedOnBye\":0,\"ackTx\":1,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":101}\nRemoved 3 ns3-e2-agent container(s)."
+    },
+    {
+      "name": "r0_live3_capture_stopped",
+      "pass": true,
+      "detail": "[00:41:50] capture live3 stopped: 1543 packets captured 1543 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "r0_live3_kpimon_log_window_complete",
+      "pass": true,
+      "detail": "files 1, rotations in window 0, coverage True, retries 0"
+    },
+    {
+      "name": "r0_live3_kpimon_zero_rc_wmore",
+      "pass": true,
+      "detail": "indications=696 hdr_wmore=0 msg_wmore=0 influx_wrote_ue=1188 influx_wrote_cell=300 "
+    },
+    {
+      "name": "r0_live3_wire_one_terminal_answer_per_request_joined_to_ledger",
+      "pass": true,
+      "detail": "{\"rcRequests\": 4, \"rcAnswers\": 4, \"acks\": 3, \"failures\": 1, \"kpmHeadersByNode\": {\"1\": 298, \"2\": 199, \"3\": 199}, \"pass\": true}"
+    },
+    {
+      "name": "r0_live3_c2_ledger",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "r0_live3_c9_handover_rows_match_applied_lines",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r0_live3_expected_outcomes_and_afterseq",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r0_d7_three_paths_two_imsis_both_gnbs",
+      "pass": true,
+      "detail": "{\"viaEnb\": 1, \"viaServingGnb\": 1, \"viaTargetGnb\": 1, \"distinctImsis\": 3, \"targetGnbs\": [2, 3], \"applied\": 3}"
+    },
+    {
+      "name": "r0_v4_already_on_target_refusal_ledger_and_wire_failure",
+      "pass": true,
+      "detail": "refused alreadyOnTarget: [{'rxSeq': 50, 'rxSimTimeNs': 5000800000, 'applySimTimeNs': 5000800000, 'viaNodeId': 3, 'ctlId': 1, 'afterSeq': 50, 'imsi': 6, 'sourceCell': 3, 'targetCell': 3, 'outcome': 'refused', 'cause': 'alreadyOnTarget'}] wire failures: 1"
+    },
+    {
+      "name": "r0_k9_ric_reset_fresh_pods_and_bucket",
+      "pass": true,
+      "detail": "rc ricxapp-rc-6db9dcd964-q6qcp ready, gRPC endpoint 10.99.49.54:7777\ngRPC describe ok, 12040 route to rc present\nrmrClient: RMR is ready after 30 seconds waiting..."
+    },
+    {
+      "name": "r0_k9_route_dump_start",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-rc-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-hw-go-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-rc-rmr.ricxapp:4560 / service-ricxapp-hw-go-rmr.ricxapp:4560"
+    },
+    {
+      "name": "r0_k9_capture_started_before_agents",
+      "pass": true,
+      "detail": "[00:42:36] capture k9 started on docker0 (pid 997231, filter 'ip proto 132')"
+    },
+    {
+      "name": "r0_k9_agents_connected_set_exact",
+      "pass": true,
+      "detail": "NS3_E2_AGENT_E2_INTERFACE=da6f82f286cdbb38af1178f82f85877b12c2f85b\nNS3_E2_AGENT_METRIC_MAP_SHA256=ab81b6392868b32ea26816a9d394c8b58403d1a41f652b30a3498cfa96a93b66\n[00:43:10] bringup agents: e2mgr CONNECTED set equals the expected agents: gnb_001_001_00000001 gnb_001_001_00000002 gnb_001_001_00000003 "
+    },
+    {
+      "name": "r0_k9_agent_ips_recorded",
+      "pass": true,
+      "detail": "{\"1\": [\"172.17.0.3\"], \"2\": [\"172.17.0.4\"], \"3\": [\"172.17.0.5\"]}"
+    },
+    {
+      "name": "r0_k9_every_agent_ready_and_subscribed",
+      "pass": true,
+      "detail": "1 0 true READY 1 0\n2 0 true READY 1 0\n3 0 true READY 1 0"
+    },
+    {
+      "name": "r0_k9_pods_snapshot_before",
+      "pass": true,
+      "detail": "agent\t3\t8c1ba6a4419d\t0\nagent\t2\t145d595ecb30\t0\nagent\t1\t32abf2d864c9\t0"
+    },
+    {
+      "name": "r0_k9_lockstep_run_exits_clean",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 1001144 at 1792716201.998480110: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --RngRun=1 --simStartEpochMs=1767225600000 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/r0/20261023T002614Z/runs/k9/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nk9: ns-3 exit 0, pacer exit 0 (want 0 and 0)"
+    },
+    {
+      "name": "r0_k9_pods_snapshot_after",
+      "pass": true,
+      "detail": "agent\t3\t8c1ba6a4419d\t0\nagent\t2\t145d595ecb30\t0\nagent\t1\t32abf2d864c9\t0"
+    },
+    {
+      "name": "r0_k9_route_dump_end",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-rc-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-rc-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-rc-rmr.ricxapp:4560 / service-ricxapp-rc-rmr.ricxapp:4560"
+    },
+    {
+      "name": "r0_k9_restart_counts_zero_rc_kpimon_hw_go_agents",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r0_k9_agents_stopped",
+      "pass": true,
+      "detail": "ns3-e2-agent-2 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1792716283129,\"nodeId\":2,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":98,\"samplesIn\":99,\"samplesForwarded\":99,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":197,\"indTxCell\":99,\"indTxUe\":98,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":0,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":3,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":1,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":1,\"applied\":0,\"refused\":1,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":1,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":100}\nns3-e2-agent-1 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1792716282897,\"nodeId\":1,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":97,\"samplesIn\":98,\"samplesForwarded\":98,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":292,\"indTxCell\":98,\"indTxUe\":194,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":0,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":2,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":0,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":0,\"applied\":0,\"refused\":0,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":99}\nRemoved 3 ns3-e2-agent container(s)."
+    },
+    {
+      "name": "r0_k9_capture_stopped",
+      "pass": true,
+      "detail": "[00:44:48] capture k9 stopped: 1472 packets captured 1472 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "r0_k9_kpimon_log_window_complete",
+      "pass": true,
+      "detail": "files 1, rotations in window 0, coverage True, retries 0"
+    },
+    {
+      "name": "r0_k9_kpimon_zero_rc_wmore",
+      "pass": true,
+      "detail": "indications=696 hdr_wmore=0 msg_wmore=0 influx_wrote_ue=1188 influx_wrote_cell=300 "
+    },
+    {
+      "name": "r0_k9_wire_one_terminal_answer_per_request_joined_to_ledger",
+      "pass": true,
+      "detail": "{\"rcRequests\": 1, \"rcAnswers\": 1, \"acks\": 0, \"failures\": 1, \"kpmHeadersByNode\": {\"1\": 298, \"2\": 199, \"3\": 199}, \"pass\": true}"
+    },
+    {
+      "name": "r0_k9_c2_ledger",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "r0_k9_c9_handover_rows_match_applied_lines",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r0_k9_forced_late_one_failure_ledger_late_no_handover_row",
+      "pass": true,
+      "detail": " \"pass\": true\n}\nk9 wire: [{'action': 1, 'answer': 'failure', 'cause': 'control-failed-to-execute', 'imsi': 4, 'outcome': '', 'step': 61, 'style': 3, 'targetKey': '0000000303', 'viaNode': 2}]"
+    },
+    {
+      "name": "r0_replay_run_without_the_ric",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 1005155 at 1792716291.333976544: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --simStartEpochMs=1767225600000 --RngRun=1 --e2TraceDir=/home/uc/evidence/r0/20261023T002614Z/runs/replay/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nreplay (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "r0_rng2_run_without_the_ric",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 1006845 at 1792716364.008857958: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --simStartEpochMs=1767225600000 --RngRun=2 --e2TraceDir=/home/uc/evidence/r0/20261023T002614Z/runs/rng2/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nrng2 (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "r0_rng2_c2_holds",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "r0_c1_three_live_runs_equal_on_all_components",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r0_c1_replay_equals_live_on_ledger_ipc_traces",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r0_c1_rng2_differs_from_live",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r0_ipc_dropped_zero_and_slack_recorded",
+      "pass": true,
+      "detail": "{\"minSlack\": {\"T_start\": 119.999524, \"T_gate\": 9.996995, \"T_ctl\": 29.98748, \"W\": null}, \"lLabelledUnusedUnderHold\": [0.008837, 0.009443, 0.009641, 0.009847, 0.010137, 0.0106, 0.010735, 0.010885, 0.010982, 0.011029, 0.011288, 0.01252], \"ipcDropped\": 0}"
+    },
+    {
+      "name": "r0_restart_counts_all_zero",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r0_no_stray_process",
+      "pass": true,
+      "detail": "no leftovers"
+    }
+  ],
+  "mode": "c1",
+  "dev": true,
+  "tCtlSeconds": 30,
+  "tCtlProvenance": "contract start value (not calibrated)",
+  "vmLoadStart": " 00:26:16 up  7:46,  0 user,  load average: 0.18, 0.82, 0.92",
+  "q2OutageSwitches": 5,
+  "substitution1Applied": true,
+  "outageThresholdDb": -1000,
+  "c8NullEqualsFree": true,
+  "routeOwner12041_live1": "service-ricxapp-hw-go-rmr.ricxapp:4560",
+  "routeOwner12042_live1": "service-ricxapp-hw-go-rmr.ricxapp:4560",
+  "routeOwnerE2term12041_live1": "service-ricxapp-hw-go-rmr.ricxapp:4560",
+  "routeOwnerE2term12042_live1": "service-ricxapp-hw-go-rmr.ricxapp:4560",
+  "routeOwner12041_live2": "service-ricxapp-kpimon-go-rmr.ricxapp:4560",
+  "routeOwner12042_live2": "service-ricxapp-kpimon-go-rmr.ricxapp:4560",
+  "routeOwnerE2term12041_live2": "service-ricxapp-rc-rmr.ricxapp:4560",
+  "routeOwnerE2term12042_live2": "service-ricxapp-rc-rmr.ricxapp:4560",
+  "routeOwner12041_live3": "service-ricxapp-hw-go-rmr.ricxapp:4560",
+  "routeOwner12042_live3": "service-ricxapp-hw-go-rmr.ricxapp:4560",
+  "routeOwnerE2term12041_live3": "service-ricxapp-hw-go-rmr.ricxapp:4560",
+  "routeOwnerE2term12042_live3": "service-ricxapp-hw-go-rmr.ricxapp:4560",
+  "d7": {
+    "viaEnb": 1,
+    "viaServingGnb": 1,
+    "viaTargetGnb": 1,
+    "distinctImsis": 3,
+    "targetGnbs": [
+      2,
+      3
+    ],
+    "applied": 3
+  },
+  "routeOwner12041_k9": "service-ricxapp-rc-rmr.ricxapp:4560",
+  "routeOwner12042_k9": "service-ricxapp-rc-rmr.ricxapp:4560",
+  "routeOwnerE2term12041_k9": "service-ricxapp-rc-rmr.ricxapp:4560",
+  "routeOwnerE2term12042_k9": "service-ricxapp-rc-rmr.ricxapp:4560",
+  "c1": {
+    "liveRunsEqual": true,
+    "replayEqual": true,
+    "rngRun2Differs": true
+  },
+  "minSlack": {
+    "T_start": 119.999524,
+    "T_gate": 9.996995,
+    "T_ctl": 29.98748,
+    "W": null
+  },
+  "lLabelledUnusedUnderHold": [
+    0.008837,
+    0.009443,
+    0.009641,
+    0.009847,
+    0.010137,
+    0.0106,
+    0.010735,
+    0.010885,
+    0.010982,
+    0.011029,
+    0.011288,
+    0.01252
+  ],
+  "ipcDropped": 0,
+  "restartCountsAllZero": true,
+  "vmLoadEnd": " 00:47:14 up  8:07,  0 user,  load average: 1.39, 1.14, 0.99"
+}

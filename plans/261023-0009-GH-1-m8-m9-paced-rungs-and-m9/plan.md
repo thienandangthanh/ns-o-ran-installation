@@ -22,15 +22,15 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-23 09:40 KST (P3: dev rehearsal 1 red only on a digest-scope harness defect, fixed; rehearsal 2 starting; the calibration and the real R0 gate need the user's decision on the CPU hold)
+last-updated: 2026-10-23 09:55 KST (P3: dev rehearsal 2 green 103/103; the calibration and the real R0 gate wait for the user's decision on the CPU hold)
 current phase: P3 (R0 = M8), in progress. P2 done. Kongming P2 exit: plans/reports/kongming-261023-0735-GH-1-p2-exit-go-no-go-p3.md. Done: standards row, pacer fixes, rung-config, wire extractor. Next: smoke q8, then Q2, G4/replay tooling, scenario, repeat-gate, gate r0; calibration and the R0 gate wait for the user's release of the CPU hold (else PAUSE T3).
 VM: expected domstate=running, snapshot-current=f7-rerun-green (no snapshot in P2)
 snapshots: fresh-install, f7-rerun-green
 host /home free: 60 G (2026-10-23 07:28 KST); VM / 52 G free; floor 20 GB; M9 projection 60 - 11 remaining dev - 48 M9 - 20 = -19 GB (raised at Stop A, user frees at Stop B)
 fork SHAs (pushed, pinned in scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, Testbed 4c8397d0
 harness SHA (pushed): see git log (P2 exit commit); gates ran at ca65920 (S1) and e97ed53 (V5)
-in-flight background jobs: R0 dev rehearsal 2 (gate-r0-rc-scripted.sh --dev, ~20 min) through vm-exec.sh. VM: running, snapshot-current f7-rerun-green but modified (rc installed, rtmgr/xApps recreated), no snapshot taken
-next action: read the rehearsal 2 verdict; commit the evidence; put the hold / T_ctl question to the user (AskUserQuestion); on release: calibration, real gate (--tctl with provenance), free-space check, r0-green snapshot, P3 exit; without release: PAUSE T3
+in-flight background jobs: none. VM: running, snapshot-current f7-rerun-green but modified (rc installed, rtmgr/xApps recreated), no snapshot taken; host /home 58 G free
+next action: user decision on the CPU hold (release, or run the gate at the 30 s start value first), then: calibration (10 scripted controls, L, T_ctl = max(30 s, 20 x L_max)) and the real gate gate-r0-rc-scripted.sh --tctl S --tctl-provenance <evidence dir>; free-space check; vm-snapshot.sh create r0-green --need-gb N; P3 exit checklist and kongming go/no-go on P4
 hold (user, 2026-10-23 02:30 KST): another Claude session loads the host CPU; no timing calibration (P3 T_ctl of L, R2/R3 W, any latency/slack used as a gate value) until it is done; check uptime/top first (host load was 0.8-1.8 during 06:55-07:25)
 ```
 On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`, `virsh -c qemu:///system snapshot-current --name ubuntu24.04` and `scripts/vm/vm-snapshot.sh list`, and compare them with this card. On a mismatch, print a PAUSE T3 line with the difference.
