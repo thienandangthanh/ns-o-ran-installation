@@ -22,15 +22,15 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-23 09:05 KST (P3: rc RMR-ready defect understood and confirmed by experiment E1; reset redesigned; smoke q8 x2 starting)
+last-updated: 2026-10-23 09:20 KST (P3: new reset works (q8 run 1 green); q8 run 2 red on a SIGPIPE in the readiness read, fixed; smoke #3 then R0 dev rehearsal starting)
 current phase: P3 (R0 = M8), in progress. P2 done. Kongming P2 exit: plans/reports/kongming-261023-0735-GH-1-p2-exit-go-no-go-p3.md. Done: standards row, pacer fixes, rung-config, wire extractor. Next: smoke q8, then Q2, G4/replay tooling, scenario, repeat-gate, gate r0; calibration and the R0 gate wait for the user's release of the CPU hold (else PAUSE T3).
 VM: expected domstate=running, snapshot-current=f7-rerun-green (no snapshot in P2)
 snapshots: fresh-install, f7-rerun-green
 host /home free: 60 G (2026-10-23 07:28 KST); VM / 52 G free; floor 20 GB; M9 projection 60 - 11 remaining dev - 48 M9 - 20 = -19 GB (raised at Stop A, user frees at Stop B)
 fork SHAs (pushed, pinned in scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, Testbed 4c8397d0
 harness SHA (pushed): see git log (P2 exit commit); gates ran at ca65920 (S1) and e97ed53 (V5)
-in-flight background jobs: smoke q8 twice back to back through vm-exec.sh (~25 min). VM: running, snapshot-current f7-rerun-green but modified (rc installed, rtmgr/kpimon/hw-go recreated), no snapshot taken
-next action: both q8 runs green (rc RMR ready gate, ACK + FAILURE on the wire, restart counts 0) -> R0 dev rehearsal (gate-r0-rc-scripted.sh --dev), measure the reset cost; any red check is the Failure Protocol with kongming, and a failed remedy is PAUSE T5; calibration and the real R0 gate wait for the user's release of the CPU hold (else PAUSE T3)
+in-flight background jobs: smoke q8 #3 then, only if green, gate-r0-rc-scripted.sh --dev (rehearsal, ~60-90 min, timeout 10800 s) through vm-exec.sh. VM: running, snapshot-current f7-rerun-green but modified (rc installed, rtmgr/xApps recreated), no snapshot taken
+next action: read evidence/q8 and evidence/r0 (dev) verdicts; measure the reset cost; red checks follow the Failure Protocol with kongming first; then the calibration and the real R0 gate need the user's release of the CPU hold (else PAUSE T3)
 hold (user, 2026-10-23 02:30 KST): another Claude session loads the host CPU; no timing calibration (P3 T_ctl of L, R2/R3 W, any latency/slack used as a gate value) until it is done; check uptime/top first (host load was 0.8-1.8 during 06:55-07:25)
 ```
 On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`, `virsh -c qemu:///system snapshot-current --name ubuntu24.04` and `scripts/vm/vm-snapshot.sh list`, and compare them with this card. On a mismatch, print a PAUSE T3 line with the difference.

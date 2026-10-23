@@ -1,0 +1,32 @@
+[23:54:01] gate q8 start; evidence /home/uc/evidence/q8/20261022T235400Z; harness 30151ffad36c0cc840487325bca6ceb9c875ca62
+[23:54:01] PASS q8_args
+[23:54:01] ric watchdog started (pid 792865, threshold 600s)
+[23:54:01] PASS q8_nist_tree_at_testbed_sha_with_agent_dir
+[23:54:01] PASS q8_build_tools_present
+[23:54:01] PASS q8_sctp_module_loaded
+[23:54:01] PASS q8_ns3_binary_located_at_pins
+[23:54:01] PASS q8_pod_log_reader_self_test
+[23:54:01] PASS q8_grpcurl_fetched_and_checksum_verified
+[23:55:33] FAIL q8_rc_at_pin_and_ready: exit 1: rc ricxapp-rc-6db9dcd964-x597b ready, gRPC endpoint 10.99.49.54:7777
+gRPC describe ok, 12040 route to rc present
+rc ricxapp-rc-6db9dcd964-x597b: no 'RMR is ready' line within 90 s
+[23:56:16] PASS q8_ric_reset_fresh_bucket_and_pods
+[23:56:16] PASS q8_route_dump_start
+[23:56:17] PASS q8_capture_started_before_agents
+[23:57:06] PASS q8_bringup_agents_connected_set_exact
+[23:57:06] PASS q8_agent_container_ips_recorded
+[23:57:10] PASS q8_every_agent_ready_and_subscribed
+[23:57:10] PASS q8_pod_snapshot_before
+[23:57:10] PASS q8_route_dump_agents_subscribed
+[23:58:26] PASS q8_lockstep_run_with_two_rc_controls
+[23:58:26] PASS q8_pod_snapshot_after
+[23:58:26] PASS q8_route_dump_end
+[23:58:26] PASS q8_restart_counts_zero
+[23:58:29] PASS q8_agents_stopped
+[23:58:30] PASS q8_capture_stopped
+[23:59:34] PASS q8_wire_extractor_joins_requests_answers_and_ledger
+[23:59:34] PASS q8_two_controls_one_ack_format1_one_failure_matching_ledger
+[23:59:34] PASS q8_kpimon_wrote_to_the_fresh_bucket
+verdict q8: FAIL failed=['q8_rc_at_pin_and_ready']
+Terminated
+[23:59:35] ric watchdog stopped (pid 792865)

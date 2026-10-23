@@ -82,14 +82,14 @@ rc_ready() {
 # A Ready pod, the gRPC server and the 12040 row of rtmgr's table are not enough: rc's gRPC server starts before
 # its RMR does, and a control that arrives first panics it (gControlData is set only when RMR is ready).
 rc_rmr_ready() {
-    local pod deadline
+    local pod deadline logs line
     read -r pod _ < <(pod_info ricxapp xapp-rc-) || return 1
     deadline=$(($(date +%s) + ${RC_RMR_READY_TIMEOUT_S:-90}))
     while [ "$(date +%s)" -lt "$deadline" ]; do
-        if kc -n ricxapp logs "$pod" 2>/dev/null | grep -q 'rmrClient: RMR is ready after'; then
-            kc -n ricxapp logs "$pod" 2>/dev/null | grep -o 'rmrClient: RMR is ready after[^"]*' | head -n 1
-            return 0
-        fi
+        # the log goes into a variable first: `kubectl logs | grep -q` dies of SIGPIPE under pipefail on a long log
+        logs=$(kc -n ricxapp logs "$pod" 2>/dev/null)
+        line=$(printf '%s\n' "$logs" | grep -o 'rmrClient: RMR is ready after[^"]*' | head -n 1)
+        if [ -n "$line" ]; then echo "$line"; return 0; fi
         sleep 3
     done
     echo "rc $pod: no 'RMR is ready' line within ${RC_RMR_READY_TIMEOUT_S:-90} s"; return 1
