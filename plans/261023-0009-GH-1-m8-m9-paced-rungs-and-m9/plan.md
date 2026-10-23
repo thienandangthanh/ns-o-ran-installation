@@ -22,19 +22,16 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-23 16:57 KST (FRESH R0 gate PASS evidence/r0/20261023T073520Z at cfc6ef4, launched 16:35 KST, 109/109, V1-V7 and V9 all met; next: free-space check then vm-snapshot.sh create r0-green --need-gb 11 (V8; reboots the VM), then the P3 exit checklist and kongming go/no-go on P4)
-earlier: 2026-10-23 16:35 KST (R0 gate run 1 evidence/r0/20261023T065551Z: C1 green, 103/103, but Verify V7/V9 failed; first failed Verify, kongming-261023-1615; gate fixed at db2e314; fresh gate launched)
-earlier: 2026-10-23 15:57 KST (calibration PASS evidence/r0/20261023T065002Z, L_max 12.9 ms, T_ctl = 30 s committed at 1ec2493; first calibration 064324Z measured fine but exited 2 on a facts.jsonl defect, fixed at 02846b7)
-earlier: 2026-10-23 15:45 KST (resumed; the user RELEASED the CPU hold at 15:44 KST; VM matched the card, boot time unchanged so no i0; host load 0.91/0.56/0.54 on 20 CPUs)
-previous: 2026-10-23 12:55 KST (PAUSE T3: the user chose to keep the CPU hold at 12:40 KST; P3 paused after dev rehearsal 2 green; journal docs/journals/2026-10-23-m8-m9-p3-pause-cpu-hold.md)
-current phase: P3 (R0 = M8), in progress; P0-P2 done. Left: calibration, the real R0 gate, r0-green, P3 exit. Kongming notes: plans/reports/kongming-261023-0735-... (P2 exit), -0830-... (rc RMR), -1000-... (this pause).
-VM: expected domstate=running, snapshot-current=f7-rerun-green, BUT MODIFIED since (rc installed at a2282ee, rtmgr/rc/kpimon/hw-go recreated, Influx bucket re-created); no snapshot taken; boot time 2026-10-22 16:40:08 UTC (a different boot time means a reboot or revert: run gate i0 first)
-snapshots: fresh-install, f7-rerun-green
-host /home free: 58 G (2026-10-23 12:41 KST); VM / 52 G free; floor 20 GB; M9 projection about -19 GB (raised at Stop A, user frees at Stop B)
+last-updated: 2026-10-23 17:02 KST (P3 exit: R0 = M8 GREEN at evidence/r0/20261023T073520Z (harness cfc6ef4, 109/109, V1-V9 met); r0-green taken 16:57 KST; kongming go/no-go on P4 requested)
+earlier: 16:35 KST R0 run 1 evidence/r0/20261023T065551Z C1 green but V7/V9 failed (first failed Verify, kongming-261023-1615; gate fixed db2e314); 15:57 calibration PASS 065002Z (L_max 12.9 ms, T_ctl 30 s at 1ec2493); 15:44 the user released the CPU hold; 12:55 PAUSE T3 (journal docs/journals/2026-10-23-m8-m9-p3-pause-cpu-hold.md)
+current phase: P4 (R1) next, pending kongming's P3-exit go/no-go; P0-P3 done. Kongming notes: plans/reports/kongming-261023-0735-... (P2 exit), -0830-... (rc RMR), -1000-... (pause), -1615-... (P3 V7/V9).
+VM: expected domstate=running, snapshot-current=r0-green (taken 2026-10-23 07:56 UTC, a clean state after the R0 gate: rc at a2282ee installed, no agent containers); boot time 2026-10-23 07:56:59 UTC (a different boot time means a reboot or revert: run gate i0 or a reset before P4's rc_at_pin precheck)
+snapshots: fresh-install, f7-rerun-green, r0-green
+host /home free: 57 G (2026-10-23 16:58 KST); VM / 51 G free; floor 20 GB; chain base 3.3 G + f7 merged 37 G + P1-P3 overlay 14.2 G + r0-green active 0.07 G; M9 projection about -19 GB (57 - ~8 remaining dev - 48 M9 - 20; raised at Stop A, user frees at Stop B)
 fork SHAs (pushed, scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, Testbed 4c8397d0
-harness SHA (pushed): see git log (the PAUSE commit); the dev rehearsals ran at 4919b30 (102/103, digest-scope defect) and e67641a (103/103)
+harness SHA (pushed): see git log; the R0 gate ran at cfc6ef4; calibration at 02846b7
 in-flight background jobs: none
-next action (after the user releases the hold): (0) check the VM boot time and the rc pod; (1) gate i0 if the VM was rebooted or reverted; (2) gate-r0-rc-scripted.sh --mode calibrate, then rung-config.py set deadlines.T_ctl_s <v> "evidence/r0/<ts> ..." and commit+push rung-config.json; (3) the real gate (no --tctl needed); (4) vm-snapshot.sh create r0-green --need-gb 11; (5) P3 exit and kongming go/no-go on P4. Or, if the user allows the 30 s start value first: --tctl 30 --tctl-provenance "user ruling <date> ...". Details in the journal section 5.
+next action: kongming P3-exit go/no-go on P4; then P4 (phase-04): gate-r1-rc-multi-control.sh, r1-scenario.json (cases a-d), fault run (ii), influx-dump.sh, the two P2-deferred barrier items (node departure inside a barrier; stop handshake polling agents), then Stop A.
 hold: RELEASED by the user 2026-10-23 15:44 KST ("Released": the other session is done). Was: 02:30 KST, re-confirmed 12:40 KST.
 ```
 On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`, `virsh -c qemu:///system snapshot-current --name ubuntu24.04` and `scripts/vm/vm-snapshot.sh list`, and compare them with this card. On a mismatch, print a PAUSE T3 line with the difference.
@@ -57,7 +54,7 @@ On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`
 | P0 | [Harness generalization, RC wire decoder, disk baseline](phase-00-harness-generalization-rc-decoder-disk-baseline.md) | lint; decoder round-trips the committed PDU fixture | none | done (V1–V8 pass, 2026-10-23 01:55 KST) |
 | P1 | [S0: ns-3 D4 method, ledger, agent RC path, N5 request part](phase-01-s0-ns3-d4-ledger-agent-rc-path.md) | free-run digest unchanged; M5–M7 re-pass | none | done (S0 PASS; M5–M7 PASS at the P1 pins, 2026-10-23 03:14 KST) |
 | P2 | [S1: pacer and barrier, Fallback-1, null-control, fault run (i)](phase-02-s1-pacer-barrier-fallback1-null-control.md) | scripted S1 gate | none | done (S1 PASS 35/35 at ca65920; M5-M7 PASS at e97ed53, 2026-10-23 07:25 KST) |
-| P3 | [R0 = M8: rc by scripted gRPC, D7 three paths, G4](phase-03-r0-m8-rc-scripted-grpc.md) | R0 C1 | `r0-green` | pending |
+| P3 | [R0 = M8: rc by scripted gRPC, D7 three paths, G4](phase-03-r0-m8-rc-scripted-grpc.md) | R0 C1 | `r0-green` | done (R0 C1 PASS, V1-V9, evidence/r0/20261023T073520Z; r0-green 2026-10-23 16:57 KST) |
 | P4 | [R1: multi-control, unknown IMSI, fault run (ii); then Stop A](phase-04-r1-multi-control-fault-runs-stop-a.md) | R1 C1 | none (no `r1-green`) | pending |
 | P5 | [R2: TS xApp + stub QP, stray-ack probe first](phase-05-r2-ts-xapp-stub-qp-stray-ack-probe.md) | R2 C1 | `r2-green` | pending |
 | P6 | [N4: opt-in UL traffic and the UL PDCP SDU volume counter](phase-06-n4-ul-traffic-and-ul-pdcp-volume-counter.md) | free-run digest (UL off) unchanged; M5–M7; R0/R1/R2 one live run each; UL-on dump | none | pending |
