@@ -22,7 +22,8 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-23 17:05 KST (R0 gate run 1 evidence/r0/20261023T065551Z: C1 green, 103/103, but Verify V7/V9 failed (verdict fields absent; first failed Verify, kongming-261023-1615); gate fixed at db2e314, fixture-tested on 065551Z; FRESH full c1 R0 gate launched at 37f4429, about 21 min, timeout 10800 s; red on any V = PAUSE T6)
+last-updated: 2026-10-23 16:57 KST (FRESH R0 gate PASS evidence/r0/20261023T073520Z at cfc6ef4, launched 16:35 KST, 109/109, V1-V7 and V9 all met; next: free-space check then vm-snapshot.sh create r0-green --need-gb 11 (V8; reboots the VM), then the P3 exit checklist and kongming go/no-go on P4)
+earlier: 2026-10-23 16:35 KST (R0 gate run 1 evidence/r0/20261023T065551Z: C1 green, 103/103, but Verify V7/V9 failed; first failed Verify, kongming-261023-1615; gate fixed at db2e314; fresh gate launched)
 earlier: 2026-10-23 15:57 KST (calibration PASS evidence/r0/20261023T065002Z, L_max 12.9 ms, T_ctl = 30 s committed at 1ec2493; first calibration 064324Z measured fine but exited 2 on a facts.jsonl defect, fixed at 02846b7)
 earlier: 2026-10-23 15:45 KST (resumed; the user RELEASED the CPU hold at 15:44 KST; VM matched the card, boot time unchanged so no i0; host load 0.91/0.56/0.54 on 20 CPUs)
 previous: 2026-10-23 12:55 KST (PAUSE T3: the user chose to keep the CPU hold at 12:40 KST; P3 paused after dev rehearsal 2 green; journal docs/journals/2026-10-23-m8-m9-p3-pause-cpu-hold.md)
