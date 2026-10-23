@@ -25,14 +25,16 @@ while [ $# -gt 0 ]; do
 done
 case "$PART" in all|ts|stub) ;; *) log "bad --part $PART"; exit 2 ;; esac
 fact part "$(json_str "$PART")"
-record i2_args true "part $PART; TS pin $TS_SHA; rc pin $RC_SHA; rmr-peer image $RMR_PEER_IMAGE"
+record i2_args true "part $PART; TS pin $TS_SHA; substitution 3 (A1 payload patch) applied; rc pin $RC_SHA; rmr-peer image $RMR_PEER_IMAGE"
 
-# the installer that runs is the Testbed fork's at TESTBED_SHA (substitution 2, if ever applied, lives there)
+# the installer that runs, and the A1 payload patch it applies, are the Testbed fork's at TESTBED_SHA
+# (substitution 2, if ever applied, lives there too)
 installer_at_pin() {
-    local f=RAN_Intelligent_Controllers/Near-Real-Time-RIC/additional_scripts/install_xapp_traffic_steering.sh
+    local d=RAN_Intelligent_Controllers/Near-Real-Time-RIC
+    local f=("$d/additional_scripts/install_xapp_traffic_steering.sh" "$d/install_patch_files/xApps/ts")
     git -C "$NIST_DIR" cat-file -e "$TESTBED_SHA^{commit}" 2>/dev/null || GIT_TERMINAL_PROMPT=0 git -C "$NIST_DIR" fetch -q origin || return 1
-    git -C "$NIST_DIR" diff --quiet "$TESTBED_SHA" -- "$f" || git -C "$NIST_DIR" checkout -q "$TESTBED_SHA" -- "$f" || return 1
-    git -C "$NIST_DIR" diff --quiet "$TESTBED_SHA" -- "$f" && echo "$f at $TESTBED_SHA"
+    git -C "$NIST_DIR" diff --quiet "$TESTBED_SHA" -- "${f[@]}" || git -C "$NIST_DIR" checkout -q "$TESTBED_SHA" -- "${f[@]}" || return 1
+    git -C "$NIST_DIR" diff --quiet "$TESTBED_SHA" -- "${f[@]}" && [ -f "$TS_A1_PATCH" ] && echo "${f[*]} at $TESTBED_SHA"
 }
 check i2_nist_tree_at_testbed_sha_with_agent_dir agents_tree_at_testbed_sha
 check i2_ts_installer_at_testbed_sha installer_at_pin
@@ -42,6 +44,8 @@ if [ "$PART" != stub ]; then
     check i2_ts_installed_at_pin_switched_to_grpc ts_install
     check i2_a1_policy_type_20008_present ts_policy_type_ensure
 fi
+check i2_ts_tree_carries_exactly_the_a1_payload_patch ts_a1_patch_check
+fact substitution3Applied true
 check i2_ts_ready_listening_no_control_api_error ts_ready
 SVCS+=(service-ricxapp-trafficxapp-rmr)
 if [ "$PART" != ts ]; then

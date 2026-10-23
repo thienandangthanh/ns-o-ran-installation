@@ -26,6 +26,10 @@
     "ts_xapp_default_rmr_handler": {
       "applied": false,
       "provenance": "substitution 2; decided by the stray-ack probe at P5"
+    },
+    "ts_xapp_a1_payload_string": {
+      "applied": true,
+      "provenance": "substitution 3 (user, 2026-10-24 08:25 KST, plans/reports/decisions-261024-0825-GH-1-substitution-3-a1-payload-ruling.md): the TS xApp also parses the A1 policy body sent as a JSON string; Testbed fork install_patch_files/xApps/ts, applied unconditionally"
     }
   },
   "scenario": {

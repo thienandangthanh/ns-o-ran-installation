@@ -50,6 +50,7 @@ THRESH_PROV=$(python3 -I "$CFG" get scenario.outageThreshold_dB.provenance)
 A1_TH=$(python3 -I "$CFG" get a1_threshold)
 A1_PROV=$(python3 -I "$CFG" get a1_threshold.provenance)
 SUB2=$(python3 -I "$CFG" get substitutions.ts_xapp_default_rmr_handler.applied)
+SUB3=$(python3 -I "$CFG" get substitutions.ts_xapp_a1_payload_string.applied)
 PACER_PORT=38499
 NODES="enb:1,gnb:2,gnb:3"
 SCEN="$HARNESS_DIR/scripts/gates/r2-scenario.json"
@@ -73,11 +74,12 @@ fact wProvenance "$(json_str "$W_PROV")"
 fact a1Threshold "$A1_TH"
 fact a1ThresholdProvenance "$(json_str "$A1_PROV")"
 fact substitution2Applied "$SUB2"
+fact substitution3Applied "$SUB3"
 fact outageThresholdDb "$THRESH"
 fact outageThresholdProvenance "$(json_str "$THRESH_PROV")"
 fact positives "$N_POS"
 fact vmLoadStart "$(json_str "$(uptime)")"
-record r2_args true "dev $DEV; mode $MODE; T_ctl $T_CTL_S s; W $W_S s ($W_PROV); A1 threshold $A1_TH ($A1_PROV); substitution 2 $SUB2; outage threshold $THRESH dB; rc pin $RC_SHA; TS pin $TS_SHA"
+record r2_args true "dev $DEV; mode $MODE; T_ctl $T_CTL_S s; W $W_S s ($W_PROV); A1 threshold $A1_TH ($A1_PROV); substitution 2 $SUB2; substitution 3 $SUB3; outage threshold $THRESH dB; rc pin $RC_SHA; TS pin $TS_SHA"
 # the gated values name the evidence that measured them
 cfg_ok() {
     case "$TCTL_PROV" in *evidence/r0/*) ;; *) echo "T_ctl provenance does not name evidence/r0/"; return 1 ;; esac
@@ -91,6 +93,7 @@ check r2_config_values_from_their_evidence cfg_ok
 ric_watchdog_bg
 
 check r2_nist_tree_at_testbed_sha_with_agent_dir agents_tree_at_testbed_sha
+check r2_ts_tree_carries_exactly_the_a1_payload_patch ts_a1_patch_check
 check r2_build_tools_present agents_ensure_build_tools
 check r2_sctp_module_loaded agents_sctp_module
 check r2_ns3_binary_located_at_pins agents_ns3_locate

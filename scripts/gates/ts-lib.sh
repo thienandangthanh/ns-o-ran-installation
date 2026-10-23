@@ -5,6 +5,8 @@
 #   ts_install                    the TS xApp at TS_SHA through NIST's installer, then switched to gRPC towards rc
 #                                 (the descriptor default is REST): re-onboarded and reinstalled (no rtmgr restart:
 #                                 the caller registers, then restarts rtmgr)
+#   ts_a1_patch_check             the TS tree's only source change is the Testbed fork's A1 payload patch (the Go
+#                                 a1mediator sends the policy body as a JSON string; the pinned TS xApp reads an object)
 #   ts_ready                      TS pod Ready, its log says it listens, and no control-API error
 #   rmr_peer_build                the rmr-peer image (stub QP + injector) from tools/rmr-peer, self-tested, imported
 #                                 into containerd; RMR_PEER_IMAGE names it (tag = git tree id of tools/rmr-peer)
@@ -39,6 +41,8 @@ TS_SHA=19e169b2e81a0dbaf3d9dc526de0415cc995ee8b
 TS_DIR="$RIC_DIR/xApps/ts"
 TS_RC_EP="service-ricxapp-rc-grpc-server.ricxapp:7777"
 TS_POLICY_TYPE=20008
+TS_A1_PATCH="$RIC_DIR/install_patch_files/xApps/ts/src/ts_xapp/ts_xapp.cpp.patch"
+TS_A1_PATCHED_FILE=src/ts_xapp/ts_xapp.cpp
 STUB_NAME=stubqp
 STUB_VERSION=0.1.0
 INJ_NAME=r2-rmr-injector
@@ -77,9 +81,23 @@ _wait_new_ready() {
     kc -n ricxapp get pods -o wide; return 1
 }
 
+ts_a1_patch_check() {
+    [ -f "$TS_A1_PATCH" ] || { echo "no A1 payload patch at $TS_A1_PATCH"; return 1; }
+    git -C "$TS_DIR" diff -- "$TS_A1_PATCHED_FILE" >"$EVIDENCE_DIR/ts-a1-payload-patch-applied.diff" || return 1
+    # the index line abbreviates blob ids by repository size, so it is left out of the comparison
+    diff <(grep -v '^index ' "$TS_A1_PATCH") <(grep -v '^index ' "$EVIDENCE_DIR/ts-a1-payload-patch-applied.diff") ||
+        { echo "the diff of $TS_A1_PATCHED_FILE is not the Testbed fork's A1 payload patch"; return 1; }
+    echo "$TS_A1_PATCHED_FILE carries exactly the A1 payload patch ($(grep -c '^+[^+]' "$TS_A1_PATCH") added lines)"
+}
+
 ts_install() {
-    local e="$EVIDENCE_DIR" sha f="$TS_DIR/xapp-descriptor/config-file_updated.json" ver
+    local e="$EVIDENCE_DIR" sha f="$TS_DIR/xapp-descriptor/config-file_updated.json" ver img_before img_after patched_before=0
     _agents_prepare_env
+    # an image built before the patch existed must not survive the install (the installer skips a build when no
+    # source is newer than its tar)
+    img_before=$(dk image inspect --format '{{.Id}}' 127.0.0.1:80/trafficxapp:latest 2>/dev/null)
+    git -C "$TS_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1 && ts_a1_patch_check >/dev/null 2>&1 && patched_before=1
+    echo "image before: ${img_before:-none}; tree patched before: $patched_before" | tee "$e/ts-image-before.txt"
     # never pipe NIST output: nist_run's idle-stdin sleep and the chartmuseum daemon inherit stdout and would
     # hold a pipe open; redact the file afterwards (as kpimon_install does)
     nist_run 3600 "$RIC_DIR/additional_scripts/install_xapp_traffic_steering.sh" >"$e/install-ts.log.raw" 2>&1
@@ -89,10 +107,18 @@ ts_install() {
     sha=$(git -C "$TS_DIR" rev-parse HEAD) || return 1
     echo "$sha" | tee "$e/ts-sha.txt"
     [ "$sha" = "$TS_SHA" ] || { echo "the TS xApp is at $sha, pinned $TS_SHA"; return 1; }
-    # NIST's installer edits only the seed routes (AD Service FQDN); anything else in the tree is a change
+    # the installer edits the seed routes (AD Service FQDN) and applies the A1 payload patch; anything else in
+    # the tree is a change
     git -C "$TS_DIR" status --short | tee "$e/ts-tree-status.txt"
     git -C "$TS_DIR" diff --stat | tee "$e/ts-tree-diffstat.txt"
-    git -C "$TS_DIR" diff --name-only | grep -vxE 'assets/bootstrap.rt|routes.txt' && { echo "unexpected tracked change in the TS tree"; return 1; }
+    git -C "$TS_DIR" diff --name-only | grep -vxE "assets/bootstrap.rt|routes.txt|$TS_A1_PATCHED_FILE" && { echo "unexpected tracked change in the TS tree"; return 1; }
+    ts_a1_patch_check || return 1
+    img_after=$(dk image inspect --format '{{.Id}}' 127.0.0.1:80/trafficxapp:latest 2>/dev/null)
+    echo "image after: ${img_after:-none}" | tee -a "$e/ts-image-before.txt"
+    [ -n "$img_after" ] || { echo "no trafficxapp image after the install"; return 1; }
+    if [ "$patched_before" = 0 ] && [ -n "$img_before" ] && [ "$img_after" = "$img_before" ]; then
+        echo "the image predates the A1 payload patch and was not rebuilt"; return 1
+    fi
     jq --arg ep "$TS_RC_EP" '.controls.ts_control_api = "grpc" | .controls.ts_control_ep = $ep' "$f" >"$e/ts-config-file.json" || return 1
     cp "$e/ts-config-file.json" "$f"
     ver=$(jq -r .version "$f")
