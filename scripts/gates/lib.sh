@@ -62,9 +62,13 @@ check() {
 }
 
 # fact <key> <json-value>: a top-level verdict.json field (the last value of a key
-# wins; it never replaces the fields gate_finish writes itself).
+# wins; it never replaces the fields gate_finish writes itself). The value is
+# re-serialized onto one line, because facts.jsonl is read line by line and a
+# pretty-printed value (an indented report file) would break the verdict.
 fact() {
-    printf '{"key":%s,"value":%s}\n' "$(json_str "$1")" "$2" >>"$EVIDENCE_DIR/facts.jsonl"
+    local v
+    v=$(python3 -I -c 'import json,sys; print(json.dumps(json.loads(sys.argv[1])))' "$2" 2>/dev/null) || v="$2"
+    printf '{"key":%s,"value":%s}\n' "$(json_str "$1")" "$v" >>"$EVIDENCE_DIR/facts.jsonl"
 }
 
 # retry <attempts> <delay-s> <command...>: each retry is logged.
