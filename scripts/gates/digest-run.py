@@ -62,7 +62,10 @@ def digests(run):
         "ipcSamples": {str(n): len(s) for n, s in sorted(samples.items())},
         "ipcDroppedMax": ipc_dropped,
         "traces": FREE.trace_digests(run),
-        "extra": {p.stem: sha(p.read_text()) for p in sorted((run / "extra").glob("*.json"))},
+        # only the named live components: the extractor's diagnostics (rc-requests, rc-answers: RIC request IDs
+        # and wall times) sit in the same directory and must never be digested
+        "extra": {n: sha((run / "extra" / (n + ".json")).read_text()) for n in EXTRA_EXPECTED
+                  if (run / "extra" / (n + ".json")).exists()},
     }
     out["overall"] = sha(json.dumps({k: out[k] for k in ("ledger", "ipc", "traces")}, sort_keys=True))
     return out

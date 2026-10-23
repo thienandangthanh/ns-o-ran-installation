@@ -1,0 +1,30 @@
+[00:01:07] gate q8 start; evidence /home/uc/evidence/q8/20261023T000106Z; harness 4919b301605fd4f278c1977c5e0fc6580ebd7249
+[00:01:07] PASS q8_args
+[00:01:07] ric watchdog started (pid 827392, threshold 600s)
+[00:01:07] PASS q8_nist_tree_at_testbed_sha_with_agent_dir
+[00:01:08] PASS q8_build_tools_present
+[00:01:08] PASS q8_sctp_module_loaded
+[00:01:08] PASS q8_ns3_binary_located_at_pins
+[00:01:08] PASS q8_pod_log_reader_self_test
+[00:01:08] PASS q8_grpcurl_fetched_and_checksum_verified
+[00:01:08] PASS q8_rc_at_pin_and_ready
+[00:01:55] PASS q8_ric_reset_fresh_bucket_and_pods
+[00:01:55] PASS q8_route_dump_start
+[00:01:56] PASS q8_capture_started_before_agents
+[00:02:29] PASS q8_bringup_agents_connected_set_exact
+[00:02:30] PASS q8_agent_container_ips_recorded
+[00:02:33] PASS q8_every_agent_ready_and_subscribed
+[00:02:34] PASS q8_pod_snapshot_before
+[00:02:34] PASS q8_route_dump_agents_subscribed
+[00:03:52] PASS q8_lockstep_run_with_two_rc_controls
+[00:03:53] PASS q8_pod_snapshot_after
+[00:03:53] PASS q8_route_dump_end
+[00:03:53] PASS q8_restart_counts_zero
+[00:03:56] PASS q8_agents_stopped
+[00:03:57] PASS q8_capture_stopped
+[00:05:10] PASS q8_wire_extractor_joins_requests_answers_and_ledger
+[00:05:10] PASS q8_two_controls_one_ack_format1_one_failure_matching_ledger
+[00:05:10] PASS q8_kpimon_wrote_to_the_fresh_bucket
+verdict q8: PASS failed=[]
+Terminated
+[00:05:11] ric watchdog stopped (pid 827392)
