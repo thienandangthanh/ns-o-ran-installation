@@ -8,10 +8,13 @@
 #   rc_ready                      pod Ready + gRPC describe through the Service + the 12040 route
 #   rc_route_dump <label>         rtmgr getdebuginfo and e2term's stash -> $e/<label>-*.txt; sets
 #                                 ROUTE_OWNER_12041 / ROUTE_OWNER_12042 (the last `-1` line wins in RMR)
-#   rc_pod_snapshot <label>       "<pod> <uid> <restarts>" of rc, kpimon, hw-go and the agents -> $e/<label>-pods.tsv
+#   rc_pod_snapshot <label>       "<kind> <pod|node> <uid|id> <restarts> <start> <container start>" of the ricxapp
+#                                 pods and the agents -> $e/<label>-pods.tsv
 #   rc_restarts_zero <label>      every restart count in that file is 0
 #   rc_influx_bucket_reset        delete and re-create the kpimon bucket; its id -> $e/influx-bucket-id.txt
-#   rc_ric_reset                  fresh Influx bucket, fresh rc/kpimon/hw-go pods, rtmgr restarted, rc RMR ready
+#   rc_ric_reset [label]          fresh Influx bucket, fresh rc/kpimon/hw-go pods, rtmgr restarted, rc RMR ready;
+#                                 with a label, $e/<label>-reset.json records the bucket id and the pods (name,
+#                                 uid, start times) before and after, and the reset fails unless all are new
 #   rc_restart_rtmgr              delete rtmgr's pod and wait for the new one (it only opens a connection to an xApp
 #                                 the first time it sees the endpoint, and never reconnects to a replaced pod)
 #   rc_rmr_ready                  rc's own `RMR is ready after` log line in its current container (bounded wait)
@@ -139,10 +142,13 @@ import json, sys
 for p in json.load(sys.stdin)["items"]:
     n = p["metadata"]["name"]
     cs = p["status"].get("containerStatuses", [])
-    print("\t".join(["pod", n, p["metadata"]["uid"], str(sum(c.get("restartCount", 0) for c in cs))]))' >"$f" || return 1
+    started = ",".join(sorted(c.get("state", {}).get("running", {}).get("startedAt", "-") for c in cs)) or "-"
+    print("\t".join(["pod", n, p["metadata"]["uid"], str(sum(c.get("restartCount", 0) for c in cs)),
+                    p["status"].get("startTime", "-"), started]))' >"$f" || return 1
     for c in $(dk ps -aq --filter label=ns3e2.agent=1); do
-        printf 'agent\t%s\t%s\t%s\n' "$(dk inspect --format '{{index .Config.Labels "ns3e2.nodeId"}}' "$c")" \
-            "$(dk inspect --format '{{.Id}}' "$c" | cut -c1-12)" "$(dk inspect --format '{{.RestartCount}}' "$c")" >>"$f"
+        printf 'agent\t%s\t%s\t%s\t%s\t%s\n' "$(dk inspect --format '{{index .Config.Labels "ns3e2.nodeId"}}' "$c")" \
+            "$(dk inspect --format '{{.Id}}' "$c" | cut -c1-12)" "$(dk inspect --format '{{.RestartCount}}' "$c")" \
+            "$(dk inspect --format '{{.Created}}' "$c")" "$(dk inspect --format '{{.State.StartedAt}}' "$c")" >>"$f"
     done
     cat "$f"
 }
@@ -172,8 +178,13 @@ rc_influx_bucket_reset() {
 # deployed carry restarts from earlier VM boots, so they are recreated per run. rc never gets SIGTERM (PID 7 under
 # sh), so a short grace period costs nothing. Agents are restarted by their own bring-up (ctlId starts at 1).
 rc_ric_reset() {
-    local x old name deadline
+    local x old name deadline label="${1:-}" r="$EVIDENCE_DIR/${1:-}-reset"
     declare -A OLD
+    if [ -n "$label" ]; then
+        date -u +%Y-%m-%dT%H:%M:%SZ >"$r-start.txt"
+        _influx bucket list --name kpimon --org influxdata --hide-headers 2>/dev/null | awk '{print $1}' >"$r-bucket-before.txt"
+        kc -n ricxapp get pods -o json >"$r-pods-before.json" || return 1
+    fi
     rc_influx_bucket_reset || return 1
     for x in xapp-rc- ricxapp-kpimon-go- ricxapp-hw-go-; do
         read -r old _ < <(pod_info ricxapp "$x") || { echo "no pod $x"; return 1; }
@@ -190,7 +201,11 @@ rc_ric_reset() {
         echo "$x: ${OLD[$x]} -> $name"
     done
     rc_restart_rtmgr || return 1
-    rc_ready
+    rc_ready || return 1
+    [ -n "$label" ] || return 0
+    cp "$EVIDENCE_DIR/influx-bucket-id.txt" "$r-bucket-after.txt"
+    kc -n ricxapp get pods -o json >"$r-pods-after.json" || return 1
+    python3 -I "$HARNESS_DIR/scripts/gates/check-ric-reset.py" "$r"
 }
 
 # rc_send_control <viaNodeId> <imsi> <targetKey10hex> [ackReq]: one control through rc (see rc-send.sh).

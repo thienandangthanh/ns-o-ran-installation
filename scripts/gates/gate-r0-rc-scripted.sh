@@ -152,8 +152,10 @@ g4() {   # G4: every gNB agent's e2mgr nodeb JSON decodes to its N5 key; the TS 
 r0_live() {
     local label="$1" sched="$2" nctl="$3" first="${4:-}" rd="$RUNS/$1" pp rc cap_t0
     rm -rf "$rd"; mkdir -p "$rd/ns3run" "$rd/trace" "$rd/extra"
-    check "r0_${label}_ric_reset_fresh_pods_and_bucket" rc_ric_reset
+    check "r0_${label}_ric_reset_fresh_pods_and_bucket" rc_ric_reset "$label"
     check "r0_${label}_route_dump_start" rc_route_dump "$label-start"
+    printf '%s\tstart\t%s\t%s\t%s\t%s\n' "$label" "${ROUTE_OWNER_12041:-}" "${ROUTE_OWNER_12042:-}" \
+        "${ROUTE_OWNER_E2TERM_12041:-}" "${ROUTE_OWNER_E2TERM_12042:-}" >>"$e/route-owners.tsv"
     check "r0_${label}_capture_started_before_agents" capture_start "$label" docker0 'ip proto 132'
     cap_t0=$(date +%s)
     check "r0_${label}_agents_connected_set_exact" gate_bringup agents "$NODES"
@@ -181,6 +183,8 @@ r0_live() {
     fact "routeOwner12042_$label" "$(json_str "${ROUTE_OWNER_12042:-}")"
     fact "routeOwnerE2term12041_$label" "$(json_str "${ROUTE_OWNER_E2TERM_12041:-}")"
     fact "routeOwnerE2term12042_$label" "$(json_str "${ROUTE_OWNER_E2TERM_12042:-}")"
+    printf '%s\tend\t%s\t%s\t%s\t%s\n' "$label" "${ROUTE_OWNER_12041:-}" "${ROUTE_OWNER_12042:-}" \
+        "${ROUTE_OWNER_E2TERM_12041:-}" "${ROUTE_OWNER_E2TERM_12042:-}" >>"$e/route-owners.tsv"
     check "r0_${label}_restart_counts_zero_rc_kpimon_hw_go_agents" rc_restarts_zero "$label-after"
     local c
     for c in $(dk ps -aq --filter label=ns3e2.agent=1); do
@@ -195,12 +199,17 @@ r0_live() {
     extract() {
         python3 -I "$HARNESS_DIR/tools/e2-evidence/wire-c1-extract.py" "$e/$label.pcap" --node-ips "$rd/node-ips.json" \
             --ledger "$rd/trace/e2-control-ledger.jsonl" --out-dir "$rd/extra" --t0 "$cap_t0" \
-            --decode-cmd "$(dk_cmd) run --rm -i $RC_DEC_TAG"
+            --decode-cmd "$(dk_cmd) run --rm -i $RC_DEC_TAG" --expect-requests "$nctl"
     }
     check "r0_${label}_wire_one_terminal_answer_per_request_joined_to_ledger" extract
     c2() { python3 -I "$HARNESS_DIR/scripts/gates/check-ledger.py" "$rd/trace/e2-control-ledger.jsonl" "$rd/pacer/pacer-log.jsonl" --expect "$nctl"; }
     check "r0_${label}_c2_ledger" c2
     check "r0_${label}_c9_handover_rows_match_applied_lines" python3 -I "$HARNESS_DIR/scripts/gates/check-c9-handover-trace.py" "$rd"
+    kpm_moves() {
+        python3 -I "$HARNESS_DIR/tools/e2-evidence/kpm-ue-list-moves.py" "$e/$label.pcap" --node-ips "$rd/node-ips.json" \
+            --ledger "$rd/trace/e2-control-ledger.jsonl" --epoch-ms "$EPOCH_MS" --t0 "$cap_t0" --out "$rd/kpm-ue-moves.json"
+    }
+    check "r0_${label}_kpm_ue_lists_move_applied_and_keep_refused" kpm_moves
 }
 
 if [ "$MODE" = calibrate ]; then
@@ -263,6 +272,27 @@ check r0_rng2_run_without_the_ric paced_null_run rng2 lockstep 0 --RngRun=2
 PACERX=()
 rng2_c2() { python3 -I "$HARNESS_DIR/scripts/gates/check-ledger.py" "$RUNS/rng2/trace/e2-control-ledger.jsonl" "$RUNS/rng2/pacer/pacer-log.jsonl"; }
 check r0_rng2_c2_holds rng2_c2
+rng2_c7() {   # the RngRun 2 replay: clean exit (checked above), no late control, no sample dropped, slack recorded
+    python3 -I - "$RUNS/rng2" <<'PY' | tee "$e/rng2-c7.json"
+import json, sys
+rd = sys.argv[1]
+late = sum(1 for l in list(open(rd + "/trace/e2-control-ledger.jsonl"))[1:] if l.strip() and json.loads(l).get("cause") == "late")
+no_sub, slack = 0, None
+for l in open(rd + "/trace/e2-pacing-log.jsonl"):
+    m = json.loads(l)
+    if m.get("type") == "step":
+        no_sub = max(no_sub, m.get("droppedNoSub", 0))
+    if m.get("type") == "barrier" and m["seq"] != -1 and m["stepsWaitS"] >= 0:
+        s = round(m["timeoutS"] - m["stepsWaitS"], 6)
+        slack = s if slack is None else min(slack, s)
+ns3 = open(rd + "/ns3-exit").read().strip()
+out = {"ns3Exit": int(ns3), "late": late, "droppedNoSub": no_sub, "minSlackTGate": slack}
+print(json.dumps(out))
+sys.exit(0 if out["ns3Exit"] == 0 and late == 0 and no_sub == 0 and slack is not None else 1)
+PY
+}
+check r0_rng2_c7_holds rng2_c7
+fact rng2 "$(cat "$e/rng2-c7.json" 2>/dev/null || echo null)"
 cmp_runs() { python3 -I "$HARNESS_DIR/scripts/gates/digest-run.py" --compare --components "$1" "${@:3}" >"$e/$2.json"; }
 c1_live() { cmp_runs ledger,ipc,traces,extra c1-live live1="$RUNS/live1" live2="$RUNS/live2" live3="$RUNS/live3"; }
 c1_replay() { cmp_runs ledger,ipc,traces c1-replay live1="$RUNS/live1" replay="$RUNS/replay"; }
@@ -277,6 +307,11 @@ fi
 ################################################################################
 # facts: restart counts, slack, hygiene
 ################################################################################
+run_facts() { python3 -I "$HARNESS_DIR/scripts/gates/r0-run-facts.py" "$e" | tee "$e/r0-run-facts.json"; }
+check r0_runs_kpm_moved_c2_c5_reset_fresh run_facts
+for k in kpmUeListMoved c2 c5 resetEvidence; do
+    fact "$k" "$(python3 -I -c 'import json,sys; print(json.dumps(json.load(open(sys.argv[1]))[sys.argv[2]]))' "$e/r0-run-facts.json" "$k" 2>/dev/null || echo null)"
+done
 facts_final() {
     python3 -I - "$e" <<'PY'
 import glob, json, sys
@@ -297,24 +332,59 @@ L = []
 for p in sorted(glob.glob(e + "/runs/live*/pacer/pacer-summary.json")):
     for rec in json.load(open(p))["steps"].values():
         L += rec.get("L", [])
-dropped = 0
+dropped = no_sub = 0
 for tr in glob.glob(e + "/runs/*/trace/e2-ipc-trace-*.jsonl"):
     for l in open(tr):
         if '"type":"sample"' in l:
             dropped = max(dropped, json.loads(l).get("ipcDropped", 0))
-out = {"minSlack": slack, "lLabelledUnusedUnderHold": sorted(L), "ipcDropped": dropped}
+for log in glob.glob(e + "/runs/*/trace/e2-pacing-log.jsonl"):
+    for l in open(log):
+        m = json.loads(l)
+        if m.get("type") == "step":
+            no_sub = max(no_sub, m.get("droppedNoSub", 0))
+out = {"minSlack": slack, "lControlLatencyS": sorted(L), "ipcDropped": dropped, "droppedNoSub": no_sub}
 json.dump(out, open(e + "/r0-facts.json", "w"), indent=1)
 print(json.dumps(out))
-sys.exit(0 if dropped == 0 else 1)
+sys.exit(0 if dropped == 0 and no_sub == 0 else 1)
 PY
 }
-check r0_ipc_dropped_zero_and_slack_recorded facts_final
-for k in minSlack lLabelledUnusedUnderHold ipcDropped; do
+check r0_ipc_dropped_zero_no_sub_dropped_zero_and_slack_recorded facts_final
+for k in minSlack lControlLatencyS ipcDropped droppedNoSub; do
     fact "$k" "$(python3 -I -c 'import json,sys; print(json.dumps(json.load(open(sys.argv[1]))[sys.argv[2]]))' "$e/r0-facts.json" "$k" 2>/dev/null || echo null)"
 done
 restart_all_zero() { cat "$e"/live*-after-pods.tsv "$e"/k9-after-pods.tsv 2>/dev/null | awk -F'\t' '$4 != 0 { bad = 1 } END { exit bad }'; }
 check r0_restart_counts_all_zero restart_all_zero
 fact restartCountsAllZero "$(restart_all_zero && echo true || echo false)"
+restart_map() {   # "<run>/<rc|kpimon|hw-go|agent-N>": restart count, from each run's after-snapshot
+    python3 -I - "$e" <<'PY'
+import glob, json, os, sys
+out = {}
+for f in sorted(glob.glob(sys.argv[1] + "/*-after-pods.tsv")):
+    run = os.path.basename(f)[:-len("-after-pods.tsv")]
+    for l in open(f):
+        c = l.rstrip("\n").split("\t")
+        if c[0] == "agent":
+            out["%s/agent-%s" % (run, c[1])] = int(c[3])
+        else:
+            for k in ("rc", "kpimon", "hw-go"):
+                if c[1].startswith("ricxapp-%s-" % k) or (k == "rc" and "xapp-rc-" in c[1]):
+                    out["%s/%s" % (run, k)] = int(c[3])
+print(json.dumps(out))
+PY
+}
+fact restartCounts "$(restart_map 2>/dev/null || echo null)"
+route_owners() {   # per run, at the start and the end, the rtmgr and e2term views of the 12041/12042 -1 owner
+    python3 -I - "$e/route-owners.tsv" "$1" <<'PY'
+import json, sys
+mt, out = sys.argv[2], {}
+for l in open(sys.argv[1]):
+    run, when, r41, r42, e41, e42 = (l.rstrip("\n").split("\t") + [""] * 6)[:6]
+    out.setdefault(run, {})[when] = {"rtmgr": r41 if mt == "12041" else r42, "e2term": e41 if mt == "12041" else e42}
+print(json.dumps(out))
+PY
+}
+fact routeOwner12041 "$(route_owners 12041 2>/dev/null || echo null)"
+fact routeOwner12042 "$(route_owners 12042 2>/dev/null || echo null)"
 no_stray() {
     local bad=0
     pgrep -f "scenario-zero" && bad=1

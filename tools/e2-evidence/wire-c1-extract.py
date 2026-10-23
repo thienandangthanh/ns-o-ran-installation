@@ -3,7 +3,7 @@
 
   wire-c1-extract.py PCAP --node-ips node-ips.json --out-dir DIR
                      [--ledger e2-control-ledger.jsonl] [--decode-cmd "docker run --rm -i rc-decode:TAG"]
-                     [--t0 EPOCH] [--t1 EPOCH]
+                     [--t0 EPOCH] [--t1 EPOCH] [--expect-requests N] [--expect-agent-local N]
 
 Writes into DIR (a run's `extra/` directory):
   rc-multiset.json        one record per RICcontrolRequest, without the RIC request IDs and wall times:
@@ -15,11 +15,16 @@ Writes into DIR (a run's `extra/` directory):
                           (retransmissions dropped by association and TSN)
   collet-start-time.json  per node, octets 1-8 of every header (the NTP-format colletStartTime of the
                           agent's header encoding) as hex
-  c1-extract-summary.json counts, the RIC-ID pairing (request <-> answer by requestorId, instanceId) and
-                          every problem found; exit 1 when there is a problem.
+  c1-extract-summary.json counts, the RIC-ID pairing (request <-> answer by requestorId, instanceId), the
+                          answer count identity (answers = ledger lines + agent-local answers), the C5
+                          summary (pairsByReqId; answerViaNodeId: each answer comes from the node the request
+                          went to) and every problem found; exit 1 when there is a problem.
 RIC request IDs and frame times stay in rc-requests.json / rc-answers.json (diagnostics, not digested).
 The RC decoder (tools/rc-decode) turns the control header/message octets into XER; a decode that is not
-RC_OK with every octet consumed is a problem. KPM headers are compared as octets, so the decode of the
+RC_OK with every octet consumed is a problem. Every ACK's RIC Control Outcome goes through the same decoder
+and must decode to E2SM-RC Control Outcome Format 1. Every request needs exactly one terminal answer.
+--expect-requests: the number of requests the run must carry; --expect-agent-local (default 0 when a ledger
+is given): requests the agent answered itself, without a ledger line. KPM headers are compared as octets, so the decode of the
 timestamp is not needed for equality.
 --t0/--t1 keep only frames in [t0, t1) (a capture can span a whole gate).
 """
@@ -201,6 +206,8 @@ def main():
     ap.add_argument("--decode-cmd", default="docker run --rm -i rc-decode")
     ap.add_argument("--t0", type=float)
     ap.add_argument("--t1", type=float)
+    ap.add_argument("--expect-requests", type=int)
+    ap.add_argument("--expect-agent-local", type=int, default=0)
     a = ap.parse_args()
     ip2node = {ip: int(n) for n, ips in json.load(open(a.node_ips)).items() for ip in ips}
     os.makedirs(a.out_dir, exist_ok=True)
@@ -213,6 +220,9 @@ def main():
     items = []
     for r in reqs:
         items += [(r["id"] + ".h", "header", r["hdr"]), (r["id"] + ".m", "message", r["msg"])]
+    for x in ans:
+        if x["kind"] == "ack":
+            items.append((x["id"] + ".o", "outcome", x["outcome"]))
     xers, p = decode_rc(items, a.decode_cmd)
     problems += p
     for r in reqs:
@@ -242,12 +252,30 @@ def main():
         r["answer"] = xs[0]["kind"] if len(xs) == 1 else ("none" if not xs else "multiple")
         r["cause"] = cause_name(xs[0]["cause"]) if len(xs) == 1 and xs[0]["kind"] == "failure" else ""
         r["outcome"] = xs[0]["outcome"] if len(xs) == 1 and xs[0]["kind"] == "ack" else ""
+        if r["answer"] not in ("ack", "failure"):
+            problems.append("request %s %r has %s terminal answer" % (r["id"], (r["requestorId"], r["instanceId"]), r["answer"]))
         if r["answer"] == "ack" and r["outcome"] != "0000":
             problems.append("ACK of %r does not carry ControlOutcome Format 1 (0000): %r" % (
                 (r["requestorId"], r["instanceId"]), r["outcome"]))
+        if r["answer"] == "ack":
+            x = xs[0]
+            x["outcomeXer"] = xers.get(x["id"] + ".o", "")
+            if "<controlOutcome-Format1>" not in x["outcomeXer"]:
+                problems.append("ACK of %r: the RIC Control Outcome does not decode to Format 1" % (
+                    (r["requestorId"], r["instanceId"]),))
+        if len(xs) == 1 and xs[0]["viaNode"] != r["viaNode"]:
+            r["answerFromOtherNode"] = xs[0]["viaNode"]
+            problems.append("request %s went to node %s but its answer came from node %s" % (
+                r["id"], r["viaNode"], xs[0]["viaNode"]))
+    if a.expect_requests is not None and len(reqs) != a.expect_requests:
+        problems.append("%d RICcontrolRequests on the wire, expected %d" % (len(reqs), a.expect_requests))
+    pairs_by_req_id = (all(len(rs) == 1 for rs in by_id.values()) and all(k in by_id for k in ans_by_id)
+                       and all(r["answer"] in ("ack", "failure") for r in reqs))
+    answer_via_node = all("answerFromOtherNode" not in r for r in reqs) and all(
+        r["answer"] in ("ack", "failure") for r in reqs)
 
     # join with the ledger: the k-th request to a node is the agent's ctlId k
-    multiset = []
+    multiset, c2 = [], None
     if a.ledger:
         rows = []
         if os.path.exists(a.ledger):
@@ -273,6 +301,13 @@ def main():
                 problems.append("request %s: ledger %s but wire answer %s" % (r["id"], x["outcome"], r["answer"]))
         for k in sorted(led):
             problems.append("ledger line %r has no request on the wire" % (k,))
+        if agent_failed != a.expect_agent_local:
+            problems.append("%d requests answered by the agent itself (no ledger line), expected %d" % (
+                agent_failed, a.expect_agent_local))
+        c2 = {"answers": len(ans), "ledgerLines": len(rows), "agentLocal": agent_failed,
+              "holds": len(ans) == len(rows) + agent_failed}
+        if not c2["holds"]:
+            problems.append("answers %d != ledger lines %d + agent-local %d" % (len(ans), len(rows), agent_failed))
     for r in sorted(reqs, key=lambda q: (q.get("step") if q.get("step") is not None else -1, q["viaNode"] or 0,
                                          q["imsi"] or 0, q["targetCell"] or 0, q["t"])):
         multiset.append({"step": r.get("step"), "viaNode": r["viaNode"], "style": r["style"], "action": r["action"],
@@ -298,7 +333,8 @@ def main():
     dump("rc-answers.json", ans)
     summary = {"rcRequests": len(reqs), "rcAnswers": len(ans),
                "acks": sum(1 for x in ans if x["kind"] == "ack"), "failures": sum(1 for x in ans if x["kind"] == "failure"),
-               "kpmHeadersByNode": {n: len(h) for n, h in sorted(per.items())}, "problems": problems,
+               "kpmHeadersByNode": {n: len(h) for n, h in sorted(per.items())}, "c2": c2,
+               "c5": {"pairsByReqId": pairs_by_req_id, "answerViaNodeId": answer_via_node}, "problems": problems,
                "pass": not problems}
     dump("c1-extract-summary.json", summary)
     print(json.dumps({k: v for k, v in summary.items() if k != "problems"}), file=sys.stderr)
