@@ -22,7 +22,8 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-23 12:55 KST (PAUSE T3: the user chose to keep the CPU hold at 12:40 KST; P3 paused after dev rehearsal 2 green; journal docs/journals/2026-10-23-m8-m9-p3-pause-cpu-hold.md)
+last-updated: 2026-10-23 15:45 KST (resumed; the user RELEASED the CPU hold at 15:44 KST; VM matched the card, boot time unchanged so no i0; host load 0.91/0.56/0.54 on 20 CPUs; calibration launched: gate-r0-rc-scripted.sh --mode calibrate, evidence/r0/<ts>, timeout 10800 s)
+previous: 2026-10-23 12:55 KST (PAUSE T3: the user chose to keep the CPU hold at 12:40 KST; P3 paused after dev rehearsal 2 green; journal docs/journals/2026-10-23-m8-m9-p3-pause-cpu-hold.md)
 current phase: P3 (R0 = M8), in progress; P0-P2 done. Left: calibration, the real R0 gate, r0-green, P3 exit. Kongming notes: plans/reports/kongming-261023-0735-... (P2 exit), -0830-... (rc RMR), -1000-... (this pause).
 VM: expected domstate=running, snapshot-current=f7-rerun-green, BUT MODIFIED since (rc installed at a2282ee, rtmgr/rc/kpimon/hw-go recreated, Influx bucket re-created); no snapshot taken; boot time 2026-10-22 16:40:08 UTC (a different boot time means a reboot or revert: run gate i0 first)
 snapshots: fresh-install, f7-rerun-green
@@ -31,7 +32,7 @@ fork SHAs (pushed, scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, T
 harness SHA (pushed): see git log (the PAUSE commit); the dev rehearsals ran at 4919b30 (102/103, digest-scope defect) and e67641a (103/103)
 in-flight background jobs: none
 next action (after the user releases the hold): (0) check the VM boot time and the rc pod; (1) gate i0 if the VM was rebooted or reverted; (2) gate-r0-rc-scripted.sh --mode calibrate, then rung-config.py set deadlines.T_ctl_s <v> "evidence/r0/<ts> ..." and commit+push rung-config.json; (3) the real gate (no --tctl needed); (4) vm-snapshot.sh create r0-green --need-gb 11; (5) P3 exit and kongming go/no-go on P4. Or, if the user allows the 30 s start value first: --tctl 30 --tctl-provenance "user ruling <date> ...". Details in the journal section 5.
-hold (user, 2026-10-23 02:30 KST, re-confirmed 12:40 KST): another Claude session loads the host CPU; no timing calibration (the T_ctl calibration of L; R2/R3 W; any latency or slack used as a gate value) until the user says it is done. Host-only code and i0 measure no timing and are not blocked.
+hold: RELEASED by the user 2026-10-23 15:44 KST ("Released": the other session is done). Was: 02:30 KST, re-confirmed 12:40 KST.
 ```
 On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`, `virsh -c qemu:///system snapshot-current --name ubuntu24.04` and `scripts/vm/vm-snapshot.sh list`, and compare them with this card. On a mismatch, print a PAUSE T3 line with the difference.
 
