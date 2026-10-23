@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Gate i2 (VM side): the install step in front of R2 in the M9 chain: the TS xApp at its pinned commit through
 # NIST's installer, switched to gRPC towards rc (G3), A1 policy type 20008, the stub QP xApp (rmr-peer image,
-# self-tested), rtmgr restarted with a session to every xApp, and the routes R2 needs:
-# 30002 and 20010|20008 to the TS xApp, 30000 to exactly one receiver, the stub.
+# self-tested), both registered with appmgr (neither registers itself), rtmgr restarted with a session to every
+# xApp and a1mediator, the routes R2 needs (20010|20008 and 30002 to the TS xApp, one 30000 row from the TS xApp
+# to the stub only), and the A1 threshold reaching the TS xApp.
 #
 #   gate-i2-ts-xapp-install.sh [--part all|ts|stub]
 #
@@ -36,7 +37,7 @@ installer_at_pin() {
 check i2_nist_tree_at_testbed_sha_with_agent_dir agents_tree_at_testbed_sha
 check i2_ts_installer_at_testbed_sha installer_at_pin
 check i2_rc_installed_at_pin_and_ready rc_at_pin
-SVCS=(service-ricxapp-rc-rmr service-ricxapp-kpimon-go-rmr)
+SVCS=(service-ricxapp-rc-rmr service-ricxapp-kpimon-go-rmr ricplt/service-ricplt-a1mediator-rmr)
 if [ "$PART" != stub ]; then
     check i2_ts_installed_at_pin_switched_to_grpc ts_install
     check i2_a1_policy_type_20008_present ts_policy_type_ensure
@@ -48,15 +49,28 @@ if [ "$PART" != ts ]; then
     check i2_stub_qp_installed_as_its_own_xapp stub_install
     SVCS+=("service-ricxapp-$STUB_NAME-rmr")
 fi
+# neither the TS xApp nor the stub registers itself; appmgr lists, so rtmgr routes, only registered xApps.
+# Every registration comes before the rtmgr restart: rtmgr reads appmgr's list when it starts.
+check i2_ts_xapp_registered_with_appmgr xapp_ensure_registered trafficxapp
+[ "$PART" = ts ] || check i2_stub_qp_registered_with_appmgr xapp_ensure_registered "$STUB_NAME"
+check i2_appmgr_xapp_list_saved xapp_list_save "$EVIDENCE_DIR/i2-appmgr-xapps.json"
+check i2_rtmgr_restarted_after_registration rc_restart_rtmgr
 sessions() { for _ in $(seq 20); do rtmgr_sessions "${SVCS[@]}" >/dev/null && break; sleep 3; done; rtmgr_sessions "${SVCS[@]}"; }
-check i2_rtmgr_session_to_every_xapp sessions
+check i2_rtmgr_session_to_every_xapp_and_a1mediator sessions
 check i2_rc_rmr_ready_after_rtmgr_restart rc_rmr_ready
 check i2_route_dump rc_route_dump i2
 fact routeOwner12041 "$(json_str "${ROUTE_OWNER_12041:-}")"
 fact routeOwner12042 "$(json_str "${ROUTE_OWNER_12042:-}")"
 fact routeOwnerE2term12041 "$(json_str "${ROUTE_OWNER_E2TERM_12041:-}")"
 fact routeOwnerE2term12042 "$(json_str "${ROUTE_OWNER_E2TERM_12042:-}")"
-[ "$PART" = ts ] || check i2_routes_30002_20010_to_ts_30000_only_to_stub ts_routes_check i2
+if [ "$PART" = ts ]; then
+    check i2_route_20010_20008_to_ts ts_routes_check i2 ts
+else
+    check i2_routes_20010_to_ts_30002_stub_to_ts_30000_only_ts_to_stub ts_routes_check i2
+fi
+A1_TH=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["threshold"])' "$HARNESS_DIR/scripts/gates/r2-scenario.json")
+check i2_a1_threshold_reaches_ts_xapp ts_policy_set "$A1_TH" "i2-$GATE_TS"
+fact xappRegistration "$(jq -c '[.[] | {name, instances: [.instances[]? | {name, ip, port}]}]' "$EVIDENCE_DIR/i2-appmgr-xapps.json" 2>/dev/null || echo null)"
 check i2_xapp_image_ids ts_image_ids
 fact xappImageIds "$(cat "$EVIDENCE_DIR/xapp-image-ids.json" 2>/dev/null || echo null)"
 check i2_pod_snapshot rc_pod_snapshot i2

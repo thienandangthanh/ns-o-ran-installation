@@ -3,16 +3,27 @@
 # bringup.sh, kpimon.sh, agents.sh and rc-lib.sh.
 #
 #   ts_install                    the TS xApp at TS_SHA through NIST's installer, then switched to gRPC towards rc
-#                                 (the descriptor default is REST): re-onboarded and reinstalled; rtmgr restarted
+#                                 (the descriptor default is REST): re-onboarded and reinstalled (no rtmgr restart:
+#                                 the caller registers, then restarts rtmgr)
 #   ts_ready                      TS pod Ready, its log says it listens, and no control-API error
 #   rmr_peer_build                the rmr-peer image (stub QP + injector) from tools/rmr-peer, self-tested, imported
 #                                 into containerd; RMR_PEER_IMAGE names it (tag = git tree id of tools/rmr-peer)
-#   stub_install                  the stub QP as xApp `stubqp` (its own descriptor), Ready; rtmgr restarted
-#   ts_routes_check <label>       rtmgr's table: 30002 and 20010|20008 to the TS xApp, 30000 to exactly one
-#                                 receiver, the stub (needs rc_route_dump <label> first)
-#   rtmgr_sessions <svc...>       rtmgr holds an ESTABLISHED TCP session to each Service's ClusterIP:4561
+#   stub_install                  the stub QP as xApp `stubqp` (its own descriptor), Ready (no rtmgr restart)
+#   xapp_register <name>          register a deployed xApp with appmgr (POST /ric/v1/register) from its deployed
+#                                 descriptor; neither the TS xApp (xapp-frame-cpp 2.3.6) nor the stub registers
+#                                 itself, and appmgr 0.5.8 lists, so rtmgr routes, only registered xApps
+#   xapp_ensure_registered <name> register only when appmgr's entry is absent or differs (a blind re-register
+#                                 forces a full route redistribution)
+#   xapp_deregister <name>        deregister, only when appmgr lists exactly that app/instance pair
+#   xapp_list_save <file>         appmgr's xApp list
+#   ts_routes_check <label> [ts]  rtmgr's table: 20010|20008 to the TS xApp; unless `ts`, also 30002 from the stub
+#                                 to the TS xApp and exactly one 30000 row, from the TS xApp to the stub only (rows
+#                                 of registered senders are sender-qualified: mse|<type>,<sender>|...)
+#   rtmgr_sessions <[ns/]svc...>  rtmgr holds an ESTABLISHED TCP session to each Service's ClusterIP:4561
+#                                 (namespace ricxapp unless given)
 #   ts_stub_pods_reset <label>    delete the TS xApp and stub pods (their Services stay), wait for new Ready pods,
-#                                 restart rtmgr, check its sessions; $e/<label>-ts-reset.json proves freshness
+#                                 ensure both are registered, restart rtmgr, check its sessions (a1mediator too);
+#                                 $e/<label>-ts-reset.json proves freshness, $e/<label>-appmgr-xapps.json the list
 #   ts_nodeb_list_check           the TS log's nodeb list (read once at start-up, gRPC mode only) names every
 #                                 CONNECTED E2 node e2mgr knows, and cell mapping did not fail
 #   ts_policy_type_ensure         A1 policy type 20008 exists at a1mediator
@@ -34,6 +45,8 @@ INJ_NAME=r2-rmr-injector
 INJ_RMR_PORT=4590
 INJ_CTL_PORT=38510
 RMR_PEER_DIR="$HARNESS_DIR/tools/rmr-peer"
+RTMGR_PEERS=(service-ricxapp-trafficxapp-rmr "service-ricxapp-$STUB_NAME-rmr" service-ricxapp-rc-rmr service-ricxapp-kpimon-go-rmr
+    ricplt/service-ricplt-a1mediator-rmr)
 export CHART_REPO_URL="${CHART_REPO_URL:-http://0.0.0.0:8090}"
 
 rmr_peer_image() { echo "127.0.0.1:80/stubqp:$(git -C "$HARNESS_DIR" rev-parse --short=12 HEAD:tools/rmr-peer)"; }
@@ -88,7 +101,6 @@ ts_install() {
     kc -n ricxapp get cm configmap-ricxapp-trafficxapp-appconfig -o jsonpath='{.data.config-file\.json}' |
         jq '.controls' | tee "$e/ts-deployed-controls.json"
     [ "$(jq -r .ts_control_api "$e/ts-deployed-controls.json")" = grpc ] || { echo "deployed TS config is not gRPC"; return 1; }
-    rc_restart_rtmgr
 }
 
 ts_ready() {
@@ -123,18 +135,73 @@ stub_install() {
     jq --arg t "${RMR_PEER_IMAGE##*:}" '.containers[0].image.tag = $t' "$RMR_PEER_DIR/xapp-descriptor/config-file.json" >"$e/stubqp-config-file.json" || return 1
     _dms_reinstall "$STUB_NAME" "$STUB_VERSION" "$e/stubqp-config-file.json" "$RMR_PEER_DIR/xapp-descriptor/schema.json" "$e/install-stubqp.log" || return 1
     _wait_new_ready "ricxapp-$STUB_NAME-" "$old" 300 || return 1
-    rc_restart_rtmgr
+    # sender-qualified routes are accepted only when the sender's name equals RMR_SRC_ID:port
+    [ "$(kc -n ricxapp get cm "configmap-ricxapp-$STUB_NAME-appenv" -o jsonpath='{.data.RMR_SRC_ID}')" = "service-ricxapp-$STUB_NAME-rmr.ricxapp" ] ||
+        { echo "stub RMR_SRC_ID is not service-ricxapp-$STUB_NAME-rmr.ricxapp"; return 1; }
+}
+
+_appmgr() { local ip; ip=$(svc_ip ricplt service-ricplt-appmgr-http) || return 1; echo "http://$ip:8080/ric/v1"; }
+
+xapp_list_save() { local u; u=$(_appmgr) && curl -sf -m 10 "$u/xapps" | jq . >"$1"; }
+
+# _xapp_body <name>: the registration body built from the deployed descriptor (as ricxappframe 3.2.2 builds its own)
+_xapp_body() {
+    local cfg
+    cfg=$(kc -n ricxapp get cm "configmap-ricxapp-$1-appconfig" -o jsonpath='{.data.config-file\.json}') || return 1
+    [ -n "$cfg" ] || return 1
+    jq -c --arg n "$1" '{appName: (.xapp_name // .name), appVersion: .version, configPath: "",
+        appInstanceName: (.xapp_name // .name), httpEndpoint: ("service-ricxapp-" + $n + "-http.ricxapp:8080"),
+        rmrEndpoint: ("service-ricxapp-" + $n + "-rmr.ricxapp:4560"), config: (. | tojson)}' <<<"$cfg"
+}
+
+# _xapp_listed_ok <name>: appmgr lists exactly one instance of that name at its rmr Service, port 4560 (its message
+# lists are recorded by xapp_list_save; the routes rtmgr derives from them are judged by ts_routes_check)
+_xapp_listed_ok() {
+    local u cfg
+    u=$(_appmgr) || return 1
+    cfg=$(kc -n ricxapp get cm "configmap-ricxapp-$1-appconfig" -o jsonpath='{.data.config-file\.json}') || return 1
+    curl -sf -m 10 "$u/xapps" | jq -e --arg n "$1" --argjson c "$cfg" '
+        [.[] | select(.name == ($c.xapp_name // $c.name)) | .instances[]?
+         | select(.name == ($c.xapp_name // $c.name) and .ip == ("service-ricxapp-" + $n + "-rmr.ricxapp") and .port == 4560)]
+        | length == 1' >/dev/null
+}
+
+xapp_register() {
+    local u body code
+    u=$(_appmgr) || return 1
+    body=$(_xapp_body "$1") || { echo "no deployed descriptor for $1"; return 1; }
+    code=$(curl -s -m 10 -o "$EVIDENCE_DIR/register-$1.out" -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d "$body" "$u/register")
+    echo "register $1: HTTP $code"
+    [ "$code" = 201 ] || { cat "$EVIDENCE_DIR/register-$1.out"; return 1; }
+    _xapp_listed_ok "$1" || { echo "appmgr does not list $1 as registered"; return 1; }
+    echo "appmgr lists $1"
+}
+
+xapp_ensure_registered() {
+    if _xapp_listed_ok "$1"; then echo "$1 already registered"; else xapp_register "$1"; fi
+}
+
+xapp_deregister() {
+    local u n code
+    u=$(_appmgr) || return 1
+    n=$(curl -sf -m 10 "$u/xapps" | jq --arg n "$1" '[.[] | select(.name == $n) | .instances[]? | select(.name == $n)] | length')
+    [ "$n" = 1 ] || { echo "appmgr does not list exactly one $1/$1 pair ($n); not deregistering"; return 1; }
+    code=$(curl -s -m 10 -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' \
+        -d "{\"appName\": \"$1\", \"appInstanceName\": \"$1\"}" "$u/deregister")
+    echo "deregister $1: HTTP $code"
+    [ "$code" = 204 ]
 }
 
 ts_routes_check() {
-    local t="$EVIDENCE_DIR/$1-routetable.txt" r30000
-    grep -E '^mse\|30002\|-1\|.*trafficxapp' "$t" || { echo "no 30002 route to the TS xApp"; return 1; }
-    grep -E '^mse\|20010\|20008\|.*trafficxapp' "$t" || { echo "no 20010|20008 route to the TS xApp"; return 1; }
-    r30000=$(grep -E '^mse\|30000\|' "$t")
+    local t="$EVIDENCE_DIR/$1-routetable.txt" r30000 n
+    grep -E '^mse\|20010(,[^|]+)?\|20008\|.*trafficxapp' "$t" || { echo "no 20010|20008 route to the TS xApp"; return 1; }
+    [ "${2:-}" = ts ] && return 0
+    grep -E "^mse\|30002,service-ricxapp-$STUB_NAME-rmr[^|]*\|-1\|.*trafficxapp" "$t" || { echo "no 30002 route from the stub to the TS xApp"; return 1; }
+    r30000=$(grep -E '^mse\|30000(,[^|]+)?\|' "$t")
     echo "$r30000"
-    [ "$(echo "$r30000" | grep -c .)" = 1 ] && echo "$r30000" | grep -q "service-ricxapp-$STUB_NAME-rmr" &&
-        [ "$(echo "$r30000" | cut -d'|' -f4 | tr ',;' '\n\n' | grep -c .)" = 1 ] ||
-        { echo "30000 must have exactly one receiver, the stub"; return 1; }
+    n=$(echo "$r30000" | grep -c .)
+    [ "$n" = 1 ] && echo "$r30000" | grep -qE "^mse\|30000,service-ricxapp-trafficxapp-rmr[^|]*\|-1\|service-ricxapp-$STUB_NAME-rmr[^|;,]*$" ||
+        { echo "30000 must have exactly one row, from the TS xApp to the stub only ($n rows)"; return 1; }
 }
 
 # rtmgr_sessions <svc...>: ESTABLISHED (state 01) entries to <ClusterIP>:4561 (11D1) in rtmgr's /proc/net/tcp.
@@ -143,7 +210,8 @@ rtmgr_sessions() {
     pod=$(kc -n ricplt get pods --no-headers | awk '/rtmgr/ && $3 == "Running" { print $1 }' | head -n 1)
     tcp=$(kc -n ricplt exec "$pod" -- cat /proc/net/tcp) || return 1
     for s in "$@"; do
-        ip=$(svc_ip ricxapp "$s") || { echo "no Service $s"; bad=1; continue; }
+        [[ "$s" == */* ]] || s="ricxapp/$s"
+        ip=$(svc_ip "${s%%/*}" "${s#*/}") || { echo "no Service $s"; bad=1; continue; }
         hex=$(echo "$ip" | awk -F. '{ printf "%02X%02X%02X%02X:11D1", $4, $3, $2, $1 }')
         if echo "$tcp" | awk -v d="$hex" '$3 == d && $4 == "01" { f = 1 } END { exit !f }'; then
             echo "rtmgr $pod -> $s $ip:4561 ESTABLISHED"
@@ -165,15 +233,18 @@ ts_stub_pods_reset() {
         kc -n ricxapp delete pod "$old" --grace-period=5 --wait=false >/dev/null || return 1
     done
     for x in ricxapp-trafficxapp- "ricxapp-$STUB_NAME-"; do _wait_new_ready "$x" "${OLD[$x]}" 300 || return 1; done
+    # registrations survive a pod replacement (the Services stay) but not an appmgr restart
+    xapp_ensure_registered trafficxapp && xapp_ensure_registered "$STUB_NAME" || return 1
+    xapp_list_save "$EVIDENCE_DIR/$1-appmgr-xapps.json" || return 1
     rc_restart_rtmgr || return 1
     kc -n ricxapp get pods -o json >"$r-pods-after.json" || return 1
     python3 -I "$HARNESS_DIR/scripts/gates/check-ts-stub-reset.py" "$r" || return 1
     # rtmgr pushes routes within seconds of its start; give it a bounded wait for every session
     for _ in $(seq 20); do
-        rtmgr_sessions service-ricxapp-trafficxapp-rmr "service-ricxapp-$STUB_NAME-rmr" service-ricxapp-rc-rmr service-ricxapp-kpimon-go-rmr >/dev/null && break
+        rtmgr_sessions "${RTMGR_PEERS[@]}" >/dev/null && break
         sleep 3
     done
-    rtmgr_sessions service-ricxapp-trafficxapp-rmr "service-ricxapp-$STUB_NAME-rmr" service-ricxapp-rc-rmr service-ricxapp-kpimon-go-rmr
+    rtmgr_sessions "${RTMGR_PEERS[@]}"
 }
 
 ts_nodeb_list_check() {
@@ -232,6 +303,10 @@ ts_policy_set() {
         done
         log "ts_policy_set: no threshold line in $pod 20 s after instance $id-$i (attempt $i/3)"
     done
+    # diagnostics for a stale a1mediator -> TS xApp connection: a1mediator's TCP table and the TS Service IP
+    local a1pod; a1pod=$(kc -n ricplt get pods --no-headers | awk '/a1mediator/ && $3 == "Running" { print $1 }' | head -n 1)
+    kc -n ricplt exec "$a1pod" -- cat /proc/net/tcp >"$EVIDENCE_DIR/a1mediator-proc-net-tcp.txt" 2>&1
+    svc_ip ricxapp service-ricxapp-trafficxapp-rmr >"$EVIDENCE_DIR/a1-ts-service-ip.txt"
     echo "the TS xApp never logged the threshold"; return 1
 }
 

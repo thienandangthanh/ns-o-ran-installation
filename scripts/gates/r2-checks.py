@@ -18,7 +18,8 @@
         a negative's IMSI
   r2-checks.py stub SCENARIO STUB_LOG INJECTOR_TX [--calibrate]
         the injector sent every trigger (RMR state 0) and the stub got one 30000 naming exactly that UE per trigger,
-        in step order, and answered each with a 30002 sent in state 0
+        in step order, and answered each with a 30002 sent in state 0; other message types the stub got (e.g.
+        12041/12042 while it holds a -1 route) are recorded, not judged
   r2-checks.py d7 LEDGER
         every applied line came through the target gNB's agent (recorded deviation P1); both gNBs are targets
   r2-checks.py w PACER_SUMMARY T_CTL [--count N]
@@ -170,6 +171,7 @@ def cmd_stub(a):
     if bad_tx:
         problems.append("%d 30000 requests without a 30002 sent in state 0: %r" % (len(bad_tx), [r.get("note") for r in bad_tx]))
     print(json.dumps({"injected": len(anomalies), "stubRequests": len(reqs), "stubOtherMessages": len(other),
+                      "stubOtherTypes": sorted({r["rx"]["mtype"] for r in other}),
                       "problems": problems, "pass": not problems}, indent=1))
     return 0 if not problems else 1
 

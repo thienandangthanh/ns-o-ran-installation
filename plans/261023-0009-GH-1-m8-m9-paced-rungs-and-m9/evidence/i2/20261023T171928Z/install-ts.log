@@ -1,0 +1,829 @@
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/additional_scripts/install_xapp_traffic_steering.sh 
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/start_sudo_refresh.sh 
+sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+Sudo refresh process started with PID 764516
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/run_chart_museum.sh 
+Container 'chartmuseum' is already running.
+Patching bootstrap.rt to use AD RMR service...
+Patching routes.txt to use AD RMR service...
+Creating and modifying the configuration file xapp-descriptor/config-file_updated.json
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 5.57kB done
+#1 WARN: FromAsCasing: 'as' and 'FROM' keywords' casing do not match (line 34)
+#1 DONE 0.0s
+
+#2 [internal] load metadata for nexus3.o-ran-sc.org:10002/o-ran-sc/bldr-ubuntu20-c-go:1.0.0
+#2 ...
+
+#3 [internal] load metadata for docker.io/library/ubuntu:20.04
+#3 DONE 2.0s
+
+#2 [internal] load metadata for nexus3.o-ran-sc.org:10002/o-ran-sc/bldr-ubuntu20-c-go:1.0.0
+#2 DONE 2.1s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [buildenv  1/10] FROM nexus3.o-ran-sc.org:10002/o-ran-sc/bldr-ubuntu20-c-go:1.0.0@sha256:REDACTED-LONG-TOKEN
+#5 resolve nexus3.o-ran-sc.org:10002/o-ran-sc/bldr-ubuntu20-c-go:1.0.0@sha256:REDACTED-LONG-TOKEN 0.0s done
+#5 ...
+
+#6 [internal] load build context
+#6 transferring context: 712.80kB 0.0s done
+#6 DONE 0.1s
+
+#5 [buildenv  1/10] FROM nexus3.o-ran-sc.org:10002/o-ran-sc/bldr-ubuntu20-c-go:1.0.0@sha256:REDACTED-LONG-TOKEN
+#5 sha256:REDACTED-LONG-TOKEN 5.96kB / 5.96kB done
+#5 sha256:REDACTED-LONG-TOKEN 2.01kB / 2.01kB done
+#5 DONE 0.4s
+
+#7 [stage-1 1/8] FROM docker.io/library/ubuntu:20.04@sha256:REDACTED-LONG-TOKEN
+#7 resolve docker.io/library/ubuntu:20.04@sha256:REDACTED-LONG-TOKEN 0.1s done
+#7 sha256:REDACTED-LONG-TOKEN 1.05MB / 27.51MB 0.4s
+#7 sha256:REDACTED-LONG-TOKEN 6.69kB / 6.69kB done
+#7 sha256:REDACTED-LONG-TOKEN 424B / 424B done
+#7 sha256:REDACTED-LONG-TOKEN 2.30kB / 2.30kB done
+#7 ...
+
+#8 [buildenv  2/10] RUN mkdir -p /playpen/assets /playpen/src /playpen/bin
+#8 DONE 0.2s
+
+#7 [stage-1 1/8] FROM docker.io/library/ubuntu:20.04@sha256:REDACTED-LONG-TOKEN
+#7 ...
+
+#9 [buildenv  3/10] WORKDIR /playpen
+#9 DONE 0.1s
+
+#7 [stage-1 1/8] FROM docker.io/library/ubuntu:20.04@sha256:REDACTED-LONG-TOKEN
+#7 sha256:REDACTED-LONG-TOKEN 3.15MB / 27.51MB 0.7s
+#7 sha256:REDACTED-LONG-TOKEN 5.24MB / 27.51MB 0.9s
+#7 sha256:REDACTED-LONG-TOKEN 20.97MB / 27.51MB 1.2s
+#7 sha256:REDACTED-LONG-TOKEN 27.51MB / 27.51MB 1.3s
+#7 sha256:REDACTED-LONG-TOKEN 27.51MB / 27.51MB 1.3s done
+#7 extracting sha256:REDACTED-LONG-TOKEN 0.1s
+#7 extracting sha256:REDACTED-LONG-TOKEN 0.5s done
+#7 DONE 2.1s
+
+#10 [buildenv  4/10] RUN wget -nv --content-disposition https://packagecloud.io/o-ran-sc/release/packages/debian/stretch/rmr_4.8.1_amd64.deb/download.deb && 	wget -nv --content-disposition https://packagecloud.io/o-ran-sc/release/packages/debian/stretch/rmr-dev_4.8.1_amd64.deb/download.deb && 	dpkg -i rmr_4.8.1_amd64.deb rmr-dev_4.8.1_amd64.deb
+#10 0.717 2026-10-23 17:19:34 URL:https://d3fo0g5hm7lbuv.cloudfront.net/20756/10598/debian/package_files/3232364.deb?Expires=1792776874&Signature=NQE69iYotXKAaG69~REDACTED-LONG-TOKEN~REDACTED-LONG-TOKEN&Key-Pair-Id=K1ZMSF1EKC3AZL [241596/241596] -> "rmr_4.8.1_amd64.deb" [1]
+#10 1.212 2026-10-23 17:19:34 URL:https://d3fo0g5hm7lbuv.cloudfront.net/20756/10598/debian/package_files/3232360.deb?Expires=1792776874&Signature=ez8aFlLH-gykLglB76wLRtn~L-fWbw7f8HQPXuJOke~V9v1yrNbvB6MF09g3dUkM~JZzVhwkeeUSvWn7O5a5Rt7cxPzLOMAPhlf9xehbZovCaN~REDACTED-LONG-TOKEN~IMrTQFTKanK415htk29eDPeMzrXkJM7puG3M1TJ5ftDCVVeBPMy4~6r52EZ3UEac-Ho2kw__&Key-Pair-Id=K1ZMSF1EKC3AZL [125638/125638] -> "rmr-dev_4.8.1_amd64.deb" [1]
+#10 1.277 Selecting previously unselected package rmr.
+#10 1.449 (Reading database ... 46361 files and directories currently installed.)
+#10 1.450 Preparing to unpack rmr_4.8.1_amd64.deb ...
+#10 1.461 Unpacking rmr (4.8.1) ...
+#10 1.514 Selecting previously unselected package rmr-dev.
+#10 1.516 Preparing to unpack rmr-dev_4.8.1_amd64.deb ...
+#10 1.524 Unpacking rmr-dev (4.8.1) ...
+#10 1.557 Setting up rmr (4.8.1) ...
+#10 1.581 Setting up rmr-dev (4.8.1) ...
+#10 DONE 1.9s
+
+#11 [stage-1 2/8] RUN apt-get update && apt-get install -y 	libcurl4-openssl-dev 	libprotobuf-dev 	libgrpc++-dev && 	rm -rf /var/lib/apt/lists/*
+#11 0.660 Get:1 http://security.ubuntu.com/ubuntu focal-security InRelease [128 kB]
+#11 0.877 Get:2 http://archive.ubuntu.com/ubuntu focal InRelease [265 kB]
+#11 ...
+
+#12 [buildenv  5/10] RUN wget -nv --content-disposition https://packagecloud.io/o-ran-sc/release/packages/debian/stretch/ricxfcpp-dev_2.3.6_amd64.deb/download.deb && 	wget -nv --content-disposition https://packagecloud.io/o-ran-sc/release/packages/debian/stretch/ricxfcpp_2.3.6_amd64.deb/download.deb && 	dpkg -i ricxfcpp-dev_2.3.6_amd64.deb ricxfcpp_2.3.6_amd64.deb
+#12 0.553 2026-10-23 17:19:36 URL:https://d3fo0g5hm7lbuv.cloudfront.net/20756/10598/debian/package_files/3293022.deb?Expires=1792776875&Signature=BfVapROe9lBzTot8bqu8f8hT6665D5tqPHwaliriarZI2eym1WIiUKkp~T3Tlo7rq4C1ukTV4d~EQbPSEY7jag8g3qX36mnMpmwtwdVByNVgYyJvrElQMGtlDzkpAI9O~fLNbyaT79GX97oSHLZphCvNWd7MLrafPvzxpwTaHSml4n~REDACTED-LONG-TOKEN~l-Pw__&Key-Pair-Id=K1ZMSF1EKC3AZL [523580/523580] -> "ricxfcpp-dev_2.3.6_amd64.deb" [1]
+#12 1.061 2026-10-23 17:19:36 URL:https://d3fo0g5hm7lbuv.cloudfront.net/20756/10598/debian/package_files/3293027.deb?Expires=1792776876&Signature=e7OOg34xwzo-5ieaWI~REDACTED-LONG-TOKEN~1fZZ9v0CnbUxuGVS05onLWfv8ppLhT52W~0yRXw674CWaYDoexYFyvB6K9u19Cqzxf9HYH-lH2~2R9ryz9RMIRxqWmU0-2-arRgei4mxT9HMKk~H4u6REUP~2YBKSTCBPZq1LyMJEa3zVjlhec9mf0diiNYKGiTR6abbVr7Bbcyu3X~REDACTED-LONG-TOKEN~Q__&Key-Pair-Id=K1ZMSF1EKC3AZL [325642/325642] -> "ricxfcpp_2.3.6_amd64.deb" [1]
+#12 1.113 Selecting previously unselected package ricxfcpp-dev.
+#12 1.124 (Reading database ... 46376 files and directories currently installed.)
+#12 1.125 Preparing to unpack ricxfcpp-dev_2.3.6_amd64.deb ...
+#12 1.133 Unpacking ricxfcpp-dev (2.3.6) ...
+#12 1.187 Selecting previously unselected package ricxfcpp.
+#12 1.188 Preparing to unpack ricxfcpp_2.3.6_amd64.deb ...
+#12 1.196 Unpacking ricxfcpp (2.3.6) ...
+#12 1.229 Setting up ricxfcpp-dev (2.3.6) ...
+#12 1.256 Setting up ricxfcpp (2.3.6) ...
+#12 DONE 1.3s
+
+#13 [buildenv  6/10] RUN git clone https://github.com/Tencent/rapidjson &&    cd rapidjson &&    mkdir build &&    cd build &&    cmake -DCMAKE_INSTALL_PREFIX=/usr/local .. &&    make install &&    cd ../../ &&    rm -rf rapidjson
+#13 0.095 Cloning into 'rapidjson'...
+#13 3.547 -- The CXX compiler identification is GNU 9.3.0
+#13 3.557 -- Check for working CXX compiler: /usr/bin/c++
+#13 3.621 -- Check for working CXX compiler: /usr/bin/c++ -- works
+#13 3.623 -- Detecting CXX compiler ABI info
+#13 3.678 -- Detecting CXX compiler ABI info - done
+#13 3.685 -- Detecting CXX compile features
+#13 3.685 -- Detecting CXX compile features - done
+#13 3.690 -- Could NOT find Doxygen (missing: DOXYGEN_EXECUTABLE) 
+#13 3.690 -- No Doxygen found. Documentation won't be built
+#13 3.692 -- Could NOT find GTestSrc (missing: GTEST_SOURCE_DIR GTEST_INCLUDE_DIR) 
+#13 3.699 -- Configuring done
+#13 3.722 -- Generating done
+#13 3.725 -- Build files have been written to: /playpen/rapidjson/build
+#13 3.745 Scanning dependencies of target serialize
+#13 3.751 [  2%] Building CXX object example/CMakeFiles/serialize.dir/serialize/serialize.cpp.o
+#13 4.781 [  5%] Linking CXX executable ../bin/serialize
+#13 4.840 [  5%] Built target serialize
+#13 4.848 Scanning dependencies of target simpledom
+#13 4.854 [  7%] Building CXX object example/CMakeFiles/simpledom.dir/simpledom/simpledom.cpp.o
+#13 5.742 [ 10%] Linking CXX executable ../bin/simpledom
+#13 5.797 [ 10%] Built target simpledom
+#13 5.804 Scanning dependencies of target simplereader
+#13 5.811 [ 12%] Building CXX object example/CMakeFiles/simplereader.dir/simplereader/simplereader.cpp.o
+#13 6.282 [ 15%] Linking CXX executable ../bin/simplereader
+#13 6.329 [ 15%] Built target simplereader
+#13 6.339 Scanning dependencies of target simplewriter
+#13 6.345 [ 17%] Building CXX object example/CMakeFiles/simplewriter.dir/simplewriter/simplewriter.cpp.o
+#13 6.719 [ 20%] Linking CXX executable ../bin/simplewriter
+#13 6.763 [ 20%] Built target simplewriter
+#13 6.770 Scanning dependencies of target capitalize
+#13 6.776 [ 23%] Building CXX object example/CMakeFiles/capitalize.dir/capitalize/capitalize.cpp.o
+#13 7.535 [ 25%] Linking CXX executable ../bin/capitalize
+#13 7.581 [ 25%] Built target capitalize
+#13 7.589 Scanning dependencies of target prettyauto
+#13 7.595 [ 28%] Building CXX object example/CMakeFiles/prettyauto.dir/prettyauto/prettyauto.cpp.o
+#13 8.433 [ 30%] Linking CXX executable ../bin/prettyauto
+#13 8.478 [ 30%] Built target prettyauto
+#13 8.486 Scanning dependencies of target condense
+#13 8.493 [ 33%] Building CXX object example/CMakeFiles/condense.dir/condense/condense.cpp.o
+#13 ...
+
+#11 [stage-1 2/8] RUN apt-get update && apt-get install -y 	libcurl4-openssl-dev 	libprotobuf-dev 	libgrpc++-dev && 	rm -rf /var/lib/apt/lists/*
+#11 1.951 Get:3 http://security.ubuntu.com/ubuntu focal-security/main amd64 Packages [4368 kB]
+#11 2.247 Get:4 http://archive.ubuntu.com/ubuntu focal-updates InRelease [128 kB]
+#11 2.581 Get:5 http://archive.ubuntu.com/ubuntu focal-backports InRelease [128 kB]
+#11 2.917 Get:6 http://archive.ubuntu.com/ubuntu focal/universe amd64 Packages [11.3 MB]
+#11 3.740 Get:7 http://security.ubuntu.com/ubuntu focal-security/multiverse amd64 Packages [32.5 kB]
+#11 3.740 Get:8 http://security.ubuntu.com/ubuntu focal-security/universe amd64 Packages [1300 kB]
+#11 3.797 Get:9 http://security.ubuntu.com/ubuntu focal-security/restricted amd64 Packages [4710 kB]
+#11 4.390 Get:10 http://archive.ubuntu.com/ubuntu focal/main amd64 Packages [1275 kB]
+#11 4.427 Get:11 http://archive.ubuntu.com/ubuntu focal/multiverse amd64 Packages [177 kB]
+#11 4.431 Get:12 http://archive.ubuntu.com/ubuntu focal/restricted amd64 Packages [33.4 kB]
+#11 4.433 Get:13 http://archive.ubuntu.com/ubuntu focal-updates/universe amd64 Packages [1588 kB]
+#11 4.938 Get:14 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 Packages [4850 kB]
+#11 5.032 Get:15 http://archive.ubuntu.com/ubuntu focal-updates/multiverse amd64 Packages [36.2 kB]
+#11 5.034 Get:16 http://archive.ubuntu.com/ubuntu focal-updates/restricted amd64 Packages [4904 kB]
+#11 5.585 Get:17 http://archive.ubuntu.com/ubuntu focal-backports/main amd64 Packages [54.7 kB]
+#11 5.585 Get:18 http://archive.ubuntu.com/ubuntu focal-backports/universe amd64 Packages [28.4 kB]
+#11 5.766 Fetched 35.3 MB in 6s (6221 kB/s)
+#11 5.766 Reading package lists...
+#11 6.459 Reading package lists...
+#11 7.141 Building dependency tree...
+#11 7.246 Reading state information...
+#11 7.352 The following additional packages will be installed:
+#11 7.352   ca-certificates krb5-locales libasn1-8-heimdal libbrotli1 libc-ares2
+#11 7.352   libc-dev-bin libc6 libc6-dev libcrypt-dev libcurl4 libgrpc++1 libgrpc-dev
+#11 7.352   libgrpc6 libgssapi-krb5-2 libgssapi3-heimdal libhcrypto4-heimdal
+#11 7.352   libheimbase1-heimdal libheimntlm0-heimdal libhx509-5-heimdal libk5crypto3
+#11 7.352   libkeyutils1 libkrb5-26-heimdal libkrb5-3 libkrb5support0 libldap-2.4-2
+#11 7.352   libldap-common libnghttp2-14 libprotobuf-lite17 libprotobuf17 libpsl5
+#11 7.352   libroken18-heimdal librtmp1 libsasl2-2 libsasl2-modules libsasl2-modules-db
+#11 7.352   libsqlite3-0 libssh-4 libssl1.1 libwind0-heimdal linux-libc-dev manpages
+#11 7.352   manpages-dev openssl publicsuffix zlib1g-dev
+#11 7.352 Suggested packages:
+#11 7.352   glibc-doc locales libcurl4-doc libidn11-dev libkrb5-dev libldap2-dev
+#11 7.352   librtmp-dev libssh2-1-dev libssl-dev pkg-config krb5-doc krb5-user
+#11 7.352   libsasl2-modules-gssapi-mit | libsasl2-modules-gssapi-heimdal
+#11 7.352   libsasl2-modules-ldap libsasl2-modules-otp libsasl2-modules-sql man-browser
+#11 7.435 The following NEW packages will be installed:
+#11 7.435   ca-certificates krb5-locales libasn1-8-heimdal libbrotli1 libc-ares2
+#11 7.435   libc-dev-bin libc6-dev libcrypt-dev libcurl4 libcurl4-openssl-dev
+#11 7.435   libgrpc++-dev libgrpc++1 libgrpc-dev libgrpc6 libgssapi-krb5-2
+#11 7.435   libgssapi3-heimdal libhcrypto4-heimdal libheimbase1-heimdal
+#11 7.435   libheimntlm0-heimdal libhx509-5-heimdal libk5crypto3 libkeyutils1
+#11 7.435   libkrb5-26-heimdal libkrb5-3 libkrb5support0 libldap-2.4-2 libldap-common
+#11 7.435   libnghttp2-14 libprotobuf-dev libprotobuf-lite17 libprotobuf17 libpsl5
+#11 7.435   libroken18-heimdal librtmp1 libsasl2-2 libsasl2-modules libsasl2-modules-db
+#11 7.435   libsqlite3-0 libssh-4 libssl1.1 libwind0-heimdal linux-libc-dev manpages
+#11 7.435   manpages-dev openssl publicsuffix zlib1g-dev
+#11 7.436 The following packages will be upgraded:
+#11 7.436   libc6
+#11 7.936 1 upgraded, 47 newly installed, 0 to remove and 4 not upgraded.
+#11 7.936 Need to get 20.4 MB of archives.
+#11 7.936 After this operation, 87.1 MB of additional disk space will be used.
+#11 7.936 Get:1 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libc6 amd64 2.31-0ubuntu9.18 [2720 kB]
+#11 10.13 Get:2 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libssl1.1 amd64 1.1.1f-1ubuntu2.24 [1323 kB]
+#11 10.21 Get:3 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 openssl amd64 1.1.1f-1ubuntu2.24 [621 kB]
+#11 10.25 Get:4 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 ca-certificates all 20240203~20.04.1 [159 kB]
+#11 10.26 Get:5 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libsqlite3-0 amd64 3.31.1-4ubuntu0.7 [549 kB]
+#11 10.30 Get:6 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 krb5-locales all 1.17-6ubuntu4.11 [12.0 kB]
+#11 10.30 Get:7 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libkrb5support0 amd64 1.17-6ubuntu4.11 [31.5 kB]
+#11 10.30 Get:8 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libk5crypto3 amd64 1.17-6ubuntu4.11 [80.3 kB]
+#11 10.38 Get:9 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libkeyutils1 amd64 1.6-6ubuntu1.1 [10.3 kB]
+#11 10.38 Get:10 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libkrb5-3 amd64 1.17-6ubuntu4.11 [330 kB]
+#11 10.40 Get:11 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libgssapi-krb5-2 amd64 1.17-6ubuntu4.11 [121 kB]
+#11 10.46 Get:12 http://archive.ubuntu.com/ubuntu focal/main amd64 libpsl5 amd64 0.21.0-1ubuntu1 [51.5 kB]
+#11 10.50 Get:13 http://archive.ubuntu.com/ubuntu focal/main amd64 manpages all 5.05-1 [1314 kB]
+#11 10.57 Get:14 http://archive.ubuntu.com/ubuntu focal/main amd64 publicsuffix all 20200303.0012-1 [111 kB]
+#11 10.58 Get:15 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libroken18-heimdal amd64 7.7.0+dfsg-1ubuntu1.4 [42.5 kB]
+#11 10.58 Get:16 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libasn1-8-heimdal amd64 7.7.0+dfsg-1ubuntu1.4 [181 kB]
+#11 10.59 Get:17 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libbrotli1 amd64 1.0.7-6ubuntu0.1 [267 kB]
+#11 10.62 Get:18 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libc-dev-bin amd64 2.31-0ubuntu9.18 [71.7 kB]
+#11 10.62 Get:19 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 linux-libc-dev amd64 5.4.0-216.236 [1111 kB]
+#11 10.66 Get:20 http://archive.ubuntu.com/ubuntu focal/main amd64 libcrypt-dev amd64 1:4.4.10-10ubuntu4 [104 kB]
+#11 10.66 Get:21 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libc6-dev amd64 2.31-0ubuntu9.18 [2520 kB]
+#11 10.77 Get:22 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libheimbase1-heimdal amd64 7.7.0+dfsg-1ubuntu1.4 [30.4 kB]
+#11 10.82 Get:23 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libhcrypto4-heimdal amd64 7.7.0+dfsg-1ubuntu1.4 [88.1 kB]
+#11 10.82 Get:24 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libwind0-heimdal amd64 7.7.0+dfsg-1ubuntu1.4 [47.7 kB]
+#11 10.82 Get:25 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libhx509-5-heimdal amd64 7.7.0+dfsg-1ubuntu1.4 [107 kB]
+#11 10.83 Get:26 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libkrb5-26-heimdal amd64 7.7.0+dfsg-1ubuntu1.4 [207 kB]
+#11 10.85 Get:27 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libheimntlm0-heimdal amd64 7.7.0+dfsg-1ubuntu1.4 [15.1 kB]
+#11 10.87 Get:28 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libgssapi3-heimdal amd64 7.7.0+dfsg-1ubuntu1.4 [96.5 kB]
+#11 10.90 Get:29 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libsasl2-modules-db amd64 2.1.27+dfsg-2ubuntu0.1 [14.7 kB]
+#11 10.91 Get:30 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libsasl2-2 amd64 2.1.27+dfsg-2ubuntu0.1 [49.3 kB]
+#11 11.02 Get:31 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libldap-common all 2.4.49+dfsg-2ubuntu1.10 [16.5 kB]
+#11 11.02 Get:32 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libldap-2.4-2 amd64 2.4.49+dfsg-2ubuntu1.10 [155 kB]
+#11 11.06 Get:33 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libnghttp2-14 amd64 1.40.0-1ubuntu0.3 [79.9 kB]
+#11 11.07 Get:34 http://archive.ubuntu.com/ubuntu focal/main amd64 librtmp1 amd64 2.4+20151223.gitfa8646d.1-2build1 [54.9 kB]
+#11 11.07 Get:35 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libssh-4 amd64 0.9.3-2ubuntu2.5 [171 kB]
+#11 11.09 Get:36 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libcurl4 amd64 7.68.0-1ubuntu2.25 [235 kB]
+#11 ...
+
+#13 [buildenv  6/10] RUN git clone https://github.com/Tencent/rapidjson &&    cd rapidjson &&    mkdir build &&    cd build &&    cmake -DCMAKE_INSTALL_PREFIX=/usr/local .. &&    make install &&    cd ../../ &&    rm -rf rapidjson
+#13 9.219 [ 35%] Linking CXX executable ../bin/condense
+#13 9.264 [ 35%] Built target condense
+#13 9.271 Scanning dependencies of target filterkey
+#13 9.277 [ 38%] Building CXX object example/CMakeFiles/filterkey.dir/filterkey/filterkey.cpp.o
+#13 10.11 [ 41%] Linking CXX executable ../bin/filterkey
+#13 10.15 [ 41%] Built target filterkey
+#13 10.16 Scanning dependencies of target filterkeydom
+#13 10.17 [ 43%] Building CXX object example/CMakeFiles/filterkeydom.dir/filterkeydom/filterkeydom.cpp.o
+#13 11.57 [ 46%] Linking CXX executable ../bin/filterkeydom
+#13 11.62 [ 46%] Built target filterkeydom
+#13 11.62 Scanning dependencies of target schemavalidator
+#13 11.63 [ 48%] Building CXX object example/CMakeFiles/schemavalidator.dir/schemavalidator/schemavalidator.cpp.o
+#13 15.54 [ 51%] Linking CXX executable ../bin/schemavalidator
+#13 15.60 [ 51%] Built target schemavalidator
+#13 15.61 Scanning dependencies of target messagereader
+#13 15.61 [ 53%] Building CXX object example/CMakeFiles/messagereader.dir/messagereader/messagereader.cpp.o
+#13 16.14 [ 56%] Linking CXX executable ../bin/messagereader
+#13 16.18 [ 56%] Built target messagereader
+#13 16.19 Scanning dependencies of target sortkeys
+#13 16.20 [ 58%] Building CXX object example/CMakeFiles/sortkeys.dir/sortkeys/sortkeys.cpp.o
+#13 16.92 [ 61%] Linking CXX executable ../bin/sortkeys
+#13 16.96 [ 61%] Built target sortkeys
+#13 16.97 Scanning dependencies of target simplepullreader
+#13 16.98 [ 64%] Building CXX object example/CMakeFiles/simplepullreader.dir/simplepullreader/simplepullreader.cpp.o
+#13 17.59 [ 66%] Linking CXX executable ../bin/simplepullreader
+#13 17.64 [ 66%] Built target simplepullreader
+#13 ...
+
+#11 [stage-1 2/8] RUN apt-get update && apt-get install -y 	libcurl4-openssl-dev 	libprotobuf-dev 	libgrpc++-dev && 	rm -rf /var/lib/apt/lists/*
+#11 11.40 Get:37 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libcurl4-openssl-dev amd64 7.68.0-1ubuntu2.25 [322 kB]
+#11 11.41 Get:38 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libc-ares2 amd64 1.15.0-1ubuntu0.5 [36.9 kB]
+#11 11.41 Get:39 http://archive.ubuntu.com/ubuntu focal/universe amd64 libgrpc6 amd64 1.16.1-1ubuntu5 [689 kB]
+#11 11.49 Get:40 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libprotobuf17 amd64 3.6.1.3-2ubuntu5.2 [798 kB]
+#11 11.51 Get:41 http://archive.ubuntu.com/ubuntu focal/universe amd64 libgrpc++1 amd64 1.16.1-1ubuntu5 [517 kB]
+#11 11.63 Get:42 http://archive.ubuntu.com/ubuntu focal/universe amd64 libgrpc-dev amd64 1.16.1-1ubuntu5 [602 kB]
+#11 11.64 Get:43 http://archive.ubuntu.com/ubuntu focal/universe amd64 libgrpc++-dev amd64 1.16.1-1ubuntu5 [624 kB]
+#11 11.64 Get:44 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libprotobuf-lite17 amd64 3.6.1.3-2ubuntu5.2 [132 kB]
+#11 11.64 Get:45 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libsasl2-modules amd64 2.1.27+dfsg-2ubuntu0.1 [48.8 kB]
+#11 11.64 Get:46 http://archive.ubuntu.com/ubuntu focal/main amd64 manpages-dev all 5.05-1 [2266 kB]
+#11 12.00 Get:47 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 zlib1g-dev amd64 1:1.2.11.dfsg-2ubuntu1.5 [155 kB]
+#11 12.00 Get:48 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libprotobuf-dev amd64 3.6.1.3-2ubuntu5.2 [1156 kB]
+#11 12.52 debconf: delaying package configuration, since apt-utils is not installed
+#11 12.54 Fetched 20.4 MB in 5s (4471 kB/s)
+#11 12.69 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 4124 files and directories currently installed.)
+#11 12.69 Preparing to unpack .../libc6_2.31-0ubuntu9.18_amd64.deb ...
+#11 12.80 debconf: unable to initialize frontend: Dialog
+#11 12.80 debconf: (TERM is not set, so the dialog frontend is not usable.)
+#11 12.80 debconf: falling back to frontend: Readline
+#11 12.80 debconf: unable to initialize frontend: Readline
+#11 12.80 debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.30.0 /usr/local/share/perl/5.30.0 /usr/lib/x86_64-linux-gnu/perl5/5.30 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl/5.30 /usr/share/perl/5.30 /usr/local/lib/site_perl /usr/lib/x86_64-linux-gnu/perl-base) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)
+#11 12.80 debconf: falling back to frontend: Teletype
+#11 12.87 Unpacking libc6:amd64 (2.31-0ubuntu9.18) over (2.31-0ubuntu9.17) ...
+#11 16.56 Setting up libc6:amd64 (2.31-0ubuntu9.18) ...
+#11 16.62 debconf: unable to initialize frontend: Dialog
+#11 16.62 debconf: (TERM is not set, so the dialog frontend is not usable.)
+#11 16.62 debconf: falling back to frontend: Readline
+#11 16.62 debconf: unable to initialize frontend: Readline
+#11 16.62 debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.30.0 /usr/local/share/perl/5.30.0 /usr/lib/x86_64-linux-gnu/perl5/5.30 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl/5.30 /usr/share/perl/5.30 /usr/local/lib/site_perl /usr/lib/x86_64-linux-gnu/perl-base) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)
+#11 16.62 debconf: falling back to frontend: Teletype
+#11 18.17 Selecting previously unselected package libssl1.1:amd64.
+#11 18.17 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 4124 files and directories currently installed.)
+#11 18.17 Preparing to unpack .../00-libssl1.1_1.1.1f-1ubuntu2.24_amd64.deb ...
+#11 18.20 Unpacking libssl1.1:amd64 (1.1.1f-1ubuntu2.24) ...
+#11 18.39 Selecting previously unselected package openssl.
+#11 18.39 Preparing to unpack .../01-openssl_1.1.1f-1ubuntu2.24_amd64.deb ...
+#11 18.43 Unpacking openssl (1.1.1f-1ubuntu2.24) ...
+#11 18.61 Selecting previously unselected package ca-certificates.
+#11 18.61 Preparing to unpack .../02-ca-certificates_20240203~20.04.1_all.deb ...
+#11 18.63 Unpacking ca-certificates (20240203~20.04.1) ...
+#11 18.93 Selecting previously unselected package libsqlite3-0:amd64.
+#11 18.93 Preparing to unpack .../03-libsqlite3-0_3.31.1-4ubuntu0.7_amd64.deb ...
+#11 18.95 Unpacking libsqlite3-0:amd64 (3.31.1-4ubuntu0.7) ...
+#11 19.08 Selecting previously unselected package krb5-locales.
+#11 19.08 Preparing to unpack .../04-krb5-locales_1.17-6ubuntu4.11_all.deb ...
+#11 19.10 Unpacking krb5-locales (1.17-6ubuntu4.11) ...
+#11 19.21 Selecting previously unselected package libkrb5support0:amd64.
+#11 19.21 Preparing to unpack .../05-libkrb5support0_1.17-6ubuntu4.11_amd64.deb ...
+#11 19.24 Unpacking libkrb5support0:amd64 (1.17-6ubuntu4.11) ...
+#11 19.41 Selecting previously unselected package libk5crypto3:amd64.
+#11 19.41 Preparing to unpack .../06-libk5crypto3_1.17-6ubuntu4.11_amd64.deb ...
+#11 19.44 Unpacking libk5crypto3:amd64 (1.17-6ubuntu4.11) ...
+#11 19.61 Selecting previously unselected package libkeyutils1:amd64.
+#11 19.61 Preparing to unpack .../07-libkeyutils1_1.6-6ubuntu1.1_amd64.deb ...
+#11 19.64 Unpacking libkeyutils1:amd64 (1.6-6ubuntu1.1) ...
+#11 19.79 Selecting previously unselected package libkrb5-3:amd64.
+#11 19.79 Preparing to unpack .../08-libkrb5-3_1.17-6ubuntu4.11_amd64.deb ...
+#11 ...
+
+#13 [buildenv  6/10] RUN git clone https://github.com/Tencent/rapidjson &&    cd rapidjson &&    mkdir build &&    cd build &&    cmake -DCMAKE_INSTALL_PREFIX=/usr/local .. &&    make install &&    cd ../../ &&    rm -rf rapidjson
+#13 17.65 Scanning dependencies of target pretty
+#13 17.65 [ 69%] Building CXX object example/CMakeFiles/pretty.dir/pretty/pretty.cpp.o
+#13 18.45 [ 71%] Linking CXX executable ../bin/pretty
+#13 18.50 [ 71%] Built target pretty
+#13 18.51 Scanning dependencies of target jsonx
+#13 18.52 [ 74%] Building CXX object example/CMakeFiles/jsonx.dir/jsonx/jsonx.cpp.o
+#13 19.09 [ 76%] Linking CXX executable ../bin/jsonx
+#13 19.15 [ 76%] Built target jsonx
+#13 19.16 Scanning dependencies of target tutorial
+#13 19.17 [ 79%] Building CXX object example/CMakeFiles/tutorial.dir/tutorial/tutorial.cpp.o
+#13 20.09 [ 82%] Linking CXX executable ../bin/tutorial
+#13 20.14 [ 82%] Built target tutorial
+#13 20.14 Scanning dependencies of target parsebyparts
+#13 20.15 [ 84%] Building CXX object example/CMakeFiles/parsebyparts.dir/parsebyparts/parsebyparts.cpp.o
+#13 21.39 [ 87%] Linking CXX executable ../bin/parsebyparts
+#13 21.44 [ 87%] Built target parsebyparts
+#13 21.45 Scanning dependencies of target lookaheadparser
+#13 21.46 [ 89%] Building CXX object example/CMakeFiles/lookaheadparser.dir/lookaheadparser/lookaheadparser.cpp.o
+#13 21.91 [ 92%] Linking CXX executable ../bin/lookaheadparser
+#13 21.96 [ 92%] Built target lookaheadparser
+#13 21.96 Scanning dependencies of target examples
+#13 21.97 [ 92%] Built target examples
+#13 21.98 Scanning dependencies of target archivertest
+#13 21.98 [ 94%] Building CXX object example/CMakeFiles/archivertest.dir/archiver/archiver.cpp.o
+#13 23.12 [ 97%] Building CXX object example/CMakeFiles/archivertest.dir/archiver/archivertest.cpp.o
+#13 23.58 [100%] Linking CXX executable ../bin/archivertest
+#13 23.63 [100%] Built target archivertest
+#13 23.65 Install the project...
+#13 23.66 -- Install configuration: "RelWithDebInfo"
+#13 23.66 -- Installing: /usr/local/lib/pkgconfig/RapidJSON.pc
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/readme.md
+#13 23.66 -- Installing: /usr/local/include/rapidjson
+#13 23.66 -- Installing: /usr/local/include/rapidjson/fwd.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/internal
+#13 23.66 -- Installing: /usr/local/include/rapidjson/internal/biginteger.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/internal/clzll.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/internal/dtoa.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/internal/itoa.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/internal/diyfp.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/internal/pow10.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/internal/stack.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/internal/swap.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/internal/ieee754.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/internal/strfunc.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/internal/strtod.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/internal/regex.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/internal/meta.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/schema.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/uri.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/prettywriter.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/document.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/reader.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/encodedstream.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/stringbuffer.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/error
+#13 23.66 -- Installing: /usr/local/include/rapidjson/error/error.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/error/en.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/ostreamwrapper.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/writer.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/msinttypes
+#13 23.66 -- Installing: /usr/local/include/rapidjson/msinttypes/inttypes.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/msinttypes/stdint.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/encodings.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/cursorstreamwrapper.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/memorystream.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/istreamwrapper.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/stream.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/allocators.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/filereadstream.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/filewritestream.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/rapidjson.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/pointer.h
+#13 23.66 -- Installing: /usr/local/include/rapidjson/memorybuffer.h
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/parsebyparts
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/parsebyparts/parsebyparts.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/schemavalidator
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/schemavalidator/schemavalidator.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/pretty
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/pretty/pretty.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/messagereader
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/messagereader/messagereader.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/serialize
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/serialize/serialize.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/capitalize
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/capitalize/capitalize.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/archiver
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/archiver/archivertest.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/archiver/archiver.h
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/archiver/archiver.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/jsonx
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/jsonx/jsonx.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/filterkeydom
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/filterkeydom/filterkeydom.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/simpledom
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/simpledom/simpledom.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/simplewriter
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/simplewriter/simplewriter.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/lookaheadparser
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/lookaheadparser/lookaheadparser.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/condense
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/condense/condense.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/traverseaspointer.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/simplereader
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/simplereader/simplereader.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/tutorial
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/tutorial/tutorial.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/CMakeLists.txt
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/sortkeys
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/sortkeys/sortkeys.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/filterkey
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/filterkey/filterkey.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/prettyauto
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/prettyauto/prettyauto.cpp
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/simplepullreader
+#13 23.66 -- Installing: /usr/local/share/doc/RapidJSON/examples/simplepullreader/simplepullreader.cpp
+#13 23.66 -- Installing: /usr/local/lib/cmake/RapidJSON/RapidJSONConfig.cmake
+#13 23.66 -- Up-to-date: /usr/local/lib/cmake/RapidJSON/RapidJSONConfig.cmake
+#13 23.66 -- Installing: /usr/local/lib/cmake/RapidJSON/RapidJSONConfigVersion.cmake
+#13 23.66 -- Installing: /usr/local/lib/cmake/RapidJSON/RapidJSON-targets.cmake
+#13 DONE 26.6s
+
+#11 [stage-1 2/8] RUN apt-get update && apt-get install -y 	libcurl4-openssl-dev 	libprotobuf-dev 	libgrpc++-dev && 	rm -rf /var/lib/apt/lists/*
+#11 19.82 Unpacking libkrb5-3:amd64 (1.17-6ubuntu4.11) ...
+#11 19.96 Selecting previously unselected package libgssapi-krb5-2:amd64.
+#11 19.96 Preparing to unpack .../09-libgssapi-krb5-2_1.17-6ubuntu4.11_amd64.deb ...
+#11 19.98 Unpacking libgssapi-krb5-2:amd64 (1.17-6ubuntu4.11) ...
+#11 20.12 Selecting previously unselected package libpsl5:amd64.
+#11 20.12 Preparing to unpack .../10-libpsl5_0.21.0-1ubuntu1_amd64.deb ...
+#11 20.15 Unpacking libpsl5:amd64 (0.21.0-1ubuntu1) ...
+#11 20.26 Selecting previously unselected package manpages.
+#11 20.26 Preparing to unpack .../11-manpages_5.05-1_all.deb ...
+#11 20.28 Unpacking manpages (5.05-1) ...
+#11 20.51 Selecting previously unselected package publicsuffix.
+#11 20.51 Preparing to unpack .../12-publicsuffix_20200303.0012-1_all.deb ...
+#11 20.53 Unpacking publicsuffix (20200303.0012-1) ...
+#11 20.65 Selecting previously unselected package libroken18-heimdal:amd64.
+#11 20.66 Preparing to unpack .../13-libroken18-heimdal_7.7.0+dfsg-1ubuntu1.4_amd64.deb ...
+#11 20.71 Unpacking libroken18-heimdal:amd64 (7.7.0+dfsg-1ubuntu1.4) ...
+#11 20.85 Selecting previously unselected package libasn1-8-heimdal:amd64.
+#11 20.85 Preparing to unpack .../14-libasn1-8-heimdal_7.7.0+dfsg-1ubuntu1.4_amd64.deb ...
+#11 20.86 Unpacking libasn1-8-heimdal:amd64 (7.7.0+dfsg-1ubuntu1.4) ...
+#11 21.02 Selecting previously unselected package libbrotli1:amd64.
+#11 21.02 Preparing to unpack .../15-libbrotli1_1.0.7-6ubuntu0.1_amd64.deb ...
+#11 21.04 Unpacking libbrotli1:amd64 (1.0.7-6ubuntu0.1) ...
+#11 21.14 Selecting previously unselected package libc-dev-bin.
+#11 21.14 Preparing to unpack .../16-libc-dev-bin_2.31-0ubuntu9.18_amd64.deb ...
+#11 21.15 Unpacking libc-dev-bin (2.31-0ubuntu9.18) ...
+#11 21.25 Selecting previously unselected package linux-libc-dev:amd64.
+#11 21.25 Preparing to unpack .../17-linux-libc-dev_5.4.0-216.236_amd64.deb ...
+#11 21.28 Unpacking linux-libc-dev:amd64 (5.4.0-216.236) ...
+#11 21.47 Selecting previously unselected package libcrypt-dev:amd64.
+#11 21.47 Preparing to unpack .../18-libcrypt-dev_1%3a4.4.10-10ubuntu4_amd64.deb ...
+#11 21.48 Unpacking libcrypt-dev:amd64 (1:4.4.10-10ubuntu4) ...
+#11 21.60 Selecting previously unselected package libc6-dev:amd64.
+#11 21.60 Preparing to unpack .../19-libc6-dev_2.31-0ubuntu9.18_amd64.deb ...
+#11 21.61 Unpacking libc6-dev:amd64 (2.31-0ubuntu9.18) ...
+#11 21.88 Selecting previously unselected package libheimbase1-heimdal:amd64.
+#11 21.88 Preparing to unpack .../20-libheimbase1-heimdal_7.7.0+dfsg-1ubuntu1.4_amd64.deb ...
+#11 21.90 Unpacking libheimbase1-heimdal:amd64 (7.7.0+dfsg-1ubuntu1.4) ...
+#11 22.08 Selecting previously unselected package libhcrypto4-heimdal:amd64.
+#11 22.08 Preparing to unpack .../21-libhcrypto4-heimdal_7.7.0+dfsg-1ubuntu1.4_amd64.deb ...
+#11 22.10 Unpacking libhcrypto4-heimdal:amd64 (7.7.0+dfsg-1ubuntu1.4) ...
+#11 22.22 Selecting previously unselected package libwind0-heimdal:amd64.
+#11 22.22 Preparing to unpack .../22-libwind0-heimdal_7.7.0+dfsg-1ubuntu1.4_amd64.deb ...
+#11 22.25 Unpacking libwind0-heimdal:amd64 (7.7.0+dfsg-1ubuntu1.4) ...
+#11 22.46 Selecting previously unselected package libhx509-5-heimdal:amd64.
+#11 22.46 Preparing to unpack .../23-libhx509-5-heimdal_7.7.0+dfsg-1ubuntu1.4_amd64.deb ...
+#11 22.48 Unpacking libhx509-5-heimdal:amd64 (7.7.0+dfsg-1ubuntu1.4) ...
+#11 22.63 Selecting previously unselected package libkrb5-26-heimdal:amd64.
+#11 22.63 Preparing to unpack .../24-libkrb5-26-heimdal_7.7.0+dfsg-1ubuntu1.4_amd64.deb ...
+#11 22.66 Unpacking libkrb5-26-heimdal:amd64 (7.7.0+dfsg-1ubuntu1.4) ...
+#11 22.79 Selecting previously unselected package libheimntlm0-heimdal:amd64.
+#11 22.79 Preparing to unpack .../25-libheimntlm0-heimdal_7.7.0+dfsg-1ubuntu1.4_amd64.deb ...
+#11 22.82 Unpacking libheimntlm0-heimdal:amd64 (7.7.0+dfsg-1ubuntu1.4) ...
+#11 22.93 Selecting previously unselected package libgssapi3-heimdal:amd64.
+#11 22.94 Preparing to unpack .../26-libgssapi3-heimdal_7.7.0+dfsg-1ubuntu1.4_amd64.deb ...
+#11 22.95 Unpacking libgssapi3-heimdal:amd64 (7.7.0+dfsg-1ubuntu1.4) ...
+#11 23.05 Selecting previously unselected package libsasl2-modules-db:amd64.
+#11 23.05 Preparing to unpack .../27-libsasl2-modules-db_2.1.27+dfsg-2ubuntu0.1_amd64.deb ...
+#11 23.06 Unpacking libsasl2-modules-db:amd64 (2.1.27+dfsg-2ubuntu0.1) ...
+#11 23.19 Selecting previously unselected package libsasl2-2:amd64.
+#11 23.19 Preparing to unpack .../28-libsasl2-2_2.1.27+dfsg-2ubuntu0.1_amd64.deb ...
+#11 23.29 Unpacking libsasl2-2:amd64 (2.1.27+dfsg-2ubuntu0.1) ...
+#11 23.45 Selecting previously unselected package libldap-common.
+#11 23.45 Preparing to unpack .../29-libldap-common_2.4.49+dfsg-2ubuntu1.10_all.deb ...
+#11 23.47 Unpacking libldap-common (2.4.49+dfsg-2ubuntu1.10) ...
+#11 23.59 Selecting previously unselected package libldap-2.4-2:amd64.
+#11 23.59 Preparing to unpack .../30-libldap-2.4-2_2.4.49+dfsg-2ubuntu1.10_amd64.deb ...
+#11 23.63 Unpacking libldap-2.4-2:amd64 (2.4.49+dfsg-2ubuntu1.10) ...
+#11 23.76 Selecting previously unselected package libnghttp2-14:amd64.
+#11 23.76 Preparing to unpack .../31-libnghttp2-14_1.40.0-1ubuntu0.3_amd64.deb ...
+#11 23.79 Unpacking libnghttp2-14:amd64 (1.40.0-1ubuntu0.3) ...
+#11 23.98 Selecting previously unselected package librtmp1:amd64.
+#11 23.98 Preparing to unpack .../32-librtmp1_2.4+20151223.gitfa8646d.1-2build1_amd64.deb ...
+#11 24.00 Unpacking librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2build1) ...
+#11 24.15 Selecting previously unselected package libssh-4:amd64.
+#11 24.15 Preparing to unpack .../33-libssh-4_0.9.3-2ubuntu2.5_amd64.deb ...
+#11 24.22 Unpacking libssh-4:amd64 (0.9.3-2ubuntu2.5) ...
+#11 24.35 Selecting previously unselected package libcurl4:amd64.
+#11 24.35 Preparing to unpack .../34-libcurl4_7.68.0-1ubuntu2.25_amd64.deb ...
+#11 24.42 Unpacking libcurl4:amd64 (7.68.0-1ubuntu2.25) ...
+#11 24.52 Selecting previously unselected package libcurl4-openssl-dev:amd64.
+#11 24.52 Preparing to unpack .../35-libcurl4-openssl-dev_7.68.0-1ubuntu2.25_amd64.deb ...
+#11 24.54 Unpacking libcurl4-openssl-dev:amd64 (7.68.0-1ubuntu2.25) ...
+#11 24.70 Selecting previously unselected package libc-ares2:amd64.
+#11 24.70 Preparing to unpack .../36-libc-ares2_1.15.0-1ubuntu0.5_amd64.deb ...
+#11 24.73 Unpacking libc-ares2:amd64 (1.15.0-1ubuntu0.5) ...
+#11 24.87 Selecting previously unselected package libgrpc6:amd64.
+#11 24.87 Preparing to unpack .../37-libgrpc6_1.16.1-1ubuntu5_amd64.deb ...
+#11 24.89 Unpacking libgrpc6:amd64 (1.16.1-1ubuntu5) ...
+#11 25.13 Selecting previously unselected package libprotobuf17:amd64.
+#11 25.13 Preparing to unpack .../38-libprotobuf17_3.6.1.3-2ubuntu5.2_amd64.deb ...
+#11 25.15 Unpacking libprotobuf17:amd64 (3.6.1.3-2ubuntu5.2) ...
+#11 25.29 Selecting previously unselected package libgrpc++1:amd64.
+#11 25.29 Preparing to unpack .../39-libgrpc++1_1.16.1-1ubuntu5_amd64.deb ...
+#11 25.33 Unpacking libgrpc++1:amd64 (1.16.1-1ubuntu5) ...
+#11 25.48 Selecting previously unselected package libgrpc-dev:amd64.
+#11 25.48 Preparing to unpack .../40-libgrpc-dev_1.16.1-1ubuntu5_amd64.deb ...
+#11 25.52 Unpacking libgrpc-dev:amd64 (1.16.1-1ubuntu5) ...
+#11 28.56 Selecting previously unselected package libgrpc++-dev:amd64.
+#11 28.56 Preparing to unpack .../41-libgrpc++-dev_1.16.1-1ubuntu5_amd64.deb ...
+#11 28.60 Unpacking libgrpc++-dev:amd64 (1.16.1-1ubuntu5) ...
+#11 28.85 Selecting previously unselected package libprotobuf-lite17:amd64.
+#11 28.85 Preparing to unpack .../42-libprotobuf-lite17_3.6.1.3-2ubuntu5.2_amd64.deb ...
+#11 28.87 Unpacking libprotobuf-lite17:amd64 (3.6.1.3-2ubuntu5.2) ...
+#11 28.99 Selecting previously unselected package libsasl2-modules:amd64.
+#11 28.99 Preparing to unpack .../43-libsasl2-modules_2.1.27+dfsg-2ubuntu0.1_amd64.deb ...
+#11 29.02 Unpacking libsasl2-modules:amd64 (2.1.27+dfsg-2ubuntu0.1) ...
+#11 29.14 Selecting previously unselected package manpages-dev.
+#11 29.14 Preparing to unpack .../44-manpages-dev_5.05-1_all.deb ...
+#11 29.16 Unpacking manpages-dev (5.05-1) ...
+#11 29.36 Selecting previously unselected package zlib1g-dev:amd64.
+#11 29.36 Preparing to unpack .../45-zlib1g-dev_1%3a1.2.11.dfsg-2ubuntu1.5_amd64.deb ...
+#11 29.40 Unpacking zlib1g-dev:amd64 (1:1.2.11.dfsg-2ubuntu1.5) ...
+#11 29.51 Selecting previously unselected package libprotobuf-dev:amd64.
+#11 29.51 Preparing to unpack .../46-libprotobuf-dev_3.6.1.3-2ubuntu5.2_amd64.deb ...
+#11 29.52 Unpacking libprotobuf-dev:amd64 (3.6.1.3-2ubuntu5.2) ...
+#11 29.79 Setting up libkeyutils1:amd64 (1.6-6ubuntu1.1) ...
+#11 29.92 Setting up libpsl5:amd64 (0.21.0-1ubuntu1) ...
+#11 30.01 Setting up manpages (5.05-1) ...
+#11 30.06 Setting up libprotobuf-lite17:amd64 (3.6.1.3-2ubuntu5.2) ...
+#11 30.15 Setting up libssl1.1:amd64 (1.1.1f-1ubuntu2.24) ...
+#11 30.23 debconf: unable to initialize frontend: Dialog
+#11 30.23 debconf: (TERM is not set, so the dialog frontend is not usable.)
+#11 30.23 debconf: falling back to frontend: Readline
+#11 30.23 debconf: unable to initialize frontend: Readline
+#11 30.23 debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.30.0 /usr/local/share/perl/5.30.0 /usr/lib/x86_64-linux-gnu/perl5/5.30 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl/5.30 /usr/share/perl/5.30 /usr/local/lib/site_perl /usr/lib/x86_64-linux-gnu/perl-base) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)
+#11 30.23 debconf: falling back to frontend: Teletype
+#11 30.26 Setting up libbrotli1:amd64 (1.0.7-6ubuntu0.1) ...
+#11 30.33 Setting up libsqlite3-0:amd64 (3.31.1-4ubuntu0.7) ...
+#11 30.41 Setting up libsasl2-modules:amd64 (2.1.27+dfsg-2ubuntu0.1) ...
+#11 30.51 Setting up libnghttp2-14:amd64 (1.40.0-1ubuntu0.3) ...
+#11 30.56 Setting up linux-libc-dev:amd64 (5.4.0-216.236) ...
+#11 30.61 Setting up krb5-locales (1.17-6ubuntu4.11) ...
+#11 30.67 Setting up libc-ares2:amd64 (1.15.0-1ubuntu0.5) ...
+#11 30.74 Setting up libldap-common (2.4.49+dfsg-2ubuntu1.10) ...
+#11 30.81 Setting up libkrb5support0:amd64 (1.17-6ubuntu4.11) ...
+#11 30.87 Setting up libsasl2-modules-db:amd64 (2.1.27+dfsg-2ubuntu0.1) ...
+#11 30.93 Setting up libgrpc6:amd64 (1.16.1-1ubuntu5) ...
+#11 30.99 Setting up librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2build1) ...
+#11 31.08 Setting up libk5crypto3:amd64 (1.17-6ubuntu4.11) ...
+#11 31.15 Setting up libsasl2-2:amd64 (2.1.27+dfsg-2ubuntu0.1) ...
+#11 31.21 Setting up libroken18-heimdal:amd64 (7.7.0+dfsg-1ubuntu1.4) ...
+#11 31.26 Setting up libcrypt-dev:amd64 (1:4.4.10-10ubuntu4) ...
+#11 31.31 Setting up libkrb5-3:amd64 (1.17-6ubuntu4.11) ...
+#11 31.37 Setting up libprotobuf17:amd64 (3.6.1.3-2ubuntu5.2) ...
+#11 31.43 Setting up libc-dev-bin (2.31-0ubuntu9.18) ...
+#11 31.48 Setting up openssl (1.1.1f-1ubuntu2.24) ...
+#11 31.56 Setting up libgrpc++1:amd64 (1.16.1-1ubuntu5) ...
+#11 31.62 Setting up publicsuffix (20200303.0012-1) ...
+#11 31.68 Setting up libheimbase1-heimdal:amd64 (7.7.0+dfsg-1ubuntu1.4) ...
+#11 31.74 Setting up manpages-dev (5.05-1) ...
+#11 31.79 Setting up libasn1-8-heimdal:amd64 (7.7.0+dfsg-1ubuntu1.4) ...
+#11 31.84 Setting up libhcrypto4-heimdal:amd64 (7.7.0+dfsg-1ubuntu1.4) ...
+#11 31.91 Setting up libgrpc-dev:amd64 (1.16.1-1ubuntu5) ...
+#11 31.95 Setting up ca-certificates (20240203~20.04.1) ...
+#11 32.03 debconf: unable to initialize frontend: Dialog
+#11 32.03 debconf: (TERM is not set, so the dialog frontend is not usable.)
+#11 32.03 debconf: falling back to frontend: Readline
+#11 32.03 debconf: unable to initialize frontend: Readline
+#11 32.03 debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.30.0 /usr/local/share/perl/5.30.0 /usr/lib/x86_64-linux-gnu/perl5/5.30 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl/5.30 /usr/share/perl/5.30 /usr/local/lib/site_perl /usr/lib/x86_64-linux-gnu/perl-base) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)
+#11 32.03 debconf: falling back to frontend: Teletype
+#11 32.24 Updating certificates in /etc/ssl/certs...
+#11 32.57 146 added, 0 removed; done.
+#11 32.70 Setting up libwind0-heimdal:amd64 (7.7.0+dfsg-1ubuntu1.4) ...
+#11 32.77 Setting up libgssapi-krb5-2:amd64 (1.17-6ubuntu4.11) ...
+#11 32.88 Setting up libssh-4:amd64 (0.9.3-2ubuntu2.5) ...
+#11 33.07 Setting up libgrpc++-dev:amd64 (1.16.1-1ubuntu5) ...
+#11 33.53 Setting up libc6-dev:amd64 (2.31-0ubuntu9.18) ...
+#11 33.61 Setting up libhx509-5-heimdal:amd64 (7.7.0+dfsg-1ubuntu1.4) ...
+#11 33.66 Setting up zlib1g-dev:amd64 (1:1.2.11.dfsg-2ubuntu1.5) ...
+#11 33.71 Setting up libkrb5-26-heimdal:amd64 (7.7.0+dfsg-1ubuntu1.4) ...
+#11 34.56 Setting up libheimntlm0-heimdal:amd64 (7.7.0+dfsg-1ubuntu1.4) ...
+#11 34.66 Setting up libprotobuf-dev:amd64 (3.6.1.3-2ubuntu5.2) ...
+#11 34.72 Setting up libgssapi3-heimdal:amd64 (7.7.0+dfsg-1ubuntu1.4) ...
+#11 34.78 Setting up libldap-2.4-2:amd64 (2.4.49+dfsg-2ubuntu1.10) ...
+#11 34.83 Setting up libcurl4:amd64 (7.68.0-1ubuntu2.25) ...
+#11 34.90 Setting up libcurl4-openssl-dev:amd64 (7.68.0-1ubuntu2.25) ...
+#11 34.97 Processing triggers for libc-bin (2.31-0ubuntu9.17) ...
+#11 35.03 Processing triggers for ca-certificates (20240203~20.04.1) ...
+#11 35.05 Updating certificates in /etc/ssl/certs...
+#11 35.32 0 added, 0 removed; done.
+#11 35.32 Running hooks in /etc/ca-certificates/update.d...
+#11 35.32 done.
+#11 DONE 36.0s
+
+#14 [buildenv  7/10] RUN apt-get update && apt-get install -y 	libcurl4-openssl-dev 	libprotobuf-dev 	libgrpc++-dev
+#14 1.270 Get:1 http://security.ubuntu.com/ubuntu focal-security InRelease [128 kB]
+#14 1.493 Hit:2 http://archive.ubuntu.com/ubuntu focal InRelease
+#14 1.702 Get:3 http://archive.ubuntu.com/ubuntu focal-updates InRelease [128 kB]
+#14 2.557 Get:4 http://security.ubuntu.com/ubuntu focal-security/multiverse amd64 Packages [32.5 kB]
+#14 2.802 Get:5 http://archive.ubuntu.com/ubuntu focal-backports InRelease [128 kB]
+#14 2.897 Get:6 http://security.ubuntu.com/ubuntu focal-security/restricted amd64 Packages [4710 kB]
+#14 3.244 Get:7 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 Packages [4850 kB]
+#14 4.412 Get:8 http://security.ubuntu.com/ubuntu focal-security/main amd64 Packages [4368 kB]
+#14 4.573 Get:9 http://archive.ubuntu.com/ubuntu focal-updates/universe amd64 Packages [1588 kB]
+#14 4.671 Get:10 http://security.ubuntu.com/ubuntu focal-security/universe amd64 Packages [1300 kB]
+#14 4.676 Get:11 http://archive.ubuntu.com/ubuntu focal-updates/restricted amd64 Packages [4904 kB]
+#14 4.890 Get:12 http://archive.ubuntu.com/ubuntu focal-updates/multiverse amd64 Packages [36.2 kB]
+#14 4.891 Get:13 http://archive.ubuntu.com/ubuntu focal-backports/universe amd64 Packages [28.4 kB]
+#14 4.891 Get:14 http://archive.ubuntu.com/ubuntu focal-backports/main amd64 Packages [54.7 kB]
+#14 5.995 Fetched 22.3 MB in 5s (4651 kB/s)
+#14 5.995 Reading package lists...
+#14 7.028 Reading package lists...
+#14 7.756 Building dependency tree...
+#14 7.875 Reading state information...
+#14 7.973 The following additional packages will be installed:
+#14 7.973   libc-ares2 libcurl4 libgrpc++1 libgrpc-dev libgrpc6 libprotobuf-lite17
+#14 7.973   libprotobuf17
+#14 7.974 Suggested packages:
+#14 7.974   libcurl4-doc libidn11-dev libkrb5-dev libldap2-dev librtmp-dev libssh2-1-dev
+#14 7.974   libssl-dev
+#14 8.018 The following NEW packages will be installed:
+#14 8.018   libc-ares2 libcurl4-openssl-dev libgrpc++-dev libgrpc++1 libgrpc-dev
+#14 8.018   libgrpc6 libprotobuf-dev libprotobuf-lite17 libprotobuf17
+#14 8.019 The following packages will be upgraded:
+#14 8.019   libcurl4
+#14 8.540 1 upgraded, 9 newly installed, 0 to remove and 205 not upgraded.
+#14 8.540 Need to get 5113 kB of archives.
+#14 8.540 After this operation, 37.8 MB of additional disk space will be used.
+#14 8.540 Get:1 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libcurl4 amd64 7.68.0-1ubuntu2.25 [235 kB]
+#14 9.912 Get:2 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libcurl4-openssl-dev amd64 7.68.0-1ubuntu2.25 [322 kB]
+#14 10.22 Get:3 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libc-ares2 amd64 1.15.0-1ubuntu0.5 [36.9 kB]
+#14 10.25 Get:4 http://archive.ubuntu.com/ubuntu focal/universe amd64 libgrpc6 amd64 1.16.1-1ubuntu5 [689 kB]
+#14 10.58 Get:5 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libprotobuf17 amd64 3.6.1.3-2ubuntu5.2 [798 kB]
+#14 10.79 Get:6 http://archive.ubuntu.com/ubuntu focal/universe amd64 libgrpc++1 amd64 1.16.1-1ubuntu5 [517 kB]
+#14 10.87 Get:7 http://archive.ubuntu.com/ubuntu focal/universe amd64 libgrpc-dev amd64 1.16.1-1ubuntu5 [602 kB]
+#14 10.95 Get:8 http://archive.ubuntu.com/ubuntu focal/universe amd64 libgrpc++-dev amd64 1.16.1-1ubuntu5 [624 kB]
+#14 11.02 Get:9 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libprotobuf-lite17 amd64 3.6.1.3-2ubuntu5.2 [132 kB]
+#14 11.04 Get:10 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libprotobuf-dev amd64 3.6.1.3-2ubuntu5.2 [1156 kB]
+#14 11.39 debconf: delaying package configuration, since apt-utils is not installed
+#14 11.43 Fetched 5113 kB in 3s (1644 kB/s)
+#14 11.50 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 46392 files and directories currently installed.)
+#14 11.51 Preparing to unpack .../0-libcurl4_7.68.0-1ubuntu2.25_amd64.deb ...
+#14 11.58 Unpacking libcurl4:amd64 (7.68.0-1ubuntu2.25) over (7.68.0-1ubuntu2.7) ...
+#14 11.74 Selecting previously unselected package libcurl4-openssl-dev:amd64.
+#14 11.75 Preparing to unpack .../1-libcurl4-openssl-dev_7.68.0-1ubuntu2.25_amd64.deb ...
+#14 11.77 Unpacking libcurl4-openssl-dev:amd64 (7.68.0-1ubuntu2.25) ...
+#14 11.94 Selecting previously unselected package libc-ares2:amd64.
+#14 11.94 Preparing to unpack .../2-libc-ares2_1.15.0-1ubuntu0.5_amd64.deb ...
+#14 11.95 Unpacking libc-ares2:amd64 (1.15.0-1ubuntu0.5) ...
+#14 12.12 Selecting previously unselected package libgrpc6:amd64.
+#14 12.12 Preparing to unpack .../3-libgrpc6_1.16.1-1ubuntu5_amd64.deb ...
+#14 12.15 Unpacking libgrpc6:amd64 (1.16.1-1ubuntu5) ...
+#14 12.32 Selecting previously unselected package libprotobuf17:amd64.
+#14 12.32 Preparing to unpack .../4-libprotobuf17_3.6.1.3-2ubuntu5.2_amd64.deb ...
+#14 12.34 Unpacking libprotobuf17:amd64 (3.6.1.3-2ubuntu5.2) ...
+#14 12.53 Selecting previously unselected package libgrpc++1:amd64.
+#14 12.53 Preparing to unpack .../5-libgrpc++1_1.16.1-1ubuntu5_amd64.deb ...
+#14 12.56 Unpacking libgrpc++1:amd64 (1.16.1-1ubuntu5) ...
+#14 12.68 Selecting previously unselected package libgrpc-dev:amd64.
+#14 12.68 Preparing to unpack .../6-libgrpc-dev_1.16.1-1ubuntu5_amd64.deb ...
+#14 12.70 Unpacking libgrpc-dev:amd64 (1.16.1-1ubuntu5) ...
+#14 12.88 Selecting previously unselected package libgrpc++-dev:amd64.
+#14 12.88 Preparing to unpack .../7-libgrpc++-dev_1.16.1-1ubuntu5_amd64.deb ...
+#14 12.91 Unpacking libgrpc++-dev:amd64 (1.16.1-1ubuntu5) ...
+#14 13.10 Selecting previously unselected package libprotobuf-lite17:amd64.
+#14 13.10 Preparing to unpack .../8-libprotobuf-lite17_3.6.1.3-2ubuntu5.2_amd64.deb ...
+#14 13.12 Unpacking libprotobuf-lite17:amd64 (3.6.1.3-2ubuntu5.2) ...
+#14 13.24 Selecting previously unselected package libprotobuf-dev:amd64.
+#14 13.24 Preparing to unpack .../9-libprotobuf-dev_3.6.1.3-2ubuntu5.2_amd64.deb ...
+#14 13.27 Unpacking libprotobuf-dev:amd64 (3.6.1.3-2ubuntu5.2) ...
+#14 13.45 Setting up libprotobuf-lite17:amd64 (3.6.1.3-2ubuntu5.2) ...
+#14 13.51 Setting up libc-ares2:amd64 (1.15.0-1ubuntu0.5) ...
+#14 13.55 Setting up libgrpc6:amd64 (1.16.1-1ubuntu5) ...
+#14 13.61 Setting up libcurl4:amd64 (7.68.0-1ubuntu2.25) ...
+#14 13.68 Setting up libprotobuf17:amd64 (3.6.1.3-2ubuntu5.2) ...
+#14 13.75 Setting up libgrpc++1:amd64 (1.16.1-1ubuntu5) ...
+#14 13.82 Setting up libgrpc-dev:amd64 (1.16.1-1ubuntu5) ...
+#14 13.89 Setting up libprotobuf-dev:amd64 (3.6.1.3-2ubuntu5.2) ...
+#14 13.98 Setting up libcurl4-openssl-dev:amd64 (7.68.0-1ubuntu2.25) ...
+#14 14.05 Setting up libgrpc++-dev:amd64 (1.16.1-1ubuntu5) ...
+#14 14.10 Processing triggers for man-db (2.9.1-1) ...
+#14 14.17 Processing triggers for libc-bin (2.31-0ubuntu9.2) ...
+#14 DONE 15.2s
+
+#15 [buildenv  8/10] COPY . /playpen/src/
+#15 DONE 0.2s
+
+#16 [buildenv  9/10] RUN cd /playpen/src && 	rm -fr .build &&	mkdir  .build && 	cd .build && 	cmake .. && 	make install
+#16 0.230 -- The C compiler identification is GNU 9.3.0
+#16 0.271 -- The CXX compiler identification is GNU 9.3.0
+#16 0.277 -- Check for working C compiler: /usr/bin/cc
+#16 0.319 -- Check for working C compiler: /usr/bin/cc -- works
+#16 0.320 -- Detecting C compiler ABI info
+#16 0.362 -- Detecting C compiler ABI info - done
+#16 0.370 -- Detecting C compile features
+#16 0.371 -- Detecting C compile features - done
+#16 0.373 -- Check for working CXX compiler: /usr/bin/c++
+#16 0.419 -- Check for working CXX compiler: /usr/bin/c++ -- works
+#16 0.420 -- Detecting CXX compiler ABI info
+#16 0.468 -- Detecting CXX compiler ABI info - done
+#16 0.476 -- Detecting CXX compile features
+#16 0.477 -- Detecting CXX compile features - done
+#16 0.479 +++ debugging is set to off
+#16 0.487 +++ profiling is off
+#16 0.661 CMake Warning at /usr/share/cmake-3.16/Modules/FindProtobuf.cmake:499 (message):
+#16 0.661   Protobuf compiler version doesn't match library version 3.6.1
+#16 0.661 Call Stack (most recent call first):
+#16 0.661   src/ts_xapp/CMakeLists.txt:18 (find_package)
+#16 0.661 
+#16 0.661 
+#16 0.662 -- Found Protobuf: /usr/lib/x86_64-linux-gnu/libprotobuf.so;-lpthread (found version "3.6.1") 
+#16 0.663 -- Configuring done
+#16 0.666 -- Generating done
+#16 0.667 -- Build files have been written to: /playpen/src/.build
+#16 0.685 Scanning dependencies of target rc_objects
+#16 0.691 [ 20%] Building CXX object ext/protobuf/CMakeFiles/rc_objects.dir/rc.pb.cc.o
+#16 1.388 [ 40%] Building CXX object ext/protobuf/CMakeFiles/rc_objects.dir/rc.grpc.pb.cc.o
+#16 2.204 [ 40%] Built target rc_objects
+#16 2.211 Scanning dependencies of target utils_objects
+#16 2.216 [ 60%] Building CXX object src/utils/CMakeFiles/utils_objects.dir/restclient.cpp.o
+#16 2.434 [ 60%] Built target utils_objects
+#16 2.441 Scanning dependencies of target ts_xapp
+#16 2.446 [ 80%] Building CXX object src/ts_xapp/CMakeFiles/ts_xapp.dir/ts_xapp.cpp.o
+#16 4.137 [100%] Linking CXX executable ts_xapp
+#16 4.267 [100%] Built target ts_xapp
+#16 4.278 Install the project...
+#16 4.282 -- Install configuration: ""
+#16 4.283 -- Installing: /usr/local/bin/ts_xapp
+#16 DONE 4.5s
+
+#17 [buildenv 10/10] COPY assets/bootstrap.rt /playpen/assets
+#17 DONE 0.1s
+
+#18 [stage-1 3/8] COPY --from=buildenv /usr/local/lib /usr/local/lib/
+#18 DONE 0.3s
+
+#19 [stage-1 4/8] COPY --from=buildenv /usr/local/bin/rmr_probe /usr/local/bin/ts_xapp /usr/local/bin/
+#19 DONE 0.1s
+
+#20 [stage-1 5/8] COPY --from=buildenv /playpen/bin /usr/local/bin/
+#20 DONE 0.1s
+
+#21 [stage-1 6/8] COPY --from=buildenv /playpen/assets /data
+#21 DONE 0.1s
+
+#22 [stage-1 7/8] WORKDIR /data
+#22 DONE 0.1s
+
+#23 [stage-1 8/8] COPY --from=buildenv /playpen/assets/* /data
+#23 DONE 0.1s
+
+#24 exporting to image
+#24 exporting layers
+#24 exporting layers 0.4s done
+#24 writing image sha256:REDACTED-LONG-TOKEN done
+#24 naming to 127.0.0.1:80/trafficxapp:latest 0.0s done
+#24 DONE 0.4s
+
+ [33m1 warning found (use docker --debug to expand):
+[0m - FromAsCasing: 'as' and 'FROM' keywords' casing do not match (line 34)
+127.0.0.1:80/trafficxapp:latest         	saved	
+application/vnd.oci.image.manifest.v1+json sha256:REDACTED-LONG-TOKEN
+Importing	elapsed: 5.3 s	total:   0.0 B	(0.0 B/s)	
+Onboarding the Traffic Steering xApp (trafficxapp)...
+/home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/appmgr/xapp_orchestrater/dev/xapp_onboarder/venv/lib/python3.12/site-packages/xapp_onboarder/server/cli.py:21: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+{ "status": "Created" }
+Onboarding successful: status is 'Created'.
+Checking if namespace 'ricxapp' exists...
+Uninstalling application 'trafficxapp' if it exists...
+Application trafficxapp not found or already uninstalled.
+/home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/appmgr/xapp_orchestrater/dev/xapp_onboarder/venv/lib/python3.12/site-packages/xapp_onboarder/server/cli.py:21: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+Installing application 'trafficxapp'...
+/home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/appmgr/xapp_orchestrater/dev/xapp_onboarder/venv/lib/python3.12/site-packages/xapp_onboarder/server/cli.py:21: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+status: OK
+Application successfully deployed.
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/stop_sudo_refresh.sh 
+Sudo refresh process stopped or was not running.
+stty: 'standard input': Inappropriate ioctl for device
+
+
+################################################################################
+# Successfully installed Traffic Steering xApp (trafficxapp)                   #
+################################################################################
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_scripts/stop_sudo_refresh.sh 
+No process found to stop.
+Sudo refresh process stopped or was not running.

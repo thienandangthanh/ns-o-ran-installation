@@ -2,7 +2,8 @@
 # Gate p5 (VM side, a one-time dev run): the stray-ack probe of the TS xApp. rtmgr gives every non-platform xApp
 # a 12041/12042 route at subid -1, and the TS xApp registers no handler for them (nor a default one), so an
 # unmatched ack may be freed twice. The probe sends such acks straight to the TS xApp's RMR Service and records
-# whether the pod crashed. Run it on a freshly installed TS xApp, before any stub QP exists.
+# whether the pod crashed. Run it on a freshly installed TS xApp registered with appmgr (gate i2 --part ts), before
+# any stub QP exists. Expected in the TS log after a 30003: `[ERROR] send failed` (no 30000 route without a stub).
 #
 # Payloads are real E2AP PDUs from the R1 capture (tools/rmr-peer/fixtures). Variants:
 #   single  one 12041, then one 30003 (the phase file's probe)
@@ -26,6 +27,12 @@ check p5_ts_ready_listening ts_ready
 no_stub() { ! kc -n ricxapp get pods --no-headers | grep "ricxapp-$STUB_NAME-" && echo "no stub QP pod"; }
 check p5_no_stub_qp_deployed no_stub
 check p5_rmr_peer_image_built_self_tested rmr_peer_build
+# the premise: registered with appmgr, the TS xApp holds 12041/12042 -1 rows in rtmgr's table
+check p5_appmgr_xapp_list_saved xapp_list_save "$e/p5-appmgr-xapps.json"
+check p5_ts_xapp_registered xapp_ensure_registered trafficxapp
+check p5_route_dump rc_route_dump p5
+ack_rows() { grep -E '^mse\|1204[12](,[^|]+)?\|-1\|' "$e/p5-routetable.txt"; }
+check p5_ack_rows_recorded ack_rows
 check p5_injector_started_static_route_to_ts injector_start "$e/injector"
 
 ts_state() {   # one JSON line: pod name, uid, restarts, lastState.terminated of the TS container
@@ -77,10 +84,13 @@ probe() {
 import json, os, sys
 e, ep, sha = sys.argv[1:]
 vs = [json.load(open(os.path.join(e, v + ".json"))) for v in ("single", "burst") if os.path.exists(os.path.join(e, v + ".json"))]
+rows = [l.strip() for l in open(os.path.join(e, "p5-routetable.txt")) if l.startswith(("mse|12041", "mse|12042")) and "|-1|" in l]
+apps = json.load(open(os.path.join(e, "p5-appmgr-xapps.json")))
 out = {"endpoint": ep, "endpointKind": "TS xApp RMR Service ClusterIP (static seed route in the injector)", "tsSha": sha,
-       "variants": vs, "crashed": any(v["crashed"] for v in vs)}
+       "ackRowsMinusOne": rows, "tsHoldsAckRows": any("trafficxapp" in r for r in rows),
+       "appmgrXapps": sorted(a["name"] for a in apps), "variants": vs, "crashed": any(v["crashed"] for v in vs)}
 json.dump(out, open(os.path.join(e, "probe.json"), "w"), indent=1)
-print(json.dumps({"crashed": out["crashed"], "variants": [(v["variant"], v["crashed"]) for v in vs]}))
+print(json.dumps({"crashed": out["crashed"], "tsHoldsAckRows": out["tsHoldsAckRows"], "variants": [(v["variant"], v["crashed"]) for v in vs]}))
 sys.exit(0 if len(vs) == 2 else 1)
 PY
 }

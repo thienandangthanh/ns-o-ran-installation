@@ -1,0 +1,19 @@
+[17:19:29] gate i2 start; evidence /home/uc/evidence/i2/20261023T171928Z; harness 9c5298d70a877598331a605ffc65b4df8a9182e6
+[17:19:29] PASS i2_args
+[17:19:30] PASS i2_nist_tree_at_testbed_sha_with_agent_dir
+[17:19:30] PASS i2_ts_installer_at_testbed_sha
+[17:19:30] PASS i2_rc_installed_at_pin_and_ready
+[17:35:56] PASS i2_ts_installed_at_pin_switched_to_grpc
+[17:35:57] PASS i2_a1_policy_type_20008_present
+[17:35:57] PASS i2_ts_ready_listening_no_control_api_error
+[17:37:00] FAIL i2_rtmgr_session_to_every_xapp: exit 1: Defaulted container "container-ricplt-rtmgr" out of: container-ricplt-rtmgr, wait-for-e2mgr (init)
+Defaulted container "container-ricplt-rtmgr" out of: container-ricplt-rtmgr, wait-for-e2mgr (init)
+rtmgr deployment-ricplt-rtmgr-74fb47b69d-2d55w -> service-ricxapp-rc-rmr 10.105.249.184:4561 ESTABLISHED
+rtmgr deployment-ricplt-rtmgr-74fb47b69d-2d55w -> service-ricxapp-kpimon-go-rmr 10.109.115.169:4561 ESTABLISHED
+rtmgr deployment-ricplt-rtmgr-74fb47b69d-2d55w: no ESTABLISHED session to service-ricxapp-trafficxapp-rmr 10.100.211.147:4561
+[17:37:01] PASS i2_rc_rmr_ready_after_rtmgr_restart
+[17:37:01] PASS i2_route_dump
+[17:37:01] PASS i2_xapp_image_ids
+[17:37:01] PASS i2_pod_snapshot
+[17:37:01] PASS i2_restart_counts_zero
+verdict i2: FAIL failed=['i2_rtmgr_session_to_every_xapp']

@@ -13,7 +13,8 @@
 #
 # Per run, from a fresh RIC state: rc_ric_reset (bucket, rc, kpimon, hw-go, rtmgr), capture, agents CONNECTED and
 # subscribed, then the TS xApp and stub pods recreated (the TS xApp reads e2mgr's nodeb list only at start-up),
-# rtmgr restarted again with a session to every xApp, the A1 threshold set again (the TS xApp starts at 0), the
+# their appmgr registrations ensured (neither registers itself), rtmgr restarted again with a session to every
+# xApp and a1mediator, the A1 threshold set again (the TS xApp starts at 0), the
 # stub's table loaded and the injector started. Positives need one control within T_ctl, negatives none within W.
 # shellcheck disable=SC2034  # SINKX and PACERX are read by paced-lib.sh
 source "$(dirname "$0")/lib.sh"
@@ -374,6 +375,16 @@ for f in sorted(glob.glob(os.path.join(sys.argv[1], "*-ts-reset.json"))):
 print(json.dumps(out))
 PY
 )"
+fact xappRegistration "$(python3 -I - "$e" <<'PY' 2>/dev/null || echo null
+import glob, json, os, sys
+out = {}
+for f in sorted(glob.glob(os.path.join(sys.argv[1], "*-appmgr-xapps.json"))):
+    out[os.path.basename(f)[:-len("-appmgr-xapps.json")]] = sorted(
+        "%s@%s:%s" % (i["name"], i["ip"], i["port"]) for a in json.load(open(f)) for i in a.get("instances") or [])
+print(json.dumps(out))
+PY
+)"
+fact stubOtherTypes "$(per_run_fact r2-stub.json stubOtherTypes 2>/dev/null || echo null)"
 fact influxDump "$(python3 -I -c 'import json,os,sys; p=sys.argv[1]; print(json.dumps({"path": "runs/live1/influx-kpimon.csv", "bytes": os.path.getsize(p)} if os.path.exists(p) else None))' "$RUNS/live1/influx-kpimon.csv" 2>/dev/null || echo null)"
 facts_final() {
     python3 -I - "$e" <<'PY'
