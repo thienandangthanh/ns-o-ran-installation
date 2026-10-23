@@ -1,0 +1,17 @@
+{
+ "_comment": "R2: the TS xApp decides from the stub QP's fixed predictions, R0 radio config (RngRun 1, outageThreshold -1000): IMSIs 1,2 start on cell 3 (gNB 3), IMSIs 3-6 on cell 2 (gNB 2). Each trigger is one 30003 naming one UE (decimal IMSI as a string), one trigger per step; each IMSI is used in one step only. predictions = the stub's answer, serving cell first, unsigned integers [dl, ul], never a tie. The TS xApp hands over when the best cell's dl exceeds serving dl x (1 + threshold/100); it addresses the control to the TARGET's E2 node (recorded deviation P1), so via = the target gNB. Negatives: n1 the serving cell is best; n2 a neighbour 5 % above the serving cell, under the 10 % threshold (with threshold 0 it would hand over, so n2 proves the A1 policy took effect). The threshold is rung-config.json a1_threshold.",
+ "threshold": 10,
+ "controls": [
+  {"step": 20, "imsi": 1, "kind": "positive", "predictions": [["0000000303", [100, 0]], ["0000000202", [300, 0]]], "via": 2, "key": "0000000202", "targetCell": 2, "expect": "applied"},
+  {"step": 30, "imsi": 3, "kind": "positive", "predictions": [["0000000202", [100, 0]], ["0000000303", [300, 0]]], "via": 3, "key": "0000000303", "targetCell": 3, "expect": "applied"},
+  {"step": 40, "imsi": 4, "kind": "negative", "case": "n1", "predictions": [["0000000202", [300, 0]], ["0000000303", [100, 0]]]},
+  {"step": 50, "imsi": 5, "kind": "negative", "case": "n2", "predictions": [["0000000202", [100, 0]], ["0000000303", [105, 0]]]},
+  {"step": 60, "imsi": 2, "kind": "positive", "predictions": [["0000000303", [100, 0]], ["0000000202", [300, 0]]], "via": 2, "key": "0000000202", "targetCell": 2, "expect": "applied"},
+  {"step": 70, "imsi": 6, "kind": "positive", "predictions": [["0000000202", [100, 0]], ["0000000303", [300, 0]]], "via": 3, "key": "0000000303", "targetCell": 3, "expect": "applied"}
+ ],
+ "calibration": {
+  "_comment": "W calibration in the gated per-step shape (one trigger per step, the same agents): count positive triggers from firstStep every everySteps steps, IMSIs round robin 1..6, each sent to the cell it is not on (start cells below, flipped after each trigger), predictions serving [100, 0] then target [300, 0]. Only L and the one-control-per-trigger count are judged; outcomes are recorded.",
+  "firstStep": 10, "everySteps": 3, "count": 25,
+  "startCells": {"1": 3, "2": 3, "3": 2, "4": 2, "5": 2, "6": 2}
+ }
+}
