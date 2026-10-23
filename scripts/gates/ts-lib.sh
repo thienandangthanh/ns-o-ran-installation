@@ -67,8 +67,12 @@ _wait_new_ready() {
 ts_install() {
     local e="$EVIDENCE_DIR" sha f="$TS_DIR/xapp-descriptor/config-file_updated.json" ver
     _agents_prepare_env
-    nist_run 3600 "$RIC_DIR/additional_scripts/install_xapp_traffic_steering.sh" 2>&1 | redact_stream >"$e/install-ts.log"
-    [ "${PIPESTATUS[0]}" = 0 ] || { tail -n 30 "$e/install-ts.log"; return 1; }
+    # never pipe NIST output: nist_run's idle-stdin sleep and the chartmuseum daemon inherit stdout and would
+    # hold a pipe open; redact the file afterwards (as kpimon_install does)
+    nist_run 3600 "$RIC_DIR/additional_scripts/install_xapp_traffic_steering.sh" >"$e/install-ts.log.raw" 2>&1
+    local rc=$?
+    redact_stream <"$e/install-ts.log.raw" >"$e/install-ts.log"; rm -f "$e/install-ts.log.raw"
+    [ "$rc" = 0 ] || { tail -n 30 "$e/install-ts.log"; return 1; }
     sha=$(git -C "$TS_DIR" rev-parse HEAD) || return 1
     echo "$sha" | tee "$e/ts-sha.txt"
     [ "$sha" = "$TS_SHA" ] || { echo "the TS xApp is at $sha, pinned $TS_SHA"; return 1; }
