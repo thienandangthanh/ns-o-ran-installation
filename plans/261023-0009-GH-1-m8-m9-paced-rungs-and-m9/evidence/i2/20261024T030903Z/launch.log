@@ -1,0 +1,24 @@
+[03:09:04] gate i2 start; evidence /home/uc/evidence/i2/20261024T030903Z; harness eaf87857d5e2267ba8ccd902f3d0d36a8fe5d570
+[03:09:04] PASS i2_args
+[03:09:04] PASS i2_nist_tree_at_testbed_sha_with_agent_dir
+[03:09:04] PASS i2_ts_installer_at_testbed_sha
+[03:09:04] PASS i2_rc_installed_at_pin_and_ready
+[03:09:04] PASS i2_ts_source_is_pin_plus_exactly_the_testbed_patches
+[03:09:05] PASS i2_ts_ready_listening_no_control_api_error
+[03:09:16] PASS i2_rmr_peer_image_built_self_tested_imported
+[03:09:20] PASS i2_stub_qp_installed_as_its_own_xapp
+[03:09:20] PASS i2_ts_xapp_registered_with_appmgr
+[03:09:20] PASS i2_stub_qp_registered_with_appmgr
+[03:09:20] PASS i2_appmgr_xapp_list_saved
+[03:09:51] PASS i2_a1mediator_restarted_fresh_policy_type_kept
+[03:10:15] PASS i2_rtmgr_restarted_after_registration
+[03:10:22] PASS i2_rtmgr_session_to_every_xapp_and_a1mediator
+[03:10:22] PASS i2_rc_rmr_ready_after_rtmgr_restart
+[03:10:23] PASS i2_route_dump
+[03:10:23] PASS i2_routes_20010_to_ts_30002_stub_to_ts_30000_only_ts_to_stub
+[03:11:03] PASS i2_a1_threshold_reaches_ts_xapp
+[03:11:04] PASS i2_a1mediator_connection_to_ts_xapp_clean
+[03:11:04] PASS i2_xapp_image_ids
+[03:11:04] PASS i2_pod_snapshot
+[03:11:04] FAIL i2_restart_counts_zero: exit 1: restart count 3 for pod ricxapp-stubqp-8459744f98-rddrd
+verdict i2: FAIL failed=['i2_restart_counts_zero']
