@@ -24,8 +24,8 @@
       "provenance": "substitution 1 applied: Q2 = 5 LTE outage switches at -5 dB in the R0-config null-control run (evidence/r0/20261023T073520Z q2OutageSwitches 5); reported in the run report"
     },
     "ts_xapp_default_rmr_handler": {
-      "applied": false,
-      "provenance": "substitution 2; decided by the stray-ack probe at P5"
+      "applied": true,
+      "provenance": "substitution 2 applied: the stray-ack probe crashed the TS xApp (glibc double free, exit 139; evidence/p5/20261024T000354Z crashed true); Testbed fork install_patch_files/xApps/ts/src/ts_xapp/ts_xapp.cpp.default_handler.patch; reported in the run report"
     },
     "ts_xapp_a1_payload_string": {
       "applied": true,
