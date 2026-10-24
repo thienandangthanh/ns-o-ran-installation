@@ -1,0 +1,12 @@
+1792800240739 1/RMR [INFO] ric message routing library on SI95 p=4593 mv=3 flg=00 id=a (a1be12a 4.9.0 built: Feb 14 2023)
+1792800240760 9/RMR [INFO] ric message routing library on SI95 p=4592 mv=3 flg=00 id=a (a1be12a 4.9.0 built: Feb 14 2023)
+ok   prediction keeps the table's cell order
+ok   a used-up UE gets no answer
+ok   a request naming two UEs gets no answer
+ok   an empty UE list gets no answer
+ok   anomaly payload: one UE, ue-id a JSON string
+ok   injector ready: READY rmr port 4592 ctl port 38599
+ok   injector reply {'ok': True, 'state': 0, 'tries': 1, 'sendS': 0.00012}
+ok   loopback received 30003 with the exact payload: (30003, b'[{"du-id": 1010, "ue-id": "3", "measTimeStampRf": 0, "Degradation": "RSRP RSSINR"}]')
+{"pass": true, "problems": []}
+built and imported 127.0.0.1:80/stubqp:a33ffe32d8ea

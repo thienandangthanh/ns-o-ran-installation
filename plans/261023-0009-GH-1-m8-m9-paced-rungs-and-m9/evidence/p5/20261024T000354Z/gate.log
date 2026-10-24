@@ -1,0 +1,15 @@
+[00:03:55] gate p5 start; evidence /home/uc/evidence/p5/20261024T000354Z; harness be0cd5af5b81c653c3efa99443c35b2aecf6d274
+[00:03:55] PASS p5_args
+[00:03:55] PASS p5_ts_ready_listening
+[00:03:55] PASS p5_no_stub_qp_deployed
+[00:04:10] PASS p5_rmr_peer_image_built_self_tested
+[00:04:11] PASS p5_appmgr_xapp_list_saved
+[00:04:11] PASS p5_ts_xapp_registered
+[00:04:11] PASS p5_route_dump
+[00:04:11] PASS p5_ack_rows_recorded
+[00:04:15] PASS p5_injector_started_static_route_to_ts
+[00:04:29] PASS p5_variant_single_12041_then_30003
+[00:05:01] FAIL p5_variant_burst_12041_12042_interleaved_30003: exit 1: {"variant": "burst", "sent": [{"ok": true, "state": 0, "tries": 1, "sendS": 0.00012, "mtype": 12041}, {"ok": true, "state": 0, "tries": 1, "sendS": 4.3e-05, "mtype": 30003}, {"ok": false, "state": 2, "tries": 1, "sendS": 1.056331, "mtype": 12042}, {"ok": false, "state": 2, "tries": 1, "sendS": 1.04309, "mtype": 30003}, {"ok": false, "state": 2, "tries": 1, "sendS": 1.041596, "mtype": 12041}, {"ok": false, "state": 2, "tries": 1, "sendS": 1.042352, "mtype": 30003}, {"ok": false, "state": 2, "tries": 1, "sendS": 1.039174, "mtype": 12042}, {"ok": false, "state": 2, "tries": 1, "sendS": 1.042432, "mtype": 30003}, {"ok": true, "state": 0, "tries": 1, "sendS": 0.00012, "mtype": 12041}, {"ok": true, "state": 0, "tries": 1, "sendS": 4.5e-05, "mtype": 30003}, {"ok": false, "state": 2, "tries": 1, "sendS": 9.3e-05, "mtype": 12042}, {"ok": false, "state": 2, "tries": 1, "sendS": 1.007995, "mtype": 30003}], "allSent": false, "before": {"pod": "ricxapp-trafficxapp-7c46768578-mb9p2", "uid": "1932ab61-2681-4c7c-a85c-8b277b8877cd", "restarts": 1, "ready": true, "state": ["running"], "lastTerminated": {"containerID": "containerd://cb52dbeafb558fce2617e3aabb94af6f3c7485772962718cd14475057f45610b", "exitCode": 139, "finishedAt": "2026-10-24T00:04:16Z", "reason": "Error", "startedAt": "2026-10-24T00:01:24Z"}}, "after": {"pod": "ricxapp-trafficxapp-7c46768578-mb9p2", "uid": "1932ab61-2681-4c7c-a85c-8b277b8877cd", "restarts": 2, "ready": false, "state": ["waiting"], "lastTerminated": {"containerID": "containerd://9bc49efab64ef35b974c218567a03b41478e321027343f10e2e4ac8973213c8a", "exitCode": 139, "finishedAt": "2026-10-24T00:04:45Z", "reason": "Error", "startedAt": "2026-10-24T00:04:42Z"}}, "glibc": ["double free or corruption (fasttop)", "double free or corruption (fasttop)"], "crashed": true}
+[00:05:01] PASS p5_injector_stopped
+[00:05:01] PASS p5_probe_json_written
+verdict p5: FAIL failed=['p5_variant_burst_12041_12042_interleaved_30003']

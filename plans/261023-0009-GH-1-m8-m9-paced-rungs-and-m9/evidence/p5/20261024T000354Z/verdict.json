@@ -1,0 +1,92 @@
+{
+  "gate": "p5",
+  "ts": "20261024T000354Z",
+  "harness_sha": "be0cd5af5b81c653c3efa99443c35b2aecf6d274",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "c76281450e1b1f2a032b0ec0a0761c87e6604f4e",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "962fabc724ccc26d0aab3fe25c2b8cac95d45884",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "63155c4946b5b1180f8f69d259509505b8388e18",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+  },
+  "duration_s": 66,
+  "pass": false,
+  "failed": [
+    "p5_variant_burst_12041_12042_interleaved_30003"
+  ],
+  "checks": [
+    {
+      "name": "p5_args",
+      "pass": true,
+      "detail": "TS pin 19e169b2e81a0dbaf3d9dc526de0415cc995ee8b; rmr-peer image 127.0.0.1:80/stubqp:a33ffe32d8ea; injector ctl port 38510"
+    },
+    {
+      "name": "p5_ts_ready_listening",
+      "pass": true,
+      "detail": "TS ricxapp-trafficxapp-7c46768578-mb9p2 ready and listening"
+    },
+    {
+      "name": "p5_no_stub_qp_deployed",
+      "pass": true,
+      "detail": "no stub QP pod"
+    },
+    {
+      "name": "p5_rmr_peer_image_built_self_tested",
+      "pass": true,
+      "detail": "ok   loopback received 30003 with the exact payload: (30003, b'[{\"du-id\": 1010, \"ue-id\": \"3\", \"measTimeStampRf\": 0, \"Degradation\": \"RSRP RSSINR\"}]')\n{\"pass\": true, \"problems\": []}\nbuilt and imported 127.0.0.1:80/stubqp:a33ffe32d8ea"
+    },
+    {
+      "name": "p5_appmgr_xapp_list_saved",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "p5_ts_xapp_registered",
+      "pass": true,
+      "detail": "trafficxapp already registered"
+    },
+    {
+      "name": "p5_route_dump",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-rc-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-rc-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-rc-rmr.ricxapp:4560 / service-ricxapp-rc-rmr.ricxapp:4560"
+    },
+    {
+      "name": "p5_ack_rows_recorded",
+      "pass": true,
+      "detail": "mse|12042|-1|service-ricxapp-hw-go-rmr.ricxapp:4560\nmse|12041|-1|service-ricxapp-rc-rmr.ricxapp:4560\nmse|12042|-1|service-ricxapp-rc-rmr.ricxapp:4560"
+    },
+    {
+      "name": "p5_injector_started_static_route_to_ts",
+      "pass": true,
+      "detail": "injector up, seed: newrt|start mse|30003|-1|10.98.52.229:4560 mse|12041|-1|10.98.52.229:4560 mse|12042|-1|10.98.52.229:4560 newrt|end "
+    },
+    {
+      "name": "p5_variant_single_12041_then_30003",
+      "pass": true,
+      "detail": "{\"variant\": \"single\", \"sent\": [{\"ok\": true, \"state\": 0, \"tries\": 1, \"sendS\": 0.000124, \"mtype\": 12041}, {\"ok\": true, \"state\": 0, \"tries\": 1, \"sendS\": 4.1e-05, \"mtype\": 30003}], \"allSent\": true, \"before\": {\"pod\": \"ricxapp-trafficxapp-7c46768578-mb9p2\", \"uid\": \"1932ab61-2681-4c7c-a85c-8b277b8877cd\", \"restarts\": 0, \"ready\": true, \"state\": [\"running\"], \"lastTerminated\": null}, \"after\": {\"pod\": \"ricxapp-trafficxapp-7c46768578-mb9p2\", \"uid\": \"1932ab61-2681-4c7c-a85c-8b277b8877cd\", \"restarts\": 1, \"ready\": true, \"state\": [\"running\"], \"lastTerminated\": {\"containerID\": \"containerd://cb52dbeafb558fce2617e3aabb94af6f3c7485772962718cd14475057f45610b\", \"exitCode\": 139, \"finishedAt\": \"2026-10-24T00:04:16Z\", \"reason\": \"Error\", \"startedAt\": \"2026-10-24T00:01:24Z\"}}, \"glibc\": [\"double free or corruption (fasttop)\"], \"crashed\": true}"
+    },
+    {
+      "name": "p5_variant_burst_12041_12042_interleaved_30003",
+      "pass": false,
+      "detail": "exit 1: {\"variant\": \"burst\", \"sent\": [{\"ok\": true, \"state\": 0, \"tries\": 1, \"sendS\": 0.00012, \"mtype\": 12041}, {\"ok\": true, \"state\": 0, \"tries\": 1, \"sendS\": 4.3e-05, \"mtype\": 30003}, {\"ok\": false, \"state\": 2, \"tries\": 1, \"sendS\": 1.056331, \"mtype\": 12042}, {\"ok\": false, \"state\": 2, \"tries\": 1, \"sendS\": 1.04309, \"mtype\": 30003}, {\"ok\": false, \"state\": 2, \"tries\": 1, \"sendS\": 1.041596, \"mtype\": 12041}, {\"ok\": false, \"state\": 2, \"tries\": 1, \"sendS\": 1.042352, \"mtype\": 30003}, {\"ok\": false, \"state\": 2, \"tries\": 1, \"sendS\": 1.039174, \"mtype\": 12042}, {\"ok\": false, \"state\": 2, \"tries\": 1, \"sendS\": 1.042432, \"mtype\": 30003}, {\"ok\": true, \"state\": 0, \"tries\": 1, \"sendS\": 0.00012, \"mtype\": 12041}, {\"ok\": true, \"state\": 0, \"tries\": 1, \"sendS\": 4.5e-05, \"mtype\": 30003}, {\"ok\": false, \"state\": 2, \"tries\": 1, \"sendS\": 9.3e-05, \"mtype\": 12042}, {\"ok\": false, \"state\": 2, \"tries\": 1, \"sendS\": 1.007995, \"mtype\": 30003}], \"allSent\": false, \"before\": {\"pod\": \"ricxapp-trafficxapp-7c46768578-mb9p2\", \"uid\": \"1932ab61-2681-4c7c-a85c-8b277b8877cd\", \"restarts\": 1, \"ready\": true, \"state\": [\"running\"], \"lastTerminated\": {\"containerID\": \"containerd://cb52dbeafb558fce2617e3aabb94af6f3c7485772962718cd14475057f45610b\", \"exitCode\": 139, \"finishedAt\": \"2026-10-24T00:04:16Z\", \"reason\": \"Error\", \"startedAt\": \"2026-10-24T00:01:24Z\"}}, \"after\": {\"pod\": \"ricxapp-trafficxapp-7c46768578-mb9p2\", \"uid\": \"1932ab61-2681-4c7c-a85c-8b277b8877cd\", \"restarts\": 2, \"ready\": false, \"state\": [\"waiting\"], \"lastTerminated\": {\"containerID\": \"containerd://9bc49efab64ef35b974c218567a03b41478e321027343f10e2e4ac8973213c8a\", \"exitCode\": 139, \"finishedAt\": \"2026-10-24T00:04:45Z\", \"reason\": \"Error\", \"startedAt\": \"2026-10-24T00:04:42Z\"}}, \"glibc\": [\"double free or corruption (fasttop)\", \"double free or corruption (fasttop)\"], \"crashed\": true}"
+    },
+    {
+      "name": "p5_injector_stopped",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "p5_probe_json_written",
+      "pass": true,
+      "detail": "{\"crashed\": true, \"tsHoldsAckRows\": true, \"variants\": [[\"single\", true], [\"burst\", true]]}"
+    }
+  ],
+  "probe": {
+    "crashed": true,
+    "endpoint": "10.98.52.229:4560"
+  }
+}

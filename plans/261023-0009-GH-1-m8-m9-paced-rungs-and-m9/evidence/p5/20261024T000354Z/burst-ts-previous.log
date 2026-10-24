@@ -1,0 +1,9 @@
+[WARN] jwrapper: badly formed json [32]; expected name (string) found type=4 4561
+[WARN] jwrapper: element [77] is undefined or of unknown type
+[INFO] nodeb list is [{"inventoryName":"gnb_001_001_00000002","globalNbId":{"plmnId":"00F110","nbId":"00000000000000000000000000010"},"connectionStatus":"DISCONNECTED"},{"inventoryName":"gnb_001_001_00000003","globalNbId":{"plmnId":"00F110","nbId":"00000000000000000000000000011"},"connectionStatus":"DISCONNECTED"},{"inventoryName":"gnb_001_001_00000001","globalNbId":{"plmnId":"00F110","nbId":"00000000000000000000000000001"},"connectionStatus":"DISCONNECTED"}]
+[INFO] listening on port 4560
+1792800282504 1/RMR [INFO] ric message routing library on SI95 p=4560 mv=3 flg=00 id=a (fa45400 4.8.1 built: Jan 10 2022)
+1792800283506 1/RMR [INFO] sends: ts=1792800283 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-qp-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792800283506 1/RMR [INFO] sends: ts=1792800283 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792800283506 1/RMR [INFO] sends: ts=1792800283 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-ad-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+double free or corruption (fasttop)

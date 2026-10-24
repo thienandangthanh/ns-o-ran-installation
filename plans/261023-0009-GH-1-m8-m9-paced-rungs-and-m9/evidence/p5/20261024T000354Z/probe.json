@@ -1,0 +1,202 @@
+{
+ "endpoint": "10.98.52.229:4560",
+ "endpointKind": "TS xApp RMR Service ClusterIP (static seed route in the injector)",
+ "tsSha": "19e169b2e81a0dbaf3d9dc526de0415cc995ee8b",
+ "ackRowsMinusOne": [
+  "mse|12041|-1|service-ricxapp-kpimon-go-rmr.ricxapp:4560",
+  "mse|12042|-1|service-ricxapp-kpimon-go-rmr.ricxapp:4560",
+  "mse|12041|-1|service-ricxapp-trafficxapp-rmr.ricxapp:4560",
+  "mse|12042|-1|service-ricxapp-trafficxapp-rmr.ricxapp:4560",
+  "mse|12041|-1|service-ricxapp-hw-go-rmr.ricxapp:4560",
+  "mse|12042|-1|service-ricxapp-hw-go-rmr.ricxapp:4560",
+  "mse|12041|-1|service-ricxapp-rc-rmr.ricxapp:4560",
+  "mse|12042|-1|service-ricxapp-rc-rmr.ricxapp:4560"
+ ],
+ "tsHoldsAckRows": true,
+ "appmgrXapps": [
+  "hw-go",
+  "kpimon-go",
+  "rc",
+  "trafficxapp"
+ ],
+ "variants": [
+  {
+   "variant": "single",
+   "sent": [
+    {
+     "ok": true,
+     "state": 0,
+     "tries": 1,
+     "sendS": 0.000124,
+     "mtype": 12041
+    },
+    {
+     "ok": true,
+     "state": 0,
+     "tries": 1,
+     "sendS": 4.1e-05,
+     "mtype": 30003
+    }
+   ],
+   "allSent": true,
+   "before": {
+    "pod": "ricxapp-trafficxapp-7c46768578-mb9p2",
+    "uid": "1932ab61-2681-4c7c-a85c-8b277b8877cd",
+    "restarts": 0,
+    "ready": true,
+    "state": [
+     "running"
+    ],
+    "lastTerminated": null
+   },
+   "after": {
+    "pod": "ricxapp-trafficxapp-7c46768578-mb9p2",
+    "uid": "1932ab61-2681-4c7c-a85c-8b277b8877cd",
+    "restarts": 1,
+    "ready": true,
+    "state": [
+     "running"
+    ],
+    "lastTerminated": {
+     "containerID": "containerd://cb52dbeafb558fce2617e3aabb94af6f3c7485772962718cd14475057f45610b",
+     "exitCode": 139,
+     "finishedAt": "2026-10-24T00:04:16Z",
+     "reason": "Error",
+     "startedAt": "2026-10-24T00:01:24Z"
+    }
+   },
+   "glibc": [
+    "double free or corruption (fasttop)"
+   ],
+   "crashed": true
+  },
+  {
+   "variant": "burst",
+   "sent": [
+    {
+     "ok": true,
+     "state": 0,
+     "tries": 1,
+     "sendS": 0.00012,
+     "mtype": 12041
+    },
+    {
+     "ok": true,
+     "state": 0,
+     "tries": 1,
+     "sendS": 4.3e-05,
+     "mtype": 30003
+    },
+    {
+     "ok": false,
+     "state": 2,
+     "tries": 1,
+     "sendS": 1.056331,
+     "mtype": 12042
+    },
+    {
+     "ok": false,
+     "state": 2,
+     "tries": 1,
+     "sendS": 1.04309,
+     "mtype": 30003
+    },
+    {
+     "ok": false,
+     "state": 2,
+     "tries": 1,
+     "sendS": 1.041596,
+     "mtype": 12041
+    },
+    {
+     "ok": false,
+     "state": 2,
+     "tries": 1,
+     "sendS": 1.042352,
+     "mtype": 30003
+    },
+    {
+     "ok": false,
+     "state": 2,
+     "tries": 1,
+     "sendS": 1.039174,
+     "mtype": 12042
+    },
+    {
+     "ok": false,
+     "state": 2,
+     "tries": 1,
+     "sendS": 1.042432,
+     "mtype": 30003
+    },
+    {
+     "ok": true,
+     "state": 0,
+     "tries": 1,
+     "sendS": 0.00012,
+     "mtype": 12041
+    },
+    {
+     "ok": true,
+     "state": 0,
+     "tries": 1,
+     "sendS": 4.5e-05,
+     "mtype": 30003
+    },
+    {
+     "ok": false,
+     "state": 2,
+     "tries": 1,
+     "sendS": 9.3e-05,
+     "mtype": 12042
+    },
+    {
+     "ok": false,
+     "state": 2,
+     "tries": 1,
+     "sendS": 1.007995,
+     "mtype": 30003
+    }
+   ],
+   "allSent": false,
+   "before": {
+    "pod": "ricxapp-trafficxapp-7c46768578-mb9p2",
+    "uid": "1932ab61-2681-4c7c-a85c-8b277b8877cd",
+    "restarts": 1,
+    "ready": true,
+    "state": [
+     "running"
+    ],
+    "lastTerminated": {
+     "containerID": "containerd://cb52dbeafb558fce2617e3aabb94af6f3c7485772962718cd14475057f45610b",
+     "exitCode": 139,
+     "finishedAt": "2026-10-24T00:04:16Z",
+     "reason": "Error",
+     "startedAt": "2026-10-24T00:01:24Z"
+    }
+   },
+   "after": {
+    "pod": "ricxapp-trafficxapp-7c46768578-mb9p2",
+    "uid": "1932ab61-2681-4c7c-a85c-8b277b8877cd",
+    "restarts": 2,
+    "ready": false,
+    "state": [
+     "waiting"
+    ],
+    "lastTerminated": {
+     "containerID": "containerd://9bc49efab64ef35b974c218567a03b41478e321027343f10e2e4ac8973213c8a",
+     "exitCode": 139,
+     "finishedAt": "2026-10-24T00:04:45Z",
+     "reason": "Error",
+     "startedAt": "2026-10-24T00:04:42Z"
+    }
+   },
+   "glibc": [
+    "double free or corruption (fasttop)",
+    "double free or corruption (fasttop)"
+   ],
+   "crashed": true
+  }
+ ],
+ "crashed": true
+}
