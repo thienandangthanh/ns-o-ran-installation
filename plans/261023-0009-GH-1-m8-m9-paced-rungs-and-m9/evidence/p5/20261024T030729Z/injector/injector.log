@@ -1,0 +1,15 @@
+1792811264121 1/RMR [INFO] ric message routing library on SI95 p=4590 mv=3 flg=00 id=a (a1be12a 4.9.0 built: Feb 14 2023)
+READY rmr port 4590 ctl port 38510
+Exception in thread Thread-1 (receiver):
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/threading.py", line 1045, in _bootstrap_inner
+    self.run()
+  File "/usr/local/lib/python3.11/threading.py", line 982, in run
+    self._target(*self._args, **self._kwargs)
+  File "/app/rmr-injector.py", line 57, in receiver
+    s = rmr.message_summary(buf)
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/ricxappframe/rmr/rmr.py", line 847, in message_summary
+    RMR_MS_PAYLOAD: get_payload(ptr_mbuf) if ptr_mbuf.contents.state == RMR_OK else None,
+                                             ^^^^^^^^^^^^^^^^^
+ValueError: NULL pointer access

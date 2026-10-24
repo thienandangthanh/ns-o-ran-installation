@@ -1,0 +1,59 @@
+[WARN] jwrapper: badly formed json [32]; expected name (string) found type=4 4561
+[WARN] jwrapper: element [77] is undefined or of unknown type
+[INFO] nodeb list is [{"inventoryName":"gnb_001_001_00000003","globalNbId":{"plmnId":"00F110","nbId":"00000000000000000000000000011"},"connectionStatus":"DISCONNECTED"},{"inventoryName":"gnb_001_001_00000001","globalNbId":{"plmnId":"00F110","nbId":"00000000000000000000000000001"},"connectionStatus":"DISCONNECTED"},{"inventoryName":"gnb_001_001_00000002","globalNbId":{"plmnId":"00F110","nbId":"00000000000000000000000000010"},"connectionStatus":"DISCONNECTED"}]
+[INFO] listening on port 4560
+1792811113613 1/RMR [INFO] ric message routing library on SI95 p=4560 mv=3 flg=00 id=a (fa45400 4.8.1 built: Jan 10 2022)
+1792811114392 1/RMR [INFO] sends: ts=1792811114 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-qp-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811114392 1/RMR [INFO] sends: ts=1792811114 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811114392 1/RMR [INFO] sends: ts=1792811114 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-ad-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811145397 1/RMR [INFO] sends: ts=1792811145 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-qp-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811145397 1/RMR [INFO] sends: ts=1792811145 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-hw-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811145397 1/RMR [INFO] sends: ts=1792811145 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-rc-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811145397 1/RMR [INFO] sends: ts=1792811145 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-kpimon-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811145397 1/RMR [INFO] sends: ts=1792811145 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-submgr-rmr.ricplt:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811145397 1/RMR [INFO] sends: ts=1792811145 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811145397 1/RMR [INFO] sends: ts=1792811145 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811145397 1/RMR [INFO] sends: ts=1792811145 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-ad-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+[INFO] Policy Callback got a message, type=20010, length=123
+[INFO] Payload is {"operation":"CREATE","payload":"{\"threshold\":10}","policy_instance_id":"i2-20261024T030327Z-1","policy_type_id":"20008"}
+1792811176938 1/RMR [INFO] sends: ts=1792811176 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-qp-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811176938 1/RMR [INFO] sends: ts=1792811176 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-hw-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811176938 1/RMR [INFO] sends: ts=1792811176 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-rc-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811176938 1/RMR [INFO] sends: ts=1792811176 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-kpimon-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811176938 1/RMR [INFO] sends: ts=1792811176 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-submgr-rmr.ricplt:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811176938 1/RMR [INFO] sends: ts=1792811176 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811176938 1/RMR [INFO] sends: ts=1792811176 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811176938 1/RMR [INFO] sends: ts=1792811176 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-ad-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+[INFO] Setting Threshold for A1-P value: 10%
+[INFO] Policy Callback got a message, type=20010, length=123
+[INFO] Payload is {"operation":"CREATE","payload":"{\"threshold\":10}","policy_instance_id":"i2-20261024T030327Z-2","policy_type_id":"20008"}
+1792811207936 1/RMR [INFO] sends: ts=1792811207 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-qp-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811207936 1/RMR [INFO] sends: ts=1792811207 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-hw-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811207936 1/RMR [INFO] sends: ts=1792811207 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-rc-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811207936 1/RMR [INFO] sends: ts=1792811207 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-kpimon-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811207936 1/RMR [INFO] sends: ts=1792811207 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-submgr-rmr.ricplt:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811207936 1/RMR [INFO] sends: ts=1792811207 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811207936 1/RMR [INFO] sends: ts=1792811207 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811207936 1/RMR [INFO] sends: ts=1792811207 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-ad-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811238940 1/RMR [INFO] sends: ts=1792811238 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-qp-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811238940 1/RMR [INFO] sends: ts=1792811238 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-hw-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811238940 1/RMR [INFO] sends: ts=1792811238 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-rc-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811238940 1/RMR [INFO] sends: ts=1792811238 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-kpimon-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811238940 1/RMR [INFO] sends: ts=1792811238 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-submgr-rmr.ricplt:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811238940 1/RMR [INFO] sends: ts=1792811238 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811238940 1/RMR [INFO] sends: ts=1792811238 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811238940 1/RMR [INFO] sends: ts=1792811238 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-ad-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+[ERROR] send failed: 2
+[INFO] Setting Threshold for A1-P value: 10%
+[INFO] AD Callback got a message, type=30003, length=83
+[INFO] Payload is [{"du-id": 1010, "ue-id": "1", "measTimeStampRf": 0, "Degradation": "RSRP RSSINR"}]
+[INFO] Prediction Request length=26, payload={"UEPredictionSet": ["1"]}
+1792811269942 1/RMR [INFO] sends: ts=1792811269 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-qp-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811269942 1/RMR [INFO] sends: ts=1792811269 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-hw-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811269942 1/RMR [INFO] sends: ts=1792811269 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=192.168.122.137:4590 open=1 succ=0 fail=0 (hard=0 soft=0)
+1792811269942 1/RMR [INFO] sends: ts=1792811269 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-rc-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811269942 1/RMR [INFO] sends: ts=1792811269 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-kpimon-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811269942 1/RMR [INFO] sends: ts=1792811269 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-submgr-rmr.ricplt:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811269942 1/RMR [INFO] sends: ts=1792811269 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811269942 1/RMR [INFO] sends: ts=1792811269 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1792811269942 1/RMR [INFO] sends: ts=1792811269 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-ad-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)

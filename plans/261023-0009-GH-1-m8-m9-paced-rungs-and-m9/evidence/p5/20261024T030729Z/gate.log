@@ -1,0 +1,15 @@
+[03:07:31] gate p5 start; evidence /home/uc/evidence/p5/20261024T030729Z; harness 6fa9d1df0b8a4891bab2eaf573511c4305191235
+[03:07:31] PASS p5_args
+[03:07:31] PASS p5_ts_ready_listening
+[03:07:31] PASS p5_no_stub_qp_deployed
+[03:07:42] PASS p5_rmr_peer_image_built_self_tested
+[03:07:42] PASS p5_appmgr_xapp_list_saved
+[03:07:42] PASS p5_ts_xapp_registered
+[03:07:43] PASS p5_route_dump
+[03:07:43] PASS p5_ack_rows_recorded
+[03:07:44] PASS p5_injector_started_static_route_to_ts
+[03:07:58] PASS p5_variant_single_12041_then_30003
+[03:08:23] PASS p5_variant_burst_12041_12042_interleaved_30003
+[03:08:23] PASS p5_injector_stopped
+[03:08:23] PASS p5_probe_json_written
+verdict p5: PASS failed=[]
