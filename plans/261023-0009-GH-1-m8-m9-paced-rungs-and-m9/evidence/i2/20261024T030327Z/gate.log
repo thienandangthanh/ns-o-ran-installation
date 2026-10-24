@@ -1,0 +1,23 @@
+[03:03:28] gate i2 start; evidence /home/uc/evidence/i2/20261024T030327Z; harness 9c8ad57f4cc58c154bc97865d05bb2843ddbbd3a
+[03:03:28] PASS i2_args
+[03:03:29] PASS i2_nist_tree_at_testbed_sha_with_agent_dir
+[03:03:29] PASS i2_ts_installer_at_testbed_sha
+[03:03:29] PASS i2_rc_installed_at_pin_and_ready
+[03:05:16] PASS i2_ts_installed_at_pin_switched_to_grpc
+[03:05:16] PASS i2_a1_policy_type_20008_present
+[03:05:16] PASS i2_ts_source_is_pin_plus_exactly_the_testbed_patches
+[03:05:16] PASS i2_ts_ready_listening_no_control_api_error
+[03:05:16] PASS i2_ts_xapp_registered_with_appmgr
+[03:05:16] PASS i2_appmgr_xapp_list_saved
+[03:05:47] PASS i2_a1mediator_restarted_fresh_policy_type_kept
+[03:06:12] PASS i2_rtmgr_restarted_after_registration
+[03:06:12] PASS i2_rtmgr_session_to_every_xapp_and_a1mediator
+[03:06:12] PASS i2_rc_rmr_ready_after_rtmgr_restart
+[03:06:12] PASS i2_route_dump
+[03:06:13] PASS i2_route_20010_20008_to_ts
+[03:06:34] PASS i2_a1_threshold_reaches_ts_xapp
+[03:06:34] PASS i2_a1mediator_connection_to_ts_xapp_clean
+[03:06:34] PASS i2_xapp_image_ids
+[03:06:34] PASS i2_pod_snapshot
+[03:06:34] PASS i2_restart_counts_zero
+verdict i2: PASS failed=[]

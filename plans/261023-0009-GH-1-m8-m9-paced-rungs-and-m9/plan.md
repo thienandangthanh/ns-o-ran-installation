@@ -30,7 +30,7 @@ snapshots: fresh-install, f7-rerun-green, r0-green
 host /home free: 53 G (2026-10-24 08:25 KST); VM / 50 G free; floor 20 GB; M9 projection about -23 to -25 GB (milestone-261023-1810); the user frees the shortfall at Stop B
 fork SHAs (pushed, scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, Testbed 597bdde2 (was 4c8397d0; only the TS installer and its two patches changed)
 harness SHA (pushed): see git log
-in-flight background jobs: gate i2 --part ts run 5 (both patches), started 2026-10-24 ~12:12 KST
+in-flight background jobs: gate p5 re-probe after substitution 2 (i2 run 5 PASS evidence/i2/20261024T030327Z), started 2026-10-24 ~12:08 KST
 next action: when i2 is green, re-probe with gate p5 (V1: crashed=false, restarts unchanged, both variants complete); then i2 --part stub, gate r2 calibrate. For Stop B: L findings 2, 3 and 4.
 hold: none.
 ```
