@@ -22,6 +22,7 @@ import socketserver
 import sys
 import threading
 import time
+import traceback
 
 TS_ANOMALY_UPDATE = 30003
 
@@ -52,15 +53,23 @@ def main():
 
     def receiver():
         buf = None
-        while True:
-            buf = rmr.rmr_torcv_msg(ctx, buf, 1000)
-            s = rmr.message_summary(buf)
-            if s[rmr.RMR_MS_MSG_STATE] == rmr.RMR_ERR_TIMEOUT:
-                continue
-            rxlog.write(json.dumps({"t": time.time(), "mtype": s[rmr.RMR_MS_MSG_TYPE], "subId": s[rmr.RMR_MS_SUB_ID],
-                                    "state": s[rmr.RMR_MS_MSG_STATE],
-                                    "payload": rmr.get_payload(buf).decode(errors="replace")}) + "\n")
-            rxlog.flush()
+        try:
+            while True:
+                buf = rmr.rmr_torcv_msg(ctx, buf, 1000)
+                if not buf:  # RMR returns no buffer when the wait times out and none was passed in (a NULL pointer)
+                    continue
+                s = rmr.message_summary(buf)
+                if s[rmr.RMR_MS_MSG_STATE] == rmr.RMR_ERR_TIMEOUT:
+                    continue
+                rxlog.write(json.dumps({"t": time.time(), "mtype": s[rmr.RMR_MS_MSG_TYPE], "subId": s[rmr.RMR_MS_SUB_ID],
+                                        "state": s[rmr.RMR_MS_MSG_STATE],
+                                        "payload": rmr.get_payload(buf).decode(errors="replace")}) + "\n")
+                rxlog.flush()
+        except BaseException:
+            # a receiver that dies quietly in a daemon thread hides the fault; end the whole injector instead
+            traceback.print_exc()
+            sys.stdout.flush()
+            os._exit(1)
 
     threading.Thread(target=receiver, daemon=True).start()
 

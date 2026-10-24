@@ -22,7 +22,7 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-24 12:10 KST (substitution 2 applied after gate p5 crashed=true, evidence/p5/20261024T000354Z; Testbed 597bdde2 adds the default RMR handler patch; re-running i2 --part ts, then re-probe p5)
+last-updated: 2026-10-24 12:40 KST (i2 --part stub red: stub QP NULL receive buffer, harness bug; kongming-261024-1215 fix applied, self-test extended; re-running i2 --part stub fresh, a second red is T6)
 earlier: 2026-10-24 03:25 PAUSE T5 (A1 payload string; journal docs/journals/2026-10-24-m8-m9-p5-pause-a1-payload.md); 02:04 user accepted every Stop A default (plans/reports/decisions-261024-0204-GH-1-stop-a-user-rulings.md; ruling 4 = recorded deviation P8); 2026-10-23 18:12 STOP A (R0 = M8 and R1 green); 18:04 R1 C1 PASS evidence/r1/20261023T084654Z; 16:57 r0-green; 16:54 R0 C1 PASS 073520Z
 current phase: P5 (R2: TS xApp + stub QP). Done in P5: rmr-peer image (stub QP + injector, self-test green on the VM), ts-lib.sh, gate i2, gate p5 (probe), probe fixtures, substitution 3 (patch + i2/r2 checks). Next: gate i2 --part ts with the patched build (>10 min), gate p5 probe, i2 --part stub, gate r2 (calibrate, --dev, C1). Kongming notes: -1815 (Stop A review, P5 must-do list in section 3.3), -0320 (A1 payload, section 5 checklist).
 VM: expected domstate=running, snapshot-current=r0-green; boot time 2026-10-23 07:56:59 UTC; rc installed at a2282ee by gate i0; no agent containers; TS xApp installed at 19e169b + substitution 3 (image sha256:b526f6ab..., i2 run 4, threshold 10 set) in gRPC mode and registered with appmgr (gate i2 run 2, 18:03 UTC); stub not installed; rmr-peer image not built (only stubqp-dev:test from a manual build); a different boot time means a reboot or revert: run gate i0 first
@@ -30,7 +30,7 @@ snapshots: fresh-install, f7-rerun-green, r0-green
 host /home free: 53 G (2026-10-24 08:25 KST); VM / 50 G free; floor 20 GB; M9 projection about -23 to -25 GB (milestone-261023-1810); the user frees the shortfall at Stop B
 fork SHAs (pushed, scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, Testbed 597bdde2 (was 4c8397d0; only the TS installer and its two patches changed)
 harness SHA (pushed): see git log
-in-flight background jobs: gate i2 --part stub, started 2026-10-24 ~12:10 KST
+in-flight background jobs: gate i2 --part stub run 2, started 2026-10-24 ~12:42 KST
 next action: i2 --part stub, then gate r2 --mode calibrate (commit W and a1_threshold), then --dev (>= 2 resets), then C1. V1 met (p5 re-probe evidence/p5/20261024T030729Z). For Stop B: L findings 2, 3 and 4.
 hold: none.
 ```

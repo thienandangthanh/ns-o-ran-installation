@@ -179,6 +179,14 @@ stub_install() {
     jq --arg t "${RMR_PEER_IMAGE##*:}" '.containers[0].image.tag = $t' "$RMR_PEER_DIR/xapp-descriptor/config-file.json" >"$e/stubqp-config-file.json" || return 1
     _dms_reinstall "$STUB_NAME" "$STUB_VERSION" "$e/stubqp-config-file.json" "$RMR_PEER_DIR/xapp-descriptor/schema.json" "$e/install-stubqp.log" || return 1
     _wait_new_ready "ricxapp-$STUB_NAME-" "$old" 300 || return 1
+    # Ready comes before the first idle receive, so a receive-loop fault shows only seconds later
+    local pod n
+    sleep 8
+    read -r pod _ < <(pod_info ricxapp "ricxapp-$STUB_NAME-") || return 1
+    n=$(kc -n ricxapp get pod "$pod" -o jsonpath='{.status.containerStatuses[0].restartCount}')
+    kc -n ricxapp logs "$pod" >"$e/stubqp-start.log" 2>&1
+    [ "$n" = 0 ] && ! grep -q Traceback "$e/stubqp-start.log" || { echo "stub $pod restarted $n times or logged a traceback"; tail -n 20 "$e/stubqp-start.log"; return 1; }
+    echo "stub $pod up 8 s after Ready, restart count 0, no traceback"
     # sender-qualified routes are accepted only when the sender's name equals RMR_SRC_ID:port
     [ "$(kc -n ricxapp get cm "configmap-ricxapp-$STUB_NAME-appenv" -o jsonpath='{.data.RMR_SRC_ID}')" = "service-ricxapp-$STUB_NAME-rmr.ricxapp" ] ||
         { echo "stub RMR_SRC_ID is not service-ricxapp-$STUB_NAME-rmr.ricxapp"; return 1; }

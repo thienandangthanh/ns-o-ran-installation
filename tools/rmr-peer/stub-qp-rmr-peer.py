@@ -102,6 +102,8 @@ def main():
     sbuf = None
     while True:
         sbuf = rmr.rmr_torcv_msg(ctx, sbuf, 1000)
+        if not sbuf:  # RMR returns no buffer when the wait times out and none was passed in (a NULL pointer)
+            continue
         summ = rmr.message_summary(sbuf)
         if summ[rmr.RMR_MS_MSG_STATE] == rmr.RMR_ERR_TIMEOUT:
             continue
