@@ -22,7 +22,7 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-26 22:42 KST (gate i2 --part stub PASS at 70c4231, evidence/i2/20261026T133527Z: fresh rc pod 5h68m, rtmgr push ack, a1ThresholdAttempt=2, a1DeliveredAttempt=1, restart counts 0; next gate r2 --mode calibrate)
+last-updated: 2026-10-26 23:12 KST (gate r2 calibrate red on C9 only, evidence/r2/20261026T133922Z: the checker's unbounded same-triple rule vs repeated same-direction handovers; kongming-261026-2250; one guided fix = per-IMSI windowed C9 matcher with self-test in lint; fresh calibrate next; any red on it is T6)
 earlier-1: 2026-10-26 22:40 KST (user rulings on the rc log-rotation PAUSE T6: release resets the one-fix budget; own-pod rule approved incl. r0/r1 scripts, regression to follow; option A rtmgr push acknowledgement; fix pushed as harness 611271d, lint ok, not yet run on the VM; plans/reports/decisions-261026-2230-GH-1-p5-rc-log-rotation-rulings.md)
 earlier: 2026-10-26 22:25 PAUSE T6 (rc start-up line rotated out of the kept pod's log; journal docs/journals/2026-10-26-m8-m9-p5-pause-t6-rc-log-rotation.md); 2026-10-24 12:35 PAUSE T6 (threshold log SIGPIPE); 03:25 PAUSE T5 (A1 payload string); 02:04 user accepted every Stop A default (plans/reports/decisions-261024-0204-GH-1-stop-a-user-rulings.md; ruling 4 = recorded deviation P8); 2026-10-23 18:12 STOP A (R0 = M8 and R1 green); 18:04 R1 C1 PASS evidence/r1/20261023T084654Z; 16:57 r0-green; 16:54 R0 C1 PASS 073520Z
 current phase: P5 (R2: TS xApp + stub QP). Done in P5: substitutions 3 and 2 (Testbed 597bdde2), L finding 4 remedy (a1mediator restart), i2 --part ts PASS (20261024T030327Z), p5 re-probe PASS crashed=false (20261024T030729Z, V1 met), stub QP NULL-receive fix (ba528c6), threshold ordering rule and log-pipe lint guard (8c88b7a, held live: a1ThresholdAttempt=2, a1DeliveredAttempt=1). Next: on the user's release and rulings (journal section 6), the start-from-own-pod fix (journal section 3), lint, i2 --part stub fresh, gate r2 calibrate, --dev, C1.
@@ -31,7 +31,7 @@ snapshots: fresh-install, f7-rerun-green, r0-green
 host /home free: 49 G (2026-10-26 21:53 KST); VM / 50 G free; floor 20 GB; M9 projection about -23 to -25 GB (milestone-261023-1810); the user frees the shortfall at Stop B
 fork SHAs (pushed, scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, Testbed 597bdde2 (was 4c8397d0; only the TS installer and its two patches changed)
 harness SHA (pushed): see git log
-in-flight background jobs: gate r2 --mode calibrate (vm-exec, timeout 5400 s), started 2026-10-26 22:43 KST
+in-flight background jobs: gate r2 --mode calibrate (vm-exec, timeout 5400 s), fresh after the C9 matcher fix, started 2026-10-26 23:13 KST
 next action: on the goal re-issue (fresh one-fix budget), i2 --part stub fresh at 611271d or later (expect pre-reset fresh, rc pod not jbcb4, rtmgr push ack for rc, a1ThresholdAttempt=2, a1DeliveredAttempt=1, restart counts 0); gate r2 --mode calibrate. r0 and r1 regression (one live run each with the new pre-reset check) in P6 unless the user wants it earlier. For Stop B: L findings 2, 3 and 4.
 hold: none.
 ```
