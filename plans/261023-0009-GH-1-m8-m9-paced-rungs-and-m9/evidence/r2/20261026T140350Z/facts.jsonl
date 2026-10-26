@@ -1,0 +1,37 @@
+{"key":"mode","value":"calibrate"}
+{"key":"dev","value":false}
+{"key":"tCtlSeconds","value":30}
+{"key":"tCtlProvenance","value":"evidence/r0/20261023T065002Z calibration: L_max 12.919 ms over 10 complete trigger steps, T_ctl = max(30 s, ceil(20 x L_max)) = 30 s; host load 1.03 (20 CPUs), VM load 1.29; CPU hold released by the user 15:44 KST"}
+{"key":"wSeconds","value":1}
+{"key":"wProvenance","value":"start value max(1 s, 3 x p99.9 of L); re-set at R2 and R3 from calibration runs"}
+{"key":"a1Threshold","value":10}
+{"key":"a1ThresholdProvenance","value":"scenario threshold (calibration run)"}
+{"key":"substitution2Applied","value":true}
+{"key":"substitution3Applied","value":true}
+{"key":"outageThresholdDb","value":-1000}
+{"key":"outageThresholdProvenance","value":"substitution 1: the R0-config null-control run at the default -5 dB counted 5 LTE outage switches (evidence/r0/20261023T073520Z q2OutageSwitches 5; also 065002Z, 065551Z); gated runs use --outageThreshold=-1000"}
+{"key":"positives","value":25}
+{"key":"vmLoadStart","value":" 14:03:52 up 3 days,  6:06,  0 user,  load average: 0.12, 0.12, 0.25"}
+{"key":"xappImageIds","value":{"trafficxapp": "sha256:f521d56b24b41eed4137a0683b740e687f81e41c7d49ef68221879c59ab3d0d5", "stubqp": "sha256:e02144480b3ab47b44eb47cd60c7f9c8231e483ca59192f4601675f8704f42ea", "stubqpImage": "127.0.0.1:80/stubqp:07c6dc93df2f"}}
+{"key":"a1ThresholdAttempt_calib","value":2}
+{"key":"a1DeliveredAttempt_calib","value":1}
+{"key":"a1mediatorRestart_calib","value":{"fresh": true, "problems": []}}
+{"key":"calibration","value":{"n": 25, "lMaxS": 0.008214, "lS": [0.002784, 0.002851, 0.003006, 0.003094, 0.003181, 0.003192, 0.003219, 0.003234, 0.003267, 0.003307, 0.003322, 0.003359, 0.0034, 0.003449, 0.003546, 0.003645, 0.003767, 0.003838, 0.004025, 0.004128, 0.004484, 0.004772, 0.005282, 0.006292, 0.008214], "wSeconds": 1.0, "tCtlCoversTwentyLMax": true, "problems": [], "pass": true}}
+{"key":"c2AgentSplit","value":{"calib": {"staticRejects": 0, "postBye": 0}}}
+{"key":"late","value":{"calib": 0}}
+{"key":"outcomes","value":{"calib": {"applied": 25}}}
+{"key":"wireRequests","value":{"calib": {"requests": 25, "positives": 25, "targetKeys": ["0000000202", "0000000303"]}}}
+{"key":"tsResetEvidence","value":{"calib": {"fresh": true, "after": {"ricxapp-stubqp": "ricxapp-stubqp-685cb7ddf4-ghvfm", "ricxapp-trafficxapp": "ricxapp-trafficxapp-7c46768578-nbl2n"}}, "pre": {"fresh": true, "after": {"ricxapp-stubqp": "ricxapp-stubqp-685cb7ddf4-w58h5", "ricxapp-trafficxapp": "ricxapp-trafficxapp-7c46768578-r6c8n"}}}}
+{"key":"xappRegistration","value":{"calib": ["hw-go@service-ricxapp-hw-go-rmr.ricxapp:4560", "kpimon-go@service-ricxapp-kpimon-go-rmr.ricxapp:4560", "rc@service-ricxapp-rc-rmr.ricxapp:4560", "stubqp@service-ricxapp-stubqp-rmr.ricxapp:4560", "trafficxapp@service-ricxapp-trafficxapp-rmr.ricxapp:4560"], "pre": ["hw-go@service-ricxapp-hw-go-rmr.ricxapp:4560", "kpimon-go@service-ricxapp-kpimon-go-rmr.ricxapp:4560", "rc@service-ricxapp-rc-rmr.ricxapp:4560", "stubqp@service-ricxapp-stubqp-rmr.ricxapp:4560", "trafficxapp@service-ricxapp-trafficxapp-rmr.ricxapp:4560"]}}
+{"key":"stubOtherTypes","value":{"calib": [12041]}}
+{"key":"influxDump","value":null}
+{"key":"minSlack","value":{"T_start": 119.999517, "T_gate": 9.996887, "T_ctl": 29.991786, "W": null}}
+{"key":"lControlLatencyS","value":[0.002784, 0.002851, 0.003006, 0.003094, 0.003181, 0.003192, 0.003219, 0.003234, 0.003267, 0.003307, 0.003322, 0.003359, 0.0034, 0.003449, 0.003546, 0.003645, 0.003767, 0.003838, 0.004025, 0.004128, 0.004484, 0.004772, 0.005282, 0.006292, 0.008214]}
+{"key":"ipcDropped","value":0}
+{"key":"droppedNoSub","value":0}
+{"key":"restartCountsAllZero","value":true}
+{"key":"restartCounts","value":{"calib/hw-go": 0, "calib/kpimon": 0, "calib/rc": 0, "calib/qp-stub": 0, "calib/ts-xapp": 0, "calib/agent-3": 0, "calib/agent-2": 0, "calib/agent-1": 0}}
+{"key":"routeOwner12041","value":{"calib": {"start": {"rtmgr": "service-ricxapp-stubqp-rmr.ricxapp:4560", "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-stubqp-rmr.ricxapp:4560", "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"}}}}
+{"key":"routeOwner12042","value":{"calib": {"start": {"rtmgr": "service-ricxapp-stubqp-rmr.ricxapp:4560", "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-stubqp-rmr.ricxapp:4560", "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"}}}}
+{"key":"tsOrStubHeldAckRoute","value":{"calib": true}}
+{"key":"vmLoadEnd","value":" 14:11:01 up 3 days,  6:14,  1 user,  load average: 0.99, 0.49, 0.36"}

@@ -1,0 +1,65 @@
+[14:03:52] gate r2 start; evidence /home/uc/evidence/r2/20261026T140350Z; harness c3817e35db3df79ecb067b78452cbaf2348ea6e7
+[14:03:52] PASS r2_args
+[14:03:52] PASS r2_config_values_from_their_evidence
+[14:03:52] ric watchdog started (pid 1241414, threshold 600s)
+[14:03:53] PASS r2_nist_tree_at_testbed_sha_with_agent_dir
+[14:03:53] PASS r2_ts_source_is_pin_plus_exactly_the_testbed_patches
+[14:03:53] PASS r2_build_tools_present
+[14:03:53] PASS r2_sctp_module_loaded
+[14:03:53] PASS r2_ns3_binary_located_at_pins
+[14:03:53] PASS r2_pod_log_reader_self_test
+[14:03:56] PASS r2_pacer_self_test
+[14:03:56] PASS r2_kpm_ue_list_judge_self_test
+[14:03:56] PASS r2_grpcurl_fetched_and_checksum_verified
+[14:04:39] PASS r2_pre_ric_reset_fresh_rc_kpimon_hw_go_and_bucket
+[14:04:39] PASS r2_rc_installed_at_pin_and_ready
+[14:05:38] PASS r2_pre_ts_and_stub_pods_fresh_rtmgr_sessions
+[14:05:38] PASS r2_ts_xapp_at_pin_ready_in_grpc_mode
+[14:05:51] PASS r2_rmr_peer_image_built_self_tested
+[14:05:51] PASS r2_stub_qp_deployed
+[14:05:51] PASS r2_a1_policy_type_20008_present
+[14:05:51] PASS r2_xapp_image_ids
+[14:06:44] PASS r2_rc_decoder_built
+[14:07:27] PASS r2_calib_ric_reset_fresh_pods_and_bucket
+[14:07:28] PASS r2_calib_capture_started_before_agents
+[14:08:01] PASS r2_calib_agents_connected_set_exact
+[14:08:01] PASS r2_calib_agent_ips_recorded
+[14:08:05] PASS r2_calib_every_agent_ready_and_subscribed
+[14:09:07] PASS r2_calib_ts_and_stub_pods_fresh_after_agents_rtmgr_sessions
+[14:09:07] PASS r2_calib_rc_rmr_ready_after_rtmgr_restart
+[14:09:07] PASS r2_calib_ts_xapp_nodeb_list_has_every_connected_agent
+[14:09:07] PASS r2_calib_route_dump_start
+[14:09:07] PASS r2_calib_routes_30002_20010_to_ts_30000_only_to_stub
+[14:09:28] PASS r2_calib_a1_threshold_set_and_logged_by_the_ts_xapp
+[14:09:28] PASS r2_calib_a1mediator_connection_to_ts_xapp_clean
+[14:09:28] PASS r2_calib_stub_table_loaded
+[14:09:29] PASS r2_calib_injector_started
+[14:09:30] PASS r2_calib_pods_snapshot_before
+[14:10:50] PASS r2_calib_lockstep_run_exits_clean
+[14:10:51] PASS r2_calib_pods_snapshot_after
+[14:10:51] PASS r2_calib_route_dump_end
+[14:10:51] PASS r2_calib_restart_counts_zero_rc_ts_stub_kpimon_hw_go_agents
+[14:10:52] PASS r2_calib_stub_log_saved
+[14:10:52] PASS r2_calib_injector_stopped
+[14:10:54] PASS r2_calib_agent_logs_with_stats_after_bye
+[14:10:57] PASS r2_calib_agents_stopped
+[14:10:57] PASS r2_calib_capture_stopped
+[14:10:57] PASS r2_calib_kpimon_log_window_complete
+[14:10:57] PASS r2_calib_kpimon_zero_rc_wmore
+[14:10:59] PASS r2_calib_wire_one_terminal_answer_per_request_joined_to_ledger
+[14:10:59] PASS r2_calib_kpm_continuity_kpimon_equals_wire_indications
+[14:10:59] PASS r2_calib_c2_ledger
+[14:10:59] PASS r2_calib_c9_handover_rows_match_applied_lines
+[14:11:00] PASS r2_calib_kpm_ue_lists_move_applied_and_keep_refused
+[14:11:00] PASS r2_calib_one_connection_per_emitter_and_agent
+[14:11:00] PASS r2_calib_agent_static_rejects_zero_post_bye_zero
+[14:11:00] PASS r2_calib_expected_outcomes_negatives_no_line_late_zero
+[14:11:00] PASS r2_calib_wire_requests_equal_positives_via_target_with_stub_key
+[14:11:00] PASS r2_calib_injector_and_stub_one_request_and_answer_per_trigger
+[14:11:00] PASS r2_calib_w_from_complete_trigger_steps
+[14:11:00] PASS r2_ipc_dropped_zero_no_sub_dropped_zero_and_slack_recorded
+[14:11:01] PASS r2_restart_counts_all_zero
+[14:11:01] PASS r2_no_stray_process
+verdict r2: PASS failed=[]
+Terminated
+[14:11:02] ric watchdog stopped (pid 1241414)

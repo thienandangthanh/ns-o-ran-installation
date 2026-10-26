@@ -14,8 +14,8 @@
       "provenance": "evidence/r0/20261023T065002Z calibration: L_max 12.919 ms over 10 complete trigger steps, T_ctl = max(30 s, ceil(20 x L_max)) = 30 s; host load 1.03 (20 CPUs), VM load 1.29; CPU hold released by the user 15:44 KST"
     },
     "W_s": {
-      "value": 1,
-      "provenance": "start value max(1 s, 3 x p99.9 of L); re-set at R2 and R3 from calibration runs"
+      "value": 1.0,
+      "provenance": "evidence/r2/20261026T140350Z calibration: L_max 8.214 ms over 25 complete trigger steps (harness c3817e3), W = max(1 s, 3 x L_max) = 1.0 s; VM load 0.12 at start; re-set at R3 from its calibration"
     }
   },
   "substitutions": {
@@ -56,8 +56,8 @@
     }
   },
   "a1_threshold": {
-    "value": null,
-    "provenance": "set at P5 from the R2 schedule"
+    "value": 10,
+    "provenance": "scripts/gates/r2-scenario.json threshold 10 (n2 is a neighbour 5 % above serving, under it), set and reached in the R2 calibration evidence/r2/20261026T140350Z"
   },
   "ul_rate": {
     "value": null,
@@ -73,8 +73,8 @@
       "provenance": "P4: the R1 scenario (cases (a)-(d) and the faultStop block) gated green at evidence/r1/20261023T084654Z"
     },
     "r2": {
-      "path": null,
-      "provenance": "written at P5"
+      "path": "scripts/gates/r2-scenario.json",
+      "provenance": "P5: positives at steps 20, 30, 60, 70, negatives n1 (40) and n2 (50), calibration block 25 positives; calibration green at evidence/r2/20261026T140350Z"
     },
     "r3": {
       "path": null,
