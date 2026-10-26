@@ -5,3 +5,4 @@ SIGPIPE hazard of `kubectl logs | grep -q` under pipefail.
 c9-r2-calib/: the control ledger and the ns-3 EnbHandover{Start,End}Stats.txt of gate r2's calibration run
 20261026T133922Z (25 applied controls; IMSIs repeat the same source and target). check-c9-handover-trace.py
 --self-test judges it and mutated copies of it; lint.sh runs that self-test.
+c9-r1-live1/: the ledger and handover rows of gate r1 live1 20261023T084654Z (4 applied, 3 refused); the refused lines must not bound a window.

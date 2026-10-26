@@ -16,7 +16,7 @@ window [its apply time, the IMSI's next applied line's apply time). Checks:
 The window matters when an IMSI repeats the same source and target (the R2 calibration block): without it a
 row could be attributed to an earlier control whose own row is missing. Only applied lines bound a window, so
 a refused line in the same step does not split one. A missing trace file counts as no rows. Prints one JSON
-report; exit 0 when there is no problem. --self-test judges fixtures/c9-r2-calib and mutated copies of it.
+report; exit 0 when there is no problem. --self-test judges fixtures/c9-r2-calib and mutated copies of it, and fixtures/c9-r1-live1 (refused siblings).
 """
 import json
 import os
@@ -114,11 +114,18 @@ def self_test():
         ("Start after the IMSI's next apply", False, m(lambda L, S, E: S[at(S, "1.0038")].__setitem__(0, "2.9"))),
         ("End at the wrong cell", False, m(lambda L, S, E: E[at(E, "4.60552")].__setitem__(3, "3"))),
         ("applied turned refused, rows kept", False, m(lambda L, S, E: L.__setitem__(13, L[13].replace('"applied"', '"refused"')))),
+        ("duplicate Start in one window", False, m(lambda L, S, E: S.append(["1.1", "1", "99", "3", "2"]))),
+        ("two applied lines of one IMSI at one apply time", False, m(lambda L, S, E: L.append(L[1]))),
         ("duplicate End", False, m(lambda L, S, E: E.append(["4.7", "1", "11", "2"]))),
         ("dropped End", False, m(lambda L, S, E: E.pop(at(E, "4.60552")))),
         ("End after the IMSI's next apply", False, m(lambda L, S, E: E[at(E, "4.60552")].__setitem__(0, "6.5"))),
     ]
     bad = 0
+    # R1 live1: four applied and three refused lines (a refused line must not bound a window)
+    r1 = judge(os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures", "c9-r1-live1"))
+    ok = r1["pass"] and r1["applied"] == 4 and r1["refused"] == 3
+    bad += not ok
+    print("%s c9 self-test: R1 live1 with refused siblings (pass=%s)" % ("ok" if ok else "FAIL", r1["pass"]))
     for name, want, fn in cases:
         L, S, E = fn(list(L0), [list(r) for r in S0], [list(r) for r in E0])
         d = tempfile.mkdtemp()
