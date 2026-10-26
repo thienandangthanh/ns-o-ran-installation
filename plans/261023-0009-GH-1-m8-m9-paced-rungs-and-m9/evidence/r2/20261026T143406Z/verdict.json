@@ -1,0 +1,1204 @@
+{
+  "gate": "r2",
+  "ts": "20261026T143406Z",
+  "harness_sha": "0a6864d5283ad76e6bf331ce555e515db37ff21b",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "597bdde2e89b7ee9372e3ada85853f515cf832a6",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "962fabc724ccc26d0aab3fe25c2b8cac95d45884",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "63155c4946b5b1180f8f69d259509505b8388e18",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+  },
+  "duration_s": 1244,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "r2_args",
+      "pass": true,
+      "detail": "dev 0; mode c1; T_ctl 30 s; W 1.0 s (evidence/r2/20261026T140350Z calibration: L_max 8.214 ms over 25 complete trigger steps (harness c3817e3), W = max(1 s, 3 x L_max) = 1.0 s; VM load 0.12 at start; re-set at R3 from its calibration); A1 threshold 10 (scripts/gates/r2-scenario.json threshold 10 (n2 is a neighbour 5 % above serving, under it), set and reached in the R2 calibration evidence/r2/20261026T140350Z); substitution 2 true; substitution 3 true; outage threshold -1000 dB; rc pin a2282eedc9e32f60298bf530456ad367bef0824b; TS pin 19e169b2e81a0dbaf3d9dc526de0415cc995ee8b"
+    },
+    {
+      "name": "r2_config_values_from_their_evidence",
+      "pass": true,
+      "detail": "T_ctl 30 s and the outage threshold from R0, W 1.0 s from R2 calibration, A1 threshold 10"
+    },
+    {
+      "name": "r2_nist_tree_at_testbed_sha_with_agent_dir",
+      "pass": true,
+      "detail": "nist HEAD 597bdde2e89b7ee9372e3ada85853f515cf832a6, want 597bdde2e89b7ee9372e3ada85853f515cf832a6\nalready at 597bdde2e89b7ee9372e3ada85853f515cf832a6\nns3_e2_agent matches 597bdde2e89b7ee9372e3ada85853f515cf832a6; metric-map sha256 ab81b6392868b32ea26816a9d394c8b58403d1a41f652b30a3498cfa96a93b66"
+    },
+    {
+      "name": "r2_ts_source_is_pin_plus_exactly_the_testbed_patches",
+      "pass": true,
+      "detail": "src/ts_xapp/ts_xapp.cpp = pin + A1 payload patch + default RMR handler patch (14 added lines)"
+    },
+    {
+      "name": "r2_build_tools_present",
+      "pass": true,
+      "detail": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\ntshark 4.4.19 (>= 4.4)"
+    },
+    {
+      "name": "r2_sctp_module_loaded",
+      "pass": true,
+      "detail": "sctp                  495616  51 sctp_diag\nsctp"
+    },
+    {
+      "name": "r2_ns3_binary_located_at_pins",
+      "pass": true,
+      "detail": "/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"
+    },
+    {
+      "name": "r2_pod_log_reader_self_test",
+      "pass": true,
+      "detail": "self-test rotation: rc 0, indications 5 (want 5), WMORE 1 (want 1), rotations 1 (want 1)\nself-test uncovered start: rc 3 (want 3)\npod-log-window self-test: ok"
+    },
+    {
+      "name": "r2_pacer_self_test",
+      "pass": true,
+      "detail": "pacer self-test: ok"
+    },
+    {
+      "name": "r2_kpm_ue_list_judge_self_test",
+      "pass": true,
+      "detail": "kpm-ue-list-moves self-test: ok"
+    },
+    {
+      "name": "r2_grpcurl_fetched_and_checksum_verified",
+      "pass": true,
+      "detail": "grpcurl v1.9.1"
+    },
+    {
+      "name": "r2_pre_ric_reset_fresh_rc_kpimon_hw_go_and_bucket",
+      "pass": true,
+      "detail": "gRPC describe ok, 12040 route to rc present\nrmrClient: RMR is ready after 30 seconds waiting...\n{\"bucketAfter\": [\"c2bb28eb555391e4\"], \"podsAfter\": {\"ricxapp-hw-go\": \"ricxapp-hw-go-c84579888-7rlw2\", \"ricxapp-kpimon-go\": \"ricxapp-kpimon-go-85dc5fdf8b-kbw2k\", \"xapp-rc\": \"ricxapp-rc-6db9dcd964-stlwf\"}, \"fresh\": true}"
+    },
+    {
+      "name": "r2_rc_installed_at_pin_and_ready",
+      "pass": true,
+      "detail": "rc ricxapp-rc-6db9dcd964-stlwf ready, gRPC endpoint 10.111.50.166:7777\ngRPC describe ok, 12040 route to rc present\nrmrClient: RMR is ready after 30 seconds waiting..."
+    },
+    {
+      "name": "r2_pre_ts_and_stub_pods_fresh_rtmgr_sessions",
+      "pass": true,
+      "detail": "rtmgr deployment-ricplt-rtmgr-74fb47b69d-5rzpk -> ricxapp/service-ricxapp-rc-rmr 10.105.249.184:4561 ESTABLISHED\nrtmgr deployment-ricplt-rtmgr-74fb47b69d-5rzpk -> ricxapp/service-ricxapp-kpimon-go-rmr 10.109.115.169:4561 ESTABLISHED\nrtmgr deployment-ricplt-rtmgr-74fb47b69d-5rzpk -> ricplt/service-ricplt-a1mediator-rmr 10.106.37.221:4561 ESTABLISHED"
+    },
+    {
+      "name": "r2_ts_xapp_at_pin_ready_in_grpc_mode",
+      "pass": true,
+      "detail": "TS ricxapp-trafficxapp-7c46768578-mvmw4 ready and listening\ntrue"
+    },
+    {
+      "name": "r2_rmr_peer_image_built_self_tested",
+      "pass": true,
+      "detail": "ok   stub still up after a second idle wait and logged exactly 1 request (1)\n{\"pass\": true, \"problems\": []}\nbuilt and imported 127.0.0.1:80/stubqp:07c6dc93df2f"
+    },
+    {
+      "name": "r2_stub_qp_deployed",
+      "pass": true,
+      "detail": "stub ricxapp-stubqp-685cb7ddf4-4vp8t ready"
+    },
+    {
+      "name": "r2_a1_policy_type_20008_present",
+      "pass": true,
+      "detail": "{\"create_schema\":{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"additionalProperties\":false,\"properties\":{\"threshold\":{\"default\":0,\"type\":\"integer\"}},\"type\":\"object\"},\"description\":\"TS xApp policy (O-RAN SC traffic steering use case): hand a UE over when a neighbour's predicted downlink throughput exceeds the serving cell's by more than threshold percent\",\"name\":\"tsapolicy\",\"policy_type_id\":20008}\n\n[20008]"
+    },
+    {
+      "name": "r2_xapp_image_ids",
+      "pass": true,
+      "detail": "{\"trafficxapp\": \"sha256:f521d56b24b41eed4137a0683b740e687f81e41c7d49ef68221879c59ab3d0d5\", \"stubqp\": \"sha256:3ffbcf3c8a9961dcee87de0b38f8f9964a93f544cb3b7185167e91f5458dc463\", \"stubqpImage\": \"127.0.0.1:80/stubqp:07c6dc93df2f\"}"
+    },
+    {
+      "name": "r2_rc_decoder_built",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r2_c8_free_run_at_gated_threshold",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 1406073 at 1793025424.507830131: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --simStartEpochMs=1767225600000 --RngRun=1 --e2TraceDir=/home/uc/evidence/r2/20261026T143406Z/runs/c8free/trace\nns-3 exit code 0\nc8free (free): ns-3 exit 0 (want 0)"
+    },
+    {
+      "name": "r2_c8_lockstep_null_control",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 1407837 at 1793025505.961356213: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --simStartEpochMs=1767225600000 --RngRun=1 --e2TraceDir=/home/uc/evidence/r2/20261026T143406Z/runs/c8null/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nc8null (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "r2_c8_null_control_equals_free_run",
+      "pass": true,
+      "detail": "all_equal True"
+    },
+    {
+      "name": "r2_live1_ric_reset_fresh_pods_and_bucket",
+      "pass": true,
+      "detail": "gRPC describe ok, 12040 route to rc present\nrmrClient: RMR is ready after 18 seconds waiting...\n{\"bucketAfter\": [\"8a8c1dc75a48b566\"], \"podsAfter\": {\"ricxapp-hw-go\": \"ricxapp-hw-go-c84579888-68tnk\", \"ricxapp-kpimon-go\": \"ricxapp-kpimon-go-85dc5fdf8b-rzc88\", \"xapp-rc\": \"ricxapp-rc-6db9dcd964-frb4z\"}, \"fresh\": true}"
+    },
+    {
+      "name": "r2_live1_capture_started_before_agents",
+      "pass": true,
+      "detail": "[14:40:31] capture live1 started on docker0 (pid 1413335, filter 'ip proto 132')"
+    },
+    {
+      "name": "r2_live1_agents_connected_set_exact",
+      "pass": true,
+      "detail": "NS3_E2_AGENT_E2_INTERFACE=da6f82f286cdbb38af1178f82f85877b12c2f85b\nNS3_E2_AGENT_METRIC_MAP_SHA256=ab81b6392868b32ea26816a9d394c8b58403d1a41f652b30a3498cfa96a93b66\n[14:41:04] bringup agents: e2mgr CONNECTED set equals the expected agents: gnb_001_001_00000001 gnb_001_001_00000002 gnb_001_001_00000003 "
+    },
+    {
+      "name": "r2_live1_agent_ips_recorded",
+      "pass": true,
+      "detail": "{\"1\": [\"172.17.0.3\"], \"2\": [\"172.17.0.4\"], \"3\": [\"172.17.0.5\"]}"
+    },
+    {
+      "name": "r2_live1_every_agent_ready_and_subscribed",
+      "pass": true,
+      "detail": "1 0 true READY 1 0\n2 0 true READY 1 0\n3 0 true READY 1 0"
+    },
+    {
+      "name": "r2_live1_ts_and_stub_pods_fresh_after_agents_rtmgr_sessions",
+      "pass": true,
+      "detail": "rtmgr deployment-ricplt-rtmgr-74fb47b69d-d9z2k -> ricxapp/service-ricxapp-rc-rmr 10.105.249.184:4561 ESTABLISHED\nrtmgr deployment-ricplt-rtmgr-74fb47b69d-d9z2k -> ricxapp/service-ricxapp-kpimon-go-rmr 10.109.115.169:4561 ESTABLISHED\nrtmgr deployment-ricplt-rtmgr-74fb47b69d-d9z2k -> ricplt/service-ricplt-a1mediator-rmr 10.106.37.221:4561 ESTABLISHED"
+    },
+    {
+      "name": "r2_live1_rc_rmr_ready_after_rtmgr_restart",
+      "pass": true,
+      "detail": "rmrClient: RMR is ready after 18 seconds waiting...\nrtmgr deployment-ricplt-rtmgr-74fb47b69d-d9z2k: Update Routes to Endpoint: service-ricxapp-rc-rmr.ricxapp:4560 successful, call_id: 1, Payload length: 6598, Route Update Status: (# of Entries:105"
+    },
+    {
+      "name": "r2_live1_ts_xapp_nodeb_list_has_every_connected_agent",
+      "pass": true,
+      "detail": "[INFO] nodeb list is [{\"inventoryName\":\"gnb_001_001_00000001\",\"globalNbId\":{\"plmnId\":\"00F110\",\"nbId\":\"00000000000000000000000000001\"},\"connectionStatus\":\"CONNECTED\"},{\"inventoryName\":\"gnb_001_001_00000002\",\"globalNbId\":{\"plmnId\":\"00F110\",\"nbId\":\"00000000000000000000000000010\"},\"connectionStatus\":\"CONNECTED\"},{\"inventoryName\":\"gnb_001_001_00000003\",\"globalNbId\":{\"plmnId\":\"00F110\",\"nbId\":\"00000000000000000000000000011\"},\"connectionStatus\":\"CONNECTED\"}]\nall 3 CONNECTED nodes are in the TS xApp's nodeb list"
+    },
+    {
+      "name": "r2_live1_route_dump_start",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-stubqp-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-stubqp-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-stubqp-rmr.ricxapp:4560 / service-ricxapp-stubqp-rmr.ricxapp:4560"
+    },
+    {
+      "name": "r2_live1_routes_30002_20010_to_ts_30000_only_to_stub",
+      "pass": true,
+      "detail": "mse|20010|20008|service-ricxapp-trafficxapp-rmr.ricxapp:4560\nmse|30002,service-ricxapp-stubqp-rmr.ricxapp:4560|-1|service-ricxapp-trafficxapp-rmr.ricxapp:4560\nmse|30000,service-ricxapp-trafficxapp-rmr.ricxapp:4560|-1|service-ricxapp-stubqp-rmr.ricxapp:4560"
+    },
+    {
+      "name": "r2_live1_a1_threshold_set_and_logged_by_the_ts_xapp",
+      "pass": true,
+      "detail": "31:[INFO] Setting Threshold for A1-P value: 10%\n33:[INFO] Payload is {\"operation\":\"CREATE\",\"payload\":\"{\\\"threshold\\\":10}\",\"policy_instance_id\":\"r2-live1-20261026T143406Z-2\",\"policy_type_id\":\"20008\"}\nthreshold logged after attempt 2"
+    },
+    {
+      "name": "r2_live1_a1mediator_connection_to_ts_xapp_clean",
+      "pass": true,
+      "detail": "a1mediator -> TS xApp 10.103.46.106:4560 ESTABLISHED, send queue empty; no :4560 connection with queued data"
+    },
+    {
+      "name": "r2_live1_stub_table_loaded",
+      "pass": true,
+      "detail": "{\"ues\": [\"1\", \"2\", \"3\", \"4\", \"5\", \"6\"], \"entries\": 6}"
+    },
+    {
+      "name": "r2_live1_injector_started",
+      "pass": true,
+      "detail": "injector up, seed: newrt|start mse|30003|-1|10.103.46.106:4560 mse|12041|-1|10.103.46.106:4560 mse|12042|-1|10.103.46.106:4560 newrt|end "
+    },
+    {
+      "name": "r2_live1_pods_snapshot_before",
+      "pass": true,
+      "detail": "agent\t3\t1e02446615a0\t0\t2026-10-26T14:40:52.527834318Z\t2026-10-26T14:40:52.576815435Z\nagent\t2\tec732185734b\t0\t2026-10-26T14:40:52.345928486Z\t2026-10-26T14:40:52.406669497Z\nagent\t1\t89f7cbba4190\t0\t2026-10-26T14:40:52.176858644Z\t2026-10-26T14:40:52.234915755Z"
+    },
+    {
+      "name": "r2_live1_lockstep_run_exits_clean",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 1423089 at 1793025757.745026125: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --RngRun=1 --simStartEpochMs=1767225600000 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/r2/20261026T143406Z/runs/live1/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nlive1: ns-3 exit 0, pacer exit 0 (want 0 and 0)"
+    },
+    {
+      "name": "r2_live1_pods_snapshot_after",
+      "pass": true,
+      "detail": "agent\t3\t1e02446615a0\t0\t2026-10-26T14:40:52.527834318Z\t2026-10-26T14:40:52.576815435Z\nagent\t2\tec732185734b\t0\t2026-10-26T14:40:52.345928486Z\t2026-10-26T14:40:52.406669497Z\nagent\t1\t89f7cbba4190\t0\t2026-10-26T14:40:52.176858644Z\t2026-10-26T14:40:52.234915755Z"
+    },
+    {
+      "name": "r2_live1_route_dump_end",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-kpimon-go-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-stubqp-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-kpimon-go-rmr.ricxapp:4560 / service-ricxapp-stubqp-rmr.ricxapp:4560"
+    },
+    {
+      "name": "r2_live1_restart_counts_zero_rc_ts_stub_kpimon_hw_go_agents",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r2_live1_stub_log_saved",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r2_live1_injector_stopped",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r2_live1_agent_logs_with_stats_after_bye",
+      "pass": true,
+      "detail": "every agent logged its stats after bye"
+    },
+    {
+      "name": "r2_live1_influx_dump_written_without_the_token",
+      "pass": true,
+      "detail": "{\"rows\": 39230, \"bytes\": 4711000, \"knownSecrets\": 44, \"tokenHits\": 0, \"tokenShapeHits\": 0}"
+    },
+    {
+      "name": "r2_live1_agents_stopped",
+      "pass": true,
+      "detail": "ns3-e2-agent-2 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1793025837700,\"nodeId\":2,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":99,\"samplesIn\":100,\"samplesForwarded\":100,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":219,\"indTxCell\":100,\"indTxUe\":119,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":1,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":4,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":2,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":2,\"applied\":2,\"refused\":0,\"failedOnBye\":0,\"ackTx\":2,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":101}\nns3-e2-agent-1 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1793025837322,\"nodeId\":1,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":99,\"samplesIn\":100,\"samplesForwarded\":100,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":298,\"indTxCell\":100,\"indTxUe\":198,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":1,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":2,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":0,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":0,\"applied\":0,\"refused\":0,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":101}\nRemoved 3 ns3-e2-agent container(s)."
+    },
+    {
+      "name": "r2_live1_capture_stopped",
+      "pass": true,
+      "detail": "[14:44:01] capture live1 stopped: 1612 packets captured 1612 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "r2_live1_kpimon_log_window_complete",
+      "pass": true,
+      "detail": "files 1, rotations in window 0, coverage True, retries 0"
+    },
+    {
+      "name": "r2_live1_kpimon_zero_rc_wmore",
+      "pass": true,
+      "detail": "indications=716 hdr_wmore=0 msg_wmore=0 influx_wrote_ue=1188 influx_wrote_cell=300 "
+    },
+    {
+      "name": "r2_live1_wire_one_terminal_answer_per_request_joined_to_ledger",
+      "pass": true,
+      "detail": "{\"rcRequests\": 4, \"rcAnswers\": 4, \"acks\": 4, \"failures\": 0, \"kpmHeadersByNode\": {\"1\": 298, \"2\": 219, \"3\": 199}, \"c2\": {\"answers\": 4, \"ledgerLines\": 4, \"agentLocal\": 0, \"holds\": true}, \"c5\": {\"pairsByReqId\": true, \"answerViaNodeId\": true}, \"pass\": true}"
+    },
+    {
+      "name": "r2_live1_kpm_continuity_kpimon_equals_wire_indications",
+      "pass": true,
+      "detail": "kpimon indications 716, wire indications 716"
+    },
+    {
+      "name": "r2_live1_c2_ledger",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "r2_live1_c9_handover_rows_match_applied_lines",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r2_live1_kpm_ue_lists_move_applied_and_keep_refused",
+      "pass": true,
+      "detail": "{\"format2Indications\": 416, \"kpmUeListMoved\": {\"1\": true, \"3\": true, \"2\": true, \"6\": true}, \"pass\": true}"
+    },
+    {
+      "name": "r2_live1_one_connection_per_emitter_and_agent",
+      "pass": true,
+      "detail": "emitters [('1', '0', '1'), ('2', '0', '1'), ('3', '0', '1')] agents ipc.accepted {'1': 1, '2': 1, '3': 1}"
+    },
+    {
+      "name": "r2_live1_agent_static_rejects_zero_post_bye_zero",
+      "pass": true,
+      "detail": "{\"staticRejects\": 0, \"postBye\": 0, \"pending\": 0, \"perAgent\": {\"1\": {\"rx\": 0, \"forwarded\": 0, \"rejFunc\": 0, \"rejDecode\": 0, \"rejAction\": 0, \"rejIpcDown\": 0, \"failedOnBye\": 0, \"ackTx\": 0, \"failTx\": 0, \"pending\": 0}, \"2\": {\"rx\": 2, \"forwarded\": 2, \"rejFunc\": 0, \"rejDecode\": 0, \"rejAction\": 0, \"rejIpcDown\": 0, \"failedOnBye\": 0, \"ackTx\": 2, \"failTx\": 0, \"pending\": 0}, \"3\": {\"rx\": 2, \"forwarded\": 2, \"rejFunc\": 0, \"rejDecode\": 0, \"rejAction\": 0, \"rejIpcDown\": 0, \"failedOnBye\": 0, \"ackTx\": 2, \"failTx\": 0, \"pending\": 0}}}"
+    },
+    {
+      "name": "r2_live1_expected_outcomes_negatives_no_line_late_zero",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r2_live1_wire_requests_equal_positives_via_target_with_stub_key",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r2_live1_injector_and_stub_one_request_and_answer_per_trigger",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r2_live2_ric_reset_fresh_pods_and_bucket",
+      "pass": true,
+      "detail": "gRPC describe ok, 12040 route to rc present\nrmrClient: RMR is ready after 31 seconds waiting...\n{\"bucketAfter\": [\"71ccec64a7b357ee\"], \"podsAfter\": {\"ricxapp-hw-go\": \"ricxapp-hw-go-c84579888-hhkrt\", \"ricxapp-kpimon-go\": \"ricxapp-kpimon-go-85dc5fdf8b-4mnbn\", \"xapp-rc\": \"ricxapp-rc-6db9dcd964-8rmp5\"}, \"fresh\": true}"
+    },
+    {
+      "name": "r2_live2_capture_started_before_agents",
+      "pass": true,
+      "detail": "[14:44:48] capture live2 started on docker0 (pid 1431836, filter 'ip proto 132')"
+    },
+    {
+      "name": "r2_live2_agents_connected_set_exact",
+      "pass": true,
+      "detail": "NS3_E2_AGENT_E2_INTERFACE=da6f82f286cdbb38af1178f82f85877b12c2f85b\nNS3_E2_AGENT_METRIC_MAP_SHA256=ab81b6392868b32ea26816a9d394c8b58403d1a41f652b30a3498cfa96a93b66\n[14:45:21] bringup agents: e2mgr CONNECTED set equals the expected agents: gnb_001_001_00000001 gnb_001_001_00000002 gnb_001_001_00000003 "
+    },
+    {
+      "name": "r2_live2_agent_ips_recorded",
+      "pass": true,
+      "detail": "{\"1\": [\"172.17.0.3\"], \"2\": [\"172.17.0.4\"], \"3\": [\"172.17.0.5\"]}"
+    },
+    {
+      "name": "r2_live2_every_agent_ready_and_subscribed",
+      "pass": true,
+      "detail": "1 0 true READY 1 0\n2 0 true READY 1 0\n3 0 true READY 1 0"
+    },
+    {
+      "name": "r2_live2_ts_and_stub_pods_fresh_after_agents_rtmgr_sessions",
+      "pass": true,
+      "detail": "rtmgr deployment-ricplt-rtmgr-74fb47b69d-b6672 -> ricxapp/service-ricxapp-rc-rmr 10.105.249.184:4561 ESTABLISHED\nrtmgr deployment-ricplt-rtmgr-74fb47b69d-b6672 -> ricxapp/service-ricxapp-kpimon-go-rmr 10.109.115.169:4561 ESTABLISHED\nrtmgr deployment-ricplt-rtmgr-74fb47b69d-b6672 -> ricplt/service-ricplt-a1mediator-rmr 10.106.37.221:4561 ESTABLISHED"
+    },
+    {
+      "name": "r2_live2_rc_rmr_ready_after_rtmgr_restart",
+      "pass": true,
+      "detail": "rmrClient: RMR is ready after 31 seconds waiting...\nrtmgr deployment-ricplt-rtmgr-74fb47b69d-b6672: Update Routes to Endpoint: service-ricxapp-rc-rmr.ricxapp:4560 successful, call_id: 1, Payload length: 6598, Route Update Status: OK(# of Entries:105"
+    },
+    {
+      "name": "r2_live2_ts_xapp_nodeb_list_has_every_connected_agent",
+      "pass": true,
+      "detail": "[INFO] nodeb list is [{\"inventoryName\":\"gnb_001_001_00000001\",\"globalNbId\":{\"plmnId\":\"00F110\",\"nbId\":\"00000000000000000000000000001\"},\"connectionStatus\":\"CONNECTED\"},{\"inventoryName\":\"gnb_001_001_00000002\",\"globalNbId\":{\"plmnId\":\"00F110\",\"nbId\":\"00000000000000000000000000010\"},\"connectionStatus\":\"CONNECTED\"},{\"inventoryName\":\"gnb_001_001_00000003\",\"globalNbId\":{\"plmnId\":\"00F110\",\"nbId\":\"00000000000000000000000000011\"},\"connectionStatus\":\"CONNECTED\"}]\nall 3 CONNECTED nodes are in the TS xApp's nodeb list"
+    },
+    {
+      "name": "r2_live2_route_dump_start",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-hw-go-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-hw-go-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-hw-go-rmr.ricxapp:4560 / service-ricxapp-hw-go-rmr.ricxapp:4560"
+    },
+    {
+      "name": "r2_live2_routes_30002_20010_to_ts_30000_only_to_stub",
+      "pass": true,
+      "detail": "mse|20010|20008|service-ricxapp-trafficxapp-rmr.ricxapp:4560\nmse|30002,service-ricxapp-stubqp-rmr.ricxapp:4560|-1|service-ricxapp-trafficxapp-rmr.ricxapp:4560\nmse|30000,service-ricxapp-trafficxapp-rmr.ricxapp:4560|-1|service-ricxapp-stubqp-rmr.ricxapp:4560"
+    },
+    {
+      "name": "r2_live2_a1_threshold_set_and_logged_by_the_ts_xapp",
+      "pass": true,
+      "detail": "31:[INFO] Setting Threshold for A1-P value: 10%\n33:[INFO] Payload is {\"operation\":\"CREATE\",\"payload\":\"{\\\"threshold\\\":10}\",\"policy_instance_id\":\"r2-live2-20261026T143406Z-2\",\"policy_type_id\":\"20008\"}\nthreshold logged after attempt 2"
+    },
+    {
+      "name": "r2_live2_a1mediator_connection_to_ts_xapp_clean",
+      "pass": true,
+      "detail": "a1mediator -> TS xApp 10.103.46.106:4560 ESTABLISHED, send queue empty; no :4560 connection with queued data"
+    },
+    {
+      "name": "r2_live2_stub_table_loaded",
+      "pass": true,
+      "detail": "{\"ues\": [\"1\", \"2\", \"3\", \"4\", \"5\", \"6\"], \"entries\": 6}"
+    },
+    {
+      "name": "r2_live2_injector_started",
+      "pass": true,
+      "detail": "injector up, seed: newrt|start mse|30003|-1|10.103.46.106:4560 mse|12041|-1|10.103.46.106:4560 mse|12042|-1|10.103.46.106:4560 newrt|end "
+    },
+    {
+      "name": "r2_live2_pods_snapshot_before",
+      "pass": true,
+      "detail": "agent\t3\t41fe3cf1c918\t0\t2026-10-26T14:45:09.236454595Z\t2026-10-26T14:45:09.317684852Z\nagent\t2\t3662b08fe3e9\t0\t2026-10-26T14:45:09.021417653Z\t2026-10-26T14:45:09.100564126Z\nagent\t1\t604c0a7ca865\t0\t2026-10-26T14:45:08.792193789Z\t2026-10-26T14:45:08.880564059Z"
+    },
+    {
+      "name": "r2_live2_lockstep_run_exits_clean",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 1440787 at 1793026008.344379627: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --RngRun=1 --simStartEpochMs=1767225600000 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/r2/20261026T143406Z/runs/live2/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nlive2: ns-3 exit 0, pacer exit 0 (want 0 and 0)"
+    },
+    {
+      "name": "r2_live2_pods_snapshot_after",
+      "pass": true,
+      "detail": "agent\t3\t41fe3cf1c918\t0\t2026-10-26T14:45:09.236454595Z\t2026-10-26T14:45:09.317684852Z\nagent\t2\t3662b08fe3e9\t0\t2026-10-26T14:45:09.021417653Z\t2026-10-26T14:45:09.100564126Z\nagent\t1\t604c0a7ca865\t0\t2026-10-26T14:45:08.792193789Z\t2026-10-26T14:45:08.880564059Z"
+    },
+    {
+      "name": "r2_live2_route_dump_end",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-kpimon-go-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-trafficxapp-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-kpimon-go-rmr.ricxapp:4560 / service-ricxapp-trafficxapp-rmr.ricxapp:4560"
+    },
+    {
+      "name": "r2_live2_restart_counts_zero_rc_ts_stub_kpimon_hw_go_agents",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r2_live2_stub_log_saved",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r2_live2_injector_stopped",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r2_live2_agent_logs_with_stats_after_bye",
+      "pass": true,
+      "detail": "every agent logged its stats after bye"
+    },
+    {
+      "name": "r2_live2_agents_stopped",
+      "pass": true,
+      "detail": "ns3-e2-agent-2 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1793026084209,\"nodeId\":2,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":99,\"samplesIn\":100,\"samplesForwarded\":100,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":219,\"indTxCell\":100,\"indTxUe\":119,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":1,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":4,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":2,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":2,\"applied\":2,\"refused\":0,\"failedOnBye\":0,\"ackTx\":2,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":101}\nns3-e2-agent-1 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1793026083985,\"nodeId\":1,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":99,\"samplesIn\":100,\"samplesForwarded\":100,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":298,\"indTxCell\":100,\"indTxUe\":198,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":1,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":2,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":0,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":0,\"applied\":0,\"refused\":0,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":101}\nRemoved 3 ns3-e2-agent container(s)."
+    },
+    {
+      "name": "r2_live2_capture_stopped",
+      "pass": true,
+      "detail": "[14:48:08] capture live2 stopped: 1600 packets captured 1600 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "r2_live2_kpimon_log_window_complete",
+      "pass": true,
+      "detail": "files 1, rotations in window 0, coverage True, retries 0"
+    },
+    {
+      "name": "r2_live2_kpimon_zero_rc_wmore",
+      "pass": true,
+      "detail": "indications=716 hdr_wmore=0 msg_wmore=0 influx_wrote_ue=1188 influx_wrote_cell=300 "
+    },
+    {
+      "name": "r2_live2_wire_one_terminal_answer_per_request_joined_to_ledger",
+      "pass": true,
+      "detail": "{\"rcRequests\": 4, \"rcAnswers\": 4, \"acks\": 4, \"failures\": 0, \"kpmHeadersByNode\": {\"1\": 298, \"2\": 219, \"3\": 199}, \"c2\": {\"answers\": 4, \"ledgerLines\": 4, \"agentLocal\": 0, \"holds\": true}, \"c5\": {\"pairsByReqId\": true, \"answerViaNodeId\": true}, \"pass\": true}"
+    },
+    {
+      "name": "r2_live2_kpm_continuity_kpimon_equals_wire_indications",
+      "pass": true,
+      "detail": "kpimon indications 716, wire indications 716"
+    },
+    {
+      "name": "r2_live2_c2_ledger",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "r2_live2_c9_handover_rows_match_applied_lines",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r2_live2_kpm_ue_lists_move_applied_and_keep_refused",
+      "pass": true,
+      "detail": "{\"format2Indications\": 416, \"kpmUeListMoved\": {\"1\": true, \"3\": true, \"2\": true, \"6\": true}, \"pass\": true}"
+    },
+    {
+      "name": "r2_live2_one_connection_per_emitter_and_agent",
+      "pass": true,
+      "detail": "emitters [('1', '0', '1'), ('2', '0', '1'), ('3', '0', '1')] agents ipc.accepted {'1': 1, '2': 1, '3': 1}"
+    },
+    {
+      "name": "r2_live2_agent_static_rejects_zero_post_bye_zero",
+      "pass": true,
+      "detail": "{\"staticRejects\": 0, \"postBye\": 0, \"pending\": 0, \"perAgent\": {\"1\": {\"rx\": 0, \"forwarded\": 0, \"rejFunc\": 0, \"rejDecode\": 0, \"rejAction\": 0, \"rejIpcDown\": 0, \"failedOnBye\": 0, \"ackTx\": 0, \"failTx\": 0, \"pending\": 0}, \"2\": {\"rx\": 2, \"forwarded\": 2, \"rejFunc\": 0, \"rejDecode\": 0, \"rejAction\": 0, \"rejIpcDown\": 0, \"failedOnBye\": 0, \"ackTx\": 2, \"failTx\": 0, \"pending\": 0}, \"3\": {\"rx\": 2, \"forwarded\": 2, \"rejFunc\": 0, \"rejDecode\": 0, \"rejAction\": 0, \"rejIpcDown\": 0, \"failedOnBye\": 0, \"ackTx\": 2, \"failTx\": 0, \"pending\": 0}}}"
+    },
+    {
+      "name": "r2_live2_expected_outcomes_negatives_no_line_late_zero",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r2_live2_wire_requests_equal_positives_via_target_with_stub_key",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r2_live2_injector_and_stub_one_request_and_answer_per_trigger",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r2_live3_ric_reset_fresh_pods_and_bucket",
+      "pass": true,
+      "detail": "gRPC describe ok, 12040 route to rc present\nrmrClient: RMR is ready after 31 seconds waiting...\n{\"bucketAfter\": [\"aff267d738a3eb23\"], \"podsAfter\": {\"ricxapp-hw-go\": \"ricxapp-hw-go-c84579888-mn2sv\", \"ricxapp-kpimon-go\": \"ricxapp-kpimon-go-85dc5fdf8b-tjpg7\", \"xapp-rc\": \"ricxapp-rc-6db9dcd964-zjc2t\"}, \"fresh\": true}"
+    },
+    {
+      "name": "r2_live3_capture_started_before_agents",
+      "pass": true,
+      "detail": "[14:48:55] capture live3 started on docker0 (pid 1449093, filter 'ip proto 132')"
+    },
+    {
+      "name": "r2_live3_agents_connected_set_exact",
+      "pass": true,
+      "detail": "NS3_E2_AGENT_E2_INTERFACE=da6f82f286cdbb38af1178f82f85877b12c2f85b\nNS3_E2_AGENT_METRIC_MAP_SHA256=ab81b6392868b32ea26816a9d394c8b58403d1a41f652b30a3498cfa96a93b66\n[14:49:29] bringup agents: e2mgr CONNECTED set equals the expected agents: gnb_001_001_00000001 gnb_001_001_00000002 gnb_001_001_00000003 "
+    },
+    {
+      "name": "r2_live3_agent_ips_recorded",
+      "pass": true,
+      "detail": "{\"1\": [\"172.17.0.3\"], \"2\": [\"172.17.0.4\"], \"3\": [\"172.17.0.5\"]}"
+    },
+    {
+      "name": "r2_live3_every_agent_ready_and_subscribed",
+      "pass": true,
+      "detail": "1 0 true READY 1 0\n2 0 true READY 1 0\n3 0 true READY 1 0"
+    },
+    {
+      "name": "r2_live3_ts_and_stub_pods_fresh_after_agents_rtmgr_sessions",
+      "pass": true,
+      "detail": "rtmgr deployment-ricplt-rtmgr-74fb47b69d-9rdzs -> ricxapp/service-ricxapp-rc-rmr 10.105.249.184:4561 ESTABLISHED\nrtmgr deployment-ricplt-rtmgr-74fb47b69d-9rdzs -> ricxapp/service-ricxapp-kpimon-go-rmr 10.109.115.169:4561 ESTABLISHED\nrtmgr deployment-ricplt-rtmgr-74fb47b69d-9rdzs -> ricplt/service-ricplt-a1mediator-rmr 10.106.37.221:4561 ESTABLISHED"
+    },
+    {
+      "name": "r2_live3_rc_rmr_ready_after_rtmgr_restart",
+      "pass": true,
+      "detail": "rmrClient: RMR is ready after 31 seconds waiting...\nrtmgr deployment-ricplt-rtmgr-74fb47b69d-9rdzs: Update Routes to Endpoint: service-ricxapp-rc-rmr.ricxapp:4560 successful, call_id: 1, Payload length: 6598, Route Update Status: (# of Entries:105"
+    },
+    {
+      "name": "r2_live3_ts_xapp_nodeb_list_has_every_connected_agent",
+      "pass": true,
+      "detail": "[INFO] nodeb list is [{\"inventoryName\":\"gnb_001_001_00000001\",\"globalNbId\":{\"plmnId\":\"00F110\",\"nbId\":\"00000000000000000000000000001\"},\"connectionStatus\":\"CONNECTED\"},{\"inventoryName\":\"gnb_001_001_00000002\",\"globalNbId\":{\"plmnId\":\"00F110\",\"nbId\":\"00000000000000000000000000010\"},\"connectionStatus\":\"CONNECTED\"},{\"inventoryName\":\"gnb_001_001_00000003\",\"globalNbId\":{\"plmnId\":\"00F110\",\"nbId\":\"00000000000000000000000000011\"},\"connectionStatus\":\"CONNECTED\"}]\nall 3 CONNECTED nodes are in the TS xApp's nodeb list"
+    },
+    {
+      "name": "r2_live3_route_dump_start",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-rc-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-stubqp-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-rc-rmr.ricxapp:4560 / service-ricxapp-stubqp-rmr.ricxapp:4560"
+    },
+    {
+      "name": "r2_live3_routes_30002_20010_to_ts_30000_only_to_stub",
+      "pass": true,
+      "detail": "mse|20010|20008|service-ricxapp-trafficxapp-rmr.ricxapp:4560\nmse|30002,service-ricxapp-stubqp-rmr.ricxapp:4560|-1|service-ricxapp-trafficxapp-rmr.ricxapp:4560\nmse|30000,service-ricxapp-trafficxapp-rmr.ricxapp:4560|-1|service-ricxapp-stubqp-rmr.ricxapp:4560"
+    },
+    {
+      "name": "r2_live3_a1_threshold_set_and_logged_by_the_ts_xapp",
+      "pass": true,
+      "detail": "31:[INFO] Setting Threshold for A1-P value: 10%\n33:[INFO] Payload is {\"operation\":\"CREATE\",\"payload\":\"{\\\"threshold\\\":10}\",\"policy_instance_id\":\"r2-live3-20261026T143406Z-2\",\"policy_type_id\":\"20008\"}\nthreshold logged after attempt 2"
+    },
+    {
+      "name": "r2_live3_a1mediator_connection_to_ts_xapp_clean",
+      "pass": true,
+      "detail": "a1mediator -> TS xApp 10.103.46.106:4560 ESTABLISHED, send queue empty; no :4560 connection with queued data"
+    },
+    {
+      "name": "r2_live3_stub_table_loaded",
+      "pass": true,
+      "detail": "{\"ues\": [\"1\", \"2\", \"3\", \"4\", \"5\", \"6\"], \"entries\": 6}"
+    },
+    {
+      "name": "r2_live3_injector_started",
+      "pass": true,
+      "detail": "injector up, seed: newrt|start mse|30003|-1|10.103.46.106:4560 mse|12041|-1|10.103.46.106:4560 mse|12042|-1|10.103.46.106:4560 newrt|end "
+    },
+    {
+      "name": "r2_live3_pods_snapshot_before",
+      "pass": true,
+      "detail": "agent\t3\t9648f9cc53f9\t0\t2026-10-26T14:49:16.707045541Z\t2026-10-26T14:49:16.763832267Z\nagent\t2\tc2a128831e8f\t0\t2026-10-26T14:49:16.522998668Z\t2026-10-26T14:49:16.585086969Z\nagent\t1\t0b4d2eff8e6f\t0\t2026-10-26T14:49:16.328067528Z\t2026-10-26T14:49:16.397537561Z"
+    },
+    {
+      "name": "r2_live3_lockstep_run_exits_clean",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 1458889 at 1793026261.862203794: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --RngRun=1 --simStartEpochMs=1767225600000 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/r2/20261026T143406Z/runs/live3/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nlive3: ns-3 exit 0, pacer exit 0 (want 0 and 0)"
+    },
+    {
+      "name": "r2_live3_pods_snapshot_after",
+      "pass": true,
+      "detail": "agent\t3\t9648f9cc53f9\t0\t2026-10-26T14:49:16.707045541Z\t2026-10-26T14:49:16.763832267Z\nagent\t2\tc2a128831e8f\t0\t2026-10-26T14:49:16.522998668Z\t2026-10-26T14:49:16.585086969Z\nagent\t1\t0b4d2eff8e6f\t0\t2026-10-26T14:49:16.328067528Z\t2026-10-26T14:49:16.397537561Z"
+    },
+    {
+      "name": "r2_live3_route_dump_end",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-stubqp-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-stubqp-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-stubqp-rmr.ricxapp:4560 / service-ricxapp-stubqp-rmr.ricxapp:4560"
+    },
+    {
+      "name": "r2_live3_restart_counts_zero_rc_ts_stub_kpimon_hw_go_agents",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r2_live3_stub_log_saved",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r2_live3_injector_stopped",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r2_live3_agent_logs_with_stats_after_bye",
+      "pass": true,
+      "detail": "every agent logged its stats after bye"
+    },
+    {
+      "name": "r2_live3_agents_stopped",
+      "pass": true,
+      "detail": "ns3-e2-agent-2 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1793026336680,\"nodeId\":2,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":99,\"samplesIn\":100,\"samplesForwarded\":100,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":219,\"indTxCell\":100,\"indTxUe\":119,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":1,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":4,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":2,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":2,\"applied\":2,\"refused\":0,\"failedOnBye\":0,\"ackTx\":2,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":101}\nns3-e2-agent-1 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1793026336797,\"nodeId\":1,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":99,\"samplesIn\":100,\"samplesForwarded\":100,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":298,\"indTxCell\":100,\"indTxUe\":198,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":1,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":2,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":0,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":0,\"applied\":0,\"refused\":0,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":101}\nRemoved 3 ns3-e2-agent container(s)."
+    },
+    {
+      "name": "r2_live3_capture_stopped",
+      "pass": true,
+      "detail": "[14:52:21] capture live3 stopped: 1606 packets captured 1606 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "r2_live3_kpimon_log_window_complete",
+      "pass": true,
+      "detail": "files 1, rotations in window 0, coverage True, retries 0"
+    },
+    {
+      "name": "r2_live3_kpimon_zero_rc_wmore",
+      "pass": true,
+      "detail": "indications=716 hdr_wmore=0 msg_wmore=0 influx_wrote_ue=1188 influx_wrote_cell=300 "
+    },
+    {
+      "name": "r2_live3_wire_one_terminal_answer_per_request_joined_to_ledger",
+      "pass": true,
+      "detail": "{\"rcRequests\": 4, \"rcAnswers\": 4, \"acks\": 4, \"failures\": 0, \"kpmHeadersByNode\": {\"1\": 298, \"2\": 219, \"3\": 199}, \"c2\": {\"answers\": 4, \"ledgerLines\": 4, \"agentLocal\": 0, \"holds\": true}, \"c5\": {\"pairsByReqId\": true, \"answerViaNodeId\": true}, \"pass\": true}"
+    },
+    {
+      "name": "r2_live3_kpm_continuity_kpimon_equals_wire_indications",
+      "pass": true,
+      "detail": "kpimon indications 716, wire indications 716"
+    },
+    {
+      "name": "r2_live3_c2_ledger",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "r2_live3_c9_handover_rows_match_applied_lines",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r2_live3_kpm_ue_lists_move_applied_and_keep_refused",
+      "pass": true,
+      "detail": "{\"format2Indications\": 416, \"kpmUeListMoved\": {\"1\": true, \"3\": true, \"2\": true, \"6\": true}, \"pass\": true}"
+    },
+    {
+      "name": "r2_live3_one_connection_per_emitter_and_agent",
+      "pass": true,
+      "detail": "emitters [('1', '0', '1'), ('2', '0', '1'), ('3', '0', '1')] agents ipc.accepted {'1': 1, '2': 1, '3': 1}"
+    },
+    {
+      "name": "r2_live3_agent_static_rejects_zero_post_bye_zero",
+      "pass": true,
+      "detail": "{\"staticRejects\": 0, \"postBye\": 0, \"pending\": 0, \"perAgent\": {\"1\": {\"rx\": 0, \"forwarded\": 0, \"rejFunc\": 0, \"rejDecode\": 0, \"rejAction\": 0, \"rejIpcDown\": 0, \"failedOnBye\": 0, \"ackTx\": 0, \"failTx\": 0, \"pending\": 0}, \"2\": {\"rx\": 2, \"forwarded\": 2, \"rejFunc\": 0, \"rejDecode\": 0, \"rejAction\": 0, \"rejIpcDown\": 0, \"failedOnBye\": 0, \"ackTx\": 2, \"failTx\": 0, \"pending\": 0}, \"3\": {\"rx\": 2, \"forwarded\": 2, \"rejFunc\": 0, \"rejDecode\": 0, \"rejAction\": 0, \"rejIpcDown\": 0, \"failedOnBye\": 0, \"ackTx\": 2, \"failTx\": 0, \"pending\": 0}}}"
+    },
+    {
+      "name": "r2_live3_expected_outcomes_negatives_no_line_late_zero",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r2_live3_wire_requests_equal_positives_via_target_with_stub_key",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r2_live3_injector_and_stub_one_request_and_answer_per_trigger",
+      "pass": true,
+      "detail": " \"problems\": [],\n \"pass\": true\n}"
+    },
+    {
+      "name": "r2_d7_every_control_via_the_target_gnb_both_gnbs",
+      "pass": true,
+      "detail": "{\"viaTargetGnb\": 4, \"applied\": 4, \"distinctImsis\": 4, \"targetGnbs\": [2, 3], \"form\": \"R2/R3: target-addressed (recorded deviation P1)\"}"
+    },
+    {
+      "name": "r2_replay_run_without_the_ric",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 1463394 at 1793026344.764549533: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --simStartEpochMs=1767225600000 --RngRun=1 --e2TraceDir=/home/uc/evidence/r2/20261026T143406Z/runs/replay/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nreplay (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "r2_rng2_run_without_the_ric",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 1465065 at 1793026419.243973573: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --simStartEpochMs=1767225600000 --RngRun=2 --e2TraceDir=/home/uc/evidence/r2/20261026T143406Z/runs/rng2/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nrng2 (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "r2_rng2_c2_holds",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "r2_rng2_c7_holds",
+      "pass": true,
+      "detail": "{\"ns3Exit\": 0, \"late\": 0, \"droppedNoSub\": 0, \"minSlackTGate\": 9.999568}"
+    },
+    {
+      "name": "r2_c1_three_live_runs_equal_on_all_components",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r2_c1_replay_equals_live_on_ledger_ipc_traces",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r2_c1_rng2_differs_from_live",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r2_runs_kpm_moved_c2_c5_reset_fresh",
+      "pass": true,
+      "detail": "{\"c2\": {\"live1\": {\"agentLocal\": 0, \"answers\": 4, \"holds\": true, \"ledgerLines\": 4}, \"live2\": {\"agentLocal\": 0, \"answers\": 4, \"holds\": true, \"ledgerLines\": 4}, \"live3\": {\"agentLocal\": 0, \"answers\": 4, \"holds\": true, \"ledgerLines\": 4}}, \"c5\": {\"answerViaNodeId\": true, \"pairsByReqId\": true, \"perRun\": {\"live1\": {\"answerViaNodeId\": true, \"pairsByReqId\": true}, \"live2\": {\"answerViaNodeId\": true, \"pairsByReqId\": true}, \"live3\": {\"answerViaNodeId\": true, \"pairsByReqId\": true}}}, \"kpmUeListMoved\": {\"1\": true, \"2\": true, \"3\": true, \"6\": true}, \"pass\": true, \"problems\": [], \"resetEvidence\": {\"live1\": {\"bucketAfter\": [\"8a8c1dc75a48b566\"], \"bucketBefore\": [\"c2bb28eb555391e4\"], \"fresh\": true, \"podsAfter\": {\"ricxapp-hw-go\": {\"containerStartedAt\": [\"2026-10-26T14:39:48Z\"], \"name\": \"ricxapp-hw-go-c84579888-68tnk\", \"startTime\": \"2026-10-26T14:39:48Z\", \"uid\": \"51c3ff71-5c73-46fb-b9ad-e99e0ba37033\"}, \"ricxapp-kpimon-go\": {\"containerStartedAt\": [\"2026-10-26T14:39:48Z\"], \"name\": \"ricxapp-kpimon-go-85dc5fdf8b-rzc88\", \"startTime\": \"2026-10-26T14:39:47Z\", \"uid\": \"b4b89066-e151-4757-80a4-d055c1275268\"}, \"xapp-rc\": {\"containerStartedAt\": [\"2026-10-26T14:39:48Z\"], \"name\": \"ricxapp-rc-6db9dcd964-frb4z\", \"startTime\": \"2026-10-26T14:39:47Z\", \"uid\": \"49b449f6-201a-40f1-a823-bd39cccec157\"}}, \"resetStartUtc\": \"2026-10-26T14:39:47Z\"}, \"live2\": {\"bucketAfter\": [\"71ccec64a7b357ee\"], \"bucketBefore\": [\"8a8c1dc75a48b566\"], \"fresh\": true, \"podsAfter\": {\"ricxapp-hw-go\": {\"containerStartedAt\": [\"2026-10-26T14:44:05Z\"], \"name\": \"ricxapp-hw-go-c84579888-hhkrt\", \"startTime\": \"2026-10-26T14:44:04Z\", \"uid\": \"83b7eb98-38f8-4865-aad0-52ef9b21d4ed\"}, \"ricxapp-kpimon-go\": {\"containerStartedAt\": [\"2026-10-26T14:44:05Z\"], \"name\": \"ricxapp-kpimon-go-85dc5fdf8b-4mnbn\", \"startTime\": \"2026-10-26T14:44:04Z\", \"uid\": \"9338838b-9dba-45a7-b4f2-1bf8ad37ae30\"}, \"xapp-rc\": {\"containerStartedAt\": [\"2026-10-26T14:44:05Z\"], \"name\": \"ricxapp-rc-6db9dcd964-8rmp5\", \"startTime\": \"2026-10-26T14:44:04Z\", \"uid\": \"0d5d4a97-1139-40d5-8639-f0953ac31d89\"}}, \"resetStartUtc\": \"2026-10-26T14:44:04Z\"}, \"live3\": {\"bucketAfter\": [\"aff267d738a3eb23\"], \"bucketBefore\": [\"71ccec64a7b357ee\"], \"fresh\": true, \"podsAfter\": {\"ricxapp-hw-go\": {\"containerStartedAt\": [\"2026-10-26T14:48:12Z\"], \"name\": \"ricxapp-hw-go-c84579888-mn2sv\", \"startTime\": \"2026-10-26T14:48:12Z\", \"uid\": \"2336736d-9ba9-4cd7-8d8f-65149747fe82\"}, \"ricxapp-kpimon-go\": {\"containerStartedAt\": [\"2026-10-26T14:48:12Z\"], \"name\": \"ricxapp-kpimon-go-85dc5fdf8b-tjpg7\", \"startTime\": \"2026-10-26T14:48:12Z\", \"uid\": \"fd5b0deb-7149-4039-802e-3d54b87cf6a0\"}, \"xapp-rc\": {\"containerStartedAt\": [\"2026-10-26T14:48:12Z\"], \"name\": \"ricxapp-rc-6db9dcd964-zjc2t\", \"startTime\": \"2026-10-26T14:48:11Z\", \"uid\": \"e1c34b32-07b8-4c6e-b475-1d278288f0ed\"}}, \"resetStartUtc\": \"2026-10-26T14:48:11Z\"}}, \"runs\": [\"live1\", \"live2\", \"live3\"]}"
+    },
+    {
+      "name": "r2_ipc_dropped_zero_no_sub_dropped_zero_and_slack_recorded",
+      "pass": true,
+      "detail": "{\"minSlack\": {\"T_start\": 119.999267, \"T_gate\": 9.99582, \"T_ctl\": 29.993189, \"W\": null}, \"lControlLatencyS\": [0.003129, 0.003218, 0.003329, 0.003537, 0.003999, 0.004035, 0.004176, 0.00513, 0.005362, 0.005498, 0.005501, 0.006811], \"ipcDropped\": 0, \"droppedNoSub\": 0}"
+    },
+    {
+      "name": "r2_restart_counts_all_zero",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "r2_no_stray_process",
+      "pass": true,
+      "detail": "no leftovers"
+    }
+  ],
+  "mode": "c1",
+  "dev": false,
+  "tCtlSeconds": 30,
+  "tCtlProvenance": "evidence/r0/20261023T065002Z calibration: L_max 12.919 ms over 10 complete trigger steps, T_ctl = max(30 s, ceil(20 x L_max)) = 30 s; host load 1.03 (20 CPUs), VM load 1.29; CPU hold released by the user 15:44 KST",
+  "wSeconds": 1.0,
+  "wProvenance": "evidence/r2/20261026T140350Z calibration: L_max 8.214 ms over 25 complete trigger steps (harness c3817e3), W = max(1 s, 3 x L_max) = 1.0 s; VM load 0.12 at start; re-set at R3 from its calibration",
+  "a1Threshold": 10,
+  "a1ThresholdProvenance": "scripts/gates/r2-scenario.json threshold 10 (n2 is a neighbour 5 % above serving, under it), set and reached in the R2 calibration evidence/r2/20261026T140350Z",
+  "substitution2Applied": true,
+  "substitution3Applied": true,
+  "outageThresholdDb": -1000,
+  "outageThresholdProvenance": "substitution 1: the R0-config null-control run at the default -5 dB counted 5 LTE outage switches (evidence/r0/20261023T073520Z q2OutageSwitches 5; also 065002Z, 065551Z); gated runs use --outageThreshold=-1000",
+  "positives": 4,
+  "vmLoadStart": " 14:34:08 up 3 days,  6:37,  0 user,  load average: 0.54, 0.78, 0.66",
+  "xappImageIds": {
+    "trafficxapp": "sha256:f521d56b24b41eed4137a0683b740e687f81e41c7d49ef68221879c59ab3d0d5",
+    "stubqp": "sha256:3ffbcf3c8a9961dcee87de0b38f8f9964a93f544cb3b7185167e91f5458dc463",
+    "stubqpImage": "127.0.0.1:80/stubqp:07c6dc93df2f"
+  },
+  "c8NullEqualsFree": true,
+  "a1ThresholdAttempt_live1": 2,
+  "a1DeliveredAttempt_live1": 1,
+  "a1mediatorRestart_live1": {
+    "fresh": true,
+    "problems": []
+  },
+  "a1ThresholdAttempt_live2": 2,
+  "a1DeliveredAttempt_live2": 1,
+  "a1mediatorRestart_live2": {
+    "fresh": true,
+    "problems": []
+  },
+  "a1ThresholdAttempt_live3": 2,
+  "a1DeliveredAttempt_live3": 1,
+  "a1mediatorRestart_live3": {
+    "fresh": true,
+    "problems": []
+  },
+  "d7": {
+    "viaTargetGnb": 4,
+    "applied": 4,
+    "distinctImsis": 4,
+    "targetGnbs": [
+      2,
+      3
+    ],
+    "form": "R2/R3: target-addressed (recorded deviation P1)"
+  },
+  "rng2": {
+    "ns3Exit": 0,
+    "late": 0,
+    "droppedNoSub": 0,
+    "minSlackTGate": 9.999568
+  },
+  "c1": {
+    "liveRunsEqual": true,
+    "replayEqual": true,
+    "rngRun2Differs": true
+  },
+  "kpmUeListMoved": {
+    "1": true,
+    "2": true,
+    "3": true,
+    "6": true
+  },
+  "c2": {
+    "live1": {
+      "agentLocal": 0,
+      "answers": 4,
+      "holds": true,
+      "ledgerLines": 4
+    },
+    "live2": {
+      "agentLocal": 0,
+      "answers": 4,
+      "holds": true,
+      "ledgerLines": 4
+    },
+    "live3": {
+      "agentLocal": 0,
+      "answers": 4,
+      "holds": true,
+      "ledgerLines": 4
+    }
+  },
+  "c5": {
+    "answerViaNodeId": true,
+    "pairsByReqId": true,
+    "perRun": {
+      "live1": {
+        "answerViaNodeId": true,
+        "pairsByReqId": true
+      },
+      "live2": {
+        "answerViaNodeId": true,
+        "pairsByReqId": true
+      },
+      "live3": {
+        "answerViaNodeId": true,
+        "pairsByReqId": true
+      }
+    }
+  },
+  "resetEvidence": {
+    "live1": {
+      "bucketAfter": [
+        "8a8c1dc75a48b566"
+      ],
+      "bucketBefore": [
+        "c2bb28eb555391e4"
+      ],
+      "fresh": true,
+      "podsAfter": {
+        "ricxapp-hw-go": {
+          "containerStartedAt": [
+            "2026-10-26T14:39:48Z"
+          ],
+          "name": "ricxapp-hw-go-c84579888-68tnk",
+          "startTime": "2026-10-26T14:39:48Z",
+          "uid": "51c3ff71-5c73-46fb-b9ad-e99e0ba37033"
+        },
+        "ricxapp-kpimon-go": {
+          "containerStartedAt": [
+            "2026-10-26T14:39:48Z"
+          ],
+          "name": "ricxapp-kpimon-go-85dc5fdf8b-rzc88",
+          "startTime": "2026-10-26T14:39:47Z",
+          "uid": "b4b89066-e151-4757-80a4-d055c1275268"
+        },
+        "xapp-rc": {
+          "containerStartedAt": [
+            "2026-10-26T14:39:48Z"
+          ],
+          "name": "ricxapp-rc-6db9dcd964-frb4z",
+          "startTime": "2026-10-26T14:39:47Z",
+          "uid": "49b449f6-201a-40f1-a823-bd39cccec157"
+        }
+      },
+      "resetStartUtc": "2026-10-26T14:39:47Z"
+    },
+    "live2": {
+      "bucketAfter": [
+        "71ccec64a7b357ee"
+      ],
+      "bucketBefore": [
+        "8a8c1dc75a48b566"
+      ],
+      "fresh": true,
+      "podsAfter": {
+        "ricxapp-hw-go": {
+          "containerStartedAt": [
+            "2026-10-26T14:44:05Z"
+          ],
+          "name": "ricxapp-hw-go-c84579888-hhkrt",
+          "startTime": "2026-10-26T14:44:04Z",
+          "uid": "83b7eb98-38f8-4865-aad0-52ef9b21d4ed"
+        },
+        "ricxapp-kpimon-go": {
+          "containerStartedAt": [
+            "2026-10-26T14:44:05Z"
+          ],
+          "name": "ricxapp-kpimon-go-85dc5fdf8b-4mnbn",
+          "startTime": "2026-10-26T14:44:04Z",
+          "uid": "9338838b-9dba-45a7-b4f2-1bf8ad37ae30"
+        },
+        "xapp-rc": {
+          "containerStartedAt": [
+            "2026-10-26T14:44:05Z"
+          ],
+          "name": "ricxapp-rc-6db9dcd964-8rmp5",
+          "startTime": "2026-10-26T14:44:04Z",
+          "uid": "0d5d4a97-1139-40d5-8639-f0953ac31d89"
+        }
+      },
+      "resetStartUtc": "2026-10-26T14:44:04Z"
+    },
+    "live3": {
+      "bucketAfter": [
+        "aff267d738a3eb23"
+      ],
+      "bucketBefore": [
+        "71ccec64a7b357ee"
+      ],
+      "fresh": true,
+      "podsAfter": {
+        "ricxapp-hw-go": {
+          "containerStartedAt": [
+            "2026-10-26T14:48:12Z"
+          ],
+          "name": "ricxapp-hw-go-c84579888-mn2sv",
+          "startTime": "2026-10-26T14:48:12Z",
+          "uid": "2336736d-9ba9-4cd7-8d8f-65149747fe82"
+        },
+        "ricxapp-kpimon-go": {
+          "containerStartedAt": [
+            "2026-10-26T14:48:12Z"
+          ],
+          "name": "ricxapp-kpimon-go-85dc5fdf8b-tjpg7",
+          "startTime": "2026-10-26T14:48:12Z",
+          "uid": "fd5b0deb-7149-4039-802e-3d54b87cf6a0"
+        },
+        "xapp-rc": {
+          "containerStartedAt": [
+            "2026-10-26T14:48:12Z"
+          ],
+          "name": "ricxapp-rc-6db9dcd964-zjc2t",
+          "startTime": "2026-10-26T14:48:11Z",
+          "uid": "e1c34b32-07b8-4c6e-b475-1d278288f0ed"
+        }
+      },
+      "resetStartUtc": "2026-10-26T14:48:11Z"
+    }
+  },
+  "c2AgentSplit": {
+    "live1": {
+      "staticRejects": 0,
+      "postBye": 0
+    },
+    "live2": {
+      "staticRejects": 0,
+      "postBye": 0
+    },
+    "live3": {
+      "staticRejects": 0,
+      "postBye": 0
+    }
+  },
+  "late": {
+    "live1": 0,
+    "live2": 0,
+    "live3": 0
+  },
+  "outcomes": {
+    "live1": {
+      "applied": 4
+    },
+    "live2": {
+      "applied": 4
+    },
+    "live3": {
+      "applied": 4
+    }
+  },
+  "wireRequests": {
+    "live1": {
+      "requests": 4,
+      "positives": 4,
+      "targetKeys": [
+        "0000000202",
+        "0000000303"
+      ]
+    },
+    "live2": {
+      "requests": 4,
+      "positives": 4,
+      "targetKeys": [
+        "0000000202",
+        "0000000303"
+      ]
+    },
+    "live3": {
+      "requests": 4,
+      "positives": 4,
+      "targetKeys": [
+        "0000000202",
+        "0000000303"
+      ]
+    }
+  },
+  "tsResetEvidence": {
+    "live1": {
+      "fresh": true,
+      "after": {
+        "ricxapp-stubqp": "ricxapp-stubqp-685cb7ddf4-qztk8",
+        "ricxapp-trafficxapp": "ricxapp-trafficxapp-7c46768578-45k46"
+      }
+    },
+    "live2": {
+      "fresh": true,
+      "after": {
+        "ricxapp-stubqp": "ricxapp-stubqp-685cb7ddf4-ndqnk",
+        "ricxapp-trafficxapp": "ricxapp-trafficxapp-7c46768578-6764k"
+      }
+    },
+    "live3": {
+      "fresh": true,
+      "after": {
+        "ricxapp-stubqp": "ricxapp-stubqp-685cb7ddf4-rrkd6",
+        "ricxapp-trafficxapp": "ricxapp-trafficxapp-7c46768578-f57mf"
+      }
+    },
+    "pre": {
+      "fresh": true,
+      "after": {
+        "ricxapp-stubqp": "ricxapp-stubqp-685cb7ddf4-4vp8t",
+        "ricxapp-trafficxapp": "ricxapp-trafficxapp-7c46768578-mvmw4"
+      }
+    }
+  },
+  "xappRegistration": {
+    "live1": [
+      "hw-go@service-ricxapp-hw-go-rmr.ricxapp:4560",
+      "kpimon-go@service-ricxapp-kpimon-go-rmr.ricxapp:4560",
+      "rc@service-ricxapp-rc-rmr.ricxapp:4560",
+      "stubqp@service-ricxapp-stubqp-rmr.ricxapp:4560",
+      "trafficxapp@service-ricxapp-trafficxapp-rmr.ricxapp:4560"
+    ],
+    "live2": [
+      "hw-go@service-ricxapp-hw-go-rmr.ricxapp:4560",
+      "kpimon-go@service-ricxapp-kpimon-go-rmr.ricxapp:4560",
+      "rc@service-ricxapp-rc-rmr.ricxapp:4560",
+      "stubqp@service-ricxapp-stubqp-rmr.ricxapp:4560",
+      "trafficxapp@service-ricxapp-trafficxapp-rmr.ricxapp:4560"
+    ],
+    "live3": [
+      "hw-go@service-ricxapp-hw-go-rmr.ricxapp:4560",
+      "kpimon-go@service-ricxapp-kpimon-go-rmr.ricxapp:4560",
+      "rc@service-ricxapp-rc-rmr.ricxapp:4560",
+      "stubqp@service-ricxapp-stubqp-rmr.ricxapp:4560",
+      "trafficxapp@service-ricxapp-trafficxapp-rmr.ricxapp:4560"
+    ],
+    "pre": [
+      "hw-go@service-ricxapp-hw-go-rmr.ricxapp:4560",
+      "kpimon-go@service-ricxapp-kpimon-go-rmr.ricxapp:4560",
+      "rc@service-ricxapp-rc-rmr.ricxapp:4560",
+      "stubqp@service-ricxapp-stubqp-rmr.ricxapp:4560",
+      "trafficxapp@service-ricxapp-trafficxapp-rmr.ricxapp:4560"
+    ]
+  },
+  "stubOtherTypes": {
+    "live1": [
+      12041
+    ],
+    "live2": [
+      12041
+    ],
+    "live3": [
+      12041
+    ]
+  },
+  "influxDump": {
+    "path": "runs/live1/influx-kpimon.csv",
+    "bytes": 4750345
+  },
+  "minSlack": {
+    "T_start": 119.999267,
+    "T_gate": 9.99582,
+    "T_ctl": 29.993189,
+    "W": null
+  },
+  "lControlLatencyS": [
+    0.003129,
+    0.003218,
+    0.003329,
+    0.003537,
+    0.003999,
+    0.004035,
+    0.004176,
+    0.00513,
+    0.005362,
+    0.005498,
+    0.005501,
+    0.006811
+  ],
+  "ipcDropped": 0,
+  "droppedNoSub": 0,
+  "restartCountsAllZero": true,
+  "restartCounts": {
+    "live1/hw-go": 0,
+    "live1/kpimon": 0,
+    "live1/rc": 0,
+    "live1/qp-stub": 0,
+    "live1/ts-xapp": 0,
+    "live1/agent-3": 0,
+    "live1/agent-2": 0,
+    "live1/agent-1": 0,
+    "live2/hw-go": 0,
+    "live2/kpimon": 0,
+    "live2/rc": 0,
+    "live2/qp-stub": 0,
+    "live2/ts-xapp": 0,
+    "live2/agent-3": 0,
+    "live2/agent-2": 0,
+    "live2/agent-1": 0,
+    "live3/hw-go": 0,
+    "live3/kpimon": 0,
+    "live3/rc": 0,
+    "live3/qp-stub": 0,
+    "live3/ts-xapp": 0,
+    "live3/agent-3": 0,
+    "live3/agent-2": 0,
+    "live3/agent-1": 0
+  },
+  "routeOwner12041": {
+    "live1": {
+      "start": {
+        "rtmgr": "service-ricxapp-stubqp-rmr.ricxapp:4560",
+        "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"
+      },
+      "end": {
+        "rtmgr": "service-ricxapp-kpimon-go-rmr.ricxapp:4560",
+        "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"
+      }
+    },
+    "live2": {
+      "start": {
+        "rtmgr": "service-ricxapp-hw-go-rmr.ricxapp:4560",
+        "e2term": "service-ricxapp-hw-go-rmr.ricxapp:4560"
+      },
+      "end": {
+        "rtmgr": "service-ricxapp-kpimon-go-rmr.ricxapp:4560",
+        "e2term": "service-ricxapp-trafficxapp-rmr.ricxapp:4560"
+      }
+    },
+    "live3": {
+      "start": {
+        "rtmgr": "service-ricxapp-rc-rmr.ricxapp:4560",
+        "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"
+      },
+      "end": {
+        "rtmgr": "service-ricxapp-stubqp-rmr.ricxapp:4560",
+        "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"
+      }
+    }
+  },
+  "routeOwner12042": {
+    "live1": {
+      "start": {
+        "rtmgr": "service-ricxapp-stubqp-rmr.ricxapp:4560",
+        "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"
+      },
+      "end": {
+        "rtmgr": "service-ricxapp-kpimon-go-rmr.ricxapp:4560",
+        "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"
+      }
+    },
+    "live2": {
+      "start": {
+        "rtmgr": "service-ricxapp-hw-go-rmr.ricxapp:4560",
+        "e2term": "service-ricxapp-hw-go-rmr.ricxapp:4560"
+      },
+      "end": {
+        "rtmgr": "service-ricxapp-kpimon-go-rmr.ricxapp:4560",
+        "e2term": "service-ricxapp-trafficxapp-rmr.ricxapp:4560"
+      }
+    },
+    "live3": {
+      "start": {
+        "rtmgr": "service-ricxapp-rc-rmr.ricxapp:4560",
+        "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"
+      },
+      "end": {
+        "rtmgr": "service-ricxapp-stubqp-rmr.ricxapp:4560",
+        "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"
+      }
+    }
+  },
+  "tsOrStubHeldAckRoute": {
+    "live1": true,
+    "live2": true,
+    "live3": true
+  },
+  "vmLoadEnd": " 14:54:52 up 3 days,  6:57,  1 user,  load average: 1.04, 0.97, 0.87"
+}

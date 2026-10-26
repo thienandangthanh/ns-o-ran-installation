@@ -1,0 +1,22 @@
+{
+  "reference": "live1",
+  "components": [
+    "ledger",
+    "ipc",
+    "traces"
+  ],
+  "runs": {
+    "replay": {
+      "equal": true,
+      "differing": [],
+      "detail": {},
+      "ipcDroppedMax": 0
+    }
+  },
+  "ipcDroppedMaxAll": 0,
+  "overall": {
+    "live1": "dc9472204a44c8528d9172048629591c72941c0223824b1633edef494426f17d",
+    "replay": "dc9472204a44c8528d9172048629591c72941c0223824b1633edef494426f17d"
+  },
+  "all_equal": true
+}

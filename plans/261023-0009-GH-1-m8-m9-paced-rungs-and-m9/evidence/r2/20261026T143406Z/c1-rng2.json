@@ -1,0 +1,59 @@
+{
+  "reference": "live1",
+  "components": [
+    "ledger",
+    "ipc",
+    "traces"
+  ],
+  "runs": {
+    "rng2": {
+      "equal": false,
+      "differing": [
+        "ledger",
+        "ipc",
+        "traces"
+      ],
+      "detail": {
+        "ipc": [
+          "1",
+          "2",
+          "3"
+        ],
+        "traces": [
+          "CellIdStats.txt",
+          "CellIdStatsHandover.txt",
+          "DlE2PdcpStats.txt",
+          "DlE2PdcpStatsLte.txt",
+          "DlE2RlcStats.txt",
+          "DlE2RlcStatsLte.txt",
+          "DlMacStats.txt",
+          "DlPdcpStats.txt",
+          "DlPhyTransmissionTrace.txt",
+          "DlRlcStats.txt",
+          "DlRxPhyStats.txt",
+          "DlTxPhyStats.txt",
+          "EnbHandoverEndStats.txt",
+          "EnbHandoverStartStats.txt",
+          "EnbSchedAllocTraces.txt",
+          "LteDlRsrpSinrStats.txt",
+          "LteUlSinrStats.txt",
+          "MmWaveSinrTime.txt",
+          "MmWaveSwitchStats.txt",
+          "RlcAmBufferSize.txt",
+          "RxPacketTrace.txt",
+          "UeHandoverEndStats.txt",
+          "UeHandoverStartStats.txt",
+          "X2Stats.txt",
+          "ues.txt"
+        ]
+      },
+      "ipcDroppedMax": 0
+    }
+  },
+  "ipcDroppedMaxAll": 0,
+  "overall": {
+    "live1": "dc9472204a44c8528d9172048629591c72941c0223824b1633edef494426f17d",
+    "rng2": "b6e9a2fce079193cbf5cd10139d0a591e44ae9c59f18b20915dff2ee4b9ef5e6"
+  },
+  "all_equal": false
+}

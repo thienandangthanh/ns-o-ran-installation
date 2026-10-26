@@ -1,0 +1,33 @@
+[WARN] jwrapper: badly formed json [32]; expected name (string) found type=4 4561
+[WARN] jwrapper: element [77] is undefined or of unknown type
+[INFO] nodeb list is [{"inventoryName":"gnb_001_001_00000001","globalNbId":{"plmnId":"00F110","nbId":"00000000000000000000000000001"},"connectionStatus":"CONNECTED"},{"inventoryName":"gnb_001_001_00000002","globalNbId":{"plmnId":"00F110","nbId":"00000000000000000000000000010"},"connectionStatus":"CONNECTED"},{"inventoryName":"gnb_001_001_00000003","globalNbId":{"plmnId":"00F110","nbId":"00000000000000000000000000011"},"connectionStatus":"CONNECTED"}]
+[INFO] listening on port 4560
+1793025675892 1/RMR [INFO] ric message routing library on SI95 p=4560 mv=3 flg=00 id=a (fa45400 4.8.1 built: Jan 10 2022)
+1793025676893 1/RMR [INFO] sends: ts=1793025676 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-qp-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025676893 1/RMR [INFO] sends: ts=1793025676 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025676893 1/RMR [INFO] sends: ts=1793025676 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-ad-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025707488 1/RMR [INFO] sends: ts=1793025707 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-qp-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025707488 1/RMR [INFO] sends: ts=1793025707 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-stubqp-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025707488 1/RMR [INFO] sends: ts=1793025707 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=10.101.123.229:38000 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025707488 1/RMR [INFO] sends: ts=1793025707 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-hw-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025707488 1/RMR [INFO] sends: ts=1793025707 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-rc-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025707488 1/RMR [INFO] sends: ts=1793025707 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-kpimon-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025707488 1/RMR [INFO] sends: ts=1793025707 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-submgr-rmr.ricplt:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025707488 1/RMR [INFO] sends: ts=1793025707 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025707488 1/RMR [INFO] sends: ts=1793025707 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025707488 1/RMR [INFO] sends: ts=1793025707 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-ad-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+[INFO] Policy Callback got a message, type=20010, length=129
+[INFO] Payload is {"operation":"CREATE","payload":"{\"threshold\":10}","policy_instance_id":"r2-live1-20261026T143406Z-1","policy_type_id":"20008"}
+1793025738727 1/RMR [INFO] sends: ts=1793025738 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-qp-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025738727 1/RMR [INFO] sends: ts=1793025738 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-stubqp-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025738727 1/RMR [INFO] sends: ts=1793025738 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=10.101.123.229:38000 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025738727 1/RMR [INFO] sends: ts=1793025738 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-hw-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025738727 1/RMR [INFO] sends: ts=1793025738 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-rc-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025738727 1/RMR [INFO] sends: ts=1793025738 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-kpimon-go-rmr.ricxapp:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025738727 1/RMR [INFO] sends: ts=1793025738 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-submgr-rmr.ricplt:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025738727 1/RMR [INFO] sends: ts=1793025738 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025738727 1/RMR [INFO] sends: ts=1793025738 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricplt-a1mediator-rmr.ricplt:4562 open=0 succ=0 fail=0 (hard=0 soft=0)
+1793025738727 1/RMR [INFO] sends: ts=1793025738 src=service-ricxapp-trafficxapp-rmr.ricxapp:4560 target=service-ricxapp-ad-rmr.ricxapp.svc.cluster.local:4560 open=0 succ=0 fail=0 (hard=0 soft=0)
+[INFO] Setting Threshold for A1-P value: 10%
+[INFO] Policy Callback got a message, type=20010, length=129
+[INFO] Payload is {"operation":"CREATE","payload":"{\"threshold\":10}","policy_instance_id":"r2-live1-20261026T143406Z-2","policy_type_id":"20008"}
