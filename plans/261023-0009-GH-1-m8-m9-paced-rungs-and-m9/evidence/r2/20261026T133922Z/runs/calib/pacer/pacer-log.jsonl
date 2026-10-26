@@ -1,0 +1,456 @@
+{"t": 1793022359.398208, "dir": "rx", "msg": {"type": "ready", "seq": -1, "simTimeNs": 1000, "buffered": 0}}
+{"t": 1793022359.3982391, "dir": "tx", "msg": {"type": "go", "seq": -1}}
+{"t": 1793022359.3983474, "dir": "rx", "msg": {"type": "steps", "seq": -1}}
+{"t": 1793022359.399535, "dir": "rx", "msg": {"type": "ready", "seq": 0, "simTimeNs": 800000, "buffered": 0}}
+{"t": 1793022359.3995554, "dir": "tx", "msg": {"type": "go", "seq": 0}}
+{"t": 1793022359.4006739, "dir": "rx", "msg": {"type": "steps", "seq": 0}}
+{"t": 1793022359.400703, "dir": "rx", "msg": {"type": "applied", "seq": 0, "controls": 0, "late": 0}}
+{"t": 1793022359.8407845, "dir": "rx", "msg": {"type": "ready", "seq": 1, "simTimeNs": 100800000, "buffered": 0}}
+{"t": 1793022359.8408172, "dir": "tx", "msg": {"type": "go", "seq": 1}}
+{"t": 1793022359.840911, "dir": "rx", "msg": {"type": "steps", "seq": 1}}
+{"t": 1793022359.8409357, "dir": "rx", "msg": {"type": "applied", "seq": 1, "controls": 0, "late": 0}}
+{"t": 1793022360.6015027, "dir": "rx", "msg": {"type": "ready", "seq": 2, "simTimeNs": 200800000, "buffered": 0}}
+{"t": 1793022360.601535, "dir": "tx", "msg": {"type": "go", "seq": 2}}
+{"t": 1793022360.6030676, "dir": "rx", "msg": {"type": "steps", "seq": 2}}
+{"t": 1793022360.603113, "dir": "rx", "msg": {"type": "applied", "seq": 2, "controls": 0, "late": 0}}
+{"t": 1793022361.3609512, "dir": "rx", "msg": {"type": "ready", "seq": 3, "simTimeNs": 300800000, "buffered": 0}}
+{"t": 1793022361.3609881, "dir": "tx", "msg": {"type": "go", "seq": 3}}
+{"t": 1793022361.3618379, "dir": "rx", "msg": {"type": "steps", "seq": 3}}
+{"t": 1793022361.361865, "dir": "rx", "msg": {"type": "applied", "seq": 3, "controls": 0, "late": 0}}
+{"t": 1793022362.1716812, "dir": "rx", "msg": {"type": "ready", "seq": 4, "simTimeNs": 400800000, "buffered": 0}}
+{"t": 1793022362.1717114, "dir": "tx", "msg": {"type": "go", "seq": 4}}
+{"t": 1793022362.172812, "dir": "rx", "msg": {"type": "steps", "seq": 4}}
+{"t": 1793022362.172849, "dir": "rx", "msg": {"type": "applied", "seq": 4, "controls": 0, "late": 0}}
+{"t": 1793022362.9346364, "dir": "rx", "msg": {"type": "ready", "seq": 5, "simTimeNs": 500800000, "buffered": 0}}
+{"t": 1793022362.9346688, "dir": "tx", "msg": {"type": "go", "seq": 5}}
+{"t": 1793022362.9352937, "dir": "rx", "msg": {"type": "steps", "seq": 5}}
+{"t": 1793022362.935325, "dir": "rx", "msg": {"type": "applied", "seq": 5, "controls": 0, "late": 0}}
+{"t": 1793022363.7488225, "dir": "rx", "msg": {"type": "ready", "seq": 6, "simTimeNs": 600800000, "buffered": 0}}
+{"t": 1793022363.7488663, "dir": "tx", "msg": {"type": "go", "seq": 6}}
+{"t": 1793022363.7494, "dir": "rx", "msg": {"type": "steps", "seq": 6}}
+{"t": 1793022363.7494216, "dir": "rx", "msg": {"type": "applied", "seq": 6, "controls": 0, "late": 0}}
+{"t": 1793022364.4710553, "dir": "rx", "msg": {"type": "ready", "seq": 7, "simTimeNs": 700800000, "buffered": 0}}
+{"t": 1793022364.4711082, "dir": "tx", "msg": {"type": "go", "seq": 7}}
+{"t": 1793022364.4712338, "dir": "rx", "msg": {"type": "steps", "seq": 7}}
+{"t": 1793022364.4712567, "dir": "rx", "msg": {"type": "applied", "seq": 7, "controls": 0, "late": 0}}
+{"t": 1793022365.26723, "dir": "rx", "msg": {"type": "ready", "seq": 8, "simTimeNs": 800800000, "buffered": 0}}
+{"t": 1793022365.26726, "dir": "tx", "msg": {"type": "go", "seq": 8}}
+{"t": 1793022365.2677643, "dir": "rx", "msg": {"type": "steps", "seq": 8}}
+{"t": 1793022365.2677865, "dir": "rx", "msg": {"type": "applied", "seq": 8, "controls": 0, "late": 0}}
+{"t": 1793022366.2242198, "dir": "rx", "msg": {"type": "ready", "seq": 9, "simTimeNs": 900800000, "buffered": 0}}
+{"t": 1793022366.224251, "dir": "tx", "msg": {"type": "go", "seq": 9}}
+{"t": 1793022366.2243395, "dir": "rx", "msg": {"type": "steps", "seq": 9}}
+{"t": 1793022366.2243583, "dir": "rx", "msg": {"type": "applied", "seq": 9, "controls": 0, "late": 0}}
+{"t": 1793022367.1613808, "dir": "rx", "msg": {"type": "ready", "seq": 10, "simTimeNs": 1000800000, "buffered": 0}}
+{"t": 1793022367.1625004, "dir": "rx", "msg": {"type": "steps", "seq": 10}}
+{"t": 1793022367.1625226, "dir": "pacer", "msg": {"type": "trigger", "seq": 10, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "1"]}}
+{"t": 1793022367.1876206, "dir": "rx", "msg": {"type": "controlRx", "seq": 10, "viaNodeId": 2, "ctlId": 1, "buffered": 1}}
+{"t": 1793022367.1876707, "dir": "tx", "msg": {"type": "go", "seq": 10}}
+{"t": 1793022367.1879082, "dir": "rx", "msg": {"type": "applied", "seq": 10, "controls": 1, "late": 0}}
+{"t": 1793022368.0304773, "dir": "rx", "msg": {"type": "ready", "seq": 11, "simTimeNs": 1100800000, "buffered": 0}}
+{"t": 1793022368.030509, "dir": "tx", "msg": {"type": "go", "seq": 11}}
+{"t": 1793022368.0311902, "dir": "rx", "msg": {"type": "steps", "seq": 11}}
+{"t": 1793022368.031216, "dir": "rx", "msg": {"type": "applied", "seq": 11, "controls": 0, "late": 0}}
+{"t": 1793022368.8834538, "dir": "rx", "msg": {"type": "ready", "seq": 12, "simTimeNs": 1200800000, "buffered": 0}}
+{"t": 1793022368.883503, "dir": "tx", "msg": {"type": "go", "seq": 12}}
+{"t": 1793022368.8857257, "dir": "rx", "msg": {"type": "steps", "seq": 12}}
+{"t": 1793022368.8867462, "dir": "rx", "msg": {"type": "applied", "seq": 12, "controls": 0, "late": 0}}
+{"t": 1793022369.7256937, "dir": "rx", "msg": {"type": "ready", "seq": 13, "simTimeNs": 1300800000, "buffered": 0}}
+{"t": 1793022369.7265933, "dir": "rx", "msg": {"type": "steps", "seq": 13}}
+{"t": 1793022369.7266166, "dir": "pacer", "msg": {"type": "trigger", "seq": 13, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "2"]}}
+{"t": 1793022369.7308302, "dir": "rx", "msg": {"type": "controlRx", "seq": 13, "viaNodeId": 2, "ctlId": 2, "buffered": 1}}
+{"t": 1793022369.7308662, "dir": "tx", "msg": {"type": "go", "seq": 13}}
+{"t": 1793022369.7310421, "dir": "rx", "msg": {"type": "applied", "seq": 13, "controls": 1, "late": 0}}
+{"t": 1793022370.49996, "dir": "rx", "msg": {"type": "ready", "seq": 14, "simTimeNs": 1400800000, "buffered": 0}}
+{"t": 1793022370.4999933, "dir": "tx", "msg": {"type": "go", "seq": 14}}
+{"t": 1793022370.5012496, "dir": "rx", "msg": {"type": "steps", "seq": 14}}
+{"t": 1793022370.5012746, "dir": "rx", "msg": {"type": "applied", "seq": 14, "controls": 0, "late": 0}}
+{"t": 1793022371.2223866, "dir": "rx", "msg": {"type": "ready", "seq": 15, "simTimeNs": 1500800000, "buffered": 0}}
+{"t": 1793022371.2224185, "dir": "tx", "msg": {"type": "go", "seq": 15}}
+{"t": 1793022371.224326, "dir": "rx", "msg": {"type": "steps", "seq": 15}}
+{"t": 1793022371.224388, "dir": "rx", "msg": {"type": "applied", "seq": 15, "controls": 0, "late": 0}}
+{"t": 1793022371.8754826, "dir": "rx", "msg": {"type": "ready", "seq": 16, "simTimeNs": 1600800000, "buffered": 0}}
+{"t": 1793022371.8764365, "dir": "rx", "msg": {"type": "steps", "seq": 16}}
+{"t": 1793022371.8764837, "dir": "pacer", "msg": {"type": "trigger", "seq": 16, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "3"]}}
+{"t": 1793022371.8806984, "dir": "rx", "msg": {"type": "controlRx", "seq": 16, "viaNodeId": 3, "ctlId": 1, "buffered": 1}}
+{"t": 1793022371.8807356, "dir": "tx", "msg": {"type": "go", "seq": 16}}
+{"t": 1793022371.880909, "dir": "rx", "msg": {"type": "applied", "seq": 16, "controls": 1, "late": 0}}
+{"t": 1793022372.5664463, "dir": "rx", "msg": {"type": "ready", "seq": 17, "simTimeNs": 1700800000, "buffered": 0}}
+{"t": 1793022372.5664876, "dir": "tx", "msg": {"type": "go", "seq": 17}}
+{"t": 1793022372.5678082, "dir": "rx", "msg": {"type": "steps", "seq": 17}}
+{"t": 1793022372.5678372, "dir": "rx", "msg": {"type": "applied", "seq": 17, "controls": 0, "late": 0}}
+{"t": 1793022373.1903598, "dir": "rx", "msg": {"type": "ready", "seq": 18, "simTimeNs": 1800800000, "buffered": 0}}
+{"t": 1793022373.1903918, "dir": "tx", "msg": {"type": "go", "seq": 18}}
+{"t": 1793022373.191106, "dir": "rx", "msg": {"type": "steps", "seq": 18}}
+{"t": 1793022373.1911302, "dir": "rx", "msg": {"type": "applied", "seq": 18, "controls": 0, "late": 0}}
+{"t": 1793022373.8128376, "dir": "rx", "msg": {"type": "ready", "seq": 19, "simTimeNs": 1900800000, "buffered": 0}}
+{"t": 1793022373.8140903, "dir": "rx", "msg": {"type": "steps", "seq": 19}}
+{"t": 1793022373.8141205, "dir": "pacer", "msg": {"type": "trigger", "seq": 19, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "4"]}}
+{"t": 1793022373.8184106, "dir": "rx", "msg": {"type": "controlRx", "seq": 19, "viaNodeId": 3, "ctlId": 2, "buffered": 1}}
+{"t": 1793022373.8184433, "dir": "tx", "msg": {"type": "go", "seq": 19}}
+{"t": 1793022373.818638, "dir": "rx", "msg": {"type": "applied", "seq": 19, "controls": 1, "late": 0}}
+{"t": 1793022374.6150002, "dir": "rx", "msg": {"type": "ready", "seq": 20, "simTimeNs": 2000800000, "buffered": 0}}
+{"t": 1793022374.615036, "dir": "tx", "msg": {"type": "go", "seq": 20}}
+{"t": 1793022374.6151037, "dir": "rx", "msg": {"type": "steps", "seq": 20}}
+{"t": 1793022374.6151597, "dir": "rx", "msg": {"type": "applied", "seq": 20, "controls": 0, "late": 0}}
+{"t": 1793022375.258556, "dir": "rx", "msg": {"type": "ready", "seq": 21, "simTimeNs": 2100800000, "buffered": 0}}
+{"t": 1793022375.258598, "dir": "tx", "msg": {"type": "go", "seq": 21}}
+{"t": 1793022375.2594595, "dir": "rx", "msg": {"type": "steps", "seq": 21}}
+{"t": 1793022375.2594893, "dir": "rx", "msg": {"type": "applied", "seq": 21, "controls": 0, "late": 0}}
+{"t": 1793022375.875123, "dir": "rx", "msg": {"type": "ready", "seq": 22, "simTimeNs": 2200800000, "buffered": 0}}
+{"t": 1793022375.8759432, "dir": "rx", "msg": {"type": "steps", "seq": 22}}
+{"t": 1793022375.8759725, "dir": "pacer", "msg": {"type": "trigger", "seq": 22, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "5"]}}
+{"t": 1793022375.8795953, "dir": "rx", "msg": {"type": "controlRx", "seq": 22, "viaNodeId": 3, "ctlId": 3, "buffered": 1}}
+{"t": 1793022375.879626, "dir": "tx", "msg": {"type": "go", "seq": 22}}
+{"t": 1793022375.8797865, "dir": "rx", "msg": {"type": "applied", "seq": 22, "controls": 1, "late": 0}}
+{"t": 1793022376.5890396, "dir": "rx", "msg": {"type": "ready", "seq": 23, "simTimeNs": 2300800000, "buffered": 0}}
+{"t": 1793022376.5890758, "dir": "tx", "msg": {"type": "go", "seq": 23}}
+{"t": 1793022376.5893683, "dir": "rx", "msg": {"type": "steps", "seq": 23}}
+{"t": 1793022376.589404, "dir": "rx", "msg": {"type": "applied", "seq": 23, "controls": 0, "late": 0}}
+{"t": 1793022377.339715, "dir": "rx", "msg": {"type": "ready", "seq": 24, "simTimeNs": 2400800000, "buffered": 0}}
+{"t": 1793022377.3397493, "dir": "tx", "msg": {"type": "go", "seq": 24}}
+{"t": 1793022377.3408525, "dir": "rx", "msg": {"type": "steps", "seq": 24}}
+{"t": 1793022377.3408818, "dir": "rx", "msg": {"type": "applied", "seq": 24, "controls": 0, "late": 0}}
+{"t": 1793022377.99509, "dir": "rx", "msg": {"type": "ready", "seq": 25, "simTimeNs": 2500800000, "buffered": 0}}
+{"t": 1793022377.9952853, "dir": "rx", "msg": {"type": "steps", "seq": 25}}
+{"t": 1793022377.9953034, "dir": "pacer", "msg": {"type": "trigger", "seq": 25, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "6"]}}
+{"t": 1793022377.9985294, "dir": "rx", "msg": {"type": "controlRx", "seq": 25, "viaNodeId": 3, "ctlId": 4, "buffered": 1}}
+{"t": 1793022377.998562, "dir": "tx", "msg": {"type": "go", "seq": 25}}
+{"t": 1793022377.9987223, "dir": "rx", "msg": {"type": "applied", "seq": 25, "controls": 1, "late": 0}}
+{"t": 1793022378.618512, "dir": "rx", "msg": {"type": "ready", "seq": 26, "simTimeNs": 2600800000, "buffered": 0}}
+{"t": 1793022378.6185465, "dir": "tx", "msg": {"type": "go", "seq": 26}}
+{"t": 1793022378.6199346, "dir": "rx", "msg": {"type": "steps", "seq": 26}}
+{"t": 1793022378.6199598, "dir": "rx", "msg": {"type": "applied", "seq": 26, "controls": 0, "late": 0}}
+{"t": 1793022379.2369115, "dir": "rx", "msg": {"type": "ready", "seq": 27, "simTimeNs": 2700800000, "buffered": 0}}
+{"t": 1793022379.2369397, "dir": "tx", "msg": {"type": "go", "seq": 27}}
+{"t": 1793022379.2377737, "dir": "rx", "msg": {"type": "steps", "seq": 27}}
+{"t": 1793022379.2378054, "dir": "rx", "msg": {"type": "applied", "seq": 27, "controls": 0, "late": 0}}
+{"t": 1793022379.8328333, "dir": "rx", "msg": {"type": "ready", "seq": 28, "simTimeNs": 2800800000, "buffered": 0}}
+{"t": 1793022379.8334267, "dir": "rx", "msg": {"type": "steps", "seq": 28}}
+{"t": 1793022379.8334413, "dir": "pacer", "msg": {"type": "trigger", "seq": 28, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "1"]}}
+{"t": 1793022379.8370767, "dir": "rx", "msg": {"type": "controlRx", "seq": 28, "viaNodeId": 3, "ctlId": 5, "buffered": 1}}
+{"t": 1793022379.8371067, "dir": "tx", "msg": {"type": "go", "seq": 28}}
+{"t": 1793022379.83726, "dir": "rx", "msg": {"type": "applied", "seq": 28, "controls": 1, "late": 0}}
+{"t": 1793022380.6358562, "dir": "rx", "msg": {"type": "ready", "seq": 29, "simTimeNs": 2900800000, "buffered": 0}}
+{"t": 1793022380.6358848, "dir": "tx", "msg": {"type": "go", "seq": 29}}
+{"t": 1793022380.6369202, "dir": "rx", "msg": {"type": "steps", "seq": 29}}
+{"t": 1793022380.6369677, "dir": "rx", "msg": {"type": "applied", "seq": 29, "controls": 0, "late": 0}}
+{"t": 1793022381.4116666, "dir": "rx", "msg": {"type": "ready", "seq": 30, "simTimeNs": 3000800000, "buffered": 0}}
+{"t": 1793022381.411697, "dir": "tx", "msg": {"type": "go", "seq": 30}}
+{"t": 1793022381.4130347, "dir": "rx", "msg": {"type": "steps", "seq": 30}}
+{"t": 1793022381.4130657, "dir": "rx", "msg": {"type": "applied", "seq": 30, "controls": 0, "late": 0}}
+{"t": 1793022382.2149894, "dir": "rx", "msg": {"type": "ready", "seq": 31, "simTimeNs": 3100800000, "buffered": 0}}
+{"t": 1793022382.2157178, "dir": "rx", "msg": {"type": "steps", "seq": 31}}
+{"t": 1793022382.215756, "dir": "pacer", "msg": {"type": "trigger", "seq": 31, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "2"]}}
+{"t": 1793022382.2199142, "dir": "rx", "msg": {"type": "controlRx", "seq": 31, "viaNodeId": 3, "ctlId": 6, "buffered": 1}}
+{"t": 1793022382.219955, "dir": "tx", "msg": {"type": "go", "seq": 31}}
+{"t": 1793022382.220149, "dir": "rx", "msg": {"type": "applied", "seq": 31, "controls": 1, "late": 0}}
+{"t": 1793022383.1364307, "dir": "rx", "msg": {"type": "ready", "seq": 32, "simTimeNs": 3200800000, "buffered": 0}}
+{"t": 1793022383.1364625, "dir": "tx", "msg": {"type": "go", "seq": 32}}
+{"t": 1793022383.137202, "dir": "rx", "msg": {"type": "steps", "seq": 32}}
+{"t": 1793022383.1372418, "dir": "rx", "msg": {"type": "applied", "seq": 32, "controls": 0, "late": 0}}
+{"t": 1793022384.0089993, "dir": "rx", "msg": {"type": "ready", "seq": 33, "simTimeNs": 3300800000, "buffered": 0}}
+{"t": 1793022384.0092645, "dir": "tx", "msg": {"type": "go", "seq": 33}}
+{"t": 1793022384.009674, "dir": "rx", "msg": {"type": "steps", "seq": 33}}
+{"t": 1793022384.0096965, "dir": "rx", "msg": {"type": "applied", "seq": 33, "controls": 0, "late": 0}}
+{"t": 1793022384.8336635, "dir": "rx", "msg": {"type": "ready", "seq": 34, "simTimeNs": 3400800000, "buffered": 0}}
+{"t": 1793022384.8344276, "dir": "rx", "msg": {"type": "steps", "seq": 34}}
+{"t": 1793022384.8344414, "dir": "pacer", "msg": {"type": "trigger", "seq": 34, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "3"]}}
+{"t": 1793022384.837666, "dir": "rx", "msg": {"type": "controlRx", "seq": 34, "viaNodeId": 2, "ctlId": 3, "buffered": 1}}
+{"t": 1793022384.8376977, "dir": "tx", "msg": {"type": "go", "seq": 34}}
+{"t": 1793022384.8378487, "dir": "rx", "msg": {"type": "applied", "seq": 34, "controls": 1, "late": 0}}
+{"t": 1793022385.7646434, "dir": "rx", "msg": {"type": "ready", "seq": 35, "simTimeNs": 3500800000, "buffered": 0}}
+{"t": 1793022385.7646804, "dir": "tx", "msg": {"type": "go", "seq": 35}}
+{"t": 1793022385.7656069, "dir": "rx", "msg": {"type": "steps", "seq": 35}}
+{"t": 1793022385.7656412, "dir": "rx", "msg": {"type": "applied", "seq": 35, "controls": 0, "late": 0}}
+{"t": 1793022386.61669, "dir": "rx", "msg": {"type": "ready", "seq": 36, "simTimeNs": 3600800000, "buffered": 0}}
+{"t": 1793022386.6167238, "dir": "tx", "msg": {"type": "go", "seq": 36}}
+{"t": 1793022386.6176457, "dir": "rx", "msg": {"type": "steps", "seq": 36}}
+{"t": 1793022386.617672, "dir": "rx", "msg": {"type": "applied", "seq": 36, "controls": 0, "late": 0}}
+{"t": 1793022387.4304016, "dir": "rx", "msg": {"type": "ready", "seq": 37, "simTimeNs": 3700800000, "buffered": 0}}
+{"t": 1793022387.4313743, "dir": "rx", "msg": {"type": "steps", "seq": 37}}
+{"t": 1793022387.4314215, "dir": "pacer", "msg": {"type": "trigger", "seq": 37, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "4"]}}
+{"t": 1793022387.4348798, "dir": "rx", "msg": {"type": "controlRx", "seq": 37, "viaNodeId": 2, "ctlId": 4, "buffered": 1}}
+{"t": 1793022387.4349127, "dir": "tx", "msg": {"type": "go", "seq": 37}}
+{"t": 1793022387.4350646, "dir": "rx", "msg": {"type": "applied", "seq": 37, "controls": 1, "late": 0}}
+{"t": 1793022388.3466594, "dir": "rx", "msg": {"type": "ready", "seq": 38, "simTimeNs": 3800800000, "buffered": 0}}
+{"t": 1793022388.3467112, "dir": "tx", "msg": {"type": "go", "seq": 38}}
+{"t": 1793022388.348152, "dir": "rx", "msg": {"type": "steps", "seq": 38}}
+{"t": 1793022388.3482144, "dir": "rx", "msg": {"type": "applied", "seq": 38, "controls": 0, "late": 0}}
+{"t": 1793022389.2071333, "dir": "rx", "msg": {"type": "ready", "seq": 39, "simTimeNs": 3900800000, "buffered": 0}}
+{"t": 1793022389.2071626, "dir": "tx", "msg": {"type": "go", "seq": 39}}
+{"t": 1793022389.2081184, "dir": "rx", "msg": {"type": "steps", "seq": 39}}
+{"t": 1793022389.2081594, "dir": "rx", "msg": {"type": "applied", "seq": 39, "controls": 0, "late": 0}}
+{"t": 1793022389.9833467, "dir": "rx", "msg": {"type": "ready", "seq": 40, "simTimeNs": 4000800000, "buffered": 0}}
+{"t": 1793022389.9846334, "dir": "rx", "msg": {"type": "steps", "seq": 40}}
+{"t": 1793022389.9846754, "dir": "pacer", "msg": {"type": "trigger", "seq": 40, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "5"]}}
+{"t": 1793022389.9880648, "dir": "rx", "msg": {"type": "controlRx", "seq": 40, "viaNodeId": 2, "ctlId": 5, "buffered": 1}}
+{"t": 1793022389.988108, "dir": "tx", "msg": {"type": "go", "seq": 40}}
+{"t": 1793022389.9882765, "dir": "rx", "msg": {"type": "applied", "seq": 40, "controls": 1, "late": 0}}
+{"t": 1793022390.79454, "dir": "rx", "msg": {"type": "ready", "seq": 41, "simTimeNs": 4100800000, "buffered": 0}}
+{"t": 1793022390.7945826, "dir": "tx", "msg": {"type": "go", "seq": 41}}
+{"t": 1793022390.7953162, "dir": "rx", "msg": {"type": "steps", "seq": 41}}
+{"t": 1793022390.7953465, "dir": "rx", "msg": {"type": "applied", "seq": 41, "controls": 0, "late": 0}}
+{"t": 1793022391.6683881, "dir": "rx", "msg": {"type": "ready", "seq": 42, "simTimeNs": 4200800000, "buffered": 0}}
+{"t": 1793022391.6684322, "dir": "tx", "msg": {"type": "go", "seq": 42}}
+{"t": 1793022391.6697204, "dir": "rx", "msg": {"type": "steps", "seq": 42}}
+{"t": 1793022391.6697814, "dir": "rx", "msg": {"type": "applied", "seq": 42, "controls": 0, "late": 0}}
+{"t": 1793022392.6054425, "dir": "rx", "msg": {"type": "ready", "seq": 43, "simTimeNs": 4300800000, "buffered": 0}}
+{"t": 1793022392.6058252, "dir": "rx", "msg": {"type": "steps", "seq": 43}}
+{"t": 1793022392.6063654, "dir": "pacer", "msg": {"type": "trigger", "seq": 43, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "6"]}}
+{"t": 1793022392.6101227, "dir": "rx", "msg": {"type": "controlRx", "seq": 43, "viaNodeId": 2, "ctlId": 6, "buffered": 1}}
+{"t": 1793022392.6101556, "dir": "tx", "msg": {"type": "go", "seq": 43}}
+{"t": 1793022392.61033, "dir": "rx", "msg": {"type": "applied", "seq": 43, "controls": 1, "late": 0}}
+{"t": 1793022393.5626569, "dir": "rx", "msg": {"type": "ready", "seq": 44, "simTimeNs": 4400800000, "buffered": 0}}
+{"t": 1793022393.5626876, "dir": "tx", "msg": {"type": "go", "seq": 44}}
+{"t": 1793022393.5633998, "dir": "rx", "msg": {"type": "steps", "seq": 44}}
+{"t": 1793022393.563421, "dir": "rx", "msg": {"type": "applied", "seq": 44, "controls": 0, "late": 0}}
+{"t": 1793022394.4596088, "dir": "rx", "msg": {"type": "ready", "seq": 45, "simTimeNs": 4500800000, "buffered": 0}}
+{"t": 1793022394.4601119, "dir": "tx", "msg": {"type": "go", "seq": 45}}
+{"t": 1793022394.4601922, "dir": "rx", "msg": {"type": "steps", "seq": 45}}
+{"t": 1793022394.4602132, "dir": "rx", "msg": {"type": "applied", "seq": 45, "controls": 0, "late": 0}}
+{"t": 1793022395.2526228, "dir": "rx", "msg": {"type": "ready", "seq": 46, "simTimeNs": 4600800000, "buffered": 0}}
+{"t": 1793022395.2535095, "dir": "rx", "msg": {"type": "steps", "seq": 46}}
+{"t": 1793022395.2535346, "dir": "pacer", "msg": {"type": "trigger", "seq": 46, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "1"]}}
+{"t": 1793022395.2577965, "dir": "rx", "msg": {"type": "controlRx", "seq": 46, "viaNodeId": 2, "ctlId": 7, "buffered": 1}}
+{"t": 1793022395.257839, "dir": "tx", "msg": {"type": "go", "seq": 46}}
+{"t": 1793022395.2580671, "dir": "rx", "msg": {"type": "applied", "seq": 46, "controls": 1, "late": 0}}
+{"t": 1793022396.1502597, "dir": "rx", "msg": {"type": "ready", "seq": 47, "simTimeNs": 4700800000, "buffered": 0}}
+{"t": 1793022396.1502953, "dir": "tx", "msg": {"type": "go", "seq": 47}}
+{"t": 1793022396.1509738, "dir": "rx", "msg": {"type": "steps", "seq": 47}}
+{"t": 1793022396.151001, "dir": "rx", "msg": {"type": "applied", "seq": 47, "controls": 0, "late": 0}}
+{"t": 1793022396.9472075, "dir": "rx", "msg": {"type": "ready", "seq": 48, "simTimeNs": 4800800000, "buffered": 0}}
+{"t": 1793022396.9472377, "dir": "tx", "msg": {"type": "go", "seq": 48}}
+{"t": 1793022396.9479063, "dir": "rx", "msg": {"type": "steps", "seq": 48}}
+{"t": 1793022396.9479346, "dir": "rx", "msg": {"type": "applied", "seq": 48, "controls": 0, "late": 0}}
+{"t": 1793022397.792582, "dir": "rx", "msg": {"type": "ready", "seq": 49, "simTimeNs": 4900800000, "buffered": 0}}
+{"t": 1793022397.7932446, "dir": "rx", "msg": {"type": "steps", "seq": 49}}
+{"t": 1793022397.7932935, "dir": "pacer", "msg": {"type": "trigger", "seq": 49, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "2"]}}
+{"t": 1793022397.7975469, "dir": "rx", "msg": {"type": "controlRx", "seq": 49, "viaNodeId": 2, "ctlId": 8, "buffered": 1}}
+{"t": 1793022397.7975826, "dir": "tx", "msg": {"type": "go", "seq": 49}}
+{"t": 1793022397.7977355, "dir": "rx", "msg": {"type": "applied", "seq": 49, "controls": 1, "late": 0}}
+{"t": 1793022398.5506835, "dir": "rx", "msg": {"type": "ready", "seq": 50, "simTimeNs": 5000800000, "buffered": 0}}
+{"t": 1793022398.5507154, "dir": "tx", "msg": {"type": "go", "seq": 50}}
+{"t": 1793022398.551462, "dir": "rx", "msg": {"type": "steps", "seq": 50}}
+{"t": 1793022398.5515292, "dir": "rx", "msg": {"type": "applied", "seq": 50, "controls": 0, "late": 0}}
+{"t": 1793022399.317214, "dir": "rx", "msg": {"type": "ready", "seq": 51, "simTimeNs": 5100800000, "buffered": 0}}
+{"t": 1793022399.3172452, "dir": "tx", "msg": {"type": "go", "seq": 51}}
+{"t": 1793022399.3178535, "dir": "rx", "msg": {"type": "steps", "seq": 51}}
+{"t": 1793022399.3178763, "dir": "rx", "msg": {"type": "applied", "seq": 51, "controls": 0, "late": 0}}
+{"t": 1793022400.024899, "dir": "rx", "msg": {"type": "ready", "seq": 52, "simTimeNs": 5200800000, "buffered": 0}}
+{"t": 1793022400.0260322, "dir": "rx", "msg": {"type": "steps", "seq": 52}}
+{"t": 1793022400.026058, "dir": "pacer", "msg": {"type": "trigger", "seq": 52, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "3"]}}
+{"t": 1793022400.029749, "dir": "rx", "msg": {"type": "controlRx", "seq": 52, "viaNodeId": 3, "ctlId": 7, "buffered": 1}}
+{"t": 1793022400.029806, "dir": "tx", "msg": {"type": "go", "seq": 52}}
+{"t": 1793022400.030019, "dir": "rx", "msg": {"type": "applied", "seq": 52, "controls": 1, "late": 0}}
+{"t": 1793022400.8752327, "dir": "rx", "msg": {"type": "ready", "seq": 53, "simTimeNs": 5300800000, "buffered": 0}}
+{"t": 1793022400.8752615, "dir": "tx", "msg": {"type": "go", "seq": 53}}
+{"t": 1793022400.8769922, "dir": "rx", "msg": {"type": "steps", "seq": 53}}
+{"t": 1793022400.8770287, "dir": "rx", "msg": {"type": "applied", "seq": 53, "controls": 0, "late": 0}}
+{"t": 1793022401.6023183, "dir": "rx", "msg": {"type": "ready", "seq": 54, "simTimeNs": 5400800000, "buffered": 0}}
+{"t": 1793022401.6023483, "dir": "tx", "msg": {"type": "go", "seq": 54}}
+{"t": 1793022401.6037023, "dir": "rx", "msg": {"type": "steps", "seq": 54}}
+{"t": 1793022401.6037369, "dir": "rx", "msg": {"type": "applied", "seq": 54, "controls": 0, "late": 0}}
+{"t": 1793022402.3238547, "dir": "rx", "msg": {"type": "ready", "seq": 55, "simTimeNs": 5500800000, "buffered": 0}}
+{"t": 1793022402.3242404, "dir": "rx", "msg": {"type": "steps", "seq": 55}}
+{"t": 1793022402.324255, "dir": "pacer", "msg": {"type": "trigger", "seq": 55, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "4"]}}
+{"t": 1793022402.327577, "dir": "rx", "msg": {"type": "controlRx", "seq": 55, "viaNodeId": 3, "ctlId": 8, "buffered": 1}}
+{"t": 1793022402.3276103, "dir": "tx", "msg": {"type": "go", "seq": 55}}
+{"t": 1793022402.3277671, "dir": "rx", "msg": {"type": "applied", "seq": 55, "controls": 1, "late": 0}}
+{"t": 1793022403.1578753, "dir": "rx", "msg": {"type": "ready", "seq": 56, "simTimeNs": 5600800000, "buffered": 0}}
+{"t": 1793022403.1579134, "dir": "tx", "msg": {"type": "go", "seq": 56}}
+{"t": 1793022403.1583326, "dir": "rx", "msg": {"type": "steps", "seq": 56}}
+{"t": 1793022403.1583622, "dir": "rx", "msg": {"type": "applied", "seq": 56, "controls": 0, "late": 0}}
+{"t": 1793022403.9069045, "dir": "rx", "msg": {"type": "ready", "seq": 57, "simTimeNs": 5700800000, "buffered": 0}}
+{"t": 1793022403.9069335, "dir": "tx", "msg": {"type": "go", "seq": 57}}
+{"t": 1793022403.9083202, "dir": "rx", "msg": {"type": "steps", "seq": 57}}
+{"t": 1793022403.9083514, "dir": "rx", "msg": {"type": "applied", "seq": 57, "controls": 0, "late": 0}}
+{"t": 1793022404.622952, "dir": "rx", "msg": {"type": "ready", "seq": 58, "simTimeNs": 5800800000, "buffered": 0}}
+{"t": 1793022404.6234386, "dir": "rx", "msg": {"type": "steps", "seq": 58}}
+{"t": 1793022404.6234536, "dir": "pacer", "msg": {"type": "trigger", "seq": 58, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "5"]}}
+{"t": 1793022404.6287117, "dir": "rx", "msg": {"type": "controlRx", "seq": 58, "viaNodeId": 3, "ctlId": 9, "buffered": 1}}
+{"t": 1793022404.6287446, "dir": "tx", "msg": {"type": "go", "seq": 58}}
+{"t": 1793022404.6289163, "dir": "rx", "msg": {"type": "applied", "seq": 58, "controls": 1, "late": 0}}
+{"t": 1793022405.4055903, "dir": "rx", "msg": {"type": "ready", "seq": 59, "simTimeNs": 5900800000, "buffered": 0}}
+{"t": 1793022405.4056265, "dir": "tx", "msg": {"type": "go", "seq": 59}}
+{"t": 1793022405.4058018, "dir": "rx", "msg": {"type": "steps", "seq": 59}}
+{"t": 1793022405.405822, "dir": "rx", "msg": {"type": "applied", "seq": 59, "controls": 0, "late": 0}}
+{"t": 1793022406.0941956, "dir": "rx", "msg": {"type": "ready", "seq": 60, "simTimeNs": 6000800000, "buffered": 0}}
+{"t": 1793022406.094231, "dir": "tx", "msg": {"type": "go", "seq": 60}}
+{"t": 1793022406.0946524, "dir": "rx", "msg": {"type": "steps", "seq": 60}}
+{"t": 1793022406.094692, "dir": "rx", "msg": {"type": "applied", "seq": 60, "controls": 0, "late": 0}}
+{"t": 1793022406.7969031, "dir": "rx", "msg": {"type": "ready", "seq": 61, "simTimeNs": 6100800000, "buffered": 0}}
+{"t": 1793022406.7975662, "dir": "rx", "msg": {"type": "steps", "seq": 61}}
+{"t": 1793022406.797606, "dir": "pacer", "msg": {"type": "trigger", "seq": 61, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "6"]}}
+{"t": 1793022406.8015203, "dir": "rx", "msg": {"type": "controlRx", "seq": 61, "viaNodeId": 3, "ctlId": 10, "buffered": 1}}
+{"t": 1793022406.801552, "dir": "tx", "msg": {"type": "go", "seq": 61}}
+{"t": 1793022406.8017185, "dir": "rx", "msg": {"type": "applied", "seq": 61, "controls": 1, "late": 0}}
+{"t": 1793022407.4441183, "dir": "rx", "msg": {"type": "ready", "seq": 62, "simTimeNs": 6200800000, "buffered": 0}}
+{"t": 1793022407.4441562, "dir": "tx", "msg": {"type": "go", "seq": 62}}
+{"t": 1793022407.4447525, "dir": "rx", "msg": {"type": "steps", "seq": 62}}
+{"t": 1793022407.4447756, "dir": "rx", "msg": {"type": "applied", "seq": 62, "controls": 0, "late": 0}}
+{"t": 1793022408.1017394, "dir": "rx", "msg": {"type": "ready", "seq": 63, "simTimeNs": 6300800000, "buffered": 0}}
+{"t": 1793022408.1018143, "dir": "tx", "msg": {"type": "go", "seq": 63}}
+{"t": 1793022408.1026638, "dir": "rx", "msg": {"type": "steps", "seq": 63}}
+{"t": 1793022408.1027055, "dir": "rx", "msg": {"type": "applied", "seq": 63, "controls": 0, "late": 0}}
+{"t": 1793022408.7510605, "dir": "rx", "msg": {"type": "ready", "seq": 64, "simTimeNs": 6400800000, "buffered": 0}}
+{"t": 1793022408.7516887, "dir": "rx", "msg": {"type": "steps", "seq": 64}}
+{"t": 1793022408.7517061, "dir": "pacer", "msg": {"type": "trigger", "seq": 64, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "1"]}}
+{"t": 1793022408.7553194, "dir": "rx", "msg": {"type": "controlRx", "seq": 64, "viaNodeId": 3, "ctlId": 11, "buffered": 1}}
+{"t": 1793022408.7553523, "dir": "tx", "msg": {"type": "go", "seq": 64}}
+{"t": 1793022408.7555141, "dir": "rx", "msg": {"type": "applied", "seq": 64, "controls": 1, "late": 0}}
+{"t": 1793022409.4476445, "dir": "rx", "msg": {"type": "ready", "seq": 65, "simTimeNs": 6500800000, "buffered": 0}}
+{"t": 1793022409.447674, "dir": "tx", "msg": {"type": "go", "seq": 65}}
+{"t": 1793022409.4486353, "dir": "rx", "msg": {"type": "steps", "seq": 65}}
+{"t": 1793022409.4486682, "dir": "rx", "msg": {"type": "applied", "seq": 65, "controls": 0, "late": 0}}
+{"t": 1793022410.0736043, "dir": "rx", "msg": {"type": "ready", "seq": 66, "simTimeNs": 6600800000, "buffered": 0}}
+{"t": 1793022410.0736377, "dir": "tx", "msg": {"type": "go", "seq": 66}}
+{"t": 1793022410.0745852, "dir": "rx", "msg": {"type": "steps", "seq": 66}}
+{"t": 1793022410.0746272, "dir": "rx", "msg": {"type": "applied", "seq": 66, "controls": 0, "late": 0}}
+{"t": 1793022410.6909826, "dir": "rx", "msg": {"type": "ready", "seq": 67, "simTimeNs": 6700800000, "buffered": 0}}
+{"t": 1793022410.691782, "dir": "rx", "msg": {"type": "steps", "seq": 67}}
+{"t": 1793022410.6918004, "dir": "pacer", "msg": {"type": "trigger", "seq": 67, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "2"]}}
+{"t": 1793022410.6956966, "dir": "rx", "msg": {"type": "controlRx", "seq": 67, "viaNodeId": 3, "ctlId": 12, "buffered": 1}}
+{"t": 1793022410.6957328, "dir": "tx", "msg": {"type": "go", "seq": 67}}
+{"t": 1793022410.695891, "dir": "rx", "msg": {"type": "applied", "seq": 67, "controls": 1, "late": 0}}
+{"t": 1793022411.5998878, "dir": "rx", "msg": {"type": "ready", "seq": 68, "simTimeNs": 6800800000, "buffered": 0}}
+{"t": 1793022411.5999248, "dir": "tx", "msg": {"type": "go", "seq": 68}}
+{"t": 1793022411.6010067, "dir": "rx", "msg": {"type": "steps", "seq": 68}}
+{"t": 1793022411.6010442, "dir": "rx", "msg": {"type": "applied", "seq": 68, "controls": 0, "late": 0}}
+{"t": 1793022412.4268732, "dir": "rx", "msg": {"type": "ready", "seq": 69, "simTimeNs": 6900800000, "buffered": 0}}
+{"t": 1793022412.4269052, "dir": "tx", "msg": {"type": "go", "seq": 69}}
+{"t": 1793022412.4272876, "dir": "rx", "msg": {"type": "steps", "seq": 69}}
+{"t": 1793022412.4273171, "dir": "rx", "msg": {"type": "applied", "seq": 69, "controls": 0, "late": 0}}
+{"t": 1793022413.2495651, "dir": "rx", "msg": {"type": "ready", "seq": 70, "simTimeNs": 7000800000, "buffered": 0}}
+{"t": 1793022413.2507124, "dir": "rx", "msg": {"type": "steps", "seq": 70}}
+{"t": 1793022413.2507346, "dir": "pacer", "msg": {"type": "trigger", "seq": 70, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "3"]}}
+{"t": 1793022413.2539277, "dir": "rx", "msg": {"type": "controlRx", "seq": 70, "viaNodeId": 2, "ctlId": 9, "buffered": 1}}
+{"t": 1793022413.2539642, "dir": "tx", "msg": {"type": "go", "seq": 70}}
+{"t": 1793022413.2541358, "dir": "rx", "msg": {"type": "applied", "seq": 70, "controls": 1, "late": 0}}
+{"t": 1793022414.294785, "dir": "rx", "msg": {"type": "ready", "seq": 71, "simTimeNs": 7100800000, "buffered": 0}}
+{"t": 1793022414.2948256, "dir": "tx", "msg": {"type": "go", "seq": 71}}
+{"t": 1793022414.2951562, "dir": "rx", "msg": {"type": "steps", "seq": 71}}
+{"t": 1793022414.2951972, "dir": "rx", "msg": {"type": "applied", "seq": 71, "controls": 0, "late": 0}}
+{"t": 1793022415.2572446, "dir": "rx", "msg": {"type": "ready", "seq": 72, "simTimeNs": 7200800000, "buffered": 0}}
+{"t": 1793022415.2572784, "dir": "tx", "msg": {"type": "go", "seq": 72}}
+{"t": 1793022415.258641, "dir": "rx", "msg": {"type": "steps", "seq": 72}}
+{"t": 1793022415.2586908, "dir": "rx", "msg": {"type": "applied", "seq": 72, "controls": 0, "late": 0}}
+{"t": 1793022416.214509, "dir": "rx", "msg": {"type": "ready", "seq": 73, "simTimeNs": 7300800000, "buffered": 0}}
+{"t": 1793022416.2150981, "dir": "rx", "msg": {"type": "steps", "seq": 73}}
+{"t": 1793022416.2151225, "dir": "pacer", "msg": {"type": "trigger", "seq": 73, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "4"]}}
+{"t": 1793022416.218472, "dir": "rx", "msg": {"type": "controlRx", "seq": 73, "viaNodeId": 2, "ctlId": 10, "buffered": 1}}
+{"t": 1793022416.2185106, "dir": "tx", "msg": {"type": "go", "seq": 73}}
+{"t": 1793022416.2186878, "dir": "rx", "msg": {"type": "applied", "seq": 73, "controls": 1, "late": 0}}
+{"t": 1793022417.2765439, "dir": "rx", "msg": {"type": "ready", "seq": 74, "simTimeNs": 7400800000, "buffered": 0}}
+{"t": 1793022417.2766078, "dir": "tx", "msg": {"type": "go", "seq": 74}}
+{"t": 1793022417.2772489, "dir": "rx", "msg": {"type": "steps", "seq": 74}}
+{"t": 1793022417.2772799, "dir": "rx", "msg": {"type": "applied", "seq": 74, "controls": 0, "late": 0}}
+{"t": 1793022418.2234988, "dir": "rx", "msg": {"type": "ready", "seq": 75, "simTimeNs": 7500800000, "buffered": 0}}
+{"t": 1793022418.223554, "dir": "tx", "msg": {"type": "go", "seq": 75}}
+{"t": 1793022418.224667, "dir": "rx", "msg": {"type": "steps", "seq": 75}}
+{"t": 1793022418.224712, "dir": "rx", "msg": {"type": "applied", "seq": 75, "controls": 0, "late": 0}}
+{"t": 1793022419.156585, "dir": "rx", "msg": {"type": "ready", "seq": 76, "simTimeNs": 7600800000, "buffered": 0}}
+{"t": 1793022419.157629, "dir": "rx", "msg": {"type": "steps", "seq": 76}}
+{"t": 1793022419.1576583, "dir": "pacer", "msg": {"type": "trigger", "seq": 76, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "5"]}}
+{"t": 1793022419.1611843, "dir": "rx", "msg": {"type": "controlRx", "seq": 76, "viaNodeId": 2, "ctlId": 11, "buffered": 1}}
+{"t": 1793022419.1612225, "dir": "tx", "msg": {"type": "go", "seq": 76}}
+{"t": 1793022419.1613884, "dir": "rx", "msg": {"type": "applied", "seq": 76, "controls": 1, "late": 0}}
+{"t": 1793022420.3437064, "dir": "rx", "msg": {"type": "ready", "seq": 77, "simTimeNs": 7700800000, "buffered": 0}}
+{"t": 1793022420.343756, "dir": "tx", "msg": {"type": "go", "seq": 77}}
+{"t": 1793022420.3442438, "dir": "rx", "msg": {"type": "steps", "seq": 77}}
+{"t": 1793022420.3442695, "dir": "rx", "msg": {"type": "applied", "seq": 77, "controls": 0, "late": 0}}
+{"t": 1793022421.299208, "dir": "rx", "msg": {"type": "ready", "seq": 78, "simTimeNs": 7800800000, "buffered": 0}}
+{"t": 1793022421.2992644, "dir": "tx", "msg": {"type": "go", "seq": 78}}
+{"t": 1793022421.3000162, "dir": "rx", "msg": {"type": "steps", "seq": 78}}
+{"t": 1793022421.3000388, "dir": "rx", "msg": {"type": "applied", "seq": 78, "controls": 0, "late": 0}}
+{"t": 1793022422.273475, "dir": "rx", "msg": {"type": "ready", "seq": 79, "simTimeNs": 7900800000, "buffered": 0}}
+{"t": 1793022422.273616, "dir": "rx", "msg": {"type": "steps", "seq": 79}}
+{"t": 1793022422.273637, "dir": "pacer", "msg": {"type": "trigger", "seq": 79, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "6"]}}
+{"t": 1793022422.2788336, "dir": "rx", "msg": {"type": "controlRx", "seq": 79, "viaNodeId": 2, "ctlId": 12, "buffered": 1}}
+{"t": 1793022422.2789063, "dir": "tx", "msg": {"type": "go", "seq": 79}}
+{"t": 1793022422.2791963, "dir": "rx", "msg": {"type": "applied", "seq": 79, "controls": 1, "late": 0}}
+{"t": 1793022423.3318684, "dir": "rx", "msg": {"type": "ready", "seq": 80, "simTimeNs": 8000800000, "buffered": 0}}
+{"t": 1793022423.33192, "dir": "tx", "msg": {"type": "go", "seq": 80}}
+{"t": 1793022423.332529, "dir": "rx", "msg": {"type": "steps", "seq": 80}}
+{"t": 1793022423.3325946, "dir": "rx", "msg": {"type": "applied", "seq": 80, "controls": 0, "late": 0}}
+{"t": 1793022424.2709806, "dir": "rx", "msg": {"type": "ready", "seq": 81, "simTimeNs": 8100800000, "buffered": 0}}
+{"t": 1793022424.271021, "dir": "tx", "msg": {"type": "go", "seq": 81}}
+{"t": 1793022424.2714744, "dir": "rx", "msg": {"type": "steps", "seq": 81}}
+{"t": 1793022424.2714937, "dir": "rx", "msg": {"type": "applied", "seq": 81, "controls": 0, "late": 0}}
+{"t": 1793022425.214623, "dir": "rx", "msg": {"type": "ready", "seq": 82, "simTimeNs": 8200800000, "buffered": 0}}
+{"t": 1793022425.215129, "dir": "rx", "msg": {"type": "steps", "seq": 82}}
+{"t": 1793022425.2151418, "dir": "pacer", "msg": {"type": "trigger", "seq": 82, "cmd": ["bash", "/home/uc/harness/scripts/gates/send-rmr.sh", "38510", "anomaly", "1"]}}
+{"t": 1793022425.2181528, "dir": "rx", "msg": {"type": "controlRx", "seq": 82, "viaNodeId": 2, "ctlId": 13, "buffered": 1}}
+{"t": 1793022425.2182026, "dir": "tx", "msg": {"type": "go", "seq": 82}}
+{"t": 1793022425.2183657, "dir": "rx", "msg": {"type": "applied", "seq": 82, "controls": 1, "late": 0}}
+{"t": 1793022426.1364367, "dir": "rx", "msg": {"type": "ready", "seq": 83, "simTimeNs": 8300800000, "buffered": 0}}
+{"t": 1793022426.13681, "dir": "tx", "msg": {"type": "go", "seq": 83}}
+{"t": 1793022426.1372733, "dir": "rx", "msg": {"type": "steps", "seq": 83}}
+{"t": 1793022426.1372929, "dir": "rx", "msg": {"type": "applied", "seq": 83, "controls": 0, "late": 0}}
+{"t": 1793022427.0010166, "dir": "rx", "msg": {"type": "ready", "seq": 84, "simTimeNs": 8400800000, "buffered": 0}}
+{"t": 1793022427.001054, "dir": "tx", "msg": {"type": "go", "seq": 84}}
+{"t": 1793022427.0016668, "dir": "rx", "msg": {"type": "steps", "seq": 84}}
+{"t": 1793022427.0020773, "dir": "rx", "msg": {"type": "applied", "seq": 84, "controls": 0, "late": 0}}
+{"t": 1793022427.905073, "dir": "rx", "msg": {"type": "ready", "seq": 85, "simTimeNs": 8500800000, "buffered": 0}}
+{"t": 1793022427.9051087, "dir": "tx", "msg": {"type": "go", "seq": 85}}
+{"t": 1793022427.906277, "dir": "rx", "msg": {"type": "steps", "seq": 85}}
+{"t": 1793022427.9063056, "dir": "rx", "msg": {"type": "applied", "seq": 85, "controls": 0, "late": 0}}
+{"t": 1793022428.8164394, "dir": "rx", "msg": {"type": "ready", "seq": 86, "simTimeNs": 8600800000, "buffered": 0}}
+{"t": 1793022428.8164835, "dir": "tx", "msg": {"type": "go", "seq": 86}}
+{"t": 1793022428.8177078, "dir": "rx", "msg": {"type": "steps", "seq": 86}}
+{"t": 1793022428.8177376, "dir": "rx", "msg": {"type": "applied", "seq": 86, "controls": 0, "late": 0}}
+{"t": 1793022429.6743455, "dir": "rx", "msg": {"type": "ready", "seq": 87, "simTimeNs": 8700800000, "buffered": 0}}
+{"t": 1793022429.6743772, "dir": "tx", "msg": {"type": "go", "seq": 87}}
+{"t": 1793022429.6744108, "dir": "rx", "msg": {"type": "steps", "seq": 87}}
+{"t": 1793022429.6744254, "dir": "rx", "msg": {"type": "applied", "seq": 87, "controls": 0, "late": 0}}
+{"t": 1793022430.5376906, "dir": "rx", "msg": {"type": "ready", "seq": 88, "simTimeNs": 8800800000, "buffered": 0}}
+{"t": 1793022430.5377324, "dir": "tx", "msg": {"type": "go", "seq": 88}}
+{"t": 1793022430.5384989, "dir": "rx", "msg": {"type": "steps", "seq": 88}}
+{"t": 1793022430.5385218, "dir": "rx", "msg": {"type": "applied", "seq": 88, "controls": 0, "late": 0}}
+{"t": 1793022431.4731655, "dir": "rx", "msg": {"type": "ready", "seq": 89, "simTimeNs": 8900800000, "buffered": 0}}
+{"t": 1793022431.4732037, "dir": "tx", "msg": {"type": "go", "seq": 89}}
+{"t": 1793022431.4736598, "dir": "rx", "msg": {"type": "steps", "seq": 89}}
+{"t": 1793022431.4737043, "dir": "rx", "msg": {"type": "applied", "seq": 89, "controls": 0, "late": 0}}
+{"t": 1793022432.3984365, "dir": "rx", "msg": {"type": "ready", "seq": 90, "simTimeNs": 9000800000, "buffered": 0}}
+{"t": 1793022432.3984766, "dir": "tx", "msg": {"type": "go", "seq": 90}}
+{"t": 1793022432.399253, "dir": "rx", "msg": {"type": "steps", "seq": 90}}
+{"t": 1793022432.3992956, "dir": "rx", "msg": {"type": "applied", "seq": 90, "controls": 0, "late": 0}}
+{"t": 1793022433.2777107, "dir": "rx", "msg": {"type": "ready", "seq": 91, "simTimeNs": 9100800000, "buffered": 0}}
+{"t": 1793022433.2777698, "dir": "tx", "msg": {"type": "go", "seq": 91}}
+{"t": 1793022433.2784493, "dir": "rx", "msg": {"type": "steps", "seq": 91}}
+{"t": 1793022433.2785003, "dir": "rx", "msg": {"type": "applied", "seq": 91, "controls": 0, "late": 0}}
+{"t": 1793022434.2853167, "dir": "rx", "msg": {"type": "ready", "seq": 92, "simTimeNs": 9200800000, "buffered": 0}}
+{"t": 1793022434.285347, "dir": "tx", "msg": {"type": "go", "seq": 92}}
+{"t": 1793022434.286017, "dir": "rx", "msg": {"type": "steps", "seq": 92}}
+{"t": 1793022434.2860425, "dir": "rx", "msg": {"type": "applied", "seq": 92, "controls": 0, "late": 0}}
+{"t": 1793022435.196813, "dir": "rx", "msg": {"type": "ready", "seq": 93, "simTimeNs": 9300800000, "buffered": 0}}
+{"t": 1793022435.1968548, "dir": "tx", "msg": {"type": "go", "seq": 93}}
+{"t": 1793022435.1977348, "dir": "rx", "msg": {"type": "steps", "seq": 93}}
+{"t": 1793022435.1977625, "dir": "rx", "msg": {"type": "applied", "seq": 93, "controls": 0, "late": 0}}
+{"t": 1793022435.9852357, "dir": "rx", "msg": {"type": "ready", "seq": 94, "simTimeNs": 9400800000, "buffered": 0}}
+{"t": 1793022435.9852798, "dir": "tx", "msg": {"type": "go", "seq": 94}}
+{"t": 1793022435.987836, "dir": "rx", "msg": {"type": "steps", "seq": 94}}
+{"t": 1793022435.9879482, "dir": "rx", "msg": {"type": "applied", "seq": 94, "controls": 0, "late": 0}}
+{"t": 1793022436.8360257, "dir": "rx", "msg": {"type": "ready", "seq": 95, "simTimeNs": 9500800000, "buffered": 0}}
+{"t": 1793022436.8360622, "dir": "tx", "msg": {"type": "go", "seq": 95}}
+{"t": 1793022436.8370945, "dir": "rx", "msg": {"type": "steps", "seq": 95}}
+{"t": 1793022436.837146, "dir": "rx", "msg": {"type": "applied", "seq": 95, "controls": 0, "late": 0}}
+{"t": 1793022437.7092519, "dir": "rx", "msg": {"type": "ready", "seq": 96, "simTimeNs": 9600800000, "buffered": 0}}
+{"t": 1793022437.7092893, "dir": "tx", "msg": {"type": "go", "seq": 96}}
+{"t": 1793022437.7104952, "dir": "rx", "msg": {"type": "steps", "seq": 96}}
+{"t": 1793022437.710548, "dir": "rx", "msg": {"type": "applied", "seq": 96, "controls": 0, "late": 0}}
+{"t": 1793022438.6567538, "dir": "rx", "msg": {"type": "ready", "seq": 97, "simTimeNs": 9700800000, "buffered": 0}}
+{"t": 1793022438.6567898, "dir": "tx", "msg": {"type": "go", "seq": 97}}
+{"t": 1793022438.6575656, "dir": "rx", "msg": {"type": "steps", "seq": 97}}
+{"t": 1793022438.6576037, "dir": "rx", "msg": {"type": "applied", "seq": 97, "controls": 0, "late": 0}}
+{"t": 1793022439.558667, "dir": "rx", "msg": {"type": "ready", "seq": 98, "simTimeNs": 9800800000, "buffered": 0}}
+{"t": 1793022439.558704, "dir": "tx", "msg": {"type": "go", "seq": 98}}
+{"t": 1793022439.5588923, "dir": "rx", "msg": {"type": "steps", "seq": 98}}
+{"t": 1793022439.5589175, "dir": "rx", "msg": {"type": "applied", "seq": 98, "controls": 0, "late": 0}}
+{"t": 1793022440.43985, "dir": "rx", "msg": {"type": "ready", "seq": 99, "simTimeNs": 9900800000, "buffered": 0}}
+{"t": 1793022440.4399128, "dir": "tx", "msg": {"type": "go", "seq": 99}}
+{"t": 1793022440.4400826, "dir": "rx", "msg": {"type": "steps", "seq": 99}}
+{"t": 1793022440.4401178, "dir": "rx", "msg": {"type": "applied", "seq": 99, "controls": 0, "late": 0}}
+{"t": 1793022441.2541795, "dir": "rx", "msg": {"type": "stopping", "seq": 99}}
+{"t": 1793022441.254217, "dir": "tx", "msg": {"type": "endAck"}}
+{"t": 1793022441.2542937, "dir": "rx", "msg": {"type": "end", "seq": 99}}
