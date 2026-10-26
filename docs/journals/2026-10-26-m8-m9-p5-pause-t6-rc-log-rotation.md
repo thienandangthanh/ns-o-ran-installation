@@ -47,3 +47,10 @@ No option changes the locked outcome: the contract already resets rc per run, ev
 1. Does a release reset the Failure Protocol's one-fix budget? A standing ruling would settle this for later pauses.
 2. Do you approve the rule "a start-up line only from a pod the gate created", including the edits to the green rungs' r0 and r1 scripts?
 3. Should the rtmgr push acknowledgement be added to the `*_rc_rmr_ready_after_rtmgr_restart` checks, or should the smaller diff be taken (record that the check proves "this gate's rc container is RMR-ready" and let the session check carry the post-restart claim)?
+
+## 7. User rulings (2026-10-26 22:30 KST)
+1. Re-issuing the goal resets the one-fix budget (standing ruling, now in `plan.md` under T6).
+2. The own-pod rule is approved, including the r0 and r1 script edits; the changes are noted and will be regression tested.
+3. Option A: the post-restart checks also require rtmgr's push acknowledgement for rc.
+
+Applied as harness `611271d` (lint ok, not yet run on the VM). Record: `plans/reports/decisions-261026-2230-GH-1-p5-rc-log-rotation-rulings.md`.

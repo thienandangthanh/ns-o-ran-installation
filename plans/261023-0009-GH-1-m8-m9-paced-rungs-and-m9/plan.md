@@ -22,8 +22,8 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-26 22:25 KST (PAUSE T6 in P5: after the user's release at 21:53, harness 8c88b7a (the 2026-10-24 kongming-guided fix) made the A1 threshold and ts_ready checks pass, but its fresh i2 --part stub re-run went red on rc_rmr_ready: kubelet rotated the 3-day-old rc pod's log at 10 MiB, so rc's start-up line left kubectl logs; evidence/i2/20261026T125704Z; journal docs/journals/2026-10-26-m8-m9-p5-pause-t6-rc-log-rotation.md; counsel plans/reports/kongming-261026-2205-GH-1-p5-i2-rc-log-rotation.md)
-earlier: 2026-10-24 12:35 PAUSE T6 (threshold log SIGPIPE; journal docs/journals/2026-10-24-m8-m9-p5-pause-t6-threshold-log-sigpipe.md); 03:25 PAUSE T5 (A1 payload string); 02:04 user accepted every Stop A default (plans/reports/decisions-261024-0204-GH-1-stop-a-user-rulings.md; ruling 4 = recorded deviation P8); 2026-10-23 18:12 STOP A (R0 = M8 and R1 green); 18:04 R1 C1 PASS evidence/r1/20261023T084654Z; 16:57 r0-green; 16:54 R0 C1 PASS 073520Z
+last-updated: 2026-10-26 22:40 KST (user rulings on the rc log-rotation PAUSE T6: release resets the one-fix budget; own-pod rule approved incl. r0/r1 scripts, regression to follow; option A rtmgr push acknowledgement; fix pushed as harness 611271d, lint ok, not yet run on the VM; plans/reports/decisions-261026-2230-GH-1-p5-rc-log-rotation-rulings.md)
+earlier: 2026-10-26 22:25 PAUSE T6 (rc start-up line rotated out of the kept pod's log; journal docs/journals/2026-10-26-m8-m9-p5-pause-t6-rc-log-rotation.md); 2026-10-24 12:35 PAUSE T6 (threshold log SIGPIPE); 03:25 PAUSE T5 (A1 payload string); 02:04 user accepted every Stop A default (plans/reports/decisions-261024-0204-GH-1-stop-a-user-rulings.md; ruling 4 = recorded deviation P8); 2026-10-23 18:12 STOP A (R0 = M8 and R1 green); 18:04 R1 C1 PASS evidence/r1/20261023T084654Z; 16:57 r0-green; 16:54 R0 C1 PASS 073520Z
 current phase: P5 (R2: TS xApp + stub QP). Done in P5: substitutions 3 and 2 (Testbed 597bdde2), L finding 4 remedy (a1mediator restart), i2 --part ts PASS (20261024T030327Z), p5 re-probe PASS crashed=false (20261024T030729Z, V1 met), stub QP NULL-receive fix (ba528c6), threshold ordering rule and log-pipe lint guard (8c88b7a, held live: a1ThresholdAttempt=2, a1DeliveredAttempt=1). Next: on the user's release and rulings (journal section 6), the start-from-own-pod fix (journal section 3), lint, i2 --part stub fresh, gate r2 calibrate, --dev, C1.
 VM: expected domstate=running, snapshot-current=r0-green; boot time 2026-10-23 07:56:59 UTC; rc at a2282ee, pod jbcb4 kept (log rotated 2026-10-26 07:22 UTC); no agent containers; TS xApp 19e169b + substitutions 3 and 2 (image f521d56b...) registered, threshold 10 set; stub QP reinstalled and registered by i2 20261026T125704Z; a1mediator fresh (restarted by i2); a different boot time means a reboot or revert: run gate i0 first. Kept TS xApp pod 2hx5c (27 KB/h) rotates around 2026-11-09: if it is older than about 10 days at a resume, run i2 --part all first
 snapshots: fresh-install, f7-rerun-green, r0-green
@@ -31,7 +31,7 @@ host /home free: 49 G (2026-10-26 21:53 KST); VM / 50 G free; floor 20 GB; M9 pr
 fork SHAs (pushed, scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, Testbed 597bdde2 (was 4c8397d0; only the TS installer and its two patches changed)
 harness SHA (pushed): see git log
 in-flight background jobs: none
-next action: user releases PAUSE T6 and rules on journal section 6 (does a release reset the one-fix budget; the own-pod rule incl. r0/r1 script edits; rtmgr push acknowledgement or the smaller diff); apply journal section 3; lint; i2 --part stub fresh; gate r2 --mode calibrate. For Stop B: L findings 2, 3 and 4.
+next action: on the goal re-issue (fresh one-fix budget), i2 --part stub fresh at 611271d or later (expect pre-reset fresh, rc pod not jbcb4, rtmgr push ack for rc, a1ThresholdAttempt=2, a1DeliveredAttempt=1, restart counts 0); gate r2 --mode calibrate. r0 and r1 regression (one live run each with the new pre-reset check) in P6 unless the user wants it earlier. For Stop B: L findings 2, 3 and 4.
 hold: none.
 ```
 On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`, `virsh -c qemu:///system snapshot-current --name ubuntu24.04` and `scripts/vm/vm-snapshot.sh list`, and compare them with this card. On a mismatch, print a PAUSE T3 line with the difference.
@@ -45,6 +45,7 @@ On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`
 - Outage threshold −5 dB is checked first (R0 null-control run); −1000 only through substitution 1.
 - Free-run stays the default; pacing is opt-in.
 - Never weaken, narrow or skip a test; never re-run a red C1 to get green.
+- A gate reads a pod's one-time start-up line only from a pod it created itself (user, 2026-10-26); for a kept pod, liveness comes from fresh evidence (rtmgr push acknowledgement, session, wire bytes).
 - Write "TS xApp" and "3GPP TS <n>", never a bare "TS".
 
 ## Phases
@@ -78,7 +79,7 @@ Every stop and trigger ends the turn with one terminal line and no further tool 
 - **T3** a scope-guard mismatch, or an acceptance signal that cannot be met as written (for example, no feasible R3 schedule gives a QP-driven handover, Fallback-2 needed, kpimon needs a code change for the UL field, a resume-card mismatch).
 - **T4** a new deviation from a standard outside P1–P7 and N5, or a needed spec missing from Zotero.
 - **T5** an L-release failure.
-- **T6** a Verify still fails after one kongming-guided fix, or the fix would change the outcome. A red C1 is re-run only after its root cause is recorded and a change committed, then as a full fresh set.
+- **T6** a Verify still fails after one kongming-guided fix, or the fix would change the outcome. A red C1 is re-run only after its root cause is recorded and a change committed, then as a full fresh set. **Standing user ruling (2026-10-26 22:30 KST, `plans/reports/decisions-261026-2230-GH-1-p5-rc-log-rotation-rulings.md`):** re-issuing the goal resets the one-fix budget; after a release, the first failed Verify gets one kongming-guided fix again.
 - **T7** a risk of the Influx token appearing in any public tree or committed file.
 - **T8** a permission refusal of a scripted command. Never work around it.
 
