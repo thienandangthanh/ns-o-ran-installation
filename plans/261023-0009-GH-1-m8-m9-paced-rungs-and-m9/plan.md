@@ -22,7 +22,7 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-27 02:05 KST (P5 exit done; kongming-261027-0145 GO for P6, no T3; P6 started: step 1 = gate r0 --mode single then gate r1 --mode single at the current pins, before any N4 code; harness 94657df)
+last-updated: 2026-10-27 02:35 KST (P6 step 1: gate r0 --mode single RED on restart counts only, evidence/r0/20261026T165654Z: kept TS xApp and stub pods have restart count 1 from the r2-green snapshot reboot; all else green incl. pre-reset and C9; Failure Protocol, kongming consulted; also the N4 design consult is out)
 earlier-1: 2026-10-26 22:40 KST (user rulings on the rc log-rotation PAUSE T6: release resets the one-fix budget; own-pod rule approved incl. r0/r1 scripts, regression to follow; option A rtmgr push acknowledgement; fix pushed as harness 611271d, lint ok, not yet run on the VM; plans/reports/decisions-261026-2230-GH-1-p5-rc-log-rotation-rulings.md)
 earlier: 2026-10-26 22:25 PAUSE T6 (rc start-up line rotated out of the kept pod's log; journal docs/journals/2026-10-26-m8-m9-p5-pause-t6-rc-log-rotation.md); 2026-10-24 12:35 PAUSE T6 (threshold log SIGPIPE); 03:25 PAUSE T5 (A1 payload string); 02:04 user accepted every Stop A default (plans/reports/decisions-261024-0204-GH-1-stop-a-user-rulings.md; ruling 4 = recorded deviation P8); 2026-10-23 18:12 STOP A (R0 = M8 and R1 green); 18:04 R1 C1 PASS evidence/r1/20261023T084654Z; 16:57 r0-green; 16:54 R0 C1 PASS 073520Z
 current phase: P6 (N4) in progress, order per kongming-261027-0145: r0 single, r1 single (the r0/r1 regression of ruling 2) > step-1 consult and Zotero reads (3GPP TS 36.323 DZFZCTGR, 3GPP TS 38.323 MSNDDXJH) > code, V1, V2 drop option > push forks, bump pins.conf BEFORE any gate > build, V2 against evidence/r2/20261026T143406Z/runs/c8free (provenance must show the new SHAs), V3 > delete kpimon pod, M5-M7 > r0/r1/r2 single > pre-registered V5 window rule (every complete 16-step window per gNB cell), UL-on dump, V5, V6 (dump committed under a non-ignored name, never git add -f) > phase exit. Skip gate i0 unless snapshot-current differs (revert).
@@ -31,8 +31,8 @@ snapshots: fresh-install, f7-rerun-green, r0-green, r2-green (chain: fresh-insta
 host /home free: 46 G (2026-10-27 01:28 KST, after r2-green); VM / 47 G free; floor 20 GB; M9 projection unchanged at about -23 to -25 GB until re-measured at P8 and P9 (milestone-261023-1810); the user frees the shortfall at Stop B
 fork SHAs (pushed, scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, Testbed 597bdde2 (was 4c8397d0; only the TS installer and its two patches changed)
 harness SHA (pushed): see git log (R2 C1 gate ran at 0a6864d, same scripts/tools as 0cc532c; checker fix c3817e3)
-in-flight background jobs: gate r0 --mode single (vm-exec, timeout 5400 s), started 2026-10-27 02:06 KST
-next action: gate r0 single, then gate r1 single at the current pins (regression of the own-pod pre-reset checks and the windowed C9 matcher); then the step-1 kongming consult for N4. Disk guard: host free >= 20 GB + step estimate before each VM step; log the r2-green overlay size after each step (baseline 2026-10-27 02:05).
+in-flight background jobs: none on the VM (kongming consults on the host: N4 design, r0 restart-count red)
+next action: apply the one kongming-guided fix for the r0 restart-count red (kongming-261027-0235), re-run gate r0 single fresh, then gate r1 single; then N4 per kongming-261027-0215 (SDU header rule, double-count design). Any further red on this step is T6.
 hold: none.
 ```
 On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`, `virsh -c qemu:///system snapshot-current --name ubuntu24.04` and `scripts/vm/vm-snapshot.sh list`, and compare them with this card. On a mismatch, print a PAUSE T3 line with the difference.
