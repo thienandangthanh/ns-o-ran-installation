@@ -1,1 +1,0 @@
-- [RMR stale connections under IPVS](project_rmr-stale-connection-ipvs.md) — xApp pod/Service replacement leaves RMR senders writing into dead TCP; restart a1mediator then rtmgr
