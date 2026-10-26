@@ -10,7 +10,7 @@
   {"step": 70, "imsi": 6, "kind": "positive", "predictions": [["0000000202", [100, 0]], ["0000000303", [300, 0]]], "via": 3, "key": "0000000303", "targetCell": 3, "expect": "applied"}
  ],
  "calibration": {
-  "_comment": "W calibration in the gated per-step shape (one trigger per step, the same agents): count positive triggers from firstStep every everySteps steps, IMSIs round robin 1..6, each sent to the cell it is not on (start cells below, flipped after each trigger), predictions serving [100, 0] then target [300, 0]. Only L and the one-control-per-trigger count are judged; outcomes are recorded.",
+  "_comment": "W calibration in the gated per-step shape (one trigger per step, the same agents): count positive triggers from firstStep every everySteps steps, IMSIs round robin 1..6, each sent to the cell it is not on (start cells below, flipped after each trigger), predictions serving [100, 0] then target [300, 0]. The calibration gate runs every per-run check (wire, stub, ledger counts, C9 handover rows, restart counts) as well as L and the one-control-per-trigger count; the same IMSI repeats the same source and target here, which the C9 window per applied line accounts for.",
   "firstStep": 10, "everySteps": 3, "count": 25,
   "startCells": {"1": 3, "2": 3, "3": 2, "4": 2, "5": 2, "6": 2}
  }

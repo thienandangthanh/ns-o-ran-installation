@@ -22,7 +22,7 @@ On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 ea
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-27 01:40 KST (P5 DONE: R2 C1 gate PASS evidence/r2/20261026T143406Z at harness 0cc532c, r2-green created 01:26 KST; phase-exit checklist in progress, kongming go/no-go for P6 next)
+last-updated: 2026-10-27 01:40 KST (P5 DONE: R2 C1 gate PASS evidence/r2/20261026T143406Z (verdict harness_sha 0a6864d, same scripts and tools as 0cc532c), r2-green created 01:26 KST; phase-exit checklist in progress, kongming go/no-go for P6 next)
 earlier-1: 2026-10-26 22:40 KST (user rulings on the rc log-rotation PAUSE T6: release resets the one-fix budget; own-pod rule approved incl. r0/r1 scripts, regression to follow; option A rtmgr push acknowledgement; fix pushed as harness 611271d, lint ok, not yet run on the VM; plans/reports/decisions-261026-2230-GH-1-p5-rc-log-rotation-rulings.md)
 earlier: 2026-10-26 22:25 PAUSE T6 (rc start-up line rotated out of the kept pod's log; journal docs/journals/2026-10-26-m8-m9-p5-pause-t6-rc-log-rotation.md); 2026-10-24 12:35 PAUSE T6 (threshold log SIGPIPE); 03:25 PAUSE T5 (A1 payload string); 02:04 user accepted every Stop A default (plans/reports/decisions-261024-0204-GH-1-stop-a-user-rulings.md; ruling 4 = recorded deviation P8); 2026-10-23 18:12 STOP A (R0 = M8 and R1 green); 18:04 R1 C1 PASS evidence/r1/20261023T084654Z; 16:57 r0-green; 16:54 R0 C1 PASS 073520Z
 current phase: P5 done, phase exit in progress; next P6 (N4: opt-in UL traffic and the UL PDCP SDU volume counter). P5 record: stray-ack probe crashed then substitution 2 (V1 met), substitution 3, L findings 2-4 (for Stop B), W = 1.0 s and A1 threshold 10 from calibration evidence/r2/20261026T140350Z, C9 windowed matcher (c3817e3, judging script change; to report at Stop B), R2 C1 PASS 20261026T143406Z (4 of 4 positives applied via target gNBs 2 and 3, late 0, restart counts 0, C1 liveRunsEqual/replayEqual/rngRun2Differs true).
@@ -30,7 +30,7 @@ VM: expected domstate=running, snapshot-current=r2-green; boot time 2026-10-26 1
 snapshots: fresh-install, f7-rerun-green, r0-green, r2-green (chain: fresh-install > f7-rerun-green > r0-green > r2-green)
 host /home free: 46 G (2026-10-27 01:28 KST, after r2-green); VM / 47 G free; floor 20 GB; M9 projection unchanged at about -23 to -25 GB until re-measured at P8 and P9 (milestone-261023-1810); the user frees the shortfall at Stop B
 fork SHAs (pushed, scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, Testbed 597bdde2 (was 4c8397d0; only the TS installer and its two patches changed)
-harness SHA (pushed): see git log (gate run at 0cc532c; checker fix c3817e3)
+harness SHA (pushed): see git log (R2 C1 gate ran at 0a6864d, same scripts/tools as 0cc532c; checker fix c3817e3)
 in-flight background jobs: none
 next action: finish the P5 phase exit (implementation-notes, push, kongming go/no-go for P6), then P6 per its phase file: free-run digest with UL off unchanged, M5-M7, one live run each of R0/R1/R2 at the new harness (this is also the r0/r1 regression for the own-pod rule and the windowed C9 checker), UL-on dump. Run gate i0 first if the boot time differs. For Stop B: L findings 2, 3 and 4, and the C9 checker change.
 hold: none.
