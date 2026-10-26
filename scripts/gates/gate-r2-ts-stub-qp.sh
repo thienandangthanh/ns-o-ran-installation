@@ -187,6 +187,7 @@ r2_live() {
     check "r2_${label}_routes_30002_20010_to_ts_30000_only_to_stub" ts_routes_check "$label-start"
     check "r2_${label}_a1_threshold_set_and_logged_by_the_ts_xapp" ts_policy_set "$A1_TH" "r2-$label-$GATE_TS"
     fact "a1ThresholdAttempt_$label" "$(cat "$e/r2-$label-$GATE_TS-a1-attempt.txt" 2>/dev/null || echo null)"
+    fact "a1DeliveredAttempt_$label" "$(cat "$e/r2-$label-$GATE_TS-a1-delivered-attempt.txt" 2>/dev/null || echo null)"
     check "r2_${label}_a1mediator_connection_to_ts_xapp_clean" a1_ts_connection_check "$label"
     fact "a1mediatorRestart_$label" "$(jq -c '{fresh, problems}' "$e/$label-a1mediator-restart.json" 2>/dev/null || echo null)"
     check "r2_${label}_stub_table_loaded" stub_table_load "$e/r2-stub-table.json"

@@ -40,7 +40,9 @@
 #   ts_nodeb_list_check           the TS log's nodeb list (read once at start-up, gRPC mode only) names every
 #                                 CONNECTED E2 node e2mgr knows, and cell mapping did not fail
 #   ts_policy_type_ensure         A1 policy type 20008 exists at a1mediator
-#   ts_policy_set <threshold> <id>  a new policy instance; wait for the TS log's threshold line (bounded)
+#   ts_threshold_logged <f> <id> <th>  the log file has a threshold line after this call's first A1 payload line
+#   ts_policy_set <threshold> <id>  a new policy instance; wait for the TS log's threshold line after this
+#                                 call's payload line (bounded)
 #   stub_table_load <json>        PUT the prediction table to the stub (resets its counters and log)
 #   stub_log_save <file>          the stub's log of 30000 requests and 30002 answers
 #   injector_start <dir>          the RMR injector on the host network, static seed route to the TS xApp's
@@ -150,13 +152,15 @@ ts_install() {
 ts_ready() {
     local pod ready logs
     read -r pod ready _ < <(pod_info ricxapp ricxapp-trafficxapp-) && [ "$ready" = true ] || { echo "TS pod not ready"; return 1; }
+    # here-strings, never `printf | grep -q`: grep -q exits on the first match and the writer dies of SIGPIPE
+    # (141 under pipefail) once the kept pod's log outgrows the pipe buffer
     for _ in $(seq 30); do
         logs=$(kc -n ricxapp logs "$pod" 2>&1)
-        printf '%s\n' "$logs" | grep -q 'listening on port 4560' && break
+        grep -q 'listening on port 4560' <<<"$logs" && break
         sleep 2
     done
-    printf '%s\n' "$logs" | grep -q 'listening on port 4560' || { echo "$pod: no 'listening on port 4560'"; return 1; }
-    printf '%s\n' "$logs" | grep -E '\[ERROR\] a control api|unable to map cells' && { echo "$pod: control API or cell mapping error"; return 1; }
+    grep -q 'listening on port 4560' <<<"$logs" || { echo "$pod: no 'listening on port 4560'"; return 1; }
+    grep -E '\[ERROR\] a control api|unable to map cells' <<<"$logs" && { echo "$pod: control API or cell mapping error"; return 1; }
     echo "TS $pod ready and listening"
 }
 
@@ -304,7 +308,7 @@ ts_nodeb_list_check() {
     local pod ip line connected n
     read -r pod _ < <(pod_info ricxapp ricxapp-trafficxapp-) || return 1
     for _ in $(seq 30); do
-        line=$(kc -n ricxapp logs "$pod" 2>&1 | grep -m 1 'nodeb list is') && break
+        line=$(grep -m 1 'nodeb list is' < <(kc -n ricxapp logs "$pod" 2>&1)) && break
         sleep 2
     done
     [ -n "$line" ] || { echo "$pod: no 'nodeb list is' line (not in gRPC mode?)"; return 1; }
@@ -382,10 +386,29 @@ ts_policy_type_ensure() {
     echo; curl -s -m 10 "$base/policytypes"
 }
 
+# ts_threshold_logged <log-file> <id> <th>: a threshold line after this call's first A1 payload line. Only
+# policy_callback prints both lines and stdout keeps its order, so such a line is this call's. A threshold line
+# before it may be an earlier run's: the TS xApp flushes stdout only on the payload line's endl.
+ts_threshold_logged() {
+    awk -v p="\"policy_instance_id\":\"$2-" -v t="Setting Threshold for A1-P value: $3%" '
+        index($0, "[INFO] Payload is ") && index($0, p) { seen = 1; next }
+        seen && index($0, t) { found = 1; exit }
+        END { exit !found }' "$1"
+}
+
+# _a1_delivered_attempt <log-file> <id>: the lowest instance k whose payload line is in the log, else null
+# (recorded, never judged: it separates a delivery delay from the TS xApp's unflushed threshold line)
+_a1_delivered_attempt() {
+    local k
+    for k in 1 2 3; do grep -qF "\"policy_instance_id\":\"$2-$k\"" "$1" && { echo "$k"; return; }; done
+    echo null
+}
+
 # ts_policy_set <threshold> <instance-id>: a fresh instance id each time (the TS xApp never answers A1, so a
-# delete would never complete); then the TS xApp's own log line, at most 3 instances, each logged.
+# delete would never complete); then the TS xApp's own log line, at most 3 instances, each logged. The log
+# is read into $e/<id>-ts-log.txt and judged there (the last read stays as evidence).
 ts_policy_set() {
-    local th="$1" id="$2" base pod code i
+    local th="$1" id="$2" base pod code i f="$EVIDENCE_DIR/$2-ts-log.txt"
     [[ "$th" =~ ^[1-9][0-9]*$ ]] || { echo "threshold must be a positive integer: $th"; return 1; }
     base=$(_a1) || return 1
     read -r pod _ < <(pod_info ricxapp ricxapp-trafficxapp-) || return 1
@@ -395,13 +418,18 @@ ts_policy_set() {
         echo "policy instance $id-$i threshold $th: HTTP $code"
         [ "$code" = 202 ] || [ "$code" = 201 ] || [ "$code" = 200 ] || return 1
         for _ in $(seq 20); do
-            kc -n ricxapp logs "$pod" 2>&1 | grep -q "Setting Threshold for A1-P value: $th%" &&
-                { kc -n ricxapp logs "$pod" 2>&1 | grep 'Setting Threshold'; echo "$i" >"$EVIDENCE_DIR/$id-a1-attempt.txt"
-                  echo "threshold logged after attempt $i"; return 0; }
+            kc -n ricxapp logs "$pod" >"$f" 2>/dev/null
+            if ts_threshold_logged "$f" "$id" "$th"; then
+                grep -n -e 'Setting Threshold' -e "\"policy_instance_id\":\"$id-" "$f"
+                echo "$i" >"$EVIDENCE_DIR/$id-a1-attempt.txt"
+                _a1_delivered_attempt "$f" "$id" >"$EVIDENCE_DIR/$id-a1-delivered-attempt.txt"
+                echo "threshold logged after attempt $i"; return 0
+            fi
             sleep 1
         done
-        log "ts_policy_set: no threshold line in $pod 20 s after instance $id-$i (attempt $i/3)"
+        log "ts_policy_set: no threshold line after a payload of $id in $pod 20 s after instance $id-$i (attempt $i/3)"
     done
+    _a1_delivered_attempt "$f" "$id" >"$EVIDENCE_DIR/$id-a1-delivered-attempt.txt"
     # diagnostics for a stale a1mediator -> TS xApp connection: a1mediator's TCP table and the TS Service IP
     local a1pod; a1pod=$(kc -n ricplt get pods --no-headers | awk '/a1mediator/ && $3 == "Running" { print $1 }' | head -n 1)
     kc -n ricplt exec "$a1pod" -- cat /proc/net/tcp >"$EVIDENCE_DIR/a1mediator-proc-net-tcp.txt" 2>&1
@@ -431,7 +459,7 @@ injector_start() {
     dk run -d --name "$INJ_NAME" --network host --user "$(id -u):$(id -g)" -v "$d:/out" \
         -e RMR_SEED_RT=/out/seed.rt -e RMR_RTG_SVC=-1 -e "RMR_SRC_ID=$nip" "$RMR_PEER_IMAGE" \
         python3 -I /app/rmr-injector.py --rmr-port "$INJ_RMR_PORT" --ctl-port "$INJ_CTL_PORT" --out /out >/dev/null || return 1
-    for _ in $(seq 50); do dk logs "$INJ_NAME" 2>&1 | grep -q '^READY' && { echo "injector up, seed: $(tr '\n' ' ' <"$d/seed.rt")"; return 0; }; sleep 0.2; done
+    for _ in $(seq 50); do grep -q '^READY' < <(dk logs "$INJ_NAME" 2>&1) && { echo "injector up, seed: $(tr '\n' ' ' <"$d/seed.rt")"; return 0; }; sleep 0.2; done
     dk logs "$INJ_NAME"; return 1
 }
 

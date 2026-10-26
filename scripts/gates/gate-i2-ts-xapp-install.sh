@@ -78,6 +78,7 @@ fi
 A1_TH=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["threshold"])' "$HARNESS_DIR/scripts/gates/r2-scenario.json")
 check i2_a1_threshold_reaches_ts_xapp ts_policy_set "$A1_TH" "i2-$GATE_TS"
 fact a1ThresholdAttempt "$(cat "$EVIDENCE_DIR/i2-$GATE_TS-a1-attempt.txt" 2>/dev/null || echo null)"
+fact a1DeliveredAttempt "$(cat "$EVIDENCE_DIR/i2-$GATE_TS-a1-delivered-attempt.txt" 2>/dev/null || echo null)"
 check i2_a1mediator_connection_to_ts_xapp_clean a1_ts_connection_check i2
 fact a1mediatorRestartCountAtEnd "$(a1mediator_restart_count 2>/dev/null || echo null)"
 fact xappRegistration "$(jq -c '[.[] | {name, instances: [.instances[]? | {name, ip, port}]}]' "$EVIDENCE_DIR/i2-appmgr-xapps.json" 2>/dev/null || echo null)"
