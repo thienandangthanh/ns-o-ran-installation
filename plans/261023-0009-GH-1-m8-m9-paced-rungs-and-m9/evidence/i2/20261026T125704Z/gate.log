@@ -1,0 +1,26 @@
+[12:57:05] gate i2 start; evidence /home/uc/evidence/i2/20261026T125704Z; harness 8c88b7aea19ee584ec7c27f048e2530c308c2b06
+[12:57:05] PASS i2_args
+[12:57:05] PASS i2_nist_tree_at_testbed_sha_with_agent_dir
+[12:57:05] PASS i2_ts_installer_at_testbed_sha
+[12:58:35] FAIL i2_rc_installed_at_pin_and_ready: exit 1: rc ricxapp-rc-6db9dcd964-jbcb4 ready, gRPC endpoint 10.111.50.166:7777
+gRPC describe ok, 12040 route to rc present
+rc ricxapp-rc-6db9dcd964-jbcb4: no 'RMR is ready' line within 90 s
+[12:58:35] PASS i2_ts_source_is_pin_plus_exactly_the_testbed_patches
+[12:58:35] PASS i2_ts_ready_listening_no_control_api_error
+[12:58:49] PASS i2_rmr_peer_image_built_self_tested_imported
+[12:59:34] PASS i2_stub_qp_installed_as_its_own_xapp
+[12:59:34] PASS i2_ts_xapp_registered_with_appmgr
+[12:59:34] PASS i2_stub_qp_registered_with_appmgr
+[12:59:34] PASS i2_appmgr_xapp_list_saved
+[13:00:05] PASS i2_a1mediator_restarted_fresh_policy_type_kept
+[13:00:29] PASS i2_rtmgr_restarted_after_registration
+[13:00:30] PASS i2_rtmgr_session_to_every_xapp_and_a1mediator
+[13:02:02] FAIL i2_rc_rmr_ready_after_rtmgr_restart: exit 1: rc ricxapp-rc-6db9dcd964-jbcb4: no 'RMR is ready' line within 90 s
+[13:02:02] PASS i2_route_dump
+[13:02:03] PASS i2_routes_20010_to_ts_30002_stub_to_ts_30000_only_ts_to_stub
+[13:02:25] PASS i2_a1_threshold_reaches_ts_xapp
+[13:02:25] PASS i2_a1mediator_connection_to_ts_xapp_clean
+[13:02:25] PASS i2_xapp_image_ids
+[13:02:26] PASS i2_pod_snapshot
+[13:02:26] PASS i2_restart_counts_zero
+verdict i2: FAIL failed=['i2_rc_installed_at_pin_and_ready', 'i2_rc_rmr_ready_after_rtmgr_restart']
