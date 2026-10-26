@@ -1,0 +1,25 @@
+[13:35:29] gate i2 start; evidence /home/uc/evidence/i2/20261026T133527Z; harness fa7d64e5a4a0452dbea8ad2634157c0ee321fb03
+[13:35:29] PASS i2_args
+[13:35:29] PASS i2_nist_tree_at_testbed_sha_with_agent_dir
+[13:35:29] PASS i2_ts_installer_at_testbed_sha
+[13:36:12] PASS i2_pre_ric_reset_fresh_rc_kpimon_hw_go_and_bucket
+[13:36:12] PASS i2_rc_installed_at_pin_and_ready
+[13:36:12] PASS i2_ts_source_is_pin_plus_exactly_the_testbed_patches
+[13:36:13] PASS i2_ts_ready_listening_no_control_api_error
+[13:36:27] PASS i2_rmr_peer_image_built_self_tested_imported
+[13:37:12] PASS i2_stub_qp_installed_as_its_own_xapp
+[13:37:12] PASS i2_ts_xapp_registered_with_appmgr
+[13:37:12] PASS i2_stub_qp_registered_with_appmgr
+[13:37:12] PASS i2_appmgr_xapp_list_saved
+[13:37:43] PASS i2_a1mediator_restarted_fresh_policy_type_kept
+[13:38:07] PASS i2_rtmgr_restarted_after_registration
+[13:38:07] PASS i2_rtmgr_session_to_every_xapp_and_a1mediator
+[13:38:08] PASS i2_rc_rmr_ready_after_rtmgr_restart
+[13:38:08] PASS i2_route_dump
+[13:38:08] PASS i2_routes_20010_to_ts_30002_stub_to_ts_30000_only_ts_to_stub
+[13:38:30] PASS i2_a1_threshold_reaches_ts_xapp
+[13:38:31] PASS i2_a1mediator_connection_to_ts_xapp_clean
+[13:38:31] PASS i2_xapp_image_ids
+[13:38:31] PASS i2_pod_snapshot
+[13:38:31] PASS i2_restart_counts_zero
+verdict i2: PASS failed=[]
