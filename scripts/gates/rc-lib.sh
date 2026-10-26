@@ -18,11 +18,18 @@
 #   rc_restart_rtmgr              delete rtmgr's pod and wait for the new one (it only opens a connection to an xApp
 #                                 the first time it sees the endpoint, and never reconnects to a replaced pod)
 #   rc_rmr_ready                  rc's own `RMR is ready after` log line in its current container (bounded wait)
+#   rtmgr_push_acked <svc> [ns]   the running rtmgr pod logged a successful route push to <svc>'s RMR port 4560
+#                                 (written only when that endpoint's RMR answered the route-table call; bounded wait)
+#   rc_rmr_ready_after_rtmgr      rc_rmr_ready, then rtmgr_push_acked for rc's RMR Service
 #   rc_at_pin                     rc's source tree at RC_SHA and rc ready; install nothing
 # rc_install is NOT part of any per-run path: NIST's script always runs `dms_cli uninstall` first, which deletes
 # rc's Services and leaves rtmgr holding a dead connection to the old pod. Use it once (gate i0), then rc_restart_rtmgr.
 #   rc_send_control <args...>     one control through rc's gRPC (see below)
 #
+# Kept pods: a gate reads a pod's one-time start-up line only from a pod the gate itself created (rc_ric_reset,
+# ts_stub_pods_reset). rc logs a line for every kubelet probe (about 150 KB/h), kubelet rotates a container log
+# at 10 MiB (about 70 h for rc) and `kubectl logs` reads only the newest file, so an older pod's start-up line is
+# gone. For a kept pod, liveness comes from fresh evidence: an rtmgr push acknowledgement, a session, wire bytes.
 # Pins: RC_SHA is the commit rc is built from (the P0 decoder and the agent's codec use the same one).
 RC_SHA=a2282eedc9e32f60298bf530456ad367bef0824b
 GRPCURL_VER=1.9.1
@@ -97,6 +104,22 @@ rc_rmr_ready() {
     done
     echo "rc $pod: no 'RMR is ready' line within ${RC_RMR_READY_TIMEOUT_S:-90} s"; return 1
 }
+
+# rtmgr_push_acked <svc> [ns]: read only from an rtmgr pod this gate restarted (rtmgr logs at DEBUG and rotates
+# within hours); the line recurs with every push, so the first match is enough.
+rtmgr_push_acked() {
+    local pod line ep="$1.${2:-ricxapp}:4560" deadline=$(($(date +%s) + ${RTMGR_PUSH_ACK_TIMEOUT_S:-90}))
+    read -r pod _ < <(kc -n ricplt get pods --no-headers | awk '/rtmgr/ && $3 == "Running" { print $1 }')
+    [ -n "$pod" ] || { echo "no running rtmgr pod"; return 1; }
+    while [ "$(date +%s)" -lt "$deadline" ]; do
+        line=$(grep -F -m 1 "Update Routes to Endpoint: $ep successful" < <(kc -n ricplt logs "$pod" -c container-ricplt-rtmgr 2>/dev/null))
+        if [ -n "$line" ]; then echo "rtmgr $pod: $(grep -o '"msg":"[^"]*' <<<"$line" | cut -c8-)"; return 0; fi
+        sleep 3
+    done
+    echo "rtmgr $pod: no successful route push to $ep within ${RTMGR_PUSH_ACK_TIMEOUT_S:-90} s"; return 1
+}
+
+rc_rmr_ready_after_rtmgr() { rc_rmr_ready && rtmgr_push_acked service-ricxapp-rc-rmr; }
 
 rc_at_pin() {
     [ "$(git -C "$RIC_DIR/xApps/rc" rev-parse HEAD)" = "$RC_SHA" ] && rc_ready

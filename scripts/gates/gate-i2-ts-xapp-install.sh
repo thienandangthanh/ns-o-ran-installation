@@ -37,6 +37,8 @@ installer_at_pin() {
 }
 check i2_nist_tree_at_testbed_sha_with_agent_dir agents_tree_at_testbed_sha
 check i2_ts_installer_at_testbed_sha installer_at_pin
+# start from rc, kpimon and hw-go pods this gate created: a kept pod's start-up line rotates out of its log
+check i2_pre_ric_reset_fresh_rc_kpimon_hw_go_and_bucket rc_ric_reset pre
 check i2_rc_installed_at_pin_and_ready rc_at_pin
 SVCS=(service-ricxapp-rc-rmr service-ricxapp-kpimon-go-rmr ricplt/service-ricplt-a1mediator-rmr)
 if [ "$PART" != stub ]; then
@@ -64,7 +66,7 @@ fact a1mediatorRestart "$(jq -c '{fresh, problems, after}' "$EVIDENCE_DIR/i2-a1m
 check i2_rtmgr_restarted_after_registration rc_restart_rtmgr
 sessions() { for _ in $(seq 20); do rtmgr_sessions "${SVCS[@]}" >/dev/null && break; sleep 3; done; rtmgr_sessions "${SVCS[@]}"; }
 check i2_rtmgr_session_to_every_xapp_and_a1mediator sessions
-check i2_rc_rmr_ready_after_rtmgr_restart rc_rmr_ready
+check i2_rc_rmr_ready_after_rtmgr_restart rc_rmr_ready_after_rtmgr
 check i2_route_dump rc_route_dump i2
 fact routeOwner12041 "$(json_str "${ROUTE_OWNER_12041:-}")"
 fact routeOwner12042 "$(json_str "${ROUTE_OWNER_12042:-}")"

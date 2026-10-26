@@ -83,6 +83,8 @@ check r1_pod_log_reader_self_test python3 -I "$HARNESS_DIR/scripts/gates/pod-log
 check r1_pacer_self_test python3 -I "$HARNESS_DIR/scripts/gates/pacer-selftest.py"
 check r1_kpm_ue_list_judge_self_test python3 -I "$HARNESS_DIR/tools/e2-evidence/kpm-ue-list-moves.py" --self-test
 check r1_grpcurl_fetched_and_checksum_verified rc_grpcurl_fetch
+# start from rc, kpimon and hw-go pods this gate created: a kept pod's start-up line rotates out of its log
+check r1_pre_ric_reset_fresh_rc_kpimon_hw_go_and_bucket rc_ric_reset pre
 check r1_rc_installed_at_pin_and_ready rc_at_pin
 RC_DEC_TAG=$(bash "$HARNESS_DIR/tools/rc-decode/build.sh" 2>/dev/null | tail -n 1)
 check r1_rc_decoder_built test -n "$RC_DEC_TAG"

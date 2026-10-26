@@ -101,7 +101,10 @@ check r2_pod_log_reader_self_test python3 -I "$HARNESS_DIR/scripts/gates/pod-log
 check r2_pacer_self_test python3 -I "$HARNESS_DIR/scripts/gates/pacer-selftest.py"
 check r2_kpm_ue_list_judge_self_test python3 -I "$HARNESS_DIR/tools/e2-evidence/kpm-ue-list-moves.py" --self-test
 check r2_grpcurl_fetched_and_checksum_verified rc_grpcurl_fetch
+# start from pods this gate created: a kept pod's start-up line rotates out of its log
+check r2_pre_ric_reset_fresh_rc_kpimon_hw_go_and_bucket rc_ric_reset pre
 check r2_rc_installed_at_pin_and_ready rc_at_pin
+check r2_pre_ts_and_stub_pods_fresh_rtmgr_sessions ts_stub_pods_reset pre
 ts_at_pin() { [ "$(git -C "$TS_DIR" rev-parse HEAD)" = "$TS_SHA" ] && ts_ready && jq -e '.ts_control_api == "grpc"' \
     <(kc -n ricxapp get cm configmap-ricxapp-trafficxapp-appconfig -o jsonpath='{.data.config-file\.json}' | jq .controls); }
 check r2_ts_xapp_at_pin_ready_in_grpc_mode ts_at_pin
@@ -180,7 +183,7 @@ r2_live() {
     check "r2_${label}_agent_ips_recorded" agents_record_ips "$rd/node-ips.json"
     check "r2_${label}_every_agent_ready_and_subscribed" all_subscribed
     check "r2_${label}_ts_and_stub_pods_fresh_after_agents_rtmgr_sessions" ts_stub_pods_reset "$label"
-    check "r2_${label}_rc_rmr_ready_after_rtmgr_restart" rc_rmr_ready
+    check "r2_${label}_rc_rmr_ready_after_rtmgr_restart" rc_rmr_ready_after_rtmgr
     check "r2_${label}_ts_xapp_nodeb_list_has_every_connected_agent" ts_nodeb_list_check
     check "r2_${label}_route_dump_start" rc_route_dump "$label-start"
     route_owner_row "$label" start
