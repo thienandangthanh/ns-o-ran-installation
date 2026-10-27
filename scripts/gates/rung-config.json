@@ -60,8 +60,49 @@
     "provenance": "scripts/gates/r2-scenario.json threshold 10 (n2 is a neighbour 5 % above serving, under it), set and reached in the R2 calibration evidence/r2/20261026T140350Z"
   },
   "ul_rate": {
-    "value": null,
-    "provenance": "set at P6 (N4)"
+    "value": {
+      "enableUlTraffic": true,
+      "app": "UdpClient",
+      "pattern": "constant",
+      "PacketSize_B": 1280,
+      "Interval_us": 500,
+      "MaxPackets": 4294967295,
+      "destinationPort": 60000,
+      "start_s": 0.1,
+      "stop": "simTime - 0.1 s",
+      "fallback": {
+        "pattern": "steps",
+        "Interval_us": 5000,
+        "PacketSize_B": "200 + 50 * (k mod 16) in 100 ms UL period k from 0.1 s",
+        "use": "only if the primary fails rule n4-v5-r1 on the UL-on calibration run; both failing is PAUSE T3"
+      },
+      "constraint": "UL SDU > 40 B (PacketSize + 28 > 40)",
+      "pdcpHeaderBytes": 2,
+      "pdcpHeaderSource": "ns-3-mmwave-oran@ba954440 src/lte/model/lte-pdcp-header.cc:96-99 LtePdcpHeader::GetSerializedSize; 3GPP TS 36.323 V19.0.0 6.2.3",
+      "v5Rule": {
+        "id": "n4-v5-r1",
+        "window": 16,
+        "slide": 1,
+        "predicate": "per gNB cell, every window of 16 consecutive present ns3.seq: both fields present as Influx long; QP PROCESS.constant() (ric-app-qp@47a35ca src/qptrain.py:81-92) False on [UL, DL]; neither column all zero",
+        "checker": "scripts/gates/check-n4-v5-windows.py",
+        "registered": "2026-10-27 12:30 KST, before any UL-on run"
+      },
+      "calibrationEvidence": null,
+      "dumpEvidence": null,
+      "r3Config": {
+        "nMmWaveEnbNodes": 2,
+        "handoverMode": "NoAuto",
+        "simTime_s": 10,
+        "RngRun": 1,
+        "outageThreshold_dB": -1000,
+        "simStartEpochMs": 1767225600000,
+        "indicationPeriodicity_s": 0.1,
+        "bufferSize_MB": 10,
+        "e2Flags": "scenario-zero defaults (e2du, e2cuUp, e2cuCp true; reducedPmValues as the rungs run it)",
+        "dl": "UdpClient 1280 B every 500 us per UE, 0.1 s to simTime - 0.1 s (unchanged)"
+      }
+    },
+    "provenance": "pre-registered at P6 per plans/reports/kongming-261027-0215-GH-1-p6-n4-sdu-header-rule-and-double-count-design.md Q4/Q6 and the P6 release amendments (decisions-261027-0955 ruling 4); calibration and dump evidence are filled after the runs; the R3 schedule's simTime must equal the dump's"
   },
   "schedules": {
     "r0": {
