@@ -32,7 +32,7 @@ snapshots: fresh-install, f7-rerun-green, r0-green, r2-green (chain: fresh-insta
 host /home free: 45 G (2026-10-27 02:48 KST); r2-green overlay 1.56 GB; VM / 49 % used; floor 20 GB; M9 projection unchanged at about -23 to -25 GB until re-measured at P8 and P9; the user frees the shortfall at Stop B
 fork SHAs (pushed, scripts/pins.conf): ns-3 962fabc7, oran-interface 63155c49, Testbed 597bdde2 (was 4c8397d0; only the TS installer and its two patches changed)
 harness SHA (pushed): see git log (R2 C1 gate ran at 0a6864d, same scripts/tools as 0cc532c; checker fix c3817e3)
-in-flight background jobs: none
+in-flight background jobs: 2026-10-27 10:05 KST goal re-issued (T6 budget fresh); VM checked = card (no boot since 16:26:48 UTC, TS xApp/stub restart 0); r0 single at 4071ad8+ launched via vm-exec (timeout 5400)
 next action: on the goal re-issue (rulings recorded in decisions-261027-0955; T6 budget fresh): check the VM against this card (recreate the TS xApp and stub only if the VM booted), r0 single at the fix SHA, read-only pre-r1 check, r1 single, then N4. Stop B list: L findings 2, 3 and 4; the C9 checker change; the r0/r1 judge change (approved U1); the TS xApp and stub in the r0/r1 restartCounts fact map (U3); T6 budget per step or per release for P6's later steps; the f2138f0 history decision; the RestartCount rule; option D.
 hold: none.
 ```
