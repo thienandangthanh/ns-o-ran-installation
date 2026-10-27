@@ -1,0 +1,46 @@
+{
+  "reference": "REF",
+  "components": [
+    "ipc",
+    "traces"
+  ],
+  "runs": {
+    "CAND": {
+      "equal": true,
+      "differing": [],
+      "detail": {},
+      "ipcDroppedMax": 0
+    }
+  },
+  "n4Drop": {
+    "REF": {
+      "mode": "absent",
+      "samplesChecked": 300,
+      "missing": 0,
+      "ulNonZero": 0,
+      "nonInt": 0,
+      "dlPositiveByNode": {},
+      "unexpectedCarriers": 0,
+      "ok": true
+    },
+    "CAND": {
+      "mode": "present",
+      "samplesChecked": 300,
+      "missing": 0,
+      "ulNonZero": 0,
+      "nonInt": 0,
+      "dlPositiveByNode": {
+        "2": true,
+        "3": true
+      },
+      "unexpectedCarriers": 0,
+      "ok": true
+    }
+  },
+  "ipcDroppedMaxAll": 0,
+  "overall": {
+    "REF": "22570657bd390aa644f68851757629bb7dba635a6eb2750b5b68e6bf72a54683",
+    "CAND": "22570657bd390aa644f68851757629bb7dba635a6eb2750b5b68e6bf72a54683"
+  },
+  "all_equal": true
+}

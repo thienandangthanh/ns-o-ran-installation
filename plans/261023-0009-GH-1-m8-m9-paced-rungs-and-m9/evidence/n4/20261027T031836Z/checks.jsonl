@@ -1,0 +1,14 @@
+{"name":"n4_args","pass":true,"detail":"part v23; dev 0; ref /home/uc/evidence/r0/20261027T005939Z/runs/c8free; cal ; UL pattern steps; ns-3 ba954440d008b17e20da07c168b3e96ef48db6de; oran-interface 96efc40eeb46e9c6cf19f1cc2184890f8e109bea"}
+{"name":"n4_reference_is_a_pre_n4_free_run","pass":true,"detail":"reference emitter ns-3 ['962fabc724ccc26d0aab3fe25c2b8cac95d45884']"}
+{"name":"n4_build_tools_present","pass":true,"detail":"gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\ntshark 4.4.19 (>= 4.4)"}
+{"name":"n4_ns3_binary_located_at_pins","pass":true,"detail":"/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"}
+{"name":"n4_uloff_free_run","pass":true,"detail":"ns-3 started pid/pgid 860214 at 1793071119.174017126: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --simStartEpochMs=1767225600000 --RngRun=1 --e2TraceDir=/home/uc/evidence/n4/20261027T031836Z/runs/uloff/trace\nns-3 exit code 0\nuloff (free): ns-3 exit 0 (want 0)"}
+{"name":"n4_uloff_emitter_at_pins","pass":true,"detail":"emitter [('ba954440d008b17e20da07c168b3e96ef48db6de', '96efc40eeb46e9c6cf19f1cc2184890f8e109bea')]"}
+{"name":"n4_v2_uloff_equals_reference_after_the_strict_drop","pass":true,"detail":"all_equal True {\"REF\": {\"mode\": \"absent\", \"samplesChecked\": 300, \"missing\": 0, \"ulNonZero\": 0, \"nonInt\": 0, \"dlPositiveByNode\": {}, \"unexpectedCarriers\": 0, \"ok\": true}, \"CAND\": {\"mode\": \"present\", \"samplesChecked\": 300, \"missing\": 0, \"ulNonZero\": 0, \"nonInt\": 0, \"dlPositiveByNode\": {\"2\": true, \"3\": true}, \"unexpectedCarriers\": 0, \"ok\": true}}"}
+{"name":"n4_v2_same_trace_file_names","pass":true,"detail":"same trace file names"}
+{"name":"n4_v2_uloff_prints_no_audit","pass":true,"detail":"N4AUDIT lines: 0"}
+{"name":"n4_ulon_free_run","pass":true,"detail":"ns-3 started pid/pgid 861915 at 1793071203.920521821: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --simStartEpochMs=1767225600000 --RngRun=1 --enableUlTraffic=true --ulTrafficPattern=steps --e2TraceDir=/home/uc/evidence/n4/20261027T031836Z/runs/ulon/trace\nns-3 exit code 0\nulon (free): ns-3 exit 0 (want 0)"}
+{"name":"n4_ulon_emitter_at_pins","pass":true,"detail":"emitter [('ba954440d008b17e20da07c168b3e96ef48db6de', '96efc40eeb46e9c6cf19f1cc2184890f8e109bea')]"}
+{"name":"n4_v3_counters_equal_the_pdcp_audit","pass":true,"detail":"{'a1': True, 'a2': True, 'a3': True, 'a4': True, 'a5': True, 'perCellMaxErrBits': 496, 'periodSumMaxErrKbit': 0.976, 'ties': 0, 'overlaps': 0, 'events': 123794, 'gnbSamples': 200}"}
+{"name":"n4_ul_flag_moves_no_random_draw","pass":true,"detail":"attach, positions, cell ids, switches and X2 before 0.1 s equal"}
+{"name":"n4_no_stray_process","pass":true,"detail":"no leftovers"}

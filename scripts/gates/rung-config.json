@@ -63,9 +63,9 @@
     "value": {
       "enableUlTraffic": true,
       "app": "UdpClient",
-      "pattern": "constant",
-      "PacketSize_B": 1280,
-      "Interval_us": 500,
+      "pattern": "steps",
+      "PacketSize_B": "200 + 50 * (k mod 16) in 100 ms UL period k from 0.1 s",
+      "Interval_us": 5000,
       "MaxPackets": 4294967295,
       "destinationPort": 60000,
       "start_s": 0.1,
@@ -87,7 +87,7 @@
         "checker": "scripts/gates/check-n4-v5-windows.py",
         "registered": "2026-10-27 12:30 KST, before any UL-on run"
       },
-      "calibrationEvidence": null,
+      "calibrationEvidence": "evidence/n4/20261027T031836Z (gate n4 PASS, V3 perCellMaxErrBits 496, periodSumMaxErrKbit 0.976; V5 on the IPC samples 170/170 windows, host-v5-ipc-n4-v5-r1.json)",
       "dumpEvidence": null,
       "r3Config": {
         "nMmWaveEnbNodes": 2,
@@ -100,9 +100,26 @@
         "bufferSize_MB": 10,
         "e2Flags": "scenario-zero defaults (e2du, e2cuUp, e2cuCp true; reducedPmValues as the rungs run it)",
         "dl": "UdpClient 1280 B every 500 us per UE, 0.1 s to simTime - 0.1 s (unchanged)"
+      },
+      "primary": {
+        "pattern": "constant",
+        "PacketSize_B": 1280,
+        "Interval_us": 500,
+        "calibrationEvidence": "evidence/n4/20261027T031109Z",
+        "v5": "red on rule n4-v5-r1 (host-v5-ipc-n4-v5-r1.json: cell 3, 28 of 170 windows: QP constant() true, 7 also all-zero UL); V2 and V3 green"
+      },
+      "ulDeliveredPerImsiPdus": {
+        "1": 1917,
+        "2": 433,
+        "3": 1808,
+        "4": 272,
+        "5": 15,
+        "6": 1749,
+        "offeredPerUe": "about 1980",
+        "note": "diagnostic for P7; UL to IMSI 5 nearly starved in this config"
       }
     },
-    "provenance": "pre-registered at P6 per plans/reports/kongming-261027-0215-GH-1-p6-n4-sdu-header-rule-and-double-count-design.md Q4/Q6 and the P6 release amendments (decisions-261027-0955 ruling 4); calibration and dump evidence are filled after the runs; the R3 schedule's simTime must equal the dump's"
+    "provenance": "pre-registered at P6 per plans/reports/kongming-261027-0215-GH-1-p6-n4-sdu-header-rule-and-double-count-design.md Q4/Q6 and the P6 release amendments (decisions-261027-0955 ruling 4); calibration and dump evidence are filled after the runs; the R3 schedule's simTime must equal the dump's; 2026-10-27 12:25 KST: the primary failed rule n4-v5-r1 on its calibration run (evidence/n4/20261027T031109Z), so the pre-registered fallback \"steps\" is selected; its calibration evidence/n4/20261027T031836Z passes V3 and V5 on the IPC samples"
   },
   "schedules": {
     "r0": {
