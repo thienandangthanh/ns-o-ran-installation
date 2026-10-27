@@ -85,7 +85,7 @@
         "slide": 1,
         "predicate": "per gNB cell, every window of 16 consecutive present ns3.seq: both fields present as Influx long; QP PROCESS.constant() (ric-app-qp@47a35ca src/qptrain.py:81-92) False on [UL, DL]; neither column all zero",
         "checker": "scripts/gates/check-n4-v5-windows.py",
-        "registered": "2026-10-27 12:30 KST, before any UL-on run"
+        "registered": "2026-10-27 12:10:01 KST (harness 55e7f57, with the ul_rate primary and fallback and the ns-3 pin carrying both patterns), before the first UL-on run (evidence/n4/20261027T031109Z, 12:11:09 KST); checkers committed b153b45 (12:06), plan amendments 533b404 (12:01)"
       },
       "calibrationEvidence": "evidence/n4/20261027T031836Z (gate n4 PASS, V3 perCellMaxErrBits 496, periodSumMaxErrKbit 0.976; V5 on the IPC samples 170/170 windows, host-v5-ipc-n4-v5-r1.json)",
       "dumpEvidence": null,

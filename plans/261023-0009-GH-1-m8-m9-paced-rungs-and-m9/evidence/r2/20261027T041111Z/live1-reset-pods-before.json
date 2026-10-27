@@ -1,0 +1,1316 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {
+                "creationTimestamp": "2026-10-27T04:11:16Z",
+                "generateName": "ricxapp-hw-go-c84579888-",
+                "generation": 1,
+                "labels": {
+                    "app": "ricxapp-hw-go",
+                    "kubernetes_name": "ricxapp_hw-go",
+                    "pod-template-hash": "c84579888",
+                    "release": "hw-go"
+                },
+                "name": "ricxapp-hw-go-c84579888-hspgn",
+                "namespace": "ricxapp",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "blockOwnerDeletion": true,
+                        "controller": true,
+                        "kind": "ReplicaSet",
+                        "name": "ricxapp-hw-go-c84579888",
+                        "uid": "14d32a8e-3851-4916-a51b-3d63b172bad7"
+                    }
+                ],
+                "resourceVersion": "602995",
+                "uid": "6966b0b0-ed59-4e5c-bb17-c9bb6a2a7943"
+            },
+            "spec": {
+                "containers": [
+                    {
+                        "envFrom": [
+                            {
+                                "configMapRef": {
+                                    "name": "configmap-ricxapp-hw-go-appenv"
+                                }
+                            },
+                            {
+                                "configMapRef": {
+                                    "name": "dbaas-appconfig"
+                                }
+                            }
+                        ],
+                        "image": "example.com:80/hw-go:latest",
+                        "imagePullPolicy": "IfNotPresent",
+                        "livenessProbe": {
+                            "failureThreshold": 3,
+                            "httpGet": {
+                                "path": "ric/v1/health/alive",
+                                "port": 8080,
+                                "scheme": "HTTP"
+                            },
+                            "initialDelaySeconds": 5,
+                            "periodSeconds": 15,
+                            "successThreshold": 1,
+                            "timeoutSeconds": 1
+                        },
+                        "name": "hw-go",
+                        "ports": [
+                            {
+                                "containerPort": 8080,
+                                "name": "http",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 4561,
+                                "name": "rmrroute",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 4560,
+                                "name": "rmrdata",
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "readinessProbe": {
+                            "failureThreshold": 3,
+                            "httpGet": {
+                                "path": "ric/v1/health/ready",
+                                "port": 8080,
+                                "scheme": "HTTP"
+                            },
+                            "initialDelaySeconds": 5,
+                            "periodSeconds": 15,
+                            "successThreshold": 1,
+                            "timeoutSeconds": 1
+                        },
+                        "resources": {},
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/opt/ric/config",
+                                "name": "config-volume"
+                            },
+                            {
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                                "name": "kube-api-access-4qx7h",
+                                "readOnly": true
+                            }
+                        ]
+                    }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "enableServiceLinks": true,
+                "hostname": "hw-go",
+                "imagePullSecrets": [
+                    {
+                        "name": "example-com-80"
+                    }
+                ],
+                "nodeName": "oran-kvm-2404",
+                "preemptionPolicy": "PreemptLowerPriority",
+                "priority": 0,
+                "restartPolicy": "Always",
+                "schedulerName": "default-scheduler",
+                "securityContext": {},
+                "serviceAccount": "default",
+                "serviceAccountName": "default",
+                "terminationGracePeriodSeconds": 30,
+                "tolerations": [
+                    {
+                        "effect": "NoExecute",
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "tolerationSeconds": 300
+                    },
+                    {
+                        "effect": "NoExecute",
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "tolerationSeconds": 300
+                    }
+                ],
+                "volumes": [
+                    {
+                        "configMap": {
+                            "defaultMode": 420,
+                            "name": "configmap-ricxapp-hw-go-appconfig"
+                        },
+                        "name": "config-volume"
+                    },
+                    {
+                        "name": "kube-api-access-4qx7h",
+                        "projected": {
+                            "defaultMode": 420,
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ],
+                                        "name": "kube-root-ca.crt"
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                },
+                                                "path": "namespace"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:17Z",
+                        "status": "True",
+                        "type": "PodReadyToStartContainers"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:16Z",
+                        "status": "True",
+                        "type": "Initialized"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:33Z",
+                        "status": "True",
+                        "type": "Ready"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:33Z",
+                        "status": "True",
+                        "type": "ContainersReady"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:16Z",
+                        "status": "True",
+                        "type": "PodScheduled"
+                    }
+                ],
+                "containerStatuses": [
+                    {
+                        "containerID": "containerd://fb2195ed1ab31d2b3e95ae2e61099b0be447512657f182609483d98bfa26b397",
+                        "image": "example.com:80/hw-go:latest",
+                        "imageID": "sha256:0259b18b80fd016b286f137b1b804858e34dbfaefda8f3a18a37acc8a360051c",
+                        "lastState": {},
+                        "name": "hw-go",
+                        "ready": true,
+                        "resources": {},
+                        "restartCount": 0,
+                        "started": true,
+                        "state": {
+                            "running": {
+                                "startedAt": "2026-10-27T04:11:17Z"
+                            }
+                        },
+                        "user": {
+                            "linux": {
+                                "gid": 0,
+                                "supplementalGroups": [
+                                    0
+                                ],
+                                "uid": 0
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/opt/ric/config",
+                                "name": "config-volume"
+                            },
+                            {
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                                "name": "kube-api-access-4qx7h",
+                                "readOnly": true,
+                                "recursiveReadOnly": "Disabled"
+                            }
+                        ]
+                    }
+                ],
+                "hostIP": "192.168.122.137",
+                "hostIPs": [
+                    {
+                        "ip": "192.168.122.137"
+                    }
+                ],
+                "phase": "Running",
+                "podIP": "10.244.0.18",
+                "podIPs": [
+                    {
+                        "ip": "10.244.0.18"
+                    }
+                ],
+                "qosClass": "BestEffort",
+                "startTime": "2026-10-27T04:11:16Z"
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {
+                "creationTimestamp": "2026-10-27T04:11:16Z",
+                "generateName": "ricxapp-kpimon-go-85dc5fdf8b-",
+                "generation": 1,
+                "labels": {
+                    "app": "ricxapp-kpimon-go",
+                    "kubernetes_name": "ricxapp_kpimon-go",
+                    "pod-template-hash": "85dc5fdf8b",
+                    "release": "kpimon-go"
+                },
+                "name": "ricxapp-kpimon-go-85dc5fdf8b-khpzs",
+                "namespace": "ricxapp",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "blockOwnerDeletion": true,
+                        "controller": true,
+                        "kind": "ReplicaSet",
+                        "name": "ricxapp-kpimon-go-85dc5fdf8b",
+                        "uid": "cb22006e-b315-455e-b76d-f39cc80021de"
+                    }
+                ],
+                "resourceVersion": "603004",
+                "uid": "bb8871cc-8101-411d-b159-0bfc30949406"
+            },
+            "spec": {
+                "containers": [
+                    {
+                        "envFrom": [
+                            {
+                                "configMapRef": {
+                                    "name": "configmap-ricxapp-kpimon-go-appenv"
+                                }
+                            },
+                            {
+                                "configMapRef": {
+                                    "name": "dbaas-appconfig"
+                                }
+                            }
+                        ],
+                        "image": "127.0.0.1:80/kpimon-go:latest",
+                        "imagePullPolicy": "IfNotPresent",
+                        "livenessProbe": {
+                            "failureThreshold": 3,
+                            "httpGet": {
+                                "path": "ric/v1/health/alive",
+                                "port": 8080,
+                                "scheme": "HTTP"
+                            },
+                            "initialDelaySeconds": 5,
+                            "periodSeconds": 15,
+                            "successThreshold": 1,
+                            "timeoutSeconds": 1
+                        },
+                        "name": "kpimon-go",
+                        "ports": [
+                            {
+                                "containerPort": 8080,
+                                "name": "http",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 4560,
+                                "name": "rmr-data",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 4561,
+                                "name": "rmr-route",
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "readinessProbe": {
+                            "failureThreshold": 3,
+                            "httpGet": {
+                                "path": "ric/v1/health/ready",
+                                "port": 8080,
+                                "scheme": "HTTP"
+                            },
+                            "initialDelaySeconds": 5,
+                            "periodSeconds": 15,
+                            "successThreshold": 1,
+                            "timeoutSeconds": 1
+                        },
+                        "resources": {},
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/opt/ric/config",
+                                "name": "config-volume"
+                            },
+                            {
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                                "name": "kube-api-access-zpr8k",
+                                "readOnly": true
+                            }
+                        ]
+                    }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "enableServiceLinks": true,
+                "hostname": "kpimon-go",
+                "imagePullSecrets": [
+                    {
+                        "name": "127-0-0-1-80"
+                    }
+                ],
+                "nodeName": "oran-kvm-2404",
+                "preemptionPolicy": "PreemptLowerPriority",
+                "priority": 0,
+                "restartPolicy": "Always",
+                "schedulerName": "default-scheduler",
+                "securityContext": {},
+                "serviceAccount": "default",
+                "serviceAccountName": "default",
+                "terminationGracePeriodSeconds": 30,
+                "tolerations": [
+                    {
+                        "effect": "NoExecute",
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "tolerationSeconds": 300
+                    },
+                    {
+                        "effect": "NoExecute",
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "tolerationSeconds": 300
+                    }
+                ],
+                "volumes": [
+                    {
+                        "configMap": {
+                            "defaultMode": 420,
+                            "name": "configmap-ricxapp-kpimon-go-appconfig"
+                        },
+                        "name": "config-volume"
+                    },
+                    {
+                        "name": "kube-api-access-zpr8k",
+                        "projected": {
+                            "defaultMode": 420,
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ],
+                                        "name": "kube-root-ca.crt"
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                },
+                                                "path": "namespace"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:17Z",
+                        "status": "True",
+                        "type": "PodReadyToStartContainers"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:16Z",
+                        "status": "True",
+                        "type": "Initialized"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:33Z",
+                        "status": "True",
+                        "type": "Ready"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:33Z",
+                        "status": "True",
+                        "type": "ContainersReady"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:16Z",
+                        "status": "True",
+                        "type": "PodScheduled"
+                    }
+                ],
+                "containerStatuses": [
+                    {
+                        "containerID": "containerd://563adc4f50b927e60981bbcaaf57cef6523a28b972b90f74f41b55416bbcf255",
+                        "image": "127.0.0.1:80/kpimon-go:latest",
+                        "imageID": "sha256:05dcbff1c01ad42771648265830eaa09513a37821eebf2d9f2a7a0eff42bee18",
+                        "lastState": {},
+                        "name": "kpimon-go",
+                        "ready": true,
+                        "resources": {},
+                        "restartCount": 0,
+                        "started": true,
+                        "state": {
+                            "running": {
+                                "startedAt": "2026-10-27T04:11:17Z"
+                            }
+                        },
+                        "user": {
+                            "linux": {
+                                "gid": 0,
+                                "supplementalGroups": [
+                                    0
+                                ],
+                                "uid": 0
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/opt/ric/config",
+                                "name": "config-volume"
+                            },
+                            {
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                                "name": "kube-api-access-zpr8k",
+                                "readOnly": true,
+                                "recursiveReadOnly": "Disabled"
+                            }
+                        ]
+                    }
+                ],
+                "hostIP": "192.168.122.137",
+                "hostIPs": [
+                    {
+                        "ip": "192.168.122.137"
+                    }
+                ],
+                "phase": "Running",
+                "podIP": "10.244.0.17",
+                "podIPs": [
+                    {
+                        "ip": "10.244.0.17"
+                    }
+                ],
+                "qosClass": "BestEffort",
+                "startTime": "2026-10-27T04:11:16Z"
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {
+                "creationTimestamp": "2026-10-27T04:11:16Z",
+                "generateName": "ricxapp-rc-6db9dcd964-",
+                "generation": 1,
+                "labels": {
+                    "app": "ricxapp-rc",
+                    "kubernetes_name": "ricxapp_rc",
+                    "pod-template-hash": "6db9dcd964",
+                    "release": "rc"
+                },
+                "name": "ricxapp-rc-6db9dcd964-rg24f",
+                "namespace": "ricxapp",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "blockOwnerDeletion": true,
+                        "controller": true,
+                        "kind": "ReplicaSet",
+                        "name": "ricxapp-rc-6db9dcd964",
+                        "uid": "7893c2e0-0438-4553-980e-4726456b4da2"
+                    }
+                ],
+                "resourceVersion": "602986",
+                "uid": "332c410b-bba2-4270-a895-1de0fa2eb60e"
+            },
+            "spec": {
+                "containers": [
+                    {
+                        "envFrom": [
+                            {
+                                "configMapRef": {
+                                    "name": "configmap-ricxapp-rc-appenv"
+                                }
+                            },
+                            {
+                                "configMapRef": {
+                                    "name": "dbaas-appconfig"
+                                }
+                            }
+                        ],
+                        "image": "127.0.0.1:80/rc:latest",
+                        "imagePullPolicy": "IfNotPresent",
+                        "livenessProbe": {
+                            "failureThreshold": 3,
+                            "httpGet": {
+                                "path": "ric/v1/health/alive",
+                                "port": 8080,
+                                "scheme": "HTTP"
+                            },
+                            "initialDelaySeconds": 5,
+                            "periodSeconds": 15,
+                            "successThreshold": 1,
+                            "timeoutSeconds": 1
+                        },
+                        "name": "rc",
+                        "ports": [
+                            {
+                                "containerPort": 8080,
+                                "name": "http",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 7777,
+                                "name": "grpc-server",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 4560,
+                                "name": "rmr-data",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 4561,
+                                "name": "rmr-route",
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "readinessProbe": {
+                            "failureThreshold": 3,
+                            "httpGet": {
+                                "path": "ric/v1/health/ready",
+                                "port": 8080,
+                                "scheme": "HTTP"
+                            },
+                            "initialDelaySeconds": 5,
+                            "periodSeconds": 15,
+                            "successThreshold": 1,
+                            "timeoutSeconds": 1
+                        },
+                        "resources": {},
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/opt/ric/config",
+                                "name": "config-volume"
+                            },
+                            {
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                                "name": "kube-api-access-zkfdd",
+                                "readOnly": true
+                            }
+                        ]
+                    }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "enableServiceLinks": true,
+                "hostname": "rc",
+                "imagePullSecrets": [
+                    {
+                        "name": "127-0-0-1-80"
+                    }
+                ],
+                "nodeName": "oran-kvm-2404",
+                "preemptionPolicy": "PreemptLowerPriority",
+                "priority": 0,
+                "restartPolicy": "Always",
+                "schedulerName": "default-scheduler",
+                "securityContext": {},
+                "serviceAccount": "default",
+                "serviceAccountName": "default",
+                "terminationGracePeriodSeconds": 30,
+                "tolerations": [
+                    {
+                        "effect": "NoExecute",
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "tolerationSeconds": 300
+                    },
+                    {
+                        "effect": "NoExecute",
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "tolerationSeconds": 300
+                    }
+                ],
+                "volumes": [
+                    {
+                        "configMap": {
+                            "defaultMode": 420,
+                            "name": "configmap-ricxapp-rc-appconfig"
+                        },
+                        "name": "config-volume"
+                    },
+                    {
+                        "name": "kube-api-access-zkfdd",
+                        "projected": {
+                            "defaultMode": 420,
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ],
+                                        "name": "kube-root-ca.crt"
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                },
+                                                "path": "namespace"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:17Z",
+                        "status": "True",
+                        "type": "PodReadyToStartContainers"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:16Z",
+                        "status": "True",
+                        "type": "Initialized"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:33Z",
+                        "status": "True",
+                        "type": "Ready"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:33Z",
+                        "status": "True",
+                        "type": "ContainersReady"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:16Z",
+                        "status": "True",
+                        "type": "PodScheduled"
+                    }
+                ],
+                "containerStatuses": [
+                    {
+                        "containerID": "containerd://a207ef2bfcc9371c0c687e66ef833b494cdfc9b7b93799e3ebe837757f9f4595",
+                        "image": "127.0.0.1:80/rc:latest",
+                        "imageID": "sha256:9ab8064699c9265b972aed3e0d2cc67ea34e44f3349fbdf03f8466a31f8d45e1",
+                        "lastState": {},
+                        "name": "rc",
+                        "ready": true,
+                        "resources": {},
+                        "restartCount": 0,
+                        "started": true,
+                        "state": {
+                            "running": {
+                                "startedAt": "2026-10-27T04:11:16Z"
+                            }
+                        },
+                        "user": {
+                            "linux": {
+                                "gid": 0,
+                                "supplementalGroups": [
+                                    0
+                                ],
+                                "uid": 0
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/opt/ric/config",
+                                "name": "config-volume"
+                            },
+                            {
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                                "name": "kube-api-access-zkfdd",
+                                "readOnly": true,
+                                "recursiveReadOnly": "Disabled"
+                            }
+                        ]
+                    }
+                ],
+                "hostIP": "192.168.122.137",
+                "hostIPs": [
+                    {
+                        "ip": "192.168.122.137"
+                    }
+                ],
+                "phase": "Running",
+                "podIP": "10.244.0.16",
+                "podIPs": [
+                    {
+                        "ip": "10.244.0.16"
+                    }
+                ],
+                "qosClass": "BestEffort",
+                "startTime": "2026-10-27T04:11:16Z"
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {
+                "creationTimestamp": "2026-10-27T04:11:59Z",
+                "generateName": "ricxapp-stubqp-685cb7ddf4-",
+                "generation": 1,
+                "labels": {
+                    "app": "ricxapp-stubqp",
+                    "kubernetes_name": "ricxapp_stubqp",
+                    "pod-template-hash": "685cb7ddf4",
+                    "release": "stubqp"
+                },
+                "name": "ricxapp-stubqp-685cb7ddf4-cfbpj",
+                "namespace": "ricxapp",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "blockOwnerDeletion": true,
+                        "controller": true,
+                        "kind": "ReplicaSet",
+                        "name": "ricxapp-stubqp-685cb7ddf4",
+                        "uid": "ea6c15a2-8d64-4eb1-a40f-258aa10036bc"
+                    }
+                ],
+                "resourceVersion": "603132",
+                "uid": "af285a3f-213f-439b-890b-7b1539f7dc00"
+            },
+            "spec": {
+                "containers": [
+                    {
+                        "envFrom": [
+                            {
+                                "configMapRef": {
+                                    "name": "configmap-ricxapp-stubqp-appenv"
+                                }
+                            },
+                            {
+                                "configMapRef": {
+                                    "name": "dbaas-appconfig"
+                                }
+                            }
+                        ],
+                        "image": "127.0.0.1:80/stubqp:07c6dc93df2f",
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "stubqp",
+                        "ports": [
+                            {
+                                "containerPort": 8080,
+                                "name": "http",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 4560,
+                                "name": "rmr-data",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 4561,
+                                "name": "rmr-route",
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "resources": {},
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/opt/ric/config",
+                                "name": "config-volume"
+                            },
+                            {
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                                "name": "kube-api-access-q89lp",
+                                "readOnly": true
+                            }
+                        ]
+                    }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "enableServiceLinks": true,
+                "hostname": "stubqp",
+                "imagePullSecrets": [
+                    {
+                        "name": "127-0-0-1-80"
+                    }
+                ],
+                "nodeName": "oran-kvm-2404",
+                "preemptionPolicy": "PreemptLowerPriority",
+                "priority": 0,
+                "restartPolicy": "Always",
+                "schedulerName": "default-scheduler",
+                "securityContext": {},
+                "serviceAccount": "default",
+                "serviceAccountName": "default",
+                "terminationGracePeriodSeconds": 30,
+                "tolerations": [
+                    {
+                        "effect": "NoExecute",
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "tolerationSeconds": 300
+                    },
+                    {
+                        "effect": "NoExecute",
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "tolerationSeconds": 300
+                    }
+                ],
+                "volumes": [
+                    {
+                        "configMap": {
+                            "defaultMode": 420,
+                            "name": "configmap-ricxapp-stubqp-appconfig"
+                        },
+                        "name": "config-volume"
+                    },
+                    {
+                        "name": "kube-api-access-q89lp",
+                        "projected": {
+                            "defaultMode": 420,
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ],
+                                        "name": "kube-root-ca.crt"
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                },
+                                                "path": "namespace"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:12:00Z",
+                        "status": "True",
+                        "type": "PodReadyToStartContainers"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:59Z",
+                        "status": "True",
+                        "type": "Initialized"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:12:00Z",
+                        "status": "True",
+                        "type": "Ready"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:12:00Z",
+                        "status": "True",
+                        "type": "ContainersReady"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:59Z",
+                        "status": "True",
+                        "type": "PodScheduled"
+                    }
+                ],
+                "containerStatuses": [
+                    {
+                        "containerID": "containerd://d2193bba5b59d4c27f123653e6526777ed5e6edebf05f58fdc25098b2bdd7f39",
+                        "image": "127.0.0.1:80/stubqp:07c6dc93df2f",
+                        "imageID": "sha256:3ffbcf3c8a9961dcee87de0b38f8f9964a93f544cb3b7185167e91f5458dc463",
+                        "lastState": {},
+                        "name": "stubqp",
+                        "ready": true,
+                        "resources": {},
+                        "restartCount": 0,
+                        "started": true,
+                        "state": {
+                            "running": {
+                                "startedAt": "2026-10-27T04:12:00Z"
+                            }
+                        },
+                        "user": {
+                            "linux": {
+                                "gid": 0,
+                                "supplementalGroups": [
+                                    0
+                                ],
+                                "uid": 0
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/opt/ric/config",
+                                "name": "config-volume"
+                            },
+                            {
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                                "name": "kube-api-access-q89lp",
+                                "readOnly": true,
+                                "recursiveReadOnly": "Disabled"
+                            }
+                        ]
+                    }
+                ],
+                "hostIP": "192.168.122.137",
+                "hostIPs": [
+                    {
+                        "ip": "192.168.122.137"
+                    }
+                ],
+                "phase": "Running",
+                "podIP": "10.244.0.21",
+                "podIPs": [
+                    {
+                        "ip": "10.244.0.21"
+                    }
+                ],
+                "qosClass": "BestEffort",
+                "startTime": "2026-10-27T04:11:59Z"
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {
+                "creationTimestamp": "2026-10-27T04:11:59Z",
+                "generateName": "ricxapp-trafficxapp-7c46768578-",
+                "generation": 1,
+                "labels": {
+                    "app": "ricxapp-trafficxapp",
+                    "kubernetes_name": "ricxapp_trafficxapp",
+                    "pod-template-hash": "7c46768578",
+                    "release": "trafficxapp"
+                },
+                "name": "ricxapp-trafficxapp-7c46768578-bn4jk",
+                "namespace": "ricxapp",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "blockOwnerDeletion": true,
+                        "controller": true,
+                        "kind": "ReplicaSet",
+                        "name": "ricxapp-trafficxapp-7c46768578",
+                        "uid": "41cc4300-4ac1-4ec4-9aa3-792033f76f03"
+                    }
+                ],
+                "resourceVersion": "603127",
+                "uid": "59a3071b-aa07-4f08-9cb7-af2bc3a19139"
+            },
+            "spec": {
+                "containers": [
+                    {
+                        "envFrom": [
+                            {
+                                "configMapRef": {
+                                    "name": "configmap-ricxapp-trafficxapp-appenv"
+                                }
+                            },
+                            {
+                                "configMapRef": {
+                                    "name": "dbaas-appconfig"
+                                }
+                            }
+                        ],
+                        "image": "127.0.0.1:80/trafficxapp:latest",
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "trafficxapp",
+                        "ports": [
+                            {
+                                "containerPort": 4560,
+                                "name": "rmr-data",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 4561,
+                                "name": "rmr-route",
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "resources": {},
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/opt/ric/config",
+                                "name": "config-volume"
+                            },
+                            {
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                                "name": "kube-api-access-4hp62",
+                                "readOnly": true
+                            }
+                        ]
+                    }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "enableServiceLinks": true,
+                "hostname": "trafficxapp",
+                "imagePullSecrets": [
+                    {
+                        "name": "127-0-0-1-80"
+                    }
+                ],
+                "nodeName": "oran-kvm-2404",
+                "preemptionPolicy": "PreemptLowerPriority",
+                "priority": 0,
+                "restartPolicy": "Always",
+                "schedulerName": "default-scheduler",
+                "securityContext": {},
+                "serviceAccount": "default",
+                "serviceAccountName": "default",
+                "terminationGracePeriodSeconds": 30,
+                "tolerations": [
+                    {
+                        "effect": "NoExecute",
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "tolerationSeconds": 300
+                    },
+                    {
+                        "effect": "NoExecute",
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "tolerationSeconds": 300
+                    }
+                ],
+                "volumes": [
+                    {
+                        "configMap": {
+                            "defaultMode": 420,
+                            "name": "configmap-ricxapp-trafficxapp-appconfig"
+                        },
+                        "name": "config-volume"
+                    },
+                    {
+                        "name": "kube-api-access-4hp62",
+                        "projected": {
+                            "defaultMode": 420,
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ],
+                                        "name": "kube-root-ca.crt"
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                },
+                                                "path": "namespace"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:12:00Z",
+                        "status": "True",
+                        "type": "PodReadyToStartContainers"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:59Z",
+                        "status": "True",
+                        "type": "Initialized"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:12:00Z",
+                        "status": "True",
+                        "type": "Ready"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:12:00Z",
+                        "status": "True",
+                        "type": "ContainersReady"
+                    },
+                    {
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2026-10-27T04:11:59Z",
+                        "status": "True",
+                        "type": "PodScheduled"
+                    }
+                ],
+                "containerStatuses": [
+                    {
+                        "containerID": "containerd://d601a64ef7c67a1f997bb61598e493acdb2f4b75b4ae37b7a413b31fc187e5b6",
+                        "image": "127.0.0.1:80/trafficxapp:latest",
+                        "imageID": "sha256:f521d56b24b41eed4137a0683b740e687f81e41c7d49ef68221879c59ab3d0d5",
+                        "lastState": {},
+                        "name": "trafficxapp",
+                        "ready": true,
+                        "resources": {},
+                        "restartCount": 0,
+                        "started": true,
+                        "state": {
+                            "running": {
+                                "startedAt": "2026-10-27T04:12:00Z"
+                            }
+                        },
+                        "user": {
+                            "linux": {
+                                "gid": 0,
+                                "supplementalGroups": [
+                                    0
+                                ],
+                                "uid": 0
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/opt/ric/config",
+                                "name": "config-volume"
+                            },
+                            {
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                                "name": "kube-api-access-4hp62",
+                                "readOnly": true,
+                                "recursiveReadOnly": "Disabled"
+                            }
+                        ]
+                    }
+                ],
+                "hostIP": "192.168.122.137",
+                "hostIPs": [
+                    {
+                        "ip": "192.168.122.137"
+                    }
+                ],
+                "phase": "Running",
+                "podIP": "10.244.0.20",
+                "podIPs": [
+                    {
+                        "ip": "10.244.0.20"
+                    }
+                ],
+                "qosClass": "BestEffort",
+                "startTime": "2026-10-27T04:11:59Z"
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": ""
+    }
+}

@@ -1,0 +1,139 @@
+{
+  "schema": "ipc-null-sink-summary.v1",
+  "validation": "structural",
+  "ports": {
+    "38471": {
+      "connections": 1,
+      "hello": 1,
+      "sample": 100,
+      "bye": 1,
+      "controlAck": 0,
+      "invalid": 0,
+      "bytes": 260543
+    },
+    "38472": {
+      "connections": 1,
+      "hello": 1,
+      "sample": 100,
+      "bye": 1,
+      "controlAck": 0,
+      "invalid": 0,
+      "bytes": 512732
+    },
+    "38473": {
+      "connections": 1,
+      "hello": 1,
+      "sample": 100,
+      "bye": 1,
+      "controlAck": 0,
+      "invalid": 0,
+      "bytes": 292039
+    }
+  },
+  "nodes": {
+    "1": {
+      "port": 38471,
+      "kind": "enb",
+      "hello": 1,
+      "sample": 100,
+      "bye": 1,
+      "last_seq": 99,
+      "seq_gaps": 0,
+      "ue_counts": {
+        "0": 1,
+        "6": 99
+      },
+      "ipc_dropped_last": 0,
+      "ipc_dropped_max": 0,
+      "period_ns": 100000000,
+      "run_ids": [
+        "1767225600000-1070315"
+      ],
+      "bye_msg": {
+        "lastSeq": 99,
+        "built": 100,
+        "sent": 100,
+        "droppedDisconnected": 0,
+        "droppedBackpressure": 0
+      },
+      "controlAck": 0,
+      "controls_sent": 0
+    },
+    "2": {
+      "port": 38472,
+      "kind": "gnb",
+      "hello": 1,
+      "sample": 100,
+      "bye": 1,
+      "last_seq": 99,
+      "seq_gaps": 0,
+      "ue_counts": {
+        "0": 1,
+        "4": 99
+      },
+      "ipc_dropped_last": 0,
+      "ipc_dropped_max": 0,
+      "period_ns": 100000000,
+      "run_ids": [
+        "1767225600000-1070315"
+      ],
+      "bye_msg": {
+        "lastSeq": 99,
+        "built": 100,
+        "sent": 100,
+        "droppedDisconnected": 0,
+        "droppedBackpressure": 0
+      },
+      "controlAck": 0,
+      "controls_sent": 0
+    },
+    "3": {
+      "port": 38473,
+      "kind": "gnb",
+      "hello": 1,
+      "sample": 100,
+      "bye": 1,
+      "last_seq": 99,
+      "seq_gaps": 0,
+      "ue_counts": {
+        "0": 1,
+        "2": 99
+      },
+      "ipc_dropped_last": 0,
+      "ipc_dropped_max": 0,
+      "period_ns": 100000000,
+      "run_ids": [
+        "1767225600000-1070315"
+      ],
+      "bye_msg": {
+        "lastSeq": 99,
+        "built": 100,
+        "sent": 100,
+        "droppedDisconnected": 0,
+        "droppedBackpressure": 0
+      },
+      "controlAck": 0,
+      "controls_sent": 0
+    }
+  },
+  "totals": {
+    "hello": 3,
+    "sample": 300,
+    "bye": 3,
+    "controlAck": 0,
+    "invalid": 0,
+    "connections": 3,
+    "controls_sent": 0,
+    "controls_never_sent": 0,
+    "distinct_imsis": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "n_distinct_imsis": 6
+  },
+  "invalid_examples": []
+}

@@ -1,0 +1,7 @@
+{
+  "check": "token line in NIST's qp_config.ini.patch vs the deployed InfluxDB token (VM influxdb_auth_token.json), compared by length and sha256 prefix only; values never printed",
+  "patchTokenLength": 0,
+  "deployedTokenLength": 88,
+  "equal": false,
+  "tokenInCommit1": false
+}

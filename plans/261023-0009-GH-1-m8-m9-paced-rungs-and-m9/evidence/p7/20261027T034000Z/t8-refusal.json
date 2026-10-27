@@ -1,0 +1,13 @@
+{
+  "trigger": "T8",
+  "command": "git -C ric-app-qp push -q -u origin dev/l-release-nist180",
+  "remote": "git@github.com:thienandangthanh/ric-app-qp.git",
+  "branch": "dev/l-release-nist180",
+  "sha": "901f8c5",
+  "refusedAtKst": "2026-10-27 ~12:22",
+  "refusedBy": "Claude Code auto-mode permission classifier",
+  "label": "[Data Exfiltration]",
+  "retried": false,
+  "otherRoute": "none",
+  "planStep": "P7 step 1 (commit 1), plan.md cross-cutting rule 'Code delivery': WIP pushes to the QP fork branch allowed; plan.md Permissions: 'A classifier refusal is T8'"
+}

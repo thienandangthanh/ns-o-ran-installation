@@ -1,0 +1,287 @@
+2026-10-27T04:09:16.828Z ns3-e2-agent INFO node 3 kind gnb gNB-ID 3 PLMN 00101 -> e2term 10.97.131.139:36422 (src port 0); RAN function 2 OID 1.3.6.1.4.1.53148.1.3.2.2
+2026-10-27T04:09:16.828Z ns3-e2-agent INFO metric map /etc/ns3-e2-agent/metric-map.v1.json sha256 9cfcbbcdd71514e4e2627cfbb4aa950760b42f85d5045de2c1b71d6215f16923: cell 35, ue 58 items; definition 2319 octets
+2026-10-27T04:09:16.828Z ns3-e2-agent INFO ipc: listening on tcp/38473
+2026-10-27T04:09:16.828Z ns3-e2-agent INFO HOLDOFF 8 s before the first connect
+{"event":"stats","unixMs":1793074161828,"nodeId":3,"state":"HOLDOFF","subs":0,"setupFuncAccepted":false,"lastSeq":-1,"samplesIn":0,"samplesForwarded":0,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0},"uesDropped":{"oversize":0,"badImsi":0},"chunkSplits":0,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":0,"indTxCell":0,"indTxUe":0,"ipc":{"accepted":0,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":0,"helloRejected":0,"bye":0,"unknownType":0},"e2":{"connectAttempts":0,"connectFailures":0,"setups":0,"rxPdu":0,"rxPduUndecodable":0,"subsAdded":0,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":0,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":0,"applied":0,"refused":0,"failedOnBye":0,"ackTx":0,"failTx":0,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":0}
+2026-10-27T04:09:24.829Z ns3-e2-agent INFO SCTP up 172.17.0.4:57150 -> 10.97.131.139:36422; E2SetupRequest sent (2428 octets)
+{"event":"stats","unixMs":1793074166828,"nodeId":3,"state":"SETUP_SENT","subs":0,"setupFuncAccepted":false,"lastSeq":-1,"samplesIn":0,"samplesForwarded":0,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0},"uesDropped":{"oversize":0,"badImsi":0},"chunkSplits":0,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":0,"indTxCell":0,"indTxUe":0,"ipc":{"accepted":0,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":0,"helloRejected":0,"bye":0,"unknownType":0},"e2":{"connectAttempts":1,"connectFailures":0,"setups":0,"rxPdu":0,"rxPduUndecodable":0,"subsAdded":0,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":0,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":0,"applied":0,"refused":0,"failedOnBye":0,"ackTx":0,"failTx":0,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":0}
+2026-10-27T04:09:27.836Z ns3-e2-agent INFO rx E2SetupResponse (procedure 1)
+2026-10-27T04:09:27.836Z ns3-e2-agent INFO E2 setup done: 1 function(s) accepted, 0 rejected; RAN function 2 ACCEPTED
+2026-10-27T04:09:28.172Z ns3-e2-agent INFO rx RICsubscriptionRequest (procedure 8)
+2026-10-27T04:09:28.172Z ns3-e2-agent INFO subscription 123/30 RAN function 2: 1 action(s) admitted, indications on action 1
+in for loop i = 0
+[encode_e2apv1.cpp:757] [INFO] Subscription response
+<E2AP-PDU>
+    <successfulOutcome>
+        <procedureCode>8</procedureCode>
+        <criticality><reject/></criticality>
+        <value>
+            <RICsubscriptionResponse>
+                <protocolIEs>
+                    <RICsubscriptionResponse-IEs>
+                        <id>29</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICrequestID>
+                                <ricRequestorID>123</ricRequestorID>
+                                <ricInstanceID>30</ricInstanceID>
+                            </RICrequestID>
+                        </value>
+                    </RICsubscriptionResponse-IEs>
+                    <RICsubscriptionResponse-IEs>
+                        <id>5</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RANfunctionID>147</RANfunctionID>
+                        </value>
+                    </RICsubscriptionResponse-IEs>
+                    <RICsubscriptionResponse-IEs>
+                        <id>17</id>
+                        <criticality><reject/></criticality>
+                        <value>
+                            <RICaction-Admitted-List>
+                                <ProtocolIE-SingleContainer>
+                                    <id>14</id>
+                                    <criticality><reject/></criticality>
+                                    <value>
+                                        <RICaction-Admitted-Item>
+                                            <ricActionID>1</ricActionID>
+                                        </RICaction-Admitted-Item>
+                                    </value>
+                                </ProtocolIE-SingleContainer>
+                            </RICaction-Admitted-List>
+                        </value>
+                    </RICsubscriptionResponse-IEs>
+                </protocolIEs>
+            </RICsubscriptionResponse>
+        </value>
+    </successfulOutcome>
+</E2AP-PDU>
+2026-10-27T04:09:28.172Z ns3-e2-agent INFO tx RICsubscriptionResponse (33 octets)
+{"event":"stats","unixMs":1793074171828,"nodeId":3,"state":"READY","subs":1,"setupFuncAccepted":true,"lastSeq":-1,"samplesIn":0,"samplesForwarded":0,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0},"uesDropped":{"oversize":0,"badImsi":0},"chunkSplits":0,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":0,"indTxCell":0,"indTxUe":0,"ipc":{"accepted":0,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":0,"helloRejected":0,"bye":0,"unknownType":0},"e2":{"connectAttempts":1,"connectFailures":0,"setups":1,"rxPdu":2,"rxPduUndecodable":0,"subsAdded":1,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":0,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":0,"applied":0,"refused":0,"failedOnBye":0,"ackTx":0,"failTx":0,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":0}
+2026-10-27T04:09:33.876Z ns3-e2-agent INFO ipc: client 172.17.0.1:34846 connected
+2026-10-27T04:09:33.876Z ns3-e2-agent INFO ipc: hello accepted (runId 1767225600000-1037815, periodNs 100000000, simStartEpochMs 1767225600000)
+2026-10-27T04:09:33.876Z ns3-e2-agent INFO lock-step: READY with 1 subscription(s); step -1 sent
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+{"event":"stats","unixMs":1793074176928,"nodeId":3,"state":"READY","subs":1,"setupFuncAccepted":true,"lastSeq":4,"samplesIn":5,"samplesForwarded":5,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0},"uesDropped":{"oversize":0,"badImsi":0},"chunkSplits":0,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":9,"indTxCell":5,"indTxUe":4,"ipc":{"accepted":1,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":1,"helloRejected":0,"bye":0,"unknownType":0},"e2":{"connectAttempts":1,"connectFailures":0,"setups":1,"rxPdu":2,"rxPduUndecodable":0,"subsAdded":1,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":0,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":0,"applied":0,"refused":0,"failedOnBye":0,"ackTx":0,"failTx":0,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":6}
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+{"event":"stats","unixMs":1793074181928,"nodeId":3,"state":"READY","subs":1,"setupFuncAccepted":true,"lastSeq":10,"samplesIn":11,"samplesForwarded":11,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0},"uesDropped":{"oversize":0,"badImsi":0},"chunkSplits":0,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":21,"indTxCell":11,"indTxUe":10,"ipc":{"accepted":1,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":1,"helloRejected":0,"bye":0,"unknownType":0},"e2":{"connectAttempts":1,"connectFailures":0,"setups":1,"rxPdu":2,"rxPduUndecodable":0,"subsAdded":1,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":0,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":0,"applied":0,"refused":0,"failedOnBye":0,"ackTx":0,"failTx":0,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":12}
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+{"event":"stats","unixMs":1793074186928,"nodeId":3,"state":"READY","subs":1,"setupFuncAccepted":true,"lastSeq":16,"samplesIn":17,"samplesForwarded":17,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0},"uesDropped":{"oversize":0,"badImsi":0},"chunkSplits":0,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":33,"indTxCell":17,"indTxUe":16,"ipc":{"accepted":1,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":1,"helloRejected":0,"bye":0,"unknownType":0},"e2":{"connectAttempts":1,"connectFailures":0,"setups":1,"rxPdu":2,"rxPduUndecodable":0,"subsAdded":1,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":0,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":0,"applied":0,"refused":0,"failedOnBye":0,"ackTx":0,"failTx":0,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":18}
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+2026-10-27T04:09:50.552Z ns3-e2-agent INFO rx RICcontrolRequest (procedure 4)
+2026-10-27T04:09:50.552Z ns3-e2-agent INFO control 1/4 -> ns-3 ctlId 1: imsi 1 target cell 2 (gNB 2) afterSeq 20
+2026-10-27T04:09:50.552Z ns3-e2-agent INFO tx RICcontrolAcknowledge (29 octets)
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+{"event":"stats","unixMs":1793074191928,"nodeId":3,"state":"READY","subs":1,"setupFuncAccepted":true,"lastSeq":21,"samplesIn":22,"samplesForwarded":22,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0},"uesDropped":{"oversize":0,"badImsi":0},"chunkSplits":0,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":43,"indTxCell":22,"indTxUe":21,"ipc":{"accepted":1,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":1,"helloRejected":0,"bye":0,"unknownType":0},"e2":{"connectAttempts":1,"connectFailures":0,"setups":1,"rxPdu":3,"rxPduUndecodable":0,"subsAdded":1,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":1,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":1,"applied":1,"refused":0,"failedOnBye":0,"ackTx":1,"failTx":0,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":23}
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+{"event":"stats","unixMs":1793074196930,"nodeId":3,"state":"READY","subs":1,"setupFuncAccepted":true,"lastSeq":28,"samplesIn":29,"samplesForwarded":29,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0},"uesDropped":{"oversize":0,"badImsi":0},"chunkSplits":0,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":57,"indTxCell":29,"indTxUe":28,"ipc":{"accepted":1,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":1,"helloRejected":0,"bye":0,"unknownType":0},"e2":{"connectAttempts":1,"connectFailures":0,"setups":1,"rxPdu":3,"rxPduUndecodable":0,"subsAdded":1,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":1,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":1,"applied":1,"refused":0,"failedOnBye":0,"ackTx":1,"failTx":0,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":30}
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+{"event":"stats","unixMs":1793074202028,"nodeId":3,"state":"READY","subs":1,"setupFuncAccepted":true,"lastSeq":35,"samplesIn":36,"samplesForwarded":36,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0},"uesDropped":{"oversize":0,"badImsi":0},"chunkSplits":0,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":71,"indTxCell":36,"indTxUe":35,"ipc":{"accepted":1,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":1,"helloRejected":0,"bye":0,"unknownType":0},"e2":{"connectAttempts":1,"connectFailures":0,"setups":1,"rxPdu":3,"rxPduUndecodable":0,"subsAdded":1,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":1,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":1,"applied":1,"refused":0,"failedOnBye":0,"ackTx":1,"failTx":0,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":37}
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+2026-10-27T04:10:04.819Z ns3-e2-agent INFO rx RICcontrolRequest (procedure 4)
+2026-10-27T04:10:04.820Z ns3-e2-agent INFO control 1/10 -> ns-3 ctlId 2: imsi 3 target cell 3 (gNB 3) afterSeq 40
+2026-10-27T04:10:04.830Z ns3-e2-agent INFO control 1/10 fails (ricRequest cause 11): ns-3 refused: inHandover
+2026-10-27T04:10:04.830Z ns3-e2-agent INFO tx RICcontrolFailure (28 octets)
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+{"event":"stats","unixMs":1793074207028,"nodeId":3,"state":"READY","subs":1,"setupFuncAccepted":true,"lastSeq":43,"samplesIn":44,"samplesForwarded":44,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0},"uesDropped":{"oversize":0,"badImsi":0},"chunkSplits":0,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":87,"indTxCell":44,"indTxUe":43,"ipc":{"accepted":1,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":1,"helloRejected":0,"bye":0,"unknownType":0},"e2":{"connectAttempts":1,"connectFailures":0,"setups":1,"rxPdu":4,"rxPduUndecodable":0,"subsAdded":1,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":2,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":2,"applied":1,"refused":1,"failedOnBye":0,"ackTx":1,"failTx":1,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":45}
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+{"event":"stats","unixMs":1793074212028,"nodeId":3,"state":"READY","subs":1,"setupFuncAccepted":true,"lastSeq":51,"samplesIn":52,"samplesForwarded":52,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0},"uesDropped":{"oversize":0,"badImsi":0},"chunkSplits":0,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":103,"indTxCell":52,"indTxUe":51,"ipc":{"accepted":1,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":1,"helloRejected":0,"bye":0,"unknownType":0},"e2":{"connectAttempts":1,"connectFailures":0,"setups":1,"rxPdu":4,"rxPduUndecodable":0,"subsAdded":1,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":2,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":2,"applied":1,"refused":1,"failedOnBye":0,"ackTx":1,"failTx":1,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":53}
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+{"event":"stats","unixMs":1793074217028,"nodeId":3,"state":"READY","subs":1,"setupFuncAccepted":true,"lastSeq":58,"samplesIn":59,"samplesForwarded":59,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0},"uesDropped":{"oversize":0,"badImsi":0},"chunkSplits":0,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":117,"indTxCell":59,"indTxUe":58,"ipc":{"accepted":1,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":1,"helloRejected":0,"bye":0,"unknownType":0},"e2":{"connectAttempts":1,"connectFailures":0,"setups":1,"rxPdu":4,"rxPduUndecodable":0,"subsAdded":1,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":2,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":2,"applied":1,"refused":1,"failedOnBye":0,"ackTx":1,"failTx":1,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":60}
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+{"event":"stats","unixMs":1793074222028,"nodeId":3,"state":"READY","subs":1,"setupFuncAccepted":true,"lastSeq":66,"samplesIn":67,"samplesForwarded":67,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0},"uesDropped":{"oversize":0,"badImsi":0},"chunkSplits":0,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":133,"indTxCell":67,"indTxUe":66,"ipc":{"accepted":1,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":1,"helloRejected":0,"bye":0,"unknownType":0},"e2":{"connectAttempts":1,"connectFailures":0,"setups":1,"rxPdu":4,"rxPduUndecodable":0,"subsAdded":1,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":2,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":2,"applied":1,"refused":1,"failedOnBye":0,"ackTx":1,"failTx":1,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":68}
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+{"event":"stats","unixMs":1793074227128,"nodeId":3,"state":"READY","subs":1,"setupFuncAccepted":true,"lastSeq":74,"samplesIn":75,"samplesForwarded":75,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0},"uesDropped":{"oversize":0,"badImsi":0},"chunkSplits":0,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":149,"indTxCell":75,"indTxUe":74,"ipc":{"accepted":1,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":1,"helloRejected":0,"bye":0,"unknownType":0},"e2":{"connectAttempts":1,"connectFailures":0,"setups":1,"rxPdu":4,"rxPduUndecodable":0,"subsAdded":1,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":2,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":2,"applied":1,"refused":1,"failedOnBye":0,"ackTx":1,"failTx":1,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":76}
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+{"event":"stats","unixMs":1793074232128,"nodeId":3,"state":"READY","subs":1,"setupFuncAccepted":true,"lastSeq":82,"samplesIn":83,"samplesForwarded":83,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0},"uesDropped":{"oversize":0,"badImsi":0},"chunkSplits":0,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":165,"indTxCell":83,"indTxUe":82,"ipc":{"accepted":1,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":1,"helloRejected":0,"bye":0,"unknownType":0},"e2":{"connectAttempts":1,"connectFailures":0,"setups":1,"rxPdu":4,"rxPduUndecodable":0,"subsAdded":1,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":2,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":2,"applied":1,"refused":1,"failedOnBye":0,"ackTx":1,"failTx":1,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":84}
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+{"event":"stats","unixMs":1793074237128,"nodeId":3,"state":"READY","subs":1,"setupFuncAccepted":true,"lastSeq":89,"samplesIn":90,"samplesForwarded":90,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0},"uesDropped":{"oversize":0,"badImsi":0},"chunkSplits":0,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":179,"indTxCell":90,"indTxUe":89,"ipc":{"accepted":1,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":1,"helloRejected":0,"bye":0,"unknownType":0},"e2":{"connectAttempts":1,"connectFailures":0,"setups":1,"rxPdu":4,"rxPduUndecodable":0,"subsAdded":1,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":2,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":2,"applied":1,"refused":1,"failedOnBye":0,"ackTx":1,"failTx":1,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":91}
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+{"event":"stats","unixMs":1793074242128,"nodeId":3,"state":"READY","subs":1,"setupFuncAccepted":true,"lastSeq":97,"samplesIn":98,"samplesForwarded":98,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0},"uesDropped":{"oversize":0,"badImsi":0},"chunkSplits":0,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":195,"indTxCell":98,"indTxUe":97,"ipc":{"accepted":1,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":1,"helloRejected":0,"bye":0,"unknownType":0},"e2":{"connectAttempts":1,"connectFailures":0,"setups":1,"rxPdu":4,"rxPduUndecodable":0,"subsAdded":1,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":2,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":2,"applied":1,"refused":1,"failedOnBye":0,"ackTx":1,"failTx":1,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":99}
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+[encode_e2apv1.cpp:902] [INFO] Initializing E2AP request
+2026-10-27T04:10:43.893Z ns3-e2-agent INFO ipc: client closed (EOF)
+2026-10-27T04:10:43.893Z ns3-e2-agent INFO ipc: bye {"type":"bye","v":1,"nodeId":3,"lastSeq":99,"built":100,"sent":100,"droppedDisconnected":0,"droppedBackpressure":0}
+{"event":"stats","unixMs":1793074247128,"nodeId":3,"state":"READY","subs":1,"setupFuncAccepted":true,"lastSeq":99,"samplesIn":100,"samplesForwarded":100,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0},"uesDropped":{"oversize":0,"badImsi":0},"chunkSplits":0,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":199,"indTxCell":100,"indTxUe":99,"ipc":{"accepted":1,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":1,"helloRejected":0,"bye":1,"unknownType":0},"e2":{"connectAttempts":1,"connectFailures":0,"setups":1,"rxPdu":4,"rxPduUndecodable":0,"subsAdded":1,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":2,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":2,"applied":1,"refused":1,"failedOnBye":0,"ackTx":1,"failTx":1,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":101}

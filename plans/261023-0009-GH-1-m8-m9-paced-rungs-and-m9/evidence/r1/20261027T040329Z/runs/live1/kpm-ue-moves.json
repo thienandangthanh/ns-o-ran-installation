@@ -1,0 +1,115 @@
+{
+ "format2Indications": 406,
+ "gnbNodes": [
+  2,
+  3
+ ],
+ "kpmUeListMoved": {
+  "1": true,
+  "2": true,
+  "3": true,
+  "6": true
+ },
+ "lines": [
+  {
+   "after": {
+    "inSource": false,
+    "inTarget": true
+   },
+   "before": {
+    "inSource": true,
+    "inTarget": false
+   },
+   "cause": "",
+   "imsi": 1,
+   "moved": true,
+   "outcome": "applied",
+   "rxSeq": 20,
+   "source": 3,
+   "target": 2
+  },
+  {
+   "after": {
+    "inSource": false,
+    "inTarget": true
+   },
+   "before": {
+    "inSource": true,
+    "inTarget": false
+   },
+   "cause": "",
+   "imsi": 6,
+   "moved": true,
+   "outcome": "applied",
+   "rxSeq": 20,
+   "source": 2,
+   "target": 3
+  },
+  {
+   "after": {
+    "inSource": false,
+    "inTarget": true
+   },
+   "before": {
+    "inSource": true,
+    "inTarget": false
+   },
+   "cause": "",
+   "imsi": 2,
+   "moved": true,
+   "outcome": "applied",
+   "rxSeq": 30,
+   "source": 3,
+   "target": 2
+  },
+  {
+   "cause": "inHandover",
+   "imsi": 2,
+   "judgedBy": "the applied line of the same imsi and step",
+   "outcome": "refused",
+   "rxSeq": 30,
+   "source": 3,
+   "target": 3
+  },
+  {
+   "after": {
+    "inSource": false,
+    "inTarget": true
+   },
+   "before": {
+    "inSource": true,
+    "inTarget": false
+   },
+   "cause": "",
+   "imsi": 3,
+   "moved": true,
+   "outcome": "applied",
+   "rxSeq": 40,
+   "source": 2,
+   "target": 3
+  },
+  {
+   "cause": "inHandover",
+   "imsi": 3,
+   "judgedBy": "the applied line of the same imsi and step",
+   "outcome": "refused",
+   "rxSeq": 40,
+   "source": 2,
+   "target": 3
+  },
+  {
+   "cause": "unknownImsi",
+   "imsi": 99,
+   "membershipK": [],
+   "membershipK1": [],
+   "outcome": "refused",
+   "rxSeq": 50,
+   "source": 0,
+   "target": 2,
+   "unchanged": true
+  }
+ ],
+ "pass": true,
+ "problems": [],
+ "reports": 297
+}
