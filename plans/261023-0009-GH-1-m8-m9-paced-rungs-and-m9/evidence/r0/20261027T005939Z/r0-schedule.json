@@ -1,0 +1,57 @@
+{
+ "steps": {
+  "20": {
+   "trigger": {
+    "cmd": [
+     "bash",
+     "/home/uc/harness/scripts/gates/rc-send.sh",
+     "10.111.50.166:7777",
+     "1",
+     "6",
+     "0000000303"
+    ]
+   },
+   "expect": 1
+  },
+  "30": {
+   "trigger": {
+    "cmd": [
+     "bash",
+     "/home/uc/harness/scripts/gates/rc-send.sh",
+     "10.111.50.166:7777",
+     "2",
+     "3",
+     "0000000303"
+    ]
+   },
+   "expect": 1
+  },
+  "40": {
+   "trigger": {
+    "cmd": [
+     "bash",
+     "/home/uc/harness/scripts/gates/rc-send.sh",
+     "10.111.50.166:7777",
+     "2",
+     "1",
+     "0000000202"
+    ]
+   },
+   "expect": 1
+  },
+  "50": {
+   "trigger": {
+    "cmd": [
+     "bash",
+     "/home/uc/harness/scripts/gates/rc-send.sh",
+     "10.111.50.166:7777",
+     "3",
+     "6",
+     "0000000303"
+    ]
+   },
+   "expect": 1
+  }
+ },
+ "late": []
+}

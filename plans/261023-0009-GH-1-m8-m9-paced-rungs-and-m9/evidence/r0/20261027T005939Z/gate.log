@@ -1,0 +1,48 @@
+[00:59:40] gate r0 start; evidence /home/uc/evidence/r0/20261027T005939Z; harness 089ea867298dfa627d6c2d780161844f643de31b
+[00:59:40] PASS r0_args
+[00:59:40] PASS r0_t_ctl_is_calibrated_or_run_is_dev
+[00:59:40] ric watchdog started (pid 638287, threshold 600s)
+[00:59:40] PASS r0_nist_tree_at_testbed_sha_with_agent_dir
+[00:59:41] PASS r0_build_tools_present
+[00:59:41] PASS r0_sctp_module_loaded
+[00:59:41] PASS r0_ns3_binary_located_at_pins
+[00:59:41] PASS r0_pod_log_reader_self_test
+[00:59:41] PASS r0_grpcurl_fetched_and_checksum_verified
+[01:00:28] PASS r0_pre_ric_reset_fresh_rc_kpimon_hw_go_and_bucket
+[01:00:28] PASS r0_rc_installed_at_pin_and_ready
+[01:01:22] PASS r0_rc_decoder_built
+[01:02:21] PASS r0_q2_null_control_free_run_default_threshold
+[01:02:21] PASS r0_q2_count_lte_outage_switches
+[01:03:44] PASS r0_c8_free_run_at_gated_threshold
+[01:05:07] PASS r0_c8_lockstep_null_control
+[01:05:08] PASS r0_c8_null_control_equals_free_run
+[01:05:51] PASS r0_live1_ric_reset_fresh_pods_and_bucket
+[01:05:52] PASS r0_live1_route_dump_start
+[01:05:52] PASS r0_live1_capture_started_before_agents
+[01:06:26] PASS r0_live1_agents_connected_set_exact
+[01:06:26] PASS r0_live1_agent_ips_recorded
+[01:06:29] PASS r0_live1_every_agent_ready_and_subscribed
+[01:06:29] PASS r0_g4_nodeb_keys_and_ts_cell_map_replay
+[01:06:30] PASS r0_live1_pods_snapshot_before
+[01:07:42] PASS r0_live1_lockstep_run_exits_clean
+[01:07:43] PASS r0_live1_pods_snapshot_after
+[01:07:43] PASS r0_live1_route_dump_end
+[01:07:43] PASS r0_live1_restart_counts_zero_rc_kpimon_hw_go_agents
+[01:07:46] PASS r0_live1_agents_stopped
+[01:07:47] PASS r0_live1_capture_stopped
+[01:07:47] PASS r0_live1_kpimon_log_window_complete
+[01:07:47] PASS r0_live1_kpimon_zero_rc_wmore
+[01:07:49] PASS r0_live1_wire_one_terminal_answer_per_request_joined_to_ledger
+[01:07:49] PASS r0_live1_c2_ledger
+[01:07:49] PASS r0_live1_c9_handover_rows_match_applied_lines
+[01:07:49] PASS r0_live1_kpm_ue_lists_move_applied_and_keep_refused
+[01:07:49] PASS r0_live1_expected_outcomes_and_afterseq
+[01:07:49] PASS r0_d7_three_paths_two_imsis_both_gnbs
+[01:07:50] PASS r0_v4_already_on_target_refusal_ledger_and_wire_failure
+[01:07:50] PASS r0_runs_kpm_moved_c2_c5_reset_fresh
+[01:07:50] PASS r0_ipc_dropped_zero_no_sub_dropped_zero_and_slack_recorded
+[01:07:50] PASS r0_restart_counts_all_zero
+[01:07:50] PASS r0_no_stray_process
+verdict r0: PASS failed=[]
+Terminated
+[01:07:51] ric watchdog stopped (pid 638287)
