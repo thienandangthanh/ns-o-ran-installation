@@ -354,9 +354,10 @@ check r0_ipc_dropped_zero_no_sub_dropped_zero_and_slack_recorded facts_final
 for k in minSlack lControlLatencyS ipcDropped droppedNoSub; do
     fact "$k" "$(python3 -I -c 'import json,sys; print(json.dumps(json.load(open(sys.argv[1]))[sys.argv[2]]))' "$e/r0-facts.json" "$k" 2>/dev/null || echo null)"
 done
-restart_all_zero() { cat "$e"/live*-after-pods.tsv "$e"/k9-after-pods.tsv 2>/dev/null | awk -F'\t' '$4 != 0 { bad = 1 } END { exit bad }'; }
-check r0_restart_counts_all_zero restart_all_zero
-fact restartCountsAllZero "$(restart_all_zero && echo true || echo false)"
+JUDGED_RUNS=(); for i in $(seq "$NLIVE"); do JUDGED_RUNS+=("live$i"); done
+if [ "$MODE" = c1 ]; then JUDGED_RUNS+=(k9); fi   # the forced-late run exists only in c1 mode
+check r0_restart_counts_all_zero rc_restarts_zero_all "${JUDGED_RUNS[@]}"
+fact restartCountsAllZero "$(rc_restarts_zero_all "${JUDGED_RUNS[@]}" >/dev/null 2>&1 && echo true || echo false)"
 restart_map() {   # "<run>/<rc|kpimon|hw-go|agent-N>": restart count, from each run's after-snapshot
     python3 -I - "$e" <<'PY'
 import glob, json, os, sys

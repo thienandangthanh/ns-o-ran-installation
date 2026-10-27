@@ -11,6 +11,7 @@
 #   rc_pod_snapshot <label>       "<kind> <pod|node> <uid|id> <restarts> <start> <container start>" of the ricxapp
 #                                 pods and the agents -> $e/<label>-pods.tsv
 #   rc_restarts_zero <label>      every restart count in that file is 0
+#   rc_restarts_zero_all <run>... each named run's after-snapshot exists, is non-empty and has restart counts 0
 #   rc_influx_bucket_reset        delete and re-create the kpimon bucket; its id -> $e/influx-bucket-id.txt
 #   rc_ric_reset [label]          fresh Influx bucket, fresh rc/kpimon/hw-go pods, rtmgr restarted, rc RMR ready;
 #                                 with a label, $e/<label>-reset.json records the bucket id and the pods (name,
@@ -179,6 +180,21 @@ for p in json.load(sys.stdin)["items"]:
 rc_restarts_zero() {
     local f="$EVIDENCE_DIR/$1-pods.tsv"
     awk -F'\t' '$4 != 0 { print "restart count " $4 " for " $1 " " $2; bad = 1 } END { exit bad }' "$f"
+}
+
+# rc_restarts_zero_all <run>...: each named run's after-snapshot exists, is non-empty and shows restart count 0
+rc_restarts_zero_all() {
+    local l bad=0
+    [ $# -ge 1 ] || { echo "no run named"; return 1; }
+    for l in "$@"; do
+        if [ ! -s "$EVIDENCE_DIR/$l-after-pods.tsv" ]; then
+            echo "$l: no after-snapshot"; bad=1
+        elif ! rc_restarts_zero "$l-after"; then
+            echo "$l: restart count not 0"; bad=1
+        fi
+    done
+    [ "$bad" = 0 ] && echo "restart counts 0 in: $*"
+    return "$bad"
 }
 
 # The in-pod influx CLI uses the pod's own admin token, expanded inside the pod; it never reaches this shell.

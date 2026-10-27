@@ -49,5 +49,27 @@ ts_threshold_logged "$tmp/own.txt" i2-20261024T030903Z 10 && { echo "ts_threshol
 cat "$tmp/big.txt" | grep -q 'Setting Threshold for A1-P value: 10%'
 [ "${PIPESTATUS[0]}" = 141 ] || { echo "fixture of $(wc -c <"$tmp/big.txt") B did not reproduce the SIGPIPE"; rc=1; }
 rm -rf "$tmp"
+# rc_restarts_zero_all: every run a mode makes needs a non-empty after-snapshot with all restart counts 0; a list
+# without the c1-only runs passes, an empty list or file does not, and the fact form is exactly one word
+source <(sed -n '/^rc_restarts_zero()/,/^}/p; /^rc_restarts_zero_all()/,/^}/p' scripts/gates/rc-lib.sh)
+EVIDENCE_DIR=$(mktemp -d)
+ok=$'pod\tricxapp-rc-a\tu\t0\t-\t-\nagent\t1\tc\t0\t-\t-'
+printf '%s\n' "$ok" >"$EVIDENCE_DIR/live1-after-pods.tsv"
+rc_restarts_zero_all live1 >/dev/null || { echo "restart judge: a single-mode run list was red"; rc=1; }
+rc_restarts_zero_all live1 k9 >/dev/null && { echo "restart judge: a missing k9 snapshot passed"; rc=1; }
+rc_restarts_zero_all >/dev/null && { echo "restart judge: an empty run list passed"; rc=1; }
+: >"$EVIDENCE_DIR/k9-after-pods.tsv"
+rc_restarts_zero_all live1 k9 >/dev/null && { echo "restart judge: an empty snapshot passed"; rc=1; }
+printf '%s\n' "$ok" $'pod\tricxapp-trafficxapp-b\tu\t1\t-\t-' >"$EVIDENCE_DIR/k9-after-pods.tsv"
+rc_restarts_zero_all live1 k9 >/dev/null && { echo "restart judge: a restart count of 1 passed"; rc=1; }
+printf '%s\n' "$ok" >"$EVIDENCE_DIR/k9-after-pods.tsv"
+rc_restarts_zero_all live1 k9 >/dev/null || { echo "restart judge: a complete c1 run list was red"; rc=1; }
+[ "$(rc_restarts_zero_all live1 live2 >/dev/null 2>&1 && echo true || echo false)" = false ] ||
+    { echo "restart fact form is not exactly false"; rc=1; }
+rm -rf "$EVIDENCE_DIR"
+# a silenced cat of a named evidence file into a pipe: a mode that skips that run makes cat fail, pipefail red
+if grep -nE 'cat [^|#]*"\$e"/[A-Za-z0-9_]+-[A-Za-z0-9_.-]+ [^|#]*2>/dev/null *\|[^|]' scripts/gates/*.sh; then
+    echo "a silenced cat of a named evidence file into a pipe (see above)"; rc=1
+fi
 [ "$rc" = 0 ] && echo "lint: ok"
 exit "$rc"
