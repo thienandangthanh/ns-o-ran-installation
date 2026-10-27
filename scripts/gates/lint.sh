@@ -30,6 +30,7 @@ echo "gate ids: $ids"
 [ "$ids" = "m5 r0 s1 q7" ] || { echo "gate-id regex broken"; rc=1; }
 python3 -I scripts/gates/pod-log-window.py --self-test || rc=1
 python3 -I scripts/gates/check-c9-handover-trace.py --self-test >/dev/null || { echo "c9 handover matcher self-test failed"; rc=1; }
+python3 -I scripts/gates/n4-drop-selftest.py >/dev/null || { echo "n4 UL-off drop self-test failed"; rc=1; }
 if grep -nE '(\blogs\b[^|#]*|"\$[a-z_]*logs?"\s*)\|\s*(grep\s+-[a-zA-Z]*[qm]|head\b)' scripts/gates/*.sh |
     grep -vE '^[^:]+:[0-9]+:\s*#'; then
     echo "an early-exit reader on a log pipe (see above): SIGPIPE under pipefail"; rc=1

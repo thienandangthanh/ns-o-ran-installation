@@ -16,18 +16,27 @@ import sys
 DROP_KEYS = {"ipcDropped"}
 
 
-def load_samples(run_dir):
-    """Return {nodeId: {seq: canonical_line}} for every trace under run_dir."""
+def load_samples(run_dir, transform=None):
+    """Return {nodeId: {seq: canonical_line}} for every trace under run_dir.
+
+    transform(msg, kind), if given, may check and edit each sample before it is
+    canonicalized; kind is the node kind from the file's hello line (None if absent).
+    """
     nodes = {}
     for path in sorted(pathlib.Path(run_dir).rglob("e2-ipc-trace-*.jsonl")):
+        kind = None
         for line in path.read_text().splitlines():
             if not line.strip():
                 continue
             msg = json.loads(line)
+            if msg.get("type") == "hello":
+                kind = msg.get("kind")
             if msg.get("type") != "sample":
                 continue
             for k in DROP_KEYS:
                 msg.pop(k, None)
+            if transform is not None:
+                transform(msg, kind)
             canon = json.dumps(msg, sort_keys=True, separators=(",", ":"))
             nodes.setdefault(msg["nodeId"], {})[msg["seq"]] = canon
     return nodes
