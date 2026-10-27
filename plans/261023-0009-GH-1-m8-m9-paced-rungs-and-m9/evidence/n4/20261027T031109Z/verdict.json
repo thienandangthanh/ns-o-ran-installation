@@ -1,0 +1,290 @@
+{
+  "gate": "n4",
+  "ts": "20261027T031109Z",
+  "harness_sha": "a31da09702a9d38576f98ed44217aa226d07cb67",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "c6d1434a793f36ae7d08b303f19f63921cf560bf",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "ba954440d008b17e20da07c168b3e96ef48db6de",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "96efc40eeb46e9c6cf19f1cc2184890f8e109bea",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+  },
+  "duration_s": 388,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "n4_args",
+      "pass": true,
+      "detail": "dev 0; ref /home/uc/evidence/r0/20261027T005939Z/runs/c8free; UL pattern constant; ns-3 ba954440d008b17e20da07c168b3e96ef48db6de; oran-interface 96efc40eeb46e9c6cf19f1cc2184890f8e109bea"
+    },
+    {
+      "name": "n4_reference_is_a_pre_n4_free_run",
+      "pass": true,
+      "detail": "reference emitter ns-3 ['962fabc724ccc26d0aab3fe25c2b8cac95d45884']"
+    },
+    {
+      "name": "n4_build_tools_present",
+      "pass": true,
+      "detail": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\ntshark 4.4.19 (>= 4.4)"
+    },
+    {
+      "name": "n4_ns3_binary_located_at_pins",
+      "pass": true,
+      "detail": "[03:11:12] ns-3 build under /home/uc/m4-build is not at the pins (ns-3 ba954440d008b17e20da07c168b3e96ef48db6de, oran-interface 96efc40eeb46e9c6cf19f1cc2184890f8e109bea): rebuilding\n[03:11:12] ns-3 binary missing under /home/uc/m4-build: rebuilding with build-ns3.sh (bound 5400s)\n/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"
+    },
+    {
+      "name": "n4_uloff_free_run",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 853883 at 1793070857.153691918: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --simStartEpochMs=1767225600000 --RngRun=1 --e2TraceDir=/home/uc/evidence/n4/20261027T031109Z/runs/uloff/trace\nns-3 exit code 0\nuloff (free): ns-3 exit 0 (want 0)"
+    },
+    {
+      "name": "n4_uloff_emitter_at_pins",
+      "pass": true,
+      "detail": "emitter [('ba954440d008b17e20da07c168b3e96ef48db6de', '96efc40eeb46e9c6cf19f1cc2184890f8e109bea')]"
+    },
+    {
+      "name": "n4_v2_uloff_equals_reference_after_the_strict_drop",
+      "pass": true,
+      "detail": "all_equal True {\"REF\": {\"mode\": \"absent\", \"samplesChecked\": 300, \"missing\": 0, \"ulNonZero\": 0, \"nonInt\": 0, \"dlPositiveByNode\": {}, \"unexpectedCarriers\": 0, \"ok\": true}, \"CAND\": {\"mode\": \"present\", \"samplesChecked\": 300, \"missing\": 0, \"ulNonZero\": 0, \"nonInt\": 0, \"dlPositiveByNode\": {\"2\": true, \"3\": true}, \"unexpectedCarriers\": 0, \"ok\": true}}"
+    },
+    {
+      "name": "n4_v2_same_trace_file_names",
+      "pass": true,
+      "detail": "same trace file names"
+    },
+    {
+      "name": "n4_v2_uloff_prints_no_audit",
+      "pass": true,
+      "detail": "N4AUDIT lines: 0"
+    },
+    {
+      "name": "n4_ulon_free_run",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 855856 at 1793070942.918327591: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --simStartEpochMs=1767225600000 --RngRun=1 --enableUlTraffic=true --ulTrafficPattern=constant --e2TraceDir=/home/uc/evidence/n4/20261027T031109Z/runs/ulon/trace\nns-3 exit code 0\nulon (free): ns-3 exit 0 (want 0)"
+    },
+    {
+      "name": "n4_ulon_emitter_at_pins",
+      "pass": true,
+      "detail": "emitter [('ba954440d008b17e20da07c168b3e96ef48db6de', '96efc40eeb46e9c6cf19f1cc2184890f8e109bea')]"
+    },
+    {
+      "name": "n4_v3_counters_equal_the_pdcp_audit",
+      "pass": true,
+      "detail": "{'a1': True, 'a2': True, 'a3': True, 'a4': True, 'a5': True, 'perCellMaxErrBits': 496, 'periodSumMaxErrKbit': 0.888, 'ties': 0, 'overlaps': 0, 'events': 130633, 'gnbSamples': 200}"
+    },
+    {
+      "name": "n4_ul_flag_moves_no_random_draw",
+      "pass": true,
+      "detail": "attach, positions, cell ids, switches and X2 before 0.1 s equal"
+    },
+    {
+      "name": "n4_no_stray_process",
+      "pass": true,
+      "detail": "no leftovers"
+    }
+  ],
+  "dev": false,
+  "reference": "/home/uc/evidence/r0/20261027T005939Z/runs/c8free",
+  "ulPattern": "constant",
+  "outageThresholdDb": -1000,
+  "vmLoadStart": " 03:11:11 up 10:44,  0 user,  load average: 0.65, 0.68, 0.42",
+  "v2Digests": {
+    "reference": "REF",
+    "components": [
+      "ipc",
+      "traces"
+    ],
+    "runs": {
+      "CAND": {
+        "equal": true,
+        "differing": [],
+        "detail": {},
+        "ipcDroppedMax": 0
+      }
+    },
+    "n4Drop": {
+      "REF": {
+        "mode": "absent",
+        "samplesChecked": 300,
+        "missing": 0,
+        "ulNonZero": 0,
+        "nonInt": 0,
+        "dlPositiveByNode": {},
+        "unexpectedCarriers": 0,
+        "ok": true
+      },
+      "CAND": {
+        "mode": "present",
+        "samplesChecked": 300,
+        "missing": 0,
+        "ulNonZero": 0,
+        "nonInt": 0,
+        "dlPositiveByNode": {
+          "2": true,
+          "3": true
+        },
+        "unexpectedCarriers": 0,
+        "ok": true
+      }
+    },
+    "ipcDroppedMaxAll": 0,
+    "overall": {
+      "REF": "22570657bd390aa644f68851757629bb7dba635a6eb2750b5b68e6bf72a54683",
+      "CAND": "22570657bd390aa644f68851757629bb7dba635a6eb2750b5b68e6bf72a54683"
+    },
+    "all_equal": true
+  },
+  "v3": {
+    "hdr": 2,
+    "end": {
+      "connected": 6,
+      "present": 6,
+      "missing": 0
+    },
+    "events": 130633,
+    "gnbSamples": 200,
+    "a1": true,
+    "rrcNodesPerImsi": {
+      "1": [
+        5
+      ],
+      "2": [
+        5
+      ],
+      "3": [
+        5
+      ],
+      "4": [
+        5
+      ],
+      "5": [
+        5
+      ],
+      "6": [
+        5
+      ]
+    },
+    "a2": true,
+    "twoRrcIdentities": 0,
+    "noIdentityEvents": 0,
+    "a3": true,
+    "sameRrcDuplicates": 0,
+    "a5": true,
+    "ties": 0,
+    "residualBits": 4112352,
+    "perCellMaxErrBits": 496,
+    "periodSumMaxErrKbit": 0.888,
+    "overlaps": 0,
+    "nonIntCounters": 0,
+    "a4": true,
+    "perUeUlPdusPerPeriod": {
+      "0": 341,
+      "1": 35,
+      "2": 17,
+      "3": 14,
+      "4": 4,
+      "5": 11,
+      "6": 5,
+      "7": 11,
+      "8": 7,
+      "9": 7,
+      "10": 4,
+      "11": 8,
+      "12": 5,
+      "13": 7,
+      "14": 2,
+      "15": 4,
+      "16": 1,
+      "17": 4,
+      "18": 2,
+      "19": 3,
+      "20": 3,
+      "21": 1,
+      "22": 1,
+      "23": 2,
+      "24": 1,
+      "25": 1,
+      "26": 2,
+      "27": 2,
+      "30": 4,
+      "31": 2,
+      "32": 2,
+      "33": 1,
+      "34": 1,
+      "36": 1,
+      "37": 2,
+      "38": 3,
+      "39": 1,
+      "40": 2,
+      "42": 1,
+      "43": 1,
+      "44": 1,
+      "51": 1,
+      "52": 1,
+      "53": 1,
+      "54": 2,
+      "55": 1,
+      "56": 1,
+      "58": 1,
+      "60": 1,
+      "63": 1,
+      "66": 3,
+      "68": 2,
+      "72": 1,
+      "74": 1,
+      "75": 1,
+      "81": 1,
+      "84": 1,
+      "88": 1,
+      "89": 2,
+      "94": 1,
+      "100": 2,
+      "103": 1,
+      "108": 1,
+      "109": 1,
+      "110": 1,
+      "112": 1,
+      "116": 1,
+      "123": 1,
+      "126": 1,
+      "133": 1,
+      "136": 1,
+      "143": 1,
+      "145": 1,
+      "149": 1,
+      "166": 1,
+      "167": 1,
+      "170": 3,
+      "171": 1,
+      "175": 1,
+      "179": 1,
+      "182": 1,
+      "190": 1,
+      "208": 1,
+      "214": 1,
+      "215": 1,
+      "224": 1,
+      "247": 1,
+      "256": 1,
+      "259": 1,
+      "260": 1,
+      "272": 1,
+      "282": 1,
+      "295": 1,
+      "316": 1,
+      "334": 1,
+      "383": 1,
+      "420": 1,
+      "426": 1,
+      "431": 1,
+      "488": 1
+    },
+    "pass": true
+  },
+  "vmLoadEnd": " 03:17:38 up 10:50,  0 user,  load average: 1.40, 2.43, 1.53"
+}
