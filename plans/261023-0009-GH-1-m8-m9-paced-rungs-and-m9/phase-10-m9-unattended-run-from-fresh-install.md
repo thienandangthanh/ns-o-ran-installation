@@ -58,3 +58,12 @@ Source: `plans/reports/kongming-261023-0020-GH-1-m8-m9-plan-collect-only-review.
 - **K1.** The M0 probe pair inside M9 (`m0-probe-n`, `m0-branch-n`) is allowed by the 01:03 KST rule.
 - **K21.** The final output line is `GOAL DONE M9 verdict=<path to verdict.json>`, printed as Claude's own message, not tool output.
 - **P7.** V5 lists P1–P7 and N5.
+
+## Amendment A1 (binding, 2026-10-27; contract approved 23:24 KST; overrides any conflicting text above)
+- **Start state:** the top rung's green snapshot exists (`r3p-green`, or `r2-green` under substitution 4).
+- **V2:** `verdict.json` holds exactly the pre-registered step set (`m0`…`m7`, `i0`, `r0`, `r1`, `i2`, `r2`, then the R3′ steps unless substitution 4), each `pass`, with `pins`; `highestGreenRung = r3p` (or `r2` under substitution 4); no `notM9` flag.
+- **V3:** the top rung's `c1` all true and `equalsReference = true` against `reference/r3p/equal/` (or `reference/r2/equal/`).
+- **V4:** `watchdog.json` `minHostFreeGb ≥ 25`, heartbeat never stale; no `watchdog-tripped.json`. Step 2 checks host free ≥ 25 GB plus the measured M9 growth.
+- **V5 / run report:** lists P1–P9 and N5, the Q2 count, every substitution state (1–4), and the descoping (S1: QP fork and real-QP R3 deferred; S2: K18/V5/V6 dropped; S3: portability smoke in the next goal).
+- **Docs:** README, `docs/deployment-guide-l-release.md` (run-to-m9, the manual rc gRPC and TS xApp loop, the scope statement) and `docs/system-architecture-l-release.md` (fix the stale §8 "not implemented" line; RC path, pacing, UL/DL rows, R3′ predictor; QP fork deferred) plus a "run your own experiment" section: `agents-ns3-run.sh:40` hard-codes the `*-scenario-zero-*` binary; pacing and ledger globals live only in `scenario-zero.cc`; the N5 key is digits only up to cellId ≤ 9; pacing is opt-in; QP/AD need a live-data adapter. Every command verified against the M9 log.
+- **Final line:** `GOAL DONE M9 verdict=<path to verdict.json>` (K21).

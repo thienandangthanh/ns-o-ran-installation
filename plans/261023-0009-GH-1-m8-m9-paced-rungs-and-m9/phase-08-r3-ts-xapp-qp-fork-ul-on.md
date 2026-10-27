@@ -1,5 +1,7 @@
 # P8: R3, TS xApp with the QP fork, UL on
 
+> **Deferred by user ruling S1 (amendment A1, 2026-10-27 23:24 KST).** Not on the M9 path of this goal; kept for a later goal, not deleted. R3′ ([phase-08b](phase-08b-r3prime-ts-xapp-harness-predictor.md)) replaces it. Do not execute any step here. The QP fork commit `381a824` (tree `aece41f6`, = the earlier `901f8c5`) stays pushed on `dev/l-release-nist180`; no `QP_URL`/`QP_SHA` in pins.conf.
+
 **Start state:** `r2-green` with the P7 pins. **Snapshot at exit:** `r3-green`, only after the free-space check.
 
 ## Context

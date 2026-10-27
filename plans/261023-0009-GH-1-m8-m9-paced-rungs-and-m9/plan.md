@@ -1,50 +1,54 @@
 ---
-title: ns-O-RAN on the L-release RIC, M8–M9 (paced rungs R0=M8, R1, R2, R3, then M9 unattended from fresh-install)
-status: ready (goal-warmup 2026-10-23 01:30 KST; contract approved ~00:05, edits 00:13 and 01:03, final summary confirmed ~01:20)
+title: ns-O-RAN on the L-release RIC, M8–M9 (paced rungs R0=M8, R1, R2, R3′, then M9 unattended from fresh-install)
+status: ready, amendment A1 (contract approved 2026-10-27 23:24 KST; Codex plan gate complete 23:41; final summary confirmed ~00:00 KST 2026-10-28). Original: ready 2026-10-23 01:30 KST
 created: 2026-10-23
-contract: goal-packet.md in this directory (LOCKED, verbatim). Sources: plans/reports/brainstorm-261022-2105-GH-1-m8-m9-goal-warmup-route-contract.md §(a) as amended by plans/reports/kongming-261022-2105-GH-1-m8-m9-goal-warmup-route-advice-checkpoint.md §4 and the user's P4–P6 rulings
+contract: goal-packet.md in this directory (LOCKED, amendment A1). Sources: plans/reports/brainstorm-261022-2105-GH-1-m8-m9-goal-warmup-route-contract.md §(a) as amended by plans/reports/kongming-261022-2105-GH-1-m8-m9-goal-warmup-route-advice-checkpoint.md §4 and the user's P4–P6 rulings
 advice: --advice (kongming always model: opus, xhigh; its counsel never counts as user approval)
 ---
 
 # Plan: M8–M9 paced closed loop on the L-release RIC
 
-## Locked outcome (summary; the full contract is in `goal-packet.md`)
-On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3 each pass their scripted repeat gate C1: 3 live runs plus 1 ledger replay without the RIC, byte-equal, and `--RngRun=2` changes the digest. Control flows from scripted rc gRPC, then the TS xApp with a stub QP, then the TS xApp with the QP fork, into ns-3 EN-DC handovers. Then M9: revert `fresh-install`, one unattended invocation, exit 0. R0–R2 pass one live run each (C2–C9). R3 is the highest green rung, passes its full C1, and equals the committed dev reference. Host free space stays ≥ 20 GB throughout. Recorded deviations, not fixed here: P1–P6.
+## Locked outcome (summary; the full contract A1 is in `goal-packet.md`)
+On VM `ubuntu24.04` (ssh `oran-kvm-2404`), the rungs R0 (= M8), R1, R2 and R3′ each pass their scripted repeat gate C1: 3 live runs plus 1 ledger replay without the RIC, byte-equal, and `--RngRun=2` changes the digest. Control flows from scripted rc gRPC, then the TS xApp with a stub QP, then the TS xApp with a harness predictor that reads per-cell DL from Influx by sim time (R3′), into ns-3 EN-DC handovers. Then M9: revert `fresh-install`, one unattended invocation, exit 0, the exact pre-registered step set. R0–R2 pass one live run each (C2–C9). R3′ (R2 under substitution 4) is the highest green rung, passes its full C1, and equals the committed dev reference. Host free ≥ 20 GB at dev times and ≥ 25 GB throughout M9. The QP fork and R3 with real QP are deferred to a later goal (user ruling S1). Recorded deviations, not fixed here: P1–P9.
 
 ## Precedence of inputs
+0. Amendment A1 (`goal-packet.md`; rulings in `plans/reports/decisions-261027-2155-GH-1-m8-m9-open-questions-rulings.md`) overrides everything below where they conflict.
 1. `plans/reports/decisions-261022-2013-…` with its erratum (21:45) and the amendments of 22:30, 22:50 and 2026-10-23 00:05 (P4–P6).
 2. `plans/reports/kongming-261022-1739-…`, as adopted ("probe first, patch if it crashes").
 3. `plans/reports/verifier-261022-1723-…` §5.
 4. `plans/reports/brainstorm-261022-1739-…` (contract body, lines 34–91 for C1–C9, R0–R3, M9).
 5. `docs/journals/2026-10-22-pre-m8-pacing-plan-checkpoint.md` §5–§7 (D1–D10).
 
-**Superseded and must not reappear:** N4 `RRU.PrbUsedDl` / `DRB.MeanActiveUeDl`; automatic snapshot deletions in contract §8; the cause `control-timer-expired`; the old D7 wording; any QP offline gate or dry run on UL-off (R1/R2) rows.
+**Superseded and must not reappear:** N4 `RRU.PrbUsedDl` / `DRB.MeanActiveUeDl`; automatic snapshot deletions in contract §8; the cause `control-timer-expired`; the old D7 wording; any QP offline gate or dry run on UL-off (R1/R2) rows. Since A1: R3 with real QP, the QP fork, `QP_URL`/`QP_SHA`, the K18 dump, P6 V5/V6, the `r3-green` snapshot name and the ≥ 20 GB M9 floor.
 
 ## Resume card (update before every VM operation longer than 10 minutes and at every phase exit)
 ```text
-last-updated: 2026-10-27 13:25 KST (PAUSE T8: the push of the QP fork branch dev/l-release-nist180 (901f8c5, P7 commit 1, V1 pass) was refused by the auto-mode classifier [Data Exfiltration]; not retried. V4 chain at 9755007: m5, m6, m7, r0 single, r1 single PASS; r2 single 041111Z FAIL on r2_pre_ts_and_stub_pods_fresh_rtmgr_sessions only (A1 policy type 20008 HTTP 404 after the a1mediator restart), no fix applied, one-fix budget unused; journal docs/journals/2026-10-27-m8-m9-p6-pause-t8-qp-fork-push-refused.md; kongming-261027-1300)
+last-updated: 2026-10-27 23:30 KST (amendment A1 approved 23:24 KST: R3′ replaces P7/P8, stop-at-R2 = substitution 4, M9 ≥ 25 GB, K18/V5/V6 dropped, Codex CX-1..CX-4 + T9; T8 released and one-fix budget fresh on re-issue; host /home free 63 G at 22:28 KST; QP fork 381a824 (= 901f8c5 tree aece41f6) is on origin dev/l-release-nist180, not pinned)
+pre-build sha: <record `git rev-parse HEAD` here when the goal is re-issued (CX-3)>
+next action (A1): resume checks; update records citing 901f8c5 to 381a824; P6 per its Amendment A1 block: F04 V3 hardening + re-judge 031836Z, F09 export fail-closed, r2 single red under the Failure Protocol (one guided fix, fresh green r2 single), P6 exit; then P8′ (phase-08b); then P9 (runner F07/F08, --reference, budget 25 GB, F10, Codex pre-ship audit, Stop B); then P10.
+earlier-A: 2026-10-27 13:25 KST (PAUSE T8: the push of the QP fork branch dev/l-release-nist180 (901f8c5, P7 commit 1, V1 pass) was refused by the auto-mode classifier [Data Exfiltration]; not retried. V4 chain at 9755007: m5, m6, m7, r0 single, r1 single PASS; r2 single 041111Z FAIL on r2_pre_ts_and_stub_pods_fresh_rtmgr_sessions only (A1 policy type 20008 HTTP 404 after the a1mediator restart), no fix applied, one-fix budget unused; journal docs/journals/2026-10-27-m8-m9-p6-pause-t8-qp-fork-push-refused.md; kongming-261027-1300)
 earlier-0: 2026-10-27 12:30 KST (gate n4 PASS twice: 031109Z constant UL (V2 green, V3 green, V5-on-IPC red on cell 3 -> pre-registered fallback selected), 031836Z steps UL (V2, V3 green; V5 on IPC 170/170); rung-config ul_rate pattern=steps committed b60b51d; next: V4 chain m5, m6, m7, r0/r1/r2 single at the N4 pins, then the K18 dump)
 earlier-1: 2026-10-27 02:50 KST (PAUSE T6: gate r0 single red a second time on r0_restart_counts_all_zero, a latent single-mode defect (cat of the c1-only k9 snapshot under pipefail; same in r1 with f2); the first red (kept TS xApp and stub restart counts after the r2-green boot) was fixed by recreating the pods; fix proposed, not applied, awaits the user; journal docs/journals/2026-10-27-m8-m9-p6-pause-t6-single-mode-restart-judge.md; kongming-261027-0245 and -0215)
 earlier-2: 2026-10-26 22:40 KST (user rulings on the rc log-rotation PAUSE T6: release resets the one-fix budget; own-pod rule approved incl. r0/r1 scripts, regression to follow; option A rtmgr push acknowledgement; fix pushed as harness 611271d, lint ok, not yet run on the VM; plans/reports/decisions-261026-2230-GH-1-p5-rc-log-rotation-rulings.md)
 earlier: 2026-10-26 22:25 PAUSE T6 (rc start-up line rotated out of the kept pod's log; journal docs/journals/2026-10-26-m8-m9-p5-pause-t6-rc-log-rotation.md); 2026-10-24 12:35 PAUSE T6 (threshold log SIGPIPE); 03:25 PAUSE T5 (A1 payload string); 02:04 user accepted every Stop A default (plans/reports/decisions-261024-0204-GH-1-stop-a-user-rulings.md; ruling 4 = recorded deviation P8); 2026-10-23 18:12 STOP A (R0 = M8 and R1 green); 18:04 R1 C1 PASS evidence/r1/20261023T084654Z; 16:57 r0-green; 16:54 R0 C1 PASS 073520Z
-current phase: P6 (N4) open: V1, V2, V3 green (gate n4 031836Z, steps UL selected per pre-registration), V4 green except r2 single (1 precondition red), K18 dump + V5/V6 not run. P7 started host-side: ric-app-qp/ (excluded locally) commit 901f8c5 = 47a35ca + NIST 4 patches, V1 tree equal (aece41f6), NOT pushed (T8).
+current phase (as of the 13:25 pause; A1 changes P6's remaining work, see next action (A1) above): P6 (N4) open: V1, V2, V3 green (gate n4 031836Z, steps UL selected per pre-registration), V4 green except r2 single (1 precondition red), K18 dump + V5/V6 not run. P7 started host-side: ric-app-qp/ (excluded locally) commit 901f8c5 = 47a35ca + NIST 4 patches, V1 tree equal (aece41f6), NOT pushed (T8).
 VM: expected domstate=running, snapshot-current=r2-green; boot time 2026-10-26 16:26:48 UTC; pods at 13:22 KST: rc wbfw2, kpimon zqg56, hw-go sgz7b, TS xApp crdj5, stub g4zxt (all restart 0, created by r2 single 041111Z); no agent containers; no ns-3, agent, pacer or capture process
 snapshots: fresh-install, f7-rerun-green, r0-green, r2-green (chain: fresh-install > f7-rerun-green > r0-green > r2-green)
-host /home free: 38 G (2026-10-27 13:22 KST); VM / 51 % used; floor 20 GB; M9 projection unchanged (about -23 to -25 GB) until re-measured at P8/P9; user frees the shortfall at Stop B
+host /home free: 63 G (2026-10-27 22:28 KST, after the user's cleanup; was 38 G); VM / 51 % used; dev floor 20 GB, M9 floor 25 GB (watchdog trip, F02); M9 projection estimated about -3 to -5 GB against 25 GB until re-measured at P8′/P9; user frees the shortfall at Stop B
 fork SHAs (pushed, scripts/pins.conf since 55e7f57): ns-3 ba954440, oran-interface 96efc40e, Testbed c6d1434a (pre-N4: 962fabc7, 63155c49, 597bdde2)
 harness SHA (pushed): see git log (R2 C1 gate ran at 0a6864d, same scripts/tools as 0cc532c; checker fix c3817e3)
 in-flight background jobs: none
-next action: on release (user picks a T8 mechanism per journal section 6; nothing pushed to the QP fork yet): resume checks + remote QP branch at 901f8c5 (push it if allowed); r2 single red under the phase-06 Failure Protocol (kongming, one guided fix, fresh budget if the user confirms); kongming-1300 D1-D4 gate hardening; gate n4 --part dump once with --cal /home/uc/evidence/n4/20261027T031836Z/runs/ulon --ul-pattern steps; host V5/V6 on the dump; P6 exit + kongming go/no-go; pre-register the QP training option (user: B default / A fallback / C / D) in phase-07; P7 commits 2-5 (reader rewrite with strict-int ids: Flux-injection finding). Stop B list unchanged plus the QP training option if not ruled.
+superseded next action (pre-A1, kept for history): on release (user picks a T8 mechanism per journal section 6; nothing pushed to the QP fork yet): resume checks + remote QP branch at 901f8c5 (push it if allowed); r2 single red under the phase-06 Failure Protocol (kongming, one guided fix, fresh budget if the user confirms); kongming-1300 D1-D4 gate hardening; gate n4 --part dump once with --cal /home/uc/evidence/n4/20261027T031836Z/runs/ulon --ul-pattern steps; host V5/V6 on the dump; P6 exit + kongming go/no-go; pre-register the QP training option (user: B default / A fallback / C / D) in phase-07; P7 commits 2-5 (reader rewrite with strict-int ids: Flux-injection finding). Stop B list unchanged plus the QP training option if not ruled.
 hold: none.
 ```
 On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`, `virsh -c qemu:///system snapshot-current --name ubuntu24.04` and `scripts/vm/vm-snapshot.sh list`, and compare them with this card. On a mismatch, print a PAUSE T3 line with the difference.
 
 ## Invariants card (never violate; re-read after every compaction)
 - The gNB agents put 5 raw bytes `%08X%02X` (gNB id, cell id) in `e2nodeComponentRequestPart`; the eNB keeps the stock `reqpart`.
-- QP's `cellKey` is uppercase; the `ue-id` sent to the TS xApp is the decimal IMSI.
+- The `ue-id` sent to the TS xApp is the decimal IMSI; cell keys toward the TS xApp are uppercase (QP's `cellKey` rule applies to the R3′ predictor's answers).
 - Every ACK carries a ControlOutcome Format 1 that decodes on the wire.
 - Never judge a gate on rc's log; judge on decoded wire bytes, the ledger, ns-3 traces and digests.
-- Snapshot rule (user, 01:03 KST, as M0–M7 D2): delete only this run's own intermediate snapshots (`m0-probe-*`, `m0-branch-*`, `r0-green`, `r2-green`, M9's own), only after their evidence is archived and only when the disk budget needs it (the M0 probe pair is always allowed); log each with the space freed. Never delete `fresh-install` or `f7-rerun-green`; keep `r3-green` until M9 is green. A refused delete is T1.
+- Snapshot rule (user, 01:03 KST, as M0–M7 D2): delete only this run's own intermediate snapshots (`m0-probe-*`, `m0-branch-*`, `r0-green`, `r2-green`, M9's own), only after their evidence is archived and only when the disk budget needs it (the M0 probe pair is always allowed); log each with the space freed. Never delete `fresh-install` or `f7-rerun-green`; keep the top rung's green snapshot (`r3p-green`, or `r2-green` under substitution 4) until M9 is green (A1). A refused delete is T1.
 - Outage threshold −5 dB is checked first (R0 null-control run); −1000 only through substitution 1.
 - Free-run stays the default; pacing is opt-in.
 - Never weaken, narrow or skip a test; never re-run a red C1 to get green.
@@ -61,42 +65,45 @@ On resume, before any action, run `virsh -c qemu:///system domstate ubuntu24.04`
 | P3 | [R0 = M8: rc by scripted gRPC, D7 three paths, G4](phase-03-r0-m8-rc-scripted-grpc.md) | R0 C1 | `r0-green` | done (R0 C1 PASS, V1-V9, evidence/r0/20261023T073520Z; r0-green 2026-10-23 16:57 KST) |
 | P4 | [R1: multi-control, unknown IMSI, fault run (ii); then Stop A](phase-04-r1-multi-control-fault-runs-stop-a.md) | R1 C1 | none (no `r1-green`) | done (R1 C1 PASS, V1-V6, evidence/r1/20261023T084654Z, 2026-10-23 18:04 KST); Stop A 18:10 KST |
 | P5 | [R2: TS xApp + stub QP, stray-ack probe first](phase-05-r2-ts-xapp-stub-qp-stray-ack-probe.md) | R2 C1 | `r2-green` | done (R2 C1 PASS, V1-V6, evidence/r2/20261026T143406Z; r2-green 2026-10-27 01:26 KST) |
-| P6 | [N4: opt-in UL traffic and the UL PDCP SDU volume counter](phase-06-n4-ul-traffic-and-ul-pdcp-volume-counter.md) | free-run digest (UL off) unchanged; M5–M7; R0/R1/R2 one live run each; UL-on dump | none | pending |
-| P7 | [QP fork and Testbed pickup](phase-07-qp-fork-and-testbed-pickup.md) | unit tests and forecast hash in the image; token gate | none | pending |
-| P8 | [R3: TS xApp + QP fork, UL on](phase-08-r3-ts-xapp-qp-fork-ul-on.md) | R3 C1 | `r3-green` | pending |
-| P9 | [Freeze pins, dev reference, M9 budget; then Stop B](phase-09-freeze-pins-dev-reference-m9-budget-stop-b.md) | reference committed; budget table | none | pending |
+| P6 | [N4: opt-in UL traffic and the UL PDCP SDU volume counter](phase-06-n4-ul-traffic-and-ul-pdcp-volume-counter.md) | A1: V1, V2, V3 (hardened, F04), V4 incl. a fresh green r2 single (F06); F09 | none | open (V1, V2 green; V3 re-judge, V4 r2 single, F09 pending) |
+| P7 | [QP fork and Testbed pickup](phase-07-qp-fork-and-testbed-pickup.md) | — | none | **deferred (user ruling S1, A1)** |
+| P8 | [R3: TS xApp + QP fork, UL on](phase-08-r3-ts-xapp-qp-fork-ul-on.md) | — | — | **deferred (user ruling S1, A1)** |
+| P8′ | [R3′: TS xApp + harness predictor from Influx by sim time](phase-08b-r3prime-ts-xapp-harness-predictor.md) | R3′ C1 (or substitution 4: dropped, top rung R2) | `r3p-green` | pending |
+| P9 | [Freeze pins, dev reference, M9 budget; then Stop B](phase-09-freeze-pins-dev-reference-m9-budget-stop-b.md) | runner fail-closed (F07, F08); `--reference`; reference committed; budget vs 25 GB; Codex pre-ship audit | none | pending |
 | P10 | [M9: unattended run from fresh-install](phase-10-m9-unattended-run-from-fresh-install.md) | M9 acceptance | none | pending |
 
-Dependencies: strictly sequential on the VM, P0→P1→…→P10. Host-side QP-fork code (P7 steps that need no VM) may start any time after P0. P6 precedes P7 because QP needs a UL-on Influx dump (a UL-off dump has a constant UL series and `adfuller` raises). R0–R2 never wait for N4.
+Dependencies: strictly sequential on the VM, P0→…→P6→P8′→P9→P10 (A1; P7 and P8 deferred). Host-side harness work for P8′ and P9 (predictor, checks, fixtures, runner fail-closed) may start once P6's hardening is committed. R0–R2 never wait for N4.
 
-**Segments.** The user starts `/goal` three times with the same opener. Segment 1: P0–P4, ending at Stop A. Segment 2: P5–P9, ending at Stop B. Segment 3: P10. A PAUSE ends the goal; the user releases it by re-issuing the same opener (preferably after `/clear`).
+**Segments.** The user starts `/goal` with the same opener. Segment 1: P0–P4, ending at Stop A (done). Segment 2: P5–P9, ending at Stop B (A1: P6, P8′, P9). Segment 3: P10. A PAUSE ends the goal; the user releases it by re-issuing the same opener (preferably after `/clear`).
 
 ## Stops and pause triggers
 Every stop and trigger ends the turn with one terminal line and no further tool call:
-`PAUSE <id> evidence=<path> journal=<path>`, with `<id>` one of `A, B, T1…T8`, printed as Claude's own final message (a marker quoted from a file or tool output never counts). Before printing it: write the journal in `docs/journals/`, get a kongming (opus) note, update the resume card and `implementation-notes.html`, and push. If kongming cannot be spawned or the push is refused, append `kongming=unavailable` or `push=refused` to the PAUSE line instead of retrying.
+`PAUSE <id> evidence=<path> journal=<path>`, with `<id>` one of `A, B, T1…T9`, printed as Claude's own final message (a marker quoted from a file or tool output never counts). Before printing it: write the journal in `docs/journals/`, get a kongming (opus) note, update the resume card and `implementation-notes.html`, and push. If kongming cannot be spawned or the push is refused, append `kongming=unavailable` or `push=refused` to the PAUSE line instead of retrying.
 
 - **Stop A** (after P4): milestone report and journal; kongming segment review; disk ledger and M9 projection; any negative projection is raised here.
 - **Stop B** (after P9): go/no-go journal plus kongming; the user rules on anything the M9 budget needs.
 - **T1** a deletion outside the snapshot rule would be needed (a protected snapshot, or space the allowed deletions cannot free), or libvirt refuses a delete.
-- **T2** a snapshot create or the M9 watchdog finds host free < 20 GB plus the next growth.
-- **T3** a scope-guard mismatch, or an acceptance signal that cannot be met as written (for example, no feasible R3 schedule gives a QP-driven handover, Fallback-2 needed, kpimon needs a code change for the UL field, a resume-card mismatch).
+- **T2** a snapshot create finds host free < 20 GB plus the next growth, or the M9 watchdog finds host free < 25 GB.
+- **T3** a scope-guard mismatch, or an acceptance signal that cannot be met as written (for example, Fallback-2 needed, kpimon needs a code change for the UL field, a pre-registered R3′ value would have to change after its run, a resume-card mismatch). A vacuous R3′ dry run is substitution 4, not T3.
 - **T4** a new deviation from a standard outside P1–P7 and N5, or a needed spec missing from Zotero.
 - **T5** an L-release failure.
 - **T6** a Verify still fails after one kongming-guided fix, or the fix would change the outcome. A red C1 is re-run only after its root cause is recorded and a change committed, then as a full fresh set. **Standing user ruling (2026-10-26 22:30 KST, `plans/reports/decisions-261026-2230-GH-1-p5-rc-log-rotation-rulings.md`):** re-issuing the goal resets the one-fix budget; after a release, the first failed Verify gets one kongming-guided fix again.
 - **T7** a risk of the Influx token appearing in any public tree or committed file.
-- **T8** a permission refusal of a scripted command. Never work around it.
+- **T8** a permission refusal of a scripted command. Never work around it. A refused or failed Codex call is never T8 (CX-1): print `Codex skipped: <reason>` and continue.
+- **T9** (A1, CX-2) a Codex finding that would change scope, an acceptance signal or a recorded user ruling. The PAUSE journal names the finding, the ruling it touches, the trade-off and the options.
 
-**Report, do not pause:** substitution 1, 2 or 3 applied; the re-set T_ctl and W values; the N5 match result; the BLAS library; kpimon field names for the UL metric.
+**Report, do not pause:** substitution 1, 2, 3 or 4 applied; `Codex skipped: <reason>`; the re-set T_ctl and W values; the N5 match result; the BLAS library; kpimon field names for the UL metric.
 
 ## Phase-exit checklist (every phase)
 1. Compare the deliverables with the locked contract in `goal-packet.md`. On a mismatch, PAUSE T3.
 2. Update this file's status table and the resume card.
 3. Update `implementation-notes.html` (decisions, deviations, trade-offs, open questions).
 4. Push every fork SHA and the harness SHA; record them.
-5. Record `scripts/vm/vm-snapshot.sh list`, `df -h /home`, and the M9 disk projection (host free − dev overlays − M9 overlay ≥ 20 GB).
+5. Record `scripts/vm/vm-snapshot.sh list`, `df -h /home`, and the M9 disk projection per P0's K2 accounting with the A1 floor: host free now − expected further dev growth − M9 need − (25 + h) GB ≥ 0 (overlays already on disk are inside host free; h is the watchdog's preventive headroom, phase-09 A1).
 6. Confirm no orphaned ns-3, agent or capture process (PGID kill, then `pgrep -f <full path>` and `ss -Sanp` empty).
 7. Fill the phase's standards-ledger rows.
 8. Spawn kongming (`model: opus`) for a go/no-go on the next phase; record the report path, or "none needed: <reason>" only where this plan says so.
+9. (A1) At P9 only: the Codex pre-ship audit per the phase-09 Amendment A1 block; its ledger ends `Status: complete`, or the journal records `Codex skipped: <reason>`.
 
 ## Traceability
 
@@ -109,10 +116,12 @@ Every stop and trigger ends the turn with one terminal line and no further tool 
 | P4 | R1 | R1 C1: same-step pair, same-IMSI pair via one agent (lower targetCellId), R1(d) two agents (lower nodeId), unknown IMSI, fault run (ii) | Covers verifier-1723 #2; kongming-1739 §2 (R1(d)). U: no `r1-green`; Stop A kept. |
 | P5 | In scope 6, 7; R2 | R2 C1 positives; negatives by ledger count + late = 0; W measured; stray-ack probe result | F: TS xApp registers only 20010/30002/30003 and may double-free on a stray ack (kongming-1739 §5.1). F: `stoi(ue_id)` unguarded (§5.4). U: probe first, substitution 2 only on crash; R2 negatives stricter. Covers kongming-1739 §5.1, §5.4, §5.6. |
 | P6 | In scope 4 (N4, amended 00:14) | free-run with UL off unchanged (traces equal; IPC equal minus the two new fields); M5–M7; one live run each of R0/R1/R2; UL-on dump with both series varying | U: N4 by R3; `DRB.PdcpSduVolumeUL` and `DRB.PdcpSduVolumeDL`, INTEGER, kbit, PDCP SDU level (decision record 00:05 and 00:14 amendments). F: UL Rx at `McEnbPdcp::DoReceivePdu`; DL counter PDU-level and CSV-only; kpimon needs no code change. A: no double count through X2 (V3 measures it). Covers verifier-2105 defect 4. |
-| P7 | In scope 5 (QP fork, N2, N3, N7, G1, G7) | unit tests + forecast hash in the image; empty tree diff for commit 1; no-token gate | U: N2, N3, N7. F: installer `cd qp` needs NAME=qp; Dockerfile and token sed stay at install time (verifier-1723 #8). Covers verifier-1723 #8; kongming-1739 §5.5 (uppercase cellKey). |
-| P8 | R3 | R3 C1; ≥ 1 QP-driven handover; forecast hash equal; QP digest + `pip freeze` in verdict; HandoverStart = applied; 0 rows in null-control; N6 16-step predicate; W from calibration | Covers verifier-1723 #4, #5 (W); kongming-1739 §4 (R3 vacuity, schedule from the UL-on dry run). |
-| P9 | M9 groundwork; constraints (disk) | reference committed at frozen pins; M9 budget table | F: deleting a non-leaf snapshot frees almost nothing (P5 housekeeping README, Lesson). A: M9 overlay ≈ 40 GB (measured at P8). Covers verifier-1723 #7 (no automatic deletions); verifier-2105 defect 5. |
-| P10 | M9 | exit 0; verdict lists M0–M7, R0–R3; R0–R2 one live run each; R3 full C1 equal to the reference; min host free ≥ 20 GB | U: M9 depth (Q3 default). F: `r3-green` exists before the revert. |
+| P6 (A1) | In scope 3 (F09), 4 (V3 hardened F04, V4 with fresh r2 single F06) | V1–V4 green; `031836Z` re-judged; scrub fail-closed fixtures | U: S2 (K18, V5, V6 dropped), rulings 3 and 6. F: F04 reproduced by Codex in memory. |
+| P8′ (A1) | In scope 5 (R3′ predictor), 3 (R3′ gate, `--reference`), 7 | R3′ C1; ≥ 1 predictor-driven handover; formula(Influx) = 30002; Influx = IPC; N6; observation-change and membership checks; null-control 0 rows; W | U: S1, substitution 4. A: constant per-cell DL moves a UE past 10 % (dry run decides). Covers verifier caveats 5, 7; Codex skeptic. |
+| P7 (deferred, A1) | In scope 5 (QP fork, N2, N3, N7, G1, G7) | unit tests + forecast hash in the image; empty tree diff for commit 1; no-token gate | U: N2, N3, N7. F: installer `cd qp` needs NAME=qp; Dockerfile and token sed stay at install time (verifier-1723 #8). Covers verifier-1723 #8; kongming-1739 §5.5 (uppercase cellKey). |
+| P8 (deferred, A1) | R3 | R3 C1; ≥ 1 QP-driven handover; forecast hash equal; QP digest + `pip freeze` in verdict; HandoverStart = applied; 0 rows in null-control; N6 16-step predicate; W from calibration | Covers verifier-1723 #4, #5 (W); kongming-1739 §4 (R3 vacuity, schedule from the UL-on dry run). |
+| P9 | M9 groundwork; constraints (disk); A1 in scope 3, 8, 9 | runner fail-closed (F07, F08) with fixtures; `--reference`; reference committed at frozen pins; budget vs 25 GB (F02); F10 records; Codex pre-ship ledger | F: deleting a non-leaf snapshot frees almost nothing (P5 housekeeping README, Lesson). A: M9 overlay ≈ 40 GB (measured at P8). Covers verifier-1723 #7 (no automatic deletions); verifier-2105 defect 5. |
+| P10 | M9 | exit 0; exact step set; R0–R2 one live run each; top rung (R3′ or R2) full C1 equal to the reference; min host free ≥ 25 GB, watchdog alive | U: M9 depth (Q3 default), S4. F: the top rung's green snapshot exists before the revert. |
 | all | constraints; records | standards ledger per phase; journals; README/docs | U: standards rule (decision record §1); P1–P6 recorded. Covers verifier-2105 defects 1 (permissions, preflight), 2 (terminal PAUSE lines), 3 (Failure Protocol + go/no-go), 8 (spec reads), 10 (packet in plan dir). |
 
 | P1–P4 | C5 (pairing by requestorId/instanceId; acks via viaNodeId) | `c5.pairsByReqId`, `c5.answerViaNodeId` in every rung verdict | Review K10. |
@@ -126,22 +135,23 @@ Q1/D7 → P3, P4 (P8 records P1). Q2 → P3. N1 (gate on the wire) → all. N2, 
 - **Evidence.** A gate is green only on decoded wire bytes (tshark with `-d sctp.port==36422,e2ap`, the KPM decoder harness, the P0 RC decoder), the ledger, ns-3 traces and digests. Logs are supporting evidence only. Evidence goes to `plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/<gate>/<UTC-ts>/` through `EVIDENCE_HOST_ROOT`, scrubbed by `scripts/gates/scrub-evidence.sh`. Pcaps stay out of git, with a sha256 manifest.
 - **Capture, NIST calls, bring-up, process hygiene:** unchanged from the M0–M7 plan (K3, K6, K10, K14 in `plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/plan.md`).
 - **RIC state is a measured precondition.** Each run: reset rc, the TS xApp, QP and a fresh Influx bucket; restart the TS xApp only after every agent is CONNECTED, then set the A1 threshold; dump rtmgr routes at start and end; record the 12041/12042 −1 owner in `verdict.json`; RestartCount = 0 for rc, TS xApp, QP, kpimon, hw-go and every agent. Bounded, logged retries only for bring-up preconditions, never for C1.
-- **Snapshots.** `scripts/vm/vm-snapshot.sh create <name> --need-gb <n>` only after the free-space check. Deletions only under the snapshot rule in the invariants card. `r3-green` must exist before P10 reverts.
-- **Disk.** Host free ≥ 20 GB at all times. Every phase exit updates the M9 projection. A negative projection is reported at Stop A and settled at Stop B, where the user frees the measured shortfall (user, 01:30 KST). T2 fires only when actual free space would cross the floor.
+- **Snapshots.** `scripts/vm/vm-snapshot.sh create <name> --need-gb <n>` only after the free-space check. Deletions only under the snapshot rule in the invariants card. The top rung's green snapshot must exist before P10 reverts (A1).
+- **Disk.** Host free ≥ 20 GB at all dev times and ≥ 25 GB throughout M9 (A1, F02). Every phase exit updates the M9 projection. A negative projection is reported at Stop A and settled at Stop B, where the user frees the measured shortfall (user, 01:30 KST). T2 fires only when actual free space would cross the floor.
 - **Permissions.** Auto mode with no rules file, as in M0–M7 (user, 01:30 KST). A classifier refusal is T8.
 - **Background VM jobs** run through `vm-exec.sh` (detached unit, polled), each with a hard timeout.
 - **Standards.** Every new technical decision gets a ledger row (decision → document, version, section → Zotero key → read date), read through zotero-mcp, before its code lands. References: E2SM-RC v03.00 `XRWZU3SS`, E2SM common v07.00 `QW6VJ83M`, E2SM-KPM v03.00 `F82PYZVK`, E2AP v03.00 `WEE5IEXF`, 3GPP TS 28.552 V20.2.0 `5SZUBP6M`, 3GPP TS 36.423 `83VGITYK`/`M8YTSAQS`. A missing document is T4.
 - **Code delivery.** Branch `dev/l-release-nist180` on ns-3, oran-interface, the Testbed (agent, installer) and the QP fork; WIP pushes allowed. Gate runs clone at the `scripts/pins.conf` SHAs. Conventional commits, no AI references, never `chore`/`docs` for `.claude` changes, no bare `git stash`.
 - **Advisors (`--advice`).** kongming (`model: opus`, xhigh) on the first failed Verify (Failure Protocol in every phase file), at every design fork the plan does not settle, at every phase exit (go/no-go), at Stops A and B and every PAUSE, before P6's UL counter lands, and before P10. Every `ak:plan`, `ak:cook` or `ak:fix` call inside `/goal` passes `--advice`. kongming's counsel never counts as user approval.
 - **L only.** On an L failure: stop, find the root cause, report (T5).
+- **Codex challenge and audit (A1, CX-1 to CX-4 in `goal-packet.md`).** Claude builds; Codex challenges read-only; the user decides. Controller session only, one call at a time, `--json`, background, 15-minute cancel; never `--write`, no SSH or VM access, no secret in a brief. Cap 4 runs for A1: plan gate 2 (warmup, ledger `reports/codex-plan-gate.md`), pre-ship 1 (P9), spare 1. Findings: accept (fix and re-run the affected Verify), reject (verification source), or escalate (T9). Failure or refusal: `Codex skipped: <reason>`, never T8. kongming stays the advisor at failed Verifies, phase exits and pauses.
 
 ## Warmup decisions
 1. **W1, contract copy in the plan dir.** The locked contract is written verbatim into `goal-packet.md` here, a departure from the skill's session-only default, because a `/goal` started after `/clear` cannot see the warmup chat (M0–M7 precedent, kongming-2105 §1).
 2. **W2, terminal PAUSE lines.** Stops and triggers are terminal transcript lines so the `/goal` evaluator, which reads only the transcript, can see them.
-3. **W3, M9 depth.** One live run on each of R0–R2 (C2–C9) and the full C1 on R3 (kongming-2105 Q3 default, accepted in the brief).
+3. **W3, M9 depth.** One live run on each of R0–R2 (C2–C9) and the full C1 on R3 (kongming-2105 Q3 default, accepted in the brief); since A1, the full C1 on the top rung (R3′, or R2 under substitution 4).
 
 ## Contract-preserving review
 Collect-only kongming review (opus), classified before any edit: `plans/reports/review-261023-0009-GH-1-m8-m9-contract-preserving-review-and-preflight-matrix.md`.
 
 ## Rollback
-Environment: revert to the phase's start snapshot (`f7-rerun-green`, `r0-green`, `r2-green` or `r3-green`), always with the VM shut off first. Code: revert commits on the fork branch (no history rewrite of pushed branches without the user). Pacing and UL traffic are opt-in, so the free-run default is the rollback for the ns-3 and agent changes. Nothing on the host changes.
+Environment: revert to the phase's start snapshot (`f7-rerun-green`, `r0-green`, `r2-green` or `r3p-green`), always with the VM shut off first. Code: revert commits on the fork branch (no history rewrite of pushed branches without the user). Pacing and UL traffic are opt-in, so the free-run default is the rollback for the ns-3 and agent changes. Nothing on the host changes.
