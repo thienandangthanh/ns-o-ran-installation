@@ -73,3 +73,6 @@ The r2 red is the first failed Verify after this release. Per kongming 1300 no f
 - Host `/home` free: 38 G (13:22 KST), above the 20 G floor; VM / 51 % used. No boot since 2026-10-26 16:26:48 UTC. Pods: rc `wbfw2`, kpimon `zqg56`, hw-go `sgz7b`, TS xApp `crdj5`, stub `g4zxt`, all at restart count 0. No ns-3, agent, pacer or capture process.
 - Forks pushed: ns-3 `ba954440`, oran-interface `96efc40e`, Testbed `c6d1434a` (pins.conf). QP fork: local only.
 - kongming pause note: `plans/reports/kongming-261027-1300-GH-1-p6-pause-t8-qp-fork-push-refused.md`.
+
+## Update 2026-10-28
+The user amended `901f8c5` (author email only) to `381a824`, same tree `aece41f6`, and pushed it to origin `dev/l-release-nist180` (verified by `git ls-remote`, 2026-10-28 11:46 KST). Where this journal says `901f8c5`, read `381a824`. Under amendment A1 the QP fork is deferred and not pinned.

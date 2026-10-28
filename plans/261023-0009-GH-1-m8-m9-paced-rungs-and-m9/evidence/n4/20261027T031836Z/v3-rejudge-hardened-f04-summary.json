@@ -1,0 +1,37 @@
+{
+  "what": "F04 re-judge of the archived ulon run with the hardened V3 judge (judge change: evidence re-read, not re-run)",
+  "rejudgedAtKst": "2026-10-28 12:00",
+  "input": "VM /home/uc/evidence/n4/20261027T031836Z/runs/ulon (ns3run/stdout.txt, trace/*.jsonl), copied read-only to a host scratch dir",
+  "inputSha256": {
+    "ns3run/stdout.txt": "d6990ceac8e5dd96f1500aa753cd47c32b500093355a0eddfe2286b49975356d",
+    "trace/e2-ipc-trace-1.jsonl": "33b5ff79e3a61efa4b6f2d18dc9f15d9b9007aef44564be11924910efb575ea7",
+    "trace/e2-ipc-trace-2.jsonl": "c4410db13a912531c22b4b7dd4fa924cb42d23d44e7134cfc5f587b330dac6bf",
+    "trace/e2-ipc-trace-3.jsonl": "3598193d0f01eabc2aca15f4cf88bdcb20421932e8bd05fab43cbc5226b16577"
+  },
+  "command": "check-pdcp-volume-totals.py <ulon> --sim-time-s 10",
+  "exit": 0,
+  "pass": true,
+  "result": "v3-rejudge-hardened-f04.json",
+  "f04Reproduction": {
+    "dropNode3": {
+      "oldJudge": {
+        "pass": true,
+        "residualBits": 422553984
+      },
+      "hardenedJudge": {
+        "pass": false,
+        "a0": false
+      }
+    },
+    "truncateSeqGe50": {
+      "oldJudge": {
+        "pass": true,
+        "residualBits": 641920320
+      },
+      "hardenedJudge": {
+        "pass": false,
+        "a0": false
+      }
+    }
+  }
+}
