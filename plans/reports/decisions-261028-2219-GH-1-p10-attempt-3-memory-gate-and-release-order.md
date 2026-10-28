@@ -30,5 +30,7 @@ The runner runs as a transient user unit started by `systemd-run --user --wait` 
 ## Ruling 6: `finish()` orphan gap (user, 22:35 KST, verbatim: "4 after M9")
 Recorded, not fixed before M9; listed in the handoff as a post-M9 harness fix (drop the `kill -0` guard before `vm_stop_gates`; correct the TERM trap message).
 
-## Still open (asked, not yet ruled)
-- Confirm that re-issuing the goal means M9 attempt 3 with prefix `p`.
+## Ruling 7: prefix (user, 22:38 KST, verbatim: "approve prefix p.")
+Re-issuing the goal means M9 attempt 3 with `--run-prefix p` at F′ `fb3554af67010dfedb6ae500e533acb7cdac9530`, under rulings 1–6.
+
+All attempt-3 questions are ruled.
