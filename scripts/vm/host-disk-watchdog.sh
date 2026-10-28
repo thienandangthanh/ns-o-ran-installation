@@ -33,9 +33,9 @@ min_file="$out/min-host-free-gb.txt"
 trip() {
     local free="$1" before after
     hlog "watchdog: host /home free ${free}G < ${min_gb}G: stopping the chain"
-    before=$(vm_ssh "systemctl list-units --plain --no-legend --state=active 'gate-*' | awk '{print \$1}'" 2>/dev/null | paste -sd, -)
-    vm_ssh "sudo systemctl stop 'gate-*'" 2>/dev/null || true
-    after=$(vm_ssh "systemctl list-units --plain --no-legend --state=active 'gate-*' | awk '{print \$1}'" 2>/dev/null | paste -sd, -)
+    before=$(vm_gate_units)
+    vm_stop_gates || hlog "watchdog: stopping the VM gate units failed or exceeded ${CANCEL_TIMEOUT_S} s; shutting down anyway"
+    after=$(vm_gate_units)
     python3 - "$out/watchdog-tripped.json" "$free" "$min_gb" "$(cat "$min_file")" "$before" "$after" <<'PY'
 import json, sys, time
 path, free, thr, minfree, before, after = sys.argv[1:]

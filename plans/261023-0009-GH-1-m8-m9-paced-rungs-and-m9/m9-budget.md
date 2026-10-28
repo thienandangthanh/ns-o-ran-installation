@@ -31,9 +31,9 @@ Global wall = ceil(1.5 × (Σ steps + revert 102 s + 8 snapshot boundaries 453 s
 
 ## Watchdog trip point (h)
 
-- Polling interval 30 s. Stop path = 2 polling periods (stale heartbeat) + 1 monitor check + 30 s cancellation + 240 s graceful shutdown = 360 s.
+- Polling interval 30 s. Stop path = 2 polling periods (stale heartbeat) + 1 monitor check + 30 s bounded cancellation (`CANCEL_TIMEOUT_S`, every remote call has a timeout) + 10 s virsh call + 240 s graceful shutdown = 370 s.
 - The fastest measured host-disk growth is between snapshot boundaries in the fresh-install chain log. It is m3, where host free went from 64 G to 40 G between 22:11:17 and 22:54:12 (2,575 s): 0.0093 GiB/s.
-- h = ceil(0.0093 × 360) = **4 GiB**, so the trip is **29 GiB** (25 + h). M9 passes only if the watchdog never trips. The trip lands at or above 25 GiB as long as growth stays under 4 GiB over the 360 s stop path.
+- h = ceil(0.0093 × 370) = **4 GiB**, so the trip is **29 GiB** (25 + h). M9 passes only if the watchdog never trips. The trip lands at or above 25 GiB as long as growth stays under 4 GiB over the 370 s stop path.
 - Caveat: each boundary sample is an average over 15–40 minutes and understates bursts. Doubling the rate gives h = 8 GiB, which the user may take as an optional +4 GiB margin at Stop B. The watchdog now logs `free-series.tsv` once per poll, so M9 records its real peak rate and h can be checked after the run.
 
 ## Disk the user must provide before P10

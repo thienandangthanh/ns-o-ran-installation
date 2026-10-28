@@ -7,7 +7,8 @@ single; r3p: c1; r2 when it is the top rung: c1). timeout = ceil(1.5 x d) + 600 
 log from fresh-install) gives the revert and every snapshot boundary (graceful shutdown -> snapshot created) and the
 host free at each boundary; globalWallS = ceil(1.5 x (sum d + revert + boundaries)). h, the watchdog's preventive
 headroom: the fastest measured host-disk growth between boundaries (GB/s) x the longer stop path (2 polling periods
-for a stale heartbeat + one monitor check + 30 s cancellation + 240 s graceful shutdown), rounded up; tripGb = 25 + h.
+for a stale heartbeat + one monitor check + 30 s bounded cancellation + 10 s virsh call + 240 s graceful
+shutdown), rounded up; tripGb = 25 + h.
 Install steps whose green runs were all warm (images already built) also get a cold-path floor: their timeout is
 never below the gate's own inner caps on the cold path + 600 s, and the global wall sums their measured cold
 duration instead of the warm one (COLD). Prints the table as Markdown; refuses (exit 1) when a step has no green
@@ -90,7 +91,7 @@ def main(av):
         if dt > 0 and f0 > f1:
             rates.append((f0 - f1) / dt)
     rate = max(rates)
-    stop_path = 2 * interval + interval + 30 + 240
+    stop_path = 2 * interval + interval + 30 + 10 + 240
     h = math.ceil(rate * stop_path)
     run_s = {s: max(v[0], COLD[s][1]) if s in COLD else v[0] for s, v in d.items()}
     timeouts = {s: max(math.ceil(1.5 * v[0]) + 600, COLD[s][0] + 600 if s in COLD else 0) for s, v in d.items()}
