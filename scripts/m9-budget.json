@@ -1,0 +1,108 @@
+{
+ "_comment": "measured by scripts/m9-budget.py; see plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/m9-budget.md",
+ "timeoutsS": {
+  "m0": 716,
+  "m1": 2754,
+  "m2": 1869,
+  "m3": 4338,
+  "m4": 2636,
+  "m5": 1238,
+  "m6": 1088,
+  "m7": 3147,
+  "i0": 4260,
+  "r0": 1379,
+  "r1": 1269,
+  "i2": 5580,
+  "r2": 1518,
+  "r3p": 2529
+ },
+ "coldPath": {
+  "i0": {
+   "innerCapsS": 3660,
+   "coldS": 339,
+   "basis": "rc_install nist_run 3600 + kill-after 60 (rc-lib.sh); cold = warm i0 132 s + the cold rc install 207 s in q8/20261022T225843Z (22:59:12 -> 23:02:39)"
+  },
+  "i2": {
+   "innerCapsS": 4980,
+   "coldS": 1053,
+   "basis": "ts_install nist_run 3600 + kill-after 60, rmr_peer_build timeout 1200, its self-test timeout 120 (ts-lib.sh); cold = i2/20261023T171928Z, 1053 s with the cold TS xApp install taking 986 s"
+  }
+ },
+ "measuredS": {
+  "m0": {
+   "durationS": 77,
+   "evidence": "plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m0/20261021T191750Z-host"
+  },
+  "m1": {
+   "durationS": 1436,
+   "evidence": "plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m1/20261021T213103Z"
+  },
+  "m2": {
+   "durationS": 846,
+   "evidence": "plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m2/20261021T215558Z"
+  },
+  "m3": {
+   "durationS": 2492,
+   "evidence": "plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m3/20261021T221128Z"
+  },
+  "m4": {
+   "durationS": 1357,
+   "evidence": "plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m4/20261021T165230Z"
+  },
+  "m5": {
+   "durationS": 425,
+   "evidence": "plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m5/20261021T231733Z"
+  },
+  "m6": {
+   "durationS": 325,
+   "evidence": "plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m6/20261021T232516Z"
+  },
+  "m7": {
+   "durationS": 1698,
+   "evidence": "plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m7/20261021T233129Z"
+  },
+  "i0": {
+   "durationS": 132,
+   "evidence": "plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/i0/20261023T082556Z"
+  },
+  "r0": {
+   "durationS": 519,
+   "evidence": "plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/r0/20261027T035415Z"
+  },
+  "r1": {
+   "durationS": 446,
+   "evidence": "plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/r1/20261027T040329Z"
+  },
+  "i2": {
+   "durationS": 187,
+   "evidence": "plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/i2/20261024T030327Z"
+  },
+  "r2": {
+   "durationS": 612,
+   "evidence": "plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/r2/20261028T030809Z"
+  },
+  "r3p": {
+   "durationS": 1286,
+   "evidence": "plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/r3p/20261028T044557Z"
+  }
+ },
+ "revertS": 102,
+ "boundariesS": [
+  11,
+  27,
+  72,
+  75,
+  103,
+  34,
+  32,
+  99
+ ],
+ "globalWallS": 20199,
+ "watchdog": {
+  "intervalS": 30,
+  "maxGrowthGbPerS": 0.00932,
+  "stopPathS": 360,
+  "hGb": 4,
+  "tripGb": 29
+ }
+}
