@@ -1,0 +1,20 @@
+1793161256272 1/RMR [INFO] ric message routing library on SI95 p=4593 mv=3 flg=00 id=a (a1be12a 4.9.0 built: Feb 14 2023)
+1793161256395 9/RMR [INFO] ric message routing library on SI95 p=4592 mv=3 flg=00 id=a (a1be12a 4.9.0 built: Feb 14 2023)
+ok   prediction keeps the table's cell order
+ok   a used-up UE gets no answer
+ok   a request naming two UEs gets no answer
+ok   an empty UE list gets no answer
+ok   anomaly payload: one UE, ue-id a JSON string
+ok   injector ready: READY rmr port 4592 ctl port 38599
+ok   injector reply {'ok': True, 'state': 0, 'tries': 1, 'sendS': 0.000117}
+ok   loopback received 30003 with the exact payload: (30003, b'[{"du-id": 1010, "ue-id": "3", "measTimeStampRf": 0, "Degradation": "RSRP RSSINR"}]')
+ok   injector still running after 2.5 s of idle receive timeouts
+ok   sent one 30004 to the injector
+ok   injector logged exactly 1 received message (1) and still runs
+ok   stub up and healthy after 2.5 s idle
+ok   stub accepted a table
+ok   sent one 30000 to the stub
+ok   stub answered 30002 with the table's prediction: (30002, b'{"3":{"0000000202":[100,0],"0000000303":[200,0]}}')
+ok   stub still up after a second idle wait and logged exactly 1 request (1)
+{"pass": true, "problems": []}
+built and imported 127.0.0.1:80/stubqp:07c6dc93df2f
