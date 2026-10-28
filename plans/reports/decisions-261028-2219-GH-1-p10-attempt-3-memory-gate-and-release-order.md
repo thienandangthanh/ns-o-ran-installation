@@ -21,8 +21,14 @@ Phase-10 pre-flight item 7 (`df -BG /home` ≥ 84, else PAUSE T2) moves after th
 
 The 84 GiB threshold itself is unchanged: T = (25 + h) + M0–M7 + R section = 29 + 43 + 12 (`m9-budget.md`).
 
+## Ruling 4: reaper environment variable (user, 22:35 KST, verbatim: "1 yes")
+The user starts the attempt-3 Claude Code session with `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1` in its launch environment (for example `env CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1 claude`). Pre-flight records `printenv CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP` as a fact.
+
+## Ruling 5: hybrid launch route (user, 22:35 KST, verbatim: "2 hybrid")
+The runner runs as a transient user unit started by `systemd-run --user --wait` with `KillMode=mixed`, launched through the Claude Code background shell, per `plans/reports/kongming-261028-2215-GH-1-p10-reaper-env-var-vs-systemd-run-advice.md` (Q3 command, work checklist items 3–9; Codex's view in `plans/reports/codex-261028-2218-GH-1-p10-reaper-env-var-vs-systemd-run-advice.md`). Recorded as the binding "Launch-route amendment" block in `phase-10-m9-unattended-run-from-fresh-install.md`. It changes no test, pass condition, budget or file under `scripts`/`tools` (K14 holds at F′).
+
+## Ruling 6: `finish()` orphan gap (user, 22:35 KST, verbatim: "4 after M9")
+Recorded, not fixed before M9; listed in the handoff as a post-M9 harness fix (drop the `kill -0` guard before `vm_stop_gates`; correct the TERM trap message).
+
 ## Still open (asked, not yet ruled)
-- Start Claude Code with `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`, or not.
-- Launch route: Claude Code background shell (phase-10 step 5 as written) or `systemd-run --user` (needs a step-5 amendment). Advice: `plans/reports/codex-261028-2218-GH-1-p10-reaper-env-var-vs-systemd-run-advice.md`, `plans/reports/kongming-261028-2215-GH-1-p10-reaper-env-var-vs-systemd-run-advice.md`.
 - Confirm that re-issuing the goal means M9 attempt 3 with prefix `p`.
-- Fix the `finish()` orphan gap now (F″) or after M9.
