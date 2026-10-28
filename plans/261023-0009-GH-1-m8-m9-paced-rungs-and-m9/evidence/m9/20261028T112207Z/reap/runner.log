@@ -1,0 +1,62 @@
+[host 11:22:07] top rung r3p (substitution 4 record: none)
+[host 11:22:07] M9 run 20261028T112207Z: steps m0 m1 m2 m3 m4 m5 m6 m7 i0 r0 r1 i2 r2 r3p (full 1), watchdog trip 29 GB every 30 s, wall 20199 s
+[11:22:07] gate m0-host start; evidence /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m0/20261028T112207Z-host; harness fb3554af67010dfedb6ae500e533acb7cdac9530
+[11:22:07] PASS host_free_ge_20g
+[11:22:07] PASS fresh_install_present
+[11:22:08] PASS harness_repo_public
+[11:22:20] PASS harness_anonymous_clone
+[11:22:32] PASS probe_create
+[11:22:32] PASS probe_marker_written
+[11:22:47] PASS revert_fresh_install
+[11:22:47] PASS marker_absent_after_revert
+[11:22:47] PASS probe_still_listed
+[11:23:02] PASS branch_create
+[11:23:02] PASS branch_overlay_exists
+[11:23:02] PASS branch_delete
+[11:23:02] PASS branch_unlisted
+[11:23:02] PASS branch_overlay_gone
+[11:23:03] PASS vm_up_after_probe
+[11:23:03] PASS vm_no_git_credentials
+verdict m0-host: PASS failed=[]
+[host 11:23:10] gate m0 (gate-m0-preflight.sh) harness fb3554af67 -> unit gate-m0-20261028T112310Z
+debconf: delaying package configuration, since apt-utils is not installed
+
+Running kernel seems to be up-to-date.
+
+No services need to be restarted.
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+[host 11:24:47] gate m0 exit 0
+scrub: no token file and no InfluxDB deployed: regex scan only
+scrub: 0 file(s) redacted, 0 known secret(s)
+[host 11:24:47] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m0/20261028T112310Z
+verdict m0 PASS []
+[host 11:24:47] no-snapshot mode: rebooting at the o0-preflight boundary
+[host 11:24:47] graceful shutdown of ubuntu24.04
+[host 11:24:59] m0 green
+[host 11:25:01] gate m1 (gate-m1-ric-up.sh) harness fb3554af67 -> unit gate-m1-20261028T112501Z
+[host 11:48:37] gate m1 exit 0
+scrub: no token file and no InfluxDB deployed: regex scan only
+scrub: 0 file(s) redacted, 0 known secret(s)
+[host 11:48:38] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m1/20261028T112501Z
+verdict m1 PASS []
+[host 11:48:39] no-snapshot mode: rebooting at the o1-ric-up boundary
+[host 11:48:39] graceful shutdown of ubuntu24.04
+[host 11:49:06] m1 green
+[host 11:49:09] gate m2 (gate-m2-refnode.sh) harness fb3554af67 -> unit gate-m2-20261028T114909Z
+[host 12:04:23] gate m2 exit 0
+scrub: no token file and no InfluxDB deployed: regex scan only
+scrub: 0 file(s) redacted, 0 known secret(s)
+[host 12:04:24] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m2/20261028T114909Z
+verdict m2 PASS []
+[host 12:04:26] no-snapshot mode: rebooting at the o2-refnode boundary
+[host 12:04:26] graceful shutdown of ubuntu24.04
+[host 12:05:39] m2 green
+[host 12:05:41] gate m3 (gate-m3-xapps.sh) harness fb3554af67 -> unit gate-m3-20261028T120541Z
+Terminated                 sleep 5
+[host 12:41:11] stopped by the disk watchdog or the heartbeat monitor
+M9 verdict: FAIL top rung None, min host free 67 GB -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m9/20261028T112207Z/verdict.json; steps run ['m0', 'm1', 'm2'], pre-registered ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'i0', 'r0', 'r1', 'i2', 'r2', 'r3p']; top rung r3p: mode None, all checks None, equalsReference None

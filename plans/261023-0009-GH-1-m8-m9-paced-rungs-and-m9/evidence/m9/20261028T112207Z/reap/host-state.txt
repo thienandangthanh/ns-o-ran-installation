@@ -1,0 +1,19 @@
+Host state when the runner was reaped (captured 2026-10-28 12:41:28Z, read-only, before any cleanup)
+
+Claude Code background-task notification (b0dh05hh1): status killed, "Background command ... was stopped because
+the system is running low on memory". The runner's TERM trap logged at 12:41:11Z
+"stopped by the disk watchdog or the heartbeat monitor" (its fixed message for any TERM) and wrote verdict.json
+(FAIL: steps run m0 m1 m2; minHostFreeGb 67; watchdog alive, 157 checks, maxAgeS 32).
+
+free -g (host, 12:41:28Z): total 31, used 27, free 0, buff/cache 2, available 3; swap 35 total, 13 used.
+Top RSS: qemu-system-x86_64 (ubuntu24.04, 16 GiB guest) 16.5 GiB; firefox started ~50 s earlier, parent 1.0 GiB plus
+about 10 content processes 0.4-0.8 GiB each (about 6 GiB total); zotero 1.3 GiB; orca-ide renderer 0.5 GiB; claude 0.4 GiB.
+Guest (free -g inside the VM): total 15, used 2, buff/cache 11, available 13.
+
+Orphan: the VM unit gate-m3-20261028T120541Z.service was still active/running after the runner exited, because
+run-to-m9.sh finish() calls vm_stop_gates only while step_pid is alive, and the reaper had already killed the
+whole process group (vm-exec included).
+
+Cleanup (12:42Z): vm_stop_gates (rc 0, no gate-* unit left, no ns-3/e2sim/pacer process); vm_shutdown (rc 0,
+shut off). Host after: used 11, available 19 GiB. No host runner/watchdog/monitor/vm-exec process.
+Disk: df -BG /home 67 G at the end of the run (watchdog min 67).
