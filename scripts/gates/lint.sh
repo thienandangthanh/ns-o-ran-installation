@@ -132,6 +132,11 @@ for f in scripts/vm/vm-exec.sh scripts/probes/vm-exec-probe.sh; do
     grep -A1 'scrub-evidence.sh \$ev"' "$f" | grep -q '^ *die "evidence scrub failed' ||
         { echo "$f: a failed scrub does not stop the evidence copy"; rc=1; }
 done
+# a check whose command is `bash -c "judge | tee f"` returns tee's status (a child bash does not inherit pipefail),
+# so a red judge would pass: such a child shell must run with -o pipefail
+if grep -nE 'check [^#]*bash -c "[^"]*\| *tee' scripts/gates/gate-*.sh; then
+    echo "a check pipes inside bash -c without -o pipefail (see above): the judge's exit status is lost"; rc=1
+fi
 # a silenced cat of a named evidence file into a pipe: a mode that skips that run makes cat fail, pipefail red
 if grep -nE 'cat [^|#]*"\$e"/[A-Za-z0-9_]+-[A-Za-z0-9_.-]+ [^|#]*2>/dev/null *\|[^|]' scripts/gates/*.sh; then
     echo "a silenced cat of a named evidence file into a pipe (see above)"; rc=1

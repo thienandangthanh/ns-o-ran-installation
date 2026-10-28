@@ -117,9 +117,9 @@ python3 -I "$CHK" table "$SCEN" "${CALX[@]}" >"$e/r2-stub-table.json"
 rung_stub_setup() { RUN_SCHEDULE="$e/r2-schedule.json"; check "r2_${1}_stub_table_loaded" stub_table_load "$e/r2-stub-table.json"; }
 rung_judges() {
     local label="$1" rd="$2"
-    check "r2_${label}_expected_outcomes_negatives_no_line_late_zero" bash -c "python3 -I '$CHK' expect '$SCEN' '$rd/trace/e2-control-ledger.jsonl' ${CALX[*]} | tee '$rd/r2-expect.json'"
-    check "r2_${label}_wire_requests_equal_positives_via_target_with_stub_key" bash -c "python3 -I '$CHK' wire '$SCEN' '$rd/extra/rc-multiset.json' ${CALX[*]} | tee '$rd/r2-wire.json'"
-    check "r2_${label}_injector_and_stub_one_request_and_answer_per_trigger" bash -c "python3 -I '$CHK' stub '$SCEN' '$rd/stub-log.json' '$rd/injector/tx.jsonl' ${CALX[*]} | tee '$rd/r2-stub.json'"
+    check "r2_${label}_expected_outcomes_negatives_no_line_late_zero" bash -o pipefail -c "python3 -I '$CHK' expect '$SCEN' '$rd/trace/e2-control-ledger.jsonl' ${CALX[*]} | tee '$rd/r2-expect.json'"
+    check "r2_${label}_wire_requests_equal_positives_via_target_with_stub_key" bash -o pipefail -c "python3 -I '$CHK' wire '$SCEN' '$rd/extra/rc-multiset.json' ${CALX[*]} | tee '$rd/r2-wire.json'"
+    check "r2_${label}_injector_and_stub_one_request_and_answer_per_trigger" bash -o pipefail -c "python3 -I '$CHK' stub '$SCEN' '$rd/stub-log.json' '$rd/injector/tx.jsonl' ${CALX[*]} | tee '$rd/r2-stub.json'"
 }
 
 if [ "$MODE" = calibrate ]; then

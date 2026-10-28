@@ -223,22 +223,22 @@ rung_judges() {
         join_log() { python3 -I -c 'import importlib.util,json,sys; s=importlib.util.spec_from_file_location("c", sys.argv[1]); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); json.dump(m.stub_log(sys.argv[2]), open(sys.argv[3], "w"))' "$CHK" "$rd" "$rd/stub-log-joined.json"; }
         check "r3p_${label}_stub_log_parts_joined" join_log
         for j in expect wire; do
-            check "r3p_${label}_calibration_${j}" bash -c "python3 -I '$G/r2-checks.py' $j '$R2SCEN' '$rd/$([ $j = expect ] && echo trace/e2-control-ledger.jsonl || echo extra/rc-multiset.json)' --calibrate | tee '$rd/r3p-$j.json'"
+            check "r3p_${label}_calibration_${j}" bash -o pipefail -c "python3 -I '$G/r2-checks.py' $j '$R2SCEN' '$rd/$([ $j = expect ] && echo trace/e2-control-ledger.jsonl || echo extra/rc-multiset.json)' --calibrate | tee '$rd/r3p-$j.json'"
         done
-        check "r3p_${label}_calibration_stub" bash -c "python3 -I '$G/r2-checks.py' stub '$R2SCEN' '$rd/stub-log-joined.json' '$rd/injector/tx.jsonl' --calibrate | tee '$rd/r3p-stub.json'"
+        check "r3p_${label}_calibration_stub" bash -o pipefail -c "python3 -I '$G/r2-checks.py' stub '$R2SCEN' '$rd/stub-log-joined.json' '$rd/injector/tx.jsonl' --calibrate | tee '$rd/r3p-stub.json'"
         n6_all() { python3 -I -c 'import glob,json,sys; v=[json.load(open(p))["pass"] for p in glob.glob(sys.argv[1]+"/r3p/n6-*.json")]; print(len(v), "N6 verdicts, all pass:", all(v)); sys.exit(0 if v and all(v) and len(v) == int(sys.argv[2]) else 1)' "$rd" "$N_POS"; }
         check "r3p_${label}_n6_passed_at_every_trigger" n6_all
         return
     fi
-    check "r3p_${label}_expected_outcomes_step_scoped_late_zero" bash -c "python3 -I '$CHK' expect '$SCHED' '$L' | tee '$rd/r3p-expect.json'"
-    check "r3p_${label}_wire_requests_equal_handovers_via_target_with_predictor_key" bash -c "python3 -I '$CHK' wire '$SCHED' '$rd/extra/rc-multiset.json' | tee '$rd/r3p-wire.json'"
-    check "r3p_${label}_injector_and_stub_sent_exactly_the_predictor_answer" bash -c "python3 -I '$CHK' stub '$SCHED' '$rd' '$rd/injector/tx.jsonl' | tee '$rd/r3p-stub.json'"
-    check "r3p_${label}_predictor_answer_equals_formula_on_n6_certified_window" bash -c "python3 -I '$CHK' predictor '$SCEN' '$SCHED' '$rd' | tee '$rd/r3p-predictor.json'"
-    check "r3p_${label}_influx_equals_ipc_full_for_the_read_counter" bash -c "python3 -I '$CHK' influx-ipc '$SCEN' '$rd' | tee '$rd/r3p-influx-ipc.json'"
-    check "r3p_${label}_d7_target_addressed" bash -c "python3 -I '$CHK' d7 '$L' | tee '$rd/r3p-d7.json'"
-    check "r3p_${label}_observation_change_gives_the_preregistered_decisions" bash -c "python3 -I '$CHK' observation '$SCEN' '$SCHED' '$rd' | tee '$rd/r3p-observation.json'"
-    check "r3p_${label}_post_handover_membership_observed" bash -c "python3 -I '$CHK' membership '$SCHED' '$rd' | tee '$rd/r3p-membership.json'"
-    check "r3p_${label}_predictor_driven_applied_at_least_one" bash -c "python3 -I '$CHK' driven '$SCHED' '$L' '$rd' | tee '$rd/r3p-driven.json'"
+    check "r3p_${label}_expected_outcomes_step_scoped_late_zero" bash -o pipefail -c "python3 -I '$CHK' expect '$SCHED' '$L' | tee '$rd/r3p-expect.json'"
+    check "r3p_${label}_wire_requests_equal_handovers_via_target_with_predictor_key" bash -o pipefail -c "python3 -I '$CHK' wire '$SCHED' '$rd/extra/rc-multiset.json' | tee '$rd/r3p-wire.json'"
+    check "r3p_${label}_injector_and_stub_sent_exactly_the_predictor_answer" bash -o pipefail -c "python3 -I '$CHK' stub '$SCHED' '$rd' '$rd/injector/tx.jsonl' | tee '$rd/r3p-stub.json'"
+    check "r3p_${label}_predictor_answer_equals_formula_on_n6_certified_window" bash -o pipefail -c "python3 -I '$CHK' predictor '$SCEN' '$SCHED' '$rd' | tee '$rd/r3p-predictor.json'"
+    check "r3p_${label}_influx_equals_ipc_full_for_the_read_counter" bash -o pipefail -c "python3 -I '$CHK' influx-ipc '$SCEN' '$rd' | tee '$rd/r3p-influx-ipc.json'"
+    check "r3p_${label}_d7_target_addressed" bash -o pipefail -c "python3 -I '$CHK' d7 '$L' | tee '$rd/r3p-d7.json'"
+    check "r3p_${label}_observation_change_gives_the_preregistered_decisions" bash -o pipefail -c "python3 -I '$CHK' observation '$SCEN' '$SCHED' '$rd' | tee '$rd/r3p-observation.json'"
+    check "r3p_${label}_post_handover_membership_observed" bash -o pipefail -c "python3 -I '$CHK' membership '$SCHED' '$rd' | tee '$rd/r3p-membership.json'"
+    check "r3p_${label}_predictor_driven_applied_at_least_one" bash -o pipefail -c "python3 -I '$CHK' driven '$SCHED' '$L' '$rd' | tee '$rd/r3p-driven.json'"
     check "r3p_${label}_no_token_in_the_predictor_dir" python3 -I "$CHK" secrets "$rd" "$TOKEN_FILE"
 }
 
