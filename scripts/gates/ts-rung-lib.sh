@@ -220,3 +220,108 @@ rung_reference() {
     fact equalsReference "$(python3 -I -c 'import json,sys; print(json.dumps(json.load(open(sys.argv[1]))["equalsReference"]))' "$e/reference-compare.json" 2>/dev/null || echo false)"
     fact referenceDir "$(json_str "${ref#"$HARNESS_DIR"/}")"
 }
+
+# rung_final_facts: the gate-level facts and checks after the runs: slack, L, IPC drops, restart counts (all runs and
+# per pod), the 12041/12042 -1 route owners, whether the TS xApp or the stub held an ack route, and no leftovers.
+rung_final_facts() {
+    facts_final() {
+        python3 -I - "$e" "$e/${RUNG}-facts.json" <<'PY'
+import glob, json, sys
+e = sys.argv[1]
+slack = {"T_start": None, "T_gate": None, "T_ctl": None, "W": None}
+for log in sorted(glob.glob(e + "/runs/live*/trace/e2-pacing-log.jsonl")) + sorted(glob.glob(e + "/runs/calib/trace/e2-pacing-log.jsonl")):
+    for l in open(log):
+        m = json.loads(l)
+        if m.get("type") == "barrier" and m["stepsWaitS"] >= 0:
+            k = "T_start" if m["seq"] == -1 else "T_gate"
+            s = round(m["timeoutS"] - m["stepsWaitS"], 6)
+            slack[k] = s if slack[k] is None else min(slack[k], s)
+summaries = sorted(glob.glob(e + "/runs/live*/pacer/pacer-summary.json")) + sorted(glob.glob(e + "/runs/calib/pacer/pacer-summary.json"))
+for p in summaries:
+    for k, v in (json.load(open(p)).get("minSlackS") or {}).items():
+        if v is not None:
+            slack[k] = v if slack[k] is None else min(slack[k], v)
+L = []
+for p in summaries:
+    for rec in json.load(open(p))["steps"].values():
+        if rec.get("window") == "T_ctl":
+            L += rec.get("L", [])
+dropped = no_sub = 0
+for tr in glob.glob(e + "/runs/*/trace/e2-ipc-trace-*.jsonl"):
+    for l in open(tr):
+        if '"type":"sample"' in l:
+            dropped = max(dropped, json.loads(l).get("ipcDropped", 0))
+for log in glob.glob(e + "/runs/*/trace/e2-pacing-log.jsonl"):
+    for l in open(log):
+        m = json.loads(l)
+        if m.get("type") == "step":
+            no_sub = max(no_sub, m.get("droppedNoSub", 0))
+out = {"minSlack": slack, "lControlLatencyS": sorted(L), "ipcDropped": dropped, "droppedNoSub": no_sub}
+json.dump(out, open(sys.argv[2], "w"), indent=1)
+print(json.dumps(out))
+sys.exit(0 if dropped == 0 and no_sub == 0 else 1)
+PY
+    }
+    check ${RUNG}_ipc_dropped_zero_no_sub_dropped_zero_and_slack_recorded facts_final
+    for k in minSlack lControlLatencyS ipcDropped droppedNoSub; do
+        fact "$k" "$(python3 -I -c 'import json,sys; print(json.dumps(json.load(open(sys.argv[1]))[sys.argv[2]]))' "$e/${RUNG}-facts.json" "$k" 2>/dev/null || echo null)"
+    done
+    restart_all_zero() { cat "$e"/*-after-pods.tsv 2>/dev/null | awk -F'\t' '$4 != 0 { bad = 1 } END { exit bad }'; }
+    check ${RUNG}_restart_counts_all_zero restart_all_zero
+    fact restartCountsAllZero "$(restart_all_zero && echo true || echo false)"
+    restart_map() {   # "<run>/<rc|ts-xapp|qp-stub|kpimon|hw-go|agent-N>": restart count, from each run's after-snapshot
+        python3 -I - "$e" <<'PY'
+import glob, json, os, sys
+names = (("ricxapp-trafficxapp-", "ts-xapp"), ("ricxapp-stubqp-", "qp-stub"), ("ricxapp-kpimon-go-", "kpimon"),
+         ("ricxapp-hw-go-", "hw-go"), ("ricxapp-rc-", "rc"))
+out = {}
+for f in sorted(glob.glob(sys.argv[1] + "/*-after-pods.tsv")):
+    run = os.path.basename(f)[:-len("-after-pods.tsv")]
+    for l in open(f):
+        c = l.rstrip("\n").split("\t")
+        if c[0] == "agent":
+            out["%s/agent-%s" % (run, c[1])] = int(c[3])
+        else:
+            for pre, k in names:
+                if c[1].startswith(pre):
+                    out["%s/%s" % (run, k)] = int(c[3])
+print(json.dumps(out))
+PY
+    }
+    fact restartCounts "$(restart_map 2>/dev/null || echo null)"
+    route_owners() {   # per run, at the start and the end, the rtmgr and e2term views of the 12041/12042 -1 owner
+        python3 -I - "$e/route-owners.tsv" "$1" <<'PY'
+import json, sys
+mt, out = sys.argv[2], {}
+for l in open(sys.argv[1]):
+    run, when, r41, r42, e41, e42 = (l.rstrip("\n").split("\t") + [""] * 6)[:6]
+    out.setdefault(run, {})[when] = {"rtmgr": r41 if mt == "12041" else r42, "e2term": e41 if mt == "12041" else e42}
+print(json.dumps(out))
+PY
+    }
+    fact routeOwner12041 "$(route_owners 12041 2>/dev/null || echo null)"
+    fact routeOwner12042 "$(route_owners 12042 2>/dev/null || echo null)"
+    # whether the TS xApp or the stub held a -1 ack route in either view, per run (attributes any later restart)
+    fact tsOrStubHeldAckRoute "$(python3 -I - "$e/route-owners.tsv" <<'PY' 2>/dev/null || echo null
+import json, sys
+out = {}
+for l in open(sys.argv[1]):
+    c = (l.rstrip("\n").split("\t") + [""] * 6)[:6]
+    held = any(("trafficxapp" in v or "stubqp" in v) for v in c[2:])
+    out[c[0]] = out.get(c[0], False) or held
+print(json.dumps(out))
+PY
+    )"
+    no_stray() {
+        local bad=0
+        pgrep -f "scenario-zero" && bad=1
+        pgrep -f ipc-null-sink && bad=1
+        pgrep -f "gates/pacer.py" && bad=1
+        [ -z "$(dk ps -aq --filter label=ns3e2.agent=1)" ] || { echo "agent container left"; bad=1; }
+        [ -z "$(dk ps -aq --filter "name=$INJ_NAME")" ] || { echo "injector container left"; bad=1; }
+        ss -Sanp 2>/dev/null | grep -E ':3847[0-9]|:38499' && bad=1
+        [ "$bad" = 0 ] && echo "no leftovers"
+        return $bad
+    }
+    check ${RUNG}_no_stray_process no_stray
+}
