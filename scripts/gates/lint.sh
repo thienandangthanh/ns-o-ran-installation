@@ -45,6 +45,10 @@ python3 -I scripts/gates/check-c9-handover-trace.py --self-test >/dev/null || { 
 python3 -I scripts/gates/n4-drop-selftest.py >/dev/null || { echo "n4 UL-off drop self-test failed"; rc=1; }
 python3 -I scripts/gates/check-pdcp-volume-totals.py --self-test >/dev/null || { echo "n4 PDCP volume audit judge self-test failed"; rc=1; }
 python3 -I scripts/gates/check-n4-v5-windows.py --self-test >/dev/null || { echo "n4 V5 window rule self-test failed"; rc=1; }
+python3 -I scripts/gates/r3p-predictor.py --self-test >/dev/null || { echo "r3p predictor self-test failed"; rc=1; }
+python3 -I scripts/gates/r3p-predictor.py lint scripts/gates/r3p-scenario.json >/dev/null ||
+    { echo "r3p-scenario.json pre-registration does not lint (empty domain or template outside it)"; rc=1; }
+python3 -I scripts/gates/check-n6-influx-window.py --self-test >/dev/null || { echo "N6 window certification self-test failed"; rc=1; }
 if grep -nE '(\blogs\b[^|#]*|"\$[a-z_]*logs?"\s*)\|\s*(grep\s+-[a-zA-Z]*[qm]|head\b)' scripts/gates/*.sh |
     grep -vE '^[^:]+:[0-9]+:\s*#'; then
     echo "an early-exit reader on a log pipe (see above): SIGPIPE under pipefail"; rc=1
