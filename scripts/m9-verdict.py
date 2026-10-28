@@ -2,15 +2,16 @@
 """m9-verdict.py: the fail-closed M9 verdict (run-to-m9.sh; amendment A1, Codex F07/F08).
 
   m9-verdict.py STEPS_TSV OUT --expected m0,...,r3p --top r3p|r2 --full 0|1 --watchdog-dir DIR --pins FILE
-                --harness SHA --prefix P --snapshots 0|1 [--sub4 pass|fail|none] [--min-free-floor 25]
+                --harness SHA --prefix P --snapshots 0|1 --end-epoch E [--sub4 pass|fail|none] [--min-free-floor 25]
 STEPS_TSV: step<TAB>pass|fail<TAB>evidence dir, one line per step run. The run passes only when:
   - the steps run are exactly the pre-registered list, in order (no missing or extra step), each green, and each
     step's own verdict.json (when it has evidence) agrees;
   - the run is the full chain (--full 1); a --from/--to subset is marked notM9 and never passes;
   - the top rung (R3′, or R2 under substitution 4) ran --mode c1, every check passed, and equalsReference is true;
   - under substitution 4 the committed record validated (--sub4 pass);
-  - DIR/min-host-free-gb.txt holds an integer >= the floor (25 GB), no watchdog-tripped.json, no watchdog-lost.json
-    or wall-deadline.json, and DIR/watchdog-alive.json shows the heartbeat never older than 2 polling periods.
+  - DIR/min-host-free-gb.txt holds an integer >= the floor (25 GB), no watchdog-tripped.json, watchdog-lost.json,
+    wall-deadline.json or monitor-lost.json, and DIR/watchdog-alive.json shows the heartbeat never older than 2
+    polling periods with the monitor's last check within 2 polling periods of the run's end (E, epoch seconds).
 Every rung verdict's substitution3Applied is carried. Exit 0 iff the verdict passes.
   m9-verdict.py --self-test
 """
@@ -35,7 +36,7 @@ def facts(v):
     return v or {}
 
 
-def judge(steps_tsv, expected, top, full, wd, sub4, floor):
+def judge(steps_tsv, expected, top, full, wd, sub4, floor, end):
     probs, steps = [], []
     for line in open(steps_tsv):
         if not line.strip():
@@ -68,13 +69,16 @@ def judge(steps_tsv, expected, top, full, wd, sub4, floor):
         probs.append("no minHostFreeGb recorded")
     if mf is not None and mf < floor:
         probs.append("minHostFreeGb %d < %d" % (mf, floor))
-    for f in ("watchdog-tripped.json", "watchdog-lost.json", "wall-deadline.json"):
+    for f in ("watchdog-tripped.json", "watchdog-lost.json", "wall-deadline.json", "monitor-lost.json"):
         if os.path.exists(os.path.join(wd, f)):
             probs.append(f + " present")
     alive = read_json(os.path.join(wd, "watchdog-alive.json"))
     if not alive or not isinstance(alive.get("maxAgeS"), (int, float)) or alive["maxAgeS"] > 2 * alive.get("intervalS", 0) \
             or not alive.get("checks"):
         probs.append("watchdog heartbeat not shown alive throughout: %r" % alive)
+    elif not isinstance(alive.get("lastCheckEpoch"), int) or not 0 <= end - alive["lastCheckEpoch"] <= 2 * alive.get("intervalS", 0):
+        probs.append("the heartbeat monitor's last check (%r) is not within 2 polling periods of the run's end %d"
+                     % (alive.get("lastCheckEpoch"), end))
     rungs = [s for s in steps if s["step"].startswith("r")]
     return {"steps": steps, "expectedSteps": expected, "exactStepSet": ran == expected, "notM9": not full,
             "topRung": top, "highestGreenRung": top if t and t["pass"] else None,
@@ -88,7 +92,7 @@ def judge(steps_tsv, expected, top, full, wd, sub4, floor):
 def main(av):
     expected = arg(av, "--expected").split(",")
     v = judge(av[0], expected, arg(av, "--top"), arg(av, "--full") == "1", arg(av, "--watchdog-dir"),
-              arg(av, "--sub4", "none"), int(arg(av, "--min-free-floor", "25")))
+              arg(av, "--sub4", "none"), int(arg(av, "--min-free-floor", "25")), int(arg(av, "--end-epoch")))
     pins = {}
     for line in open(arg(av, "--pins")):
         line = line.strip()
@@ -102,6 +106,9 @@ def main(av):
         "PASS" if v["pass"] else "FAIL", v["highestGreenRung"], v["minHostFreeGb"], av[1],
         "" if v["pass"] else "; " + "; ".join(v["problems"][:4])))
     return 0 if v["pass"] else 1
+
+
+END = 1_800_000_000
 
 
 def self_test():
@@ -124,7 +131,8 @@ def self_test():
         if mf is not None:
             open(os.path.join(wd, "min-host-free-gb.txt"), "w").write(mf)
         if alive is not False:
-            json.dump(alive or {"intervalS": 60, "maxAgeS": 61, "checks": 400}, open(os.path.join(wd, "watchdog-alive.json"), "w"))
+            json.dump(alive or {"intervalS": 60, "maxAgeS": 61, "checks": 400, "lastCheckEpoch": END - 30},
+                      open(os.path.join(wd, "watchdog-alive.json"), "w"))
         for f in extra:
             open(os.path.join(wd, f), "w").write("{}")
         return os.path.join(d, "steps.tsv"), wd
@@ -135,7 +143,12 @@ def self_test():
         ("substitution 4 record invalid", sub4, sub4, "r2", True, "fail", {}, False),
         ("no heartbeat record", full, full, "r3p", True, "none", {"alive": False}, False),
         ("a stale heartbeat (older than 2 polling periods)", full, full, "r3p", True, "none",
-         {"alive": {"intervalS": 60, "maxAgeS": 125, "checks": 400}}, False),
+         {"alive": {"intervalS": 60, "maxAgeS": 125, "checks": 400, "lastCheckEpoch": END - 30}}, False),
+        ("the monitor died after one early check (no check near the end)", full, full, "r3p", True, "none",
+         {"alive": {"intervalS": 60, "maxAgeS": 60, "checks": 1, "lastCheckEpoch": END - 7200}}, False),
+        ("a monitor record without its last-check time", full, full, "r3p", True, "none",
+         {"alive": {"intervalS": 60, "maxAgeS": 60, "checks": 400}}, False),
+        ("the runner saw a monitor exit", full, full, "r3p", True, "none", {"extra": ("monitor-lost.json",)}, False),
         ("the watchdog lost", full, full, "r3p", True, "none", {"extra": ("watchdog-lost.json",)}, False),
         ("the global wall deadline passed", full, full, "r3p", True, "none", {"extra": ("wall-deadline.json",)}, False),
         ("the watchdog tripped", full, full, "r3p", True, "none", {"extra": ("watchdog-tripped.json",)}, False),
@@ -151,7 +164,7 @@ def self_test():
     for name, steps, exp, top, fl, s4, kw, want in cases:
         with tempfile.TemporaryDirectory() as d:
             tsv, wd = build(d, steps, **kw)
-            got = judge(tsv, exp, top, fl, wd, s4, 25)["pass"]
+            got = judge(tsv, exp, top, fl, wd, s4, 25, END)["pass"]
         bad += got != want
         print(("ok   " if got == want else "FAIL ") + name)
     print("m9 verdict self-test: %s" % ("ok" if not bad else "%d failure(s)" % bad))

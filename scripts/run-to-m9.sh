@@ -15,7 +15,9 @@
 #       polling periods or the global wall deadline passes.
 # The verdict (evidence/m9/<ts>/verdict.json, m9-verdict.py) is written in every case and fails closed: exactly
 # the pre-registered step set, every step green, the top rung's C1 green and equal to its reference, minHostFreeGb
-# >= 25, the watchdog alive throughout; a --from/--to subset is marked notM9.
+# >= 25, the watchdog alive throughout (its heartbeat monitor checked within 2 polling periods of the run's end);
+# a --from/--to subset is marked notM9. While each step runs, the runner also supervises both monitors: if either
+# exits unexpectedly it writes monitor-lost.json, cancels the step and stops the VM gate units (bounded).
 #
 # --run-prefix defaults to n; f and l are reserved (M0-M7 runs) and a prefix whose snapshots already exist is
 # refused. With --no-snapshots no snapshot is created, M7 included; gate-m0-host.sh still creates the
@@ -100,11 +102,17 @@ steps_file="$run_dir/steps.tsv"
 : >"$steps_file"
 interval=$(budget watchdog.intervalS); trip_gb=$(budget watchdog.tripGb); wall_s=$(budget globalWallS)
 
+# the judge's status is the verdict's; markers absent on a healthy run are not copied, and a failed copy fails it
 write_verdict() {
+    local rc=0 f
     python3 -I "$here/m9-verdict.py" "$steps_file" "$run_dir/verdict.json" --expected "$(IFS=,; echo "${ORDER[*]}")" \
         --top "$top" --full "$full" --watchdog-dir "$wd" --pins "$here/pins.conf" --harness "$harness_sha" \
-        --prefix "$prefix" --snapshots "$snapshots" --sub4 "$sub4" --min-free-floor 25
-    cp "$wd"/{min-host-free-gb.txt,free-series.tsv,watchdog-alive.json,watchdog-tripped.json,watchdog-lost.json,wall-deadline.json} "$run_dir/" 2>/dev/null
+        --prefix "$prefix" --snapshots "$snapshots" --sub4 "$sub4" --min-free-floor 25 --end-epoch "$(date +%s)" || rc=1
+    for f in min-host-free-gb.txt free-series.tsv watchdog-alive.json watchdog-tripped.json watchdog-lost.json \
+        wall-deadline.json monitor-lost.json; do
+        [ ! -e "$wd/$f" ] || cp "$wd/$f" "$run_dir/" || rc=1
+    done
+    return "$rc"
 }
 
 finish() {
@@ -116,7 +124,7 @@ finish() {
 }
 trap 'hlog "stopped by the disk watchdog or the heartbeat monitor"; finish 3' TERM
 
-rm -f "$wd"/{watchdog-tripped.json,min-host-free-gb.txt,free-series.tsv,heartbeat,watchdog-alive.json,watchdog-lost.json,wall-deadline.json}
+rm -f "$wd"/{watchdog-tripped.json,min-host-free-gb.txt,free-series.tsv,heartbeat,watchdog-alive.json,watchdog-lost.json,wall-deadline.json,monitor-lost.json}
 "$here/vm/host-disk-watchdog.sh" --runner-pid $$ --min-gb "$trip_gb" --interval "$interval" --out "$wd" &
 wd_pid=$!
 "$here/vm/m9-heartbeat-monitor.sh" --runner-pid $$ --dir "$wd" --interval "$interval" \
@@ -124,11 +132,33 @@ wd_pid=$!
 mon_pid=$!
 hlog "M9 run $run_ts: steps ${ORDER[*]} (full $full), watchdog trip ${trip_gb} GB every ${interval} s, wall ${wall_s} s"
 
+# supervised CMD...: runs CMD while checking every 5 s that the disk watchdog and the heartbeat monitor are alive;
+# when one has exited, records monitor-lost.json, stops CMD and the VM gate units (bounded) and returns 1
+supervised() {
+    "$@" &
+    local c=$! who
+    while kill -0 "$c" 2>/dev/null; do
+        who=""
+        kill -0 "$wd_pid" 2>/dev/null || who="disk watchdog"
+        kill -0 "$mon_pid" 2>/dev/null || who="${who:+$who and }heartbeat monitor"
+        if [ -n "$who" ]; then
+            hlog "the $who exited during the run: cancelling"
+            printf '{"utc": "%s", "lost": "%s"}\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$who" >"$wd/monitor-lost.json"
+            kill -TERM "$c" 2>/dev/null
+            vm_stop_gates || hlog "stopping the VM gate units failed or exceeded ${CANCEL_TIMEOUT_S} s"
+            wait "$c"
+            return 1
+        fi
+        sleep 5
+    done
+    wait "$c"
+}
+
 boundary() {
     local step="$1" suffix="$2" grow="$3" ev="$4"
     local name="$prefix${step#m}-$suffix"
     if [ "$snapshots" = 1 ]; then
-        "$here/vm/vm-snapshot.sh" create "$name" --need-gb "$grow" --evidence "$ev" || return 1
+        supervised "$here/vm/vm-snapshot.sh" create "$name" --need-gb "$grow" --evidence "$ev" || return 1
     else
         hlog "no-snapshot mode: rebooting at the $name boundary"
         vm_shutdown && vm_start || return 1
@@ -141,10 +171,10 @@ for ((i = from_i; i <= to_i; i++)); do
     tmo=$(budget "timeoutsS.$step") || { hlog "no timeout for $step in the budget"; printf '%s\tfail\t\n' "$step" >>"$steps_file"; finish 1; }
     [ -f "$here/gates/$script" ] || { printf '%s\tfail\t\n' "$step" >>"$steps_file"; hlog "gate script $script not written yet"; finish 1; }
     if [ "$step" = m0 ]; then
-        "$here/gates/gate-m0-host.sh" "$prefix" "$harness_sha" || { printf 'm0-host\tfail\t\n' >>"$steps_file"; finish 1; }
+        supervised "$here/gates/gate-m0-host.sh" "$prefix" "$harness_sha" || { printf 'm0-host\tfail\t\n' >>"$steps_file"; finish 1; }
     fi
     read -ra gargs <<<"$args"
-    if "$here/vm/vm-exec.sh" "$script" --harness-sha "$harness_sha" --timeout "$tmo" -- "${gargs[@]}"; then
+    if supervised "$here/vm/vm-exec.sh" "$script" --harness-sha "$harness_sha" --timeout "$tmo" -- "${gargs[@]}"; then
         status=pass
     else
         status=fail
