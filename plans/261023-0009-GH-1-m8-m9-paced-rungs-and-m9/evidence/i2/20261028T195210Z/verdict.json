@@ -1,0 +1,228 @@
+{
+  "gate": "i2",
+  "ts": "20261028T195210Z",
+  "harness_sha": "39b3ba21d46d9e347d14d2841a8abe1ace1ccb05",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "c6d1434a793f36ae7d08b303f19f63921cf560bf",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "ba954440d008b17e20da07c168b3e96ef48db6de",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "96efc40eeb46e9c6cf19f1cc2184890f8e109bea",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+  },
+  "duration_s": 252,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "i2_args",
+      "pass": true,
+      "detail": "part all; TS pin 19e169b2e81a0dbaf3d9dc526de0415cc995ee8b; substitutions 3 (A1 payload) and 2 (default RMR handler) applied; rc pin a2282eedc9e32f60298bf530456ad367bef0824b; rmr-peer image 127.0.0.1:80/stubqp:07c6dc93df2f"
+    },
+    {
+      "name": "i2_nist_tree_at_testbed_sha_with_agent_dir",
+      "pass": true,
+      "detail": "nist HEAD c6d1434a793f36ae7d08b303f19f63921cf560bf, want c6d1434a793f36ae7d08b303f19f63921cf560bf\nalready at c6d1434a793f36ae7d08b303f19f63921cf560bf\nns3_e2_agent matches c6d1434a793f36ae7d08b303f19f63921cf560bf; metric-map sha256 9cfcbbcdd71514e4e2627cfbb4aa950760b42f85d5045de2c1b71d6215f16923"
+    },
+    {
+      "name": "i2_ts_installer_at_testbed_sha",
+      "pass": true,
+      "detail": "RAN_Intelligent_Controllers/Near-Real-Time-RIC/additional_scripts/install_xapp_traffic_steering.sh RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_patch_files/xApps/ts at c6d1434a793f36ae7d08b303f19f63921cf560bf"
+    },
+    {
+      "name": "i2_pre_ric_reset_fresh_rc_kpimon_hw_go_and_bucket",
+      "pass": true,
+      "detail": "gRPC describe ok, 12040 route to rc present\nrmrClient: RMR is ready after 30 seconds waiting...\n{\"bucketAfter\": [\"4b24dfe24737f349\"], \"podsAfter\": {\"ricxapp-hw-go\": \"ricxapp-hw-go-c84579888-c2cz6\", \"ricxapp-kpimon-go\": \"ricxapp-kpimon-go-85dc5fdf8b-zgzjh\", \"xapp-rc\": \"ricxapp-rc-6db9dcd964-6tkzp\"}, \"fresh\": true}"
+    },
+    {
+      "name": "i2_rc_installed_at_pin_and_ready",
+      "pass": true,
+      "detail": "rc ricxapp-rc-6db9dcd964-6tkzp ready, gRPC endpoint 10.106.244.75:7777\ngRPC describe ok, 12040 route to rc present\nrmrClient: RMR is ready after 30 seconds waiting..."
+    },
+    {
+      "name": "i2_ts_installed_at_pin_switched_to_grpc",
+      "pass": true,
+      "detail": "  \"ts_control_api\": \"grpc\",\n  \"ts_control_ep\": \"service-ricxapp-rc-grpc-server.ricxapp:7777\"\n}"
+    },
+    {
+      "name": "i2_a1_policy_type_20008_present",
+      "pass": true,
+      "detail": "{\"create_schema\":{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"additionalProperties\":false,\"properties\":{\"threshold\":{\"default\":0,\"type\":\"integer\"}},\"type\":\"object\"},\"description\":\"TS xApp policy (O-RAN SC traffic steering use case): hand a UE over when a neighbour's predicted downlink throughput exceeds the serving cell's by more than threshold percent\",\"name\":\"tsapolicy\",\"policy_type_id\":20008}\n\n[20008]"
+    },
+    {
+      "name": "i2_ts_source_is_pin_plus_exactly_the_testbed_patches",
+      "pass": true,
+      "detail": "src/ts_xapp/ts_xapp.cpp = pin + A1 payload patch + default RMR handler patch (14 added lines)"
+    },
+    {
+      "name": "i2_ts_ready_listening_no_control_api_error",
+      "pass": true,
+      "detail": "TS ricxapp-trafficxapp-7c46768578-8sc5l ready and listening"
+    },
+    {
+      "name": "i2_rmr_peer_image_built_self_tested_imported",
+      "pass": true,
+      "detail": "ok   stub still up after a second idle wait and logged exactly 1 request (1)\n{\"pass\": true, \"problems\": []}\nbuilt and imported 127.0.0.1:80/stubqp:07c6dc93df2f"
+    },
+    {
+      "name": "i2_stub_qp_installed_as_its_own_xapp",
+      "pass": true,
+      "detail": "ricxapp-stubqp- -> ricxapp-stubqp-685cb7ddf4-cvsrg\nstub ricxapp-stubqp-685cb7ddf4-cvsrg up 8 s after Ready, restart count 0, no traceback"
+    },
+    {
+      "name": "i2_ts_xapp_registered_with_appmgr",
+      "pass": true,
+      "detail": "register trafficxapp: HTTP 201\nappmgr lists trafficxapp"
+    },
+    {
+      "name": "i2_stub_qp_registered_with_appmgr",
+      "pass": true,
+      "detail": "register stubqp: HTTP 201\nappmgr lists stubqp"
+    },
+    {
+      "name": "i2_appmgr_xapp_list_saved",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "i2_a1mediator_restarted_fresh_policy_type_kept",
+      "pass": true,
+      "detail": "a1mediator deployment-ricplt-a1mediator-78f79cbb6b-q9r6r -> deployment-ricplt-a1mediator-78f79cbb6b-7bjkt\n{\"fresh\": true, \"problems\": []}\npolicy type 20008 after the restart: HTTP 200"
+    },
+    {
+      "name": "i2_rtmgr_restarted_after_registration",
+      "pass": true,
+      "detail": "rtmgr deployment-ricplt-rtmgr-74fb47b69d-6nrrp -> deployment-ricplt-rtmgr-74fb47b69d-z855s"
+    },
+    {
+      "name": "i2_rtmgr_session_to_every_xapp_and_a1mediator",
+      "pass": true,
+      "detail": "rtmgr deployment-ricplt-rtmgr-74fb47b69d-z855s -> ricplt/service-ricplt-a1mediator-rmr 10.107.90.93:4561 ESTABLISHED\nrtmgr deployment-ricplt-rtmgr-74fb47b69d-z855s -> ricxapp/service-ricxapp-trafficxapp-rmr 10.100.148.197:4561 ESTABLISHED\nrtmgr deployment-ricplt-rtmgr-74fb47b69d-z855s -> ricxapp/service-ricxapp-stubqp-rmr 10.109.128.103:4561 ESTABLISHED"
+    },
+    {
+      "name": "i2_rc_rmr_ready_after_rtmgr_restart",
+      "pass": true,
+      "detail": "rmrClient: RMR is ready after 30 seconds waiting...\nrtmgr deployment-ricplt-rtmgr-74fb47b69d-z855s: Update Routes to Endpoint: service-ricxapp-rc-rmr.ricxapp:4560 successful, call_id: 1, Payload length: 4857, Route Update Status: OK(# of Entries:83"
+    },
+    {
+      "name": "i2_route_dump",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-hw-go-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-trafficxapp-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-hw-go-rmr.ricxapp:4560 / service-ricxapp-trafficxapp-rmr.ricxapp:4560"
+    },
+    {
+      "name": "i2_routes_20010_to_ts_30002_stub_to_ts_30000_only_ts_to_stub",
+      "pass": true,
+      "detail": "mse|20010|20008|service-ricxapp-trafficxapp-rmr.ricxapp:4560\nmse|30002,service-ricxapp-stubqp-rmr.ricxapp:4560|-1|service-ricxapp-trafficxapp-rmr.ricxapp:4560\nmse|30000,service-ricxapp-trafficxapp-rmr.ricxapp:4560|-1|service-ricxapp-stubqp-rmr.ricxapp:4560"
+    },
+    {
+      "name": "i2_a1_threshold_reaches_ts_xapp",
+      "pass": true,
+      "detail": "32:[INFO] Setting Threshold for A1-P value: 10%\n34:[INFO] Payload is {\"operation\":\"CREATE\",\"payload\":\"{\\\"threshold\\\":10}\",\"policy_instance_id\":\"i2-20261028T195210Z-2\",\"policy_type_id\":\"20008\"}\nthreshold logged after attempt 2"
+    },
+    {
+      "name": "i2_a1mediator_connection_to_ts_xapp_clean",
+      "pass": true,
+      "detail": "a1mediator -> TS xApp 10.100.148.197:4560 ESTABLISHED, send queue empty; no :4560 connection with queued data"
+    },
+    {
+      "name": "i2_xapp_image_ids",
+      "pass": true,
+      "detail": "{\"trafficxapp\": \"sha256:405201f92352df3b8f456cd6e309ed7e38d71296eaba8cae7321ec3e51728c56\", \"stubqp\": \"sha256:68b10571debb88481bf6ec035d70ed906c6e6b3cc9317f0c66d65517ea601d35\", \"stubqpImage\": \"127.0.0.1:80/stubqp:07c6dc93df2f\"}"
+    },
+    {
+      "name": "i2_pod_snapshot",
+      "pass": true,
+      "detail": "pod\tricxapp-rc-6db9dcd964-6tkzp\t6f6014f3-466b-44f9-a243-9df4330844e1\t0\t2026-10-28T19:52:11Z\t2026-10-28T19:52:12Z\npod\tricxapp-stubqp-685cb7ddf4-cvsrg\tf68b1ef0-0764-492e-bdad-37dcfa8e6189\t0\t2026-10-28T19:54:53Z\t2026-10-28T19:54:53Z\npod\tricxapp-trafficxapp-7c46768578-8sc5l\t5f517e5d-28da-44ab-89c5-90ffd0d96257\t0\t2026-10-28T19:54:29Z\t2026-10-28T19:54:30Z"
+    },
+    {
+      "name": "i2_restart_counts_zero",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "part": "all",
+  "substitution2Applied": true,
+  "substitution3Applied": true,
+  "a1mediatorRestart": {
+    "fresh": true,
+    "problems": [],
+    "after": {
+      "deployment-ricplt-a1mediator": {
+        "name": "deployment-ricplt-a1mediator-78f79cbb6b-7bjkt",
+        "uid": "0069b5cb-3d18-4fa6-9658-ca7493de119f",
+        "startTime": "2026-10-28T19:55:05Z",
+        "containerStartedAt": [
+          "2026-10-28T19:55:05Z"
+        ],
+        "restarts": 0
+      }
+    }
+  },
+  "routeOwner12041": "service-ricxapp-hw-go-rmr.ricxapp:4560",
+  "routeOwner12042": "service-ricxapp-hw-go-rmr.ricxapp:4560",
+  "routeOwnerE2term12041": "service-ricxapp-trafficxapp-rmr.ricxapp:4560",
+  "routeOwnerE2term12042": "service-ricxapp-trafficxapp-rmr.ricxapp:4560",
+  "a1ThresholdAttempt": 2,
+  "a1DeliveredAttempt": 1,
+  "a1mediatorRestartCountAtEnd": 0,
+  "xappRegistration": [
+    {
+      "name": "rc",
+      "instances": [
+        {
+          "name": "rc",
+          "ip": "service-ricxapp-rc-rmr.ricxapp",
+          "port": 4560
+        }
+      ]
+    },
+    {
+      "name": "trafficxapp",
+      "instances": [
+        {
+          "name": "trafficxapp",
+          "ip": "service-ricxapp-trafficxapp-rmr.ricxapp",
+          "port": 4560
+        }
+      ]
+    },
+    {
+      "name": "stubqp",
+      "instances": [
+        {
+          "name": "stubqp",
+          "ip": "service-ricxapp-stubqp-rmr.ricxapp",
+          "port": 4560
+        }
+      ]
+    },
+    {
+      "name": "hw-go",
+      "instances": [
+        {
+          "name": "hw-go",
+          "ip": "service-ricxapp-hw-go-rmr.ricxapp",
+          "port": 4560
+        }
+      ]
+    },
+    {
+      "name": "kpimon-go",
+      "instances": [
+        {
+          "name": "kpimon-go",
+          "ip": "service-ricxapp-kpimon-go-rmr.ricxapp",
+          "port": 4560
+        }
+      ]
+    }
+  ],
+  "xappImageIds": {
+    "trafficxapp": "sha256:405201f92352df3b8f456cd6e309ed7e38d71296eaba8cae7321ec3e51728c56",
+    "stubqp": "sha256:68b10571debb88481bf6ec035d70ed906c6e6b3cc9317f0c66d65517ea601d35",
+    "stubqpImage": "127.0.0.1:80/stubqp:07c6dc93df2f"
+  }
+}

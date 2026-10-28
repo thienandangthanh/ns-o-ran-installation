@@ -1,0 +1,43 @@
+[18:52:53] gate m6 start; evidence /home/uc/evidence/m6/20261028T185253Z; harness 39b3ba21d46d9e347d14d2841a8abe1ace1ccb05
+[18:52:53] ric watchdog started (pid 4158, threshold 600s)
+[18:52:53] PASS m6_nist_tree_at_testbed_sha_with_agent_dir
+[18:52:53] PASS m6_build_tools_present
+[18:52:53] PASS m6_sctp_module_loaded_and_persisted
+[18:52:53] PASS m6_kpimon_so_extracted_from_image
+[18:52:54] PASS m6_kpimon_so_is_the_size8_patched_build
+[18:52:54] PASS m6_ns3_binary_located
+[18:52:54] PASS m6_capture_started_before_agents
+[18:56:54] PASS m6_bringup_agents_kpm_sim_stopped_connected_set_exact
+[18:56:54] PASS m6_agent_container_ip_recorded
+[18:56:55] PASS m6_wire_shows_kpimon_subscription_request_and_agent_response
+[18:56:55] PASS m6_pcap_subscription_facts
+[18:56:55] PASS m6_tshark_decodes_subscription_request_response_func2
+[18:56:58] PASS m6_ns3_started_single_gnb
+[18:57:12] PASS m6_ns3_completes_exit0
+[18:57:12] draining 8s
+[18:57:20] PASS m6_pod_log_reader_self_test
+[18:57:20] PASS m6_kpimon_log_window_complete_across_rotations
+[18:57:20] PASS m6_influx_exported
+[18:57:21] PASS m6_capture_stopped
+[18:57:22] PASS m6_pcap_facts_extracted
+[18:57:24] PASS m6_tshark_decodes_ricindications_header_and_message
+[18:57:24] PASS m6_harness_ran_on_pcap
+[18:57:25] PASS m6_wire_indications_gt0_no_rows_skipped
+[18:57:25] PASS m6_harness_every_header_clean_rc_ok_equals_wire
+[18:57:25] PASS m6_harness_every_message_clean_rc_ok_equals_wire
+[18:57:25] PASS m6_harness_zero_wmore_fail_other
+[18:57:25] PASS m6_harness_ts_len_8_everywhere
+[18:57:25] PASS m6_kpimon_log_indications_equal_wire_zero_wmore
+[18:57:25] PASS m6_agent_indtx_equals_wire
+[18:57:25] PASS m6_kpimon_pod_no_restart
+[18:57:25] PASS m6_emitter_bye_sent_equals_built_zero_drops
+[18:57:25] PASS m6_agent_counters_clean_samples_in_equal_forwarded_equal_trace
+[18:57:25] PASS m6_influx_three_samples_equal_trace_bit_exact
+[18:57:25] PASS m6_influx_all_samples_comparison_informational
+[18:57:27] PASS m6_agents_stopped_no_container_left
+[18:57:27] PASS m6_no_stray_ns3_agent_process_or_3847x_listener
+[18:57:27] PASS m6_no_capture_left_running
+[18:57:27] PASS m6_pcap_in_evidence
+Terminated
+[18:57:27] ric watchdog stopped (pid 4158)
+verdict m6: PASS failed=[]

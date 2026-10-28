@@ -1,0 +1,206 @@
+{
+  "gate": "m6",
+  "ts": "20261028T185253Z",
+  "harness_sha": "39b3ba21d46d9e347d14d2841a8abe1ace1ccb05",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "c6d1434a793f36ae7d08b303f19f63921cf560bf",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "ba954440d008b17e20da07c168b3e96ef48db6de",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "96efc40eeb46e9c6cf19f1cc2184890f8e109bea",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+  },
+  "duration_s": 274,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "m6_nist_tree_at_testbed_sha_with_agent_dir",
+      "pass": true,
+      "detail": "nist HEAD c6d1434a793f36ae7d08b303f19f63921cf560bf, want c6d1434a793f36ae7d08b303f19f63921cf560bf\nalready at c6d1434a793f36ae7d08b303f19f63921cf560bf\nns3_e2_agent matches c6d1434a793f36ae7d08b303f19f63921cf560bf; metric-map sha256 9cfcbbcdd71514e4e2627cfbb4aa950760b42f85d5045de2c1b71d6215f16923"
+    },
+    {
+      "name": "m6_build_tools_present",
+      "pass": true,
+      "detail": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\ntshark 4.4.19 (>= 4.4)"
+    },
+    {
+      "name": "m6_sctp_module_loaded_and_persisted",
+      "pass": true,
+      "detail": "sctp                  495616  4\nsctp"
+    },
+    {
+      "name": "m6_kpimon_so_extracted_from_image",
+      "pass": true,
+      "detail": "timestamp_size: 8\nextracted_at: 2026-10-28T18:52:53+00:00\nTimeStamp SIZE in this .so: 8"
+    },
+    {
+      "name": "m6_kpimon_so_is_the_size8_patched_build",
+      "pass": true,
+      "detail": "TimeStamp SIZE in the extracted .so: 8"
+    },
+    {
+      "name": "m6_ns3_binary_located",
+      "pass": true,
+      "detail": "/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"
+    },
+    {
+      "name": "m6_capture_started_before_agents",
+      "pass": true,
+      "detail": "[18:52:54] capture m6 started on docker0 (pid 4694, filter 'ip proto 132')"
+    },
+    {
+      "name": "m6_bringup_agents_kpm_sim_stopped_connected_set_exact",
+      "pass": true,
+      "detail": "NS3_E2_AGENT_METRIC_MAP_SHA256=9cfcbbcdd71514e4e2627cfbb4aa950760b42f85d5045de2c1b71d6215f16923\n[18:56:51] bringup agents: e2mgr CONNECTED set equals the expected agents: gnb_001_001_00000002 \n[18:56:54] bringup agents: every agent READY with an E2 setup: 2 0 true READY 1 0;"
+    },
+    {
+      "name": "m6_agent_container_ip_recorded",
+      "pass": true,
+      "detail": "{\"2\": [\"172.17.0.2\"]}"
+    },
+    {
+      "name": "m6_wire_shows_kpimon_subscription_request_and_agent_response",
+      "pass": true,
+      "detail": "wire RICsubscription (requests responses): 1 1"
+    },
+    {
+      "name": "m6_pcap_subscription_facts",
+      "pass": true,
+      "detail": "frames=17 inits=1 aborts=0 shutdowns=0 setup_req=1 setup_resp=1 sub_req=1 sub_resp=1 ind_srcs={}"
+    },
+    {
+      "name": "m6_tshark_decodes_subscription_request_response_func2",
+      "pass": true,
+      "detail": "RICsubscriptionRequests: [(12, '172.17.0.2', 123, 1, 2)]\nRICsubscriptionResponses: [(14, '172.17.0.2', 123, 1, 2)]"
+    },
+    {
+      "name": "m6_ns3_started_single_gnb",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 17965 at 1793213816.008115158: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=1 --e2lteEnabled=false --simTime=10 --indicationPeriodicity=0.1 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/m6/20261028T185253Z/ns3run"
+    },
+    {
+      "name": "m6_ns3_completes_exit0",
+      "pass": true,
+      "detail": "ns-3 exit code 0"
+    },
+    {
+      "name": "m6_pod_log_reader_self_test",
+      "pass": true,
+      "detail": "self-test rotation: rc 0, indications 5 (want 5), WMORE 1 (want 1), rotations 1 (want 1)\nself-test uncovered start: rc 3 (want 3)\npod-log-window self-test: ok"
+    },
+    {
+      "name": "m6_kpimon_log_window_complete_across_rotations",
+      "pass": true,
+      "detail": "files 2, rotations in window 0, coverage True, retries 0"
+    },
+    {
+      "name": "m6_influx_exported",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m6_capture_stopped",
+      "pass": true,
+      "detail": "[18:57:21] capture m6 stopped: 370 packets captured 370 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "m6_pcap_facts_extracted",
+      "pass": true,
+      "detail": "frames=370 inits=1 aborts=0 shutdowns=0 setup_req=1 setup_resp=1 sub_req=1 sub_resp=1 ind_srcs={'172.17.0.2': 199}"
+    },
+    {
+      "name": "m6_tshark_decodes_ricindications_header_and_message",
+      "pass": true,
+      "detail": "27\ntshark 4.4.19: malformed indication frames 0\nnode 2: 199 RICindication frames over 1 association(s): [('172.17.0.2:48415', 199)]"
+    },
+    {
+      "name": "m6_harness_ran_on_pcap",
+      "pass": true,
+      "detail": "{\"expect_ts_len\": 8, \"hdr_clean\": 199, \"hdr_fail\": 0, \"hdr_ok_exact\": 199, \"hdr_other\": 0, \"hdr_wmore\": 0, \"msg_clean\": 199, \"msg_fail\": 0, \"msg_other\": 0, \"msg_wmore\": 0, \"total\": 199}"
+    },
+    {
+      "name": "m6_wire_indications_gt0_no_rows_skipped",
+      "pass": true,
+      "detail": "wire indications (TSN-deduped): 199, extractor rows skipped: 0"
+    },
+    {
+      "name": "m6_harness_every_header_clean_rc_ok_equals_wire",
+      "pass": true,
+      "detail": "headers clean (RC_OK, consumed==len, ts_len 8): 199 = harness total 199 = wire 199"
+    },
+    {
+      "name": "m6_harness_every_message_clean_rc_ok_equals_wire",
+      "pass": true,
+      "detail": "messages clean (RC_OK, consumed==len): 199 = harness total 199 = wire 199"
+    },
+    {
+      "name": "m6_harness_zero_wmore_fail_other",
+      "pass": true,
+      "detail": "harness WMORE hdr/msg 0/0, FAIL 0/0, other 0/0"
+    },
+    {
+      "name": "m6_harness_ts_len_8_everywhere",
+      "pass": true,
+      "detail": "ts_len histogram: {\"8\": 199}"
+    },
+    {
+      "name": "m6_kpimon_log_indications_equal_wire_zero_wmore",
+      "pass": true,
+      "detail": "kpimon log (since capture start): indications 199, wire 199, header RC_WMORE 0, MSG RC_WMORE 0"
+    },
+    {
+      "name": "m6_agent_indtx_equals_wire",
+      "pass": true,
+      "detail": "agent indTx 199, wire 199"
+    },
+    {
+      "name": "m6_kpimon_pod_no_restart",
+      "pass": true,
+      "detail": "kpimon pod ricxapp-kpimon-go-85dc5fdf8b-kmm96 restarts 3 -> 3"
+    },
+    {
+      "name": "m6_emitter_bye_sent_equals_built_zero_drops",
+      "pass": true,
+      "detail": "node 2 (gnb): samples=100 last_seq=99 gaps=0 ipcDropped_max=0 ues_max=2 hello=1 bye=1 {\"built\": 100, \"sent\": 100, \"droppedDisconnected\": 0, \"droppedBackpressure\": 0, \"lastSeq\": 99}"
+    },
+    {
+      "name": "m6_agent_counters_clean_samples_in_equal_forwarded_equal_trace",
+      "pass": true,
+      "detail": "state=READY subs=1 samplesIn=100 forwarded=100 (trace 100) indTx=199 (cell 100 ue 99) chunkSplits=0 nonzero={}"
+    },
+    {
+      "name": "m6_influx_three_samples_equal_trace_bit_exact",
+      "pass": true,
+      "detail": "pick middle          seq=50 fallback_from=None ues=2 cell_row=True ue_rows=2 fields=151 differ=0 \npick last            seq=99 fallback_from=None ues=2 cell_row=True ue_rows=2 fields=151 differ=0 \nall samples: {\"all_fields_compared\": 14694, \"all_fields_differ\": 0, \"all_first_diffs\": [], \"all_samples_complete\": 100, \"duplicate_keys\": 0, \"influx_cell_rows\": 100, \"influx_ue_rows\": 193, \"kind\": \"gnb\", \"node\": 2, \"trace_samples\": 100, \"trace_ue_rows\": 193}"
+    },
+    {
+      "name": "m6_influx_all_samples_comparison_informational",
+      "pass": true,
+      "detail": "{\"all_fields_compared\": 14694, \"all_fields_differ\": 0, \"all_first_diffs\": [], \"all_samples_complete\": 100, \"duplicate_keys\": 0, \"influx_cell_rows\": 100, \"influx_ue_rows\": 193, \"kind\": \"gnb\", \"node\": 2, \"trace_samples\": 100, \"trace_ue_rows\": 193}"
+    },
+    {
+      "name": "m6_agents_stopped_no_container_left",
+      "pass": true,
+      "detail": "# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/ns3_e2_agent/install_scripts/stop_ns3_e2_agents.sh \nns3-e2-agent-2 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1793213844099,\"nodeId\":2,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":99,\"samplesIn\":100,\"samplesForwarded\":100,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":199,\"indTxCell\":100,\"indTxUe\":99,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":1,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":2,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":0,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":0,\"applied\":0,\"refused\":0,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":0}\nRemoved 1 ns3-e2-agent container(s)."
+    },
+    {
+      "name": "m6_no_stray_ns3_agent_process_or_3847x_listener",
+      "pass": true,
+      "detail": "no ns-3 process, no agent container, no listener on 3847x"
+    },
+    {
+      "name": "m6_no_capture_left_running",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m6_pcap_in_evidence",
+      "pass": true,
+      "detail": "287980 /home/uc/evidence/m6/20261028T185253Z/m6.pcap;"
+    }
+  ]
+}

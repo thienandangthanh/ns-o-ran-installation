@@ -2,7 +2,9 @@
 
 ## ns-O-RAN on the OSC Near-RT RIC L-release (NIST v1.8.0)
 
-This is the primary path of the repo. It runs the ns-O-RAN `scenario-zero` ns-3 simulation against the O-RAN Software Community Near-RT RIC **L release**, installed with the NIST O-RAN-Testbed-Automation v1.8.0 scripts (on our fork, branch `dev/l-release-nist180`). ns-3 no longer links asn1c or e2sim and no longer opens SCTP itself. Each simulated E2 node is served by its own small E2 agent that speaks E2AP and E2SM-KPM to the RIC. Gates M0 to M7 prove the chain from an empty VM to a multi-gNB run. Everything is scripted and reproducible from a VM snapshot. The control path (RC, M8) is not part of this scope yet.
+This is the primary path of the repo. It runs the ns-O-RAN `scenario-zero` ns-3 simulation against the O-RAN Software Community Near-RT RIC **L release**, installed with the NIST O-RAN-Testbed-Automation v1.8.0 scripts (on our fork, branch `dev/l-release-nist180`). ns-3 no longer links asn1c or e2sim and no longer opens SCTP itself. Each simulated E2 node is served by its own small E2 agent that speaks E2AP, E2SM-KPM and E2SM-RC to the RIC. Gates M0 to M7 prove the KPM chain from an empty VM to a multi-gNB run. The closed-loop rungs R0 to R2 and R3′ prove that RC handover controls reach ns-3, first from scripted gRPC calls to the rc xApp, then from the TS xApp. M9 runs all of it unattended from one snapshot.
+
+**Scope.** The closed loop is proven with the TS xApp and a harness predictor that stands in for the QoE Predictor (QP). The QP fork and an R3 rung with the real QP are deferred to a later goal; AD is not used.
 
 ### Architecture
 
@@ -14,13 +16,14 @@ ns-3 scenario-zero --NDJSON over TCP 127.0.0.1:(38470+cellId)--> one ns3-e2-agen
 - ns-3 writes one JSON line per node per indication period to a local trace file and to the agent's TCP port.
 - Each agent runs in its own Docker container (own network namespace), connects to the e2term Service, and sends KPM indications.
 - kpimon-go decodes them with the TimeStamp `SIZE(8)` patch and writes InfluxDB points.
+- Control flows the other way: rc (gRPC :7777) sends an E2SM-RC handover control to an agent, the agent forwards it to ns-3, and ns-3 records the outcome in a control ledger.
 - Details and rationale: [docs/system-architecture-l-release.md](docs/system-architecture-l-release.md).
 
 ### Prerequisites
 
 - A libvirt/KVM VM `ubuntu24.04` (Ubuntu 24.04.5, at least 8 vCPU, 14 GiB RAM, 60 GB free on `/`) with an offline snapshot named `fresh-install`. The VM user `uc` needs passwordless sudo. Defaults live in `scripts/vm/vm-common.sh` and can be overridden with `VM_DOMAIN`, `VM_SSH`, `VM_IMAGE_DIR`.
 - An ssh alias for the VM (default `oran-kvm-2404`, key-based, no prompts). The host user manages `qemu:///system` without sudo.
-- About 70 GB of free host disk under `/home`: a 20 GB reserve plus the per-gate snapshot growth listed in `scripts/run-to-m7.sh`.
+- About 70 GB of free host disk under `/home` for M0 to M7: a 20 GB reserve plus the per-gate snapshot growth listed in `scripts/run-to-m7.sh`. M9 needs more; its projection is in `plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/m9-budget.md`.
 - This repo pushed to a public GitHub repository. The VM clones it anonymously at the harness SHA you pass on the command line. The SHA must be on an `origin` branch.
 - Internet access from the VM (apt, Docker registries, GitHub, the Go module proxy).
 
@@ -34,6 +37,19 @@ scripts/run-to-m7.sh --harness-sha <pushed SHA> --run-prefix f
 
 The chain runs each gate on the VM, copies the scrubbed evidence back, snapshots the VM, and stops at the first red gate. Per-gate timeouts are set in the `GATES` table of `scripts/run-to-m7.sh`. A green run ends with the snapshot `f7-rerun-green`. Use a run prefix that no existing snapshot uses (`l` for development runs, `f` for the re-run). The step-by-step guide, single-gate runs, and troubleshooting are in [docs/deployment-guide-l-release.md](docs/deployment-guide-l-release.md).
 
+### Reproduce M9 (M0 to M7 plus the closed-loop rungs) with one command
+
+```bash
+scripts/vm/vm-snapshot.sh revert fresh-install
+scripts/run-to-m9.sh --harness-sha <pushed SHA> --run-prefix n --no-snapshots
+```
+
+The runner refuses to start unless `scripts/`, `tools/` and the committed reference in this worktree equal the harness SHA, and unless `scripts/m9-budget.json` exists (per-step timeouts, the global wall deadline, the disk watchdog's trip point). It runs M0 to M7, then the installs and rungs in a fixed order, under a host disk watchdog and a heartbeat monitor. The verdict lands in `plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m9/<UTC timestamp>/verdict.json` and is written fail-closed: it passes only for the exact pre-registered step set, every step green, the top rung's repeat gate green and equal to its committed reference, and the watchdog alive with the minimum host free space at or above 25 GB.
+
+The rungs: **R0** (= M8) sends scripted controls through rc's gRPC; **R1** adds multi-control cases (same-step pairs, two agents for one UE, an unknown IMSI) and a late-control fault run; **R2** has the TS xApp decide from a stub QP's fixed predictions; **R3′** has the TS xApp decide from a harness predictor that reads each gNB cell's DL PDCP volume from InfluxDB by simulation time. ns-3 runs in lock-step with a harness pacer in every rung. R0 to R2 run one live run each in M9; the top rung, R3′, runs its full repeat gate: three live runs byte-equal, a RIC-free replay of the ledger, and a `--RngRun=2` run that must differ. When a validated `scripts/gates/r3p-substitution4.json` exists (R3′'s dry run formed no schedule), R2 is the top rung instead and R3′ is not run (`scripts/run-to-m9.sh` header).
+
+Recorded M9 run (stateful): `plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m9/20261028T165825Z/verdict.json`, result **PASS** (14/14 steps, top rung R3′ C1 equal to its reference, minimum host free 59 GB), run report `plans/reports/run-report-261029-0535-GH-1-m8-m9-deviations.md`. That run was `scripts/run-to-m9.sh --harness-sha 39b3ba21d46d9e347d14d2841a8abe1ace1ccb05 --run-prefix q --no-snapshots`, launched as a transient user unit with `systemd-run --user --wait --unit=m9-q` so that a closed terminal does not stop it (`phase-10-m9-unattended-run-from-fresh-install.md`, Launch-route amendment).
+
 ### What each gate proves
 
 | Gate | Script | Proves |
@@ -46,10 +62,17 @@ The chain runs each gate on the VM, copies the scrubbed evidence back, snapshots
 | M5 | `gate-m5-agent-setup.sh` | One agent registers with e2term (RAN function 2, real OID), e2mgr lists it CONNECTED, and a graceful stop leaves it DISCONNECTED. |
 | M6 | `gate-m6-kpm.sh` | Single-gNB KPM end to end: indications decode on the wire and through kpimon, and InfluxDB values equal the ns-3 trace bit for bit. |
 | M7 | `gate-m7-multignb.sh` | Five agents (eNB 1, gNB 2 to 5) run for 15 minutes, then survive an e2term pod delete, reconnect, and resume indications. |
+| i0 | `gate-i0-rc-install.sh` | The RC wire decoder builds, grpcurl is fetched and checksum-verified, and rc installs at its pin, Ready, answering gRPC, with its route. |
+| R0 (M8) | `gate-r0-rc-scripted.sh` | Scripted rc gRPC controls reach ns-3 in lock-step; the ledger, the wire answers and the handover rows agree; a null-control lock-step run equals the free run. |
+| R1 | `gate-r1-rc-multi-control.sh` | Same-step and same-UE controls are applied in a fixed order, unknown UEs are refused, and a control after the final barrier gets exactly one failure. |
+| i2 | `gate-i2-ts-xapp-install.sh` | The TS xApp at its pin, switched to gRPC towards rc, A1 policy type 20008, and the stub QP, both registered and routed. |
+| R2 | `gate-r2-ts-stub-qp.sh` | The TS xApp, triggered per UE, hands over exactly when the stub's prediction beats the serving cell by more than the A1 threshold. |
+| R3′ | `gate-r3p-ts-predictor.sh` | The TS xApp's decisions follow the harness predictor's answer, computed by a pre-registered formula from certified InfluxDB rows; the run is repeatable and equals the committed reference. |
 
 ### Where evidence lands
 
 - Per gate on the host: `plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/<gate>/<UTC timestamp>/` (override with `EVIDENCE_HOST_ROOT`). The verdict is `verdict.json` in that directory; `.last-mN` in the evidence root points at the latest one.
+- `run-to-m9.sh` uses `plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/` as its root instead, for every step including M0 to M7; the run-level verdict, `steps.tsv` and the watchdog files are in `m9/<UTC timestamp>/`.
 - Pcaps are not committed. Each evidence directory carries a `pcap-sha256.txt` manifest.
 - Layout and the scrubber are explained in the deployment guide.
 
@@ -57,8 +80,8 @@ The chain runs each gate on the VM, copies the scrubbed evidence back, snapshots
 
 | Document | Read it for |
 |---|---|
-| [docs/deployment-guide-l-release.md](docs/deployment-guide-l-release.md) | VM preparation, running gates and the chain, manual agent and ns-3 runs, troubleshooting. |
-| [docs/system-architecture-l-release.md](docs/system-architecture-l-release.md) | Components, data flow, IPC schema, agent robustness, E2SM-KPM content, the kpimon patch, out-of-scope items. |
+| [docs/deployment-guide-l-release.md](docs/deployment-guide-l-release.md) | VM preparation, running gates, the M0–M7 chain and M9, manual agent and ns-3 runs, sending rc and TS xApp controls by hand, troubleshooting. |
+| [docs/system-architecture-l-release.md](docs/system-architecture-l-release.md) | Components, data flow, IPC schema, agent robustness, E2SM-KPM content, the kpimon patch, the RC path and pacing, the R3′ predictor, out-of-scope items, running your own experiment. |
 | [docs/journals/2026-10-21-p3-e2-agent-design-checkpoint.md](docs/journals/2026-10-21-p3-e2-agent-design-checkpoint.md) | The signed-off design record (stateful, dated). |
 | [docs/linux-vm-setup-guide.md](docs/linux-vm-setup-guide.md) | Host-side libvirt/virtiofs setup. |
 

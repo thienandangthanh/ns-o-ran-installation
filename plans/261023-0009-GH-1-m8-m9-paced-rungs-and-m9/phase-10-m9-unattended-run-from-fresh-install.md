@@ -31,6 +31,8 @@ M9: revert `fresh-install`, one invocation, no prompts, exit 0. `verdict.json` l
 | Decision | Document, version, section | Zotero | Read |
 |---|---|---|---|
 | Run report deviations P1–P6, N5 | as recorded in the decision record §6 and the 00:05/00:14 amendments | — | — |
+| Run report deviations P1–P9, N5 (A1) | rows of `plans/reports/run-report-261029-0535-GH-1-m8-m9-deviations.md` with their documents: E2AP v03.00 §9.2.27, §9.2.6, §8.2.4.3; E2SM common v07.00 §6.2.2.6; E2SM-KPM v03.00 §7.9.1; 3GPP TS 28.552 §5.1.3.6.1.1 and §5.1.2.1.1.1; 3GPP TS 36.423 §9.1.2.31; 3GPP TS 37.340 §4.2.2 and §10.5.1; 3GPP TS 38.300 §9.2.3 | `WEE5IEXF`, `QW6VJ83M`, `F82PYZVK`, `5SZUBP6M`, `83VGITYK`/`M8YTSAQS` (3GPP TS 37.340 and 38.300 cited from the earlier phases' ledgers) | carried from the phase ledgers; no new decision in P10 |
+| F″ bring-up remedy (pod replacement, rtmgr restart) | operational; no standard governs RMR route distribution inside the RIC | — | — |
 
 ## Failure Protocol
 If any Verify step does not meet its stated pass condition, STOP this phase.

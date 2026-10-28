@@ -50,6 +50,10 @@ flowchart LR
 | E2 agent | One per node. Speaks E2AP and E2SM-KPM to e2term, forwards ns-3 samples as indications | `O-RAN-Testbed-Automation/RAN_Intelligent_Controllers/Near-Real-Time-RIC/ns3_e2_agent/` |
 | e2term Service | The stable address of e2term; survives pod deletes | resolved by `install_scripts/run_ns3_e2_agents.sh` |
 | kpimon-go | Subscribes to each connected node, decodes KPM, writes InfluxDB points | NIST `additional_scripts/install_xapp_kpi_monitor.sh` and its patches |
+| rc xApp | Takes handover controls on gRPC :7777 and sends them to the named E2 node as E2SM-RC control requests | NIST `additional_scripts/install_xapp_ric_control.sh`; pin `RC_SHA` in `scripts/gates/rc-lib.sh` |
+| TS xApp | Per triggered UE, asks for a prediction and calls rc's gRPC when another cell is better by more than the A1 threshold | NIST `additional_scripts/install_xapp_traffic_steering.sh` with the Testbed fork's two patches; pin `TS_SHA` in `scripts/gates/ts-lib.sh` |
+| stub QP | An RMR peer that answers the TS xApp's prediction requests from a loaded table | `tools/rmr-peer/` |
+| Pacer, R3′ predictor | Lock-step step grants and scripted triggers; the R3′ answer computed from InfluxDB | `scripts/gates/pacer.py`, `scripts/gates/r3p-predictor.py` |
 | Gate harness | Builds, runs and judges everything above | `scripts/`, `tools/` |
 
 Placement and transport choices, and what was rejected:
@@ -65,13 +69,13 @@ Node identity: each agent registers as a gNB-type E2 node with gNB-ID equal to t
 
 The schema is the authority: `O-RAN-Testbed-Automation/RAN_Intelligent_Controllers/Near-Real-Time-RIC/ns3_e2_agent/schema/ns3-e2-ipc.v1.schema.json`. Summary of intent only:
 
-- **Transport.** Newline-delimited JSON over TCP, UTF-8, one object per line, at most 1 MiB per line, ns-3 to agent only.
+- **Transport.** Newline-delimited JSON over TCP, UTF-8, one object per line, at most 1 MiB per line. Samples flow from ns-3 to the agent; controls and lock-step steps flow back.
 - **Messages.** `hello` (sent on every connect: node, kind, period, the wall-clock epoch that maps to sim time 0, run id, emitter SHAs), `sample` (one per node per period: cell sections and a UE list sorted by IMSI, a per-run sequence number, the sim time and the emitter's drop counter), `bye` (final counters).
 - **Full-set rule.** A sample carries every value ns-3 computes, regardless of `reducedPmValues`. A later subscription filter (option B) can then live in the agent alone.
 - **Exact values.** Doubles use the shortest round-trip decimal so values compare bit for bit. Non-finite doubles are `null`.
 - **Trace equals wire.** ns-3 writes the identical line to its local trace before sending, so the trace is the ground truth the gates compare Influx against, including samples dropped because the agent was down.
-- **Evolution.** Receivers ignore unknown keys; a new key bumps `minor`, a breaking change bumps `v`. The types `control`, `controlAck` and `step` are reserved for RC and pacing; v1 emitters drain and ignore inbound bytes.
-- **Emitter behaviour.** Non-blocking sends, a bounded buffer that drops and counts on overflow, reconnect with backoff, scheduling at init. ns-3 never waits for a subscription and never stalls simulated time.
+- **Evolution.** Receivers ignore unknown keys; a new key bumps `minor`, a breaking change bumps `v`. Minor 1 adds `control` (agent to ns-3, a decoded RC handover control) and `controlAck` (ns-3 to agent, its outcome). Minor 2 adds lock-step pacing: the hello's `pacing`, `tStartS` and `tGateS`, and `step` (agent to ns-3, sample k handled). Section 8 explains both.
+- **Emitter behaviour.** Non-blocking sends, a bounded buffer that drops and counts on overflow, reconnect with backoff, scheduling at init. In free pacing, the default, ns-3 never waits for a subscription and never stalls simulated time.
 
 Why JSON: the NIST build image already ships a JSON library, ns-3 needs only a small serialiser, shortest round-trip doubles give bit-exact comparison, and the trace file doubles as the wire record. Protobuf would add code generation in two toolchains; CBOR gains nothing here.
 
@@ -82,7 +86,7 @@ The agent is a single-threaded `poll()` loop over the SCTP socket, the IPC liste
 1. **Hold-off**, 8 s after start.
 2. **Connecting** on a fresh socket with an **ephemeral SCTP source port**, retried every 2 s without end.
 3. **Setup sent.** No E2SetupResponse within 10 s, or an E2SetupFailure, exits with code 3.
-4. **Ready.** The subscription table starts empty. A subscription request for the KPM function is admitted and stored, a subscription delete removes the entry and is answered, a service query is answered with a service update, and an undecodable PDU is logged and counted, never fatal.
+4. **Ready.** The subscription table starts empty. A subscription request for the KPM function is admitted and stored, a subscription delete removes the entry and is answered, a service query is answered with a service update, an RC control request is handled as in section 8, and an undecodable PDU is logged and counted, never fatal.
 5. **Association lost** exits with code 2. Invalid configuration exits with code 1.
 
 Docker's `--restart always` restarts the container, which returns with empty state and goes through the hold-off to a fresh E2Setup. Every agent writes a JSON stats line every 5 s.
@@ -134,17 +138,68 @@ Facts checked against kpimon's code (`control.go`, `wrapper.c`) and the golden c
 
 A gate is green only when wire bytes decode with tshark and, for KPM, through kpimon's own decoder; log lines are supporting evidence. Captures run on `docker0` with BPF `ip proto 132` (never `-i any`), start before the first E2Setup because Wireshark learns the E2SM mapping only from the setup, and are counted deduplicated by SCTP TSN and attributed by association. tshark 4.2.2 from noble cannot dissect KPM REAL records, so the gates use the `tshark-kpm` image (`tools/tshark-kpm`). Details of layout and tools: the deployment guide and `tools/e2-evidence/`.
 
-## 8. Deliberately out of scope
+## 8. RC control path, pacing and the R3′ predictor
 
-- **RIC Control and M8.** The IPC message types and the agent's loop leave room for it; nothing implements it.
-- **Pacing.** M5 to M7 run free: ns-3 emits at wall-clock speed without lock-step. The timing report `plans/reports/timing-261022-0217-GH-1-ns3-scenario-zero-real-vs-sim-time.md` (stateful, dated) records why this matters: the default scenario is much slower than real time, so the simulator is the slow side of any lock-step loop.
+```text
+scripted gRPC, or the TS xApp --gRPC :7777--> rc --E2SM-RC control request--> agent of the addressed node
+   --IPC `control`--> ns-3 E2ControlHub --> LTE master eNB RRC (handover) --> ledger line + IPC `controlAck`
+   --> agent --> RIC control acknowledge or failure --> rc
+```
+
+### Agent
+
+The agent accepts E2SM-RC CONTROL style 3 (Connected Mode Mobility), action 1 (Handover Control), on RAN function 3, decoded with the E2SM-RC v2.0 codec of rc's pinned commit. The UE is the decimal IMSI carried in AMF-UE-NGAP-ID; the target is the 5-byte cell key at the end of the NR CGI. Code: `ns3_e2_agent/src/rc-control.hpp` (the answer table is its header comment).
+
+- **One terminal answer per request.** Pending controls are keyed by an agent-monotonic `ctlId` and have no wall-clock timer. An applied control is answered with a RIC control acknowledge carrying an E2SM-RC ControlOutcome Format 1, unless the request asked for no acknowledgement. A refusal by ns-3, a late control, or ns-3 leaving (`bye` or EOF) gives a RIC control failure with `control-failed-to-execute`. Requests the agent rejects itself never reach ns-3: `ran-function-id-invalid`, `action-not-supported`, `control-message-invalid`, and `control-failed-to-execute` while ns-3 is not connected. Without a timer, every request gets exactly one terminal answer, however long ns-3 takes to reach it.
+- **Cell key (N5).** Each gNB agent puts 5 raw bytes, `%08X%02X` of its gNB ID and cell ID, in `e2nodeComponentRequestPart` of its E2 setup; the TS xApp builds its cell map from them and names targets with the same key. The eNB agent keeps NIST's `reqpart` bytes. Code: `ns3_e2_agent/src/e2ap-builders.cpp`.
+
+### ns-3
+
+`E2ControlHub` (oran-interface, `model/e2-control-hub.h`) collects controls from every emitter and applies them once per E2 period: after the last emitter's sample k, at the current simulation time (no actuation delay), in the order (IMSI, via node, target cell, `ctlId`). Each control gets one ledger line and one `controlAck`. The handler is `LteEnbRrc::ApplyExternalHandover` (ns-3, `src/lte/model/lte-enb-rrc.h`), an additive method on the LTE master eNB's RRC. It checks, in order, unknown IMSI, unknown target (not a mmWave secondary cell of this eNB), handover in progress, already on target, and LTE fallback; on a pass it cancels the UE's pending time-to-trigger handover and performs the secondary-cell handover.
+
+Why: the fixed order makes the outcome independent of arrival order, and the method draws no random numbers and schedules no event of its own, so a run without controls equals the free run, and a ledger can be replayed without the RIC. The ledger, not rc's log, is the record a gate judges, because rc answers its gRPC caller at once and sends the control asynchronously.
+
+### Pacing (opt-in)
+
+`--e2Pacing=free` is the default. Without controls the hub then writes nothing and schedules nothing, so free-run output is unchanged. `--e2Pacing=lockstep` connects ns-3 to the harness pacer (`scripts/gates/pacer.py`). A start barrier waits until every agent is READY with a subscription. After each sample k a barrier blocks the simulation until every node has handled k and the pacer has granted k; controls that arrive meanwhile are buffered and applied as above, and a control stamped with an earlier sample than the barrier it reaches is refused as late. The barrier deadlines (`e2StartTimeout` for the start barrier, `e2GateTimeout` for the others) count only while the simulation is blocked, and a missed one fails the run. The pacer owns the control deadline and the negative window and may abort; an abort or a lost pacer link ends ns-3 with exit code 5 and `e2-pacing-abort.json` naming the step.
+
+Why: ns-3 is the only time base and the only party that blocks, so a control lands at a pre-registered step and a run repeats byte for byte. That is what lets the gates compare three live runs, a RIC-free replay and a `--RngRun=2` run. The default scenario is much slower than real time (timing report `plans/reports/timing-261022-0217-GH-1-ns3-scenario-zero-real-vs-sim-time.md`, stateful, dated), so the simulator is the slow side of the loop.
+
+### UL and DL PDCP SDU volume rows
+
+Every gNB cell list carries `DRB.PdcpSduVolumeUL` and `DRB.PdcpSduVolumeDL` (INTEGER, kbit per period; legacy names with `_Filter`), mapped in `ns3_e2_agent/schema/metric-map.v1.json`. ns-3 credits the PDCP volume that the LTE master node hosts for a cell's UEs to that en-gNB cell (recorded deviation P9, against 3GPP TS 28.552 §5.1.2.1.1.1). UL traffic is opt-in: `--enableUlTraffic` (default off) makes every UE also send UDP uplink and prints a per-PDU audit (`N4AUDIT` lines) on stdout. The flag creates no random variable, and with it off the ns-3 traces equal the pre-N4 build's (gate N4, `scripts/gates/gate-n4-ul-metric.sh`).
+
+### R3′ harness predictor
+
+R3′ closes the TS xApp loop through live KPM data without QP. For every trigger step T, the pacer's prepare hook (`scripts/gates/r3p-prepare.py`) runs before the trigger. `check-n6-influx-window.py` first certifies that InfluxDB holds every row of the window [T−15, T] and the UE's serving cell. `r3p-predictor.py` then answers from that window only: for each gNB cell (the eNB is excluded), the sum of `DRB.PdcpSduVolumeDL` over the window, UL 0, serving cell first, keyed `%08X%02X`, for the UE named by decimal IMSI. The answer is loaded into the stub QP, which sends it to the TS xApp as the 30002 reply to the TS xApp's request. The formula and its domain are pre-registered in `scripts/gates/r3p-scenario.json` and checked against 3GPP TS 28.552. InfluxDB is queried only inside its pod, and the prepare hook reads no secret.
+
+Why: it is deterministic, reads the same counter the RIC stores, and can be compared offline against InfluxDB and the IPC samples. It is a test stand-in, not a load-balancing policy; its prediction quality is out of scope.
+
+## 9. Deliberately out of scope
+
+- **QP and AD.** The QP fork and an R3 rung with the real QP are deferred to a later goal, not dropped; AD is not used. NIST's installers feed both xApps sample `UEReports` and `CellReports` data, so live data needs an adapter (NIST's `Near-Real-Time-RIC/README.md`).
+- **Specification deviations kept on purpose.** P1 to P9 and N5, each with its standard, are listed in the M9 run report `plans/reports/run-report-261029-0535-GH-1-m8-m9-deviations.md`. A realism pass after M9 addresses them.
+- **Other scenarios.** Only scenario-zero is exercised. A scenario-agnostic harness and a portability smoke on another scenario are a later goal; section 11 lists the coupling.
 - **Subscription option B.** Honouring the action definition and reporting period is deferred; it would change only the agent.
 - **N release.** The port targets L only. There is no fallback to another release.
 - **Bronze RIC.** The legacy flow in the README is not exercised by the gates.
-- **Scenario and radio changes.** None, apart from the optional `--nMmWaveEnbNodes` argument (default 4, unchanged behaviour) and the IPC emitter.
+- **Scenario and radio changes.** None by default. The added arguments (`--nMmWaveEnbNodes`, the pacing and ledger flags, `--enableUlTraffic`) default to the earlier behaviour, and the handover method runs only when a control arrives.
 
-## 9. Known gaps against the target
+## 10. Known gaps against the target
 
 - The agent's behaviour after an e2term pod delete depends on e2mgr and kpimon timing outside this repo's control. The design handles it by restarting agents; recovery takes minutes, not seconds.
 - kpimon logs slightly fewer indications than the wire carried during very fast bursts in some runs (about 2 % in the M3 reference-node burst). The gates record this as a cross-check, not a pass criterion; M6 re-measures at ns-3's rate.
 - Gate-level confirmation of M7 on the unattended re-run is recorded in the evidence directory, not in this note.
+
+## 11. Run your own experiment
+
+The harness is built around scenario-zero and the TS xApp. Before you build on this port with another scenario or another xApp, account for these couplings:
+
+- **The harness runs scenario-zero only.** `agents_ns3_locate` in `scripts/gates/agents-ns3-run.sh:40` takes the first `*-scenario-zero-*` binary of the M4 build, and gates S0 and S1 look the binary up the same way. Another scenario needs that lookup changed.
+- **The pacing and ledger flags exist only in `scratch/scenario-zero.cc`.** It declares `e2Pacing`, `e2PacerPort`, `e2StartTimeout`, `e2GateTimeout`, `e2LedgerPath` and `simStartEpochMs` as global values and copies them into the `ns3::E2ControlHub` and `ns3::MmWaveHelper` attribute defaults. Another scenario must do the same, or set those attributes itself.
+- **The N5 cell key is upper-case hex `%08X%02X`.** Every rung uses gNB and cell IDs up to 9, where the key is digits only, so letter case cannot matter. IDs of 10 or more can put the letters A to F into the key; that case is untested.
+- **Pacing is opt-in.** Free run stays the default. Controls in a free run land at a step that depends on wall-clock timing; for a repeatable experiment use `--e2Pacing=lockstep` with the pacer and a schedule (format in the header of `scripts/gates/pacer.py`).
+- **QP and AD need a live-data adapter.** They read NIST's sample schemas, not kpimon's `cellMetrics` and `UeMetrics`. Until an adapter exists, the stub QP or a harness predictor like R3′'s stands in.
+- **The deviations apply to you too.** Every experiment on this port inherits P1 to P9 and N5 (the M9 run report `plans/reports/run-report-261029-0535-GH-1-m8-m9-deviations.md`).
+
+The manual rc and TS xApp loops in [deployment-guide-l-release.md](deployment-guide-l-release.md) are the smallest starting point.

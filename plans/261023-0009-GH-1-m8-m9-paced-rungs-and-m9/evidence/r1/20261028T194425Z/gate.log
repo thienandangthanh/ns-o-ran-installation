@@ -1,0 +1,50 @@
+[19:44:25] gate r1 start; evidence /home/uc/evidence/r1/20261028T194425Z; harness 39b3ba21d46d9e347d14d2841a8abe1ace1ccb05
+[19:44:26] PASS r1_args
+[19:44:26] PASS r1_t_ctl_and_threshold_from_r0_evidence
+[19:44:26] ric watchdog started (pid 83651, threshold 600s)
+[19:44:26] PASS r1_nist_tree_at_testbed_sha_with_agent_dir
+[19:44:26] PASS r1_build_tools_present
+[19:44:26] PASS r1_sctp_module_loaded
+[19:44:26] PASS r1_ns3_binary_located_at_pins
+[19:44:26] PASS r1_pod_log_reader_self_test
+[19:44:30] PASS r1_pacer_self_test
+[19:44:31] PASS r1_kpm_ue_list_judge_self_test
+[19:44:31] PASS r1_grpcurl_fetched_and_checksum_verified
+[19:45:14] PASS r1_pre_ric_reset_fresh_rc_kpimon_hw_go_and_bucket
+[19:45:14] PASS r1_rc_installed_at_pin_and_ready
+[19:46:16] PASS r1_rc_decoder_built
+[19:47:36] PASS r1_c8_free_run_at_gated_threshold
+[19:48:56] PASS r1_c8_lockstep_null_control
+[19:48:56] PASS r1_c8_null_control_equals_free_run
+[19:49:39] PASS r1_live1_ric_reset_fresh_pods_and_bucket
+[19:49:39] PASS r1_live1_route_dump_start
+[19:49:40] PASS r1_live1_capture_started_before_agents
+[19:50:33] PASS r1_live1_agents_connected_set_exact
+[19:50:33] PASS r1_live1_agent_ips_recorded
+[19:50:40] PASS r1_live1_every_agent_ready_and_subscribed
+[19:50:41] PASS r1_live1_pods_snapshot_before
+[19:51:48] PASS r1_live1_lockstep_run_exits_clean
+[19:51:48] PASS r1_live1_pods_snapshot_after
+[19:51:48] PASS r1_live1_route_dump_end
+[19:51:49] PASS r1_live1_restart_counts_zero_rc_kpimon_hw_go_agents
+[19:51:53] PASS r1_live1_agent_logs_with_stats_after_bye
+[19:51:53] PASS r1_live1_influx_dump_written_without_the_token
+[19:51:56] PASS r1_live1_agents_stopped
+[19:51:56] PASS r1_live1_capture_stopped
+[19:51:57] PASS r1_live1_kpimon_log_window_complete
+[19:51:57] PASS r1_live1_kpimon_zero_rc_wmore
+[19:51:58] PASS r1_live1_wire_one_terminal_answer_per_request_joined_to_ledger
+[19:51:58] PASS r1_live1_c2_ledger
+[19:51:58] PASS r1_live1_c9_handover_rows_match_applied_lines
+[19:51:59] PASS r1_live1_kpm_ue_lists_move_applied_and_keep_refused
+[19:51:59] PASS r1_live1_one_connection_per_emitter_and_agent
+[19:51:59] PASS r1_live1_agent_static_rejects_zero_post_bye_as_expected
+[19:51:59] PASS r1_live1_expected_outcomes_and_afterseq
+[19:51:59] PASS r1_live1_c4_sort_exercised_not_arrival_order
+[19:51:59] PASS r1_d7_three_paths_two_imsis_both_gnbs
+[19:51:59] PASS r1_runs_kpm_moved_c2_c5_reset_fresh
+[19:52:00] PASS r1_ipc_dropped_zero_no_sub_dropped_zero_and_slack_recorded
+[19:52:00] PASS r1_restart_counts_all_zero
+[19:52:00] PASS r1_no_stray_process
+verdict r1: PASS failed=[]
+[19:52:01] ric watchdog stopped (pid 83651)

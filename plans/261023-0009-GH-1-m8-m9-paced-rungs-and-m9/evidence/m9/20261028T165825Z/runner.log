@@ -1,0 +1,136 @@
+[host 16:58:25] top rung r3p (substitution 4 record: none)
+[host 16:58:25] M9 run 20261028T165825Z: steps m0 m1 m2 m3 m4 m5 m6 m7 i0 r0 r1 i2 r2 r3p (full 1), watchdog trip 29 GB every 30 s, wall 20199 s
+[16:58:25] gate m0-host start; evidence /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m0/20261028T165825Z-host; harness 39b3ba21d46d9e347d14d2841a8abe1ace1ccb05
+[16:58:25] PASS host_free_ge_20g
+[16:58:25] PASS fresh_install_present
+[16:58:26] PASS harness_repo_public
+[16:58:38] PASS harness_anonymous_clone
+[16:58:50] PASS probe_create
+[16:58:50] PASS probe_marker_written
+[16:59:29] PASS revert_fresh_install
+[16:59:29] PASS marker_absent_after_revert
+[16:59:29] PASS probe_still_listed
+[17:00:08] PASS branch_create
+[17:00:08] PASS branch_overlay_exists
+[17:00:08] PASS branch_delete
+[17:00:09] PASS branch_unlisted
+[17:00:09] PASS branch_overlay_gone
+[17:00:09] PASS vm_up_after_probe
+[17:00:09] PASS vm_no_git_credentials
+verdict m0-host: PASS failed=[]
+[host 17:00:12] gate m0 (gate-m0-preflight.sh) harness 39b3ba21d4 -> unit gate-m0-20261028T170012Z
+debconf: delaying package configuration, since apt-utils is not installed
+
+Running kernel seems to be up-to-date.
+
+No services need to be restarted.
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+[host 17:01:45] gate m0 exit 0
+scrub: no token file and no InfluxDB deployed: regex scan only
+scrub: 0 file(s) redacted, 0 known secret(s)
+[host 17:01:45] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m0/20261028T170012Z
+verdict m0 PASS []
+[host 17:01:50] no-snapshot mode: rebooting at the q0-preflight boundary
+[host 17:01:50] graceful shutdown of ubuntu24.04
+[host 17:02:03] m0 green
+[host 17:02:05] gate m1 (gate-m1-ric-up.sh) harness 39b3ba21d4 -> unit gate-m1-20261028T170205Z
+[host 17:27:35] gate m1 exit 0
+scrub: no token file and no InfluxDB deployed: regex scan only
+scrub: 0 file(s) redacted, 0 known secret(s)
+[host 17:27:35] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m1/20261028T170205Z
+verdict m1 PASS []
+[host 17:27:38] no-snapshot mode: rebooting at the q1-ric-up boundary
+[host 17:27:38] graceful shutdown of ubuntu24.04
+[host 17:28:06] m1 green
+[host 17:28:08] gate m2 (gate-m2-refnode.sh) harness 39b3ba21d4 -> unit gate-m2-20261028T172808Z
+[host 17:41:51] gate m2 exit 0
+scrub: no token file and no InfluxDB deployed: regex scan only
+scrub: 0 file(s) redacted, 0 known secret(s)
+[host 17:41:52] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m2/20261028T172808Z
+verdict m2 PASS []
+[host 17:41:56] no-snapshot mode: rebooting at the q2-refnode boundary
+[host 17:41:56] graceful shutdown of ubuntu24.04
+[host 17:43:08] m2 green
+[host 17:43:10] gate m3 (gate-m3-xapps.sh) harness 39b3ba21d4 -> unit gate-m3-20261028T174310Z
+[host 18:23:14] gate m3 exit 0
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 18:23:14] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m3/20261028T174310Z
+verdict m3 PASS []
+[host 18:23:19] no-snapshot mode: rebooting at the q3-xapps boundary
+[host 18:23:19] graceful shutdown of ubuntu24.04
+[host 18:24:35] m3 green
+[host 18:24:37] gate m4 (gate-m4-ns3-build.sh) harness 39b3ba21d4 -> unit gate-m4-20261028T182437Z
+[host 18:45:59] gate m4 exit 0
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 18:46:03] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m4/20261028T182437Z
+verdict m4 PASS []
+[host 18:46:05] no-snapshot mode: rebooting at the q4-ns3-build boundary
+[host 18:46:05] graceful shutdown of ubuntu24.04
+[host 18:46:38] m4 green
+[host 18:46:40] gate m5 (gate-m5-agent-setup.sh) harness 39b3ba21d4 -> unit gate-m5-20261028T184640Z
+[host 18:52:16] gate m5 exit 0
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 18:52:17] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m5/20261028T184640Z
+verdict m5 PASS []
+[host 18:52:18] no-snapshot mode: rebooting at the q5-agent-setup boundary
+[host 18:52:18] graceful shutdown of ubuntu24.04
+[host 18:52:51] m5 green
+[host 18:52:53] gate m6 (gate-m6-kpm.sh) harness 39b3ba21d4 -> unit gate-m6-20261028T185253Z
+[host 18:57:28] gate m6 exit 0
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 18:57:30] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m6/20261028T185253Z
+verdict m6 PASS []
+[host 18:57:31] no-snapshot mode: rebooting at the q6-kpm boundary
+[host 18:57:31] graceful shutdown of ubuntu24.04
+[host 18:59:14] m6 green
+[host 18:59:16] gate m7 (gate-m7-multignb.sh) harness 39b3ba21d4 -> unit gate-m7-20261028T185916Z
+[host 19:27:43] gate m7 exit 0
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 19:28:25] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m7/20261028T185916Z
+verdict m7 PASS []
+[host 19:28:29] no-snapshot mode: rebooting at the q7-multignb boundary
+[host 19:28:29] graceful shutdown of ubuntu24.04
+[host 19:30:12] m7 green
+[host 19:30:15] gate i0 (gate-i0-rc-install.sh) harness 39b3ba21d4 -> unit gate-i0-20261028T193015Z
+[host 19:35:02] gate i0 exit 0
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 19:35:03] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/i0/20261028T193015Z
+verdict i0 PASS []
+[host 19:35:08] i0 green
+[host 19:35:10] gate r0 (gate-r0-rc-scripted.sh) harness 39b3ba21d4 -> unit gate-r0-20261028T193510Z
+[host 19:44:19] gate r0 exit 0
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 19:44:21] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/r0/20261028T193510Z
+verdict r0 PASS []
+[host 19:44:23] r0 green
+[host 19:44:25] gate r1 (gate-r1-rc-multi-control.sh) harness 39b3ba21d4 -> unit gate-r1-20261028T194425Z
+[host 19:52:03] gate r1 exit 0
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 19:52:04] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/r1/20261028T194425Z
+verdict r1 PASS []
+[host 19:52:08] r1 green
+[host 19:52:10] gate i2 (gate-i2-ts-xapp-install.sh) harness 39b3ba21d4 -> unit gate-i2-20261028T195210Z
+[host 19:56:45] gate i2 exit 0
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 19:56:46] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/i2/20261028T195210Z
+verdict i2 PASS []
+[host 19:56:48] i2 green
+[host 19:56:50] gate r2 (gate-r2-ts-stub-qp.sh) harness 39b3ba21d4 -> unit gate-r2-20261028T195650Z
+[host 20:07:05] gate r2 exit 0
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 20:07:07] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/r2/20261028T195650Z
+verdict r2 PASS []
+[host 20:07:08] r2 green
+[host 20:07:10] gate r3p (gate-r3p-ts-predictor.sh) harness 39b3ba21d4 -> unit gate-r3p-20261028T200710Z
+[host 20:29:04] gate r3p exit 0
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 20:29:07] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/r3p/20261028T200710Z
+verdict r3p PASS []
+[host 20:29:08] r3p green
+[host 20:29:08] steps m0..r3p green
+M9 verdict: PASS top rung r3p, min host free 59 GB -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m9/20261028T165825Z/verdict.json

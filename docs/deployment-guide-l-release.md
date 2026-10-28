@@ -1,6 +1,6 @@
 # Deployment and re-run guide: ns-O-RAN on the OSC Near-RT RIC L-release (NIST v1.8.0)
 
-This guide gets you from a clean `fresh-install` VM snapshot to a green M0 to M7 chain, and shows how to run single gates, the E2 agents and ns-3 by hand. The scripts are the authority for commands and flags; this guide cites them and does not restate their logic. For the design and the reasons behind it, read [system-architecture-l-release.md](system-architecture-l-release.md).
+This guide gets you from a clean `fresh-install` VM snapshot to a green M0 to M7 chain or a green M9 run, and shows how to run single gates, the E2 agents, ns-3, rc controls and the TS xApp loop by hand. The scripts are the authority for commands and flags; this guide cites them and does not restate their logic. For the design and the reasons behind it, read [system-architecture-l-release.md](system-architecture-l-release.md).
 
 Where a step was not checked against a script or a run, it is marked "(unverified)".
 
@@ -65,6 +65,27 @@ scripts/run-to-m7.sh --harness-sha <new pushed SHA> --run-prefix f --from 3
 
 With `--from N` greater than 0 the M0 host half is skipped. A snapshot that already exists makes `create` fail, so after a red gate that you revert past, delete the stale later snapshots of your own prefix first (`vm-snapshot.sh delete <name>`; it refuses `fresh-install`). Do not reuse a prefix for a different run.
 
+### M9: the chain plus the closed-loop rungs
+
+```bash
+scripts/vm/vm-snapshot.sh revert fresh-install
+scripts/run-to-m9.sh --harness-sha <pushed SHA> --run-prefix n --no-snapshots
+```
+
+Usage, step order and stop paths are in the header of `scripts/run-to-m9.sh`. In short:
+
+- The steps are M0 to M7, then `i0` (rc install), `r0`, `r1`, `i2` (TS xApp and stub QP install), `r2` and `r3p`. Rungs below the top run `--mode single`; the top rung runs `--mode c1 --reference` against `plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/reference/`.
+- The runner refuses to start when `scripts/`, `tools/` or that reference differ from the harness SHA in your worktree, when they hold untracked files, when `scripts/m9-budget.json` is missing, when the prefix is `f` or `l`, or when snapshots with the prefix already exist.
+- Revert `fresh-install` yourself first; the runner never reverts.
+- `--no-snapshots` takes no snapshot, M7 included, and reboots the VM at each gate boundary instead. The M0 host half still creates its own `m0-probe-*`/`m0-branch-*` pair.
+- Per-step timeouts, the global wall deadline and the disk watchdog's polling interval and trip point come from `scripts/m9-budget.json`; `m9-budget.md` in the plan directory explains them and gives the host free space to have before the revert. Below the trip point the watchdog stops the run; a stale watchdog heartbeat or the wall deadline cancels it the same way.
+- `--from` and `--to` run a subset, which the verdict marks `notM9`.
+- A revert to `fresh-install` after an M9 run can leave that run's working overlay in `/home/andang/VMs/` (the M0 probe's branch create and delete untrack it in libvirt). `df -BG /home` then shows the space still used. Check that no domain, snapshot or image references the file before you delete it; the checks used are in `plans/reports/decisions-261028-2014-GH-1-leaked-overlay-deletion-ruling.md`.
+- Every RIC bring-up checks that e2mgr's and submgr's RMR route-table readers drain what rtmgr sends them. After a cold boot or a fresh RIC install they can stop reading, and then e2mgr cannot answer an E2 Setup. If a reader is stuck, the bring-up replaces e2mgr and submgr and restarts rtmgr once (`ric_refresh_routes` in `scripts/gates/bringup.sh`), logged in the gate's `watchdog.log` and `rt-readers-*.txt`. In the recorded M9 run it fired once, in m1.
+- The verdict is `evidence/m9/<UTC timestamp>/verdict.json` under the plan directory, written by `scripts/m9-verdict.py` in every case. Read `pass`, `problems`, `exactStepSet`, `notM9`, `highestGreenRung`, `equalsReference`, `minHostFreeGb` and `watchdogAlive`. Each step's own evidence is listed in `steps.tsv` next to it.
+
+Scope: M9 proves the closed loop with the TS xApp and a harness predictor in place of QP. The QP fork and an R3 rung with the real QP are deferred to a later goal; AD is not used. The deviations from the O-RAN and 3GPP specifications that the port keeps knowingly (P1 to P9, N5) are listed, with their standards, in the M9 run report `plans/reports/run-report-261029-0535-GH-1-m8-m9-deviations.md`. The recorded M9 run passed: `plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m9/20261028T165825Z/verdict.json`.
+
 ## 4. Run one gate
 
 ```bash
@@ -92,6 +113,7 @@ Gate scripts, default timeouts (seconds) and the growth reserve for the snapshot
 |---|---|
 | `l*` | the development run (`l0-preflight` to `l7-multignb`) |
 | `f*` | the unattended re-run (`f0-preflight` to `f6-kpm`, then `f7-rerun-green`) |
+| `n*` (default of `run-to-m9.sh`) | the M9 run; none are created with `--no-snapshots` |
 | `m0-probe-<run>`, `m0-branch-<run>` | M0 snapshot probes |
 | `fresh-install` | the protected base; `vm-snapshot.sh delete` refuses it |
 
@@ -223,6 +245,14 @@ Flags (declared in `ns-3-mmwave-oran/scratch/scenario-zero.cc` on the pinned com
 | `--indicationPeriodicity` | 0.1 | seconds between samples, 0.01 to 2.0 |
 | `--e2AgentHost` | 127.0.0.1 | host of the agents; the agent of cellId N listens on 38470 + N |
 | `--e2TraceDir` | current directory | directory of `e2-ipc-trace-<cellId>.jsonl`, the local copy of every line sent |
+| `--handoverMode` | `DynamicTtt` | the rungs use `NoAuto` (no automatic handover; RC controls move the UEs) |
+| `--outageThreshold` | -5 | SNR outage threshold in dB; the rungs use -1000 (no LTE outage switch) |
+| `--e2LedgerPath` | `e2-control-ledger.jsonl` in `e2TraceDir` | one line per applied or refused control |
+| `--e2Pacing` | `free` | `lockstep` connects to the pacer at `127.0.0.1:<e2PacerPort>` |
+| `--e2PacerPort` | 38499 | pacer TCP port |
+| `--e2StartTimeout`, `--e2GateTimeout` | 120, 10 | lock-step barrier deadlines in seconds (start barrier, every other barrier) |
+| `--simStartEpochMs` | 0 (wall clock at start) | epoch mapped to sim time 0; the rungs pin it so KPM timestamps repeat |
+| `--enableUlTraffic`, `--ulTrafficPattern` | false, `constant` | opt-in UL traffic and the PDCP volume audit on stdout |
 
 Timing: the default scenario needs far more wall time than simulated time; plan `--simTime` from the measured ratio. Measure it with:
 
@@ -239,6 +269,62 @@ python3 -I tools/ipc-null-sink/ipc-null-sink.py --ports 38471-38475 --out ./sink
 ```
 
 It prints `READY` when all listeners are bound, validates every line against the IPC schema, and writes `summary.json` on SIGTERM or SIGINT. It never replies. Stop ns-3 and the sink when done and verify no `3847x` listener is left (`ss -ltnp`).
+
+### Send an rc control by hand
+
+Use a VM at a green i0 state or later: rc is installed and Ready, and grpcurl is at `~/grpcurl-1.9.1/grpcurl`. `vm-exec.sh` leaves the harness clone at `~/harness`. The steps follow the smoke gate `scripts/gates/gate-q8-rc-smoke.sh`, which owns this loop (unverified as a hand run).
+
+1. Start the agents for eNB 1, gNB 2 and gNB 3 (`run_ns3_e2_agents.sh --nodes enb:1,gnb:2,gnb:3`, above) and wait until each is READY with a kpimon subscription; the lock-step start barrier waits for exactly that.
+2. Write a pacer schedule with one trigger and start the pacer; wait for `READY` in `pacer.log`:
+
+    ```bash
+    export KUBECONFIG=$HOME/.kube/config
+    RC_EP="$(kubectl -n ricxapp get svc service-ricxapp-rc-grpc-server -o jsonpath='{.spec.clusterIP}'):7777"
+    cat >sched.json <<JSON
+    {"steps": {"20": {"trigger": {"cmd": ["bash", "$HOME/harness/scripts/gates/rc-send.sh", "$RC_EP", "2", "6", "0000000303"]}, "expect": 1}}, "late": []}
+    JSON
+    python3 -I ~/harness/scripts/gates/pacer.py --port 38499 --out ./pacer --t-ctl 30 --schedule sched.json >pacer.log 2>&1 &
+    ```
+
+3. Run ns-3 in lock-step:
+
+    ```bash
+    "$BIN" --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --outageThreshold=-1000 \
+        --e2AgentHost=127.0.0.1 --e2TraceDir=./run1 --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10
+    ```
+
+At step 20, once every agent has read sample 20, the pacer runs `rc-send.sh <endpoint> <viaNodeId> <imsi> <target key> [ackReq]`: here through the agent of node 2, for IMSI 6, to the key `0000000303` (`%08X%02X`, gNB 3, cell 3). rc answers the gRPC call at once and sends the RIC control request asynchronously, so exit 0 only means "queued". Judge the result on `./run1/e2-control-ledger.jsonl` (a header line, then one line per control with `viaNodeId`, `imsi`, `sourceCell`, `targetCell`, `outcome`, `cause`) and on the wire: an applied control is acknowledged with an E2SM-RC ControlOutcome Format 1, a refused one gets a RIC control failure with cause `control-failed-to-execute`. rc's log is not evidence. The pacer's schedule format is described in the header of `scripts/gates/pacer.py`.
+
+Free run: without the pacer and the `--e2Pacing`, `--e2PacerPort` and `--e2GateTimeout` flags, call `rc-send.sh` directly while ns-3 runs. ns-3 applies the control after the next sample, at a step that depends on wall-clock timing, so the run does not repeat (unverified with the RIC; gate S0 checks free-run control against the null sink).
+
+### Drive the TS xApp by hand
+
+Use a VM at a green i2 state or later: the TS xApp switched to gRPC towards rc, A1 policy type 20008, and the stub QP xApp `stubqp`, both registered with appmgr. The per-run order is `rung_live` in `scripts/gates/ts-rung-lib.sh`; the commands are in `scripts/gates/ts-lib.sh` (unverified as a hand run).
+
+1. Start the agents as above, then replace the TS xApp and stub pods: the TS xApp reads e2mgr's node list only at start-up. Follow `ts_stub_pods_reset` in `ts-lib.sh`: delete both pods, wait for new Ready pods, make sure both are still registered with appmgr (neither registers itself), replace the a1mediator pod, then restart rtmgr (it never reconnects to a replaced pod).
+2. Set the A1 threshold. The TS xApp starts at 0 and never answers A1, so use a new policy instance id each time; its log then shows `Setting Threshold for A1-P value: 10%`:
+
+    ```bash
+    A1="http://$(kubectl -n ricplt get svc service-ricplt-a1mediator-http -o jsonpath='{.spec.clusterIP}'):10000/A1-P/v2"
+    curl -s -X PUT -H 'Content-Type: application/json' -d '{"threshold": 10}' "$A1/policytypes/20008/policies/manual-1"
+    ```
+
+3. Load the stub's predictions by pod IP. The table format is in the header of `tools/rmr-peer/stub-qp-rmr-peer.py`: per UE, one answer per trigger, each a list of `["<cell key>", [dl, ul]]` with the serving cell first, integers only and no tie:
+
+    ```bash
+    STUB_IP=$(kubectl -n ricxapp get pods -o jsonpath='{range .items[*]}{.metadata.name} {.status.podIP}{"\n"}{end}' | awk '/^ricxapp-stubqp-/ {print $2}')
+    curl -s "http://$STUB_IP:8080/health"                      # "ok" once its RMR is ready
+    curl -sf -X PUT --data-binary @table.json "http://$STUB_IP:8080/table"
+    ```
+
+4. Start the RMR injector as `injector_start` in `ts-lib.sh` does: the rmr-peer image on the host network, with a static seed route that sends message type 30003 to the TS xApp's RMR Service, and its control port on 38510.
+5. Run ns-3 (lock-step with this trigger in the pacer schedule, as the gates do, or free run) and trigger one UE by decimal IMSI:
+
+    ```bash
+    bash ~/harness/scripts/gates/send-rmr.sh 38510 anomaly 6
+    ```
+
+The TS xApp asks the stub for a prediction (30000), receives it (30002), and when the best other cell beats the serving cell by more than the threshold it calls rc's gRPC (`service-ricxapp-rc-grpc-server.ricxapp:7777`), addressing the control to the target cell's E2 node (recorded deviation P1). Check the ledger and the wire as in the rc loop. In R3′ the pacer's prepare hook (`scripts/gates/r3p-prepare.py`) replaces step 3 for every trigger: it certifies the InfluxDB window, computes the predictor's answer and loads it into the stub.
 
 ### Process hygiene
 
