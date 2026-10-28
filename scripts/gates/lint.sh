@@ -50,6 +50,7 @@ python3 -I scripts/gates/r3p-predictor.py lint scripts/gates/r3p-scenario.json >
     { echo "r3p-scenario.json pre-registration does not lint (empty domain or template outside it)"; rc=1; }
 python3 -I scripts/gates/check-n6-influx-window.py --self-test >/dev/null || { echo "N6 window certification self-test failed"; rc=1; }
 python3 -I scripts/gates/r3p-dry-run-classifier.py --self-test >/dev/null || { echo "r3p dry-run classifier self-test failed"; rc=1; }
+python3 -I scripts/gates/r3p-checks.py --self-test >/dev/null || { echo "r3p checks self-test failed"; rc=1; }
 if grep -nE '(\blogs\b[^|#]*|"\$[a-z_]*logs?"\s*)\|\s*(grep\s+-[a-zA-Z]*[qm]|head\b)' scripts/gates/*.sh |
     grep -vE '^[^:]+:[0-9]+:\s*#'; then
     echo "an early-exit reader on a log pipe (see above): SIGPIPE under pipefail"; rc=1
