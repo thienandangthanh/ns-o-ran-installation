@@ -1,0 +1,88 @@
+{
+ "steps": {
+  "20": {
+   "prepare": {
+    "cmd": [
+     "python3",
+     "-I",
+     "/home/uc/harness/scripts/gates/r3p-prepare.py",
+     "trigger",
+     "/home/uc/harness/scripts/gates/r3p-scenario.json",
+     "20",
+     "3",
+     "none",
+     "/home/uc/evidence/r3p/20261028T044557Z/runs/live1",
+     "http://10.244.0.144:8080"
+    ],
+    "timeoutS": 30
+   },
+   "trigger": {
+    "cmd": [
+     "bash",
+     "/home/uc/harness/scripts/gates/send-rmr.sh",
+     "38510",
+     "anomaly",
+     "3"
+    ]
+   },
+   "expect": 0,
+   "absence": true
+  },
+  "30": {
+   "prepare": {
+    "cmd": [
+     "python3",
+     "-I",
+     "/home/uc/harness/scripts/gates/r3p-prepare.py",
+     "trigger",
+     "/home/uc/harness/scripts/gates/r3p-scenario.json",
+     "30",
+     "1",
+     "handover",
+     "/home/uc/evidence/r3p/20261028T044557Z/runs/live1",
+     "http://10.244.0.144:8080"
+    ],
+    "timeoutS": 30
+   },
+   "trigger": {
+    "cmd": [
+     "bash",
+     "/home/uc/harness/scripts/gates/send-rmr.sh",
+     "38510",
+     "anomaly",
+     "1"
+    ]
+   },
+   "expect": 1
+  },
+  "50": {
+   "prepare": {
+    "cmd": [
+     "python3",
+     "-I",
+     "/home/uc/harness/scripts/gates/r3p-prepare.py",
+     "trigger",
+     "/home/uc/harness/scripts/gates/r3p-scenario.json",
+     "50",
+     "1",
+     "none",
+     "/home/uc/evidence/r3p/20261028T044557Z/runs/live1",
+     "http://10.244.0.144:8080"
+    ],
+    "timeoutS": 30
+   },
+   "trigger": {
+    "cmd": [
+     "bash",
+     "/home/uc/harness/scripts/gates/send-rmr.sh",
+     "38510",
+     "anomaly",
+     "1"
+    ]
+   },
+   "expect": 0,
+   "absence": true
+  }
+ },
+ "late": []
+}
