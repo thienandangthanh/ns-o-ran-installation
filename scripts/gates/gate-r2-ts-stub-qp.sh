@@ -95,35 +95,7 @@ cfg_ok() {
     echo "T_ctl $T_CTL_S s and the outage threshold from R0, W $W_S s from R2 calibration, A1 threshold $A1_TH"
 }
 check r2_config_values_from_their_evidence cfg_ok
-ric_watchdog_bg
-
-check r2_nist_tree_at_testbed_sha_with_agent_dir agents_tree_at_testbed_sha
-check r2_ts_source_is_pin_plus_exactly_the_testbed_patches ts_patches_check
-check r2_build_tools_present agents_ensure_build_tools
-check r2_sctp_module_loaded agents_sctp_module
-check r2_ns3_binary_located_at_pins agents_ns3_locate
-check r2_pod_log_reader_self_test python3 -I "$HARNESS_DIR/scripts/gates/pod-log-window.py" --self-test
-check r2_pacer_self_test python3 -I "$HARNESS_DIR/scripts/gates/pacer-selftest.py"
-check r2_kpm_ue_list_judge_self_test python3 -I "$HARNESS_DIR/tools/e2-evidence/kpm-ue-list-moves.py" --self-test
-check r2_grpcurl_fetched_and_checksum_verified rc_grpcurl_fetch
-# start from pods this gate created: a kept pod's start-up line rotates out of its log
-check r2_pre_ric_reset_fresh_rc_kpimon_hw_go_and_bucket rc_ric_reset pre
-check r2_rc_installed_at_pin_and_ready rc_at_pin
-# SDL is in-memory: a VM boot (dbaas restart) empties it, so the type is ensured before any a1mediator restart,
-# whose check then proves the type survives that restart
-check r2_a1_policy_type_20008_present ts_policy_type_ensure
-fact a1PolicyTypeCreated "$([ -e "$e/a1-type-create.txt" ] && echo true || echo false)"
-check r2_pre_ts_and_stub_pods_fresh_rtmgr_sessions ts_stub_pods_reset pre
-ts_at_pin() { [ "$(git -C "$TS_DIR" rev-parse HEAD)" = "$TS_SHA" ] && ts_ready && jq -e '.ts_control_api == "grpc"' \
-    <(kc -n ricxapp get cm configmap-ricxapp-trafficxapp-appconfig -o jsonpath='{.data.config-file\.json}' | jq .controls); }
-check r2_ts_xapp_at_pin_ready_in_grpc_mode ts_at_pin
-check r2_rmr_peer_image_built_self_tested rmr_peer_build
-stub_present() { read -r n r _ < <(pod_info ricxapp "ricxapp-$STUB_NAME-") && [ "$r" = true ] && echo "stub $n ready"; }
-check r2_stub_qp_deployed stub_present
-check r2_xapp_image_ids ts_image_ids
-fact xappImageIds "$(cat "$e/xapp-image-ids.json" 2>/dev/null || echo null)"
-RC_DEC_TAG=$(bash "$HARNESS_DIR/tools/rc-decode/build.sh" 2>/dev/null | tail -n 1)
-check r2_rc_decoder_built test -n "$RC_DEC_TAG"
+rung_preconditions
 
 ################################################################################
 # C8: the radio config, no RIC
