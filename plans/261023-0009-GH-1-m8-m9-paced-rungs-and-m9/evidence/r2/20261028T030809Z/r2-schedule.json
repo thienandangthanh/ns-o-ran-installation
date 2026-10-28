@@ -1,0 +1,79 @@
+{
+ "steps": {
+  "20": {
+   "trigger": {
+    "cmd": [
+     "bash",
+     "/home/uc/harness/scripts/gates/send-rmr.sh",
+     "38510",
+     "anomaly",
+     "1"
+    ]
+   },
+   "expect": 1
+  },
+  "30": {
+   "trigger": {
+    "cmd": [
+     "bash",
+     "/home/uc/harness/scripts/gates/send-rmr.sh",
+     "38510",
+     "anomaly",
+     "3"
+    ]
+   },
+   "expect": 1
+  },
+  "40": {
+   "trigger": {
+    "cmd": [
+     "bash",
+     "/home/uc/harness/scripts/gates/send-rmr.sh",
+     "38510",
+     "anomaly",
+     "4"
+    ]
+   },
+   "expect": 0,
+   "absence": true
+  },
+  "50": {
+   "trigger": {
+    "cmd": [
+     "bash",
+     "/home/uc/harness/scripts/gates/send-rmr.sh",
+     "38510",
+     "anomaly",
+     "5"
+    ]
+   },
+   "expect": 0,
+   "absence": true
+  },
+  "60": {
+   "trigger": {
+    "cmd": [
+     "bash",
+     "/home/uc/harness/scripts/gates/send-rmr.sh",
+     "38510",
+     "anomaly",
+     "2"
+    ]
+   },
+   "expect": 1
+  },
+  "70": {
+   "trigger": {
+    "cmd": [
+     "bash",
+     "/home/uc/harness/scripts/gates/send-rmr.sh",
+     "38510",
+     "anomaly",
+     "6"
+    ]
+   },
+   "expect": 1
+  }
+ },
+ "late": []
+}
