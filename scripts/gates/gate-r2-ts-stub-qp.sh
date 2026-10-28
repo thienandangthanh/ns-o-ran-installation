@@ -4,12 +4,13 @@
 # injector naming one UE (the decimal IMSI); the TS xApp asks the stub (30000), gets its prediction (30002) and
 # hands over when the best cell beats the serving cell by more than the A1 threshold.
 #
-#   gate-r2-ts-stub-qp.sh [--mode c1|single|calibrate] [--dev]
+#   gate-r2-ts-stub-qp.sh [--mode c1|single|calibrate] [--dev] [--reference <committed reference dir>]
 #
 # --mode c1 (default): C8, live1..live3, the RIC-free replay, the --RngRun=2 replay, C1. --mode single (the M9
 # chain): C8 and one live run with its per-run checks. --mode calibrate: one live run of the calibration block
 # (scripts/gates/r2-scenario.json), the per-run checks, and W = max(1 s, 3 x L_max) for rung-config.json.
-# --dev labels the run a rehearsal (verdict.json `dev: true`); it is not the gate.
+# --dev labels the run a rehearsal (verdict.json `dev: true`); it is not the gate. --reference (c1 only; the M9 top
+# rung under substitution 4) adds one check: live1 equals the committed dev reference (reference-compare.py).
 #
 # Per run, from a fresh RIC state: rc_ric_reset (bucket, rc, kpimon, hw-go, rtmgr), capture, agents CONNECTED and
 # subscribed, then the TS xApp and stub pods recreated (the TS xApp reads e2mgr's nodeb list only at start-up),
@@ -30,15 +31,17 @@ source "$(dirname "$0")/influx-dump.sh"
 source "$(dirname "$0")/ts-rung-lib.sh"
 RUNG=r2
 
-DEV=0; MODE=c1
+DEV=0; MODE=c1; REF=""
 while [ $# -gt 0 ]; do
     case "$1" in
         --mode) MODE="$2"; shift 2 ;;
+        --reference) REF="$2"; shift 2 ;;
         --dev) DEV=1; shift ;;
         *) log "unknown arg $1"; exit 2 ;;
     esac
 done
 case "$MODE" in c1|single|calibrate) ;; *) log "bad --mode $MODE"; exit 2 ;; esac
+[ -z "$REF" ] || [ "$MODE" = c1 ] || { log "--reference needs --mode c1"; exit 2; }
 e="$EVIDENCE_DIR"; RUNS="$e/runs"; mkdir -p "$RUNS"
 CFG="$HARNESS_DIR/scripts/gates/rung-config.py"
 EPOCH_MS=$(python3 -I "$CFG" get scenario.simStartEpochMs)
@@ -167,6 +170,7 @@ if [ "$MODE" = c1 ]; then
 # C1: the replay without the RIC, RngRun 2, and the digest comparisons
 ################################################################################
 rung_c1
+[ -z "$REF" ] || rung_reference "$REF" --recorded "xapp-image-ids.json=$e/xapp-image-ids.json"
 fi
 
 ################################################################################

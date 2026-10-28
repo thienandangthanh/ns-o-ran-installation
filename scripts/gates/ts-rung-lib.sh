@@ -203,3 +203,20 @@ PY
     jbool() { python3 -I -c 'import json,sys; print(json.dumps(json.load(open(sys.argv[1]))[sys.argv[2]]))' "$1" "$2" 2>/dev/null || echo null; }
     fact c1 "{\"liveRunsEqual\": $(jbool "$e/c1-live.json" all_equal), \"replayEqual\": $(jbool "$e/c1-replay.json" all_equal), \"rngRun2Differs\": $(python3 -I -c 'import json; print(json.dumps(not json.load(open("'"$e"'/c1-rng2.json"))["all_equal"]))' 2>/dev/null || echo null)}"
 }
+
+# rung_reference <ref dir> [reference-compare.py args]: --reference mode (C1 only, after rung_c1): live1 equals the
+# committed dev reference (SHA256SUMS, ledger/ipc/traces/extra digests, the named files); recorded items are
+# reported, never judged. A relative ref dir is taken inside the harness clone, where the reference is committed.
+rung_reference() {
+    local ref="$1"; shift
+    case "$ref" in /*) ;; *) ref="$HARNESS_DIR/$ref" ;; esac
+    ref_cmp() {
+        python3 -I "$HARNESS_DIR/scripts/gates/reference-compare.py" compare "$RUNS/live1" "$ref" "$@" >"$e/reference-compare.json"
+        local rc=$?
+        cat "$e/reference-compare.json"
+        return $rc
+    }
+    check "${RUNG}_c1_live1_equals_the_committed_reference" ref_cmp "$@"
+    fact equalsReference "$(python3 -I -c 'import json,sys; print(json.dumps(json.load(open(sys.argv[1]))["equalsReference"]))' "$e/reference-compare.json" 2>/dev/null || echo false)"
+    fact referenceDir "$(json_str "${ref#"$HARNESS_DIR"/}")"
+}
