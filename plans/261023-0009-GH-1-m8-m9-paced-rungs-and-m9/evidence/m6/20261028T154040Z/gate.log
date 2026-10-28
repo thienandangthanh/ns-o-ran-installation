@@ -1,0 +1,53 @@
+[15:40:39] gate m6 start; evidence /home/uc/evidence/m6/20261028T154040Z; harness fb3554af67010dfedb6ae500e533acb7cdac9530
+[15:40:40] ric watchdog started (pid 4272, threshold 600s)
+[15:40:40] PASS m6_nist_tree_at_testbed_sha_with_agent_dir
+[15:40:40] PASS m6_build_tools_present
+[15:40:40] PASS m6_sctp_module_loaded_and_persisted
+[15:40:40] PASS m6_kpimon_so_extracted_from_image
+[15:40:40] PASS m6_kpimon_so_is_the_size8_patched_build
+[15:40:40] PASS m6_ns3_binary_located
+[15:40:41] PASS m6_capture_started_before_agents
+[15:45:11] PASS m6_bringup_agents_kpm_sim_stopped_connected_set_exact
+[15:45:11] PASS m6_agent_container_ip_recorded
+[15:48:12] FAIL m6_wire_shows_kpimon_subscription_request_and_agent_response: exit 1: wire RICsubscription (requests responses): 0 0
+wire RICsubscription (requests responses): 0 0
+wire RICsubscription (requests responses): 0 0
+wire RICsubscription (requests responses): 0 0
+wire RICsubscription (requests responses): 0 0
+[15:48:13] PASS m6_pcap_subscription_facts
+[15:48:13] FAIL m6_tshark_decodes_subscription_request_response_func2: exit 1: RICsubscriptionRequests: []
+RICsubscriptionResponses: []
+PROBLEM: need >= 1 request and >= 1 response
+[15:48:15] PASS m6_ns3_started_single_gnb
+[15:48:29] PASS m6_ns3_completes_exit0
+[15:48:29] draining 8s
+[15:48:38] PASS m6_pod_log_reader_self_test
+[15:48:38] PASS m6_kpimon_log_window_complete_across_rotations
+[15:48:38] PASS m6_influx_exported
+[15:48:38] PASS m6_capture_stopped
+[15:48:39] PASS m6_pcap_facts_extracted
+[15:48:40] FAIL m6_tshark_decodes_ricindications_header_and_message: exit 1: 0
+[15:48:40] PASS m6_harness_ran_on_pcap
+[15:48:40] FAIL m6_wire_indications_gt0_no_rows_skipped: exit 1: wire indications (TSN-deduped): 0, extractor rows skipped: 0
+[15:48:41] FAIL m6_harness_every_header_clean_rc_ok_equals_wire: exit 1: headers clean (RC_OK, consumed==len, ts_len 8): 0 = harness total 0 = wire 0
+[15:48:41] FAIL m6_harness_every_message_clean_rc_ok_equals_wire: exit 1: messages clean (RC_OK, consumed==len): 0 = harness total 0 = wire 0
+[15:48:41] PASS m6_harness_zero_wmore_fail_other
+[15:48:41] FAIL m6_harness_ts_len_8_everywhere: exit 1: ts_len histogram: {}
+[15:48:41] PASS m6_kpimon_log_indications_equal_wire_zero_wmore
+[15:48:41] PASS m6_agent_indtx_equals_wire
+[15:48:41] PASS m6_kpimon_pod_no_restart
+[15:48:41] FAIL m6_emitter_bye_sent_equals_built_zero_drops: exit 1: node 2 (gnb): samples=100 last_seq=99 gaps=0 ipcDropped_max=3 ues_max=2 hello=2 bye=1 {"built": 100, "sent": 97, "droppedDisconnected": 3, "droppedBackpressure": 0, "lastSeq": 99}
+PROBLEM: node 2 hello=2 bye=1 (want 1/1)
+[15:48:41] FAIL m6_agent_counters_clean_samples_in_equal_forwarded_equal_trace: exit 1: state=SETUP_SENT subs=0 samplesIn=57 forwarded=0 (trace 100) indTx=0 (cell 0 ue 0) chunkSplits=0 nonzero={'e2Down': 57}
+[15:48:41] FAIL m6_influx_three_samples_equal_trace_bit_exact: exit 1: pick first_with_ues  seq=1 fallback_from=None ues=0 cell_row=None ue_rows=None fields=None differ=None no complete sample in Influx
+pick middle          seq=50 fallback_from=None ues=0 cell_row=None ue_rows=None fields=None differ=None no complete sample in Influx
+pick last            seq=99 fallback_from=None ues=0 cell_row=None ue_rows=None fields=None differ=None no complete sample in Influx
+all samples: {"all_fields_compared": 0, "all_fields_differ": 0, "all_first_diffs": [], "all_samples_complete": 0, "duplicate_keys": 0, "influx_cell_rows": 0, "influx_ue_rows": 0, "kind": "gnb", "node": 2, "trace_samples": 100, "trace_ue_rows": 193}
+[15:48:41] PASS m6_influx_all_samples_comparison_informational
+[15:48:41] PASS m6_agents_stopped_no_container_left
+[15:48:41] PASS m6_no_stray_ns3_agent_process_or_3847x_listener
+[15:48:41] PASS m6_no_capture_left_running
+[15:48:41] PASS m6_pcap_in_evidence
+Terminated
+[15:48:41] ric watchdog stopped (pid 4272)
+verdict m6: FAIL failed=['m6_wire_shows_kpimon_subscription_request_and_agent_response', 'm6_tshark_decodes_subscription_request_response_func2', 'm6_tshark_decodes_ricindications_header_and_message', 'm6_wire_indications_gt0_no_rows_skipped', 'm6_harness_every_header_clean_rc_ok_equals_wire', 'm6_harness_every_message_clean_rc_ok_equals_wire', 'm6_harness_ts_len_8_everywhere', 'm6_emitter_bye_sent_equals_built_zero_drops', 'm6_agent_counters_clean_samples_in_equal_forwarded_equal_trace', 'm6_influx_three_samples_equal_trace_bit_exact']

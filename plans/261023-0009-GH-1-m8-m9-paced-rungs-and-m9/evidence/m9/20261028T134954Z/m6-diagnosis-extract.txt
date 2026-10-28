@@ -1,0 +1,96 @@
+# m6 diagnosis extract (full scrubbed logs stay on the host in this dir, not committed: e2mgr.log, rtmgr.log, e2term-alpha.log, submgr.log)
+[{"e2tAddress":"10.98.86.163:38000","ranNames":[]}]
+[{"inventoryName":"gnb_001_001_00000002","globalNbId":{"plmnId":"00F110","nbId":"00000000000000000000000000010"},"connectionStatus":"DISCONNECTED"}]
+boot: 2026-10-28 15:40:31
+## e2mgr ERROR lines
+"time":"2026-10-28T15:41:07Z"},"msg":"#RoutingManagerClient.sendMessage - failed sending request. error: Post \
+"time":"2026-10-28T15:41:07Z"},"msg":"#E2TermInitNotificationHandler.HandleNewE2TInstance - e2t address count - 1 : 10.98.86.163:38000 - routing manager failure
+"time":"2026-10-28T15:41:07Z"},"msg":"#RoutingManagerClient.sendMessage - failed sending request. error: Post \
+"time":"2026-10-28T15:41:07Z"},"msg":"#E2TermInitNotificationHandler.HandleNewE2TInstance - e2t address count - 2 : 10.98.86.163:38000 - routing manager failure
+"time":"2026-10-28T15:41:07Z"},"msg":"#RoutingManagerClient.sendMessage - failed sending request. error: Post \
+"time":"2026-10-28T15:41:07Z"},"msg":"#E2TermInitNotificationHandler.HandleNewE2TInstance - e2t address count - 3 : 10.98.86.163:38000 - routing manager failure
+"time":"2026-10-28T15:42:44Z"},"msg":"[Routing Manager -> E2 Manager] #RoutingManagerClient.sendMessage - failure. http status code: 400
+"time":"2026-10-28T15:42:44Z"},"msg":"#E2TermInitNotificationHandler.HandleNewE2TInstance - e2t address count - 1 : 10.98.86.163:38000 - routing manager failure
+"time":"2026-10-28T15:43:07Z"},"msg":"#RmrSender.Send - RAN name:  , Message type: 1101 - Failed sending message. Error: #rmrCgoApi.SendMsg - Failed to send message. state: 2 - send/call could not find an endpoint based on msg type
+"time":"2026-10-28T15:43:32Z"},"msg":"[Routing Manager -> E2 Manager] #RoutingManagerClient.sendMessage - failure. http status code: 400
+"time":"2026-10-28T15:43:32Z"},"msg":"#E2TermInitNotificationHandler.HandleNewE2TInstance - e2t address count - 2 : 10.98.86.163:38000 - routing manager failure
+"time":"2026-10-28T15:44:27Z"},"msg":"[Routing Manager -> E2 Manager] #RoutingManagerClient.sendMessage - failure. http status code: 400
+"time":"2026-10-28T15:44:27Z"},"msg":"#E2TermInitNotificationHandler.HandleNewE2TInstance - e2t address count - 3 : 10.98.86.163:38000 - routing manager failure
+"time":"2026-10-28T15:45:07Z"},"msg":"#RmrSender.Send - RAN name:  , Message type: 1101 - Failed sending message. Error: #rmrCgoApi.SendMsg - Failed to send message. state: 2 - send/call could not find an endpoint based on msg type
+"time":"2026-10-28T15:45:10Z"},"msg":"#RmrSender.Send - RAN name: gnb_001_001_00000002 , Message type: 12002 - Failed sending message. Error: #rmrCgoApi.SendMsg - Failed to send message. state: 2 - send/call could not find an endpoint based on msg type
+"time":"2026-10-28T15:45:28Z"},"msg":"#RmrSender.Send - RAN name: gnb_001_001_00000002 , Message type: 12002 - Failed sending message. Error: #rmrCgoApi.SendMsg - Failed to send message. state: 2 - send/call could not find an endpoint based on msg type
+"time":"2026-10-28T15:45:35Z"},"msg":"#E2TInstancesManager.RemoveRanFromInstance - E2T Instance address:  - Failed retrieving E2TInstance. error: #utils.ValidateAndBuildE2TInstanceKey - an empty E2T address received
+"time":"2026-10-28T15:45:35Z"},"msg":"#E2TAssociationManager.DissociateRan - RAN name: gnb_001_001_00000002 - Failed to remove RAN from E2T instance . Error: RNIB error
+"time":"2026-10-28T15:45:47Z"},"msg":"#RmrSender.Send - RAN name: gnb_001_001_00000002 , Message type: 12002 - Failed sending message. Error: #rmrCgoApi.SendMsg - Failed to send message. state: 2 - send/call could not find an endpoint based on msg type
+"time":"2026-10-28T15:46:05Z"},"msg":"#RmrSender.Send - RAN name: gnb_001_001_00000002 , Message type: 12002 - Failed sending message. Error: #rmrCgoApi.SendMsg - Failed to send message. state: 2 - send/call could not find an endpoint based on msg type
+"time":"2026-10-28T15:46:23Z"},"msg":"#RmrSender.Send - RAN name: gnb_001_001_00000002 , Message type: 12002 - Failed sending message. Error: #rmrCgoApi.SendMsg - Failed to send message. state: 2 - send/call could not find an endpoint based on msg type
+"time":"2026-10-28T15:46:42Z"},"msg":"#RmrSender.Send - RAN name: gnb_001_001_00000002 , Message type: 12002 - Failed sending message. Error: #rmrCgoApi.SendMsg - Failed to send message. state: 2 - send/call could not find an endpoint based on msg type
+"time":"2026-10-28T15:47:00Z"},"msg":"#RmrSender.Send - RAN name: gnb_001_001_00000002 , Message type: 12002 - Failed sending message. Error: #rmrCgoApi.SendMsg - Failed to send message. state: 2 - send/call could not find an endpoint based on msg type
+"time":"2026-10-28T15:47:07Z"},"msg":"#RmrSender.Send - RAN name:  , Message type: 1101 - Failed sending message. Error: #rmrCgoApi.SendMsg - Failed to send message. state: 2 - send/call could not find an endpoint based on msg type
+"time":"2026-10-28T15:47:18Z"},"msg":"#RmrSender.Send - RAN name: gnb_001_001_00000002 , Message type: 12002 - Failed sending message. Error: #rmrCgoApi.SendMsg - Failed to send message. state: 2 - send/call could not find an endpoint based on msg type
+"time":"2026-10-28T15:47:37Z"},"msg":"#RmrSender.Send - RAN name: gnb_001_001_00000002 , Message type: 12002 - Failed sending message. Error: #rmrCgoApi.SendMsg - Failed to send message. state: 2 - send/call could not find an endpoint based on msg type
+"time":"2026-10-28T15:47:55Z"},"msg":"#RmrSender.Send - RAN name: gnb_001_001_00000002 , Message type: 12002 - Failed sending message. Error: #rmrCgoApi.SendMsg - Failed to send message. state: 2 - send/call could not find an endpoint based on msg type
+"time":"2026-10-28T15:48:13Z"},"msg":"#RmrSender.Send - RAN name: gnb_001_001_00000002 , Message type: 12002 - Failed sending message. Error: #rmrCgoApi.SendMsg - Failed to send message. state: 2 - send/call could not find an endpoint based on msg type
+"time":"2026-10-28T15:48:32Z"},"msg":"#RmrSender.Send - RAN name: gnb_001_001_00000002 , Message type: 12002 - Failed sending message. Error: #rmrCgoApi.SendMsg - Failed to send message. state: 2 - send/call could not find an endpoint based on msg type
+"time":"2026-10-28T15:49:07Z"},"msg":"#RmrSender.Send - RAN name:  , Message type: 1101 - Failed sending message. Error: #rmrCgoApi.SendMsg - Failed to send message. state: 2 - send/call could not find an endpoint based on msg type
+"time":"2026-10-28T15:51:07Z"},"msg":"#RmrSender.Send - RAN name:  , Message type: 1101 - Failed sending message. Error: #rmrCgoApi.SendMsg - Failed to send message. state: 2 - send/call could not find an endpoint based on msg type
+"time":"2026-10-28T15:34:27Z"},"msg":"#RoutingManagerClient.sendMessage - failed sending request. error: Post \
+"time":"2026-10-28T15:34:27Z"},"msg":"#E2TermInitNotificationHandler.HandleNewE2TInstance - e2t address count - 1 : 10.98.86.163:38000 - routing manager failure
+"time":"2026-10-28T15:34:27Z"},"msg":"#RoutingManagerClient.sendMessage - failed sending request. error: Post \
+"time":"2026-10-28T15:34:27Z"},"msg":"#E2TermInitNotificationHandler.HandleNewE2TInstance - e2t address count - 2 : 10.98.86.163:38000 - routing manager failure
+"time":"2026-10-28T15:34:27Z"},"msg":"#RoutingManagerClient.sendMessage - failed sending request. error: Post \
+"time":"2026-10-28T15:34:27Z"},"msg":"#E2TermInitNotificationHandler.HandleNewE2TInstance - e2t address count - 3 : 10.98.86.163:38000 - routing manager failure
+"time":"2026-10-28T15:35:38Z"},"msg":"[Routing Manager -> E2 Manager] #RoutingManagerClient.sendMessage - failure. http status code: 400
+"time":"2026-10-28T15:35:38Z"},"msg":"#E2TermInitNotificationHandler.HandleNewE2TInstance - e2t address count - 1 : 10.98.86.163:38000 - routing manager failure
+"time":"2026-10-28T15:36:12Z"},"msg":"[Routing Manager -> E2 Manager] #RoutingManagerClient.sendMessage - failure. http status code: 400
+"time":"2026-10-28T15:36:12Z"},"msg":"#E2TermInitNotificationHandler.HandleNewE2TInstance - e2t address count - 2 : 10.98.86.163:38000 - routing manager failure
+"time":"2026-10-28T15:36:23Z"},"msg":"#RmrSender.Send - RAN name:  , Message type: 1101 - Failed sending message. Error: #rmrCgoApi.SendMsg - Failed to send message. state: 2 - send/call could not find an endpoint based on msg type
+"time":"2026-10-28T15:37:00Z"},"msg":"[Routing Manager -> E2 Manager] #RoutingManagerClient.sendMessage - failure. http status code: 400
+"time":"2026-10-28T15:37:00Z"},"msg":"#E2TermInitNotificationHandler.HandleNewE2TInstance - e2t address count - 3 : 10.98.86.163:38000 - routing manager failure
+## rtmgr AddE2T / wormhole / platform errors (15:41-15:46)
+"time":"2026-10-28T15:41:11"},"msg":"Wormhole ID created for routingmanager:0
+"time":"2026-10-28T15:41:14"},"msg":"Application='' is not ready yet, waiting ...
+"time":"2026-10-28T15:41:19"},"msg":"Application='' is not ready yet, waiting ...
+"time":"2026-10-28T15:41:19"},"msg":"Wormhole ID is 1 and EP is service-ricplt-submgr-rmr.ricplt:4561
+"time":"2026-10-28T15:41:19"},"msg":"Wormhole ID is 2 and EP is service-ricplt-e2mgr-rmr.ricplt:4561
+"time":"2026-10-28T15:41:24"},"msg":"Application='' is not ready yet, waiting ...
+"time":"2026-10-28T15:41:24"},"msg":"Platform component not found: A1Mediator
+"time":"2026-10-28T15:41:24"},"msg":"Platform component not found: E2 Termination List
+"time":"2026-10-28T15:41:31"},"msg":"Cannot create socket for endpoint: E2TERM due to:cannot open wormhole connection for endpoint:service-ricplt-e2term-rmr-alpha.ricplt:38000 due to invalid Wormhole ID: � count: 4
+"time":"2026-10-28T15:41:31"},"msg":"Wormhole ID is 3 and EP is service-ricplt-a1mediator-rmr.ricplt:4561
+"time":"2026-10-28T15:41:31"},"msg":"Wormhole ID is 4 and EP is service-ricxapp-hw-go-rmr.ricxapp:4561
+"time":"2026-10-28T15:41:31"},"msg":"Wormhole ID is 5 and EP is service-ricxapp-kpimon-go-rmr.ricxapp:4561
+"time":"2026-10-28T15:41:34"},"msg":"Platform component not found: E2 Termination List
+"time":"2026-10-28T15:41:43"},"msg":"Cannot create socket for endpoint: E2TERM due to:cannot open wormhole connection for endpoint:service-ricplt-e2term-rmr-alpha.ricplt:38000 due to invalid Wormhole ID: � count: 8
+"time":"2026-10-28T15:41:43"},"msg":"Platform component not found: E2 Termination List
+"time":"2026-10-28T15:41:44"},"msg":"Platform component not found: E2 Termination List
+"time":"2026-10-28T15:41:54"},"msg":"Platform component not found: E2 Termination List
+"time":"2026-10-28T15:41:55"},"msg":"Cannot create socket for endpoint: E2TERM due to:cannot open wormhole connection for endpoint:service-ricplt-e2term-rmr-alpha.ricplt:38000 due to invalid Wormhole ID: � count: 9
+"time":"2026-10-28T15:41:55"},"msg":"Platform component not found: E2 Termination List
+"time":"2026-10-28T15:42:04"},"msg":"Platform component not found: E2 Termination List
+"time":"2026-10-28T15:42:10"},"msg":"Invoked createNewE2tHandleHandlerImpl
+"time":"2026-10-28T15:42:14"},"msg":"Platform component not found: E2 Termination List
+"time":"2026-10-28T15:42:22"},"msg":"Cannot create socket for endpoint: E2TERM due to:cannot open wormhole connection for endpoint:service-ricplt-e2term-rmr-alpha.ricplt:38000 due to invalid Wormhole ID: � count: 10
+"time":"2026-10-28T15:42:24"},"msg":"Platform component not found: E2 Termination List
+"time":"2026-10-28T15:42:29"},"msg":"Platform component not found: E2 Termination List
+"time":"2026-10-28T15:42:34"},"msg":"Cannot create socket for endpoint: E2TERMINST due to:cannot open wormhole connection for endpoint:10.98.86.163:38000 due to invalid Wormhole ID: � count: 11
+"time":"2026-10-28T15:42:34"},"msg":"Platform component not found: E2 Termination List
+"time":"2026-10-28T15:42:44"},"msg":"RoutingManager->E2Manager AddE2T Request Failed: Error while adding new E2T 10.98.86.163:38000
+"time":"2026-10-28T15:42:44"},"msg":"Invoked createNewE2tHandleHandlerImpl
+"time":"2026-10-28T15:42:46"},"msg":"Cannot create socket for endpoint: E2TERM due to:cannot open wormhole connection for endpoint:service-ricplt-e2term-rmr-alpha.ricplt:38000 due to invalid Wormhole ID: � count: 12
+"time":"2026-10-28T15:42:58"},"msg":"Cannot create socket for endpoint: E2TERMINST due to:cannot open wormhole connection for endpoint:10.98.86.163:38000 due to invalid Wormhole ID: � count: 13
+"time":"2026-10-28T15:43:10"},"msg":"Cannot create socket for endpoint: E2TERM due to:cannot open wormhole connection for endpoint:service-ricplt-e2term-rmr-alpha.ricplt:38000 due to invalid Wormhole ID: � count: 14
+"time":"2026-10-28T15:43:22"},"msg":"Cannot create socket for endpoint: E2TERMINST due to:cannot open wormhole connection for endpoint:10.98.86.163:38000 due to invalid Wormhole ID: � count: 15
+"time":"2026-10-28T15:43:22"},"msg":"Platform component not found: E2 Termination List
+"time":"2026-10-28T15:43:32"},"msg":"RoutingManager->E2Manager AddE2T Request Failed: Error while adding new E2T 10.98.86.163:38000
+"time":"2026-10-28T15:43:32"},"msg":"Invoked createNewE2tHandleHandlerImpl
+"time":"2026-10-28T15:43:34"},"msg":"Platform component not found: E2 Termination List
+"time":"2026-10-28T15:43:41"},"msg":"Cannot create socket for endpoint: E2TERM due to:cannot open wormhole connection for endpoint:service-ricplt-e2term-rmr-alpha.ricplt:38000 due to invalid Wormhole ID: � count: 16
+"time":"2026-10-28T15:43:50"},"msg":"Invoked createNewE2tHandleHandlerImpl
+"time":"2026-10-28T15:43:53"},"msg":"Cannot create socket for endpoint: E2TERMINST due to:cannot open wormhole connection for endpoint:10.98.86.163:38000 due to invalid Wormhole ID: � count: 17
+"time":"2026-10-28T15:44:05"},"msg":"Cannot create socket for endpoint: E2TERM due to:cannot open wormhole connection for endpoint:service-ricplt-e2term-rmr-alpha.ricplt:38000 due to invalid Wormhole ID: � count: 18
+"time":"2026-10-28T15:44:17"},"msg":"Cannot create socket for endpoint: E2TERMINST due to:cannot open wormhole connection for endpoint:10.98.86.163:38000 due to invalid Wormhole ID: � count: 19
+"time":"2026-10-28T15:44:17"},"msg":"Platform component not found: E2 Termination List
+"time":"2026-10-28T15:44:27"},"msg":"RoutingManager->E2Manager AddE2T Request Failed: Error while adding new E2T 10.98.86.163:38000
+"time":"2026-10-28T15:44:28"},"msg":"Wormhole ID is 7 and EP is 10.98.86.163:4561
+"time":"2026-10-28T15:44:38"},"msg":"RoutingManager->E2Manager AddE2T Request Success, E2T = 10.98.86.163:38000
