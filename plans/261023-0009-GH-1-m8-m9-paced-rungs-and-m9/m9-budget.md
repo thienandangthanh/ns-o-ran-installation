@@ -54,3 +54,13 @@ Do not delete when freeing space: `fresh-install`, `f7-rerun-green` and `r3p-gre
 - Pins (`scripts/pins.conf`, unchanged since 47aee0b) equal each fork's `dev/l-release-nist180` head on GitHub (`git ls-remote`, 14:41 KST): Testbed `c6d1434a`, ns-3 `ba954440`, oran-interface `96efc40e`, e2sim `2209995a`.
 - The parent's submodule gitlinks (`597bdde`, `ace3216`, `438a839`) are stale and do not match the pins. `pins.conf` governs every gate; the run report discloses the gap.
 - K14: since the C1 harness `d2e1ab4`, no file the r3p gate reads has changed, so `reference/r3p/` (made from C1 live1) is valid at F.
+
+## Projection at Stop B (2026-10-28 15:38 KST)
+
+| Term | GiB |
+|---|---|
+| X = host `/home` free now (`df -BG`, after the last P9 VM run; `evidence/p8b-disk/20261028T050900Z/df-stop-b.txt`) | 58 |
+| T = (25 + h) + M0–M7 + R section | 84 |
+| **Projection = X − T** | **−26 (negative)** |
+
+The user frees 26 GiB (30 with the optional h = 8 margin) before P10. P10 starts only once `df -BG /home` shows ≥ 84 GiB (≥ 88 with the margin).
