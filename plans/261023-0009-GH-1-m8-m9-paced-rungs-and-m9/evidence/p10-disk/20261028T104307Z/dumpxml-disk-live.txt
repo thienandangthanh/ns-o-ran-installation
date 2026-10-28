@@ -1,0 +1,20 @@
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='/home/andang/VMs/ubuntu24.1793183688' index='2'/>
+      <backingStore type='file' index='3'>
+        <format type='qcow2'/>
+        <source file='/home/andang/VMs/ubuntu24.04'/>
+        <backingStore/>
+      </backingStore>
+      <target dev='vda' bus='virtio'/>
+      <alias name='virtio-disk0'/>
+      <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
+    </disk>
+    <disk type='file' device='cdrom'>
+      <driver name='qemu' type='raw'/>
+      <source index='1'/>
+      <target dev='sda' bus='sata'/>
+      <readonly/>
+      <alias name='sata0-0-0'/>
+      <address type='drive' controller='0' bus='0' target='0' unit='0'/>
+    </disk>
