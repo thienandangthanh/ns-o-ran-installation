@@ -6,7 +6,8 @@
 # heartbeat is fresh: wall-deadline.json and both stopped; (3) a healthy watchdog: the monitor keeps running and
 # records maxAgeS <= 2 periods; (4) a hung stop command is bounded; (5) write_verdict returns the judge's
 # status; (6) supervised cancels and shuts the VM down once either
-# monitor has exited; (7) a TERM to the runner alone stops the running step. Then the substitution 4 record validator and m9-verdict.py self-tests. Exit 0 when every case holds.
+# monitor has exited; (7) a TERM to the runner alone stops the running step; (8) the shipped watchdog's heartbeat is
+# never read torn by the monitor. Then the substitution 4 record validator and m9-verdict.py self-tests. Exit 0 when every case holds.
 set -uo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 rc=0
@@ -110,6 +111,23 @@ if [ -n "$step" ] && ! alive "$r" && ! alive "$step" && [ -e "$d/stopped" ]; the
 else echo "FAIL finish on TERM: runner alive $(alive "$r" && echo yes || echo no), step ${step:-none} alive $([ -n "$step" ] && alive "$step" && echo yes || echo no)"; rc=1
     [ -n "$step" ] && kill "$step" 2>/dev/null; fi
 kill "$mons" 2>/dev/null
+
+# (8) a live watchdog's heartbeat is never read torn: the shipped watchdog in a tight loop, its date slowed so a
+# truncate-then-write heartbeat would sit empty for 0.3 s of every ~0.6 s loop, against the monitor at 1 s
+d="$tmp/torn"; mkdir -p "$d/bin"
+printf '#!/bin/sh\nsleep 0.3\nexec %s "$@"\n' "$(command -v date)" >"$d/bin/date"; chmod +x "$d/bin/date"
+VM_SSH=selftest.invalid VM_DOMAIN=selftest-absent PATH="$d/bin:$PATH" \
+    "$here/host-disk-watchdog.sh" --interval 0 --min-gb 0 --out "$d" >/dev/null 2>&1 & wdog=$!
+sleep 300 & unit=$!
+runner=$(dummy_runner)
+"$here/m9-heartbeat-monitor.sh" --runner-pid "$runner" --dir "$d" --interval 1 --deadline-epoch $(($(date +%s) + 600)) \
+    --stop-cmd "kill $unit" >/dev/null 2>&1 & mon=$!
+sleep 8
+if alive "$unit" && alive "$runner" && alive "$mon" && [ ! -e "$d/watchdog-lost.json" ] &&
+    python3 -I -c 'import json,sys; a=json.load(open(sys.argv[1])); sys.exit(0 if a["checks"] >= 5 and a["maxAgeS"] <= 2 * a["intervalS"] else 1)' "$d/watchdog-alive.json"; then
+    echo "ok   a live watchdog's heartbeat is never read torn"
+else echo "FAIL torn heartbeat read: $(cat "$d/watchdog-lost.json" 2>/dev/null)"; rc=1; fi
+kill "$wdog" "$mon" "$unit" "$runner" 2>/dev/null
 
 python3 -I "$here/../gates/r3p-substitution4-validate.py" --self-test >/dev/null || { echo "FAIL substitution 4 record validator self-test"; rc=1; }
 python3 -I "$here/../m9-verdict.py" --self-test >/dev/null || { echo "FAIL m9-verdict.py self-test"; rc=1; }

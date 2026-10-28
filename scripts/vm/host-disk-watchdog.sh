@@ -57,7 +57,9 @@ PY
 }
 
 while :; do
-    date +%s >"$out/heartbeat"   # read by m9-heartbeat-monitor.sh: a stale heartbeat means this watchdog died
+    # read by m9-heartbeat-monitor.sh: a stale heartbeat means this watchdog died; written whole (temp file, then
+    # rename in the same dir), so the monitor never reads it empty
+    date +%s >"$out/heartbeat.tmp" && mv -f "$out/heartbeat.tmp" "$out/heartbeat"
     free=$(host_free_gb)
     printf '%s\t%s\n' "$(date +%s)" "$free" >>"$out/free-series.tsv"
     if [ ! -s "$min_file" ] || [ "$free" -lt "$(cat "$min_file")" ]; then echo "$free" >"$min_file"; fi
