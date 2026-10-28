@@ -1,32 +1,36 @@
 #!/usr/bin/env bash
 # run-to-m9.sh --harness-sha SHA [--run-prefix P] [--from STEP] [--to STEP] [--no-snapshots]
 #
-# Host-side chain for M9: gates M0..M7 (as run-to-m7.sh), then the installs and
-# rungs R0..R3 in this order:
-#   i0 (RC decoder build + rc install) -> r0 -> r1
-#   -> i2 (TS xApp + stub QP install) -> r2
-#   -> i3 (stub QP down + QP fork install) -> r3
-# Rungs below the top run one live run (--mode single, C2-C9); r3 runs its
-# full repeat gate (--mode c1) against the committed dev reference.
+# Host-side chain for M9 (amendment A1): gates M0..M7 (as run-to-m7.sh), then the installs and rungs
+#   i0 (RC decoder build + rc install) -> r0 -> r1 -> i2 (TS xApp + stub QP install) -> r2 -> r3p
+# Rungs below the top run one live run (--mode single, C2-C9); the top rung runs its full repeat gate (--mode c1)
+# against its committed dev reference (--reference). The top rung is R3′ (gate-r3p-ts-predictor.sh), or R2 when
+# scripts/gates/r3p-substitution4.json records substitution 4 (validated: its dry-run evidence dir exists and its
+# rung-config and scenario sha256s equal the frozen files); then r3p is not a step and r2 runs c1.
 #
-# Evidence goes to the M8-M9 plan's evidence/ dir. A host disk watchdog runs
-# for the whole chain: below 25 GB free it stops the VM unit, shuts the VM down
-# and stops this runner. The chain stops at the first red step; the run
-# verdict (evidence/m9/<ts>/verdict.json) is written in every case.
+# Budget (scripts/m9-budget.json, measured at P9; the run refuses to start without it): per-step timeouts, the
+# global wall deadline, the watchdog's polling interval and trip point (25 + h GB). Two bounded stop paths:
+#   (a) host-disk-watchdog.sh trips below the trip point (stops the VM gate unit, shuts the VM down, stops this
+#       runner); (b) m9-heartbeat-monitor.sh cancels the same way when the watchdog's heartbeat is older than two
+#       polling periods or the global wall deadline passes.
+# The verdict (evidence/m9/<ts>/verdict.json, m9-verdict.py) is written in every case and fails closed: exactly
+# the pre-registered step set, every step green, the top rung's C1 green and equal to its reference, minHostFreeGb
+# >= 25, the watchdog alive throughout; a --from/--to subset is marked notM9.
 #
-# --run-prefix defaults to n; f and l are reserved (M0-M7 runs) and a prefix
-# whose snapshots already exist is refused. With --no-snapshots no snapshot is
-# created, M7 included; gate-m0-host.sh still creates the m0-probe/m0-branch
-# pair (allowed by the snapshot rule). STEP is one of m0..m7, i0, r0, r1, i2,
-# r2, i3, r3.
+# --run-prefix defaults to n; f and l are reserved (M0-M7 runs) and a prefix whose snapshots already exist is
+# refused. With --no-snapshots no snapshot is created, M7 included; gate-m0-host.sh still creates the
+# m0-probe/m0-branch pair (allowed by the snapshot rule). STEP is one of m0..m7, i0, r0, r1, i2, r2, r3p.
 
 set -uo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 export EVIDENCE_HOST_ROOT="${EVIDENCE_HOST_ROOT:-$here/../plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence}"
 source "$here/vm/vm-common.sh"
 EVIDENCE_HOST_ROOT="$(cd "$EVIDENCE_HOST_ROOT" && pwd)"
+PLAN_REL=plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9
+BUDGET="$here/m9-budget.json"
+SUB4="$here/gates/r3p-substitution4.json"
 
-harness_sha=""; prefix="n"; from="m0"; to="r3"; snapshots=1
+harness_sha=""; prefix="n"; from="m0"; to=""; snapshots=1
 while [ $# -gt 0 ]; do
     case "$1" in
         --harness-sha) harness_sha="$2"; shift 2 ;;
@@ -45,80 +49,82 @@ case "$prefix" in
 esac
 "${VIRSH[@]}" snapshot-list "$VM_DOMAIN" --name | grep -E "^${prefix}[0-9]-" >/dev/null &&
     die "snapshots with prefix $prefix already exist"
+[ -s "$BUDGET" ] || die "no $BUDGET: the M9 budget (timeouts, wall deadline, trip point) is measured at P9"
+budget() { python3 -I -c 'import json,sys; v=json.load(open(sys.argv[1])); [v := v[k] for k in sys.argv[2].split(".")]; print(v)' "$BUDGET" "$1"; }
 
-# step -> "script|snapshot-suffix|timeout-s|expected growth GB|gate args"
-ORDER=(m0 m1 m2 m3 m4 m5 m6 m7 i0 r0 r1 i2 r2 i3 r3)
+# the top rung: R3′, or R2 under a validated substitution 4 record
+top=r3p; sub4=none
+if [ -e "$SUB4" ]; then
+    top=r2
+    if python3 -I - "$SUB4" "$here/.." <<'PY'; then sub4=pass; else sub4=fail; fi
+import hashlib, json, os, sys
+r, root = json.load(open(sys.argv[1])), sys.argv[2]
+sha = lambda p: hashlib.sha256(open(os.path.join(root, p), "rb").read()).hexdigest()
+ok = os.path.isdir(os.path.join(root, r["dryRunEvidenceDir"])) and \
+    sha("scripts/gates/rung-config.json") == r["rungConfigSha256"] and sha("scripts/gates/r3p-scenario.json") == r["scenarioSha256"]
+print("substitution 4 record %s" % ("validated" if ok else "does NOT validate"))
+sys.exit(0 if ok else 1)
+PY
+fi
+hlog "top rung $top (substitution 4 record: $sub4)"
+
+# step -> "script|snapshot-suffix|expected growth GB|gate args"; timeouts come from the budget
+ORDER=(m0 m1 m2 m3 m4 m5 m6 m7 i0 r0 r1 i2 r2)
+[ "$top" = r3p ] && ORDER+=(r3p)
 declare -A STEPS=(
-    [m0]="gate-m0-preflight.sh|preflight|1800|1|"
-    [m1]="gate-m1-ric-up.sh|ric-up|9600|25|"
-    [m2]="gate-m2-refnode.sh|refnode|3600|3|"
-    [m3]="gate-m3-xapps.sh|xapps|5400|8|"
-    [m4]="gate-m4-ns3-build.sh|ns3-build|7200|10|"
-    [m5]="gate-m5-agent-setup.sh|agent-setup|5400|3|"
-    [m6]="gate-m6-kpm.sh|kpm|3600|2|"
-    [m7]="gate-m7-multignb.sh|multignb|6000|2|"
-    [i0]="gate-i0-rc-install.sh|-|3600|3|"
-    [r0]="gate-r0-rc-scripted.sh|-|5400|1|--mode single"
-    [r1]="gate-r1-rc-multi-control.sh|-|5400|1|--mode single"
-    [i2]="gate-i2-ts-xapp-install.sh|-|3600|3|"
-    [r2]="gate-r2-ts-stub-qp.sh|-|5400|1|--mode single"
-    [i3]="gate-i3-qp-install.sh|-|5400|5|"
-    [r3]="gate-r3-ts-qp-fork.sh|-|14400|2|--mode c1 --reference"
+    [m0]="gate-m0-preflight.sh|preflight|1|"
+    [m1]="gate-m1-ric-up.sh|ric-up|25|"
+    [m2]="gate-m2-refnode.sh|refnode|3|"
+    [m3]="gate-m3-xapps.sh|xapps|8|"
+    [m4]="gate-m4-ns3-build.sh|ns3-build|10|"
+    [m5]="gate-m5-agent-setup.sh|agent-setup|3|"
+    [m6]="gate-m6-kpm.sh|kpm|2|"
+    [m7]="gate-m7-multignb.sh|multignb|2|"
+    [i0]="gate-i0-rc-install.sh|-|3|"
+    [r0]="gate-r0-rc-scripted.sh|-|1|--mode single"
+    [r1]="gate-r1-rc-multi-control.sh|-|1|--mode single"
+    [i2]="gate-i2-ts-xapp-install.sh|-|3|"
+    [r2]="gate-r2-ts-stub-qp.sh|-|1|--mode single"
+    [r3p]="gate-r3p-ts-predictor.sh|-|2|--mode c1 --reference $PLAN_REL/reference/r3p"
 )
+[ "$top" = r2 ] && STEPS[r2]="gate-r2-ts-stub-qp.sh|-|2|--mode c1 --reference $PLAN_REL/reference/r2"
+[ -n "$to" ] || to="${ORDER[-1]}"
 
 idx() { local i; for i in "${!ORDER[@]}"; do [ "${ORDER[$i]}" = "$1" ] && echo "$i" && return; done; die "unknown step $1"; }
 from_i=$(idx "$from"); to_i=$(idx "$to")
+full=0; [ "$from_i" = 0 ] && [ "$to_i" = $((${#ORDER[@]} - 1)) ] && full=1
 
 run_ts=$(date -u +%Y%m%dT%H%M%SZ)
 run_dir="$EVIDENCE_HOST_ROOT/m9/$run_ts"
-mkdir -p "$run_dir"
+wd="$EVIDENCE_HOST_ROOT/watchdog"
+mkdir -p "$run_dir" "$wd"
 steps_file="$run_dir/steps.tsv"
 : >"$steps_file"
+interval=$(budget watchdog.intervalS); trip_gb=$(budget watchdog.tripGb); wall_s=$(budget globalWallS)
 
 write_verdict() {
-    python3 - "$steps_file" "$run_dir/verdict.json" "$harness_sha" "$here/pins.conf" \
-        "$EVIDENCE_HOST_ROOT/watchdog" "$prefix" "$snapshots" <<'PY'
-import json, os, sys
-steps_file, out, harness, pins, wd, prefix, snaps = sys.argv[1:]
-steps = []
-for line in open(steps_file):
-    step, status, ev = line.rstrip("\n").split("\t")
-    entry = {"step": step, "pass": status == "pass", "evidence": ev}
-    vp = os.path.join(ev, "verdict.json") if ev else ""
-    if vp and os.path.exists(vp):
-        v = json.load(open(vp))
-        entry["failed"] = v.get("failed", [])
-        entry["pins"] = v.get("pins", {})
-    steps.append(entry)
-pin_map = dict(l.strip().split("=", 1) for l in open(pins) if "=" in l and not l.startswith("#"))
-rungs = [s["step"] for s in steps if s["step"].startswith("r") and s["pass"]]
-minfree = None
-mf = os.path.join(wd, "min-host-free-gb.txt")
-if os.path.exists(mf):
-    minfree = int(open(mf).read().strip())
-tripped = os.path.exists(os.path.join(wd, "watchdog-tripped.json"))
-verdict = {"harness_sha": harness, "pins": pin_map, "run_prefix": prefix,
-           "snapshots": snaps == "1", "steps": steps,
-           "highestGreenRung": rungs[-1] if rungs else None,
-           "minHostFreeGb": minfree, "watchdogTripped": tripped,
-           "pass": bool(steps) and all(s["pass"] for s in steps) and not tripped}
-json.dump(verdict, open(out, "w"), indent=2)
-print(f"M9 verdict: {'PASS' if verdict['pass'] else 'FAIL'} highest green rung "
-      f"{verdict['highestGreenRung']} min host free {minfree} GB -> {out}")
-PY
+    python3 -I "$here/m9-verdict.py" "$steps_file" "$run_dir/verdict.json" --expected "$(IFS=,; echo "${ORDER[*]}")" \
+        --top "$top" --full "$full" --watchdog-dir "$wd" --pins "$here/pins.conf" --harness "$harness_sha" \
+        --prefix "$prefix" --snapshots "$snapshots" --sub4 "$sub4" --min-free-floor 25
+    cp "$wd"/{min-host-free-gb.txt,watchdog-alive.json,watchdog-tripped.json,watchdog-lost.json,wall-deadline.json} "$run_dir/" 2>/dev/null
 }
 
 finish() {
     local rc="$1"
+    [ -n "${mon_pid:-}" ] && kill "$mon_pid" 2>/dev/null
     [ -n "${wd_pid:-}" ] && kill "$wd_pid" 2>/dev/null
-    write_verdict
+    write_verdict || rc=1
     exit "$rc"
 }
-trap 'hlog "stopped by the disk watchdog"; finish 3' TERM
+trap 'hlog "stopped by the disk watchdog or the heartbeat monitor"; finish 3' TERM
 
-rm -f "$EVIDENCE_HOST_ROOT/watchdog/watchdog-tripped.json" "$EVIDENCE_HOST_ROOT/watchdog/min-host-free-gb.txt"
-"$here/vm/host-disk-watchdog.sh" --runner-pid $$ &
+rm -f "$wd"/{watchdog-tripped.json,min-host-free-gb.txt,heartbeat,watchdog-alive.json,watchdog-lost.json,wall-deadline.json}
+"$here/vm/host-disk-watchdog.sh" --runner-pid $$ --min-gb "$trip_gb" --interval "$interval" --out "$wd" &
 wd_pid=$!
+"$here/vm/m9-heartbeat-monitor.sh" --runner-pid $$ --dir "$wd" --interval "$interval" \
+    --deadline-epoch $(($(date +%s) + wall_s)) &
+mon_pid=$!
+hlog "M9 run $run_ts: steps ${ORDER[*]} (full $full), watchdog trip ${trip_gb} GB every ${interval} s, wall ${wall_s} s"
 
 boundary() {
     local step="$1" suffix="$2" grow="$3" ev="$4"
@@ -133,7 +139,8 @@ boundary() {
 
 for ((i = from_i; i <= to_i; i++)); do
     step="${ORDER[$i]}"
-    IFS='|' read -r script suffix tmo grow args <<<"${STEPS[$step]}"
+    IFS='|' read -r script suffix grow args <<<"${STEPS[$step]}"
+    tmo=$(budget "timeoutsS.$step") || { hlog "no timeout for $step in the budget"; printf '%s\tfail\t\n' "$step" >>"$steps_file"; finish 1; }
     [ -f "$here/gates/$script" ] || { printf '%s\tfail\t\n' "$step" >>"$steps_file"; hlog "gate script $script not written yet"; finish 1; }
     if [ "$step" = m0 ]; then
         "$here/gates/gate-m0-host.sh" "$prefix" "$harness_sha" || { printf 'm0-host\tfail\t\n' >>"$steps_file"; finish 1; }
