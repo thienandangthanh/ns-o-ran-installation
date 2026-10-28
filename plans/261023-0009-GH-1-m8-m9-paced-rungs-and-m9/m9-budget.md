@@ -47,3 +47,10 @@ T = (25 + h) + M0–M7 + R section = 29 + 43 + 12 = **84 GiB** (88 GiB with the 
 - The user must free **84 − X GiB**, with X = `df -BG /home` measured at Stop B after the last P9 VM run.
 
 Do not delete when freeing space: `fresh-install`, `f7-rerun-green` and `r3p-green` (never deleted); and the raw C1 traces and the Influx CSV under `evidence/r3p/20261028T044557Z/` (gitignored). Those raw files are the only way to rebuild the reference without a VM run. Deleting `r0-green` or `r2-green` frees almost nothing, because both are non-leaf snapshots.
+
+## Freeze (2026-10-28 15:00 KST)
+
+- Harness F = `e0a6ac5ee0b4824038c22e39d467fc1f714d0d13` (on `origin/migrate-l-release-NIST-1-8-0`). P10 runs `scripts/run-to-m9.sh --harness-sha e0a6ac5ee0b4824038c22e39d467fc1f714d0d13`. The runner refuses a worktree whose `scripts`, `tools` or `reference` differ from F.
+- Pins (`scripts/pins.conf`, unchanged since 47aee0b) equal each fork's `dev/l-release-nist180` head on GitHub (`git ls-remote`, 14:41 KST): Testbed `c6d1434a`, ns-3 `ba954440`, oran-interface `96efc40e`, e2sim `2209995a`.
+- The parent's submodule gitlinks (`597bdde`, `ace3216`, `438a839`) are stale and do not match the pins. `pins.conf` governs every gate; the run report discloses the gap.
+- K14: since the C1 harness `d2e1ab4`, no file the r3p gate reads has changed, so `reference/r3p/` (made from C1 live1) is valid at F.
