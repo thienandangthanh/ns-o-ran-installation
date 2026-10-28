@@ -27,7 +27,9 @@ import glob
 import importlib.util
 import json
 import os
+import subprocess
 import sys
+import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -149,10 +151,10 @@ def c_predictor(a):
     return out(probs, triggers=len(ts), records=len(recs))
 
 
-def c_influx_ipc(a):
-    sc, rd = load(a[0]), a[1]
+def influx_ipc_problems(sc, rd, text):
+    """Full Influx = IPC for the read counter: every gNB cell holds every seq 0 .. samples-1 in IPC and exactly one
+    long Influx row per seq with the same value; no extra seq; no other node carries the counter."""
     field, gnbs = sc["counter"]["field"], [int(n) for n in sc["n6"]["expectedCells"]]
-    text = open(a[a.index("--cell-csv") + 1]).read() if "--cell-csv" in a else N6.query(N6.flux("cellMetrics", ["ns3.nodeId", "ns3.seq", field]))
     ipc = N6.ipc(os.path.join(rd, "trace"), 10 ** 9, gnbs)
     rows, probs = {}, []
     for r, ty in N6.parse(text):
@@ -163,14 +165,36 @@ def c_influx_ipc(a):
             continue
         rows.setdefault((n, s), []).append((r.get(field), ty.get(field)))
     for n in gnbs:
-        if not ipc[n]:
-            probs.append("node %d: no IPC samples" % n)
-        for s, smp in sorted(ipc[n].items()):
-            got, want = rows.pop((n, s), []), ((smp.get("cell") or {}).get("cuUp") or {}).get(field)
-            if len(got) != 1 or got[0][1] != "long" or got[0][0] is None or int(got[0][0]) != want:
+        for s in range(sc["config"]["samples"]):
+            smp = ipc[n].get(s)
+            got, want = rows.pop((n, s), []), ((smp or {}).get("cell") or {}).get("cuUp", {}).get(field)
+            if smp is None or len(got) != 1 or got[0][1] != "long" or got[0][0] is None or type(want) is not int \
+                    or int(got[0][0]) != want:
                 probs.append("(%d, %d): influx %r, ipc %r" % (n, s, got, want))
-    probs += ["(%d, %d): an Influx row with no IPC sample" % k for k in sorted(rows)]
-    return out(probs, seqsPerNode={str(n): len(ipc[n]) for n in gnbs})
+        probs += ["(%d, %d): an IPC sample past the expected seqs" % (n, s) for s in sorted(ipc[n]) if s >= sc["config"]["samples"]]
+    probs += ["(%d, %d): an Influx row with no expected IPC sample" % k for k in sorted(rows)]
+    return probs, {str(n): len(ipc[n]) for n in gnbs}
+
+
+def c_influx_ipc(a):
+    """Live: polls Influx until the comparison holds (kpimon may still be writing the last period), at most the N6
+    deadline after the run; a fixture CSV is judged once."""
+    sc, rd = load(a[0]), a[1]
+    deadline = time.time() + float(sc["n6"]["deadlineS"])
+    while True:
+        if "--cell-csv" in a:
+            text = open(a[a.index("--cell-csv") + 1]).read()
+        else:
+            try:
+                text = N6.query(N6.flux("cellMetrics", ["ns3.nodeId", "ns3.seq", sc["counter"]["field"]]))
+            except (RuntimeError, subprocess.TimeoutExpired) as ex:
+                text = None
+                probs, seqs = ["query: %s" % ex], {}
+        if text is not None:
+            probs, seqs = influx_ipc_problems(sc, rd, text)
+        if not probs or "--cell-csv" in a or time.time() > deadline:
+            return out(probs, seqsPerNode=seqs)
+        time.sleep(float(sc["n6"]["pollS"]))
 
 
 def c_d7(a):

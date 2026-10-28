@@ -26,9 +26,9 @@ def build(d, P, sc, mut):
     for n in (2, 3):
         lines = [json.dumps({"type": "hello", "nodeId": n, "kind": "gnb"})]
         lines += [json.dumps({"type": "sample", "nodeId": n, "seq": s, "cell": {"cuUp": {FIELD: dl[n]}},
-                              "ues": [{"imsi": i} for i in mem(s)[n]]}) for s in range(60)]
+                              "ues": [{"imsi": i} for i in mem(s)[n]]}) for s in range(mut.get("samples", 100))]
         (rd / "trace" / ("e2-ipc-trace-%d.jsonl" % n)).write_text("\n".join(lines) + "\n")
-    cells = {str(n): {str(s): dl[n] for s in range(60)} for n in (2, 3)}
+    cells = {str(n): {str(s): dl[n] for s in range(100)} for n in (2, 3)}
     recs, parts, tx = [], [], []
     for t in SCHED["triggers"]:
         m = {str(i): n for n in (2, 3) for i in mem(t["step"] if not mut.get("stuck") else 0)[n]}
@@ -58,7 +58,7 @@ def build(d, P, sc, mut):
     (rd / "ledger.jsonl").write_text("".join(json.dumps(x) + "\n" for x in led))
     (rd / "rc.json").write_text(json.dumps([{"imsi": 1, "step": 30, "viaNode": 2, "targetKey": "0000000202", "answer": "ack"}]
                                            + mut.get("extra_rc", [])))
-    rows = [(n, s, None if n == 1 else dl[n]) for n in (1, 2, 3) for s in range(60)]
+    rows = [(n, s, None if n == 1 else dl[n]) for n in (1, 2, 3) for s in range(mut.get("samples", 100))]
     if mut.get("drop"):
         rows.remove(mut["drop"])
     rows += [mut["dup"]] if mut.get("dup") else []
@@ -98,6 +98,7 @@ CASES = [
     ("influx-ipc: a duplicate (node, seq)", "influx-ipc", False, {"dup": (3, 12, 4186)}),
     ("influx-ipc: an eNB row carries the counter", "influx-ipc", False, {"enb": True}),
     ("influx-ipc: a double field", "influx-ipc", False, {"dtype": "double"}),
+    ("influx-ipc: a tail truncated in both IPC and Influx", "influx-ipc", False, {"samples": 90}),
     ("d7: pass", "d7", True, {}),
     ("d7: an applied line not via the target gNB", "d7", False, {"via": 3}),
     ("observation: pass", "observation", True, {}),

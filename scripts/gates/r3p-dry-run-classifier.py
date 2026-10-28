@@ -57,11 +57,18 @@ def judge(sc, wins, stage, imsis):
     return probs, cand
 
 
-def pick(cand, lo, hi, imsis, want):
+def swap_eligibility(ans):
+    """Eligibility after the pre-registered observation change (the two gNB cells' DL swapped)."""
+    return P.eligibility([[ans[0][0], [ans[1][1][0], 0]], [ans[1][0], [ans[0][1][0], 0]]] + ans[2:])
+
+
+def pick(cand, lo, hi, imsis, want, swap_want=None):
+    """The first step of [lo, hi] with an IMSI whose decision and eligibility are `want` (and, for n1, whose swapped
+    observations are eligible for the pre-registered opposite decision); the lowest such IMSI."""
     for t in range(lo, hi + 1):
         for i in sorted(imsis):
             c = cand.get((t, i))
-            if c and c[0] == want and c[2] == want:
+            if c and c[0] == want and c[2] == want and (swap_want is None or swap_eligibility(c[3]) == swap_want):
                 return t, i, c
     return None
 
@@ -82,7 +89,8 @@ def stage_a(sc, wins, stage):
     if not any(c[0] == "handover" for c in cand.values()):
         return {"class": "substitution4", "candidates": len(cand), "handovers": 0}
     tpl = sc["scheduleTemplate"]
-    n1 = pick(cand, tpl["n1"]["step"], tpl["n1"]["step"] + tpl["n1"]["slot"], sc["imsis"], "none")
+    n1 = pick(cand, tpl["n1"]["step"], tpl["n1"]["step"] + tpl["n1"]["slot"], sc["imsis"], "none",
+              sc["observationChange"]["cases"]["n1"])
     h1 = pick(cand, tpl["h1"]["step"], tpl["h1"]["step"] + tpl["h1"]["slot"], sc["imsis"], "handover")
     counts = {k: sum(1 for c in cand.values() if (c[0], c[2]) == k) for k in
               [("handover", "handover"), ("handover", "margin"), ("none", "none"), ("none", "margin")]}

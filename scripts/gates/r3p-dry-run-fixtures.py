@@ -40,6 +40,9 @@ def self_test(C, P):
     every = {k: 3 for k in START}
     expect("every IMSI hands over in n1's slot: T3", C.stage_a(sc, windows(dom, 8371, 4186, mem=every), clean), "T3")
     expect("handovers only in the margin band: T3", C.stage_a(sc, windows(dom, 112, 100), clean), "T3")
+    early, late = windows(range(lo, 31), 110, 100), windows(range(31, hi + 1), 8371, 4186)
+    expect("n1's slot holds no IMSI whose swapped observations would hand over: T3",
+           C.stage_a(sc, {**early, **late}, clean), "T3")
     if a.get("class") == "formed":
         moved = dict(START, **{"1": 2})
         bdom = range(a["h1"]["step"] + sc["window"]["length"], hi + 1)

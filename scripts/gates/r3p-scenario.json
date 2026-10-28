@@ -21,7 +21,7 @@
  "domain": {"rampGuard": 5, "tailGuard": 10,
             "rule": "tLo = rampGuard + window.length - 1; tHi = config.samples - 1 - tailGuard; every IMSI at every T in [tLo, tHi]"},
  "scheduleTemplate": {
-   "n1": {"step": 20, "slot": 10, "decision": "none", "imsi": "the lowest none-eligible IMSI in stage A at the first step of [step, step + slot] that has one"},
+   "n1": {"step": 20, "slot": 10, "decision": "none", "imsi": "the lowest none-eligible IMSI in stage A at the first step of [step, step + slot] that has one whose swapped observations are handover-eligible (20 * serving_dl >= 23 * other_dl), so the observation change can give its pre-registered result"},
    "h1": {"step": 30, "slot": 10, "decision": "handover", "imsi": "the lowest handover-eligible IMSI in stage A, same slot rule"},
    "m1": {"offset": 20, "slot": 10, "imsi": "h1's", "decision": "stage B's eligible decision for h1's IMSI at the first step of [h1 + offset, h1 + offset + slot] where it is eligible"},
    "stageB": {"inject": "h1's control at h1's step via the target gNB (deviation P1)", "observeFrom": "h1 + window.length"}},
