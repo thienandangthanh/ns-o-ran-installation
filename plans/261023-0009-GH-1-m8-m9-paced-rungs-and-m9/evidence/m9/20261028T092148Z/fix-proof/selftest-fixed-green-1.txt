@@ -1,0 +1,13 @@
+# selftest in the worktree with the atomic heartbeat, run 1, 2026-10-28T10:19:23Z
+ok   watchdog loss stops the unit and the runner within the bound
+ok   the global wall deadline stops the unit and the runner
+ok   a healthy watchdog: no stop, heartbeat recorded fresh
+ok   a hung stop command is bounded and the runner still stops
+ok   write_verdict exits 0 (healthy run)
+ok   write_verdict exits 1 (watchdog lost)
+ok   supervised cancels and shuts the VM down when the watchdog has exited
+ok   supervised cancels and shuts the VM down when the monitor has exited
+ok   a TERM to the runner stops the running step and the gate units
+ok   a live watchdog's heartbeat is never read torn
+m9 runner self-test: ok
+exit 0
