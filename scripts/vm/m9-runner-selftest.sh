@@ -5,7 +5,8 @@
 # stopped within 2 polling periods + one check + slack (5 s); (2) the global wall deadline passes while the
 # heartbeat is fresh: wall-deadline.json and both stopped; (3) a healthy watchdog: the monitor keeps running and
 # records maxAgeS <= 2 periods; (4) a hung stop command is bounded; (5) write_verdict returns the judge's
-# status; (6) supervised cancels a step once a monitor has exited. Then the substitution 4 record validator and m9-verdict.py self-tests. Exit 0 when every case holds.
+# status; (6) supervised cancels and shuts the VM down once either
+# monitor has exited; (7) a TERM to the runner alone stops the running step. Then the substitution 4 record validator and m9-verdict.py self-tests. Exit 0 when every case holds.
 set -uo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 rc=0
@@ -79,13 +80,36 @@ for want in 0 1; do
         echo "ok   write_verdict exits $want ($([ "$want" = 0 ] && echo healthy run || echo watchdog lost))"
     else echo "FAIL write_verdict: want $want, got $got"; rc=1; fi
 done
-# (6) supervised cancels the step when a monitor has exited
-d="$tmp/supervised"; mkdir -p "$d"
-sleep 300 & mon_alive=$!
-got=$(wd="$d" wd_pid=999999 mon_pid=$mon_alive bash -c "hlog() { :; }; vm_stop_gates() { :; }; $(fn supervised); supervised sleep 300; echo \$?")
-if [ "$got" = 1 ] && grep -q "disk watchdog" "$d/monitor-lost.json" 2>/dev/null; then echo "ok   supervised cancels the step when the disk watchdog has exited"
-else echo "FAIL supervised: got $got"; rc=1; fi
-kill "$mon_alive" 2>/dev/null
+# (6) supervised cancels as the monitor would (stop the step and the gate units, shut the VM down) when either
+# monitor has exited; the dead PID is a reaped child, so it cannot belong to a live process
+sleep 0 & dead=$!; wait "$dead"
+for lost in watchdog monitor; do
+    d="$tmp/supervised-$lost"; mkdir -p "$d"
+    sleep 300 & live=$!
+    if [ "$lost" = watchdog ]; then w=$dead; m=$live; else w=$live; m=$dead; fi
+    got=$(wd="$d" wd_pid=$w mon_pid=$m bash -c "hlog() { :; }; vm_stop_gates() { touch $d/stopped; }; vm_shutdown() { touch $d/shutdown; }
+        $(fn supervised); supervised sleep 300; echo \$?")
+    if [ "$got" = 1 ] && [ -s "$d/monitor-lost.json" ] && [ -e "$d/stopped" ] && [ -e "$d/shutdown" ]; then
+        echo "ok   supervised cancels and shuts the VM down when the $lost has exited"
+    else echo "FAIL supervised ($lost exited): got $got, stopped $([ -e "$d/stopped" ] && echo yes || echo no), shutdown $([ -e "$d/shutdown" ] && echo yes || echo no)"; rc=1; fi
+    kill "$live" 2>/dev/null
+done
+# (7) a TERM to the runner alone stops the running step (finish never orphans it)
+d="$tmp/finish"; mkdir -p "$d"
+sleep 300 & mons=$!   # stands for both live monitors (finish stops them)
+bash -c "hlog() { :; }; vm_stop_gates() { touch $d/stopped; }; write_verdict() { :; }
+    $(fn supervised); $(fn finish); trap 'finish 3' TERM; wd_pid=$mons; mon_pid=$mons
+    supervised sleep 301; echo unreachable" >/dev/null 2>&1 &
+r=$!
+sleep 1.5
+step=$(pgrep -f "^sleep 301$" -P "$r")
+kill -TERM "$r"
+t0=$SECONDS; while alive "$r" && [ $((SECONDS - t0)) -lt 8 ]; do sleep 0.2; done
+if [ -n "$step" ] && ! alive "$r" && ! alive "$step" && [ -e "$d/stopped" ]; then
+    echo "ok   a TERM to the runner stops the running step and the gate units"
+else echo "FAIL finish on TERM: runner alive $(alive "$r" && echo yes || echo no), step ${step:-none} alive $([ -n "$step" ] && alive "$step" && echo yes || echo no)"; rc=1
+    [ -n "$step" ] && kill "$step" 2>/dev/null; fi
+kill "$mons" 2>/dev/null
 
 python3 -I "$here/../gates/r3p-substitution4-validate.py" --self-test >/dev/null || { echo "FAIL substitution 4 record validator self-test"; rc=1; }
 python3 -I "$here/../m9-verdict.py" --self-test >/dev/null || { echo "FAIL m9-verdict.py self-test"; rc=1; }
