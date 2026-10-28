@@ -1,0 +1,25 @@
+2026-10-28T15:40:39.286316451Z I1028 15:40:39.286160       1 server.go:715] "Successfully retrieved node IP(s)" IPs=["192.168.122.137"]
+2026-10-28T15:40:39.290601002Z I1028 15:40:39.289878       1 conntrack.go:60] "Setting nf_conntrack_max" nfConntrackMax=262144
+2026-10-28T15:40:39.290609618Z I1028 15:40:39.289923       1 conntrack.go:121] "Set sysctl" entry="net/netfilter/nf_conntrack_tcp_timeout_established" value=86400
+2026-10-28T15:40:39.290610488Z I1028 15:40:39.289939       1 conntrack.go:121] "Set sysctl" entry="net/netfilter/nf_conntrack_tcp_timeout_close_wait" value=3600
+2026-10-28T15:40:39.290612650Z E1028 15:40:39.289951       1 server.go:245] "Kube-proxy configuration may be incomplete or incorrect" err="nodePortAddresses is unset; NodePort connections will be accepted on all local IPs. Consider using `--nodeport-addresses primary`"
+2026-10-28T15:40:39.300940437Z I1028 15:40:39.300867       1 server.go:254] "kube-proxy running in dual-stack mode" primary ipFamily="IPv4"
+2026-10-28T15:40:39.307052626Z I1028 15:40:39.306975       1 server_linux.go:202] "Using ipvs Proxier"
+2026-10-28T15:40:39.307084228Z I1028 15:40:39.307063       1 proxier.go:353] "IPVS scheduler not specified, use rr by default" ipFamily="IPv4"
+2026-10-28T15:40:39.307164314Z I1028 15:40:39.307110       1 proxier.go:353] "IPVS scheduler not specified, use rr by default" ipFamily="IPv6"
+2026-10-28T15:40:39.307169507Z I1028 15:40:39.307125       1 ipset.go:118] "Ipset name truncated" ipSetName="KUBE-6-LOAD-BALANCER-SOURCE-CIDR" truncatedName="KUBE-6-LOAD-BALANCER-SOURCE-CID"
+2026-10-28T15:40:39.307171171Z I1028 15:40:39.307130       1 ipset.go:118] "Ipset name truncated" ipSetName="KUBE-6-NODE-PORT-LOCAL-SCTP-HASH" truncatedName="KUBE-6-NODE-PORT-LOCAL-SCTP-HAS"
+2026-10-28T15:40:39.307281473Z I1028 15:40:39.307254       1 server.go:516] "Version info" version="v1.33.13"
+2026-10-28T15:40:39.307284022Z I1028 15:40:39.307259       1 server.go:518] "Golang settings" GOGC="" GOMAXPROCS="" GOTRACEBACK=""
+2026-10-28T15:40:39.307859822Z I1028 15:40:39.307814       1 config.go:199] "Starting service config controller"
+2026-10-28T15:40:39.307916590Z I1028 15:40:39.307879       1 config.go:440] "Starting serviceCIDR config controller"
+2026-10-28T15:40:39.308085884Z I1028 15:40:39.307957       1 shared_informer.go:350] "Waiting for caches to sync" controller="service config"
+2026-10-28T15:40:39.308090680Z I1028 15:40:39.307963       1 shared_informer.go:350] "Waiting for caches to sync" controller="serviceCIDR config"
+2026-10-28T15:40:39.308094546Z I1028 15:40:39.307966       1 config.go:105] "Starting endpoint slice config controller"
+2026-10-28T15:40:39.308096081Z I1028 15:40:39.307978       1 shared_informer.go:350] "Waiting for caches to sync" controller="endpoint slice config"
+2026-10-28T15:40:39.308097641Z I1028 15:40:39.308013       1 config.go:329] "Starting node config controller"
+2026-10-28T15:40:39.308099063Z I1028 15:40:39.308018       1 shared_informer.go:350] "Waiting for caches to sync" controller="node config"
+2026-10-28T15:40:39.408839871Z I1028 15:40:39.408763       1 shared_informer.go:357] "Caches are synced" controller="node config"
+2026-10-28T15:40:39.408851790Z I1028 15:40:39.408780       1 shared_informer.go:357] "Caches are synced" controller="endpoint slice config"
+2026-10-28T15:40:39.408852891Z I1028 15:40:39.408782       1 shared_informer.go:357] "Caches are synced" controller="serviceCIDR config"
+2026-10-28T15:40:39.408853786Z I1028 15:40:39.408781       1 shared_informer.go:357] "Caches are synced" controller="service config"

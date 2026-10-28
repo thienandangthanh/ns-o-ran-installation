@@ -1,0 +1,15 @@
+NAME                                                        READY   STATUS    RESTARTS       AGE    IP             NODE            NOMINATED NODE   READINESS GATES
+deployment-ricplt-a1mediator-78f79cbb6b-g42tk               1/1     Running   6 (37m ago)    141m   10.244.0.103   oran-kvm-2404   <none>           <none>
+deployment-ricplt-alarmmanager-5b49476676-pvhbk             1/1     Running   5 (37m ago)    141m   10.244.0.111   oran-kvm-2404   <none>           <none>
+deployment-ricplt-appmgr-5564b65869-4b778                   1/1     Running   5 (37m ago)    142m   10.244.0.110   oran-kvm-2404   <none>           <none>
+deployment-ricplt-e2mgr-9b6b8f99f-mrbgt                     1/1     Running   8 (37m ago)    142m   10.244.0.101   oran-kvm-2404   <none>           <none>
+deployment-ricplt-e2term-alpha-f8f7d7855-spbdp              1/1     Running   8 (35m ago)    142m   10.244.0.113   oran-kvm-2404   <none>           <none>
+deployment-ricplt-o1mediator-bf4fb5758-lzcvl                1/1     Running   5 (37m ago)    141m   10.244.0.107   oran-kvm-2404   <none>           <none>
+deployment-ricplt-rtmgr-74fb47b69d-jwn27                    1/1     Running   9 (37m ago)    142m   10.244.0.105   oran-kvm-2404   <none>           <none>
+deployment-ricplt-submgr-858956fbdc-7hrhr                   1/1     Running   5 (37m ago)    141m   10.244.0.100   oran-kvm-2404   <none>           <none>
+deployment-ricplt-vespamgr-848f7bb874-ztzkc                 1/1     Running   5 (37m ago)    141m   10.244.0.108   oran-kvm-2404   <none>           <none>
+r4-influxdb-influxdb2-0                                     1/1     Running   3 (37m ago)    102m   10.244.0.95    oran-kvm-2404   <none>           <none>
+r4-infrastructure-kong-78657d8f48-2rrbx                     2/2     Running   10 (37m ago)   142m   10.244.0.99    oran-kvm-2404   <none>           <none>
+r4-infrastructure-prometheus-alertmanager-b9cc56766-qpk68   2/2     Running   10 (37m ago)   142m   10.244.0.109   oran-kvm-2404   <none>           <none>
+r4-infrastructure-prometheus-server-6476958975-n977p        1/1     Running   5 (37m ago)    142m   10.244.0.106   oran-kvm-2404   <none>           <none>
+statefulset-ricplt-dbaas-server-0                           1/1     Running   5 (37m ago)    142m   10.244.0.96    oran-kvm-2404   <none>           <none>
