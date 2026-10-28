@@ -8,7 +8,10 @@ log from fresh-install) gives the revert and every snapshot boundary (graceful s
 host free at each boundary; globalWallS = ceil(1.5 x (sum d + revert + boundaries)). h, the watchdog's preventive
 headroom: the fastest measured host-disk growth between boundaries (GB/s) x the longer stop path (2 polling periods
 for a stale heartbeat + one monitor check + 30 s cancellation + 240 s graceful shutdown), rounded up; tripGb = 25 + h.
-Prints the table as Markdown; refuses (exit 1) when a step has no green measurement.
+Install steps whose green runs were all warm (images already built) also get a cold-path floor: their timeout is
+never below the gate's own inner caps on the cold path + 600 s, and the global wall sums their measured cold
+duration instead of the warm one (COLD). Prints the table as Markdown; refuses (exit 1) when a step has no green
+measurement.
 """
 import glob
 import json
@@ -19,6 +22,13 @@ from datetime import datetime
 
 ROOTS = ("plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence", "plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence")
 MODE = {"r0": "single", "r1": "single", "r2": "single", "r3p": "c1"}
+# step -> (inner caps on the cold path s, measured cold duration s, basis); a fresh-install M9 builds everything cold
+COLD = {
+    "i0": (3660, 132 + 207, "rc_install nist_run 3600 + kill-after 60 (rc-lib.sh); cold = warm i0 132 s + the cold rc "
+           "install 207 s in q8/20261022T225843Z (22:59:12 -> 23:02:39)"),
+    "i2": (3660 + 1200 + 120, 1053, "ts_install nist_run 3600 + kill-after 60, rmr_peer_build timeout 1200, its self-test "
+           "timeout 120 (ts-lib.sh); cold = i2/20261023T171928Z, 1053 s with the cold TS xApp install taking 986 s"),
+}
 
 
 def arg(av, k, d=None):
@@ -82,17 +92,20 @@ def main(av):
     rate = max(rates)
     stop_path = 2 * interval + interval + 30 + 240
     h = math.ceil(rate * stop_path)
-    total = sum(v[0] for v in d.values()) + revert + sum(bounds)
+    run_s = {s: max(v[0], COLD[s][1]) if s in COLD else v[0] for s, v in d.items()}
+    timeouts = {s: max(math.ceil(1.5 * v[0]) + 600, COLD[s][0] + 600 if s in COLD else 0) for s, v in d.items()}
+    total = sum(run_s.values()) + revert + sum(bounds)
     budget = {"_comment": "measured by scripts/m9-budget.py; see plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/m9-budget.md",
-              "timeoutsS": {s: math.ceil(1.5 * v[0]) + 600 for s, v in d.items()},
+              "timeoutsS": timeouts,
+              "coldPath": {s: {"innerCapsS": c[0], "coldS": c[1], "basis": c[2]} for s, c in COLD.items() if s in d},
               "measuredS": {s: {"durationS": v[0], "evidence": v[1]} for s, v in d.items()},
               "revertS": revert, "boundariesS": bounds, "globalWallS": math.ceil(1.5 * total),
               "watchdog": {"intervalS": interval, "maxGrowthGbPerS": round(rate, 5), "stopPathS": stop_path,
                            "hGb": h, "tripGb": 25 + h}}
     json.dump(budget, open(arg(av, "--out-json"), "w"), indent=1)
-    print("| Step | Longest green (s) | Timeout (s) | Evidence |\n|---|---|---|---|")
+    print("| Step | Longest green (s) | In the wall (s) | Timeout (s) | Evidence |\n|---|---|---|---|---|")
     for s, v in d.items():
-        print("| %s | %d | %d | `%s` |" % (s, v[0], budget["timeoutsS"][s], v[1]))
+        print("| %s | %d | %d | %d | `%s` |" % (s, v[0], run_s[s], timeouts[s], v[1]))
     print("\nrevert %d s, %d boundaries %d s, sum %d s, global wall %d s; max growth %.4f GB/s x stop path %d s -> h %d GB, "
           "trip %d GB" % (revert, len(bounds), sum(bounds), total, budget["globalWallS"], rate, stop_path, h, 25 + h))
     return 0
