@@ -64,3 +64,13 @@ Do not delete when freeing space: `fresh-install`, `f7-rerun-green` and `r3p-gre
 | **Projection = X − T** | **−26 (negative)** |
 
 The user frees 26 GiB (30 with the optional h = 8 margin) before P10. P10 starts only once `df -BG /home` shows ≥ 84 GiB (≥ 88 with the margin).
+
+## Projection at P10 start (2026-10-28 18:22 KST)
+
+The user freed the shortfall after Stop B. `df -BG /home` read 98 GiB before the revert (18:17 KST) and 101 GiB after `vm-snapshot.sh revert fresh-install` (+3, against the inferred +2.6). `r3p-green` is still listed.
+
+| Term | GiB |
+|---|---|
+| X′ = host `/home` free after the revert to `fresh-install` | 101 |
+| T = (25 + h) + M0–M7 + R section | 84 |
+| **Projection = X′ − T** | **+17 (≥ 0)** |
