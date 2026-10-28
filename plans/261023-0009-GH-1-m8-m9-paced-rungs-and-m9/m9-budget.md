@@ -102,3 +102,17 @@ The user deleted the leaked 16 GiB overlay `ubuntu24.1793179340` at about 20:10 
 | **Projection = X′ − T** | **+17 (≥ 0)** |
 
 GO: run with prefix `o` at F′ `fb3554a`.
+
+## Projection at attempt-3 start (2026-10-28 22:50 KST)
+
+Host rebooted at 22:40 KST (user ruling 2). Before the 13:47Z revert to `fresh-install`, `df -BG /home` read 67 GiB. The revert left attempt 2's active overlay behind, as the leaked-overlay record predicts. The VM now runs on `ubuntu24.1793195253` over `ubuntu24.04`, and `r3p-green` is still listed.
+
+Leaked-overlay deletion (user ruling 2026-10-28 20:14 KST, checks 1–5 all PASS, `plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/p10-disk/20261028T134728Z/`): file `/home/andang/VMs/ubuntu24.1793186558`, size 36467376128 B (33.96 GiB); space freed 33.96 GiB; `df -BG /home` 67 → 101 GiB.
+
+| Term | GiB |
+|---|---|
+| X′ = host `/home` free after the revert and the leaked-overlay deletion | 101 |
+| T = (25 + h) + M0–M7 + R section | 84 |
+| **Projection = X′ − T** | **+17 (≥ 0)** |
+
+Memory gate (user ruling 1): MemAvailable + qemu RSS = 28.02 GiB ≥ 23, PASS (`plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/p10-disk/20261028T134728Z/memory-gate.txt`). GO: run with prefix `p` at F′ `fb3554a` through the unit `m9-p`.

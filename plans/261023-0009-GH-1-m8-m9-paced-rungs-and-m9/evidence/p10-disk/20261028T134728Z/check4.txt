@@ -1,0 +1,23 @@
+## check 4: no image depends on it (backingStore of every volume in pool VMs, via vol-dumpxml)
+ubuntu24.04 -> backing: none
+ubuntu24.04-r0-green.qcow2 -> backing: /home/andang/VMs/ubuntu24.1792653312
+ubuntu24.04-r2-green.qcow2 -> backing: /home/andang/VMs/ubuntu24.04-r0-green.qcow2
+ubuntu24.1792618143 -> backing: /home/andang/VMs/ubuntu24.04
+ubuntu24.1792653312 -> backing: /home/andang/VMs/ubuntu24.1792618143
+ubuntu24.1793179273 -> backing: /home/andang/VMs/ubuntu24.04
+ubuntu24.1793186494 -> backing: /home/andang/VMs/ubuntu24.04
+ubuntu24.1793186558 -> backing: /home/andang/VMs/ubuntu24.04
+ubuntu24.1793195253 -> backing: /home/andang/VMs/ubuntu24.04
+## images newer than ubuntu24.1793186558 (by name epoch) and gate disk-chain evidence:
+free-series.tsv
+min-host-free-gb.txt
+reap
+steps.tsv
+verdict.json
+watchdog-alive.json
+plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m0/20261028T112207Z-host/disk-chain-after-m0-probe-o10281122.txt
+plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m0/20261028T112207Z-host/disk-chain-before.txt
+plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m0/20261028T112207Z-host/disk-chain-after-revert.txt
+plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m0/20261028T112207Z-host/disk-chain-after-m0-branch-o10281122.txt
+plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m0/20261028T112207Z-host/disk-chain-after-branch-delete.txt
+CHECK4 PASS

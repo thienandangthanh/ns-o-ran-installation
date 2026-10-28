@@ -1,0 +1,28 @@
+## check 5: nothing has it open, not written since its run stopped, evidence archived
+now: 2026-10-28T22:48:24+09:00
+mtime 2026-10-28 21:43:21.878976783 +0900 size 36467376128 owner root
+VM state: running, active vda: /home/andang/VMs/ubuntu24.1793195253
+qemu procs:
+  30112 libvirt+ Wed Oct 28 22:47:33 2026 /usr/bin/qemu-system-x86_64 -name guest=ubuntu24.04,debug-threads=on -S -object {"qom-type":"secret","id":"masterKey0","format":"raw","file":"/var/lib/libvirt
+  32297 andang   Wed Oct 28 22:48:24 2026 /bin/bash -c source /home/andang/.claude/shell-snapshots/snapshot-bash-1793195006204-7now6j.sh 2>/dev/null || true && export CK_SESSION_ID="d8d75ba4-1960-4c73
+  32310 andang   Wed Oct 28 22:48:24 2026 /bin/bash -c source /home/andang/.claude/shell-snapshots/snapshot-bash-1793195006204-7now6j.sh 2>/dev/null || true && export CK_SESSION_ID="d8d75ba4-1960-4c73
+/bin/bash: line 33: /proc/$Q/cmdline: ambiguous redirect
+qemu cmdline references file: 0
+fds of user-visible processes on it: 0
+VM attempt-2 shutdown record (resume card earlier-X): controller ran vm_stop_gates + vm_shutdown after the 12:41Z reap; host rebooted 22:41 KST
+archived evidence of the run that used it (attempt 2, 20261028T112207Z), tracked in git:
+plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m9/20261028T112207Z/free-series.tsv
+plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m9/20261028T112207Z/min-host-free-gb.txt
+plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m9/20261028T112207Z/reap/free-after.txt
+plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m9/20261028T112207Z/reap/host-state.txt
+plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m9/20261028T112207Z/reap/runner.log
+plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m9/20261028T112207Z/reap/snapshots-after.txt
+plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m9/20261028T112207Z/steps.tsv
+plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m9/20261028T112207Z/verdict.json
+plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m9/20261028T112207Z/watchdog-alive.json
+9
+## check 5 addendum (pgrep above matched the checking shell too; redone on qemu pid 30112, started 22:47:33 after the revert)
+qemu 30112 cmdline references ubuntu24.1793186558: 0
+qemu 30112 cmdline active image: ubuntu24.04 ubuntu24.1793195253 
+host boot: 2026-10-28 22:40:45; file mtime 2026-10-28 21:43:21 precedes the boot, so no pre-boot process can hold it; the only qemu started after the reboot uses ubuntu24.1793195253
+CHECK5 PASS

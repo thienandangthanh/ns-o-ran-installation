@@ -1,0 +1,5 @@
+rm -f /home/andang/VMs/ubuntu24.1793186558
+rm rc=0
+virsh -c qemu:///system pool-refresh VMs
+Pool VMs refreshed
+
