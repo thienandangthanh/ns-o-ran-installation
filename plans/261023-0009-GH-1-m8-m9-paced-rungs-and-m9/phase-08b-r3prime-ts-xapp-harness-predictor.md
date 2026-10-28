@@ -60,7 +60,7 @@ R3′: the real TS xApp plus the harness predictor, fixed pre-registered trigger
 ## Standards ledger
 | Decision | Document, version, section | Zotero | Read |
 |---|---|---|---|
-| Predictor input: PDCP SDU volume as the per-cell throughput basis | 3GPP TS 28.552 V20.2.0 §5.1.2.1.1.1 (and §5.1.2.1.2.1 if UL is read) | `5SZUBP6M` | read in step 2 |
+| Predictor input: PDCP SDU volume as the per-cell throughput basis | 3GPP TS 28.552 V20.2.0 §5.1.2.1.1.1 (and §5.1.2.1.2.1 if UL is read) | `5SZUBP6M` | 2026-10-28 (step 2; DL only, UL not read) |
 | Target-addressed control — **recorded deviation P1** | 3GPP TS 38.300 §9.2.3; 3GPP TS 37.340 §10.5.1 | per decision record §2 | 2026-10-22 |
 | UE ID — **recorded deviation P4** | E2SM common v07.00 §6.2.2.6 | `QW6VJ83M` | 2026-10-22 |
 
