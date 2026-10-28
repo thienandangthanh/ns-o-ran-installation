@@ -25,7 +25,7 @@ Timeout = ceil(1.5 × longest green duration in the mode M9 runs) + 600 s. M0–
 | r2 | 612 | 612 | 1518 | `plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/r2/20261028T030809Z` |
 | r3p | 1286 | 1286 | 2529 | `plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/r3p/20261028T044557Z` |
 
-revert 102 s, 8 boundaries 453 s, sum 13466 s, global wall 20199 s; max growth 0.0093 GB/s x stop path 360 s -> h 4 GB, trip 29 GB
+revert 102 s, 8 boundaries 453 s, sum 13466 s, global wall 20199 s; max growth 0.0093 GB/s x stop path 370 s -> h 4 GB, trip 29 GB
 
 Global wall = ceil(1.5 × (Σ steps + revert 102 s + 8 snapshot boundaries 453 s)) = **20,199 s** (5 h 37 min).
 
