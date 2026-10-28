@@ -90,3 +90,15 @@ The user freed the shortfall after Stop B. `df -BG /home` read 98 GiB before the
 | **Projection = X′ − T** | **+1 (inside the R term's ±3)** |
 
 NO-GO, PAUSE T1: attempt 1's 16 GiB overlay `ubuntu24.1793179340` leaked (no snapshot tracks it; libvirt did not unlink it on the revert), and only a raw file deletion outside the snapshot rule can free it. Expected minimum at 85 ≈ 30 GiB against the 29 trip (≈ 25–40 % trip risk); at ≈ 101 after the user's delete, ≈ 46 (`plans/reports/kongming-261028-1945-GH-1-p10-attempt-2-disk-go-no-go.md`).
+
+## Projection at attempt-2 start after the release (2026-10-28 20:22 KST)
+
+The user deleted the leaked 16 GiB overlay `ubuntu24.1793179340` at about 20:10 KST (`plans/reports/decisions-261028-2014-GH-1-leaked-overlay-deletion-ruling.md`). `df -BG /home` read 101 GiB before the 11:21Z revert to `fresh-install` and 101 GiB after it. The revert unlinked the tracked overlay `ubuntu24.1793183688` (27 MB), the VM now runs on `ubuntu24.1793186494` over `ubuntu24.04`, and `r3p-green` is still listed.
+
+| Term | GiB |
+|---|---|
+| X′ = host `/home` free after the revert to `fresh-install` | 101 |
+| T = (25 + h) + M0–M7 + R section | 84 |
+| **Projection = X′ − T** | **+17 (≥ 0)** |
+
+GO: run with prefix `o` at F′ `fb3554a`.
