@@ -1,0 +1,7 @@
+policy instance r2-live3-20261028T055917Z-1 threshold 10: HTTP 202
+[06:16:44] ts_policy_set: no threshold line after a payload of r2-live3-20261028T055917Z in ricxapp-trafficxapp-7c46768578-b85sb 20 s after instance r2-live3-20261028T055917Z-1 (attempt 1/3)
+policy instance r2-live3-20261028T055917Z-2 threshold 10: HTTP 202
+20:[INFO] Payload is {"operation":"CREATE","payload":"{\"threshold\":10}","policy_instance_id":"r2-live3-20261028T055917Z-1","policy_type_id":"20008"}
+31:[INFO] Setting Threshold for A1-P value: 10%
+33:[INFO] Payload is {"operation":"CREATE","payload":"{\"threshold\":10}","policy_instance_id":"r2-live3-20261028T055917Z-2","policy_type_id":"20008"}
+threshold logged after attempt 2

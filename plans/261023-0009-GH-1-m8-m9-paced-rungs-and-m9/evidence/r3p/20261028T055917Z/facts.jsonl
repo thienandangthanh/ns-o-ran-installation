@@ -1,0 +1,47 @@
+{"key":"mode","value":"c1"}
+{"key":"stage","value":""}
+{"key":"dev","value":false}
+{"key":"tCtlSeconds","value":30}
+{"key":"tCtlProvenance","value":"evidence/r0/20261023T065002Z calibration: L_max 12.919 ms over 10 complete trigger steps, T_ctl = max(30 s, ceil(20 x L_max)) = 30 s; host load 1.03 (20 CPUs), VM load 1.29; CPU hold released by the user 15:44 KST"}
+{"key":"wSeconds","value":1.0}
+{"key":"wProvenance","value":"evidence/r3p/20261028T042540Z calibration (gate-r3p --mode calibrate, harness f614311): R2's fixed-prediction block through the R3\u2032 prepare path, 25 complete one-control trigger steps, L_max 5.395 ms (= p99.9 by nearest rank at n = 25), W = max(1 s, 3 x L_max) = 1.0 s; 20 x L_max <= T_ctl"}
+{"key":"a1Threshold","value":10}
+{"key":"a1ThresholdProvenance","value":"scripts/gates/r2-scenario.json threshold 10 (n2 is a neighbour 5 % above serving, under it), set and reached in the R2 calibration evidence/r2/20261026T140350Z"}
+{"key":"substitution2Applied","value":true}
+{"key":"substitution3Applied","value":true}
+{"key":"outageThresholdDb","value":-1000}
+{"key":"outageThresholdProvenance","value":"substitution 1: the R0-config null-control run at the default -5 dB counted 5 LTE outage switches (evidence/r0/20261023T073520Z q2OutageSwitches 5; also 065002Z, 065551Z); gated runs use --outageThreshold=-1000"}
+{"key":"scenarioSha256","value":"7824c744034bb812c3f04808e9b6f1d93571521b447b357597b8e65bc47464f6"}
+{"key":"handoverTriggers","value":1}
+{"key":"vmLoadStart","value":" 05:59:20 up 48 min,  1 user,  load average: 0.13, 0.16, 0.11"}
+{"key":"a1PolicyTypeCreated","value":true}
+{"key":"xappImageIds","value":{"trafficxapp": "sha256:f521d56b24b41eed4137a0683b740e687f81e41c7d49ef68221879c59ab3d0d5", "stubqp": "sha256:3fc24e92157663284cbe7244ed757a25a93eb36d9bbbe5c7c98141682e4e8d40", "stubqpImage": "127.0.0.1:80/stubqp:07c6dc93df2f"}}
+{"key":"a1ThresholdAttempt_live1","value":2}
+{"key":"a1DeliveredAttempt_live1","value":1}
+{"key":"a1mediatorRestart_live1","value":{"fresh": true, "problems": []}}
+{"key":"a1ThresholdAttempt_live2","value":2}
+{"key":"a1DeliveredAttempt_live2","value":1}
+{"key":"a1mediatorRestart_live2","value":{"fresh": true, "problems": []}}
+{"key":"a1ThresholdAttempt_live3","value":2}
+{"key":"a1DeliveredAttempt_live3","value":1}
+{"key":"a1mediatorRestart_live3","value":{"fresh": true, "problems": []}}
+{"key":"rng2","value":{"ns3Exit": 0, "late": 0, "droppedNoSub": 0, "minSlackTGate": 9.999525}}
+{"key":"c1","value":{"liveRunsEqual": true, "replayEqual": true, "rngRun2Differs": true}}
+{"key":"equalsReference","value":true}
+{"key":"referenceDir","value":"plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/reference/r3p"}
+{"key":"kpmUeListMoved","value":{"1": true}}
+{"key":"c2","value":{"live1": {"agentLocal": 0, "answers": 1, "holds": true, "ledgerLines": 1}, "live2": {"agentLocal": 0, "answers": 1, "holds": true, "ledgerLines": 1}, "live3": {"agentLocal": 0, "answers": 1, "holds": true, "ledgerLines": 1}}}
+{"key":"c5","value":{"answerViaNodeId": true, "pairsByReqId": true, "perRun": {"live1": {"answerViaNodeId": true, "pairsByReqId": true}, "live2": {"answerViaNodeId": true, "pairsByReqId": true}, "live3": {"answerViaNodeId": true, "pairsByReqId": true}}}}
+{"key":"resetEvidence","value":{"live1": {"bucketAfter": ["d6a8a69b5108fc42"], "bucketBefore": ["ee05cfd3b74991c0"], "fresh": true, "podsAfter": {"ricxapp-hw-go": {"containerStartedAt": ["2026-10-28T06:05:38Z"], "name": "ricxapp-hw-go-c84579888-nnkcw", "startTime": "2026-10-28T06:05:37Z", "uid": "854c63ff-9e1c-45e1-b78a-d350d9759771"}, "ricxapp-kpimon-go": {"containerStartedAt": ["2026-10-28T06:05:38Z"], "name": "ricxapp-kpimon-go-85dc5fdf8b-w64n6", "startTime": "2026-10-28T06:05:37Z", "uid": "251d95f5-b991-43a5-a102-56f62602143c"}, "xapp-rc": {"containerStartedAt": ["2026-10-28T06:05:38Z"], "name": "ricxapp-rc-6db9dcd964-h7vh4", "startTime": "2026-10-28T06:05:37Z", "uid": "e6e182b9-da08-426d-a00f-ee41153c23ff"}}, "resetStartUtc": "2026-10-28T06:05:37Z"}, "live2": {"bucketAfter": ["caf199014f51569f"], "bucketBefore": ["d6a8a69b5108fc42"], "fresh": true, "podsAfter": {"ricxapp-hw-go": {"containerStartedAt": ["2026-10-28T06:09:50Z"], "name": "ricxapp-hw-go-c84579888-sws7r", "startTime": "2026-10-28T06:09:50Z", "uid": "04ffe974-c131-4ecd-a891-43b5f1c5c092"}, "ricxapp-kpimon-go": {"containerStartedAt": ["2026-10-28T06:09:50Z"], "name": "ricxapp-kpimon-go-85dc5fdf8b-zlk74", "startTime": "2026-10-28T06:09:50Z", "uid": "1d1eedda-0277-4711-b6ac-7a5cc460a7b6"}, "xapp-rc": {"containerStartedAt": ["2026-10-28T06:09:50Z"], "name": "ricxapp-rc-6db9dcd964-vwgml", "startTime": "2026-10-28T06:09:49Z", "uid": "c72deea5-497c-4e1f-8871-6631610be91a"}}, "resetStartUtc": "2026-10-28T06:09:49Z"}, "live3": {"bucketAfter": ["c839ff687e431875"], "bucketBefore": ["caf199014f51569f"], "fresh": true, "podsAfter": {"ricxapp-hw-go": {"containerStartedAt": ["2026-10-28T06:14:03Z"], "name": "ricxapp-hw-go-c84579888-xswfz", "startTime": "2026-10-28T06:14:02Z", "uid": "4e978bea-c4aa-4a23-80f8-831b7f4c7b04"}, "ricxapp-kpimon-go": {"containerStartedAt": ["2026-10-28T06:14:03Z"], "name": "ricxapp-kpimon-go-85dc5fdf8b-l7mzr", "startTime": "2026-10-28T06:14:02Z", "uid": "cf957ed2-afbb-4da4-a484-501c719c1d7a"}, "xapp-rc": {"containerStartedAt": ["2026-10-28T06:14:03Z"], "name": "ricxapp-rc-6db9dcd964-9ccxg", "startTime": "2026-10-28T06:14:02Z", "uid": "0a9fe115-5af7-4b76-9bea-868b75dbbdeb"}}, "resetStartUtc": "2026-10-28T06:14:02Z"}}}
+{"key":"predictorDrivenApplied","value":{"live1": 1, "live2": 1, "live3": 1}}
+{"key":"observationChange","value":{"live1": {"h1": "none", "n1": "handover"}, "live2": {"h1": "none", "n1": "handover"}, "live3": {"h1": "none", "n1": "handover"}}}
+{"key":"minSlack","value":{"T_start": 119.999604, "T_gate": 9.992046, "T_ctl": 29.99216, "W": null}}
+{"key":"lControlLatencyS","value":[0.004522, 0.006196, 0.00784]}
+{"key":"ipcDropped","value":0}
+{"key":"droppedNoSub","value":0}
+{"key":"restartCountsAllZero","value":true}
+{"key":"restartCounts","value":{"live1/hw-go": 0, "live1/kpimon": 0, "live1/rc": 0, "live1/qp-stub": 0, "live1/ts-xapp": 0, "live1/agent-3": 0, "live1/agent-2": 0, "live1/agent-1": 0, "live2/hw-go": 0, "live2/kpimon": 0, "live2/rc": 0, "live2/qp-stub": 0, "live2/ts-xapp": 0, "live2/agent-3": 0, "live2/agent-2": 0, "live2/agent-1": 0, "live3/hw-go": 0, "live3/kpimon": 0, "live3/rc": 0, "live3/qp-stub": 0, "live3/ts-xapp": 0, "live3/agent-3": 0, "live3/agent-2": 0, "live3/agent-1": 0}}
+{"key":"routeOwner12041","value":{"live1": {"start": {"rtmgr": "service-ricxapp-kpimon-go-rmr.ricxapp:4560", "e2term": "service-ricxapp-hw-go-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-trafficxapp-rmr.ricxapp:4560", "e2term": "service-ricxapp-rc-rmr.ricxapp:4560"}}, "live2": {"start": {"rtmgr": "service-ricxapp-stubqp-rmr.ricxapp:4560", "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-stubqp-rmr.ricxapp:4560", "e2term": "service-ricxapp-trafficxapp-rmr.ricxapp:4560"}}, "live3": {"start": {"rtmgr": "service-ricxapp-hw-go-rmr.ricxapp:4560", "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-rc-rmr.ricxapp:4560", "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"}}}}
+{"key":"routeOwner12042","value":{"live1": {"start": {"rtmgr": "service-ricxapp-kpimon-go-rmr.ricxapp:4560", "e2term": "service-ricxapp-hw-go-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-trafficxapp-rmr.ricxapp:4560", "e2term": "service-ricxapp-rc-rmr.ricxapp:4560"}}, "live2": {"start": {"rtmgr": "service-ricxapp-stubqp-rmr.ricxapp:4560", "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-stubqp-rmr.ricxapp:4560", "e2term": "service-ricxapp-trafficxapp-rmr.ricxapp:4560"}}, "live3": {"start": {"rtmgr": "service-ricxapp-hw-go-rmr.ricxapp:4560", "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-rc-rmr.ricxapp:4560", "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"}}}}
+{"key":"tsOrStubHeldAckRoute","value":{"live1": true, "live2": true, "live3": true}}
+{"key":"vmLoadEnd","value":" 06:20:42 up  1:09,  2 users,  load average: 1.03, 0.93, 0.73"}

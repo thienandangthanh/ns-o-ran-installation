@@ -1,0 +1,30 @@
+{
+  "reference": "live1",
+  "components": [
+    "ledger",
+    "ipc",
+    "traces",
+    "extra"
+  ],
+  "runs": {
+    "live2": {
+      "equal": true,
+      "differing": [],
+      "detail": {},
+      "ipcDroppedMax": 0
+    },
+    "live3": {
+      "equal": true,
+      "differing": [],
+      "detail": {},
+      "ipcDroppedMax": 0
+    }
+  },
+  "ipcDroppedMaxAll": 0,
+  "overall": {
+    "live1": "1ad68acba38cac208b1f7f2a29201297a2d3512ea67c3cd9597387a7190892e6",
+    "live2": "1ad68acba38cac208b1f7f2a29201297a2d3512ea67c3cd9597387a7190892e6",
+    "live3": "1ad68acba38cac208b1f7f2a29201297a2d3512ea67c3cd9597387a7190892e6"
+  },
+  "all_equal": true
+}
