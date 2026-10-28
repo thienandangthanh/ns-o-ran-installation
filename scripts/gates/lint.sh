@@ -24,10 +24,22 @@ if grep -nE "(^|[;&|(]|\s)(timeout|nist_run|sudo|env|xargs)( +-[-a-zA-Z=0-9]+| +
 fi
 # Gate-id self-test: vm-exec.sh names evidence dirs and .last-<id> files by it.
 source scripts/vm/vm-common.sh
-ids=$(for s in gate-m5-agent-setup.sh gate-r0-rc-scripted.sh gate-s1-pacer-lockstep.sh gate-q7-qp-token-check.sh; do
-    gate_id "$s"; done | paste -sd' ')
+ids=$(for s in gate-m5-agent-setup.sh gate-r0-rc-scripted.sh gate-s1-pacer-lockstep.sh gate-q7-qp-token-check.sh \
+    gate-r3p-ts-predictor.sh; do gate_id "$s"; done | paste -sd' ')
 echo "gate ids: $ids"
-[ "$ids" = "m5 r0 s1 q7" ] || { echo "gate-id regex broken"; rc=1; }
+[ "$ids" = "m5 r0 s1 q7 r3p" ] || { echo "gate-id regex broken"; rc=1; }
+for s in scripts/gates/gate-*.sh; do
+    [[ "$(gate_id "$(basename "$s")")" =~ ^[a-z]+[0-9]+[a-z]?$ ]] || { echo "gate id of $s is not a short id"; rc=1; }
+done
+# the top rung's green snapshot is protected: r3p-green always, r2-green only once substitution 4 is recorded
+prot() { R3P_SUBST4_FILE="$1" bash scripts/vm/vm-snapshot.sh check-protected "$2"; }
+sub4=$(mktemp); nosub4="$sub4.absent"
+for want in "fresh-install $nosub4 protected" "f7-rerun-green $nosub4 protected" "r3p-green $nosub4 protected" \
+    "r2-green $nosub4 deletable" "r2-green $sub4 protected" "r0-green $sub4 deletable"; do
+    read -r n f w <<<"$want"
+    [ "$(prot "$f" "$n")" = "$w" ] || { echo "check-protected $n (substitution-4 file $([ -e "$f" ] && echo present || echo absent)) is not $w"; rc=1; }
+done
+rm -f "$sub4"
 python3 -I scripts/gates/pod-log-window.py --self-test || rc=1
 python3 -I scripts/gates/check-c9-handover-trace.py --self-test >/dev/null || { echo "c9 handover matcher self-test failed"; rc=1; }
 python3 -I scripts/gates/n4-drop-selftest.py >/dev/null || { echo "n4 UL-off drop self-test failed"; rc=1; }

@@ -9,8 +9,10 @@ VM_SSH="${VM_SSH:-oran-kvm-2404}"
 VM_IMAGE_DIR="${VM_IMAGE_DIR:-/home/andang/VMs}"
 # shellcheck disable=SC2034  # used by the scripts that source this file
 VM_PROTECTED_SNAPSHOT=fresh-install
-# Never deleted by any script (user snapshot rule, 2026-10-23 01:03 KST).
-VM_NEVER_DELETE=(fresh-install f7-rerun-green r3-green)
+# Never deleted by any script (user snapshot rule, 2026-10-23 01:03 KST; amendment A1: the top rung's green
+# snapshot is r3p-green, or r2-green once substitution 4 is recorded in R3P_SUBST4_FILE).
+VM_NEVER_DELETE=(fresh-install f7-rerun-green r3p-green)
+R3P_SUBST4_FILE="${R3P_SUBST4_FILE:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/scripts/gates/r3p-substitution4.json}"
 HOST_MIN_FREE_GB="${HOST_MIN_FREE_GB:-20}"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 # Default is the M0-M7 plan; run-to-m9.sh and the R-rung gates export the M8-M9
@@ -59,13 +61,15 @@ vm_start() {
     wait_ssh 300
 }
 
-# gate_id <gate-script>: gate-m5-agent-setup.sh -> m5, gate-r0-rc-scripted.sh -> r0.
-gate_id() { sed -E 's/^gate-([a-z]+[0-9]+).*/\1/' <<<"$1"; }
+# gate_id <gate-script>: gate-m5-agent-setup.sh -> m5, gate-r0-rc-scripted.sh -> r0, gate-r3p-ts-predictor.sh -> r3p.
+gate_id() { sed -E 's/^gate-([a-z]+[0-9]+[a-z]?)-.*/\1/' <<<"$1"; }
 
 # is_protected <snapshot>: true for the snapshots no script may delete.
 is_protected() {
     local s
     for s in "${VM_NEVER_DELETE[@]}"; do [ "$1" = "$s" ] && return 0; done
+    # substitution 4: R2 is the top rung, so its green snapshot is kept until M9 is green
+    [ "$1" = r2-green ] && [ -e "$R3P_SUBST4_FILE" ] && return 0
     return 1
 }
 

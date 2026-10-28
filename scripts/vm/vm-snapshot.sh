@@ -10,7 +10,7 @@
 # create: graceful shutdown -> snapshot-create-as --disk-only --atomic -> start
 #         -> wait for ssh. Refuses when host /home has < 20 GB + N free.
 # revert: graceful shutdown -> snapshot-revert -> start -> wait for ssh.
-# delete: refuses fresh-install, f7-rerun-green and r3-green before any virsh call.
+# delete: refuses fresh-install, f7-rerun-green, r3p-green and (under substitution 4) r2-green before any virsh call.
 
 source "$(dirname "$0")/vm-common.sh"
 
