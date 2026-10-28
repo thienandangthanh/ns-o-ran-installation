@@ -21,6 +21,8 @@
   driven SCHED LEDGER RD      predictorDrivenApplied: applied lines whose (imsi, rxSeq) is a scheduled handover
                               trigger and whose target is the predictor's argmax key; must be >= 1
   secrets RD TOKEN_FILE       no secret of the token file in RD/r3p (fails closed when the file cannot be read)
+  dry-ledger LEDGER [--h1 STAGE_A_CLASS]   dry run: stage A has no ledger line at all (absent file = none); stage B
+                              exactly one, h1's (via, imsi, targetCell, afterSeq = h1's step), applied, not late
   --self-test
 """
 import glob
@@ -50,7 +52,8 @@ def load(p):
 
 
 def ledger(p):
-    return [json.loads(l) for l in open(p) if l.strip()][1:]
+    """The ledger's lines after its header; ns-3 writes the file only with its first line, so absent = empty."""
+    return [json.loads(l) for l in open(p) if l.strip()][1:] if os.path.exists(p) else []
 
 
 def node_of(key):
@@ -257,9 +260,24 @@ def c_secrets(a):
                knownSecrets=len(secrets))
 
 
+def c_dry_ledger(a):
+    lines, probs = ledger(a[0]), []
+    if "--h1" not in a:
+        if lines:
+            probs.append("%d ledger line(s) in a run without any control: %r" % (len(lines), lines[:2]))
+        return out(probs, stage="a", lines=len(lines))
+    h1 = load(a[a.index("--h1") + 1])["h1"]
+    want = (h1["via"], h1["imsi"], h1["targetCell"], h1["step"])
+    if not os.path.exists(a[0]) or len(lines) != 1 or (lines[0]["viaNodeId"], lines[0]["imsi"], lines[0]["targetCell"],
+                                                       lines[0]["afterSeq"]) != want \
+            or lines[0]["outcome"] != "applied" or lines[0].get("cause") == "late":
+        probs.append("want exactly h1's applied line %r, got %r" % (want, lines[:3]))
+    return out(probs, stage="b", lines=len(lines))
+
+
 CMDS = {"expect": (c_expect, 2), "wire": (c_wire, 2), "stub": (c_stub, 3), "predictor": (c_predictor, 3),
         "influx-ipc": (c_influx_ipc, 2), "d7": (c_d7, 1), "observation": (c_observation, 3), "membership": (c_membership, 2),
-        "driven": (c_driven, 3), "secrets": (c_secrets, 2)}
+        "driven": (c_driven, 3), "secrets": (c_secrets, 2), "dry-ledger": (c_dry_ledger, 1)}
 
 if __name__ == "__main__":
     av = sys.argv[1:]

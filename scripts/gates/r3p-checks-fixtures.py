@@ -69,6 +69,9 @@ def build(d, P, sc, mut):
     (rd / "cell.csv").write_text("\n".join(hdr + [",,0,%d,%d,%s" % (n, s, "" if v is None else v) for n, s, v in rows]) + "\n")
     (d / "sched.json").write_text(json.dumps(SCHED))
     (d / "tok.json").write_text(json.dumps({"token": "t" * 40}))
+    (d / "stage-a.json").write_text(json.dumps({"h1": SCHED["triggers"][1]}))
+    if mut.get("noledger"):
+        (rd / "ledger.jsonl").unlink()
     if mut.get("leak"):
         (rd / "r3p" / "leak.txt").write_text("x" + "t" * 40)
     if mut.get("flat"):
@@ -109,6 +112,16 @@ CASES = [
     ("driven: no applied handover", "driven", False, {"noapply": True}),
     ("secrets: pass", "secrets", True, {}),
     ("secrets: a token in the predictor dir", "secrets", False, {"leak": True}),
+    ("dry-ledger stage A: no ledger file (no control) passes", "dry-ledger-a", True, {"noledger": True}),
+    ("dry-ledger stage A: a header-only ledger passes", "dry-ledger-a", True, {"noapply": True}),
+    ("dry-ledger stage A: any ledger line fails", "dry-ledger-a", False, {}),
+    ("dry-ledger stage B: exactly h1's applied line passes", "dry-ledger-b", True, {}),
+    ("dry-ledger stage B: no ledger file fails", "dry-ledger-b", False, {"noledger": True}),
+    ("dry-ledger stage B: h1's line via the wrong gNB fails", "dry-ledger-b", False, {"via": 3}),
+    ("dry-ledger stage B: an extra line fails", "dry-ledger-b", False, {"extra_ledger": [{"viaNodeId": 3, "imsi": 3, "targetCell": 3, "afterSeq": 40, "rxSeq": 40, "outcome": "refused", "cause": "late"}]}),
+    ("expect: no ledger at all with a scheduled handover fails", "expect", False, {"noledger": True}),
+    ("d7: no ledger at all fails", "d7", False, {"noledger": True}),
+    ("driven: no ledger at all fails", "driven", False, {"noledger": True}),
 ]
 
 
@@ -118,7 +131,8 @@ def argv(judge, d, rd):
             "stub": [s, str(rd), str(rd / "tx.jsonl")], "predictor": [sc, s, str(rd)],
             "influx-ipc": [sc, str(rd), "--cell-csv", str(rd / "cell.csv")], "d7": [str(rd / "ledger.jsonl")],
             "observation": [sc, s, str(rd)], "membership": [s, str(rd)], "driven": [s, str(rd / "ledger.jsonl"), str(rd)],
-            "secrets": [str(rd), str(d / "tok.json")]}[judge]
+            "secrets": [str(rd), str(d / "tok.json")], "dry-ledger-a": [str(rd / "ledger.jsonl")],
+            "dry-ledger-b": [str(rd / "ledger.jsonl"), "--h1", str(d / "stage-a.json")]}[judge]
 
 
 def self_test(C):
@@ -130,7 +144,7 @@ def self_test(C):
             rd = build(d, C.P, sc, mut)
             buf = io.StringIO()
             with contextlib.redirect_stdout(buf):
-                got = C.CMDS[judge][0](argv(judge, d, rd)) == 0
+                got = C.CMDS[judge.replace("-a", "").replace("-b", "") if judge.startswith("dry-") else judge][0](argv(judge, d, rd)) == 0
         bad += got != want
         print(("ok   " if got == want else "FAIL ") + name + ("" if got == want else ": " + buf.getvalue()[:300]))
     print("r3p checks self-test: %s" % ("ok" if not bad else "%d failure(s)" % bad))

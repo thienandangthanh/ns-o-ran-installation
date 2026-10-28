@@ -156,9 +156,12 @@ if [ "$MODE" = dryrun ]; then
     check "r3p_${label}_influx_equals_ipc_full" python3 -I "$CHK" influx-ipc "$SCEN" "$rd"
     check "r3p_${label}_agents_stopped" agents_stop
     check "r3p_${label}_handover_rows_match_ledger" python3 -I "$G/check-c9-handover-trace.py" "$rd"
-    want_applied=0; [ "$STAGE" = b ] && want_applied=1
-    applied_n() { local n; n=$(grep -c '"outcome":"applied"' "$rd/trace/e2-control-ledger.jsonl"); echo "applied $n (want $want_applied)"; [ "$n" = "$want_applied" ]; }
-    check "r3p_${label}_applied_controls_${want_applied}" applied_n
+    # stage A: no ledger line at all (ns-3 writes no ledger without a control); stage B: exactly h1's applied line
+    if [ "$STAGE" = b ]; then
+        check "r3p_${label}_ledger_exactly_h1_applied" python3 -I "$CHK" dry-ledger "$rd/trace/e2-control-ledger.jsonl" --h1 "$STAGE_A"
+    else
+        check "r3p_${label}_ledger_no_control" python3 -I "$CHK" dry-ledger "$rd/trace/e2-control-ledger.jsonl"
+    fi
     check "r3p_${label}_no_token_in_the_predictor_dir" python3 -I "$CHK" secrets "$rd" "$TOKEN_FILE"
     # the stage is clean iff every check of this run passed; the classifier never drops a candidate
     python3 -I - "$CHECKS_FILE" "r3p_${label}_" "$rd/r3p-stage.json" <<'PY'
@@ -170,7 +173,9 @@ PY
         local rc
         if [ "$STAGE" = a ]; then python3 -I "$G/r3p-dry-run-classifier.py" stage-a "$SCEN" "$rd" "$e/r3p-stage-a-class.json"; rc=$?
         else python3 -I "$G/r3p-dry-run-classifier.py" stage-b "$SCEN" "$STAGE_A" "$rd" "$e/r3p-schedule.json" "$e/r3p-stage-b-class.json"; rc=$?; fi
-        [ "$rc" != 1 ]   # invalid fails the gate; formed, a schedule, substitution 4 and T3 are classifications
+        # formed or a schedule (0), substitution 4 (4) and T3 (3) are classifications; invalid (1), a usage error or a
+        # killed classifier fail the gate, and so does a missing class file
+        case "$rc" in 0|3|4) [ -s "$e/r3p-stage-$STAGE-class.json" ] ;; *) return 1 ;; esac
     }
     check "r3p_${label}_classified_valid" classify
     fact dryRunClass "$(cat "$e/r3p-stage-$STAGE-class.json" 2>/dev/null || echo null)"
