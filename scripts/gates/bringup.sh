@@ -118,7 +118,8 @@ _bringup_ric() {
             if [ -z "$missing" ]; then
                 kc get pods -A -o wide >"$EVIDENCE_DIR/bringup-pods-wide-$tag.txt" 2>&1
                 log "bringup ric: all ricplt pods Ready"
-                _wait_e2t_registered
+                _wait_e2t_registered || return 1
+                _ric_route_readers_ready
                 return
             fi
             log "bringup ric: pods missing:$missing"
@@ -194,6 +195,110 @@ _wait_e2t_registered() {
         fi
         sleep 5
     done
+}
+
+RT_READER_WAIT_S="${RT_READER_WAIT_S:-120}"
+RT_READER_SAMPLES="${RT_READER_SAMPLES:-5}"
+# ric_pod <component>: the Running ricplt pod whose name contains <component> (e.g. e2mgr, rtmgr).
+ric_pod() { kc -n ricplt get pods --no-headers | awk -v c="ricplt-$1-" 'index($1, c) && $3 == "Running" { print $1 }' | head -n 1; }
+
+# ric_restart_rtmgr: delete rtmgr's pod and wait for the new one. rtmgr only opens a connection to an
+# endpoint the first time it sees it, and never reconnects to a replaced pod, so it restarts after them.
+ric_restart_rtmgr() {
+    local old name deadline
+    old=$(kc -n ricplt get pods --no-headers | awk '/rtmgr/ { print $1 }' | head -n 1)
+    [ -n "$old" ] || { echo "no rtmgr pod"; return 1; }
+    kc -n ricplt delete pod "$old" --wait=true >/dev/null || return 1
+    deadline=$(($(date +%s) + 180))
+    while [ "$(date +%s)" -lt "$deadline" ]; do
+        name=$(kc -n ricplt get pods --no-headers | awk '/rtmgr/ && $2 == "1/1" && $3 == "Running" { print $1 }' | head -n 1)
+        [ -n "$name" ] && [ "$name" != "$old" ] && { echo "rtmgr $old -> $name"; sleep 5; return 0; }
+        sleep 3
+    done
+    echo "rtmgr did not come back"; return 1
+}
+
+# rt_reader_ok <e2mgr|submgr> <tag>: the component's RMR route-table reader drains what rtmgr sends it.
+# After a cold boot (2026-10-28, M9 attempt 3, m6) the readers in e2mgr and submgr stopped reading: the
+# session from rtmgr stayed ESTABLISHED with ~126 KB unread, so neither a session check nor rtmgr's own
+# "successful" log line shows it, and e2mgr had no route for the E2 Setup Response. Pass: an ESTABLISHED
+# socket on local port 4561 exists (bounded wait), and every such socket shows rx_queue 0 in at least one
+# of RT_READER_SAMPLES samples 2 s apart (a live reader drains each push at once). Rows go to rt-readers-<tag>.txt.
+rt_reader_ok() {
+    local comp="$1" tag="$2" pod deadline i out="$EVIDENCE_DIR/rt-readers-$2.txt" samples
+    pod=$(ric_pod "$comp")
+    [ -n "$pod" ] || { echo "rt reader $comp: no Running pod" | tee -a "$out"; return 1; }
+    deadline=$(($(date +%s) + RT_READER_WAIT_S))
+    until kc -n ricplt exec "$pod" -- cat /proc/net/tcp /proc/net/tcp6 2>/dev/null | awk '$2 ~ /:11D1$/ && $4 == "01" { f = 1 } END { exit !f }'; do
+        [ "$(date +%s)" -lt "$deadline" ] || { echo "rt reader $comp $pod: no ESTABLISHED socket on :4561 within ${RT_READER_WAIT_S}s" | tee -a "$out"; return 1; }
+        sleep 3
+    done
+    samples=$(for ((i = 1; i <= RT_READER_SAMPLES; i++)); do
+        echo "sample $i"; kc -n ricplt exec "$pod" -- cat /proc/net/tcp /proc/net/tcp6 2>/dev/null
+        [ "$i" -lt "$RT_READER_SAMPLES" ] && sleep 2
+    done)
+    echo "$samples" | python3 -I -c '
+import sys
+comp, pod = sys.argv[1], sys.argv[2]
+seen, drained, last, n = {}, set(), set(), 0
+for line in sys.stdin:
+    f = line.split()
+    if f[:1] == ["sample"]:
+        n += 1; last = set(); continue
+    if len(f) < 5 or not f[1].endswith(":11D1") or f[3] != "01":
+        continue
+    rx = int(f[4].split(":")[1], 16)
+    seen.setdefault(f[2], []).append(rx); last.add(f[2])
+    if rx == 0:
+        drained.add(f[2])
+stuck = sorted(r for r in last if r not in drained)
+for r in sorted(seen):
+    print("rt reader %s %s: peer %s rx_queue %s" % (comp, pod, r, seen[r]))
+print("rt reader %s %s: %s (%d samples, %d sockets now, stuck %s)" % (comp, pod, "OK" if last and not stuck else "STUCK", n, len(last), stuck))
+sys.exit(0 if last and not stuck else 1)' "$comp" "$pod" | tee -a "$out" | tail -n 1
+    return "${PIPESTATUS[1]}"
+}
+
+# ric_refresh_routes <ric|agents>: replace e2mgr and submgr (pod delete, not a rollout, so two copies never
+# share the SDL), wait for e2term's registration, restart rtmgr last, then require both readers OK. Bounded
+# and logged; at most once per level in a gate run (atomic marker). rNIB lives in dbaas, which stays.
+ric_refresh_routes() {
+    local level="$1" e="$EVIDENCE_DIR" tag c old new deadline
+    tag="refresh-$level-$(date -u +%H%M%S)"
+    mkdir "$e/.ric-refresh-$level" 2>/dev/null || { log "ric refresh ($level): already used once in this gate run"; return 1; }
+    log "ric refresh ($level): replacing e2mgr and submgr, then rtmgr"
+    echo "$(date -u +%FT%TZ) ric refresh ($level) started" >>"$e/watchdog.log"
+    for c in rtmgr e2mgr submgr; do
+        kc -n ricplt exec "$(ric_pod $c)" -- cat /proc/net/tcp /proc/net/tcp6 >"$e/$tag-tcp-$c.txt" 2>&1
+    done
+    e2mgr_get e2t/list >"$e/$tag-e2t-list.json"
+    for c in e2mgr submgr; do
+        old=$(ric_pod "$c")
+        kc -n ricplt logs "$old" --since=5m --timestamps >"$e/$tag-$c-before.log" 2>&1
+        if [ -z "$old" ] || ! kc -n ricplt delete pod "$old" --wait=true >/dev/null; then log "ric refresh: delete $c failed"; return 1; fi
+        deadline=$(($(date +%s) + 180))
+        while :; do
+            new=$(kc -n ricplt get pods --no-headers | awk -v c="ricplt-$c-" 'index($1, c) && $2 == "1/1" && $3 == "Running" { print $1 }' | head -n 1)
+            [ -n "$new" ] && [ "$new" != "$old" ] && { log "ric refresh: $c $old -> $new"; break; }
+            [ "$(date +%s)" -lt "$deadline" ] || { log "ric refresh: $c did not come back within 180s"; return 1; }
+            sleep 3
+        done
+    done
+    _wait_e2t_registered || return 1
+    ric_restart_rtmgr | while read -r l; do log "ric refresh: $l"; done
+    [ "${PIPESTATUS[0]}" -eq 0 ] || return 1
+    if ! { rt_reader_ok e2mgr "$tag" && rt_reader_ok submgr "$tag"; }; then log "ric refresh ($level): a reader is still stuck"; return 1; fi
+    echo "$(date -u +%FT%TZ) ric refresh ($level) done, readers OK" >>"$e/watchdog.log"
+    sleep "$E2T_SETTLE_S"
+}
+
+# _ric_route_readers_ready: read-only check on every RIC bring-up; the refresh runs only when a reader is stuck.
+_ric_route_readers_ready() {
+    local tag
+    tag="ric-$(date -u +%H%M%S)"
+    rt_reader_ok e2mgr "$tag" && rt_reader_ok submgr "$tag" && return 0
+    log "bringup ric: an RMR route-table reader is stuck"
+    ric_refresh_routes ric
 }
 
 REFNODE_ATTEMPTS="${REFNODE_ATTEMPTS:-3}"

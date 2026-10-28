@@ -126,19 +126,7 @@ rc_at_pin() {
     [ "$(git -C "$RIC_DIR/xApps/rc" rev-parse HEAD)" = "$RC_SHA" ] && rc_ready
 }
 
-rc_restart_rtmgr() {
-    local old name deadline
-    old=$(kc -n ricplt get pods --no-headers | awk '/rtmgr/ { print $1 }' | head -n 1)
-    [ -n "$old" ] || { echo "no rtmgr pod"; return 1; }
-    kc -n ricplt delete pod "$old" --wait=true >/dev/null || return 1
-    deadline=$(($(date +%s) + 180))
-    while [ "$(date +%s)" -lt "$deadline" ]; do
-        name=$(kc -n ricplt get pods --no-headers | awk '/rtmgr/ && $2 == "1/1" && $3 == "Running" { print $1 }' | head -n 1)
-        [ -n "$name" ] && [ "$name" != "$old" ] && { echo "rtmgr $old -> $name"; sleep 5; return 0; }
-        sleep 3
-    done
-    echo "rtmgr did not come back"; return 1
-}
+rc_restart_rtmgr() { ric_restart_rtmgr; }   # defined in bringup.sh (one definition)
 
 rc_route_dump() {
     local p="$1" e="$EVIDENCE_DIR" ip pod

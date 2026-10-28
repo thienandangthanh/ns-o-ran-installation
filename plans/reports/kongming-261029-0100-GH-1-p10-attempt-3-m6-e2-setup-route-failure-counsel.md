@@ -212,3 +212,87 @@ These are read-only. Save them into `…/m6-diagnosis/live-<UTC>/`.
 Status: DONE_WITH_CONCERNS
 Summary: root cause = cold-boot L-release rtmgr route distribution never reached e2mgr/submgr (AddE2T 400s are normal, not causal); guided fix F″ = once-per-boot rtmgr refresh + agent READY precondition with one remedy, validated on the live broken VM, then attempt 4 with prefix q; T5 only if no restart cures it.
 Concerns: F″ changes VM bring-up code after the freeze (mitigated by live validation, not a rehearsal); remedy efficacy is unproven until the validation run.
+
+## Addendum after the §4 capture (2026-10-29 ~01:40 KST)
+Source: `evidence/m9/20261028T134954Z/m6-diagnosis/live-20261028T161753Z/`. I decoded `tcp-*.txt` myself and confirm the caller's reading.
+
+**Facts from the capture**
+- **e2mgr is not reading its route-table socket.** Its `:4561 <- 10.244.0.105:59314` socket is ESTABLISHED with rx_queue 126,454.
+- **submgr is not reading either.** Its `:4561 <- 10.244.0.105:46316` socket has rx_queue 126,145.
+- **rtmgr is blocked on exactly those two sessions.** Its tx_queue is 60,410 towards the e2mgr VIP and 59,149 towards the submgr pod IP. Every other :4561 session has tx_queue 0. Retransmits are 0.
+- **The transport is healthy.** The RMR route-table collector inside e2mgr and inside submgr stopped reading.
+- **The first push was never acked.** Call 1 (15:41:24–25) got an empty status from both e2mgr and submgr. The "OK" on call 2 is the cross-matched ack described in §1.4.
+- **What follows for F″ as first written:**
+  - `rtmgr_sessions` cannot detect this state; it would pass now.
+  - Restarting rtmgr alone probably cannot cure it, because a wedged collector would not read a new connection either.
+
+**Trigger (speculation; the mechanism is unknown).** Both collectors started 23 s before rtmgr existed, during a cold boot. This is not the R-gates' pattern. There, xApp receivers are replaced while the old rtmgr is up and rtmgr is restarted afterwards, and that has stayed healthy across every R-run.
+
+### Adjusted F″ (replaces §2's items 1–2)
+**Detection predicate: receiver-side, transport-level, no logs.** A new helper, `rt_reader_ok <e2mgr|submgr>`:
+1. Read `kubectl -n ricplt exec <pod> -- cat /proc/net/tcp /proc/net/tcp6`. `ss` may be missing from the image; `cat` is proven to work.
+2. Wait up to 120 s until at least one socket has local port `:11D1` and state `01`.
+3. Take up to 5 samples, 2 s apart. The receiver is OK when every such socket shows rx_queue `0` in at least one sample.
+4. Why this discriminates:
+   - A healthy collector drains the ~4 KB pushes immediately.
+   - A wedged one only accumulates (126 KB here).
+   - "No ESTABLISHED socket" also catches the P3 stale-wormhole class (rtmgr still holding a replaced pod).
+5. Log the decoded rows to `$EVIDENCE_DIR/rt-readers-<tag>.txt`.
+
+**Refresh sequence: `ric_refresh_routes`, in `bringup.sh`.**
+- Bounded and logged to the gate log and `watchdog.log`. At most one RIC-level and one agent-level use per gate run, guarded by `mkdir` markers in `$EVIDENCE_DIR`.
+1. Save evidence: the three `/proc/net/tcp` dumps, the `e2t/list` output, and `logs --since=5m` for e2mgr and submgr.
+2. Delete the e2mgr and submgr pods together.
+   - Use `kc -n ricplt delete pod <e2mgr> <submgr> --wait=true`.
+   - Use `delete pod`, never `rollout restart`: a surge would briefly run two e2mgr or two submgr against the same SDL.
+   - Wait for each new pod to be Running 1/1, bound 180 s each.
+3. Run `_wait_e2t_registered`. The E2T instance lives in rNIB (dbaas), and dbaas is not restarted, so this should pass immediately. The NIST e2term roll still applies after 300 s.
+4. Restart rtmgr last, with the moved `rc_restart_rtmgr` logic. rtmgr must restart after the receivers for two reasons:
+   - its wormholes to the old e2mgr VIP backend and the old submgr pod IP would otherwise stay stale (P3);
+   - its startup fetch should read the E2T list from the new e2mgr.
+5. Apply `rt_reader_ok` to both receivers, then settle for `E2T_SETTLE_S`. If it still fails, `return 1`.
+
+**Hooks**
+1. **`_bringup_ric`, after `_wait_e2t_registered` (`bringup.sh:121`).** Run `rt_reader_ok` for e2mgr and submgr on every call; it is read-only and takes ~5–15 s. Only if it fails, run `ric_refresh_routes`.
+   - The boot-id marker and the unconditional rtmgr restart from §2 item 1 are dropped.
+   - This also covers m1 (fresh install), m2 and m3 (refnode), and the R-gates. In the R-gates the check runs after `rc_ric_reset`, because `agents_bringup` calls `_bringup_ric` first.
+2. **`agents_bringup`, after `_agents_wait_connected_exact` (`agents.sh:198`).** Keep the READY predicate (`state == READY` and `e2.setups >= 1`, bound 60 s). On timeout, the one remedy is:
+   1. stop the agents;
+   2. run `ric_refresh_routes --force` (it ignores only the RIC-level marker);
+   3. start the agents again;
+   4. check the CONNECTED set, then READY.
+
+**Side effects, checked against the capture and the earlier logs**
+- **nodeb and CONNECTED state.** The RIC-level refresh runs before any agent of the gate. After a reboot, dbaas is empty (e2mgr returned "0 identity" at 15:45:08), so there is no RAN state to lose. Replacing e2mgr keeps the rNIB contents (nodebs, E2T instance). The exact CONNECTED-set check counts only CONNECTED nodes, so stale DISCONNECTED records do not matter; the R-runs already rely on this.
+- **submgr and subscriptions.** submgr restores its subscriptions from SDL. Before agents exist there is nothing to break. kpimon re-subscribes on every reconnect ("it will be subscribed again after reconnecting", m6 kpimon log). Neither e2term nor kpimon had an open RMR connection to submgr (`open=0` in their `sends:` lines), so the headless pod-IP change cannot strand a sender.
+- **Residual risk: e2term's existing connection to the e2mgr VIP:3801 (`open=1`) goes stale when e2mgr is replaced.**
+  - Prediction from the 2026-10-24 IPVS note: a local RST, at most one lost message, then a re-dial.
+  - The lost message could be one E2 Setup Request (the agent retries every ~18 s, inside the 60 s READY bound) or one keep-alive reply (keep-alives run every 120 s; the response timeout is far longer).
+  - The validation run tests exactly this.
+- **Budget.**
+  - Green path: about +5–15 s per bring-up.
+  - Remedy path: typically ~2–3 min, at worst ~8 min.
+  - m6 (1088 s budget, ~8 min observed) fits one remedy. m5 and m7 have ample room. No budget or timeout change.
+- **Untouched:** no judged check, runner, verdict, pins, budget, `tools/` or `reference/` changes. No rtmgr, e2mgr or e2term code or config changes, only pod restarts.
+
+**Validation gate: still stands, and it is stronger now.** The live VM is in the exact wedged state. Push F″, then run `gate-m6-kpm.sh` at F″ on it. Expected:
+1. `rt_reader_ok` reports rx ≈ 126 KB for e2mgr and submgr, i.e. wedged.
+2. One refresh: e2mgr and submgr replaced, the E2T still listed, then rtmgr restarted.
+3. Both receivers show rx 0.
+4. The agent reaches READY.
+5. m6 is green.
+6. Check afterwards, by hand and not in code: e2mgr's `sends:` targets include `10.98.86.163:38000`, and submgr's include the E2T and kpimon.
+
+**Off-ramp.** If any of these happen, the root cause is recorded but no in-contract remedy exists, so PAUSE T5 and stop iterating:
+- the post-refresh `rt_reader_ok` fails;
+- READY never comes;
+- the new collectors wedge again.
+
+### Corrections to earlier sections
+- **§2:** replace "sessions" with `rt_reader_ok` everywhere.
+- **§4:** the capture is done.
+- **Success metrics:** add that every exposed gate's log shows `rt_reader_ok` passing for e2mgr and submgr, or one logged refresh that ends with it passing.
+- **What to avoid:** add "detecting with `rtmgr_sessions` or rtmgr tx success", and "restarting rtmgr alone as the cure".
+
+Status: DONE_WITH_CONCERNS
+Summary: The capture shows wedged route-table collectors in e2mgr and submgr. F″ now detects them by receiver rx_queue on :4561 and remedies by replacing e2mgr and submgr, then restarting rtmgr last. Run the check on every `_bringup_ric` call and keep the agent READY backstop. Validate on the live wedged VM; PAUSE T5 if that does not cure it.

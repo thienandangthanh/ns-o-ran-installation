@@ -195,7 +195,41 @@ agents_bringup() {
     nist_run 600 "$AGENT_DIR/install_scripts/run_ns3_e2_agents.sh" --nodes "$nodes" "${@:2}" >"$EVIDENCE_DIR/run-agents.log" 2>&1 || {
         tail -n 20 "$EVIDENCE_DIR/run-agents.log"; return 1; }
     cp "$AGENT_DIR/run/agents.json" "$EVIDENCE_DIR/agents.json"
-    _agents_wait_connected_exact
+    _agents_wait_connected_exact || return 1
+    _agents_wait_ready && return 0
+    # One remedy: e2mgr marks a node CONNECTED before it sends the E2 Setup Response, so the exact set can pass
+    # while no response route exists (see rt_reader_ok). Stop the agents, refresh the routes, start them again.
+    log "bringup agents: an agent is not READY within ${AGENTS_SETUP_WAIT_S}s; one remedy: stop, refresh routes, restart"
+    { agents_stats_all; e2mgr_states; echo; } >>"$EVIDENCE_DIR/agents-ready-remedy.txt" 2>&1
+    agents_stop || return 1
+    ric_refresh_routes agents || return 1
+    nist_run 600 "$AGENT_DIR/install_scripts/run_ns3_e2_agents.sh" --nodes "$nodes" "${@:2}" >>"$EVIDENCE_DIR/run-agents.log" 2>&1 || {
+        tail -n 20 "$EVIDENCE_DIR/run-agents.log"; return 1; }
+    cp "$AGENT_DIR/run/agents.json" "$EVIDENCE_DIR/agents.json"
+    _agents_wait_connected_exact && _agents_wait_ready
+}
+
+AGENTS_SETUP_WAIT_S="${AGENTS_SETUP_WAIT_S:-60}"
+# _agents_wait_ready: every agent's last stats line shows state READY and e2.setups >= 1 (bounded), the
+# predicate m5's agent_ready and the rungs' all_subscribed already trust. The agent prints stats every 5 s.
+_agents_wait_ready() {
+    local deadline=$(($(date +%s) + AGENTS_SETUP_WAIT_S)) c bad
+    while :; do
+        bad=""
+        for c in $(dk ps -q --filter label=ns3e2.agent=1); do
+            agents_stats_last "$c" | python3 -I -c '
+import json, sys
+try:
+    s = json.loads(sys.stdin.read())
+except Exception:
+    sys.exit(1)
+sys.exit(0 if s.get("state") == "READY" and s.get("e2", {}).get("setups", 0) >= 1 else 1)' || bad="$bad $c"
+        done
+        [ -n "$(dk ps -q --filter label=ns3e2.agent=1)" ] && [ -z "$bad" ] && {
+            log "bringup agents: every agent READY with an E2 setup: $(agents_stats_all | tr '\n' ';')"; return 0; }
+        [ "$(date +%s)" -lt "$deadline" ] || { log "bringup agents: not READY:$bad"; return 1; }
+        sleep 3
+    done
 }
 
 agents_stop() {
