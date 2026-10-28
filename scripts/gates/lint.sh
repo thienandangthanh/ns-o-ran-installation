@@ -93,16 +93,23 @@ rm -rf "$EVIDENCE_DIR"
 # nothing to scan (no token file and no InfluxDB pod); the exporters copy nothing after a failed scrub
 tmp=$(mktemp -d); mkdir -p "$tmp/ric" "$tmp/ev" "$tmp/kc" "$tmp/nokc"
 ln -s "$(command -v python3)" "$tmp/nokc/python3"; ln -s "$(command -v grep)" "$tmp/nokc/grep"
-tok="tok$(printf 'x%.0s' $(seq 40))"
+tok="tok$(printf 'x%.0s' $(seq 85))" adm="adm$(printf 'y%.0s' $(seq 29))"
 scrub() { NIST_RIC_DIR="$tmp/ric" PATH="$1" "$BASH" scripts/gates/scrub-evidence.sh "$2" >/dev/null 2>&1; }
-kc() { printf '#!/bin/sh\n%s\n' "$1" >"$tmp/kc/kubectl"; chmod +x "$tmp/kc/kubectl"; }
-printf '{"token": "%s"}' "$tok" >"$tmp/ric/influxdb_auth_token.json"; echo "x $tok y" >"$tmp/ev/log.txt"
+# fake kubectl: `get pods` prints $1, `exec` prints $2 (the pod's admin token)
+kc() { printf '#!/bin/sh\ncase "$1" in get) %s ;; exec) %s ;; esac\n' "$1" "${2:-exit 1}" >"$tmp/kc/kubectl"; chmod +x "$tmp/kc/kubectl"; }
+printf '{"token": "%s"}' "$tok" >"$tmp/ric/influxdb_auth_token.json"; echo "x $tok y $adm z" >"$tmp/ev/log.txt"
+kc 'echo "ricplt r4-influxdb-influxdb2-0 1/1 Running 0 1d"' "printf %s $adm"
+scrub "$tmp/kc:$PATH" "$tmp/ev" && ! grep -q "$tok" "$tmp/ev/log.txt" && ! grep -q "$adm" "$tmp/ev/log.txt" ||
+    { echo "scrub: the file token or the pod's admin token was not redacted"; rc=1; }
 kc 'echo "ricplt r4-influxdb-influxdb2-0 1/1 Running 0 1d"'
-scrub "$tmp/kc:$PATH" "$tmp/ev" && ! grep -q "$tok" "$tmp/ev/log.txt" || { echo "scrub: a readable token was not redacted"; rc=1; }
+scrub "$tmp/kc:$PATH" "$tmp/ev" && { echo "scrub: an unreadable admin token in a deployed InfluxDB pod passed"; rc=1; }
+kc 'echo "ricplt r4-influxdb-influxdb2-0 1/1 Running 0 1d"' "printf %s $adm"
 echo '{"token": ' >"$tmp/ric/influxdb_auth_token.json"
 scrub "$tmp/kc:$PATH" "$tmp/ev" && { echo "scrub: an unparseable token file passed"; rc=1; }
 echo '{"token": "short"}' >"$tmp/ric/influxdb_auth_token.json"
 scrub "$tmp/kc:$PATH" "$tmp/ev" && { echo "scrub: a token file without a secret passed"; rc=1; }
+printf '{"token": "%s"}' "${tok:0:40}" >"$tmp/ric/influxdb_auth_token.json"
+scrub "$tmp/kc:$PATH" "$tmp/ev" && { echo "scrub: a 40-character file token (not an Influx v2 token) passed"; rc=1; }
 if [ "$(id -u)" != 0 ]; then
     printf '{"token": "%s"}' "$tok" >"$tmp/ric/influxdb_auth_token.json"; chmod 000 "$tmp/ric/influxdb_auth_token.json"
     scrub "$tmp/kc:$PATH" "$tmp/ev" && { echo "scrub: an unreadable token file passed"; rc=1; }
