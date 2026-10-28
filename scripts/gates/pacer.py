@@ -25,6 +25,11 @@ Per `ready` k the pacer looks k up in the schedule:
     lines before the next one starts (rc sends every control in its own goroutine, so two quick calls
     could reach the agent in either order and swap its ctlIds); each control's L is measured from its
     own command's start, each within T_ctl.
+  - "prepare": {"cmd", "timeoutS" (default 30), "mayFail"} (optional, with or without a trigger): after any
+    "inject", wait for `steps` k, then run the command before the trigger's t0, so its wall time never counts
+    toward L or W (the R3′ Influx certification, predictor and stub load). A non-zero exit or a timeout aborts
+    the run naming "prepare"; with "mayFail" it is recorded (prepareRc, prepareWallS) and the step goes on.
+    An entry with only "prepare" is followed by `go` k.
 At `stopping` it sends the schedule's "late" controls (forced-late case: ns-3
 answers them refused/late), runs the schedule's "stopTrigger" if any, and then
 endAck. "stopTrigger": {"cmd", "confirm", "timeoutS"} sends a control after the
@@ -222,6 +227,30 @@ class Pacer:
         self.send({"type": "go", "seq": seq})
         return False
 
+    def run_prepare(self, seq, rec, prep):
+        """Waits for `steps` seq, then runs the prepare command before any trigger's t0, so its wall time
+        never counts toward L or W. Returns (run over, may continue); a failed or timed-out prepare
+        aborts the run unless "mayFail" (then it is recorded and the step goes on)."""
+        if self.wait_steps(seq, time.time() + self.t_ctl):
+            return True, False
+        if seq not in self.steps_in:
+            self.summary["steps"][str(seq)] = rec
+            self.abort("step %d: no `steps` from ns-3 within %s s" % (seq, self.t_ctl))
+            return False, False
+        self.note("pacer", {"type": "prepare", "seq": seq, "cmd": prep["cmd"]})
+        t0 = time.time()
+        try:
+            p = subprocess.run(prep["cmd"], capture_output=True, text=True, timeout=float(prep.get("timeoutS", 30)))
+            rec["prepareRc"], rec["prepareOut"] = p.returncode, (p.stdout + p.stderr)[-400:]
+        except subprocess.TimeoutExpired:
+            rec["prepareRc"], rec["prepareOut"] = None, "still running at its timeout %s s" % prep.get("timeoutS", 30)
+        rec["prepareWallS"] = round(time.time() - t0, 6)
+        if rec["prepareRc"] == 0 or prep.get("mayFail"):
+            return False, True
+        self.summary["steps"][str(seq)] = rec
+        self.abort("step %d: prepare failed (rc %s): %s" % (seq, rec["prepareRc"], rec["prepareOut"][-200:]))
+        return False, False
+
     def abort(self, reason):
         self.send({"type": "abort", "reason": reason})
         self.summary["pacerAbortReason"] = reason
@@ -246,6 +275,12 @@ class Pacer:
         for c in entry.get("inject", []):
             self.send(dict({"type": "control"}, **c))
         rec["injected"] = len(entry.get("inject", []))
+        if entry.get("prepare"):
+            over, ok = self.run_prepare(seq, rec, entry["prepare"])
+            if over:
+                return True
+            if not ok:
+                return False
         if entry.get("triggers"):
             return self.step_triggers(seq, rec, entry["triggers"])
         trig = entry.get("trigger")
