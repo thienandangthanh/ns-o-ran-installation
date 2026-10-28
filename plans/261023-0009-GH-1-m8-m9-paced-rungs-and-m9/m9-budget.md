@@ -125,3 +125,15 @@ Memory gate (user ruling 1): MemAvailable + qemu RSS = 28.02 GiB ≥ 23, PASS (`
 - Validation on the wedged VM: `vm-exec.sh gate-m6-kpm.sh --harness-sha F″` passed (`plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m6/20261028T164804Z`). e2mgr's reader was STUCK at 126,454 B, one `ric refresh (ric)` took 111 s, both new readers had rx_queue 0, the agent was READY with RestartCount 0, and no agent remedy ran. After the refresh, e2mgr's and submgr's RMR targets include the E2T `10.98.86.163:38000` and kpimon.
 - Expected cost: about +22–27 s per bring-up on the green path (about +6–8 min over M9), and about +2 min per refresh. This stays inside every step's timeout and the 20,199 s wall.
 - Attempt 4 uses prefix `q` at F″ (Failure Protocol: a fresh revert and a new prefix). The run report must list every `ric refresh` line in a gate's `watchdog.log` and every `agents-ready-remedy.txt` as a disclosed bring-up remedy.
+
+## Projection at attempt-4 start (2026-10-29 01:58 KST)
+
+Before the 16:56Z revert to `fresh-install`, `df -BG /home` read 62 GiB. The revert left the overlay of attempt 3 and the F″ validation behind. Leaked-overlay deletion (user ruling 2026-10-28 20:14 KST, checks 1–5 all PASS, `plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/p10-disk/20261028T165516Z/`): file `/home/andang/VMs/ubuntu24.1793195425`, size 41549758464 B (38.70 GiB), space freed 38.70 GiB; `df -BG /home` 62 → 101 GiB. The VM runs on `ubuntu24.1793206609` over `ubuntu24.04`, and `r3p-green` is listed.
+
+| Term | GiB |
+|---|---|
+| X′ = host `/home` free after the revert and the leaked-overlay deletion | 101 |
+| T = (25 + h) + M0–M7 + R section | 84 |
+| **Projection = X′ − T** | **+17 (≥ 0)** |
+
+Memory gate: 27.81 GiB ≥ 23, PASS (`plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/p10-disk/20261028T165516Z/memory-gate.txt`). GO: attempt 4 with prefix `q` at F″ `39b3ba2` through the unit `m9-q`.

@@ -1,0 +1,12 @@
+## check 4: no image depends on it (backingStore via vol-dumpxml)
+ubuntu24.04 -> backing: none
+ubuntu24.04-r0-green.qcow2 -> backing: /home/andang/VMs/ubuntu24.1792653312
+ubuntu24.04-r2-green.qcow2 -> backing: /home/andang/VMs/ubuntu24.04-r0-green.qcow2
+ubuntu24.1792618143 -> backing: /home/andang/VMs/ubuntu24.04
+ubuntu24.1792653312 -> backing: /home/andang/VMs/ubuntu24.1792618143
+ubuntu24.1793179273 -> backing: /home/andang/VMs/ubuntu24.04
+ubuntu24.1793186494 -> backing: /home/andang/VMs/ubuntu24.04
+ubuntu24.1793195253 -> backing: /home/andang/VMs/ubuntu24.04
+ubuntu24.1793195425 -> backing: /home/andang/VMs/ubuntu24.04
+ubuntu24.1793206609 -> backing: /home/andang/VMs/ubuntu24.04
+CHECK4 PASS

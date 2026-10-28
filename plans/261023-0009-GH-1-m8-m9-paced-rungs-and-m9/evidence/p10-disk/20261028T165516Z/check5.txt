@@ -1,0 +1,8 @@
+## check 5: nothing has it open, not written since its run stopped, evidence archived
+now: 2026-10-29T01:57:13+09:00
+mtime 2026-10-29 01:56:46.685422450 +0900 size 41549758464 owner root
+VM: running, active vda: /home/andang/VMs/ubuntu24.1793206609
+qemu pid 260986 started Thu Oct 29 01:56:49 2026; cmdline references ubuntu24.1793195425: 0; images in cmdline: ubuntu24.04 ubuntu24.1793206609 
+user-visible fds on it: 0
+its runs: M9 attempt 3 (evidence/m9/20261028T134954Z, committed aee6eb3/ac74c95) and the F″ validation m6 (plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/m6/20261028T164804Z, committed a8a52c9); the previous qemu that held it was shut down by the 16:55:16Z graceful shutdown in revert.log; mtime 01:56 KST = the shutdown
+CHECK5 PASS
