@@ -46,7 +46,8 @@ EPOCH_MS=$(python3 -I "$CFG" get scenario.simStartEpochMs)
 THRESH=$(python3 -I "$CFG" get scenario.outageThreshold_dB)
 SINK="$HARNESS_DIR/tools/ipc-null-sink/ipc-null-sink.py"
 PACER="$HARNESS_DIR/scripts/gates/pacer.py"
-CLI=(--nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 "--outageThreshold=$THRESH")
+SIM_TIME_S=10
+CLI=(--nMmWaveEnbNodes=2 --handoverMode=NoAuto "--simTime=$SIM_TIME_S" "--outageThreshold=$THRESH")
 SINKX=(); PACERX=(); PACER_PORT=38499; T_GATE_S=10; T_CTL_S=30
 G="$HARNESS_DIR/scripts/gates"
 fact dev "$([ "$DEV" = 1 ] && echo true || echo false)"
@@ -186,7 +187,7 @@ check n4_v2_uloff_prints_no_audit no_audit
 check n4_ulon_free_run paced_null_run ulon free 0 --RngRun=1 --enableUlTraffic=true "--ulTrafficPattern=$PATTERN"
 check n4_ulon_emitter_at_pins emitter_at_pins ulon
 v3() {
-    python3 -I "$G/check-pdcp-volume-totals.py" "$RUNS/ulon" >"$e/v3.json"
+    python3 -I "$G/check-pdcp-volume-totals.py" "$RUNS/ulon" --sim-time-s "$SIM_TIME_S" >"$e/v3.json"
     local rc=$?
     python3 -I -c 'import json,sys; d=json.load(open(sys.argv[1])); print({k: d[k] for k in ("a1","a2","a3","a4","a5","perCellMaxErrBits","periodSumMaxErrKbit","ties","overlaps","events","gnbSamples")})' "$e/v3.json"
     return $rc

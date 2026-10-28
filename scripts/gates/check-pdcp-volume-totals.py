@@ -4,6 +4,9 @@
 A UL-on ns-3 run prints one `N4AUDIT` line per DRB PDCP PDU event on every eNB/gNB RRC
 (scenario-zero, enableUlTraffic). That audit is the ground truth for the two per-cell counters
 in the gNB IPC samples (cell.cuUp, kbit, rounded once per cell per period). Pass iff:
+  A0 sample completeness: the gNB traces are exactly the expected gNB nodes (2 .. 1 + nMmWaveEnbNodes of
+     the rung-config scenario; node 1 is the eNB) and each holds every seq 0 .. N-1 once, N = simTime /
+     the hello periodNs (a missing cell or a truncated tail fails instead of becoming residual bits);
   A1 completeness: an `end` line with connected == present and missing == 0; the audit header's
      PDCP header size equals the 12-bit-SN DRB data PDU header (2 octets, 3GPP TS 36.323 §6.2.3,
      3GPP TS 38.323 §6.2.2.2);
@@ -14,15 +17,19 @@ in the gNB IPC samples (cell.cuUp, kbit, rounded once per cell per period). Pass
      = sum of 8 * (pduBytes - h) over the lcid-3 events of the sample's UEs in (that UE's previous
      gNB read, this read]; per read instant, the sum over gNB cells is within 1 kbit per cell; an
      event exactly at a read instant of its UE is a tie and fails; a UE listed by two gNB cells at
-     one read is judged on the sum over those cells and counted as an overlap;
+     one read is judged on the sum over those cells and counted as an overlap; events after a UE's
+     last read are residual and allowed only when that read is the run's final read instant (a UE
+     that vanishes from every gNB map before the end leaves unverified bits, which fail);
   A5 every event has pduBytes >= h + 1 and every UL lcid-3 SDU is larger than 40 bytes.
 Never compensates a double count (no dedupe, factor or wider tolerance).
 
-  check-pdcp-volume-totals.py RUN_DIR       (RUN_DIR/ns3run/stdout.txt, RUN_DIR/trace/*.jsonl)
+  check-pdcp-volume-totals.py RUN_DIR --sim-time-s S
+        (RUN_DIR/ns3run/stdout.txt, RUN_DIR/trace/*.jsonl; nMmWaveEnbNodes from rung-config.json or $RUNG_CONFIG)
   check-pdcp-volume-totals.py --self-test
 """
 import collections
 import json
+import os
 import pathlib
 import sys
 import tempfile
@@ -51,7 +58,7 @@ def load_audit(path):
     return hdr, end, ev
 
 
-def load_gnb_samples(trace_dir):
+def load_gnb_samples(trace_dir, periods=None):
     out = []
     for p in sorted(pathlib.Path(trace_dir).glob("e2-ipc-trace-*.jsonl")):
         kind = None
@@ -61,6 +68,8 @@ def load_gnb_samples(trace_dir):
             m = json.loads(line)
             if m.get("type") == "hello":
                 kind = m.get("kind")
+                if periods is not None and kind == "gnb":
+                    periods.add(m.get("periodNs"))
             elif m.get("type") == "sample" and kind == "gnb":
                 cu = (m.get("cell") or {}).get("cuUp") or {}
                 out.append({"node": m["nodeId"], "seq": m["seq"], "t": m["simTimeNs"],
@@ -69,11 +78,22 @@ def load_gnb_samples(trace_dir):
     return out
 
 
-def judge(run):
+def judge(run, gnb_nodes, n_seq):
     run = pathlib.Path(run)
     hdr, end, ev = load_audit(run / "ns3run" / "stdout.txt")
     samples = load_gnb_samples(run / "trace")
     v = {"hdr": hdr, "end": end, "events": len(ev), "gnbSamples": len(samples)}
+
+    # A0
+    seqs = collections.defaultdict(list)
+    for s in samples:
+        seqs[s["node"]].append(s["seq"])
+    want = list(range(n_seq))
+    v["expectedGnbNodes"], v["expectedSeqsPerNode"], v["gnbNodes"] = sorted(gnb_nodes), n_seq, sorted(seqs)
+    v["incompleteNodes"] = {str(n): {"missing": len(set(want) - set(seqs.get(n, []))),
+                                     "extraOrDuplicate": len(seqs.get(n, [])) - len(set(seqs.get(n, [])) & set(want))}
+                            for n in sorted(set(gnb_nodes) | set(seqs)) if sorted(seqs.get(n, [])) != want}
+    v["a0"] = n_seq > 0 and set(seqs) == set(gnb_nodes) and not v["incompleteNodes"]
 
     # A1
     v["a1"] = hdr == HDR and end is not None and end.get("missing") == 0 and end.get("connected") == end.get("present")
@@ -107,7 +127,8 @@ def judge(run):
         for imsi in s["ues"]:
             reads[imsi].append((s["t"], i))
     truth = [{"ul": 0, "dl": 0} for _ in samples]
-    ties, residual = 0, 0
+    final_t = max((s["t"] for s in samples), default=None)
+    ties, residual, unverified = 0, 0, 0
     by_ue = collections.defaultdict(list)
     for e in ev:
         if e["lcid"] == LCID:
@@ -123,7 +144,10 @@ def judge(run):
                 continue
             nxt = next((t for t in times if t > e["t"]), None)
             if nxt is None:
-                residual += 8 * (e["bytes"] - HDR)
+                if times and times[-1] == final_t:
+                    residual += 8 * (e["bytes"] - HDR)
+                else:
+                    unverified += 8 * (e["bytes"] - HDR)
                 continue
             owners = [i for t, i in rl if t == nxt]
             truth[owners[0]][e["d"]] += 8 * (e["bytes"] - HDR)
@@ -131,7 +155,7 @@ def judge(run):
         for t in times:
             per_ue_ul_pdus.append(sum(1 for e in es if e["d"] == "ul" and prev < e["t"] < t))
             prev = t
-    v["ties"], v["residualBits"] = ties, residual
+    v["ties"], v["residualBits"], v["unverifiedResidualBits"] = ties, residual, unverified
 
     # groups of gNB samples at one read instant joined by a shared UE (HO overlap)
     at = collections.defaultdict(list)
@@ -171,9 +195,9 @@ def judge(run):
             a4 &= perr <= len(idx)
     v.update({"perCellMaxErrBits": cell_err, "periodSumMaxErrKbit": sum_err, "overlaps": overlaps,
               "nonIntCounters": bad_ctr})
-    v["a4"] = a4 and ties == 0
+    v["a4"] = a4 and ties == 0 and unverified == 0
     v["perUeUlPdusPerPeriod"] = dict(sorted(collections.Counter(per_ue_ul_pdus).items()))
-    v["pass"] = all(v[k] for k in ("a1", "a2", "a3", "a4", "a5"))
+    v["pass"] = all(v[k] for k in ("a0", "a1", "a2", "a3", "a4", "a5"))
     return v
 
 
@@ -181,7 +205,7 @@ def _fixture(root, audit, samples):
     (root / "ns3run").mkdir(parents=True)
     (root / "trace").mkdir()
     (root / "ns3run" / "stdout.txt").write_text("noise\n" + "\n".join(audit) + "\n")
-    lines = [json.dumps({"type": "hello", "nodeId": 2, "kind": "gnb"})]
+    lines = [json.dumps({"type": "hello", "nodeId": 2, "kind": "gnb", "periodNs": 100000000})]
     for seq, t, ues, ul, dl in samples:
         lines.append(json.dumps({"type": "sample", "nodeId": 2, "seq": seq, "simTimeNs": t,
                                  "cell": {"cuUp": {KEYS["ul"]: ul, KEYS["dl"]: dl}},
@@ -195,34 +219,56 @@ def self_test():
             "N4AUDIT ulrx 150000000 0 1 3 3 1310 2000000", "N4AUDIT ulrx 160000000 0 1 3 3 1310 2000000",
             "N4AUDIT dltx 170000000 0 1 3 3 1310", "N4AUDIT end connected=2 present=2 missing=0"]
     # 2 UL PDUs of 1308 B SDU = 20928 bits -> 21 kbit; 1 DL -> 10464 bits -> 10 kbit
-    ok_samples = [(1, 100800000, [3], 0, 0), (2, 200800000, [3], 21, 10)]
+    ok_samples = [(0, 100800000, [3], 0, 0), (1, 200800000, [3], 21, 10)]
+    tail = good[:-1] + ["N4AUDIT ulrx 250000000 0 1 3 3 1310 2000000", good[-1]]
+    # (name, audit, samples, want[, expected gNB nodes[, expected seqs per node]]); default [2], 2
     cases = [
         ("pass", good, ok_samples, True),
-        ("counter off by 1 kbit", good, [(1, 100800000, [3], 0, 0), (2, 200800000, [3], 22, 10)], False),
+        ("pass, residual after the final read", tail, ok_samples, True),
+        ("counter off by 1 kbit", good, [(0, 100800000, [3], 0, 0), (1, 200800000, [3], 22, 10)], False),
         ("PDU counted at two RRCs", good + ["N4AUDIT ulrx 150000000 7 9 3 3 1310 2000000"], ok_samples, False),
         ("header size 3", [good[0].replace("hdr=2", "hdr=3")] + good[1:], ok_samples, False),
         ("an unconnected PDCP", good[:-1] + ["N4AUDIT end connected=2 present=3 missing=1"], ok_samples, False),
         ("no end line", good[:-1], ok_samples, False),
         ("tie at a read", good + ["N4AUDIT dltx 200800000 0 1 3 3 1310"], ok_samples, False),
         ("UL SDU of 40 B", good + ["N4AUDIT ulrx 180000000 0 1 3 3 42 1000"], ok_samples, False),
-        ("a float counter", good, [(1, 100800000, [3], 0, 0), (2, 200800000, [3], 21.0, 10)], False),
+        ("a float counter", good, [(0, 100800000, [3], 0, 0), (1, 200800000, [3], 21.0, 10)], False),
+        ("a missing gNB cell", good, ok_samples, False, [2, 3]),
+        ("a truncated tail", good, ok_samples, False, [2], 3),
+        ("a duplicate seq", good, ok_samples + [(1, 200800000, [], 0, 0)], False),
+        ("an unexpected gNB node", good, ok_samples, False, [3]),
+        ("residual after a UE leaves every gNB map", tail,
+         [(0, 100800000, [3], 0, 0), (1, 200800000, [3], 21, 10), (2, 300800000, [], 0, 0)], False, [2], 3),
     ]
     bad = 0
-    for name, audit, smp, want in cases:
+    for name, audit, smp, want, *exp in cases:
+        nodes, n_seq = (exp + [[2], 2][len(exp):])[:2]
         with tempfile.TemporaryDirectory() as t:
-            got = judge(_fixture(pathlib.Path(t), audit, smp))["pass"]
+            got = judge(_fixture(pathlib.Path(t), audit, smp), nodes, n_seq)["pass"]
         bad += got != want
         print(("ok   " if got == want else "FAIL ") + name)
     return 1 if bad else 0
 
 
+def expected_from_config(run, sim_time_s):
+    """gNB node ids from the rung-config scenario, and the seq count from simTime and the gNB hello periodNs."""
+    cfg = os.environ.get("RUNG_CONFIG", str(pathlib.Path(__file__).resolve().parent / "rung-config.json"))
+    nodes = list(range(2, 2 + json.load(open(cfg))["scenario"]["nMmWaveEnbNodes"]["value"]))
+    periods = set()
+    load_gnb_samples(pathlib.Path(run) / "trace", periods)
+    if len(periods) != 1 or type(next(iter(periods))) is not int or next(iter(periods)) <= 0:
+        return nodes, 0   # no gNB hello, or disagreeing periods: A0 fails closed
+    n_seq, rem = divmod(round(sim_time_s * 1e9), next(iter(periods)))
+    return nodes, (n_seq if rem == 0 else 0)
+
+
 def main(argv):
     if argv[1:] == ["--self-test"]:
         return self_test()
-    if len(argv) != 2:
+    if len(argv) != 4 or argv[2] != "--sim-time-s":
         print(__doc__, file=sys.stderr)
         return 2
-    v = judge(argv[1])
+    v = judge(argv[1], *expected_from_config(argv[1], float(argv[3])))
     json.dump(v, sys.stdout, indent=2)
     print()
     return 0 if v["pass"] else 1

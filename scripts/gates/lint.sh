@@ -70,6 +70,41 @@ rc_restarts_zero_all live1 k9 >/dev/null || { echo "restart judge: a complete c1
 [ "$(rc_restarts_zero_all live1 live2 >/dev/null 2>&1 && echo true || echo false)" = false ] ||
     { echo "restart fact form is not exactly false"; rc=1; }
 rm -rf "$EVIDENCE_DIR"
+# scrub-evidence.sh fails closed: exit 0 only when the exact-secret scan ran (token file read) or provably had
+# nothing to scan (no token file and no InfluxDB pod); the exporters copy nothing after a failed scrub
+tmp=$(mktemp -d); mkdir -p "$tmp/ric" "$tmp/ev" "$tmp/kc" "$tmp/nokc"
+ln -s "$(command -v python3)" "$tmp/nokc/python3"; ln -s "$(command -v grep)" "$tmp/nokc/grep"
+tok="tok$(printf 'x%.0s' $(seq 40))"
+scrub() { NIST_RIC_DIR="$tmp/ric" PATH="$1" "$BASH" scripts/gates/scrub-evidence.sh "$2" >/dev/null 2>&1; }
+kc() { printf '#!/bin/sh\n%s\n' "$1" >"$tmp/kc/kubectl"; chmod +x "$tmp/kc/kubectl"; }
+printf '{"token": "%s"}' "$tok" >"$tmp/ric/influxdb_auth_token.json"; echo "x $tok y" >"$tmp/ev/log.txt"
+kc 'echo "ricplt r4-influxdb-influxdb2-0 1/1 Running 0 1d"'
+scrub "$tmp/kc:$PATH" "$tmp/ev" && ! grep -q "$tok" "$tmp/ev/log.txt" || { echo "scrub: a readable token was not redacted"; rc=1; }
+echo '{"token": ' >"$tmp/ric/influxdb_auth_token.json"
+scrub "$tmp/kc:$PATH" "$tmp/ev" && { echo "scrub: an unparseable token file passed"; rc=1; }
+echo '{"token": "short"}' >"$tmp/ric/influxdb_auth_token.json"
+scrub "$tmp/kc:$PATH" "$tmp/ev" && { echo "scrub: a token file without a secret passed"; rc=1; }
+if [ "$(id -u)" != 0 ]; then
+    printf '{"token": "%s"}' "$tok" >"$tmp/ric/influxdb_auth_token.json"; chmod 000 "$tmp/ric/influxdb_auth_token.json"
+    scrub "$tmp/kc:$PATH" "$tmp/ev" && { echo "scrub: an unreadable token file passed"; rc=1; }
+    chmod 600 "$tmp/ric/influxdb_auth_token.json"
+    echo data >"$tmp/ev/locked.txt"; chmod 000 "$tmp/ev/locked.txt"
+    scrub "$tmp/kc:$PATH" "$tmp/ev" && { echo "scrub: an unreadable evidence file passed"; rc=1; }
+    rm -f "$tmp/ev/locked.txt"
+fi
+rm -f "$tmp/ric/influxdb_auth_token.json"
+scrub "$tmp/kc:$PATH" "$tmp/ev" && { echo "scrub: no token file with an InfluxDB pod passed"; rc=1; }
+kc 'echo "The connection to the server was refused" >&2; exit 1'
+scrub "$tmp/kc:$PATH" "$tmp/ev" && { echo "scrub: no token file with a failing kubectl passed"; rc=1; }
+kc 'echo "kube-system coredns-1 1/1 Running 0 1d"'
+scrub "$tmp/kc:$PATH" "$tmp/ev" || { echo "scrub: no token file and no InfluxDB pod was red"; rc=1; }
+scrub "$tmp/nokc" "$tmp/ev" || { echo "scrub: no token file and no kubectl (pre-RIC) was red"; rc=1; }
+scrub "$tmp/nokc" "$tmp/missing" && { echo "scrub: a missing evidence dir passed"; rc=1; }
+rm -rf "$tmp"
+for f in scripts/vm/vm-exec.sh scripts/probes/vm-exec-probe.sh; do
+    grep -A1 'scrub-evidence.sh \$ev"' "$f" | grep -q '^ *die "evidence scrub failed' ||
+        { echo "$f: a failed scrub does not stop the evidence copy"; rc=1; }
+done
 # a silenced cat of a named evidence file into a pipe: a mode that skips that run makes cat fail, pipefail red
 if grep -nE 'cat [^|#]*"\$e"/[A-Za-z0-9_]+-[A-Za-z0-9_.-]+ [^|#]*2>/dev/null *\|[^|]' scripts/gates/*.sh; then
     echo "a silenced cat of a named evidence file into a pipe (see above)"; rc=1

@@ -78,8 +78,10 @@ hlog "gate $gate exit $code"
 
 # Scrub on the VM, then copy back; pcaps and ns-3 trace text files get sha256
 # manifests (they stay out of git).
-vm_ssh "bash /home/uc/harness/scripts/gates/scrub-evidence.sh $ev; \
-    cd $ev && find . -name '*.pcap*' -type f -exec sha256sum {} + >pcap-sha256.txt 2>/dev/null; \
+# A failed scrub stops the export: nothing is copied (fail closed).
+vm_ssh "bash /home/uc/harness/scripts/gates/scrub-evidence.sh $ev" ||
+    die "evidence scrub failed for $gate (gate exit $code); evidence NOT copied, it stays on the VM at $ev"
+vm_ssh "cd $ev && find . -name '*.pcap*' -type f -exec sha256sum {} + >pcap-sha256.txt 2>/dev/null; \
     find . -path '*ns3run*' -name '*.txt' -type f -exec sha256sum {} + >ns3run-sha256.txt 2>/dev/null; true"
 dest="$EVIDENCE_HOST_ROOT/$gate/$ts"
 mkdir -p "$dest"

@@ -65,8 +65,10 @@ while :; do
 done
 hlog "probe $probe exit $code"
 
-vm_ssh "bash /home/uc/harness/scripts/gates/scrub-evidence.sh $ev; \
-    cd $ev && find . -name '*.pcap*' -type f -exec sha256sum {} + >pcap-sha256.txt 2>/dev/null; true"
+# A failed scrub stops the export: nothing is copied (fail closed).
+vm_ssh "bash /home/uc/harness/scripts/gates/scrub-evidence.sh $ev" ||
+    die "evidence scrub failed for $probe (probe exit $code); evidence NOT copied, it stays on the VM at $ev"
+vm_ssh "cd $ev && find . -name '*.pcap*' -type f -exec sha256sum {} + >pcap-sha256.txt 2>/dev/null; true"
 dest="$PROBE_EVIDENCE_ROOT/$probe/$ts"
 mkdir -p "$dest"
 vm_ssh "tar -C $ev -cf - ." | tar -C "$dest" -xf - || die "evidence copy failed"
