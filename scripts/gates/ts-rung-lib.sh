@@ -3,7 +3,7 @@
 # with the harness predictor). Source after lib.sh, bringup.sh, capture.sh, kpimon.sh, agents.sh, rc-lib.sh,
 # ts-lib.sh, paced-lib.sh and influx-dump.sh; the gate sets RUNG (the check-name prefix), e, RUNS, NODES, PACER,
 # PACER_PORT, T_CTL_S, W_S, CLI, EPOCH_MS, T_GATE_S, RC_DEC_TAG, N_POS and defines the hooks named at rung_live.
-# shellcheck disable=SC2154  # e, RUNS, RUNG and the rest are set by the sourcing gate
+# shellcheck disable=SC2154,SC2034  # e, RUNS, RUNG and the rest are set by the sourcing gate; PACERX is read by paced-lib.sh
 all_subscribed() {
     local deadline=$(($(date +%s) + 180)) rows
     while [ "$(date +%s)" -lt "$deadline" ]; do
@@ -161,4 +161,45 @@ PY
     }
     check "${RUNG}_${label}_agent_static_rejects_zero_post_bye_zero" agent_c2
     rung_judges "$label" "$rd"
+}
+
+# rung_c1: C1 after the three live runs: the replay without the RIC, the --RngRun=2 replay, C2/C7 on it, the
+# three live runs equal on every component, the replay equal to live1 and RngRun 2 different from it.
+rung_c1() {
+    PACERX=(--replay "$RUNS/live1/trace/e2-control-ledger.jsonl")
+    check ${RUNG}_replay_run_without_the_ric paced_null_run replay lockstep 0 --RngRun=1
+    check ${RUNG}_rng2_run_without_the_ric paced_null_run rng2 lockstep 0 --RngRun=2
+    PACERX=()
+    rng2_c2() { python3 -I "$HARNESS_DIR/scripts/gates/check-ledger.py" "$RUNS/rng2/trace/e2-control-ledger.jsonl" "$RUNS/rng2/pacer/pacer-log.jsonl"; }
+    check ${RUNG}_rng2_c2_holds rng2_c2
+    rng2_c7() {
+        python3 -I - "$RUNS/rng2" <<'PY' | tee "$e/rng2-c7.json"
+import json, sys
+rd = sys.argv[1]
+late = sum(1 for l in list(open(rd + "/trace/e2-control-ledger.jsonl"))[1:] if l.strip() and json.loads(l).get("cause") == "late")
+no_sub, slack = 0, None
+for l in open(rd + "/trace/e2-pacing-log.jsonl"):
+    m = json.loads(l)
+    if m.get("type") == "step":
+        no_sub = max(no_sub, m.get("droppedNoSub", 0))
+    if m.get("type") == "barrier" and m["seq"] != -1 and m["stepsWaitS"] >= 0:
+        s = round(m["timeoutS"] - m["stepsWaitS"], 6)
+        slack = s if slack is None else min(slack, s)
+ns3 = open(rd + "/ns3-exit").read().strip()
+out = {"ns3Exit": int(ns3), "late": late, "droppedNoSub": no_sub, "minSlackTGate": slack}
+print(json.dumps(out))
+sys.exit(0 if out["ns3Exit"] == 0 and late == 0 and no_sub == 0 and slack is not None else 1)
+PY
+    }
+    check ${RUNG}_rng2_c7_holds rng2_c7
+    fact rng2 "$(cat "$e/rng2-c7.json" 2>/dev/null || echo null)"
+    cmp_runs() { python3 -I "$HARNESS_DIR/scripts/gates/digest-run.py" --compare --components "$1" "${@:3}" >"$e/$2.json"; }
+    c1_live() { cmp_runs ledger,ipc,traces,extra c1-live live1="$RUNS/live1" live2="$RUNS/live2" live3="$RUNS/live3"; }
+    c1_replay() { cmp_runs ledger,ipc,traces c1-replay live1="$RUNS/live1" replay="$RUNS/replay"; }
+    c1_rng2() { cmp_runs ledger,ipc,traces c1-rng2 live1="$RUNS/live1" rng2="$RUNS/rng2"; [ $? -eq 1 ]; }   # must differ
+    check ${RUNG}_c1_three_live_runs_equal_on_all_components c1_live
+    check ${RUNG}_c1_replay_equals_live_on_ledger_ipc_traces c1_replay
+    check ${RUNG}_c1_rng2_differs_from_live c1_rng2
+    jbool() { python3 -I -c 'import json,sys; print(json.dumps(json.load(open(sys.argv[1]))[sys.argv[2]]))' "$1" "$2" 2>/dev/null || echo null; }
+    fact c1 "{\"liveRunsEqual\": $(jbool "$e/c1-live.json" all_equal), \"replayEqual\": $(jbool "$e/c1-replay.json" all_equal), \"rngRun2Differs\": $(python3 -I -c 'import json; print(json.dumps(not json.load(open("'"$e"'/c1-rng2.json"))["all_equal"]))' 2>/dev/null || echo null)}"
 }

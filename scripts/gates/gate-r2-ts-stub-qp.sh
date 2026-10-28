@@ -166,42 +166,7 @@ if [ "$MODE" = c1 ]; then
 ################################################################################
 # C1: the replay without the RIC, RngRun 2, and the digest comparisons
 ################################################################################
-PACERX=(--replay "$RUNS/live1/trace/e2-control-ledger.jsonl")
-check r2_replay_run_without_the_ric paced_null_run replay lockstep 0 --RngRun=1
-check r2_rng2_run_without_the_ric paced_null_run rng2 lockstep 0 --RngRun=2
-PACERX=()
-rng2_c2() { python3 -I "$HARNESS_DIR/scripts/gates/check-ledger.py" "$RUNS/rng2/trace/e2-control-ledger.jsonl" "$RUNS/rng2/pacer/pacer-log.jsonl"; }
-check r2_rng2_c2_holds rng2_c2
-rng2_c7() {
-    python3 -I - "$RUNS/rng2" <<'PY' | tee "$e/rng2-c7.json"
-import json, sys
-rd = sys.argv[1]
-late = sum(1 for l in list(open(rd + "/trace/e2-control-ledger.jsonl"))[1:] if l.strip() and json.loads(l).get("cause") == "late")
-no_sub, slack = 0, None
-for l in open(rd + "/trace/e2-pacing-log.jsonl"):
-    m = json.loads(l)
-    if m.get("type") == "step":
-        no_sub = max(no_sub, m.get("droppedNoSub", 0))
-    if m.get("type") == "barrier" and m["seq"] != -1 and m["stepsWaitS"] >= 0:
-        s = round(m["timeoutS"] - m["stepsWaitS"], 6)
-        slack = s if slack is None else min(slack, s)
-ns3 = open(rd + "/ns3-exit").read().strip()
-out = {"ns3Exit": int(ns3), "late": late, "droppedNoSub": no_sub, "minSlackTGate": slack}
-print(json.dumps(out))
-sys.exit(0 if out["ns3Exit"] == 0 and late == 0 and no_sub == 0 and slack is not None else 1)
-PY
-}
-check r2_rng2_c7_holds rng2_c7
-fact rng2 "$(cat "$e/rng2-c7.json" 2>/dev/null || echo null)"
-cmp_runs() { python3 -I "$HARNESS_DIR/scripts/gates/digest-run.py" --compare --components "$1" "${@:3}" >"$e/$2.json"; }
-c1_live() { cmp_runs ledger,ipc,traces,extra c1-live live1="$RUNS/live1" live2="$RUNS/live2" live3="$RUNS/live3"; }
-c1_replay() { cmp_runs ledger,ipc,traces c1-replay live1="$RUNS/live1" replay="$RUNS/replay"; }
-c1_rng2() { cmp_runs ledger,ipc,traces c1-rng2 live1="$RUNS/live1" rng2="$RUNS/rng2"; [ $? -eq 1 ]; }   # must differ
-check r2_c1_three_live_runs_equal_on_all_components c1_live
-check r2_c1_replay_equals_live_on_ledger_ipc_traces c1_replay
-check r2_c1_rng2_differs_from_live c1_rng2
-jbool() { python3 -I -c 'import json,sys; print(json.dumps(json.load(open(sys.argv[1]))[sys.argv[2]]))' "$1" "$2" 2>/dev/null || echo null; }
-fact c1 "{\"liveRunsEqual\": $(jbool "$e/c1-live.json" all_equal), \"replayEqual\": $(jbool "$e/c1-replay.json" all_equal), \"rngRun2Differs\": $(python3 -I -c 'import json; print(json.dumps(not json.load(open("'"$e"'/c1-rng2.json"))["all_equal"]))' 2>/dev/null || echo null)}"
+rung_c1
 fi
 
 ################################################################################
