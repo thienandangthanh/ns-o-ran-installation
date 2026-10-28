@@ -1,0 +1,114 @@
+[
+  {
+    "instances": [
+      {
+        "ip": "service-ricxapp-hw-go-rmr.ricxapp",
+        "name": "hw-go",
+        "policies": [
+          1
+        ],
+        "port": 4560,
+        "rxMessages": [
+          "RIC_SUB_RESP",
+          "A1_POLICY_REQ",
+          "RIC_HEALTH_CHECK_REQ"
+        ],
+        "status": "deployed",
+        "txMessages": [
+          "RIC_SUB_REQ",
+          "A1_POLICY_RESP",
+          "A1_POLICY_QUERY",
+          "RIC_HEALTH_CHECK_RESP"
+        ]
+      }
+    ],
+    "name": "hw-go",
+    "status": "deployed",
+    "version": "1.0.0"
+  },
+  {
+    "instances": [
+      {
+        "ip": "service-ricxapp-kpimon-go-rmr.ricxapp",
+        "name": "kpimon-go",
+        "policies": null,
+        "port": 4560,
+        "rxMessages": [
+          "RIC_SUB_RESP",
+          "RIC_INDICATION"
+        ],
+        "status": "deployed",
+        "txMessages": [
+          "RIC_SUB_REQ"
+        ]
+      }
+    ],
+    "name": "kpimon-go",
+    "status": "deployed"
+  },
+  {
+    "instances": [
+      {
+        "ip": "service-ricxapp-trafficxapp-rmr.ricxapp",
+        "name": "trafficxapp",
+        "policies": [
+          20008
+        ],
+        "port": 4560,
+        "rxMessages": [
+          "TS_QOE_PREDICTION",
+          "A1_POLICY_REQ",
+          "TS_ANOMALY_UPDATE"
+        ],
+        "status": "deployed",
+        "txMessages": [
+          "TS_UE_LIST",
+          "TS_ANOMALY_ACK"
+        ]
+      }
+    ],
+    "name": "trafficxapp",
+    "status": "deployed",
+    "version": "1.2.5"
+  },
+  {
+    "instances": [
+      {
+        "ip": "service-ricxapp-stubqp-rmr.ricxapp",
+        "name": "stubqp",
+        "policies": null,
+        "port": 4560,
+        "rxMessages": [
+          "TS_UE_LIST"
+        ],
+        "status": "deployed",
+        "txMessages": [
+          "TS_QOE_PREDICTION"
+        ]
+      }
+    ],
+    "name": "stubqp",
+    "status": "deployed",
+    "version": "0.1.0"
+  },
+  {
+    "instances": [
+      {
+        "ip": "service-ricxapp-rc-rmr.ricxapp",
+        "name": "rc",
+        "policies": null,
+        "port": 4560,
+        "rxMessages": [
+          "RIC_CONTROL_ACK, RIC_CONTROL_FAILURE, RIC_ERROR_INDICATION"
+        ],
+        "status": "deployed",
+        "txMessages": [
+          "RIC_CONTROL_REQ"
+        ]
+      }
+    ],
+    "name": "rc",
+    "status": "deployed",
+    "version": "1.0.0"
+  }
+]
