@@ -3,6 +3,7 @@
 # with the harness predictor). Source after lib.sh, bringup.sh, capture.sh, kpimon.sh, agents.sh, rc-lib.sh,
 # ts-lib.sh, paced-lib.sh and influx-dump.sh; the gate sets RUNG (the check-name prefix), e, RUNS, NODES, PACER,
 # PACER_PORT, T_CTL_S, W_S, CLI, EPOCH_MS, T_GATE_S, RC_DEC_TAG, N_POS and defines the hooks named at rung_live.
+# shellcheck disable=SC2154  # e, RUNS, RUNG and the rest are set by the sourcing gate
 all_subscribed() {
     local deadline=$(($(date +%s) + 180)) rows
     while [ "$(date +%s)" -lt "$deadline" ]; do
