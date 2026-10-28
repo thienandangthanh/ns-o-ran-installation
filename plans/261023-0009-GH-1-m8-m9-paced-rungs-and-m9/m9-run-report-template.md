@@ -6,7 +6,7 @@ Fill every `<...>` from `evidence/m9/<ts>/verdict.json`, `steps.tsv` and the run
 
 | Item | Value |
 |---|---|
-| Runner command | `scripts/run-to-m9.sh --harness-sha <F> [--run-prefix n]` |
+| Runner command | `scripts/run-to-m9.sh --harness-sha e0a6ac5ee0b4824038c22e39d467fc1f714d0d13 --run-prefix n --no-snapshots` (after `vm-snapshot.sh revert fresh-install`) |
 | Harness SHA (frozen, P9) | `<F>` |
 | Pins (`scripts/pins.conf`) | Testbed `c6d1434a`, ns-3 `ba954440`, oran-interface `96efc40e`, e2sim `2209995a` (verdict `pins`) |
 | Start / end (UTC) / wall | `<start>` / `<end>` / `<s>` of the budgeted 20,199 s |
@@ -43,6 +43,7 @@ Fill every `<...>` from `evidence/m9/<ts>/verdict.json`, `steps.tsv` and the run
 
 - **S1:** R3 with real QP and the QP fork are deferred to a later goal; R3′ (harness predictor reading per-cell DL from Influx by sim time) is the top rung, with stop-at-R2 (substitution 4) pre-authorized.
 - **S2:** the N4 counters and the UL flag stay as an opt-in feature; the QP-only checks (K18 dump, V5 window predicate, V6) are dropped.
+- **S3:** a complex-scenario or portability smoke (scenario-one) and a scenario-agnostic harness move to the next goal.
 
 ## Substitutions (only these are allowed)
 
@@ -61,6 +62,10 @@ Fill every `<...>` from `evidence/m9/<ts>/verdict.json`, `steps.tsv` and the run
 4. R3′'s W was calibrated through R2's fixed-answer block on the R3′ prepare path.
 5. The R3′ dry run ran in two stages (A: class; B: schedule).
 6. Route owners of 12041/12042 differ between runs; they are recorded facts, not judged.
+7. The parent repo's stale submodule gitlinks are disclosed; `pins.conf` governs.
+8. (h) "25 GB" is enforced as 25 GiB (`df -BG`), which is stricter; the effective floor is the 29 GiB trip point.
+9. (i) `substitution3Applied` is carried by every rung verdict (r0, r1, r2, r3p), by i2 and by the M9 verdict's map; the m0–m7 and i0 verdicts do not carry it.
+10. (j) P10's Verify wording is mapped to the A1 runner's verdict fields (phase-10 "Stop B mapping"); the signals are the same.
 
 ## Records
 

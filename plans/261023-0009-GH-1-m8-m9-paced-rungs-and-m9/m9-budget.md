@@ -40,9 +40,9 @@ Global wall = ceil(1.5 × (Σ steps + revert 102 s + 8 snapshot boundaries 453 s
 
 All figures are in GiB, as `df -BG /home` and the watchdog report them. P10 starts only when `df -BG /home` shows at least:
 
-T = (25 + h) + M0–M7 + R section = 29 + 43 + 12 = **84 GiB** (88 GiB with the optional h = 8 margin).
+T = (25 + h) + M0–M7 + R section = 29 + 43 + 12 = **84 GiB** (88 GiB with the optional h = 8 margin; that margin is extra headroom only, the trip point stays 29 GiB). P10 re-measures free space after the revert to `fresh-install`, which frees the overlay above `r3p-green` (about 2.6 GiB, inferred).
 
-- M0–M7: 43 GiB. That is the measured host-free drop of 78 → 36 G in the chain log (42) + 1 for m0 and m0-host, which ran before the first sample. It is larger than the 39.7 GB merged overlay because blocks duplicated across the per-step snapshots and the host evidence also count. M9 repeats those snapshots.
+- M0–M7: 43 GiB. That is the measured host-free drop of 78 → 36 G in the chain log (42) + 1 for m0 and m0-host, which ran before the first sample. It is larger than the 39.7 GB merged overlay because blocks duplicated across the per-step snapshots and the host evidence also count. P10 runs `--no-snapshots`, so this term is conservative there (about 5 GiB inferred slack).
 - R section (i0 r0 r1 i2 r2 r3p): 12 GiB, an estimate good to about ±3. The r0-green → r2-green overlay (9.6 GB) holds i0 (warm), 2 r1 C1, 2 r2 C1, 2 r2 calibrations, 9 i2 (one cold) and 2 p5 runs. It does not hold the cold rc image and rc-decode build, which happened under f7 → r0-green. It does hold about 5 GB of runs that M9 does not need, which plausibly covers the cold i0. On top of that come 4 gate runs at the measured 0.55 GB each since r2-green.
 - The user must free **84 − X GiB**, with X = `df -BG /home` measured at Stop B after the last P9 VM run.
 

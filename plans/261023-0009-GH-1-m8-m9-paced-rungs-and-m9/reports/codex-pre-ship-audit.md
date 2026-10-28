@@ -71,7 +71,7 @@ Codex reviewed the code before the fixes existed, so the fix diff `5dcd9d9..32b5
 | R4 | Low: `virsh domstate` in `wait_state` has no timeout; the stop budget leaves out kill-after and polling overhead (about 372–380 s, not 370). | **reject, no change** | `virsh domstate` is a local libvirt call, not ssh (`vm-common.sh`), and libvirt's keepalive limits it. At the measured 0.0093 GiB/s, h stays 4 GiB up to a 429 s stop path (`m9-budget.py`: h = ceil(rate × path)). |
 | R5 | Low: fixture (4) bounds only the `--stop-cmd` path; removing the `timeout` from `vm_stop_gates` would not fail any self-test. | **accept as a known gap** | `vm_stop_gates` and `vm_gate_units` are one-line wrappers whose `timeout` the review read directly. A fixture would need a fake ssh, which is out of scope for P9. |
 
-After the Round 2 fixes: `lint.sh` ok; `m9-runner-selftest.sh` ok (10 cases); `m9-verdict.py --self-test` ok (19 cases). No R3′ gate input changed (K14), so `reference/r3p/` stands.
+After the Round 2 fixes: `lint.sh` ok; `m9-runner-selftest.sh` ok (10 cases); `m9-verdict.py --self-test` ok (18 cases). No R3′ gate input changed (K14), so `reference/r3p/` stands.
 
 ## Coverage
 

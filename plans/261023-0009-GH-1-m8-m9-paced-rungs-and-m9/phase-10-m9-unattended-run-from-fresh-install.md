@@ -67,3 +67,22 @@ Source: `plans/reports/kongming-261023-0020-GH-1-m8-m9-plan-collect-only-review.
 - **V5 / run report:** lists P1–P9 and N5, the Q2 count, every substitution state (1–4), and the descoping (S1: QP fork and real-QP R3 deferred; S2: K18/V5/V6 dropped; S3: portability smoke in the next goal).
 - **Docs:** README, `docs/deployment-guide-l-release.md` (run-to-m9, the manual rc gRPC and TS xApp loop, the scope statement) and `docs/system-architecture-l-release.md` (fix the stale §8 "not implemented" line; RC path, pacing, UL/DL rows, R3′ predictor; QP fork deferred) plus a "run your own experiment" section: `agents-ns3-run.sh:40` hard-codes the `*-scenario-zero-*` binary; pacing and ledger globals live only in `scenario-zero.cc`; the N5 key is digits only up to cellId ≤ 9; pacing is opt-in; QP/AD need a live-data adapter. Every command verified against the M9 log.
 - **Final line:** `GOAL DONE M9 verdict=<path to verdict.json>` (K21).
+
+## Stop B mapping to the A1 runner (records only; the same signals, none weakened; listed for the user's ratification at Stop B)
+Source: `plans/reports/kongming-261028-1540-GH-1-stop-b-go-no-go-p10.md`. The runner writes no `watchdog.json`; every signal is read from `evidence/m9/<ts>/verdict.json`, which `scripts/m9-verdict.py` writes fail-closed.
+- **Step 2:** `vm-snapshot.sh list` shows `r3p-green`; `df -BG /home` ≥ T = 84 GiB (`m9-budget.md`), else PAUSE T2 without reverting.
+- **Step 6:** read the r3p gate's own `equalsReference` (its `--reference` compare against `reference/r3p/`), which the verdict carries.
+- **V2:** "no `notM9` flag" means `notM9: false`; `exactStepSet: true`.
+- **V4:** `minHostFreeGb` ≥ 25; `watchdogAlive.maxAgeS` ≤ 2 × `intervalS` with `lastCheckEpoch` within 2 polling periods of the end; none of `watchdog-tripped.json`, `watchdog-lost.json`, `wall-deadline.json`, `monitor-lost.json` present. K15's trip at 25 is superseded by the A1 trip at 29 GiB (25 + h).
+- **Pre-flight (before step 4), in order:**
+  1. resume checks: the chain is fresh-install > f7-rerun-green > r0-green > r2-green > r3p-green, with no `n[0-9]-*` or `m0-*-n*` names;
+  2. the worktree equals F for `scripts`, `tools` and the reference, and F is on origin;
+  3. the pins are re-checked with `ls-remote`;
+  4. `lint.sh`, the runner self-test and the verdict self-test all pass;
+  5. record Debian trixie's tshark version (4.4.19-0+deb13u1 at Stop B);
+  6. no runner, watchdog, monitor or vm-exec process runs on the host, and no `gate-*` unit is active on the VM;
+  7. `df -BG /home` ≥ 84 (88 with the margin), else PAUSE T2;
+  8. update the resume card, commit and push;
+  9. revert `fresh-install` (the runner never reverts, and `gate-m0-host.sh` would otherwise pin the active overlay as its probe's backing file), re-measure df (about +2.6 GiB), confirm `r3p-green` is still listed, and commit a "P10 start" projection row ≥ 0;
+  10. run `scripts/run-to-m9.sh --harness-sha e0a6ac5ee0b4824038c22e39d467fc1f714d0d13 --run-prefix n --no-snapshots` in the background and record the start epoch and deadline (wall 20,199 s);
+  11. when it exits, apply V1–V5 as mapped above.
