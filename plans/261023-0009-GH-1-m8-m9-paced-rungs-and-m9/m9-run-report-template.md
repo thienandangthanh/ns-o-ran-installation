@@ -6,9 +6,11 @@ Fill every `<...>` from `evidence/m9/<ts>/verdict.json`, `steps.tsv` and the run
 
 | Item | Value |
 |---|---|
-| Runner command | `scripts/run-to-m9.sh --harness-sha <F′> --run-prefix o --no-snapshots` (after `vm-snapshot.sh revert fresh-install`) |
+| Runner command | `scripts/run-to-m9.sh --harness-sha <F″> --run-prefix q --no-snapshots` (as the unit `m9-q`, phase-10 Launch-route amendment) (after `vm-snapshot.sh revert fresh-install`) |
 | Attempt 1 (red, harness defect) | `evidence/m9/20261028T092148Z`, prefix n at F `e0a6ac5`: m0, m1 green; cancelled in m2 by a torn heartbeat read (watchdog alive, 85 GiB free); one guided fix to F′ (`plans/reports/kongming-261028-1900-GH-1-p10-m9-heartbeat-race-failure-counsel.md`); leftover snapshot `m0-probe-n10280921` kept |
-| Harness SHA (frozen) | `<F′>` (P9 freeze F `e0a6ac5` plus the atomic heartbeat write; K14: only two host files differ) |
+| Harness SHA (frozen) | `<F″>` = F′ `fb3554a` (P9 freeze F `e0a6ac5` plus the atomic heartbeat write, two host files) plus the bring-up fix (scripts/gates/bringup.sh, agents.sh, rc-lib.sh; `m9-budget.md` F″ addendum) |
+| Attempts 2 and 3 | 2: `evidence/m9/20261028T112207Z`, prefix o at F′, m0–m2 green, reaped in m3 (environmental, PAUSE T8). 3: `evidence/m9/20261028T134954Z`, prefix p at F′, m0–m5 green, m6 red (stuck RMR route readers in e2mgr/submgr after a cold boot), guided fix F″ |
+| Bring-up remedies (disclosed) | every `ric refresh` line in a gate's `watchdog.log` and every `agents-ready-remedy.txt`: `<list or none>` |
 | Pins (`scripts/pins.conf`) | Testbed `c6d1434a`, ns-3 `ba954440`, oran-interface `96efc40e`, e2sim `2209995a` (verdict `pins`) |
 | Start / end (UTC) / wall | `<start>` / `<end>` / `<s>` of the budgeted 20,199 s |
 | Exit code | `<0>` |
