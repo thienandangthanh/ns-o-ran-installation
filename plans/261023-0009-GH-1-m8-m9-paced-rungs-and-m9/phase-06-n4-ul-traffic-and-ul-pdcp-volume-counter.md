@@ -106,3 +106,7 @@ Source: `plans/reports/decisions-261027-2155-GH-1-m8-m9-open-questions-rulings.m
 - **Influx = IPC for the counters R3′ reads (non-QP part of F05):** moved to P8′ V3 (full, duplicate-free, no missing seq), where the read counter is pre-registered.
 - **F09 (export fails closed), before any further evidence export:** `scrub-evidence.sh` exits non-zero when the token file cannot be read or the exact-secret scan cannot run (no `except Exception: pass`); `vm-exec.sh` stops the copy when the scrub fails (no `; true`). Fixture test for both.
 - **Exit:** V1–V4 green and the hardening above committed → P6 done; kongming go/no-go on **P8′** (not P7).
+
+## Errata (2026-10-28, kongming-261028-1230)
+- A1 V3 "every seq 1..N" reads as seqs 0..N−1 (the IPC traces number samples from 0); the hardened judge requires exactly N seqs per expected gNB node, all present, no extras.
+- The original standards-ledger row "PDCP header size for SDU accounting | 3GPP TS 38.323 … check presence in Zotero" is superseded by the 2026-10-27 rows (3GPP TS 36.323 V19.0.0 §6.2.3 and 3GPP TS 38.323 V19.1.0 §6.2.2.2).
