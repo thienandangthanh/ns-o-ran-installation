@@ -74,3 +74,9 @@ The user freed the shortfall after Stop B. `df -BG /home` read 98 GiB before the
 | X′ = host `/home` free after the revert to `fresh-install` | 101 |
 | T = (25 + h) + M0–M7 + R section | 84 |
 | **Projection = X′ − T** | **+17 (≥ 0)** |
+
+## F′ addendum (2026-10-28 19:25 KST)
+
+- Attempt 1 (`evidence/m9/20261028T092148Z`, prefix n at F) was cancelled in m2 by a torn heartbeat read, not by disk: host free never fell below 85 GiB. The guided fix is F′ = `fb3554af67010dfedb6ae500e533acb7cdac9530` (atomic heartbeat write and self-test case 8).
+- K14 at F′: `git diff --name-only e0a6ac5 fb3554a -- scripts tools <plan>/reference` lists only `scripts/vm/host-disk-watchdog.sh` and `scripts/vm/m9-runner-selftest.sh`; `git diff --quiet e0a6ac5 fb3554a -- scripts/gates tools scripts/pins.conf scripts/m9-budget.json scripts/run-to-m9.sh scripts/m9-verdict.py <plan>/reference` exits 0. The VM runs neither changed file, so `reference/r3p/` and the F rehearsal stand. This budget (`scripts/m9-budget.json`) is unchanged.
+- Measured fact, recorded and not acted on: attempt 1's m1 lost 8 GiB of host free in 363 s (09:26:18–09:32:21Z, `free-series.tsv`), about 0.022 GiB/s, above the 0.0093 used for h. That implies h ≈ 9 (trip ≈ 34) against the frozen h = 4 (trip 29). At about 100 GiB free the expected minimum is about 45 GiB, so the frozen trip is not reached; a future budget may adopt the measured rate.

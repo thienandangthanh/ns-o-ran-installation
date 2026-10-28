@@ -6,8 +6,9 @@ Fill every `<...>` from `evidence/m9/<ts>/verdict.json`, `steps.tsv` and the run
 
 | Item | Value |
 |---|---|
-| Runner command | `scripts/run-to-m9.sh --harness-sha e0a6ac5ee0b4824038c22e39d467fc1f714d0d13 --run-prefix n --no-snapshots` (after `vm-snapshot.sh revert fresh-install`) |
-| Harness SHA (frozen, P9) | `<F>` |
+| Runner command | `scripts/run-to-m9.sh --harness-sha <F′> --run-prefix o --no-snapshots` (after `vm-snapshot.sh revert fresh-install`) |
+| Attempt 1 (red, harness defect) | `evidence/m9/20261028T092148Z`, prefix n at F `e0a6ac5`: m0, m1 green; cancelled in m2 by a torn heartbeat read (watchdog alive, 85 GiB free); one guided fix to F′ (`plans/reports/kongming-261028-1900-GH-1-p10-m9-heartbeat-race-failure-counsel.md`); leftover snapshot `m0-probe-n10280921` kept |
+| Harness SHA (frozen) | `<F′>` (P9 freeze F `e0a6ac5` plus the atomic heartbeat write; K14: only two host files differ) |
 | Pins (`scripts/pins.conf`) | Testbed `c6d1434a`, ns-3 `ba954440`, oran-interface `96efc40e`, e2sim `2209995a` (verdict `pins`) |
 | Start / end (UTC) / wall | `<start>` / `<end>` / `<s>` of the budgeted 20,199 s |
 | Exit code | `<0>` |
