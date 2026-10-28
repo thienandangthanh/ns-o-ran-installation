@@ -27,6 +27,8 @@ source "$(dirname "$0")/rc-lib.sh"
 source "$(dirname "$0")/ts-lib.sh"
 source "$(dirname "$0")/paced-lib.sh"
 source "$(dirname "$0")/influx-dump.sh"
+source "$(dirname "$0")/ts-rung-lib.sh"
+RUNG=r2
 
 DEV=0; MODE=c1
 while [ $# -gt 0 ]; do
@@ -137,174 +139,23 @@ fi
 python3 -I "$CHK" schedule "$SCEN" "$SEND" "$INJ_CTL_PORT" "${CALX[@]}" >"$e/r2-schedule.json"
 python3 -I "$CHK" table "$SCEN" "${CALX[@]}" >"$e/r2-stub-table.json"
 
-all_subscribed() {
-    local deadline=$(($(date +%s) + 180)) rows
-    while [ "$(date +%s)" -lt "$deadline" ]; do
-        rows=$(agents_stats_all)
-        echo "$rows" | awk '$4 == "READY" && $5 >= 1 { ok++ } END { exit !(ok == 3) }' && { echo "$rows"; return 0; }
-        sleep 3
-    done
-    echo "$rows"; return 1
-}
-
-# agent logs after ns-3 said bye: the agent prints its stats every 5 s, so wait for a stats line with ipc.bye >= 1
-agent_logs_after_bye() {
-    local rd="$1" c n deadline=$(($(date +%s) + 15))
-    for c in $(dk ps -aq --filter label=ns3e2.agent=1); do
-        n=$(dk inspect --format '{{index .Config.Labels "ns3e2.nodeId"}}' "$c")
-        while :; do
-            dk logs "$c" >"$rd/agent-$n.log" 2>&1
-            python3 -I - "$rd/agent-$n.log" <<'PY' && break
-import json, sys
-last = None
-for l in open(sys.argv[1], errors="replace"):
-    if l.startswith('{"event":"stats"'):
-        last = json.loads(l)
-sys.exit(0 if last and last["ipc"]["bye"] >= 1 else 1)
-PY
-            [ "$(date +%s)" -lt "$deadline" ] || { echo "agent $n: no stats line after bye within 15 s"; return 1; }
-            sleep 1
-        done
-    done
-    echo "every agent logged its stats after bye"
-}
-
-route_owner_row() {
-    printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$1" "$2" "${ROUTE_OWNER_12041:-}" "${ROUTE_OWNER_12042:-}" \
-        "${ROUTE_OWNER_E2TERM_12041:-}" "${ROUTE_OWNER_E2TERM_12042:-}" >>"$e/route-owners.tsv"
-}
-
-# r2_live <label> [--dump]: one run from a fresh RIC state; the per-run checks.
-r2_live() {
-    local label="$1" dump="${2:-}" rd="$RUNS/$1" pp rc cap_t0
-    rm -rf "$rd"; mkdir -p "$rd/ns3run" "$rd/trace" "$rd/extra"
-    check "r2_${label}_ric_reset_fresh_pods_and_bucket" rc_ric_reset "$label"
-    check "r2_${label}_capture_started_before_agents" capture_start "$label" docker0 'ip proto 132'
-    cap_t0=$(date +%s)
-    check "r2_${label}_agents_connected_set_exact" gate_bringup agents "$NODES"
-    echo '{}' >"$rd/node-ips.json"
-    check "r2_${label}_agent_ips_recorded" agents_record_ips "$rd/node-ips.json"
-    check "r2_${label}_every_agent_ready_and_subscribed" all_subscribed
-    check "r2_${label}_ts_and_stub_pods_fresh_after_agents_rtmgr_sessions" ts_stub_pods_reset "$label"
-    check "r2_${label}_rc_rmr_ready_after_rtmgr_restart" rc_rmr_ready_after_rtmgr
-    check "r2_${label}_ts_xapp_nodeb_list_has_every_connected_agent" ts_nodeb_list_check
-    check "r2_${label}_route_dump_start" rc_route_dump "$label-start"
-    route_owner_row "$label" start
-    check "r2_${label}_routes_30002_20010_to_ts_30000_only_to_stub" ts_routes_check "$label-start"
-    check "r2_${label}_a1_threshold_set_and_logged_by_the_ts_xapp" ts_policy_set "$A1_TH" "r2-$label-$GATE_TS"
-    fact "a1ThresholdAttempt_$label" "$(cat "$e/r2-$label-$GATE_TS-a1-attempt.txt" 2>/dev/null || echo null)"
-    fact "a1DeliveredAttempt_$label" "$(cat "$e/r2-$label-$GATE_TS-a1-delivered-attempt.txt" 2>/dev/null || echo null)"
-    check "r2_${label}_a1mediator_connection_to_ts_xapp_clean" a1_ts_connection_check "$label"
-    fact "a1mediatorRestart_$label" "$(jq -c '{fresh, problems}' "$e/$label-a1mediator-restart.json" 2>/dev/null || echo null)"
-    check "r2_${label}_stub_table_loaded" stub_table_load "$e/r2-stub-table.json"
-    check "r2_${label}_injector_started" injector_start "$rd/injector"
-    check "r2_${label}_pods_snapshot_before" rc_pod_snapshot "$label-before"
-    run_it() {
-        python3 -I "$PACER" --port "$PACER_PORT" --out "$rd/pacer" --t-ctl "$T_CTL_S" --w "$W_S" --schedule "$e/r2-schedule.json" >"$rd/pacer.log" 2>&1 &
-        pp=$!
-        paced_wait_ready "$rd/pacer.log" pacer || { kill "$pp"; return 1; }
-        ns3_start "$rd/ns3run" "${CLI[@]}" --RngRun=1 "--simStartEpochMs=$EPOCH_MS" --e2AgentHost=127.0.0.1 \
-            --e2TraceDir="$rd/trace" --e2Pacing=lockstep "--e2PacerPort=$PACER_PORT" "--e2GateTimeout=$T_GATE_S" || { kill "$pp"; return 1; }
-        ns3_wait; rc=$NS3_RC
-        paced_pacer_finish "$pp"
-        echo "$rc" >"$rd/ns3-exit"
-        echo "$label: ns-3 exit $rc, pacer exit $PACER_RC (want 0 and 0)"
-        [ "$rc" = 0 ] && [ "$PACER_RC" = 0 ]
-    }
-    check "r2_${label}_lockstep_run_exits_clean" run_it
-    check "r2_${label}_pods_snapshot_after" rc_pod_snapshot "$label-after"
-    check "r2_${label}_route_dump_end" rc_route_dump "$label-end"
-    route_owner_row "$label" end
-    check "r2_${label}_restart_counts_zero_rc_ts_stub_kpimon_hw_go_agents" rc_restarts_zero "$label-after"
-    check "r2_${label}_stub_log_saved" stub_log_save "$rd/stub-log.json"
-    check "r2_${label}_injector_stopped" injector_stop "$rd/injector"
-    check "r2_${label}_agent_logs_with_stats_after_bye" agent_logs_after_bye "$rd"
-    if [ "$dump" = --dump ]; then
-        dump_it() { influx_dump "$rd/influx-kpimon.csv"; }
-        check "r2_${label}_influx_dump_written_without_the_token" dump_it
-    fi
-    check "r2_${label}_agents_stopped" agents_stop
-    check "r2_${label}_capture_stopped" capture_stop "$label"
-    kpimon_window() { kpimon_logs_since "$cap_t0" "$rd/kpimon.log" && kpimon_log_window_summary "$rd/kpimon.log"; }
-    check "r2_${label}_kpimon_log_window_complete" kpimon_window
-    wmore0() { local c; c=$(kpimon_log_counts "$rd/kpimon.log"); echo "$c" | tr '\n' ' '; echo "$c" | awk -F= '($1=="hdr_wmore"||$1=="msg_wmore") && $2!=0 {bad=1} END{exit bad}'; }
-    check "r2_${label}_kpimon_zero_rc_wmore" wmore0
-    extract() {
-        python3 -I "$HARNESS_DIR/tools/e2-evidence/wire-c1-extract.py" "$e/$label.pcap" --node-ips "$rd/node-ips.json" \
-            --ledger "$rd/trace/e2-control-ledger.jsonl" --out-dir "$rd/extra" --t0 "$cap_t0" \
-            --decode-cmd "$(dk_cmd) run --rm -i $RC_DEC_TAG" --expect-requests "$N_POS" --expect-agent-local 0
-    }
-    check "r2_${label}_wire_one_terminal_answer_per_request_joined_to_ledger" extract
-    # KPM continuity after the second rtmgr restart: kpimon decoded every indication on the wire
-    kpm_cont() {
-        local k w
-        k=$(kpimon_log_counts "$rd/kpimon.log" | sed -n 's/^indications=//p')
-        w=$(python3 -I -c 'import json,sys; print(sum(json.load(open(sys.argv[1]))["kpmHeadersByNode"].values()))' "$rd/extra/c1-extract-summary.json")
-        echo "kpimon indications $k, wire indications $w"
-        [ -n "$k" ] && [ "$k" = "$w" ] && [ "$k" -gt 0 ]
-    }
-    check "r2_${label}_kpm_continuity_kpimon_equals_wire_indications" kpm_cont
-    c2() { python3 -I "$HARNESS_DIR/scripts/gates/check-ledger.py" "$rd/trace/e2-control-ledger.jsonl" "$rd/pacer/pacer-log.jsonl" --expect "$N_POS"; }
-    check "r2_${label}_c2_ledger" c2
-    check "r2_${label}_c9_handover_rows_match_applied_lines" python3 -I "$HARNESS_DIR/scripts/gates/check-c9-handover-trace.py" "$rd"
-    kpm_moves() {
-        python3 -I "$HARNESS_DIR/tools/e2-evidence/kpm-ue-list-moves.py" "$e/$label.pcap" --node-ips "$rd/node-ips.json" \
-            --ledger "$rd/trace/e2-control-ledger.jsonl" --epoch-ms "$EPOCH_MS" --t0 "$cap_t0" --out "$rd/kpm-ue-moves.json"
-    }
-    check "r2_${label}_kpm_ue_lists_move_applied_and_keep_refused" kpm_moves
-    one_connection() {
-        python3 -I - "$rd" <<'PY'
-import glob, json, re, sys
-rd = sys.argv[1]
-em = re.findall(r"E2IPC node (\d+) \(\w+\) .*droppedDisconnected=(\d+) .*connects=(\d+)", open(rd + "/ns3run/stderr.txt").read())
-bad = [m for m in em if m[1] != "0" or m[2] != "1"]
-acc = {}
-for f in sorted(glob.glob(rd + "/agent-*.log")):
-    last = None
-    for l in open(f, errors="replace"):
-        if l.startswith('{"event":"stats"'):
-            last = json.loads(l)
-    acc[f.rsplit("-", 1)[1][:-4]] = last["ipc"]["accepted"] if last else None
-print("emitters", em, "agents ipc.accepted", acc)
-sys.exit(0 if len(em) == 3 and not bad and len(acc) == 3 and all(v == 1 for v in acc.values()) else 1)
-PY
-    }
-    check "r2_${label}_one_connection_per_emitter_and_agent" one_connection
-    agent_c2() {
-        python3 -I - "$rd" <<'PY' | tee "$rd/agent-c2.json"
-import glob, json, sys
-rd = sys.argv[1]
-per = {}
-for f in sorted(glob.glob(rd + "/agent-*.log")):
-    last = None
-    for l in open(f, errors="replace"):
-        if l.startswith('{"event":"stats"'):
-            last = json.loads(l)
-    r = last["rc"]
-    per[f.rsplit("-", 1)[1][:-4]] = {k: r[k] for k in ("rx", "forwarded", "rejFunc", "rejDecode", "rejAction", "rejIpcDown",
-                                                       "failedOnBye", "ackTx", "failTx", "pending")}
-static = sum(v["rejFunc"] + v["rejDecode"] + v["rejAction"] + v["rejIpcDown"] for v in per.values())
-post_bye = sum(v["failedOnBye"] for v in per.values())
-pending = sum(v["pending"] for v in per.values())
-print(json.dumps({"staticRejects": static, "postBye": post_bye, "pending": pending, "perAgent": per}))
-sys.exit(0 if static == 0 and post_bye == 0 and pending == 0 else 1)
-PY
-    }
-    check "r2_${label}_agent_static_rejects_zero_post_bye_zero" agent_c2
+rung_stub_setup() { RUN_SCHEDULE="$e/r2-schedule.json"; check "r2_${1}_stub_table_loaded" stub_table_load "$e/r2-stub-table.json"; }
+rung_judges() {
+    local label="$1" rd="$2"
     check "r2_${label}_expected_outcomes_negatives_no_line_late_zero" bash -c "python3 -I '$CHK' expect '$SCEN' '$rd/trace/e2-control-ledger.jsonl' ${CALX[*]} | tee '$rd/r2-expect.json'"
     check "r2_${label}_wire_requests_equal_positives_via_target_with_stub_key" bash -c "python3 -I '$CHK' wire '$SCEN' '$rd/extra/rc-multiset.json' ${CALX[*]} | tee '$rd/r2-wire.json'"
     check "r2_${label}_injector_and_stub_one_request_and_answer_per_trigger" bash -c "python3 -I '$CHK' stub '$SCEN' '$rd/stub-log.json' '$rd/injector/tx.jsonl' ${CALX[*]} | tee '$rd/r2-stub.json'"
 }
 
 if [ "$MODE" = calibrate ]; then
-    r2_live calib
+    rung_live calib
     wcal() { python3 -I "$CHK" w "$RUNS/calib/pacer/pacer-summary.json" "$T_CTL_S" --count "$N_POS" | tee "$e/r2-w-calibration.json"; }
     check r2_calib_w_from_complete_trigger_steps wcal
     fact calibration "$(cat "$e/r2-w-calibration.json" 2>/dev/null || echo null)"
 else
     NLIVE=3; [ "$MODE" = single ] && NLIVE=1
     for i in $(seq "$NLIVE"); do
-        if [ "$i" = 1 ]; then r2_live "live$i" --dump; else r2_live "live$i"; fi
+        if [ "$i" = 1 ]; then rung_live "live$i" --dump; else rung_live "live$i"; fi
     done
     d7() { python3 -I "$CHK" d7 "$RUNS/live1/trace/e2-control-ledger.jsonl" | tee "$e/d7.json"; }
     check r2_d7_every_control_via_the_target_gnb_both_gnbs d7
