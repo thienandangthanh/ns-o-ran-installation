@@ -69,6 +69,8 @@ fact mode "$(json_str "$MODE")"
 fact dev "$([ "$DEV" = 1 ] && echo true || echo false)"
 fact tCtlSeconds "$T_CTL_S"
 fact tCtlProvenance "$(json_str "$TCTL_PROV")"
+# substitution 3 patches the TS xApp, which is not in this rung's control path (and in M9 not yet installed)
+fact substitution3Applied false
 fact vmLoadStart "$(json_str "$(uptime)")"
 record r0_args true "dev $DEV; T_ctl $T_CTL_S s ($TCTL_PROV); T_gate $T_GATE_S s; epoch $EPOCH_MS; rc pin $RC_SHA"
 # a gated run needs a T_ctl whose provenance names its calibration evidence (evidence/r0/<ts>) or the user's ruling

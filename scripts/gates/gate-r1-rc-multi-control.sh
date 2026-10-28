@@ -62,6 +62,8 @@ fact mode "$(json_str "$MODE")"
 fact dev "$([ "$DEV" = 1 ] && echo true || echo false)"
 fact tCtlSeconds "$T_CTL_S"
 fact tCtlProvenance "$(json_str "$TCTL_PROV")"
+# substitution 3 patches the TS xApp, which is not in this rung's control path (and in M9 not yet installed)
+fact substitution3Applied false
 fact outageThresholdDb "$THRESH"
 fact outageThresholdProvenance "$(json_str "$THRESH_PROV")"
 fact vmLoadStart "$(json_str "$(uptime)")"
