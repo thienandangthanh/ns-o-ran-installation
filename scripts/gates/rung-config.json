@@ -142,8 +142,8 @@
   "r3pConfig": {
     "_comment": "R3\u2032 only (gate-r3p-ts-predictor.sh). R2's deadlines.W_s and a1_threshold stay untouched (gate r2's cfg_ok reads them); R3\u2032 uses the same A1 threshold (scripts/gates/r3p-scenario.json threshold 10 must equal a1_threshold).",
     "W_s": {
-      "value": null,
-      "provenance": "unset: set from the R3\u2032 calibration run (gate-r3p --mode calibrate, evidence/r3p/<ts>): W = max(1 s, 3 x L_max), L_max = p99.9 by nearest rank at n = 25"
+      "value": 1.0,
+      "provenance": "evidence/r3p/20261028T042540Z calibration (gate-r3p --mode calibrate, harness f614311): R2's fixed-prediction block through the R3\u2032 prepare path, 25 complete one-control trigger steps, L_max 5.395 ms (= p99.9 by nearest rank at n = 25), W = max(1 s, 3 x L_max) = 1.0 s; 20 x L_max <= T_ctl"
     },
     "prepareTimeoutS": {
       "value": 30,

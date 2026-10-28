@@ -1,0 +1,32 @@
+{"key":"mode","value":"calibrate"}
+{"key":"stage","value":""}
+{"key":"dev","value":false}
+{"key":"tCtlSeconds","value":30}
+{"key":"tCtlProvenance","value":"evidence/r0/20261023T065002Z calibration: L_max 12.919 ms over 10 complete trigger steps, T_ctl = max(30 s, ceil(20 x L_max)) = 30 s; host load 1.03 (20 CPUs), VM load 1.29; CPU hold released by the user 15:44 KST"}
+{"key":"wSeconds","value":1.0}
+{"key":"wProvenance","value":"unset: set from the R3\u2032 calibration run (gate-r3p --mode calibrate, evidence/r3p/<ts>): W = max(1 s, 3 x L_max), L_max = p99.9 by nearest rank at n = 25"}
+{"key":"a1Threshold","value":10}
+{"key":"a1ThresholdProvenance","value":"scripts/gates/r2-scenario.json threshold 10 (n2 is a neighbour 5 % above serving, under it), set and reached in the R2 calibration evidence/r2/20261026T140350Z"}
+{"key":"substitution2Applied","value":true}
+{"key":"substitution3Applied","value":true}
+{"key":"outageThresholdDb","value":-1000}
+{"key":"outageThresholdProvenance","value":"substitution 1: the R0-config null-control run at the default -5 dB counted 5 LTE outage switches (evidence/r0/20261023T073520Z q2OutageSwitches 5; also 065002Z, 065551Z); gated runs use --outageThreshold=-1000"}
+{"key":"scenarioSha256","value":"7824c744034bb812c3f04808e9b6f1d93571521b447b357597b8e65bc47464f6"}
+{"key":"handoverTriggers","value":25}
+{"key":"vmLoadStart","value":" 04:25:42 up 1 day, 11:58,  0 user,  load average: 0.82, 1.05, 0.86"}
+{"key":"a1PolicyTypeCreated","value":false}
+{"key":"xappImageIds","value":{"trafficxapp": "sha256:f521d56b24b41eed4137a0683b740e687f81e41c7d49ef68221879c59ab3d0d5", "stubqp": "sha256:8aaae9a1f34d65c5d4821a792b55182fcc7cbefc7505edfc74fc83201078305f", "stubqpImage": "127.0.0.1:80/stubqp:07c6dc93df2f"}}
+{"key":"a1ThresholdAttempt_calib","value":2}
+{"key":"a1DeliveredAttempt_calib","value":1}
+{"key":"a1mediatorRestart_calib","value":{"fresh": true, "problems": []}}
+{"key":"calibration","value":{"n": 25, "lMaxS": 0.005395, "lS": [0.002928, 0.002951, 0.002985, 0.003, 0.003047, 0.003047, 0.003056, 0.003114, 0.003179, 0.003212, 0.003247, 0.003253, 0.003274, 0.003366, 0.003369, 0.003418, 0.003439, 0.003445, 0.003616, 0.003693, 0.003971, 0.003999, 0.004171, 0.004308, 0.005395], "wSeconds": 1.0, "tCtlCoversTwentyLMax": true, "problems": [], "pass": true}}
+{"key":"minSlack","value":{"T_start": 119.999604, "T_gate": 9.979877, "T_ctl": 29.994605, "W": null}}
+{"key":"lControlLatencyS","value":[0.002928, 0.002951, 0.002985, 0.003, 0.003047, 0.003047, 0.003056, 0.003114, 0.003179, 0.003212, 0.003247, 0.003253, 0.003274, 0.003366, 0.003369, 0.003418, 0.003439, 0.003445, 0.003616, 0.003693, 0.003971, 0.003999, 0.004171, 0.004308, 0.005395]}
+{"key":"ipcDropped","value":0}
+{"key":"droppedNoSub","value":0}
+{"key":"restartCountsAllZero","value":true}
+{"key":"restartCounts","value":{"calib/hw-go": 0, "calib/kpimon": 0, "calib/rc": 0, "calib/qp-stub": 0, "calib/ts-xapp": 0, "calib/agent-3": 0, "calib/agent-2": 0, "calib/agent-1": 0}}
+{"key":"routeOwner12041","value":{"calib": {"start": {"rtmgr": "service-ricxapp-kpimon-go-rmr.ricxapp:4560", "e2term": "service-ricxapp-kpimon-go-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-kpimon-go-rmr.ricxapp:4560", "e2term": "service-ricxapp-kpimon-go-rmr.ricxapp:4560"}}}}
+{"key":"routeOwner12042","value":{"calib": {"start": {"rtmgr": "service-ricxapp-kpimon-go-rmr.ricxapp:4560", "e2term": "service-ricxapp-kpimon-go-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-kpimon-go-rmr.ricxapp:4560", "e2term": "service-ricxapp-kpimon-go-rmr.ricxapp:4560"}}}}
+{"key":"tsOrStubHeldAckRoute","value":{"calib": false}}
+{"key":"vmLoadEnd","value":" 04:33:19 up 1 day, 12:06,  0 user,  load average: 1.18, 0.88, 0.82"}
