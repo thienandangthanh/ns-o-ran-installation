@@ -1,0 +1,57 @@
+r3p predictor self-test: ok
+ok   healthy disjoint membership, one IMSI
+ok   healthy, every IMSI (dry-run observe)
+ok   a missing UE row at T
+ok   the UE row at T on the wrong gNB
+ok   an IMSI listed by both gNBs in IPC
+ok   a missing cell row in the window
+ok   a duplicate cell row
+ok   a row past T
+ok   Influx DL differs from IPC
+ok   a double-typed counter
+ok   the last applied line targets a cell that does not list the IMSI
+ok   a handover applied at T (in progress)
+ok   the eNB's UeMetrics rows are never read (one dropped: still healthy)
+n6 self-test: ok
+ok   happy path: n1 and h1 formed
+ok   a missing row inside the only handover-producing windows: invalid
+ok   an unclean stage: invalid
+ok   a domain not fully observed: invalid
+ok   a complete domain with no handover: substitution 4
+ok   every IMSI hands over in n1's slot: T3
+ok   handovers only in the margin band: T3
+ok   n1's slot holds no IMSI whose swapped observations would hand over: T3
+ok   stage B happy path: schedule n1, h1, m1
+ok   stage B: m1 only in the margin band: T3
+ok   stage B: an N6 failure: invalid
+ok   an empty domain is refused by the lint
+r3p dry-run classifier self-test: ok
+ok   expect: pass
+ok   expect: a ledger line for a none trigger
+ok   wire: pass
+ok   wire: a request for a none trigger
+ok   stub: pass
+ok   stub: a 30002 value = formula + 1
+ok   stub: serving cell not first
+ok   stub: a cell key spelled differently (no zero padding; cells 2 and 3 have no hex letters to lowercase)
+ok   stub: a non-decimal ue-id
+ok   predictor: pass
+ok   predictor: a record that differs from the formula
+ok   influx-ipc: pass
+ok   influx-ipc: a missing seq
+ok   influx-ipc: a duplicate (node, seq)
+ok   influx-ipc: an eNB row carries the counter
+ok   influx-ipc: a double field
+ok   influx-ipc: a tail truncated in both IPC and Influx
+ok   d7: pass
+ok   d7: an applied line not via the target gNB
+ok   observation: pass
+ok   observation: equal cells, so the swap changes no decision
+ok   membership: pass
+ok   membership: h1's IMSI still on its old cell at m1
+ok   driven: pass
+ok   driven: no applied handover
+ok   secrets: pass
+ok   secrets: a token in the predictor dir
+r3p checks self-test: ok
+reference-compare self-test: ok

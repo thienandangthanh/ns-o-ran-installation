@@ -1,0 +1,44 @@
+[03:54:40] gate r3p start; evidence /home/uc/evidence/r3p/20261028T035439Z; harness 5c2b0498a37fd1705eeeeba5165c1dbe37262118
+[03:54:41] PASS r3p_args
+[03:54:41] PASS r3p_config_values_from_their_evidence
+[03:54:41] PASS r3p_predictor_n6_classifier_checks_reference_self_tests
+[03:54:41] ric watchdog started (pid 2726346, threshold 600s)
+[03:54:41] PASS r3p_nist_tree_at_testbed_sha_with_agent_dir
+[03:54:41] PASS r3p_ts_source_is_pin_plus_exactly_the_testbed_patches
+[03:54:42] PASS r3p_build_tools_present
+[03:54:42] PASS r3p_sctp_module_loaded
+[03:54:42] PASS r3p_ns3_binary_located_at_pins
+[03:54:42] PASS r3p_pod_log_reader_self_test
+[03:54:46] PASS r3p_pacer_self_test
+[03:54:46] PASS r3p_kpm_ue_list_judge_self_test
+[03:54:46] PASS r3p_grpcurl_fetched_and_checksum_verified
+[03:55:29] PASS r3p_pre_ric_reset_fresh_rc_kpimon_hw_go_and_bucket
+[03:55:30] PASS r3p_rc_installed_at_pin_and_ready
+[03:55:30] PASS r3p_a1_policy_type_20008_present
+[03:56:29] PASS r3p_pre_ts_and_stub_pods_fresh_rtmgr_sessions
+[03:56:29] PASS r3p_ts_xapp_at_pin_ready_in_grpc_mode
+[03:56:44] PASS r3p_rmr_peer_image_built_self_tested
+[03:56:44] PASS r3p_stub_qp_deployed
+[03:56:44] PASS r3p_xapp_image_ids
+[03:57:51] PASS r3p_rc_decoder_built
+[03:58:34] PASS r3p_drya_ric_reset_fresh_pods_and_bucket
+[03:59:08] PASS r3p_drya_agents_connected_set_exact
+[03:59:11] PASS r3p_drya_every_agent_ready_and_subscribed
+[03:59:11] PASS r3p_drya_observe_schedule_written
+[03:59:12] PASS r3p_drya_pods_snapshot_before
+[04:00:53] PASS r3p_drya_lockstep_null_control_run_exits_clean
+[04:00:54] PASS r3p_drya_pods_snapshot_after
+[04:00:54] PASS r3p_drya_restart_counts_zero_rc_ts_stub_kpimon_hw_go_agents
+[04:00:54] PASS r3p_drya_influx_equals_ipc_full
+[04:00:57] PASS r3p_drya_agents_stopped
+[04:00:57] PASS r3p_drya_handover_rows_match_ledger
+[04:00:57] FAIL r3p_drya_applied_controls_0: exit 1: grep: /home/uc/evidence/r3p/20261028T035439Z/runs/drya/trace/e2-control-ledger.jsonl: No such file or directory
+applied  (want 0)
+[04:00:57] PASS r3p_drya_no_token_in_the_predictor_dir
+[04:00:57] FAIL r3p_drya_classified_valid: exit 1: {"class": "invalid", "problems": ["stage not clean: ['r3p_drya_applied_controls_0']"]}
+[04:00:57] PASS r3p_ipc_dropped_zero_no_sub_dropped_zero_and_slack_recorded
+[04:00:57] PASS r3p_restart_counts_all_zero
+[04:00:58] PASS r3p_no_stray_process
+verdict r3p: FAIL failed=['r3p_drya_applied_controls_0', 'r3p_drya_classified_valid']
+Terminated
+[04:00:58] ric watchdog stopped (pid 2726346)
