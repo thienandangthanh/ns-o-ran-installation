@@ -29,8 +29,8 @@ vm_ssh() { ssh "${SSH_OPTS[@]}" "$VM_SSH" "$@"; }
 # A cancelling stop path must stay inside its budget (m9-budget.py): every remote call it makes is bounded, so a
 # responsive sshd whose systemctl never returns cannot hold the shutdown back. CANCEL_TIMEOUT_S bounds the stop.
 CANCEL_TIMEOUT_S="${CANCEL_TIMEOUT_S:-30}"
-vm_gate_units() { timeout --kill-after=2 10 ssh "${SSH_OPTS[@]}" "$VM_SSH" "systemctl list-units --plain --no-legend --state=active 'gate-*' | awk '{print \$1}'" 2>/dev/null | paste -sd, -; }
-vm_stop_gates() { timeout --kill-after=2 "$CANCEL_TIMEOUT_S" ssh "${SSH_OPTS[@]}" "$VM_SSH" "sudo systemctl stop 'gate-*'" 2>/dev/null; }
+vm_gate_units() { timeout --kill-after=2 10 ssh -n "${SSH_OPTS[@]}" "$VM_SSH" "systemctl list-units --plain --no-legend --state=active 'gate-*' | awk '{print \$1}'" 2>/dev/null | paste -sd, -; }
+vm_stop_gates() { timeout --kill-after=2 "$CANCEL_TIMEOUT_S" ssh -n "${SSH_OPTS[@]}" "$VM_SSH" "sudo systemctl stop 'gate-*'" 2>/dev/null; }
 
 vm_state() { "${VIRSH[@]}" domstate "$VM_DOMAIN" 2>/dev/null | head -1; }
 

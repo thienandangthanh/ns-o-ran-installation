@@ -115,8 +115,14 @@ write_verdict() {
     return "$rc"
 }
 
+# a TERM to the runner (a trip sweep, the monitor's cancel, or an operator) must not orphan the running step:
+# finish stops it and the VM gate units (bounded) before writing the verdict
 finish() {
     local rc="$1"
+    if [ -n "${step_pid:-}" ] && kill -0 "$step_pid" 2>/dev/null; then
+        kill -TERM "$step_pid" 2>/dev/null
+        vm_stop_gates || hlog "stopping the VM gate units failed or exceeded ${CANCEL_TIMEOUT_S} s"
+    fi
     [ -n "${mon_pid:-}" ] && kill "$mon_pid" 2>/dev/null
     [ -n "${wd_pid:-}" ] && kill "$wd_pid" 2>/dev/null
     write_verdict || rc=1
@@ -133,10 +139,12 @@ mon_pid=$!
 hlog "M9 run $run_ts: steps ${ORDER[*]} (full $full), watchdog trip ${trip_gb} GB every ${interval} s, wall ${wall_s} s"
 
 # supervised CMD...: runs CMD while checking every 5 s that the disk watchdog and the heartbeat monitor are alive;
-# when one has exited, records monitor-lost.json, stops CMD and the VM gate units (bounded) and returns 1
+# when one has exited, records monitor-lost.json and cancels as the heartbeat monitor would (stop CMD and the VM
+# gate units, bounded, then shut the VM down gracefully) and returns 1. The step's PID is kept for finish.
 supervised() {
     "$@" &
-    local c=$! who
+    step_pid=$!
+    local c=$step_pid who
     while kill -0 "$c" 2>/dev/null; do
         who=""
         kill -0 "$wd_pid" 2>/dev/null || who="disk watchdog"
@@ -146,12 +154,17 @@ supervised() {
             printf '{"utc": "%s", "lost": "%s"}\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$who" >"$wd/monitor-lost.json"
             kill -TERM "$c" 2>/dev/null
             vm_stop_gates || hlog "stopping the VM gate units failed or exceeded ${CANCEL_TIMEOUT_S} s"
+            vm_shutdown || hlog "the guest did not shut down within 240 s"
             wait "$c"
+            step_pid=""
             return 1
         fi
         sleep 5
     done
     wait "$c"
+    local rc=$?
+    step_pid=""
+    return "$rc"
 }
 
 boundary() {

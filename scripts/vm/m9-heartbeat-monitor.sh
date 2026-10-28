@@ -50,8 +50,9 @@ while :; do
     [[ "$hb" =~ ^[0-9]+$ ]] || cancel "no watchdog heartbeat" watchdog-lost.json
     age=$((now - hb)); checks=$((checks + 1))
     [ "$age" -gt "$max_age" ] && max_age=$age
+    # written whole (temp file, then rename), so the verdict never reads a truncated record
     printf '{"intervalS": %s, "maxAgeS": %s, "checks": %s, "lastCheckEpoch": %s}\n' "$interval" "$max_age" "$checks" "$now" \
-        >"$dir/watchdog-alive.json"
+        >"$dir/watchdog-alive.json.tmp" && mv -f "$dir/watchdog-alive.json.tmp" "$dir/watchdog-alive.json"
     [ "$age" -le $((2 * interval)) ] || cancel "watchdog heartbeat ${age}s old (> 2 x ${interval}s)" watchdog-lost.json
     [ "$now" -le "$deadline" ] || cancel "global wall deadline passed" wall-deadline.json
 done

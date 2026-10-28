@@ -47,8 +47,8 @@ json.dump({"tripped_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
 PY
     vm_shutdown || hlog "watchdog: guest did not shut down within 240 s"
     if [ -n "$runner_pid" ]; then
-        # The runner's TERM trap runs only after its foreground child exits, so
-        # stop that child (vm-exec.sh) first; this watchdog is a child too.
+        # Stop the runner's children first (the supervised step, its poll sleep,
+        # the heartbeat monitor), then the runner, whose TERM trap writes the verdict.
         local c
         for c in $(pgrep -P "$runner_pid"); do [ "$c" = $$ ] || kill -TERM "$c" 2>/dev/null; done
         kill -TERM "$runner_pid" 2>/dev/null
