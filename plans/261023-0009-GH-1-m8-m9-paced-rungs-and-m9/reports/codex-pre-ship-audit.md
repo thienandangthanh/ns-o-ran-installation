@@ -78,3 +78,20 @@ After the Round 2 fixes: `lint.sh` ok; `m9-runner-selftest.sh` ok (10 cases); `m
 Every material inventory item is reviewed. Codex reviewed all 38 inventory files. The normal reviewer reviewed the post-audit fix diff (`scripts/run-to-m9.sh`, `scripts/m9-verdict.py`, `scripts/m9-budget.py`, `scripts/m9-budget.json`, `scripts/vm/vm-common.sh`, `scripts/vm/host-disk-watchdog.sh`, `scripts/vm/m9-heartbeat-monitor.sh`, `scripts/vm/m9-runner-selftest.sh`). The Round 2 change (`2d1314e`, `2e8f04f`) applies the reviewer's own recommendations, and its fixtures were back-tested against the previous runner. No finding needs a user ruling (no T9).
 
 Status: complete
+
+## F′ heartbeat fix (P10, 2026-10-28 19:35 KST)
+
+Trigger: M9 attempt 1 (`evidence/m9/20261028T092148Z`) was cancelled by a torn heartbeat read; the guided fix is F′ = `fb3554a` (`plans/reports/kongming-261028-1900-GH-1-p10-m9-heartbeat-race-failure-counsel.md`). Inventory: `scripts/vm/host-disk-watchdog.sh`, `scripts/vm/m9-runner-selftest.sh` (diff `239d09f..fb3554a`), plus a read-only sweep of `run-to-m9.sh`, `m9-heartbeat-monitor.sh`, `m9-verdict.py`, `vm-common.sh`.
+
+Codex skipped: run cap reached. The spare (4th) run was consumed at 10:22Z by an accidental `adversarial-review --help` call, which the companion treats as a working-tree review; it was cancelled after about 60 s with no result (job `review-mvrytuzs-ft0d3h`). No further Codex run was started. Per CX-1 the normal reviewer reviewed the inventory: `plans/reports/code-reviewer-261028-1930-GH-1-f-prime-heartbeat-fix-review.md` (no must-fix; case 8 red at `e0a6ac5`, green at `fb3554a`, reproduced independently; VM-isolated; no leftovers).
+
+| # | Finding | Decision | Verification |
+|---|---|---|---|
+| S1 | `df -BG` rounds up (`vm-common.sh:81`): the trip is effectively ≤ 28 GiB real and a recorded 25 can be 24.x GiB real. | **reject for this fix, record** | A recorded 25 G means > 24 GiB real = > 25.7 GB, so the contract's "≥ 25 GB" still holds; only interpretation (h)'s "25 GiB" wording loses about 1 GiB. At the P10 start (≈ 100 GiB) the projected minimum is ≈ 45 GiB, far from the trip. A frozen-file change is not needed for M9 correctness. |
+| S2 | A cancel during a no-snapshot reboot (`run-to-m9.sh:177`) can leave the VM running after the runner exits. | **accept as a known gap, deferred past M9** | Happens only after a cancel, whose verdict already fails closed; no gate unit is active during a boundary reboot, so the VM is idle. Post-run checks (domstate, no orphan) catch it. |
+| N2 | Case 8 does not catch an `echo "$(date +%s)" >file` regression (µs window). | note | The shipped bug is caught; the residual window is microseconds. |
+| N5–N12 | `min-host-free-gb.txt` torn read on TERM (≈ 1e-7, fails closed); wall deadline not re-checked by the verdict (≤ 30 s); hung-watchdog-near-end; suspend/clock step; empty df; long trip noise; no lock; PID reuse. | note | Each fails closed or is covered by the pre-flight (no orphan runner/watchdog/monitor; host stays awake). |
+
+After the fix: `lint.sh` ok; `m9-runner-selftest.sh` ok (10 printed cases); `m9-verdict.py --self-test` ok. K14: only the two inventory files differ from `e0a6ac5`; no gate input or reference changed. No finding needs a user ruling (no T9).
+
+Status: complete
