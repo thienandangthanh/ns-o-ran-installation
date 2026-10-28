@@ -1,0 +1,99 @@
+{
+  "steps": [
+    {
+      "step": "m0",
+      "pass": true,
+      "evidence": "/home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m0/20261028T092251Z",
+      "gatePass": true,
+      "failed": [],
+      "pins": {
+        "FORK_BRANCH": "dev/l-release-nist180",
+        "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+        "TESTBED_SHA": "c6d1434a793f36ae7d08b303f19f63921cf560bf",
+        "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+        "NS3_SHA": "ba954440d008b17e20da07c168b3e96ef48db6de",
+        "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+        "ORAN_INTERFACE_SHA": "96efc40eeb46e9c6cf19f1cc2184890f8e109bea",
+        "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+        "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+      },
+      "mode": null,
+      "substitution3Applied": null,
+      "equalsReference": null
+    },
+    {
+      "step": "m1",
+      "pass": true,
+      "evidence": "/home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m1/20261028T092443Z",
+      "gatePass": true,
+      "failed": [],
+      "pins": {
+        "FORK_BRANCH": "dev/l-release-nist180",
+        "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+        "TESTBED_SHA": "c6d1434a793f36ae7d08b303f19f63921cf560bf",
+        "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+        "NS3_SHA": "ba954440d008b17e20da07c168b3e96ef48db6de",
+        "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+        "ORAN_INTERFACE_SHA": "96efc40eeb46e9c6cf19f1cc2184890f8e109bea",
+        "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+        "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+      },
+      "mode": null,
+      "substitution3Applied": null,
+      "equalsReference": null
+    }
+  ],
+  "expectedSteps": [
+    "m0",
+    "m1",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "i0",
+    "r0",
+    "r1",
+    "i2",
+    "r2",
+    "r3p"
+  ],
+  "exactStepSet": false,
+  "notM9": false,
+  "topRung": "r3p",
+  "highestGreenRung": null,
+  "topRungC1Pass": false,
+  "equalsReference": false,
+  "substitution4": false,
+  "substitution4Record": "none",
+  "substitution3Applied": {},
+  "minHostFreeGb": 85,
+  "minHostFreeFloorGb": 25,
+  "watchdogAlive": {
+    "intervalS": 30,
+    "maxAgeS": 30,
+    "checks": 74,
+    "lastCheckEpoch": 1793181533
+  },
+  "problems": [
+    "steps run ['m0', 'm1'], pre-registered ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'i0', 'r0', 'r1', 'i2', 'r2', 'r3p']",
+    "top rung r3p: mode None, all checks None, equalsReference None",
+    "watchdog-lost.json present"
+  ],
+  "pass": false,
+  "harness_sha": "e0a6ac5ee0b4824038c22e39d467fc1f714d0d13",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "c6d1434a793f36ae7d08b303f19f63921cf560bf",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "ba954440d008b17e20da07c168b3e96ef48db6de",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "96efc40eeb46e9c6cf19f1cc2184890f8e109bea",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+  },
+  "run_prefix": "n",
+  "snapshots": false
+}

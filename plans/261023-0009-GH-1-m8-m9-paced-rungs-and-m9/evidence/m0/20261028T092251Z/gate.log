@@ -1,0 +1,56 @@
+[09:23:19] gate m0 start; evidence /home/uc/evidence/m0/20261028T092251Z; harness e0a6ac5ee0b4824038c22e39d467fc1f714d0d13
+[09:23:21] facts written to /home/uc/evidence/m0/20261028T092251Z/facts.txt
+[09:23:21] PASS os_is_24_04
+[09:23:21] PASS cgroup_v2
+[09:23:21] PASS ram_ge_14g
+[09:23:21] PASS cpus_ge_8
+[09:23:21] PASS root_free_ge_60g
+[09:23:21] PASS swap_state_informational
+[09:23:21] PASS sctp_module
+[09:23:21] PASS egress_github.com
+[09:23:22] PASS egress_registry-1.docker.io_v2_
+[09:23:22] PASS egress_pkgs.k8s.io
+[09:23:24] PASS egress_gerrit.o-ran-sc.org
+[09:23:26] PASS egress_nexus3.o-ran-sc.org_10002_v2_
+[09:23:27] PASS egress_packagecloud.io
+[09:23:27] PASS egress_dl.google.com
+[09:23:28] PASS egress_proxy.golang.org
+[09:23:29] PASS egress_ppa.launchpadcontent.net
+[09:23:29] PASS egress_download.docker.com
+[09:23:29] PASS egress_packages.buildkite.com
+[09:23:37] PASS egress_nexus3.o-ran-sc.org
+[09:23:42] PASS testbed_clone
+[09:23:42] PASS testbed_commit_hashes
+from /tmp/m0/testbed/RAN_Intelligent_Controllers/Near-Real-Time-RIC/install_patch_files/ric-dep/bin/install_k8s_and_helm.sh: KUBEV=1.33 HELMV=3.20 DOCKERV(docker-ce)=29.5
+[09:23:43] PASS index_k8s
+[09:23:44] PASS index_docker
+[09:23:46] PASS index_helm
+[09:23:46] PASS pkg_kubeadm
+[09:23:46] PASS pkg_kubelet
+[09:23:46] PASS pkg_kubectl
+[09:23:46] PASS pkg_docker_ce
+[09:23:46] PASS pkg_containerd_io
+[09:23:46] PASS pkg_helm
+[09:23:48] PASS ricdep_clone
+[09:24:02] PASS kpimon_clone
+[09:24:02] PASS apply_ricdep_getConfigmap_go
+[09:24:02] PASS apply_ricdep_e2mgr_configmap
+[09:24:02] PASS apply_ricdep_ni_e2mgr_configmap
+[09:24:02] PASS apply_ricdep_rtmgr_config
+[09:24:02] PASS apply_ricdep_rtmgr_deployment
+[09:24:02] PASS apply_ricdep_ni_rtmgr_config
+[09:24:02] PASS apply_ricdep_ni_rtmgr_deployment
+[09:24:02] PASS apply_kpimon_wrapper_c
+[09:24:02] PASS apply_kpimon_kpm2_0_asn
+[09:24:03] PASS apply_kpimon_LogicalOR_h
+[09:24:03] PASS apply_kpimon_MatchingCondItemChoice_h
+[09:24:03] PASS apply_kpimon_MatchingCondItem_h
+[09:24:03] PASS apply_kpimon_LogicalOR_c
+[09:24:03] PASS apply_kpimon_MatchingCondItemChoice_c
+[09:24:03] PASS apply_kpimon_MatchingCondItem_c
+[09:24:03] PASS apply_kpimon_control_go
+[09:24:05] PASS fetch_testbed_sha
+[09:24:11] PASS fetch_ns3_sha
+[09:24:12] PASS fetch_oran_interface_sha
+[09:24:14] PASS fetch_e2sim_sha
+verdict m0: PASS failed=[]

@@ -200,5 +200,11 @@ table { border-collapse:collapse; width:100%; } td, th { border:1px solid var(--
 <li><span class="tag decision">decision</span><b>Freeze</b> F = <code>e0a6ac5</code>; pins = fork heads. Rehearsal at F (<code>evidence/r3p/20261028T055917Z</code>): <code>--mode c1 --reference</code> exit 0, <code>equalsReference</code> true, <code>a1PolicyTypeCreated</code> true (first live proof of the type-create path), C1 all true, 168 checks.</li>
 <li><span class="tag question">question</span><b>For Stop B:</b> the GB to free (84 &minus; X), the optional +4 GiB margin, <code>--no-snapshots</code>, the interpretations list, and the stale parent gitlinks (disclosed; <code>pins.conf</code> governs).</li>
 </ul>
+<h2>P10: M9 (goal re-issued 2026-10-28 18:16 KST; pre-build sha <code>585ea58</code>)</h2>
+<ul>
+<li><span class="tag deviation">failure</span><b>Attempt 1 red, harness defect</b> (<code>evidence/m9/20261028T092148Z</code>, prefix n at F <code>e0a6ac5</code>): m0, m1 green; in m2 at 09:59:23Z the heartbeat monitor cancelled on &ldquo;no watchdog heartbeat&rdquo; with the watchdog alive and host free 85 GiB. Root cause: <code>host-disk-watchdog.sh:60</code> wrote the heartbeat by truncate-then-write, and the monitor, on the same 30 s period in the same second, read it empty (file times 3 ms apart; reproduced off-VM, old code 4/4 red). The runner self-test used sub-second periods and never collided.</li>
+<li><span class="tag decision">decision</span><b>One guided fix</b> (<code>plans/reports/kongming-261028-1900-GH-1-p10-m9-heartbeat-race-failure-counsel.md</code>): atomic heartbeat write (temp + rename), monitor unchanged (no re-read, which would let the old code pass), new self-test case 8 running the shipped watchdog against the real monitor with a slowed <code>date</code>; red on F, green on F&prime;. F&prime; touches only the two host files, so K14 holds and <code>reference/r3p</code> stands; the spare Codex run reviews it. Re-run with prefix <code>o</code> (the n probe <code>m0-probe-n10280921</code> is kept as the attempt-1 leftover).</li>
+<li><span class="tag deviation">fact</span><b>Disk growth</b> in attempt-1 m1: 8 GiB in 363 s (&asymp; 0.022 GiB/s), above the budget's 0.0093; that implies h &asymp; 9 against the frozen h = 4. Harmless at ~100 GiB free; recorded, the budget is not changed in this fix.</li>
+</ul>
 </body>
 </html>
