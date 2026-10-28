@@ -9,7 +9,7 @@ Verdict: `plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/m9/20261028T1
 | Item | Value |
 |---|---|
 | Runner command | `scripts/run-to-m9.sh --harness-sha 39b3ba21d46d9e347d14d2841a8abe1ace1ccb05 --run-prefix q --no-snapshots`, run as the transient user unit `m9-q` (`systemd-run --user --wait`, KillMode=mixed; phase-10 Launch-route amendment), after `scripts/vm/vm-snapshot.sh revert fresh-install` |
-| Exit code (V1) | client `rc=0`; unit `Result=success`, `ExecMainStatus=0` (`evidence/m9/20261028T165825Z/unit-journal.txt`) |
+| Exit code (V1) | client `rc=0`, `Finished with result: success`, `status=0/SUCCESS` (`evidence/m9/20261028T165825Z/client-exit.txt`, copied from the launch client's output); the unit journal (`unit-journal.txt`) has no `Main process exited` or `Failed with result` line, unlike attempt 3's (`evidence/m9/20261028T134954Z/unit-journal.txt`) |
 | Start / end (UTC) / wall | 2026-10-28 16:58:25 / 20:29:08 / 12,643 s of the budgeted 20,199 s |
 | Harness SHA (frozen) | F″ = `39b3ba2`: F′ `fb3554a` (the P9 freeze F `e0a6ac5` plus the atomic heartbeat write) plus the bring-up fix in `scripts/gates/bringup.sh`, `agents.sh` and `rc-lib.sh` (`m9-budget.md` F″ addendum) |
 | Pins (verdict `pins`) | Testbed `c6d1434a`, ns-3 `ba954440`, oran-interface `96efc40e`, e2sim `2209995a` (`scripts/pins.conf`, re-checked with `git ls-remote` at pre-flight) |
@@ -42,7 +42,7 @@ Duration is measured from the gate start to the green boundary, including the bo
 | r2 | pass | 618 | 1518 | `plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/r2/20261028T195650Z` |
 | r3p | pass | 1318 | 2529 | `plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/r3p/20261028T200710Z` |
 
-R0, R1 and R2 each passed one live run (mode `single`, `failed: []`; C2–C9 within each gate's checks). Every rung's RestartCount is 0 for rc, kpimon, hw-go, the TS xApp, the stub QP and every agent (`restartCountsAllZero: true`). T_ctl is 30 s for every rung (R0 calibration `evidence/r0/20261023T065002Z`); R3′'s W stays 1.0 s (`r3pConfig.W_s`).
+R0, R1 and R2 each passed one live run (mode `single`, `failed: []`; C2–C9 within each gate's checks). Every rung's RestartCount is 0 for each pod in its path (`restartCountsAllZero: true`): rc, kpimon, hw-go and every agent in all rungs, plus the TS xApp and the stub QP in r2 and r3p. T_ctl is 30 s for every rung (R0 calibration `evidence/r0/20261023T065002Z`); R3′'s W stays 1.0 s (`r3pConfig.W_s`).
 
 ## Bring-up remedies (disclosed; F″)
 
@@ -62,7 +62,7 @@ The refresh is a bounded, logged bring-up remedy that runs before any judged evi
 | P3 | d = 0: controls apply at the next step, no whole-loop delay | decision D5 | present |
 | P4 | UE ID `gNB-UEID` with the IMSI in AMF-UE-NGAP-ID, not `en-gNB-UEID` / `eNB-UEID` | E2SM common v07.00 §6.2.2.6 | present |
 | P5 | Every agent registers as `gNB` with a Global gNB ID | E2AP v03.00 §9.2.6 | present |
-| P6 | DL volume row sent as `QosFlow.PdcpPduVolumeDL`, REAL bytes per period | E2SM-KPM v03.00 §7.9.1; 3GPP TS 28.552 §5.1.3.6.1.1 | present |
+| P6 | MAC-sourced DL volume row sent as `QosFlow.PdcpPduVolumeDL`, REAL bytes per period | E2SM-KPM v03.00 §7.9.1; 3GPP TS 28.552 §5.1.3.6.1.1 | present |
 | P7 | ns-3 puts an E-UTRA PDCP header on the EN-DC bearer | 3GPP TS 37.340 §4.2.2 | present; changes none of the N4 numbers |
 | P8 | RAN function 3 (RC) is not announced in E2 Setup; the agents accept RC controls anyway (Stop A ruling 4) | E2AP v03.00 §8.2.4.3 | present |
 | P9 | MN-hosted PDCP SDU volume credited to the en-gNB cell (`DRB.PdcpSduVolumeDL/UL`) | 3GPP TS 28.552 §5.1.2.1.1.1 (NRCellCU) | present; R3′'s predictor reads this counter |
@@ -88,20 +88,19 @@ Q2: the R0-config null-control run at the default −5 dB counted **5** LTE outa
 
 ## Interpretations made under A1
 
-Listed for ratification at Stop B (`docs/journals/2026-10-28-m8-m9-stop-b.md` §4). The user re-issued the goal after Stop B, but no explicit ruling on these items is recorded.
+Listed for ratification at Stop B (`docs/journals/2026-10-28-m8-m9-stop-b.md` §4, labels (a)–(k) as there). The user re-issued the goal after Stop B, but no explicit ruling on these items is recorded.
 
-
-1. F09: an absent Influx token file passes the scrub only while provably no secret exists (no kubectl, or no Influx pod).
-2. The R3′ persistence formula sends UEs toward the more loaded cell under CBR (anti-load-balancing); prediction quality is out of scope.
-3. "Every seq 1..N" (P6 A1 V3) reads as N consecutive seqs 0..N−1.
-4. R3′'s W was calibrated through R2's fixed-answer block on the R3′ prepare path.
-5. The R3′ dry run ran in two stages (A: class; B: schedule).
-6. Route owners of 12041/12042 differ between runs; they are recorded facts, not judged.
-7. The parent repo's stale submodule gitlinks are disclosed; `pins.conf` governs.
-8. (h) "25 GB" is enforced as 25 GiB (`df -BG`), which is stricter; the effective floor is the 29 GiB trip point.
-9. (i) `substitution3Applied` is carried by every rung verdict (r0, r1, r2, r3p), by i2 and by the M9 verdict's map; the m0–m7 and i0 verdicts do not carry it.
-10. (j) P10's Verify wording is mapped to the A1 runner's verdict fields (phase-10 "Stop B mapping"); the signals are the same.
-
+- (a) F09: an absent Influx token file passes the scrub only while provably no secret exists (no kubectl, or no Influx pod).
+- (b) The R3′ persistence formula sends UEs toward the more loaded cell under CBR (anti-load-balancing); prediction quality is out of scope.
+- (c) "Every seq 1..N" (P6 A1 V3) reads as N consecutive seqs 0..N−1.
+- (d) R3′'s W was calibrated through R2's fixed-answer block on the R3′ prepare path.
+- (e) The R3′ dry run ran in two stages (A: class; B: schedule).
+- (f) Route owners of 12041/12042 differ between runs; they are recorded facts, not judged.
+- (g) The parent repo's stale submodule gitlinks are disclosed; `pins.conf` governs.
+- (h) "25 GB" is enforced as 25 GiB (`df -BG`), which is stricter; the effective floor is the 29 GiB trip point.
+- (i) `substitution3Applied` is carried by every rung verdict (r0, r1, r2, r3p), by i2 and by the M9 verdict's map; the m0–m7 and i0 verdicts do not carry it.
+- (j) Known record slips: the R3′ C1 count was first written as 168 checks (it is 167) and the verdict self-test count as 19 (it is 18); both are corrected, and there are no other slips.
+- (k) P10's Verify wording (`watchdog.json`, `r3-green`, ≥ 20 GB) is mapped to the A1 runner's verdict fields (phase-10 "Stop B mapping"); the signals are the same.
 
 ## Records
 
@@ -110,7 +109,7 @@ Listed for ratification at Stop B (`docs/journals/2026-10-28-m8-m9-stop-b.md` §
 - tshark in `tools/tshark-kpm` (unpinned `debian:trixie-slim`): Debian 4.4.19-0+deb13u1 at pre-flight (unchanged since P9); `equalsReference: true` shows no decoder drift.
 - The M9 run created the allowed M0 probe snapshot `m0-probe-q10281658`. The probes from the earlier attempts (`m0-probe-n10280921`, `m0-probe-o10281122`, `m0-probe-p10281349`) are kept. `fresh-install`, `f7-rerun-green` and `r3p-green` are untouched.
 - Leaked overlays deleted under the 2026-10-28 20:14 ruling: `ubuntu24.1793186558` (33.96 GiB, `evidence/p10-disk/20261028T134728Z`) and `ubuntu24.1793195425` (38.70 GiB, `evidence/p10-disk/20261028T165516Z`).
-- Codex: plan gate 2 runs plus pre-ship 1 run plus the spare 1 = cap reached; F″ was reviewed by kongming (`Codex skipped: run cap reached`).
+- Codex: plan gate 2 runs, pre-ship 1 run, and the spare 1 run (used by accident on a `--help` review that was cancelled; disclosed in the PAUSE T1 journal) make 4 runs, so the cap is reached. F″ was reviewed by kongming instead (`Codex skipped: run cap reached`).
 
 ## Unresolved questions
 
