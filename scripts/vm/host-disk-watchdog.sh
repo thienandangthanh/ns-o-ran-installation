@@ -9,7 +9,8 @@
 #   3. shuts the VM down gracefully (never forced);
 #   4. sends SIGTERM to the runner PID, which stops the chain;
 # and exits 1. --once checks a single time: exit 0 above the threshold. Every
-# poll writes DIR/heartbeat (epoch seconds) for the runner's heartbeat monitor.
+# poll writes DIR/heartbeat (epoch seconds) for the runner's heartbeat monitor and appends "epoch free-GB" to
+# DIR/free-series.tsv, so a run records its real peak growth rate.
 # DIR defaults to $EVIDENCE_HOST_ROOT/watchdog.
 
 source "$(dirname "$0")/vm-common.sh"
@@ -58,6 +59,7 @@ PY
 while :; do
     date +%s >"$out/heartbeat"   # read by m9-heartbeat-monitor.sh: a stale heartbeat means this watchdog died
     free=$(host_free_gb)
+    printf '%s\t%s\n' "$(date +%s)" "$free" >>"$out/free-series.tsv"
     if [ ! -s "$min_file" ] || [ "$free" -lt "$(cat "$min_file")" ]; then echo "$free" >"$min_file"; fi
     [ "$free" -ge "$min_gb" ] || trip "$free"
     [ "$once" = 1 ] && exit 0

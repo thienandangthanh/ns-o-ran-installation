@@ -49,6 +49,12 @@ case "$prefix" in
 esac
 "${VIRSH[@]}" snapshot-list "$VM_DOMAIN" --name | grep -E "^${prefix}[0-9]-" >/dev/null &&
     die "snapshots with prefix $prefix already exist"
+# the VM clones --harness-sha while this runner and its host scripts run from the worktree: refuse unless they agree
+git -C "$here/.." rev-parse -q --verify "$harness_sha^{commit}" >/dev/null || die "harness sha $harness_sha is not a commit here"
+git -C "$here/.." diff --quiet "$harness_sha" -- scripts tools "$PLAN_REL/reference" ||
+    die "scripts, tools or the reference differ from $harness_sha in this worktree"
+[ -z "$(git -C "$here/.." ls-files --others --exclude-standard -- scripts tools "$PLAN_REL/reference")" ] ||
+    die "untracked files under scripts, tools or the reference"
 [ -s "$BUDGET" ] || die "no $BUDGET: the M9 budget (timeouts, wall deadline, trip point) is measured at P9"
 budget() { python3 -I -c 'import json,sys; v=json.load(open(sys.argv[1])); [v := v[k] for k in sys.argv[2].split(".")]; print(v)' "$BUDGET" "$1"; }
 
@@ -56,15 +62,7 @@ budget() { python3 -I -c 'import json,sys; v=json.load(open(sys.argv[1])); [v :=
 top=r3p; sub4=none
 if [ -e "$SUB4" ]; then
     top=r2
-    if python3 -I - "$SUB4" "$here/.." <<'PY'; then sub4=pass; else sub4=fail; fi
-import hashlib, json, os, sys
-r, root = json.load(open(sys.argv[1])), sys.argv[2]
-sha = lambda p: hashlib.sha256(open(os.path.join(root, p), "rb").read()).hexdigest()
-ok = os.path.isdir(os.path.join(root, r["dryRunEvidenceDir"])) and \
-    sha("scripts/gates/rung-config.json") == r["rungConfigSha256"] and sha("scripts/gates/r3p-scenario.json") == r["scenarioSha256"]
-print("substitution 4 record %s" % ("validated" if ok else "does NOT validate"))
-sys.exit(0 if ok else 1)
-PY
+    if python3 -I "$here/gates/r3p-substitution4-validate.py" "$SUB4" "$here/.."; then sub4=pass; else sub4=fail; fi
 fi
 hlog "top rung $top (substitution 4 record: $sub4)"
 
@@ -106,7 +104,7 @@ write_verdict() {
     python3 -I "$here/m9-verdict.py" "$steps_file" "$run_dir/verdict.json" --expected "$(IFS=,; echo "${ORDER[*]}")" \
         --top "$top" --full "$full" --watchdog-dir "$wd" --pins "$here/pins.conf" --harness "$harness_sha" \
         --prefix "$prefix" --snapshots "$snapshots" --sub4 "$sub4" --min-free-floor 25
-    cp "$wd"/{min-host-free-gb.txt,watchdog-alive.json,watchdog-tripped.json,watchdog-lost.json,wall-deadline.json} "$run_dir/" 2>/dev/null
+    cp "$wd"/{min-host-free-gb.txt,free-series.tsv,watchdog-alive.json,watchdog-tripped.json,watchdog-lost.json,wall-deadline.json} "$run_dir/" 2>/dev/null
 }
 
 finish() {
@@ -118,7 +116,7 @@ finish() {
 }
 trap 'hlog "stopped by the disk watchdog or the heartbeat monitor"; finish 3' TERM
 
-rm -f "$wd"/{watchdog-tripped.json,min-host-free-gb.txt,heartbeat,watchdog-alive.json,watchdog-lost.json,wall-deadline.json}
+rm -f "$wd"/{watchdog-tripped.json,min-host-free-gb.txt,free-series.tsv,heartbeat,watchdog-alive.json,watchdog-lost.json,wall-deadline.json}
 "$here/vm/host-disk-watchdog.sh" --runner-pid $$ --min-gb "$trip_gb" --interval "$interval" --out "$wd" &
 wd_pid=$!
 "$here/vm/m9-heartbeat-monitor.sh" --runner-pid $$ --dir "$wd" --interval "$interval" \

@@ -4,7 +4,7 @@
 # dummy unit. Cases: (1) the watchdog dies (one heartbeat, then none): watchdog-lost.json, the unit and the runner
 # stopped within 2 polling periods + one check + slack (5 s); (2) the global wall deadline passes while the
 # heartbeat is fresh: wall-deadline.json and both stopped; (3) a healthy watchdog: the monitor keeps running and
-# records maxAgeS <= 2 periods. Then m9-verdict.py --self-test. Exit 0 when every case holds.
+# records maxAgeS <= 2 periods. Then the substitution 4 record validator and m9-verdict.py self-tests. Exit 0 when every case holds.
 set -uo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 rc=0
@@ -49,6 +49,7 @@ if alive "$unit" && alive "$runner" && alive "$mon" && python3 -I -c 'import jso
 else echo "FAIL healthy watchdog"; rc=1; fi
 kill "$mon" "$beat" "$unit" "$runner" 2>/dev/null
 
+python3 -I "$here/../gates/r3p-substitution4-validate.py" --self-test >/dev/null || { echo "FAIL substitution 4 record validator self-test"; rc=1; }
 python3 -I "$here/../m9-verdict.py" --self-test >/dev/null || { echo "FAIL m9-verdict.py self-test"; rc=1; }
 echo "m9 runner self-test: $([ "$rc" = 0 ] && echo ok || echo failed)"
 exit "$rc"
