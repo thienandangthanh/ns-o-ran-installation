@@ -1,0 +1,86 @@
+{
+ "ricplt/prometheus/prometheus-alertmanager": {
+  "image": "docker.io/prom/alertmanager:v0.20.0",
+  "imageID": "docker.io/prom/alertmanager@sha256:7e4e9f7a0954b45736d149c40e9620a6664036bb05f0dce447bef5042b139f5d"
+ },
+ "ricplt/prometheus/prometheus-alertmanager-configmap-reload": {
+  "image": "docker.io/jimmidyson/configmap-reload:v0.3.0",
+  "imageID": "docker.io/jimmidyson/configmap-reload@sha256:d107c7a235c266273b1c3502a391fec374430e5625539403d0de797fa9c556a2"
+ },
+ "ricplt/prometheus/prometheus-server": {
+  "image": "docker.io/prom/prometheus:v2.18.1",
+  "imageID": "docker.io/prom/prometheus@sha256:5880ec936055fad18ccee798d2a63f64ed85bd28e8e0af17c6923a090b686c3d"
+ },
+ "ricplt/r4-influxdb-influxdb2-0/influxdb2": {
+  "image": "docker.io/library/influxdb:2.2.0-alpine",
+  "imageID": "docker.io/library/influxdb@sha256:0bf6457dc1282f653d9e82186fad7e35138892364c7f81e5e2c47b551c65a49a"
+ },
+ "ricplt/r4-infrastructure-kong/ingress-controller": {
+  "image": "docker.io/kong/kubernetes-ingress-controller:3.1",
+  "imageID": "docker.io/kong/kubernetes-ingress-controller@sha256:999213b98257cae9db2452d5aaaeda98e962c5d3d384ef5b7c269f0ad49dec09"
+ },
+ "ricplt/r4-infrastructure-kong/proxy": {
+  "image": "docker.io/library/kong:3.6",
+  "imageID": "docker.io/library/kong@sha256:a42d2b4503e7b6674ca7914883bdb0d2274b806b0e397a6af28d1dd57aafce4e"
+ },
+ "ricplt/ricplt-a1mediator/container-ricplt-a1mediator": {
+  "image": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-a1:3.2.2",
+  "imageID": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-a1@sha256:7aca81db8eb8535dcff84d8130bd2ebc730e75e494676f5baeebf4c2b1cbd122"
+ },
+ "ricplt/ricplt-alarmmanager/container-ricplt-alarmmanager": {
+  "image": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-alarmmanager:0.5.16",
+  "imageID": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-alarmmanager@sha256:ff48a10b23c50cbcab9cff4a3bd2987f5cfb0d5ab31dbcb0c33c7f7fab5fba3c"
+ },
+ "ricplt/ricplt-appmgr/container-ricplt-appmgr": {
+  "image": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-appmgr:0.5.8",
+  "imageID": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-appmgr@sha256:9628ec75b90f638a0271bbc63b97c04994ba6762312ff8e274c8253d2e91bad2"
+ },
+ "ricplt/ricplt-dbaas/container-ricplt-dbaas-redis": {
+  "image": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-dbaas:0.6.4",
+  "imageID": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-dbaas@sha256:26fa529342600b562bd96503509aad82dbb2588790a15a3ef98c79bc99c0b1eb"
+ },
+ "ricplt/ricplt-e2mgr/container-ricplt-e2mgr": {
+  "image": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-e2mgr:6.0.6",
+  "imageID": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-e2mgr@sha256:7c66665b24262b9b7294941148bfce08befc27e5e473bd629cdfa5d6859d9ced"
+ },
+ "ricplt/ricplt-e2term-alpha/container-ricplt-e2term": {
+  "image": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-e2:6.0.6",
+  "imageID": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-e2@sha256:d1340d57b17a2c7597af9776eb0fe6d69fde31fd3df73f250e04f2af1b796574"
+ },
+ "ricplt/ricplt-o1mediator/container-ricplt-o1mediator": {
+  "image": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-o1:0.6.3",
+  "imageID": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-o1@sha256:27846ce70b3df2387eda7ce760789e7971bf18a659a5020a48558fd0deb01608"
+ },
+ "ricplt/ricplt-rtmgr/container-ricplt-rtmgr": {
+  "image": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-rtmgr:0.9.6",
+  "imageID": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-rtmgr@sha256:d016163a8ff9b1ca62b2eefa9872ae2d5f6269f9194361d122502f39ecd07a08"
+ },
+ "ricplt/ricplt-submgr/container-ricplt-submgr": {
+  "image": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-submgr:0.10.2",
+  "imageID": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-submgr@sha256:b7e472e4e1863a3db9a23eef01501617cc5a6ae774ae0e8dd458d0071d0794f7"
+ },
+ "ricplt/ricplt-vespamgr/container-ricplt-vespamgr": {
+  "image": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-vespamgr:0.7.5",
+  "imageID": "nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-vespamgr@sha256:de6dc780871528c440c071b29d50c3ca53090bce669ed370e9418f5d54f81b57"
+ },
+ "ricxapp/ricxapp-hw-go/hw-go": {
+  "image": "example.com:80/hw-go:latest",
+  "imageID": "sha256:0259b18b80fd016b286f137b1b804858e34dbfaefda8f3a18a37acc8a360051c"
+ },
+ "ricxapp/ricxapp-kpimon-go/kpimon-go": {
+  "image": "127.0.0.1:80/kpimon-go:latest",
+  "imageID": "sha256:05dcbff1c01ad42771648265830eaa09513a37821eebf2d9f2a7a0eff42bee18"
+ },
+ "ricxapp/ricxapp-rc/rc": {
+  "image": "127.0.0.1:80/rc:latest",
+  "imageID": "sha256:9ab8064699c9265b972aed3e0d2cc67ea34e44f3349fbdf03f8466a31f8d45e1"
+ },
+ "ricxapp/ricxapp-stubqp/stubqp": {
+  "image": "127.0.0.1:80/stubqp:07c6dc93df2f",
+  "imageID": "sha256:ffcd09fad2831d6779d9ce127e991585e0760b66150f11f85a07b96aebbbec1e"
+ },
+ "ricxapp/ricxapp-trafficxapp/trafficxapp": {
+  "image": "127.0.0.1:80/trafficxapp:latest",
+  "imageID": "sha256:f521d56b24b41eed4137a0683b740e687f81e41c7d49ef68221879c59ab3d0d5"
+ }
+}
