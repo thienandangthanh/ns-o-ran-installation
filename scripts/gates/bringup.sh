@@ -229,7 +229,7 @@ rt_reader_ok() {
     pod=$(ric_pod "$comp")
     [ -n "$pod" ] || { echo "rt reader $comp: no Running pod" | tee -a "$out"; return 1; }
     deadline=$(($(date +%s) + RT_READER_WAIT_S))
-    until kc -n ricplt exec "$pod" -- cat /proc/net/tcp /proc/net/tcp6 2>/dev/null | awk '$2 ~ /:11D1$/ && $4 == "01" { f = 1 } END { exit !f }'; do
+    until { kc -n ricplt exec "$pod" -- cat /proc/net/tcp /proc/net/tcp6 2>/dev/null || true; } | awk '$2 ~ /:11D1$/ && $4 == "01" { f = 1 } END { exit !f }'; do
         [ "$(date +%s)" -lt "$deadline" ] || { echo "rt reader $comp $pod: no ESTABLISHED socket on :4561 within ${RT_READER_WAIT_S}s" | tee -a "$out"; return 1; }
         sleep 3
     done
@@ -240,17 +240,24 @@ rt_reader_ok() {
     echo "$samples" | python3 -I -c '
 import sys
 comp, pod = sys.argv[1], sys.argv[2]
-seen, drained, last, n = {}, set(), set(), 0
+# Judge the sockets of the last sample that holds a /proc/net/tcp header: a failed exec is no evidence.
+seen, drained, last, cur, n, ok = {}, set(), set(), set(), 0, False
 for line in sys.stdin:
     f = line.split()
     if f[:1] == ["sample"]:
-        n += 1; last = set(); continue
+        if ok:
+            last = cur
+        n += 1; cur = set(); ok = False; continue
+    if f[1:2] == ["local_address"]:
+        ok = True; continue
     if len(f) < 5 or not f[1].endswith(":11D1") or f[3] != "01":
         continue
     rx = int(f[4].split(":")[1], 16)
-    seen.setdefault(f[2], []).append(rx); last.add(f[2])
+    seen.setdefault(f[2], []).append(rx); cur.add(f[2])
     if rx == 0:
         drained.add(f[2])
+if ok:
+    last = cur
 stuck = sorted(r for r in last if r not in drained)
 for r in sorted(seen):
     print("rt reader %s %s: peer %s rx_queue %s" % (comp, pod, r, seen[r]))
@@ -259,8 +266,8 @@ sys.exit(0 if last and not stuck else 1)' "$comp" "$pod" | tee -a "$out" | tail 
     return "${PIPESTATUS[1]}"
 }
 
-# ric_refresh_routes <ric|agents>: replace e2mgr and submgr (pod delete, not a rollout, so two copies never
-# share the SDL), wait for e2term's registration, restart rtmgr last, then require both readers OK. Bounded
+# ric_refresh_routes <ric|agents>: replace e2mgr and submgr (pod delete, not a rollout, so no surge copy
+# runs beside them), wait for e2term's registration, restart rtmgr last, then require both readers OK. Bounded
 # and logged; at most once per level in a gate run (atomic marker). rNIB lives in dbaas, which stays.
 ric_refresh_routes() {
     local level="$1" e="$EVIDENCE_DIR" tag c old new deadline
