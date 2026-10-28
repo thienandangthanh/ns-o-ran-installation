@@ -29,7 +29,7 @@
 #                                 ensure both are registered, restart rtmgr, check its sessions (a1mediator too);
 #                                 $e/<label>-ts-reset.json proves freshness, $e/<label>-appmgr-xapps.json the list
 #   a1mediator_restart <label>    replace the a1mediator pod (deleted, not rolled), wait for a new Ready pod, prove it
-#                                 fresh and policy type 20008 still present ($e/<label>-a1mediator-restart.json). Its
+#                                 fresh and policy type 20008 present before and after it ($e/<label>-a1mediator-restart.json). Its
 #                                 RMR keeps one TCP connection per endpoint and notices a dead peer only on a read
 #                                 error; behind kube-proxy IPVS (idle entries expire after 900 s) a replaced TS pod
 #                                 or Service leaves that connection black-holed, so 20010 is "sent" and lost
@@ -333,6 +333,11 @@ a1mediator_restart() {
     kc -n ricplt get pods -o json >"$r-pods-before.json" || return 1
     old=$(kc -n ricplt get pods --no-headers | awk '/a1mediator/ { print $1 }' | head -n 1)
     [ -n "$old" ] || { echo "no a1mediator pod"; return 1; }
+    # survival means 200 before and 200 after: a type that was never there is not "lost in the restart"
+    base=$(_a1) || return 1
+    code=$(curl -s -m 5 -o /dev/null -w '%{http_code}' "$base/policytypes/$TS_POLICY_TYPE")
+    echo "policy type $TS_POLICY_TYPE before the restart: HTTP $code"
+    [ "$code" = 200 ] || { echo "ensure policy type $TS_POLICY_TYPE before restarting a1mediator"; return 1; }
     kc -n ricplt delete pod "$old" --wait=true >/dev/null || return 1
     deadline=$(($(date +%s) + 180))
     while [ "$(date +%s)" -lt "$deadline" ]; do
@@ -344,7 +349,8 @@ a1mediator_restart() {
     echo "a1mediator $old -> $name"
     kc -n ricplt get pods -o json >"$r-pods-after.json" || return 1
     python3 -I "$HARNESS_DIR/scripts/gates/check-ts-stub-reset.py" "$r" deployment-ricplt-a1mediator || return 1
-    # the policy types live in SDL, so they survive the restart; GET only
+    # the policy types live in SDL, so they survive an a1mediator restart (not a dbaas restart: SDL is in-memory);
+    # GET only
     base=$(_a1) || return 1
     for _ in $(seq 20); do
         code=$(curl -s -m 5 -o /dev/null -w '%{http_code}' "$base/policytypes/$TS_POLICY_TYPE")
