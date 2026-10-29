@@ -1,0 +1,21 @@
+[16:48:07] bringup ric: waiting up to 1200s for ricplt pods
+[16:48:07] bringup ric: all ricplt pods Ready
+[16:48:07] bringup ric: e2term registered with e2mgr: [{"e2tAddress":"10.98.86.163:38000","ranNames":[]}]
+rt reader e2mgr deployment-ricplt-e2mgr-9b6b8f99f-mrbgt: STUCK (5 samples, 1 sockets now, stuck ['6900F40A:E7B2'])
+[16:48:35] bringup ric: an RMR route-table reader is stuck
+[16:48:35] ric refresh (ric): replacing e2mgr and submgr, then rtmgr
+[16:49:06] ric refresh: e2mgr deployment-ricplt-e2mgr-9b6b8f99f-mrbgt -> deployment-ricplt-e2mgr-9b6b8f99f-qbtt7
+[16:49:26] ric refresh: submgr deployment-ricplt-submgr-858956fbdc-7hrhr -> deployment-ricplt-submgr-858956fbdc-kwc8b
+[16:49:26] bringup ric: e2term registered with e2mgr: [{"e2tAddress":"10.98.86.163:38000","ranNames":[]}]
+[16:50:05] ric refresh: rtmgr deployment-ricplt-rtmgr-74fb47b69d-jwn27 -> deployment-ricplt-rtmgr-74fb47b69d-c29c7
+rt reader e2mgr deployment-ricplt-e2mgr-9b6b8f99f-qbtt7: OK (5 samples, 1 sockets now, stuck [])
+rt reader submgr deployment-ricplt-submgr-858956fbdc-kwc8b: OK (5 samples, 1 sockets now, stuck [])
+[16:50:46] bringup agents: stopping NIST kpm_sim so its node cannot mix into the CONNECTED set
+[16:50:46] bringup agents: stop_e2sim.sh exit 0
+[16:50:46] bringup agents: image ns3-e2-agent:c6d1434a793f exists (Testbed commit and map sha match); not rebuilding
+NS3_E2_AGENT_IMAGE=ns3-e2-agent:c6d1434a793f
+NS3_E2_AGENT_IMAGE_ID=sha256:4f9aedc2f6ac6b7ce234479933a0a0961ef659d6694a8f298135f90b5c2e88b8
+NS3_E2_AGENT_E2_INTERFACE=da6f82f286cdbb38af1178f82f85877b12c2f85b
+NS3_E2_AGENT_METRIC_MAP_SHA256=9cfcbbcdd71514e4e2627cfbb4aa950760b42f85d5045de2c1b71d6215f16923
+[16:50:59] bringup agents: e2mgr CONNECTED set equals the expected agents: gnb_001_001_00000002 
+[16:51:02] bringup agents: every agent READY with an E2 setup: 2 0 true READY 1 0;

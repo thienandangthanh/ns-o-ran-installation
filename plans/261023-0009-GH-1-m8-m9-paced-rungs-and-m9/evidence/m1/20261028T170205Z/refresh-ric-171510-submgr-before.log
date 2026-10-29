@@ -1,0 +1,21 @@
+2026-10-28T17:10:54.361794920Z 1793207454361 1/RMR [INFO] sends: ts=1793207454 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+2026-10-28T17:11:25.364917347Z 1793207485364 1/RMR [INFO] sends: ts=1793207485 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+2026-10-28T17:11:56.367894039Z 1793207516367 1/RMR [INFO] sends: ts=1793207516 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+2026-10-28T17:12:27.369902794Z 1793207547369 1/RMR [INFO] sends: ts=1793207547 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+2026-10-28T17:12:58.372367985Z 1793207578372 1/RMR [INFO] sends: ts=1793207578 src=service-ricplt-submgr-rmr.ricplt:4560 target=service-ricplt-e2mgr-rmr.ricplt:3801 open=0 succ=0 fail=0 (hard=0 soft=0)
+2026-10-28T17:14:24.302986904Z CRESTSubscriptionRequest
+2026-10-28T17:14:24.303001075Z   SubscriptionID = ''
+2026-10-28T17:14:24.303003897Z   ClientEndpoint.Host = service-ricxapp-hw-go-rmr.ricxapp
+2026-10-28T17:14:24.303006258Z   ClientEndpoint.HTTPPort = 8080
+2026-10-28T17:14:24.303007984Z   ClientEndpoint.RMRPort = 4560
+2026-10-28T17:14:24.303009635Z   Meid = gnb_734_373_16b8cef1
+2026-10-28T17:14:24.303011252Z   E2SubscriptionDirectives = nil
+2026-10-28T17:14:24.303012839Z   RANFunctionID = 1
+2026-10-28T17:14:24.303014774Z   SubscriptionDetail.XappEventInstanceID = 1234
+2026-10-28T17:14:24.303016415Z   SubscriptionDetail.EventTriggers = [1 2 3 4]
+2026-10-28T17:14:24.303017928Z   SubscriptionDetail.ActionToBeSetup.ActionID = 1
+2026-10-28T17:14:24.303019441Z   SubscriptionDetail.ActionToBeSetup.ActionType = report
+2026-10-28T17:14:24.303021237Z   SubscriptionDetail.ActionToBeSetup.ActionDefinition = [1 2 3 4]
+2026-10-28T17:14:24.303023029Z   SubscriptionDetail.ActionToBeSetup.SubsequentAction.SubsequentActionType = continue
+2026-10-28T17:14:24.303024673Z   SubscriptionDetail.ActionToBeSetup..SubsequentAction.TimeToWait = w10ms
+2026-10-28T17:14:24.303026584Z {"ts":1793207664302,"crit":"ERROR","id":"submgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-10-28T17:14:24"},"msg":"No E2 connection for ranName gnb_734_373_16b8cef1"}

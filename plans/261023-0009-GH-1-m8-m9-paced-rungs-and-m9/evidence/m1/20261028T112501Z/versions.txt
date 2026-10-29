@@ -1,0 +1,39 @@
+--- dpkg (kube*, containerd*, docker*, helm)
+ii  containerd.io             2.4.2-3~ubuntu.24.04~noble    amd64        An open and reliable container runtime
+ii  docker-buildx-plugin      0.38.1-1~ubuntu.24.04~noble   amd64        Docker Buildx plugin extends build capabilities with BuildKit.
+ii  docker-ce                 5:29.5.3-1~ubuntu.24.04~noble amd64        Docker: the open-source application container engine
+ii  docker-ce-cli             5:29.9.2-1~ubuntu.24.04~noble amd64        Docker CLI: the open-source application container engine
+ii  docker-ce-rootless-extras 5:29.9.2-1~ubuntu.24.04~noble amd64        Rootless support for Docker.
+ii  docker-compose-plugin     5.6.1-1~ubuntu.24.04~noble    amd64        Docker Compose (V2) plugin for the Docker CLI.
+hi  kubeadm                   1.33.13-1.1                   amd64        Command-line utility for administering a Kubernetes cluster
+ii  kubecolor                 0.0.20-2ubuntu0.24.04.3       amd64        colorizes kubectl output
+hi  kubectl                   1.33.13-1.1                   amd64        Command-line utility for interacting with a Kubernetes cluster
+hi  kubelet                   1.33.13-1.1                   amd64        Node agent for Kubernetes clusters
+hi  kubernetes-cni            1.6.0-1.1                     amd64        Binaries required to provision kubernetes container networking
+--- uname -r
+6.8.0-147-generic
+--- kubectl version
+Client Version: v1.33.13
+Kustomize Version: v5.6.0
+Server Version: v1.33.13
+--- containerd --version
+containerd containerd v2.4.2 b7a25261e029d68978bbf290df0a62fc819b3c51
+--- helm version
+version.BuildInfo{Version:"v3.20.2", GitCommit:"8fb76d6ab555577e98e23b7500009537a471feee", GitTreeState:"clean", GoVersion:"go1.25.9"}
+--- ricplt/ricinfra pod images (pod container image imageID)
+deployment-ricplt-a1mediator-78f79cbb6b-85csh container-ricplt-a1mediator nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-a1:3.2.2 nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-a1@sha256:7aca81db8eb8535dcff84d8130bd2ebc730e75e494676f5baeebf4c2b1cbd122
+deployment-ricplt-alarmmanager-5b49476676-8whl2 container-ricplt-alarmmanager nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-alarmmanager:0.5.16 nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-alarmmanager@sha256:ff48a10b23c50cbcab9cff4a3bd2987f5cfb0d5ab31dbcb0c33c7f7fab5fba3c
+deployment-ricplt-appmgr-5564b65869-k8w2n container-ricplt-appmgr nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-appmgr:0.5.8 nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-appmgr@sha256:9628ec75b90f638a0271bbc63b97c04994ba6762312ff8e274c8253d2e91bad2
+deployment-ricplt-e2mgr-9b6b8f99f-d2t9c container-ricplt-e2mgr nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-e2mgr:6.0.6 nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-e2mgr@sha256:7c66665b24262b9b7294941148bfce08befc27e5e473bd629cdfa5d6859d9ced
+deployment-ricplt-e2term-alpha-f8f7d7855-x4r22 container-ricplt-e2term nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-e2:6.0.6 nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-e2@sha256:d1340d57b17a2c7597af9776eb0fe6d69fde31fd3df73f250e04f2af1b796574
+deployment-ricplt-o1mediator-bf4fb5758-jqrhx container-ricplt-o1mediator nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-o1:0.6.3 nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-o1@sha256:27846ce70b3df2387eda7ce760789e7971bf18a659a5020a48558fd0deb01608
+deployment-ricplt-rtmgr-74fb47b69d-wwnql container-ricplt-rtmgr nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-rtmgr:0.9.6 nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-rtmgr@sha256:d016163a8ff9b1ca62b2eefa9872ae2d5f6269f9194361d122502f39ecd07a08
+deployment-ricplt-submgr-858956fbdc-7fktl container-ricplt-submgr nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-submgr:0.10.2 nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-submgr@sha256:b7e472e4e1863a3db9a23eef01501617cc5a6ae774ae0e8dd458d0071d0794f7
+deployment-ricplt-vespamgr-848f7bb874-dqzlx container-ricplt-vespamgr nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-vespamgr:0.7.5 nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-vespamgr@sha256:de6dc780871528c440c071b29d50c3ca53090bce669ed370e9418f5d54f81b57
+r4-infrastructure-kong-78657d8f48-5d64n ingress-controller kong/kubernetes-ingress-controller:3.1 docker.io/kong/kubernetes-ingress-controller@sha256:999213b98257cae9db2452d5aaaeda98e962c5d3d384ef5b7c269f0ad49dec09
+r4-infrastructure-kong-78657d8f48-5d64n proxy kong:3.6 docker.io/library/kong@sha256:a42d2b4503e7b6674ca7914883bdb0d2274b806b0e397a6af28d1dd57aafce4e
+r4-infrastructure-prometheus-alertmanager-b9cc56766-r74c6 prometheus-alertmanager prom/alertmanager:v0.20.0 docker.io/prom/alertmanager@sha256:7e4e9f7a0954b45736d149c40e9620a6664036bb05f0dce447bef5042b139f5d
+r4-infrastructure-prometheus-alertmanager-b9cc56766-r74c6 prometheus-alertmanager-configmap-reload jimmidyson/configmap-reload:v0.3.0 docker.io/jimmidyson/configmap-reload@sha256:d107c7a235c266273b1c3502a391fec374430e5625539403d0de797fa9c556a2
+r4-infrastructure-prometheus-server-6476958975-pdq6p prometheus-server prom/prometheus:v2.18.1 docker.io/prom/prometheus@sha256:5880ec936055fad18ccee798d2a63f64ed85bd28e8e0af17c6923a090b686c3d
+statefulset-ricplt-dbaas-server-0 container-ricplt-dbaas-redis nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-dbaas:0.6.4 nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-dbaas@sha256:26fa529342600b562bd96503509aad82dbb2588790a15a3ef98c79bc99c0b1eb
+deployment-tiller-ricxapp-84b87b8c64-2k7qm tiller ghcr.io/helm/tiller:v2.16.12 ghcr.io/helm/tiller@sha256:6003775d503546087266eda39418d221f9afb5ccfe35f637c32a1161619a3f9c

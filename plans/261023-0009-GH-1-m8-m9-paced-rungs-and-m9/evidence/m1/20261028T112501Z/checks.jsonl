@@ -1,0 +1,11 @@
+{"name":"testbed_clone","pass":true,"detail":""}
+{"name":"full_install_exit_0","pass":true,"detail":"exit 0"}
+{"name":"ricdep_sha","pass":true,"detail":"ee47a347314aa0749881de367e8fedc4a1bba13a"}
+{"name":"appmgr_sha","pass":true,"detail":"4c05932dce72e98db23eaff2b72b58816e1f2d55"}
+{"name":"ric_bringup","pass":true,"detail":"[11:37:49] bringup ric: waiting up to 1200s for ricplt pods\n[11:37:49] bringup ric: all ricplt pods Ready\n[11:37:49] bringup ric: e2term registered with e2mgr: [{\"e2tAddress\":\"10.109.150.80:38000\",\"ranNames\":[\"gnb_734_373_16b8cef1\"]}]"}
+{"name":"versions_recorded","pass":true,"detail":""}
+{"name":"image_tags_recorded","pass":true,"detail":"rtmgr 0.9.6 nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-rtmgr:0.9.6\nsubmgr 0.10.2 nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-submgr:0.10.2\nappmgr 0.5.8 nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-appmgr:0.5.8"}
+{"name":"image_tags_match_l_recipe","pass":true,"detail":"all five tags match the L recipe"}
+{"name":"ricplt_stable_10min","pass":true,"detail":"sample 8: restarts=3 (baseline 3) unready=''\nsample 9: restarts=3 (baseline 3) unready=''\nsample 10: restarts=3 (baseline 3) unready=''"}
+{"name":"watchdog_interventions_informational","pass":true,"detail":"e2term deletions by the gate watchdog: 0"}
+{"name":"kpm_sim_connected_informational","pass":true,"detail":"gnb_734_373_16b8cef1=CONNECTED"}

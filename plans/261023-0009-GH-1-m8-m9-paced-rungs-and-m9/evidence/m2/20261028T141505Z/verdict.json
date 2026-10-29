@@ -1,0 +1,181 @@
+{
+  "gate": "m2",
+  "ts": "20261028T141505Z",
+  "harness_sha": "fb3554af67010dfedb6ae500e533acb7cdac9530",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "c6d1434a793f36ae7d08b303f19f63921cf560bf",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "ba954440d008b17e20da07c168b3e96ef48db6de",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "96efc40eeb46e9c6cf19f1cc2184890f8e109bea",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+  },
+  "duration_s": 807,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "m2_tshark_installed",
+      "pass": true,
+      "detail": "packages have been installed but needrestart is suspended\n/usr/bin/tshark\nTShark (Wireshark) 4.2.2 (Git v4.2.2 packaged as 4.2.2-1.1build3)."
+    },
+    {
+      "name": "m2_tshark_has_e2ap_dissector",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m2_tshark_kpm_dissector_informational",
+      "pass": true,
+      "detail": "TShark (Wireshark) 4.2.2 (Git v4.2.2 packaged as 4.2.2-1.1build3).; E2SM-KPM dissector: KPM V2 KPMv2 kpm-v2 T T T|"
+    },
+    {
+      "name": "m2_old_refnode_stopped",
+      "pass": true,
+      "detail": "oransim\noransim\nE2 simulator stopped."
+    },
+    {
+      "name": "m2_capture_started",
+      "pass": true,
+      "detail": "[14:15:25] capture golden-e2setup-sustained started on docker0 (pid 8494, filter 'sctp')"
+    },
+    {
+      "name": "m2_refnode_up",
+      "pass": true,
+      "detail": "[14:18:14] bringup refnode: attempt 1: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)\n[14:18:16] bringup refnode: run_e2sim script exit 0\n[14:18:22] bringup refnode: e2mgr shows a CONNECTED node (attempt 1)"
+    },
+    {
+      "name": "m2_fetch_connected_e2_nodes_shows_connected",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m2_check_e2ap_version_recorded_informational",
+      "pass": true,
+      "detail": "# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/additional_scripts/check_e2ap_version.sh |E2 simuator E2AP file: ./e2-interface/e2sim/asn1c/asn/v03/e2ap-epd-v03.01.asn|E2 simuator E2SM KPM file: ./e2-interface/e2sim/asn1c/asn/v03/e2sm-kpm-v03.00.asn|KPI monitor xApp E2AP file: ./xApps/kpimon-go/e2ap/asn1/elementryProcedureDefinition.asn|KPI monitor xApp E2SM KPM file: ./xApps/kpimon-go/e2sm/asn1/kpm2_0.asn||E2 simulator: E2AP v03.01|E2 simulator: E2SM KPM v03.00|KPI monitor xApp: E2AP v2.0|KPI monitor xApp: E2SM KPM v2.0|"
+    },
+    {
+      "name": "m2_e2mgr_stays_connected_during_hold",
+      "pass": true,
+      "detail": "held 300s after CONNECTED; samples: 2, not-connected: 0"
+    },
+    {
+      "name": "m2_e2mgr_connected_at_end",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m2_golden_capture_stopped",
+      "pass": true,
+      "detail": "[14:23:22] capture golden-e2setup-sustained stopped: 48 packets captured 48 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "m2_sctp_init_present",
+      "pass": true,
+      "detail": "INIT frames: 1 (want >= 1, <= 99999)"
+    },
+    {
+      "name": "m2_sctp_init_ack_present",
+      "pass": true,
+      "detail": "INIT_ACK frames: 1 (want >= 1, <= 99999)"
+    },
+    {
+      "name": "m2_sctp_heartbeat_present",
+      "pass": true,
+      "detail": "HEARTBEAT frames: 19 (want >= 1, <= 99999)"
+    },
+    {
+      "name": "m2_sctp_heartbeat_ack_present",
+      "pass": true,
+      "detail": "HEARTBEAT_ACK frames: 19 (want >= 1, <= 99999)"
+    },
+    {
+      "name": "m2_sctp_sack_present",
+      "pass": true,
+      "detail": "SACK frames: 3 (want >= 1, <= 99999)"
+    },
+    {
+      "name": "m2_sctp_zero_abort",
+      "pass": true,
+      "detail": "ABORT frames: 0 (want >= 0, <= 0)"
+    },
+    {
+      "name": "m2_golden_decodes_e2ap",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m2_decodes_e2setup_request",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m2_decodes_e2setup_response",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m2_e2setup_facts_recorded",
+      "pass": true,
+      "detail": "id: id-GlobalE2node-ID (3)\npLMN-Identity: 131014\nplmn-id: 373437"
+    },
+    {
+      "name": "m2_e2setup_ran_functions_informational",
+      "pass": true,
+      "detail": "Item 0: id-RANfunctionID-Item|RANfunctionID-Item|id: id-RANfunctionID-Item (6)|ranFunctionID: 2|ranFunctionOID: OID123|"
+    },
+    {
+      "name": "m2_e2setup_node_id_informational",
+      "pass": true,
+      "detail": "GlobalE2node-ID: gNB (0)|Item 1: id-GlobalE2node-ID|global-gNB-ID|gnb-ID: b5c67788 [bit length 29, 3 LSB pad bits, 1011 0101  1100 0110  0111 0111  1000 1... decimal value 381210353]|gnb-id: gnb-ID (0)|id: id-GlobalE2node-ID (3)|pLMN-Identity: 131014|plmn-id: 373437|"
+    },
+    {
+      "name": "m2_probe_e2term_service_resolved",
+      "pass": true,
+      "detail": "service service-ricplt-e2term-sctp-alpha clusterIP 10.97.178.7"
+    },
+    {
+      "name": "m2_probe_image_ready",
+      "pass": true,
+      "detail": "docker.io/library/python:3.12-slim"
+    },
+    {
+      "name": "m2_probe_both_containers_exit_0",
+      "pass": true,
+      "detail": "[14:23:28] capture probe-two-assoc started on docker0 (pid 21281, filter 'sctp')\nm2probe-a exit 0\nm2probe-b exit 0"
+    },
+    {
+      "name": "m2_probe_capture_stopped",
+      "pass": true,
+      "detail": "[14:28:32] capture probe-two-assoc stopped: 120 packets captured 126 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "m2_probe_two_distinct_associations",
+      "pass": true,
+      "detail": "m2probe-a (172.17.0.3): INIT=1 INIT_ACK=1\nm2probe-b (172.17.0.4): INIT=1 INIT_ACK=1\ndistinct container IPs: 2"
+    },
+    {
+      "name": "m2_probe_heartbeats_during_hold",
+      "pass": true,
+      "detail": "m2probe-a (172.17.0.3): HEARTBEAT=18\nm2probe-b (172.17.0.4): HEARTBEAT=18"
+    },
+    {
+      "name": "m2_probe_zero_abort",
+      "pass": true,
+      "detail": "ABORT frames for 172.17.0.3: 0\nABORT frames for 172.17.0.4: 0"
+    },
+    {
+      "name": "m2_no_capture_left_running",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m2_pcaps_in_evidence",
+      "pass": true,
+      "detail": "9384 /home/uc/evidence/m2/20261028T141505Z/golden-e2setup-sustained.pcap;15248 /home/uc/evidence/m2/20261028T141505Z/probe-two-assoc.pcap;"
+    }
+  ]
+}

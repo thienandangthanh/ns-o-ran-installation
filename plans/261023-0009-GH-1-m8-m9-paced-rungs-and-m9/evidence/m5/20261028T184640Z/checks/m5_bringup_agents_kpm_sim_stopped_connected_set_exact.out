@@ -1,0 +1,25 @@
+[18:47:07] bringup ric: waiting up to 1200s for ricplt pods
+[18:47:07] bringup ric: rc=0 unready: deployment-ricplt-a1mediator-78f79cbb6b-q9r6r deployment-ricplt-appmgr-5564b65869-hbxzt deployment-ricplt-e2mgr-9b6b8f99f-tw5bk deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld deployment-ricplt-rtmgr-74fb47b69d-zrdnr deployment-ricplt-submgr-858956fbdc-rfjjc r4-infrastructure-prometheus-alertmanager-b9cc56766-wcrlp r4-infrastructure-prometheus-server-6476958975-wm29v 
+[18:47:22] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld deployment-ricplt-rtmgr-74fb47b69d-zrdnr r4-infrastructure-prometheus-alertmanager-b9cc56766-wcrlp 
+[18:47:37] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[18:47:53] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[18:48:08] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[18:48:23] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[18:48:38] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[18:48:53] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[18:49:08] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[18:49:23] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[18:49:38] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[18:49:53] bringup ric: all ricplt pods Ready
+[18:50:03] bringup ric: e2term registered with e2mgr: [{"e2tAddress":"10.102.26.73:38000","ranNames":[]}]
+rt reader e2mgr deployment-ricplt-e2mgr-9b6b8f99f-tw5bk: OK (5 samples, 1 sockets now, stuck [])
+rt reader submgr deployment-ricplt-submgr-858956fbdc-rfjjc: OK (5 samples, 1 sockets now, stuck [])
+[18:50:40] bringup agents: stopping NIST kpm_sim so its node cannot mix into the CONNECTED set
+[18:50:40] bringup agents: stop_e2sim.sh exit 0
+[18:50:40] bringup agents: building the agent image (install_ns3_e2_agent.sh, bound 3600s)
+NS3_E2_AGENT_IMAGE=ns3-e2-agent:c6d1434a793f
+NS3_E2_AGENT_IMAGE_ID=sha256:465820fea3f0f66c1ac66a0137afb24c1ca8cc9b9ebaf59176772ceabe788225
+NS3_E2_AGENT_E2_INTERFACE=da6f82f286cdbb38af1178f82f85877b12c2f85b
+NS3_E2_AGENT_METRIC_MAP_SHA256=9cfcbbcdd71514e4e2627cfbb4aa950760b42f85d5045de2c1b71d6215f16923
+[18:52:00] bringup agents: e2mgr CONNECTED set equals the expected agents: gnb_001_001_00000002 
+[18:52:03] bringup agents: every agent READY with an E2 setup: 2 0 true READY 1 0;

@@ -1,0 +1,20 @@
+image before: none; tree patched before: 0
+19e169b2e81a0dbaf3d9dc526de0415cc995ee8b
+ M assets/bootstrap.rt
+ M routes.txt
+ M src/ts_xapp/ts_xapp.cpp
+?? assets/bootstrap.previous.rt
+?? routes.previous.txt
+?? trafficxapp.tar
+?? xapp-descriptor/config-file_updated.json
+ assets/bootstrap.rt     |  2 +-
+ routes.txt              |  2 +-
+ src/ts_xapp/ts_xapp.cpp | 14 ++++++++++++++
+ 3 files changed, 16 insertions(+), 2 deletions(-)
+src/ts_xapp/ts_xapp.cpp = pin + A1 payload patch + default RMR handler patch (14 added lines)
+image after: sha256:405201f92352df3b8f456cd6e309ed7e38d71296eaba8cae7321ec3e51728c56
+ricxapp-trafficxapp- -> ricxapp-trafficxapp-7c46768578-8sc5l
+{
+  "ts_control_api": "grpc",
+  "ts_control_ep": "service-ricxapp-rc-grpc-server.ricxapp:7777"
+}

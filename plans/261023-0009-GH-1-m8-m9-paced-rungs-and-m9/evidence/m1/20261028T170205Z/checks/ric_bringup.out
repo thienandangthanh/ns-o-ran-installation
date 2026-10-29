@@ -1,0 +1,12 @@
+[17:14:41] bringup ric: waiting up to 1200s for ricplt pods
+[17:14:42] bringup ric: all ricplt pods Ready
+[17:14:42] bringup ric: e2term registered with e2mgr: [{"e2tAddress":"10.102.26.73:38000","ranNames":[]}]
+rt reader e2mgr deployment-ricplt-e2mgr-9b6b8f99f-p6lbf: STUCK (5 samples, 1 sockets now, stuck ['0A00F40A:CC42'])
+[17:15:10] bringup ric: an RMR route-table reader is stuck
+[17:15:10] ric refresh (ric): replacing e2mgr and submgr, then rtmgr
+[17:15:41] ric refresh: e2mgr deployment-ricplt-e2mgr-9b6b8f99f-p6lbf -> deployment-ricplt-e2mgr-9b6b8f99f-tw5bk
+[17:16:00] ric refresh: submgr deployment-ricplt-submgr-858956fbdc-mdvll -> deployment-ricplt-submgr-858956fbdc-rfjjc
+[17:16:00] bringup ric: e2term registered with e2mgr: [{"e2tAddress":"10.102.26.73:38000","ranNames":[]}]
+[17:16:39] ric refresh: rtmgr deployment-ricplt-rtmgr-74fb47b69d-jbnt6 -> deployment-ricplt-rtmgr-74fb47b69d-zrdnr
+rt reader e2mgr deployment-ricplt-e2mgr-9b6b8f99f-tw5bk: OK (5 samples, 1 sockets now, stuck [])
+rt reader submgr deployment-ricplt-submgr-858956fbdc-rfjjc: OK (5 samples, 1 sockets now, stuck [])

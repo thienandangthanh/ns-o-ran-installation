@@ -1,0 +1,31 @@
+[18:59:17] bringup ric: waiting up to 1200s for ricplt pods
+[18:59:17] bringup ric: rc=0 unready: deployment-ricplt-a1mediator-78f79cbb6b-q9r6r deployment-ricplt-alarmmanager-5b49476676-g98mx deployment-ricplt-appmgr-5564b65869-hbxzt deployment-ricplt-e2mgr-9b6b8f99f-tw5bk deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld deployment-ricplt-o1mediator-bf4fb5758-s5nfj deployment-ricplt-rtmgr-74fb47b69d-zrdnr deployment-ricplt-submgr-858956fbdc-rfjjc deployment-ricplt-vespamgr-848f7bb874-vtbgz r4-influxdb-influxdb2-0 r4-infrastructure-kong-78657d8f48-2jhn5 r4-infrastructure-prometheus-alertmanager-b9cc56766-wcrlp r4-infrastructure-prometheus-server-6476958975-wm29v statefulset-ricplt-dbaas-server-0 
+[18:59:34] bringup ric: rc=0 unready: deployment-ricplt-a1mediator-78f79cbb6b-q9r6r deployment-ricplt-alarmmanager-5b49476676-g98mx deployment-ricplt-appmgr-5564b65869-hbxzt deployment-ricplt-e2mgr-9b6b8f99f-tw5bk deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld deployment-ricplt-o1mediator-bf4fb5758-s5nfj deployment-ricplt-rtmgr-74fb47b69d-zrdnr deployment-ricplt-submgr-858956fbdc-rfjjc deployment-ricplt-vespamgr-848f7bb874-vtbgz r4-influxdb-influxdb2-0 r4-infrastructure-kong-78657d8f48-2jhn5 r4-infrastructure-prometheus-alertmanager-b9cc56766-wcrlp r4-infrastructure-prometheus-server-6476958975-wm29v statefulset-ricplt-dbaas-server-0 
+[18:59:49] bringup ric: rc=0 unready: deployment-ricplt-a1mediator-78f79cbb6b-q9r6r deployment-ricplt-appmgr-5564b65869-hbxzt deployment-ricplt-e2mgr-9b6b8f99f-tw5bk deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld deployment-ricplt-rtmgr-74fb47b69d-zrdnr deployment-ricplt-submgr-858956fbdc-rfjjc r4-infrastructure-kong-78657d8f48-2jhn5 r4-infrastructure-prometheus-alertmanager-b9cc56766-wcrlp r4-infrastructure-prometheus-server-6476958975-wm29v statefulset-ricplt-dbaas-server-0 
+[19:00:04] bringup ric: rc=0 unready: deployment-ricplt-e2mgr-9b6b8f99f-tw5bk deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld deployment-ricplt-rtmgr-74fb47b69d-zrdnr deployment-ricplt-submgr-858956fbdc-rfjjc r4-infrastructure-prometheus-alertmanager-b9cc56766-wcrlp r4-infrastructure-prometheus-server-6476958975-wm29v 
+[19:00:19] bringup ric: rc=0 unready: deployment-ricplt-e2mgr-9b6b8f99f-tw5bk deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld deployment-ricplt-rtmgr-74fb47b69d-zrdnr r4-infrastructure-prometheus-server-6476958975-wm29v 
+[19:00:34] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld deployment-ricplt-rtmgr-74fb47b69d-zrdnr 
+[19:00:49] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[19:01:04] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[19:01:19] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[19:01:34] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[19:01:49] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[19:02:04] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[19:02:19] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[19:02:34] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[19:02:49] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[19:03:05] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[19:03:20] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-qn6ld 
+[19:03:35] bringup ric: all ricplt pods Ready
+[19:03:35] bringup ric: e2term registered with e2mgr: [{"e2tAddress":"10.102.26.73:38000","ranNames":[]}]
+rt reader e2mgr deployment-ricplt-e2mgr-9b6b8f99f-tw5bk: OK (5 samples, 1 sockets now, stuck [])
+rt reader submgr deployment-ricplt-submgr-858956fbdc-rfjjc: OK (5 samples, 1 sockets now, stuck [])
+[19:04:12] bringup agents: stopping NIST kpm_sim so its node cannot mix into the CONNECTED set
+[19:04:12] bringup agents: stop_e2sim.sh exit 0
+[19:04:12] bringup agents: image ns3-e2-agent:c6d1434a793f exists (Testbed commit and map sha match); not rebuilding
+NS3_E2_AGENT_IMAGE=ns3-e2-agent:c6d1434a793f
+NS3_E2_AGENT_IMAGE_ID=sha256:465820fea3f0f66c1ac66a0137afb24c1ca8cc9b9ebaf59176772ceabe788225
+NS3_E2_AGENT_E2_INTERFACE=da6f82f286cdbb38af1178f82f85877b12c2f85b
+NS3_E2_AGENT_METRIC_MAP_SHA256=9cfcbbcdd71514e4e2627cfbb4aa950760b42f85d5045de2c1b71d6215f16923
+[19:04:25] bringup agents: e2mgr CONNECTED set equals the expected agents: gnb_001_001_00000001 gnb_001_001_00000002 gnb_001_001_00000003 gnb_001_001_00000004 gnb_001_001_00000005 
+[19:04:29] bringup agents: every agent READY with an E2 setup: 1 0 true READY 1 0;2 0 true READY 1 0;3 0 true READY 1 0;4 0 true READY 1 0;5 0 true READY 1 0;

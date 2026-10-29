@@ -1,0 +1,13 @@
+{"key":"part","value":"all"}
+{"key":"substitution2Applied","value":true}
+{"key":"substitution3Applied","value":true}
+{"key":"a1mediatorRestart","value":{"fresh": true, "problems": [], "after": {"deployment-ricplt-a1mediator": {"name": "deployment-ricplt-a1mediator-78f79cbb6b-7bjkt", "uid": "0069b5cb-3d18-4fa6-9658-ca7493de119f", "startTime": "2026-10-28T19:55:05Z", "containerStartedAt": ["2026-10-28T19:55:05Z"], "restarts": 0}}}}
+{"key":"routeOwner12041","value":"service-ricxapp-hw-go-rmr.ricxapp:4560"}
+{"key":"routeOwner12042","value":"service-ricxapp-hw-go-rmr.ricxapp:4560"}
+{"key":"routeOwnerE2term12041","value":"service-ricxapp-trafficxapp-rmr.ricxapp:4560"}
+{"key":"routeOwnerE2term12042","value":"service-ricxapp-trafficxapp-rmr.ricxapp:4560"}
+{"key":"a1ThresholdAttempt","value":2}
+{"key":"a1DeliveredAttempt","value":1}
+{"key":"a1mediatorRestartCountAtEnd","value":0}
+{"key":"xappRegistration","value":[{"name": "rc", "instances": [{"name": "rc", "ip": "service-ricxapp-rc-rmr.ricxapp", "port": 4560}]}, {"name": "trafficxapp", "instances": [{"name": "trafficxapp", "ip": "service-ricxapp-trafficxapp-rmr.ricxapp", "port": 4560}]}, {"name": "stubqp", "instances": [{"name": "stubqp", "ip": "service-ricxapp-stubqp-rmr.ricxapp", "port": 4560}]}, {"name": "hw-go", "instances": [{"name": "hw-go", "ip": "service-ricxapp-hw-go-rmr.ricxapp", "port": 4560}]}, {"name": "kpimon-go", "instances": [{"name": "kpimon-go", "ip": "service-ricxapp-kpimon-go-rmr.ricxapp", "port": 4560}]}]}
+{"key":"xappImageIds","value":{"trafficxapp": "sha256:405201f92352df3b8f456cd6e309ed7e38d71296eaba8cae7321ec3e51728c56", "stubqp": "sha256:68b10571debb88481bf6ec035d70ed906c6e6b3cc9317f0c66d65517ea601d35", "stubqpImage": "127.0.0.1:80/stubqp:07c6dc93df2f"}}

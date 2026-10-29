@@ -1,0 +1,22 @@
+[11:49:31] bringup ric: waiting up to 1200s for ricplt pods
+[11:49:31] bringup ric: rc=0 unready: deployment-ricplt-a1mediator-78f79cbb6b-85csh deployment-ricplt-e2mgr-9b6b8f99f-d2t9c deployment-ricplt-e2term-alpha-f8f7d7855-x4r22 r4-infrastructure-prometheus-alertmanager-b9cc56766-r74c6 r4-infrastructure-prometheus-server-6476958975-pdq6p 
+[11:49:46] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-x4r22 r4-infrastructure-prometheus-alertmanager-b9cc56766-r74c6 r4-infrastructure-prometheus-server-6476958975-pdq6p 
+[11:50:02] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-x4r22 deployment-ricplt-rtmgr-74fb47b69d-wwnql 
+[11:50:17] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-x4r22 
+[11:50:32] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-x4r22 
+[11:50:47] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-x4r22 
+[11:51:02] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-x4r22 
+[11:51:17] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-x4r22 
+[11:51:32] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-x4r22 
+[11:51:47] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-x4r22 
+[11:52:02] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-x4r22 
+[11:52:17] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-x4r22 
+[11:52:32] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-x4r22 
+[11:52:47] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-x4r22 
+[11:53:02] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-x4r22 
+[11:53:17] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-f8f7d7855-x4r22 
+[11:53:33] bringup ric: all ricplt pods Ready
+[11:53:38] bringup ric: e2term registered with e2mgr: [{"e2tAddress":"10.109.150.80:38000","ranNames":[]}]
+[11:53:58] bringup refnode: attempt 1: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)
+[11:54:00] bringup refnode: run_e2sim script exit 0
+[11:54:06] bringup refnode: e2mgr shows a CONNECTED node (attempt 1)
