@@ -11,14 +11,16 @@ Where a step was not checked against a script or a run, it is marked "(unverifie
 | Host | libvirt/KVM; the host user manages `qemu:///system` without sudo; `ssh`, `git`, `python3`, `gh` | `scripts/vm/vm-common.sh`, `scripts/gates/gate-m0-host.sh` |
 | VM | libvirt domain `ubuntu24.04`, Ubuntu 24.04.5, at least 8 vCPU, 14 GiB RAM, 60 GB free on `/`, `sctp` kernel module available | `scripts/gates/gate-m0-preflight.sh` |
 | VM user | `uc` with passwordless sudo, no git credentials | `gate-m0-host.sh` (`vm_no_git_credentials`) |
-| Snapshot | `fresh-install`, offline and disk-only; never deleted by the scripts | `scripts/vm/vm-snapshot.sh` |
+| Snapshot | `fresh-install`, offline and disk-only; never deleted by the scripts. Contents: a vanilla minimal install of `ubuntu-24.04.5-live-server-amd64.iso` (e.g. `https://ftp.kaist.ac.kr/ubuntu-cd/24.04.5.1/ubuntu-24.04.5-live-server-amd64.iso`) with no updates, plus one change, passwordless sudo for `uc`: `ssh -t oran-kvm-2404 "echo 'uc ALL=(ALL) NOPASSWD:ALL' \| sudo tee /etc/sudoers.d/90-uc-agent"` | `scripts/vm/vm-snapshot.sh` |
 | ssh alias | `oran-kvm-2404` by default, key-based | `VM_SSH` in `vm-common.sh` |
 | Host disk | `/home` free space of at least 20 GB plus the growth of the next gate | `vm-snapshot.sh create`, growth table in `run-to-m7.sh` |
 | Harness repo | public on GitHub, harness SHA pushed to an `origin` branch | `scripts/vm/vm-exec.sh` |
 
 Host-side overrides (environment variables, defaults in `vm-common.sh` and `vm-exec.sh`): `VM_DOMAIN`, `VM_SSH`, `VM_IMAGE_DIR`, `HOST_MIN_FREE_GB`, `EVIDENCE_HOST_ROOT`, `HARNESS_URL`.
 
-For host-side libvirt and virtiofs setup, see [linux-vm-setup-guide.md](linux-vm-setup-guide.md).
+For the host libvirt setup and how to build the VM and its `fresh-install` snapshot, see [linux-vm-setup-guide.md](linux-vm-setup-guide.md).
+
+Reproducibility scope: every green run so far, M9 included, ran on one host and one VM. A run on a second workstation is untested and deferred to future work. The VM is built by hand, and packages and images are installed at the newest version within the installer's prefixes, so compare M1's recorded versions across machines (see "Comparing two runs").
 
 Disk budget rule: the sum of the growth column in `run-to-m7.sh` is about 54 GB, and the reserve is 20 GB, which is where the "about 70 GB" figure comes from. A revert does not delete the overlay files it leaves behind, so they count against the budget. `vm-snapshot.sh create` refuses to run when the budget is not met; when it does, free space (see "Snapshots") or stop and decide.
 

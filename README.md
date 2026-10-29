@@ -83,7 +83,7 @@ Recorded M9 run (stateful): `plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evi
 | [docs/deployment-guide-l-release.md](docs/deployment-guide-l-release.md) | VM preparation, running gates, the M0–M7 chain and M9, manual agent and ns-3 runs, sending rc and TS xApp controls by hand, troubleshooting. |
 | [docs/system-architecture-l-release.md](docs/system-architecture-l-release.md) | Components, data flow, IPC schema, agent robustness, E2SM-KPM content, the kpimon patch, the RC path and pacing, the R3′ predictor, out-of-scope items, running your own experiment. |
 | [docs/journals/2026-10-21-p3-e2-agent-design-checkpoint.md](docs/journals/2026-10-21-p3-e2-agent-design-checkpoint.md) | The signed-off design record (stateful, dated). |
-| [docs/linux-vm-setup-guide.md](docs/linux-vm-setup-guide.md) | Host-side libvirt/virtiofs setup. |
+| [docs/linux-vm-setup-guide.md](docs/linux-vm-setup-guide.md) | Host libvirt setup, the Ubuntu 24.04.5 gate VM and its `fresh-install` snapshot (plus the legacy virtiofs VM). |
 
 ---
 

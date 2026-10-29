@@ -106,7 +106,7 @@ Listed for ratification at Stop B (`docs/journals/2026-10-28-m8-m9-stop-b.md` §
 ## Records
 
 - R3′ C1 in M9: 167 checks, none failed (the 168th PASS line in its `gate.log` is the verdict line); the same count as the P8′ C1 and the P9 rehearsal.
-- Stale submodule gitlinks in the parent repo vs `pins.conf`: disclosed, not updated; `pins.conf` governs every gate.
+- Stale submodule gitlinks in the parent repo vs `pins.conf`: disclosed, not updated during M9; `pins.conf` governs every gate. Updated after M9 (2026-10-29): the gitlinks now equal the pins and `.gitmodules` points at the forks; no verdict changes.
 - tshark in `tools/tshark-kpm` (unpinned `debian:trixie-slim`): Debian 4.4.19-0+deb13u1 at pre-flight (unchanged since P9); `equalsReference: true` shows no decoder drift.
 - The M9 run created the allowed M0 probe snapshot `m0-probe-q10281658`. The probes from the earlier attempts (`m0-probe-n10280921`, `m0-probe-o10281122`, `m0-probe-p10281349`) are kept. `fresh-install`, `f7-rerun-green` and `r3p-green` are untouched.
 - Leaked overlays deleted under the 2026-10-28 20:14 ruling: `ubuntu24.1793186558` (33.96 GiB, `evidence/p10-disk/20261028T134728Z`) and `ubuntu24.1793195425` (38.70 GiB, `evidence/p10-disk/20261028T165516Z`).
