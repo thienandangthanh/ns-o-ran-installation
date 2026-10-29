@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sim Time vs Wall Time</title>
+<meta name="description" content="How the ns-O-RAN L-release port reconciles ns-3 simulated time with the Near-RT RIC's wall-clock time, compared with the original ns-O-RAN.">
+<style>
+:root{
+  --bg:#f7f7f4; --surface:#ffffff; --surface-2:#f0efe9; --ink:#1c1d1f; --ink-2:#4a4d52; --line:#d9d7cf;
+  --sim:#1f6feb; --wall:#c2410c; --ok:#15803d; --warn:#b45309; --bad:#b91c1c; --accent:#6d28d9;
+  --code-bg:#f2f1ec; --focus:#6d28d9;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  --mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121315; --surface:#1b1d20; --surface-2:#23262a; --ink:#e8e6e1; --ink-2:#a9adb3; --line:#33373c;
+    --sim:#6ea8fe; --wall:#fb923c; --ok:#4ade80; --warn:#fbbf24; --bad:#f87171; --accent:#a78bfa;
+    --code-bg:#23262a; --focus:#a78bfa;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121315; --surface:#1b1d20; --surface-2:#23262a; --ink:#e8e6e1; --ink-2:#a9adb3; --line:#33373c;
+  --sim:#6ea8fe; --wall:#fb923c; --ok:#4ade80; --warn:#fbbf24; --bad:#f87171; --accent:#a78bfa;
+  --code-bg:#23262a; --focus:#a78bfa;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--sans)}
+main{max-width:1040px;margin:0 auto;padding:24px 16px 80px}
+h1{font-size:clamp(1.7rem,4vw,2.5rem);line-height:1.15;margin:.2em 0 .3em;letter-spacing:-.01em}
+h2{font-size:1.45rem;margin:2.4em 0 .6em;padding-top:.4em;border-top:1px solid var(--line)}
+h3{font-size:1.08rem;margin:1.2em 0 .4em}
+p{margin:.5em 0}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.08em .32em;border-radius:4px}
+pre{font-family:var(--mono);font-size:.84rem;background:var(--code-bg);padding:12px 14px;border-radius:8px;overflow-x:auto;line-height:1.5}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+.lede{font-size:1.1rem;color:var(--ink-2);max-width:62ch}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.badge{font-size:.78rem;border:1px solid var(--line);border-radius:999px;padding:2px 10px;color:var(--ink-2);background:var(--surface)}
+.sim{color:var(--sim);font-weight:600}.wall{color:var(--wall);font-weight:600}
+.grid{display:grid;gap:14px}
+@media(min-width:760px){.g2{grid-template-columns:1fr 1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.card h3{margin-top:0}
+.q{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);margin-bottom:2px}
+.verdict{display:inline-block;font-weight:700;font-size:.85rem;padding:1px 8px;border-radius:6px;margin-right:6px}
+.v-ok{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.v-warn{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.v-bad{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}
+.figure{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
+.figure svg{width:100%;height:auto;display:block}
+.cap{font-size:.86rem;color:var(--ink-2);margin:.5em 4px 0}
+svg text{fill:var(--ink);font-family:var(--sans)}
+svg .muted{fill:var(--ink-2)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}
+.tab{font:inherit;font-size:.9rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 12px;border-radius:8px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.panel[hidden]{display:none}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem;min-width:640px}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{background:var(--surface-2);font-weight:600}
+tr:last-child td{border-bottom:none}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.steps li{counter-increment:s;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px 10px 48px;position:relative}
+.steps li::before{content:counter(s);position:absolute;left:12px;top:10px;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-size:.85rem;font-weight:700}
+.alert{border-left:4px solid var(--warn);background:color-mix(in srgb,var(--warn) 8%,var(--surface));padding:10px 14px;border-radius:0 10px 10px 0;margin:10px 0}
+.alert.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 7%,var(--surface))}
+.alert.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 7%,var(--surface))}
+.calc{display:grid;gap:12px}
+@media(min-width:760px){.calc{grid-template-columns:320px 1fr}}
+label{display:block;font-size:.88rem;color:var(--ink-2);margin:8px 0 4px}
+select,input[type=number]{font:inherit;width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+input[type=range]{width:100%}
+.out{font-size:1rem}
+.out .big{font-size:1.6rem;font-weight:700;font-family:var(--mono)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.92rem}
+.kv dt{color:var(--ink-2)}.kv dd{margin:0}
+.theme-toggle{position:fixed;right:12px;top:12px;font:inherit;font-size:.82rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:4px 10px;cursor:pointer;z-index:5}
+footer{margin-top:48px;font-size:.82rem;color:var(--ink-2)}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+.pulse{animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+</style>
+</head>
+<body>
+<button class="theme-toggle" type="button" id="themeBtn" aria-label="Toggle light or dark theme">Theme</button>
+<main>
+
+<header>
+  <div class="q">ns-O-RAN → O-RAN SC L-release port · NIST Testbed 1.8.0</div>
+  <h1>Two clocks: <span class="sim">ns-3 sim time</span> and <span class="wall">RIC wall time</span></h1>
+  <p class="lede">ns-3 advances simulated time event by event, about 32× slower than real time in the default scenario. The Near-RT RIC runs on the real clock. The port keeps free run as the default and adds an opt-in lock-step mode in which ns-3 is the only time base and stops after every indication period, so that RIC controls land at a known simulated step.</p>
+  <div class="badges">
+    <span class="badge">Grounded in code at the current pins</span>
+    <span class="badge">Measured: M4 timing, R0/R2/R3′ calibration, R3′ live pacing logs</span>
+    <span class="badge">Compared with original ns-O-RAN <code>master</code></span>
+    <span class="badge">Diagrams: hand-written inline SVG (no diagram compiler)</span>
+  </div>
+</header>
+
+<h2 id="answers">Your four questions, answered briefly</h2>
+<div class="grid g2">
+  <article class="card">
+    <div class="q">1 · Tweaks that affect xApps in a real network?</div>
+    <h3><span class="verdict v-warn">Yes, some</span>but not the timing machinery</h3>
+    <p>The pacer, barrier, pinned epoch and <code>ns3.*</code> correlation KPIs live in ns-3, the agent and the harness. They don't change any xApp. What would break against real gNBs is the encoding on the TS xApp → rc path: <b>P1</b> (control sent to the target cell's node), <b>P11</b> (9-octet target instead of an NR CGI), <b>P4</b> (IMSI in AMF-UE-NGAP-ID), <b>N5/P2</b> (TS xApp cell map built from 5 raw bytes in <code>e2nodeComponentRequestPart</code>), <b>P8</b> (RC not announced in E2 Setup). The xApp patches themselves are harmless or spec-correcting: kpimon TimeStamp SIZE(8), substitution 2 (a do-nothing RMR handler) and substitution 3 (tolerant A1 payload parsing). The stub QP, R3′ predictor and scripted 30003 trigger are harness stand-ins and have no real-network role.</p>
+  </article>
+  <article class="card">
+    <div class="q">2 · Is the timing approach O-RAN compliant?</div>
+    <h3><span class="verdict v-warn">Wire: yes · semantics: idealised · one deviation (P12)</span></h3>
+    <p>The timing fields on the wire follow the specs: <code>colletStartTime</code> is an 8-octet NTP-64 TimeStamp at the start of the collection window, and every RIC control gets exactly one ack or failure. The specs ask the interface to <em>support</em> loops of 10 ms to 1 s. They set no minimum delay, so d = 0 (<b>P3</b>) is idealised rather than forbidden. Our wall-clock RIC half takes 5–13 ms, which is inside that range. <b>The real gap:</b> kpimon subscribes with a <b>10 s</b> reporting period, and the agent ignores it and reports every 100 ms. This is now recorded as deviation <b>P12</b> (2026-10-29); its fix needs a brainstorm and a plan first. Pausing the whole RAN has no counterpart in the specs; the closest is INSERT with a RIC Time to Wait, which pauses one procedure, not the RAN. <a href="#spec">Details and clauses</a>.</p>
+  </article>
+  <article class="card">
+    <div class="q">3 · Can the xApp act in time, at the significant moment?</div>
+    <h3><span class="verdict v-warn">In lock-step: trivially · in reality: untested</span></h3>
+    <p>At a <b>scheduled</b> trigger step in lock-step, the simulation freezes while the RIC works, so any loop shorter than T<sub>ctl</sub> = 30 s costs <b>0 simulated time</b>. The measured wall latency L was 5–13 ms. That says nothing about speed, because we removed time from the loop. A control the xApp sends <b>on its own</b> almost always arrives while ns-3 is computing (about 0.7 s per period), so it is <b>refused as late</b>. And the TS xApp <b>doesn't choose the moment</b>: the harness injects the 30003 anomaly message at pre-registered steps, standing in for AD. In free run the RIC looks about 7× faster than it is (32× in the default scenario). In a real network with stock kpimon, data would arrive every 10 s. <a href="#calc">Try the latency translator</a>.</p>
+  </article>
+  <article class="card">
+    <div class="q">4 · Does ns-3 pause every interval T?</div>
+    <h3><span class="verdict v-ok">Lock-step: yes · free run: never</span></h3>
+    <p>With <code>--e2Pacing=lockstep</code>, ns-3 stops after <b>every</b> sample period, at sim time k·T + 0.8 ms (T = 100 ms). It waits until every agent has sent <code>step k</code> and the pacer has sent <code>go k</code>. <code>step k</code> means the agent has read sample k and called SCTP send; an agent sends it even if it dropped the sample, and a disconnected agent counts as done. The barrier does not wait for e2term, kpimon or InfluxDB; only R3′ trigger steps wait for InfluxDB, in prepare. Measured in M9: a median pause of <b>0.5–0.8 ms</b>, and trigger steps of <b>0.22 s</b> (prepare) up to <b>1.2 s</b> (prepare plus a 1 s absence window). In total ns-3 was paused 2.7 s of a 74 s R3′ run.</p>
+  </article>
+</div>
+
+<h2 id="clocks">Visual mental model: wall clock against sim clock</h2>
+<div class="figure">
+<svg viewBox="0 0 900 430" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Simulated time versus wall time in four modes</title>
+  <desc id="d1">X axis is wall time from 0 to 12 seconds, Y axis is simulated time from 0 to 0.3 seconds. A real network follows the diagonal (1 to 1) and leaves the chart almost at once. The single-gNB ns-3 run is also steep. The default free-run ns-3 is a shallow straight line with slope 1/32. Lock-step follows the same shallow line but adds flat plateaus at every 0.1 s sim barrier, with a long plateau at a trigger step.</desc>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+  </defs>
+  <!-- axes: origin (70,380); x 0..12 s -> 70..850 (65 px/s); y 0..0.3 s -> 380..60 (1066.7 px/s) -->
+  <g stroke="var(--line)" stroke-width="1">
+    <line x1="70" y1="273.3" x2="850" y2="273.3" stroke-dasharray="3 4"/>
+    <line x1="70" y1="166.7" x2="850" y2="166.7" stroke-dasharray="3 4"/>
+    <line x1="70" y1="60" x2="850" y2="60" stroke-dasharray="3 4"/>
+  </g>
+  <g stroke="var(--ink-2)" stroke-width="1.5" style="color:var(--ink-2)">
+    <line x1="70" y1="380" x2="860" y2="380" marker-end="url(#ah)"/>
+    <line x1="70" y1="380" x2="70" y2="45" marker-end="url(#ah)"/>
+  </g>
+  <g font-size="12" class="muted">
+    <text x="70" y="398" text-anchor="middle" class="muted">0</text>
+    <text x="265" y="398" text-anchor="middle" class="muted">3 s</text>
+    <text x="460" y="398" text-anchor="middle" class="muted">6 s</text>
+    <text x="655" y="398" text-anchor="middle" class="muted">9 s</text>
+    <text x="850" y="398" text-anchor="middle" class="muted">12 s</text>
+    <text x="62" y="277" text-anchor="end" class="muted">0.1 s</text>
+    <text x="62" y="171" text-anchor="end" class="muted">0.2 s</text>
+    <text x="62" y="64" text-anchor="end" class="muted">0.3 s</text>
+  </g>
+  <text x="460" y="422" text-anchor="middle" font-size="13" fill="var(--wall)" style="fill:var(--wall)" font-weight="600">wall time (RIC clock)</text>
+  <text x="18" y="220" font-size="13" transform="rotate(-90 18 220)" text-anchor="middle" style="fill:var(--sim)" font-weight="600">sim time (ns-3 clock)</text>
+
+  <!-- real network: slope 1 -> y=0.3 at x=0.3s -> px 70+19.5 -->
+  <line x1="70" y1="380" x2="89.5" y2="60" stroke="var(--ink)" stroke-width="2.5"/>
+  <text x="96" y="58" font-size="12">real network (1 : 1)</text>
+  <!-- single gNB 1.685x: y=0.3 at x=0.5055 s -> px 102.9 -->
+  <line x1="70" y1="380" x2="102.9" y2="60" stroke="var(--accent)" stroke-width="2.5" stroke-dasharray="6 4"/>
+  <text x="108" y="82" font-size="12" style="fill:var(--accent)">ns-3, 1 gNB (1.685 s per sim s)</text>
+  <!-- default free 31.96x: sim 0.3 at 9.59 s -> px 693 -->
+  <line x1="70" y1="380" x2="693.3" y2="60" stroke="var(--sim)" stroke-width="2.5" stroke-dasharray="6 4"/>
+  <line x1="160" y1="128" x2="190" y2="128" stroke="var(--sim)" stroke-width="2.5" stroke-dasharray="6 4"/>
+  <text x="198" y="132" font-size="12" style="fill:var(--sim)">ns-3 free run, default (31.96 s per sim s)</text>
+  <line x1="160" y1="148" x2="190" y2="148" stroke="var(--wall)" stroke-width="3"/>
+  <text x="198" y="152" font-size="12" style="fill:var(--wall)">ns-3 lock-step (same slope + plateaus)</text>
+  <!-- lockstep: same slope, plateau at 0.1 (tiny), at 0.2 a 1.23 s trigger plateau (80 px) -->
+  <polyline fill="none" stroke="var(--wall)" stroke-width="3"
+    points="70,380 277.7,273.3 279,273.3 485.4,166.7 565.4,166.7 773,60"/>
+  <circle cx="278" cy="273.3" r="4" fill="var(--wall)"/>
+  <circle cx="525" cy="166.7" r="5" fill="var(--wall)" class="pulse"/>
+  <text x="300" y="300" font-size="12" style="fill:var(--wall)">lock-step barrier at sample k: ≈0.2–0.7 ms (too small to see)</text>
+  <text x="500" y="196" font-size="12" style="fill:var(--wall)">trigger step: sim frozen ≈0.2–1.2 s while the</text>
+  <text x="500" y="211" font-size="12" style="fill:var(--wall)">RIC decides; control applied here, at the same sim instant</text>
+  <text x="780" y="58" font-size="12" style="fill:var(--wall)">lock-step</text>
+</svg>
+<p class="cap">The slopes come from the M4 timing report (<code>plans/reports/timing-261022-0217-…</code>). The plateau sizes come from the R3′ <code>live3</code> pacing log (<code>evidence/r3p/20261028T200710Z</code>). The plateau positions are illustrative. The R3′ configuration has 3 nodes, so its real slope sits between the two dashed ns-3 lines.</p>
+</div>
+
+<h2 id="modes">How each mode lines the clocks up</h2>
+<div class="tabs" role="tablist" aria-label="Timing modes">
+  <button class="tab" role="tab" aria-selected="true" aria-controls="p-orig" id="tab-orig">Original ns-O-RAN (RIC over E2)</button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="p-gym" id="tab-gym" tabindex="-1">Original ns-O-RAN gym (semaphores)</button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="p-free" id="tab-free" tabindex="-1">Port: free run (default)</button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="p-lock" id="tab-lock" tabindex="-1">Port: lock-step (gates)</button>
+</div>
+
+<section class="panel figure" role="tabpanel" id="p-orig" aria-labelledby="tab-orig">
+<svg viewBox="0 0 900 230" role="img" aria-labelledby="t2 d2"><title id="t2">Original ns-O-RAN with the RIC</title>
+<desc id="d2">ns-3 runs continuously. An e2sim thread inside the ns-3 process talks SCTP to e2term. A RIC control arrives on that thread and is scheduled at delay zero, so it lands at whatever sim time ns-3 has reached.</desc>
+<g font-size="13">
+<rect x="20" y="30" width="400" height="160" rx="12" fill="none" stroke="var(--sim)" stroke-width="2"/>
+<text x="36" y="55" font-weight="700" style="fill:var(--sim)">ns-3 process (never waits)</text>
+<rect x="40" y="70" width="170" height="44" rx="8" fill="var(--surface-2)" stroke="var(--line)"/><text x="125" y="97" text-anchor="middle">sim thread: events</text>
+<rect x="230" y="70" width="170" height="44" rx="8" fill="var(--surface-2)" stroke="var(--line)"/><text x="315" y="91" text-anchor="middle">e2sim thread</text><text x="315" y="106" text-anchor="middle" font-size="11" class="muted">E2Termination::DoStart</text>
+<text x="40" y="140" font-size="12">KPM header ts = wall-clock at start + Simulator::Now() ms</text>
+<text x="40" y="160" font-size="12">control → ScheduleWithContext(Seconds(0), handover)</text>
+<text x="40" y="178" font-size="12" style="fill:var(--bad)">lands at whatever sim time ns-3 has reached: not repeatable</text>
+<rect x="500" y="30" width="380" height="160" rx="12" fill="none" stroke="var(--wall)" stroke-width="2"/>
+<text x="516" y="55" font-weight="700" style="fill:var(--wall)">RIC (wall clock)</text>
+<text x="516" y="85" font-size="12">e2term → xApps (original TS xApp, QP, AD)</text>
+<text x="516" y="105" font-size="12">acts when its own logic or timers say so</text>
+<line x1="400" y1="92" x2="500" y2="92" stroke="var(--ink-2)" stroke-width="2"/><text x="450" y="84" text-anchor="middle" font-size="11" class="muted">SCTP E2AP</text>
+</g></svg>
+<p class="cap">Source: <code>ns-3-mmwave-oran@master</code> <code>src/lte/model/lte-enb-net-device.cc:434-470</code> (control callback), <code>src/mmwave/model/mmwave-enb-net-device.cc:674</code> (timestamp), <code>src/mmwave/helper/mmwave-helper.cc:3300</code> (<code>system_clock</code> start), <code>oran-interface@master</code> <code>model/oran-interface.cc:105-120</code> (detached e2sim thread). No pacing.</p>
+</section>
+
+<section class="panel figure" role="tabpanel" id="p-gym" aria-labelledby="tab-gym" hidden>
+<svg viewBox="0 0 900 230" role="img" aria-labelledby="t3 d3"><title id="t3">Original ns-O-RAN gym lock-step with POSIX semaphores</title>
+<desc id="d3">Every E2 period ns-3 writes metrics to files, posts a metrics-ready semaphore and blocks on a control semaphore. The Python gym agent reads the files, writes a CSV control file and posts the control semaphore. The RIC is not in this loop.</desc>
+<g font-size="13">
+<rect x="20" y="30" width="380" height="160" rx="12" fill="none" stroke="var(--sim)" stroke-width="2"/>
+<text x="36" y="55" font-weight="700" style="fill:var(--sim)">ns-3 (useSemaphores=true)</text>
+<text x="36" y="82" font-size="12">every e2Periodicity: ReadControlFile()</text>
+<text x="36" y="102" font-size="12">sem_post(metricsReady) → sem_wait(control)</text>
+<text x="36" y="122" font-size="12">then parse ts_actions_for_ns3.csv / es_ / qos_</text>
+<text x="36" y="142" font-size="12">apply now, or Schedule(MilliSeconds(ts)) if</text>
+<text x="36" y="158" font-size="12">ScheduleControlMessages=true</text>
+<text x="36" y="180" font-size="12" style="fill:var(--ok)">ns-3 blocks every period: repeatable steps</text>
+<rect x="500" y="30" width="380" height="160" rx="12" fill="none" stroke="var(--accent)" stroke-width="2"/>
+<text x="516" y="55" font-weight="700" style="fill:var(--accent)">ns-o-ran-gym (Python, no RIC)</text>
+<text x="516" y="82" font-size="12">posix_ipc Semaphores /sem_metrics_*, /sem_control_*</text>
+<text x="516" y="102" font-size="12">reads KPM CSV files, writes control CSV</text>
+<text x="516" y="122" font-size="12" style="fill:var(--bad)">no E2AP, no e2term, no xApp in the loop</text>
+<line x1="400" y1="110" x2="500" y2="110" stroke="var(--ink-2)" stroke-width="2"/><text x="450" y="102" text-anchor="middle" font-size="11" class="muted">files + sems</text>
+</g></svg>
+<p class="cap">Source: <code>ns-3-mmwave-oran@master</code> <code>src/lte/model/lte-enb-net-device.cc:128-160, 255-290, 374, 613-633</code>; <code>ns-o-ran-gym/src/nsoran/ns_env.py:11, 235-239</code>. This is the nearest original equivalent of our lock-step, but it replaces the RIC rather than pacing it.</p>
+</section>
+
+<section class="panel figure" role="tabpanel" id="p-free" aria-labelledby="tab-free" hidden>
+<svg viewBox="0 0 900 230" role="img" aria-labelledby="t4 d4"><title id="t4">Port free run</title>
+<desc id="d4">ns-3 emits JSON samples over TCP to one out-of-process agent per node, which speaks SCTP E2AP to e2term. Controls come back as IPC lines and E2ControlHub applies them once per period after the last node's sample. ns-3 never waits.</desc>
+<g font-size="13">
+<rect x="20" y="40" width="250" height="140" rx="12" fill="none" stroke="var(--sim)" stroke-width="2"/>
+<text x="36" y="64" font-weight="700" style="fill:var(--sim)">ns-3 (never waits)</text>
+<text x="36" y="90" font-size="12">E2IpcEmitter: non-blocking send</text>
+<text x="36" y="110" font-size="12">E2ControlHub: apply buffered</text>
+<text x="36" y="126" font-size="12">controls after sample k (d = 0)</text>
+<text x="36" y="150" font-size="12">epoch = wall clock at start</text>
+<text x="36" y="166" font-size="12">(simStartEpochMs = 0)</text>
+<rect x="330" y="60" width="200" height="100" rx="12" fill="var(--surface-2)" stroke="var(--line)"/>
+<text x="430" y="92" text-anchor="middle" font-weight="700">agent ×N</text>
+<text x="430" y="114" text-anchor="middle" font-size="12">JSON → E2SM-KPM</text>
+<text x="430" y="132" text-anchor="middle" font-size="12">no wall-clock ack timer</text>
+<rect x="590" y="40" width="290" height="140" rx="12" fill="none" stroke="var(--wall)" stroke-width="2"/>
+<text x="606" y="64" font-weight="700" style="fill:var(--wall)">RIC (wall clock)</text>
+<text x="606" y="90" font-size="12">e2term → kpimon → InfluxDB (_time = now)</text>
+<text x="606" y="110" font-size="12">rc / TS xApp → RC control</text>
+<text x="606" y="140" font-size="12" style="fill:var(--bad)">control lands at a step that depends</text>
+<text x="606" y="156" font-size="12" style="fill:var(--bad)">on wall-clock timing: not repeatable</text>
+<line x1="270" y1="110" x2="330" y2="110" stroke="var(--ink-2)" stroke-width="2"/><text x="300" y="102" text-anchor="middle" font-size="10" class="muted">TCP</text>
+<line x1="530" y1="110" x2="590" y2="110" stroke="var(--ink-2)" stroke-width="2"/><text x="560" y="102" text-anchor="middle" font-size="10" class="muted">SCTP</text>
+</g></svg>
+<p class="cap">Same timing behaviour as the original RIC mode, but controls are batched per period in a fixed order. Source: <code>oran-interface/model/e2-control-hub.cc:206-229</code> (<code>OnSampleEmitted</code>: free run drains and applies, with no barrier).</p>
+</section>
+
+<section class="panel figure" role="tabpanel" id="p-lock" aria-labelledby="tab-lock" hidden>
+<svg viewBox="0 0 900 340" role="img" aria-labelledby="t5 d5"><title id="t5">Port lock-step: one trigger step</title>
+<desc id="d5">Sequence over wall time with lanes for ns-3, agents, pacer, harness, TS xApp with QP, and rc. ns-3 emits sample k and blocks. Agents send step k. The pacer runs prepare, then injects 30003 to the TS xApp, which asks QP and calls rc. rc sends the RC control, the agent forwards it with afterSeq k, and the pacer sees controlRx and sends go k. ns-3 applies the control at sim time k and resumes.</desc>
+<g font-size="12">
+  <g font-weight="700">
+  <text x="70" y="24" text-anchor="middle" style="fill:var(--sim)">ns-3</text>
+  <text x="210" y="24" text-anchor="middle">agents</text>
+  <text x="350" y="24" text-anchor="middle">pacer</text>
+  <text x="500" y="24" text-anchor="middle">harness</text>
+  <text x="650" y="24" text-anchor="middle">TS xApp + QP</text>
+  <text x="810" y="24" text-anchor="middle" style="fill:var(--wall)">rc</text>
+  </g>
+  <g stroke="var(--line)" stroke-width="2"><line x1="70" y1="32" x2="70" y2="330"/><line x1="210" y1="32" x2="210" y2="330"/><line x1="350" y1="32" x2="350" y2="330"/><line x1="500" y1="32" x2="500" y2="330"/><line x1="650" y1="32" x2="650" y2="330"/><line x1="810" y1="32" x2="810" y2="330"/></g>
+  <rect x="62" y="52" width="16" height="250" fill="var(--wall)" opacity=".35"/>
+  <text x="84" y="190" font-size="11" style="fill:var(--wall)" transform="rotate(90 84 190)">sim time frozen at k</text>
+  <g style="color:var(--ink-2)" stroke="var(--ink-2)" stroke-width="1.5">
+    <line x1="70" y1="52" x2="208" y2="52" marker-end="url(#ah)"/>
+    <line x1="210" y1="72" x2="74" y2="72" marker-end="url(#ah)"/>
+    <line x1="70" y1="92" x2="348" y2="92" marker-end="url(#ah)"/>
+    <line x1="350" y1="116" x2="498" y2="116" marker-end="url(#ah)"/>
+    <line x1="500" y1="150" x2="648" y2="150" marker-end="url(#ah)"/>
+    <line x1="650" y1="178" x2="808" y2="178" marker-end="url(#ah)"/>
+    <line x1="810" y1="206" x2="212" y2="206" marker-end="url(#ah)"/>
+    <line x1="210" y1="230" x2="74" y2="230" marker-end="url(#ah)"/>
+    <line x1="70" y1="254" x2="348" y2="254" marker-end="url(#ah)"/>
+    <line x1="350" y1="278" x2="74" y2="278" marker-end="url(#ah)"/>
+  </g>
+  <text x="140" y="47" text-anchor="middle">sample k</text>
+  <text x="140" y="67" text-anchor="middle">step k (read + sent)</text>
+  <text x="210" y="87" text-anchor="middle">ready k → steps k</text>
+  <text x="425" y="110" text-anchor="middle">prepare: N6 + predictor</text>
+  <text x="425" y="132" text-anchor="middle" class="muted">≈0.22 s, not counted in L</text>
+  <text x="575" y="145" text-anchor="middle">30003 (stands in for AD)</text>
+  <text x="730" y="173" text-anchor="middle">30000/30002 → gRPC</text>
+  <text x="520" y="200" text-anchor="middle">E2SM-RC control (via e2term)</text>
+  <text x="140" y="225" text-anchor="middle">control afterSeq=k</text>
+  <text x="210" y="249" text-anchor="middle">controlRx k  (L ≈ 5 ms)</text>
+  <text x="210" y="273" text-anchor="middle">go k</text>
+  <text x="70" y="318" text-anchor="middle" font-weight="700" style="fill:var(--sim)">Apply(k) at sim t = k·T, then resume</text>
+</g></svg>
+<p class="cap">Source: <code>oran-interface/model/e2-control-hub.cc:221-227</code> (one barrier per seq), <code>:443-527</code> (<code>Barrier</code>: waits for every node's <code>step ≥ k</code> and <code>go ≥ k</code>, aborts after GateTimeout), <code>:256-261</code> (late refusal); agent <code>ns3_e2_agent/src/main.cpp:49-66, 122-123</code> (step sent right after forwarding the sample); <code>scripts/gates/pacer.py</code> docstring (prepare/trigger/W). Steps with no schedule entry get <code>go</code> at once.</p>
+</section>
+
+<h3>Side by side</h3>
+<div class="table-wrap"><table>
+<thead><tr><th></th><th>Original, RIC over E2</th><th>Original gym</th><th>Port free run (default)</th><th>Port lock-step (opt-in)</th></tr></thead>
+<tbody>
+<tr><th>Does ns-3 pause?</th><td>Never</td><td>Every e2Periodicity (sem_wait)</td><td>Never</td><td>Every period T, until all agents send <code>step k</code> and the pacer sends <code>go k</code></td></tr>
+<tr><th>Who decides when control acts</th><td>Arrival time on the e2sim thread</td><td>Gym agent per step (CSV), optional scheduled ms</td><td>Arrival time, batched to the next period</td><td>The step named by <code>afterSeq</code>; later arrival is refused as late</td></tr>
+<tr><th>RIC in the loop</th><td>Yes</td><td>No</td><td>Yes</td><td>Yes (rc, TS xApp, stub QP / predictor)</td></tr>
+<tr><th>RIC control answer</th><td>None (no ack or failure sent)</td><td>n/a</td><td>One ack or failure per request</td><td>One ack or failure per request; late → failure</td></tr>
+<tr><th>KPM timestamp</th><td>wall at start + sim ms, as 8 big-endian octets of Unix ms (not NTP-64)</td><td>same (CSV <code>timestamp</code>)</td><td>wall at start + sim (NTP-64, window start)</td><td>pinned 2026-01-01T00:00Z + sim</td></tr>
+<tr><th>Repeatable run</th><td>No</td><td>Yes, if the agent is deterministic</td><td>No</td><td>Yes: 3 live runs + RIC-free replay byte-equal (C1)</td></tr>
+<tr><th>Wall-clock use</th><td>RIC timers</td><td>None in ns-3</td><td>RIC timers</td><td>Deadlines only: T<sub>start</sub> 120 s, T<sub>gate</sub> 10 s, T<sub>ctl</sub> 30 s, W 1 s</td></tr>
+<tr><th>Actuation delay in sim</th><td>≈ L / slowdown (random)</td><td>0 or as scheduled</td><td>≈ L / slowdown, rounded up to the next period</td><td>0 (P3)</td></tr>
+</tbody></table></div>
+
+<h2 id="calc">Latency translator: how fast does the RIC look to the simulated RAN?</h2>
+<div class="calc">
+  <div class="card">
+    <label for="mode">Mode</label>
+    <select id="mode">
+      <option value="real">Real network (1 wall s = 1 sim s)</option>
+      <option value="free1">Port free run, 1 gNB (1.685 wall s per sim s)</option>
+      <option value="free3" selected>Port free run, R2/R3′ config 1 eNB + 2 gNB (≈7.2)</option>
+      <option value="free5">Port free run, default 4 gNB + 1 eNB (31.96)</option>
+      <option value="lock">Port lock-step (sim frozen while RIC works)</option>
+    </select>
+    <label for="lat">RIC loop latency L (wall ms): <b id="latv">10</b></label>
+    <input id="lat" type="range" min="1" max="2000" step="1" value="10" aria-describedby="latHelp">
+    <p id="latHelp" class="cap">Measured in this port: 5.4–12.9 ms (R0, R2, R3′ calibration).</p>
+    <label for="per">Indication period T (sim ms)</label>
+    <input id="per" type="number" min="1" max="10000" value="100">
+  </div>
+  <div class="card out" aria-live="polite">
+    <div class="q">Delay the simulated RAN experiences</div>
+    <div class="big" id="simDelay">–</div>
+    <dl class="kv">
+      <dt>Lands at</dt><dd id="landsAt">–</dd>
+      <dt>O-RAN Near-RT band</dt><dd id="band">–</dd>
+      <dt>Repeatable?</dt><dd id="rep">–</dd>
+    </dl>
+    <p class="cap" id="note"></p>
+  </div>
+</div>
+
+<h2 id="walk">Step-by-step: what the port does with time</h2>
+<ol class="steps">
+  <li><b>ns-3 is the only clock.</b> Every sample carries <code>ns3.simTimeMs</code> and <code>ns3.seq</code>. Gates join InfluxDB to the ns-3 trace on <code>(nodeId, seq[, imsi])</code>, never on <code>_time</code>, because kpimon stamps <code>time.Now()</code>.</li>
+  <li><b>One epoch maps sim time to an absolute time.</b> <code>hello.simStartEpochMs</code> plus sim time gives the KPM <code>colletStartTime</code> (start of the collection window, NTP-64). Gated runs pin it to <code>1767225600000</code> (<code>scripts/gates/rung-config.json:48</code>), so header bytes repeat across runs.</li>
+  <li><b>Start barrier</b> at sim time 1 µs: every agent must report READY with a subscription (T<sub>start</sub> 120 s).</li>
+  <li><b>Barrier after every sample k.</b> ns-3 flushes IPC, sends <code>ready k</code> to the pacer, then polls until every node's <code>step ≥ k</code> and the pacer's <code>go ≥ k</code>. GateTimeout (10 s) counts only while blocked.</li>
+  <li><b>Trigger steps</b> (pre-registered): after <code>steps k</code> the pacer runs <em>prepare</em> (N6 certifies Influx rows for [k−15, k], the predictor answers, the stub is loaded), then the trigger (30003 to the TS xApp, or an rc gRPC call), then waits for <code>controlRx</code> within T<sub>ctl</sub>, or for a W = 1 s absence window when no control is expected.</li>
+  <li><b>Apply at the barrier.</b> Buffered controls with <code>afterSeq = k</code> are applied at sim time k·T in the order (IMSI, via node, target, ctlId), each with one ledger line and one <code>controlAck</code>. A control stamped with an earlier seq is refused as <code>late</code>.</li>
+</ol>
+
+<h2 id="trace">Concrete trace: R3′ live run 3 (gate C1, 2026-10-28)</h2>
+<pre>
+config: enb:1, gnb:2, gnb:3 · simTime 10 s · T = 100 ms · 100 barriers
+barrier waits (totalWaitS): median 0.7 ms · p90 1.7 ms · sum 2.76 s over 10 sim s
+
+seq 20  prepare 0.224 s  → predictor: decision none     → wait W = 1 s  → total 1.226 s
+seq 30  prepare 0.217 s  → predictor: handover → 0000000202
+        TS xApp → rc → agent → ns-3 controlRx after L = 4.9 ms         → total 0.224 s
+        applied at sim t = 3.0 s (ledger line, controlAck)
+seq 50  prepare 0.217 s  → decision none                → wait W = 1 s  → total 1.219 s
+other 97 barriers: no schedule entry → go at once (sub-millisecond)
+</pre>
+<p class="cap">Source: <code>plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/r3p/20261028T200710Z/runs/live3/</code> (<code>trace/e2-pacing-log.jsonl</code>, <code>pacer-summary.json</code>). Null-control R0/R2 runs: median 0.2 ms, max 0.7 ms per barrier.</p>
+
+<h2 id="spec">Spec compliance in detail</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Aspect</th><th>What we do</th><th>Spec expectation</th><th>Verdict</th></tr></thead>
+<tbody>
+<tr><td>KPM header TimeStamp</td><td>8-octet NTP-64 <code>colletStartTime</code> = epoch + window start (<code>sample-forwarder.cpp:62-65</code>)</td><td>E2SM-KPM v03.00 §8.2.1.3.1 (Collection Start Time) and §8.3.12 (Time Stamp: UTC, OCTET STRING SIZE(8), RFC 5905 64-bit format, rounded to ms)</td><td><span class="verdict v-ok">compliant</span>the value is simulated UTC (pinned epoch)</td></tr>
+<tr><td>Near-RT control loop</td><td>Sim-time loop latency 0 (P3); wall latency 5–13 ms hidden by the barrier</td><td>E2GAP v08 §5.1.1; RICARCH §5.1.3 REQ-API-Generic-002: <em>support</em> loops of 10 ms to 1 s; no minimum delay is imposed</td><td><span class="verdict v-warn">idealised</span>recorded as P3; realism pass adds sim-time δ</td></tr>
+<tr><td>Reporting period</td><td>kpimon asks for 10 s reporting (wire: <code>reportingPeriod: 10000</code>) and 10 s granularity; the agent reports every 100 ms with <code>granulPeriod</code> 100 (option A)</td><td>E2SM-KPM v03.00 §7.3.2 (Event Trigger Style 1 sets the report period), §8.2.1.1.1 (Reporting Period, ms), §8.2.1.2.3 and §8.3.8 (Granularity Period, the collection interval within a reporting period); also E2GAP §5.3.2.2</td><td><span class="verdict v-bad">deviation</span>recorded as P12 (2026-10-29)</td></tr>
+<tr><td>Pausing the RAN</td><td>Barrier every T in lock-step</td><td>No counterpart. The closest is INSERT with Halt and a RIC Time to Wait of 1 ms to 60 s (E2AP §8.2.3.2, §9.2.13), which pauses one procedure</td><td><span class="verdict v-warn">out of spec scope</span>a test-harness device; the RIC sees only gaps between indications</td></tr>
+<tr><td>Control answer timing</td><td>Exactly one ack or failure per request, no wall-clock timer</td><td>E2AP §8.2.4.2–8.2.4.4</td><td><span class="verdict v-ok">compliant</span></td></tr>
+<tr><td>Late control</td><td><code>control-failed-to-execute</code></td><td>E2AP RIC control failure cause</td><td><span class="verdict v-ok">compliant</span>"late" is our own rule</td></tr>
+</tbody></table></div>
+<p class="cap">Clauses come from kongming's reading of the Zotero vault full-text caches: E2GAP v08, E2AP v08, RICARCH-R005 v08, E2SM-KPM v07 and v02, E2SM-RC v03. Codex cited other web editions (RICARCH v07 §5.1.4, E2AP v04, KPM v07, RC v09), so the numbering differs by edition. The E2SM-KPM rows were re-checked on 2026-10-29 against the project's edition, O-RAN.WG3.E2SM-KPM-R003-v03.00 (Zotero <code>F82PYZVK</code>).</p>
+
+<h2 id="realnet">What would change against a real network</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Item</th><th>Where</th><th>Effect in a real network</th></tr></thead>
+<tbody>
+<tr><td>P1: control sent to the target cell's node</td><td>TS xApp addressing + agent routing</td><td>A real EN-DC handover is commanded through the serving/master node; a target gNB would not act on it</td></tr>
+<tr><td>P11: 9-octet target, not an NR CGI</td><td>rc builds it; agent decodes it</td><td>A real gNB would reject or misread the target</td></tr>
+<tr><td>P4: IMSI carried in AMF-UE-NGAP-ID</td><td>rc / TS xApp UE id → agent</td><td>A real network has no IMSI there; the UE wouldn't be found</td></tr>
+<tr><td>N5 / P2: 5 raw bytes in <code>e2nodeComponentRequestPart</code></td><td>agent; the TS xApp cell map depends on it</td><td>Real gNBs send an X2/XN setup message there; the TS xApp cell map would be empty or wrong</td></tr>
+<tr><td>P8: RC not announced in E2 Setup</td><td>agent</td><td>A real RIC/e2mgr may not route RC controls to the node</td></tr>
+<tr><td>kpimon subscribes with a 10 s period</td><td>stock kpimon; the agent ignores it</td><td>A spec-following node would report every 10 s, too coarse for the TS xApp loop. Needs a configurable period and an agent that honours the subscription</td></tr>
+<tr><td>rc panics on an ack without an outcome</td><td>stock rc (from earlier counsel, not re-verified at <code>a2282ee</code>)</td><td>The outcome is optional in E2AP §8.2.4.2. Our agent always sends one, so M9 never exercised this</td></tr>
+<tr><td>QP's <code>-1600ms</code> window is wall time</td><td>QP fork</td><td>Wrong time base in the simulator (about 2 periods instead of 16); correct in a real network</td></tr>
+<tr><td>TS xApp reads its node list only at start-up and restarts with threshold 0</td><td>upstream TS xApp</td><td>A node joining later, or a TS xApp restart, needs a re-start or a re-sent A1 policy</td></tr>
+<tr><td>kpimon TimeStamp SIZE(8)</td><td>kpimon patch (opt-in)</td><td>Right for KPM v03+ nodes (8 octets); wrong for KPM v02.00 nodes (4 octets)</td></tr>
+<tr><td>Substitutions 2 and 3</td><td>TS xApp (Testbed fork)</td><td>Benign: a do-nothing RMR default handler; also accepts an A1 body sent as a JSON string</td></tr>
+<tr><td>Stub QP, R3′ predictor, scripted 30003</td><td>harness</td><td>Test stand-ins; a real deployment needs AD + QP fed from live KPM data</td></tr>
+<tr><td>Lock-step pacer and barrier</td><td>ns-3 + agent + harness</td><td>Not applicable: a real RAN cannot be paused, so xApps there must meet real deadlines</td></tr>
+</tbody></table></div>
+
+<h2 id="warn">Warnings and failure modes</h2>
+<div class="alert bad"><b>Lock-step hides latency.</b> A green lock-step gate proves the loop is <em>correct and repeatable</em>, not that it is fast enough. An xApp needing 3 s would still pass under T<sub>ctl</sub> = 30 s.</div>
+<div class="alert"><b>d = 0 (P3).</b> A control acts at the same simulated instant as the sample it reacted to. That is optimistic, even compared with the 10 ms lower bound of the Near-RT band.</div>
+<div class="alert"><b>The barrier doesn't wait for the RIC's database.</b> <code>step k</code> means "the agent has read and sent sample k". Only trigger steps wait for InfluxDB (the N6 certification in prepare).</div>
+<div class="alert bad"><b>Unscheduled controls are refused in lock-step.</b> ns-3 spends about 0.7 s of wall time computing each period. A control the xApp sends on its own carries afterSeq k but reaches barrier k+1, so it is refused as <code>late</code>. Lock-step tests whether a decision is right at a moment the harness chose. It does not test whether the xApp is fast enough.</div>
+<div class="alert"><b>"Applied" means the handover started.</b> The ledger's <code>applied</code> is the handover's start, not completed radio execution. L is measured from the trigger to <code>controlRx</code> and leaves out the R3′ prepare step (≈0.22 s).</div>
+<div class="alert"><b>The xApp doesn't pick the moment.</b> 30003 triggers are pre-registered from a dry run. Detecting the significant moment (AD) is out of scope, so "acting at the right moment" is untested.</div>
+<div class="alert"><b>Free run isn't repeatable.</b> A control lands at a step that depends on wall-clock timing, as in the original ns-O-RAN.</div>
+<div class="alert"><b>Timestamps are synthetic.</b> With a pinned epoch, every gated run claims to have happened on 2026-01-01. InfluxDB <code>_time</code> is wall time, so don't correlate on it.</div>
+<div class="alert ok"><b>Free-run output is unchanged by the port.</b> Without controls, the hub writes nothing and schedules nothing (null-control equivalence gate).</div>
+
+<h2 id="advice">Advisor reads (kongming · Codex)</h2>
+<div id="advisorBox" class="grid g2">
+  <article class="card">
+    <div class="q">Where they agree</div>
+    <ul>
+      <li>The timing machinery sits below the xApps; no xApp has a simulator-clock dependence.</li>
+      <li>The real-network blockers are P1, P4, P11, P2/N5 and P8, not timing.</li>
+      <li>Wire timing (NTP-64 <code>colletStartTime</code>, one answer per control) is compliant. Timing semantics are idealised (d = 0, a frozen RAN).</li>
+      <li>Ignoring the subscribed reporting period is a real spec gap.</li>
+      <li>Lock-step proves repeatability, not reaction speed. Free run's landing step depends on wall-clock timing.</li>
+      <li>The original online path had the same sim/wall split. The gym's semaphores were the only original pause, and they ran without a RIC. Our lock-step brings the gym's model onto the live E2 wire.</li>
+    </ul>
+  </article>
+  <article class="card">
+    <div class="q">What each adds</div>
+    <ul>
+      <li><b>kongming:</b> unscheduled controls are refused as late in lock-step; kpimon subscribes at 10 s (now P12); rc may panic on an ack without an outcome; QP's wall-clock window; the M9 pause table; avoid <code>RealtimeSimulatorImpl</code>, since even 1 gNB runs 1.7× slower than real time.</li>
+      <li><b>Codex:</b> the original KPM timestamp was raw Unix ms, not NTP-64; <code>step k</code> is sent even for a dropped sample; "applied" means the handover started; L leaves out prepare; keep the full observation-to-actuation timestamps.</li>
+    </ul>
+  </article>
+  <article class="card" style="grid-column:1/-1">
+    <div class="q">Merged recommendation for the realism pass (ranked)</div>
+    <ol>
+      <li><b>Sim-time actuation delay δ</b> (<code>ActuationDelay</code>, default 0, byte-equal to the M9 references). Sweep {100, 200, 500 ms} plus one off-grid value before publishing any closed-loop number. <em>Both advisors rank this first.</em></li>
+      <li><b>P12 (recorded):</b> honour the subscription with a configurable kpimon period plus agent option B. Brainstorm and plan first.</li>
+      <li><b>Model the whole loop latency in sim time:</b> fixed first, then seeded distributions from measurements, keeping the measurement, reception, decision, apply and completion times.</li>
+      <li><b>Put wall-window xApps (QP, AD) on measurement time</b> before they join the loop.</li>
+      <li><b>Decide how lock-step treats unscheduled controls:</b> a window W every step, or late-apply labelled statistical, or event-driven pausing later.</li>
+      <li><b>Run free run as a measurement campaign</b> (L, rxSeq − afterSeq, C/T, an optimized build), not as a gate.</li>
+      <li><b>Real-time simulator</b> only after compute headroom exists. Model execution latency with <code>UseIdealRrc=false</code>.</li>
+    </ol>
+    <p class="cap">Reports: <code>plans/reports/kongming-261029-1426-GH-1-timing-realism-advice.md</code> (Opus 5.5, xhigh) · <code>plans/reports/codex-261029-1426-GH-1-timing-realism-advice.md</code> (requested gpt-6-astra at xhigh, the companion's highest; the runtime didn't report the model it used).</p>
+  </article>
+</div>
+
+<h2 id="glossary">Glossary and analogy limits</h2>
+<dl class="kv">
+  <dt>sim time</dt><dd>ns-3's virtual clock (<code>Simulator::Now()</code>); it jumps from event to event and runs as fast as the CPU allows.</dd>
+  <dt>wall time</dt><dd>The real clock that the RIC, kpimon, InfluxDB and every timeout use.</dd>
+  <dt>T (period)</dt><dd><code>indicationPeriodicity</code>, 100 ms of sim time between samples.</dd>
+  <dt>barrier</dt><dd>The point after sample k where ns-3 blocks in lock-step.</dd>
+  <dt>step k / go k</dt><dd>Agent: "read sample k". Pacer: "you may pass barrier k".</dd>
+  <dt>afterSeq</dt><dd>The sample a control reacted to; it must be applied at that barrier.</dd>
+  <dt>L</dt><dd>Wall latency from a trigger to the control reaching ns-3 (<code>controlRx</code>).</dd>
+  <dt>T<sub>ctl</sub>, W</dt><dd>30 s control deadline; 1 s absence window for "no control" decisions.</dd>
+  <dt>slowdown</dt><dd>Wall seconds per sim second: 1.685 (1 gNB), 31.96 (default).</dd>
+  <dt>Analogy</dt><dd>Lock-step is like a chess clock that stops while the RIC "thinks". That breaks down because in a real RAN the clock never stops.</dd>
+</dl>
+
+<footer>
+  Grounded in: <code>docs/system-architecture-l-release.md</code> §3, §5, §6, §8, §11; <code>oran-interface/model/e2-control-hub.cc</code>; <code>ns3_e2_agent/src/main.cpp</code>, <code>sample-forwarder.cpp:62-65</code>; <code>scripts/gates/pacer.py</code>, <code>rung-config.json</code>; <code>plans/reports/run-report-261029-0535-GH-1-m8-m9-deviations.md</code>; original code at <code>ns-3-mmwave-oran@master</code> (8c42089d), <code>oran-interface@master</code>, <code>ns-o-ran-gym@0e8ea58</code>. Diagrams are hand-written inline SVG, not compiler output; interaction is limited to tabs, the theme toggle and the calculator.
+</footer>
+</main>
+<script>
+(function(){
+  // Theme toggle (per-viewer convenience; storage may be unavailable)
+  var root=document.documentElement, btn=document.getElementById('themeBtn');
+  try{var s=localStorage.getItem('theme'); if(s) root.setAttribute('data-theme',s);}catch(e){}
+  btn.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+    var nxt=cur==='dark'?'light':'dark'; root.setAttribute('data-theme',nxt);
+    try{localStorage.setItem('theme',nxt);}catch(e){}
+  });
+
+  // Accessible tabs with arrow-key navigation
+  var tabs=[].slice.call(document.querySelectorAll('[role=tab]'));
+  function select(t){
+    tabs.forEach(function(x){var on=x===t; x.setAttribute('aria-selected',on); x.tabIndex=on?0:-1;
+      document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});
+    t.focus();
+  }
+  tabs.forEach(function(t,i){
+    t.addEventListener('click',function(){select(t)});
+    t.addEventListener('keydown',function(e){
+      if(e.key==='ArrowRight') select(tabs[(i+1)%tabs.length]);
+      if(e.key==='ArrowLeft') select(tabs[(i-1+tabs.length)%tabs.length]);
+    });
+  });
+
+  // Latency translator: wall-clock RIC latency -> delay seen by the simulated RAN
+  var mode=document.getElementById('mode'), lat=document.getElementById('lat'), per=document.getElementById('per');
+  // free3: ≈0.72 s ns-3 compute per 100 ms period in the M9 r3p run (kongming report)
+  var slow={real:1, free1:1.685, free3:7.2, free5:31.96};
+  function fmt(ms){return ms<1? (ms*1000).toFixed(0)+' µs' : ms<1000? ms.toFixed(ms<10?2:1)+' ms' : (ms/1000).toFixed(2)+' s';}
+  function upd(){
+    var L=+lat.value, T=Math.max(1,+per.value||100), m=mode.value;
+    document.getElementById('latv').textContent=L;
+    var d, lands, band, rep, note;
+    if(m==='lock'){
+      if(L<30000){ d=0; lands='barrier k (same step it reacted to), sim t = k·T';
+        rep='Yes (C1: byte-equal runs and replay)';
+        note='Only at a scheduled trigger step: the wall latency is absorbed while ns-3 is blocked, and only T_ctl = 30 s can fail the run. An unscheduled control arrives while ns-3 computes the next period and is refused as late. Pausing a real RAN is impossible.';
+      }
+      band='0 ms sim: below the 10 ms lower bound (P3, not modelled)';
+    } else {
+      d=L/slow[m];
+      var stepsLate=Math.ceil(d/T);
+      lands = m==='real' ? 'whenever the node receives it ('+fmt(d)+' after the report)'
+        : 'next control slot after the period it arrives in: about sample k+'+Math.max(1,stepsLate)+' (hub applies once per period)';
+      band = d<10?'below 10 ms':(d<=1000?'within 10 ms – 1 s':'above 1 s (non-RT territory)');
+      rep = m==='real'?'n/a':'No: the landing step depends on wall-clock jitter';
+      note = m==='real'?'This is the regime the specs describe. Our gates never exercise it.'
+        :'ns-3 runs '+slow[m]+'× slower than real time, so the RIC looks '+slow[m]+'× faster than it is.';
+    }
+    document.getElementById('simDelay').textContent=fmt(d);
+    document.getElementById('landsAt').textContent=lands;
+    document.getElementById('band').textContent=band;
+    document.getElementById('rep').textContent=rep;
+    document.getElementById('note').textContent=note;
+  }
+  [mode,lat,per].forEach(function(el){el.addEventListener('input',upd)});
+  upd();
+})();
+</script>
+</body>
+</html>
