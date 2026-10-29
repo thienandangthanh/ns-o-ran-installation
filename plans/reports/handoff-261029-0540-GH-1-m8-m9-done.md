@@ -22,7 +22,7 @@ README "Reproduce M9" and `docs/deployment-guide-l-release.md` §3 "M9". Before 
 4. **Root cause of the stuck RMR route readers** in e2mgr and submgr after a cold boot or a fresh install (L-release images). F″ remedies it; it fired once in M9 (m1). Worth an upstream bug report once the trigger is isolated.
 5. **Watchdog headroom h**: the measured growth rate implies h ≈ 9 (trip ≈ 34) against the frozen h = 4 (trip 29); adopt it in the next budget.
 6. **Deferred by A1**: the QP fork (`381a824`) and R3 with real QP; K18/V5/V6; the scenario-one portability smoke and a scenario-agnostic harness (S3); the realism pass for P1–P11 (P10, the E2AP SCTP PPID, and P11, the non-standard NR CGI target encoding, added 2026-10-29) with its gates, including a scale gate of more than 9 gNBs; the stale parent submodule gitlinks.
-7. Commits `f2138f0` (675 evidence files force-added earlier): a history rewrite is pending the user's approval.
+7. Commits `f2138f0` (675 evidence files force-added earlier): no history rewrite; the user ruled "keep it public" (`decisions-261027-2155-GH-1-m8-m9-open-questions-rulings.md:10`).
 
 ## Unresolved questions
 1. The A1 interpretations listed at Stop B have no explicit ratification on record. Should they be ratified?

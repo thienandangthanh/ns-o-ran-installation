@@ -1,0 +1,29 @@
+# Gate evidence lives in plans/<plan>/evidence/<gate>/<UTC ts>/.
+# Git keeps each run directory's verdict layer. Raw output (traces, logs, pod
+# dumps, captures) stays in the host evidence archive and is bound to git by
+# the run directory's evidence-sha256.txt. To keep a raw file in git, promote it
+# to plans/<plan>/reference/ or add a commented negation here; never git add -f.
+/*/evidence/*/*/**
+!/*/evidence/*/*/**/
+!/*/evidence/*/*/**/verdict.json
+!/*/evidence/*/*/**/gate.log
+!/*/evidence/*/*/**/exit_code
+!/*/evidence/*/*/**/watchdog.log
+!/*/evidence/*/*/**/checks.jsonl
+!/*/evidence/*/*/**/checks/*.out
+!/*/evidence/*/*/**/facts.jsonl
+!/*/evidence/*/*/**/rt-readers-*.txt
+!/*/evidence/*/*/**/refresh-ric-*
+!/*/evidence/*/*/**/*-sha256.txt
+!/*/evidence/*/*/**/*.manifest.json
+!/*/evidence/*/*/**/versions*.txt
+!/*/evidence/*/*/**/images.txt
+# The M9 run directory is the run-level record: keep its top-level files.
+!/*/evidence/m9/*/*
+# Host live state, rewritten by every run (steps.tsv and m9/<ts>/ keep the values).
+/*/evidence/.last-*
+/*/evidence/watchdog/
+# Captures never go to git, whatever their name.
+*.pcap
+*.pcapng
+*.pcap.gz

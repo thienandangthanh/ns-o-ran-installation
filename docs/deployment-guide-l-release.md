@@ -144,7 +144,11 @@ Per gate, on the host under `$EVIDENCE_HOST_ROOT/<gate>/<UTC timestamp>/` (defau
 | `*.pcap`, `pcap-sha256.txt` | captures (ignored by git) and their sha256 manifest |
 | gate-specific files | tshark decodes, harness JSONL, agent stats, Influx exports, ns-3 traces |
 
-The M0 host half writes `<ts>-host/verdict.json` next to the VM half. M0 is green only when both pass. `<root>/.last-mN` holds the path of the latest evidence for gate N.
+The M0 host half writes `<ts>-host/verdict.json` next to the VM half. M0 is green only when both pass. `<root>/.last-mN` holds the path of the latest evidence for gate N; it and `<root>/watchdog/` are host-local live state and are not tracked.
+
+What git keeps: `plans/.gitignore` is an allowlist. Inside a run directory only the verdict layer is tracked: `verdict.json`, `gate.log`, `exit_code`, `watchdog.log`, `checks.jsonl`, `checks/*.out`, `facts.jsonl`, `rt-readers-*.txt`, `refresh-ric-*`, `*-sha256.txt`, `*.manifest.json`, `versions*.txt`, `images.txt`, and every top-level file of `m9/<ts>/`. After a run, `git add plans/` is safe without `-f`. Raw output (traces, ns-3 runs, kpimon logs, install logs, pod dumps, captures) stays on the host. To keep a raw file in git, promote it to `plans/<plan>/reference/` with a `SHA256SUMS`, or add a commented negation to `plans/.gitignore` naming the claim it supports; never `git add -f`.
+
+Raw evidence archive: raw files exist only in the worktree until archived, so archive them before removing the worktree or running `git clean -x`. The archive lives in `/mnt/data/andang-data/ns-o-ran-installation-evidence/` (`<name>.tar.zst`, its NUL-separated file list `<name>.list0`, and `SHA256SUMS`). Before archiving, write `evidence-sha256.txt` (sha256 of every file in the run directory) in each run directory that has untracked files, and commit it; it binds the archived bytes to git. The gates do not write it yet; the first archive, `plans-evidence-raw-20261029.tar.zst`, covers every untracked and ignored file under `plans/` as of 2026-10-29.
 
 Print a verdict:
 

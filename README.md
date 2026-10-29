@@ -71,9 +71,10 @@ Recorded M9 run (stateful): `plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evi
 
 ### Where evidence lands
 
-- Per gate on the host: `plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/<gate>/<UTC timestamp>/` (override with `EVIDENCE_HOST_ROOT`). The verdict is `verdict.json` in that directory; `.last-mN` in the evidence root points at the latest one.
+- Per gate on the host: `plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/<gate>/<UTC timestamp>/` (override with `EVIDENCE_HOST_ROOT`). The verdict is `verdict.json` in that directory; `.last-mN` in the evidence root points at the latest one (host-local, not tracked).
 - `run-to-m9.sh` uses `plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/` as its root instead, for every step including M0 to M7; the run-level verdict, `steps.tsv` and the watchdog files are in `m9/<UTC timestamp>/`.
 - Pcaps are not committed. Each evidence directory carries a `pcap-sha256.txt` manifest.
+- Git keeps only each run's verdict layer (verdicts, check outputs, gate logs, sha256 manifests, M1 versions, the M9 run record); the allowlist is `plans/.gitignore`. Raw output stays in a host archive, bound to git by each run directory's `evidence-sha256.txt`. Details in the deployment guide.
 - Layout and the scrubber are explained in the deployment guide.
 
 ### Documents
