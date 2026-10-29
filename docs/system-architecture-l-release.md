@@ -98,7 +98,7 @@ Why these choices:
 - **Retry forever while connecting.** Exiting because e2term is not up yet would make Docker's restart backoff grow to a minute.
 - **Exit on loss, let Docker restart.** It gives the same clean-state path after an agent crash, an e2term pod delete, or a lost setup. The cost is minutes of recovery after an e2term delete, because agents retry until the new e2term has registered with e2mgr. This was measured in the development run of M7.
 - **Graceful stop.** On SIGTERM the agent sends an SCTP SHUTDOWN (bounded 2 s wait) while its network namespace still exists, and the stop script uses `docker stop -t 10` before removing the container. Without that, e2term learns of the loss only from heartbeat timeouts, e2mgr keeps a stale CONNECTED node, and kpimon never re-subscribes to it.
-- **Subscription option A.** The agent admits the subscription without interpreting the action definition and forwards every sample. Option B (honouring the action definition) would change only the agent.
+- **Subscription option A.** The agent admits the subscription without interpreting the action definition and forwards every sample. It therefore reports every ns-3 period (100 ms of sim time) although kpimon subscribes with a 10 s reporting and granularity period; this is recorded deviation P12. Option B (honouring the action definition) would change the agent, and kpimon's period would then need to be configurable.
 
 Constraints from NIST's E2AP generators, handled by in-place edits of the generated PDUs: the subscription response hard-codes a RAN function id, the "not admitted" branch writes into the admitted list, the setup request leaves some OCTET STRING contexts uninitialised, and the indication generator copies into a fixed 8192-byte buffer.
 
@@ -178,7 +178,7 @@ Why: it is deterministic, reads the same counter the RIC stores, and can be comp
 ## 9. Deliberately out of scope
 
 - **QP and AD.** The QP fork and an R3 rung with the real QP are deferred to a later goal, not dropped; AD is not used. NIST's installers feed both xApps sample `UEReports` and `CellReports` data, so live data needs an adapter (NIST's `Near-Real-Time-RIC/README.md`).
-- **Specification deviations kept on purpose.** P1 to P11 and N5, each with its standard, are listed in the M9 run report `plans/reports/run-report-261029-0535-GH-1-m8-m9-deviations.md`. A realism pass after M9 addresses them.
+- **Specification deviations kept on purpose.** P1 to P12 and N5, each with its standard, are listed in the M9 run report `plans/reports/run-report-261029-0535-GH-1-m8-m9-deviations.md`. A realism pass after M9 addresses them.
 - **Other scenarios.** Only scenario-zero is exercised. A scenario-agnostic harness and a portability smoke on another scenario are a later goal; section 11 lists the coupling.
 - **Subscription option B.** Honouring the action definition and reporting period is deferred; it would change only the agent.
 - **N release.** The port targets L only. There is no fallback to another release.
@@ -200,6 +200,6 @@ The harness is built around scenario-zero and the TS xApp. Before you build on t
 - **The N5 cell key is upper-case hex `%08X%02X`.** Every rung uses gNB and cell IDs up to 9, where the key is digits only, so letter case cannot matter. IDs of 10 or more can put the letters A to F into the key; that case is untested.
 - **Pacing is opt-in.** Free run stays the default. Controls in a free run land at a step that depends on wall-clock timing; for a repeatable experiment use `--e2Pacing=lockstep` with the pacer and a schedule (format in the header of `scripts/gates/pacer.py`).
 - **QP and AD need a live-data adapter.** They read NIST's sample schemas, not kpimon's `cellMetrics` and `UeMetrics`. Until an adapter exists, the stub QP or a harness predictor like R3′'s stands in.
-- **The deviations apply to you too.** Every experiment on this port inherits P1 to P11 and N5 (the M9 run report `plans/reports/run-report-261029-0535-GH-1-m8-m9-deviations.md`).
+- **The deviations apply to you too.** Every experiment on this port inherits P1 to P12 and N5 (the M9 run report `plans/reports/run-report-261029-0535-GH-1-m8-m9-deviations.md`).
 
 The manual rc and TS xApp loops in [deployment-guide-l-release.md](deployment-guide-l-release.md) are the smallest starting point.
