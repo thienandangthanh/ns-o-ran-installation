@@ -21,7 +21,7 @@ README "Reproduce M9" and `docs/deployment-guide-l-release.md` §3 "M9". Before 
 3. **`rtmgr_push_acked` can report a false OK**: rtmgr logs "successful … OK" for endpoints that never read the table. Judge on receiver evidence (`rt_reader_ok`) instead.
 4. **Root cause of the stuck RMR route readers** in e2mgr and submgr after a cold boot or a fresh install (L-release images). F″ remedies it; it fired once in M9 (m1). Worth an upstream bug report once the trigger is isolated.
 5. **Watchdog headroom h**: the measured growth rate implies h ≈ 9 (trip ≈ 34) against the frozen h = 4 (trip 29); adopt it in the next budget.
-6. **Deferred by A1**: the QP fork (`381a824`) and R3 with real QP; K18/V5/V6; the scenario-one portability smoke and a scenario-agnostic harness (S3); the realism pass for P1–P11 (P10, the E2AP SCTP PPID, and P11, the non-standard NR CGI target encoding, added 2026-10-29); the stale parent submodule gitlinks.
+6. **Deferred by A1**: the QP fork (`381a824`) and R3 with real QP; K18/V5/V6; the scenario-one portability smoke and a scenario-agnostic harness (S3); the realism pass for P1–P11 (P10, the E2AP SCTP PPID, and P11, the non-standard NR CGI target encoding, added 2026-10-29) with its gates, including a scale gate of more than 9 gNBs; the stale parent submodule gitlinks.
 7. Commits `f2138f0` (675 evidence files force-added earlier): a history rewrite is pending the user's approval.
 
 ## Unresolved questions
