@@ -178,7 +178,7 @@ Why: it is deterministic, reads the same counter the RIC stores, and can be comp
 ## 9. Deliberately out of scope
 
 - **QP and AD.** The QP fork and an R3 rung with the real QP are deferred to a later goal, not dropped; AD is not used. NIST's installers feed both xApps sample `UEReports` and `CellReports` data, so live data needs an adapter (NIST's `Near-Real-Time-RIC/README.md`).
-- **Specification deviations kept on purpose.** P1 to P9 and N5, each with its standard, are listed in the M9 run report `plans/reports/run-report-261029-0535-GH-1-m8-m9-deviations.md`. A realism pass after M9 addresses them.
+- **Specification deviations kept on purpose.** P1 to P10 and N5, each with its standard, are listed in the M9 run report `plans/reports/run-report-261029-0535-GH-1-m8-m9-deviations.md`. A realism pass after M9 addresses them.
 - **Other scenarios.** Only scenario-zero is exercised. A scenario-agnostic harness and a portability smoke on another scenario are a later goal; section 11 lists the coupling.
 - **Subscription option B.** Honouring the action definition and reporting period is deferred; it would change only the agent.
 - **N release.** The port targets L only. There is no fallback to another release.
@@ -200,6 +200,6 @@ The harness is built around scenario-zero and the TS xApp. Before you build on t
 - **The N5 cell key is upper-case hex `%08X%02X`.** Every rung uses gNB and cell IDs up to 9, where the key is digits only, so letter case cannot matter. IDs of 10 or more can put the letters A to F into the key; that case is untested.
 - **Pacing is opt-in.** Free run stays the default. Controls in a free run land at a step that depends on wall-clock timing; for a repeatable experiment use `--e2Pacing=lockstep` with the pacer and a schedule (format in the header of `scripts/gates/pacer.py`).
 - **QP and AD need a live-data adapter.** They read NIST's sample schemas, not kpimon's `cellMetrics` and `UeMetrics`. Until an adapter exists, the stub QP or a harness predictor like R3′'s stands in.
-- **The deviations apply to you too.** Every experiment on this port inherits P1 to P9 and N5 (the M9 run report `plans/reports/run-report-261029-0535-GH-1-m8-m9-deviations.md`).
+- **The deviations apply to you too.** Every experiment on this port inherits P1 to P10 and N5 (the M9 run report `plans/reports/run-report-261029-0535-GH-1-m8-m9-deviations.md`).
 
 The manual rc and TS xApp loops in [deployment-guide-l-release.md](deployment-guide-l-release.md) are the smallest starting point.

@@ -66,6 +66,7 @@ The refresh is a bounded, logged bring-up remedy that runs before any judged evi
 | P7 | ns-3 puts an E-UTRA PDCP header on the EN-DC bearer | 3GPP TS 37.340 §4.2.2 | present; changes none of the N4 numbers |
 | P8 | RAN function 3 (RC) is not announced in E2 Setup; the agents accept RC controls anyway (Stop A ruling 4) | E2AP v03.00 §8.2.4.3 | present |
 | P9 | MN-hosted PDCP SDU volume credited to the en-gNB cell (`DRB.PdcpSduVolumeDL/UL`) | 3GPP TS 28.552 §5.1.2.1.1.1 (NRCellCU) | present; R3′'s predictor reads this counter |
+| P10 | The agents send every E2AP message with SCTP PPID 0, not 70: e2sim (`2209995`) sends with a plain `send()` (`e2sim/src/SCTP/e2sim_sctp.cpp:222`). e2term sends PPID 70. Wireshark falls back to port 36422 (X2AP) and shows the agent's frames as X2AP; `-d sctp.port==36422,e2ap` decodes them as E2AP. | O-RAN.WG3.TS.E2GAP-R004-v08.00 §6.1 | present: in M9's r3p `live1.pcap`–`live3.pcap`, all 1142 agent → e2term DATA chunks per run carry PPID 0 and all 9 e2term → agent chunks carry 70; e2term accepts it, and no gate judges the PPID. Found in the post-M9 review on 2026-10-29. Fix acceptance (user ruling, 2026-10-29): a gate check that every agent's agent → e2term DATA chunks in every live capture carry PPID 70, judged per agent. |
 | N5 | gNB agents send `%08X%02X` (5 bytes) as the TS xApp's cell key; key-length limit for other experiments | — | present |
 
 
