@@ -1,0 +1,103 @@
+asn1-indep ASN.1 inputs and codec pins
+=======================================
+
+Every .asn file in this directory is a byte-identical copy of its upstream file
+(sha256 below = sha256 of the upstream bytes = sha256 of the committed copy).
+The build compiles a temporary copy with the edits listed under "Compile edits";
+the committed files are never edited.
+
+O-RAN E2AP v03.01, generic E2SM v03.01, E2SM-KPM v03.00
+-------------------------------------------------------
+repo:    OSC sim/e2-interface (https://gerrit.o-ran-sc.org/r/sim/e2-interface)
+local:   /home/andang/Documents/UCLAB/projects/O-RAN-DW/OSC-repos/sim-e2-interface
+commit:  da6f82f286cdbb38af1178f82f85877b12c2f85b (HEAD; last commit touching
+         e2sim/asn1c/asn/v03: f5900596513e4359fc839ba361da085674e90b68, 2023-11-13,
+         "SIM-115: update simulator to use latest E2SM ..."); files tracked, tree clean
+path:    e2sim/asn1c/asn/v03/<file>
+91112ae93a3ca476a28149698718f861121512aeb477c20e66ee9400079660f9  e2ap-common-v03.01.asn     (E2AP-CommonDataTypes)
+be38ef66780b509d5082457c645dde8ca6e026440352198f3e8a16c775ba0dd8  e2ap-constant-v03.01.asn   (E2AP-Constants)
+f9ee4f45b300d4fbf59c12fa617e0d6fec103ad178b257d263f3b30db2bc5746  e2ap-container-v03.01.asn  (E2AP-Containers)
+1f98e4746482df0b01f38f3ab6f1cdaa033fa5ab432cdb16d6486187ac809309  e2ap-ied-v03.01.asn        (E2AP-IEs)
+6d6834b147497c7946cb9e49129e2a05cd9f77407327c0a8b0e25f3e3fd7e29c  e2ap-pdu-v03.01.asn        (E2AP-PDU-Contents)
+bf1e22f312b9220b88fff7f27ba9ffcefaf33b5c60a0e7ed15e4c213403baf77  e2ap-epd-v03.01.asn        (E2AP-PDU-Descriptions)
+f9da0b1cacc6e2aa90ab35424b8d19902136f5aae931284b91050d9bdcef62db  e2sm-v03.01.asn            (E2SM-COMMON-IEs)
+385be5cb5cc02f8be100dbff55b6c92a17a9c49f964370e46dcb20258f8b650a  e2sm-kpm-v03.00.asn        (E2SM-KPM-IEs)
+
+E2SM common + E2SM-RC v2.0 (the files the deployed rc xApp was generated from)
+--------------------------------------------------------------------------------
+repo:    OSC ric-app/rc (https://gerrit.o-ran-sc.org/r/ric-app/rc.git)
+local:   /home/andang/Documents/UCLAB/projects/O-RAN-DW/OSC-repos/ric-app-rc
+commit:  a2282eedc9e32f60298bf530456ad367bef0824b (2023-05-29), via `git show a2282ee:<path>`
+7193cda375d6037a0d013ae3f1e186d4b742218f0a0ffff488945d26dffc73a3  e2sm-common.asn    (e2sm/e2sm-common.asn, module E2SM-COMMON-IEs)
+55f6a79d0b5556f98418bd6872f00a785e79058f3e3d4b65c248e5b69a522bf2  e2sm-rc-2.0.asn    (e2sm/e2sm-rc-2.0.asn, module E2SM-RC-IEs)
+
+Module sets (compile-asn.py)
+----------------------------
+E2AP_v0301      the six e2ap-*-v03.01.asn files
+E2SM_KPM_v0300  e2sm-v03.01.asn + e2sm-kpm-v03.00.asn
+E2SM_RC_v0200   e2sm-common.asn + e2sm-rc-2.0.asn
+The E2SM sets are compiled apart: e2sm-v03.01.asn and rc's e2sm-common.asn both
+define module E2SM-COMMON-IEs. Their contents are identical once comments and
+whitespace are dropped.
+
+Compile edits (applied by compile-asn.py to a temporary copy; each must match once)
+-----------------------------------------------------------------------------------
+1. e2ap-pdu-v03.01.asn: add `RICtimeToWait,` to the IMPORTS from E2AP-IEs.
+   E2AP-PDU-Contents uses RICtimeToWait (RICaction-RequiredToBeModified-Item) but
+   does not import it; pycrate stops at the undefined reference. Import list
+   only, no type changes.
+2. e2ap-epd-v03.01.asn: IMPORTS `RICqueryRequest, RICqueryResponse, RICqueryFailure`
+   -> `RICQueryRequest, RICQueryResponse, RICQueryFailure`. E2AP-PDU-Contents
+   defines RICQuery* and the elementary procedure set references RICQuery*; the
+   import list had the wrong case. Type names are not encoded, so no wire change.
+3. e2sm-rc-2.0.asn: `RANParameter-ID ::= INTEGER (1..2^32, ...)` ->
+   `INTEGER (1..4294967295, ...)`. `2^32` is not ASN.1 value notation; the edit
+   writes the bound O-RAN E2SM-RC v03.00 states in its own ASN.1 (Zotero
+   JRDTL7XS, p. 287). (2^32 written in decimal would encode identically:
+   pycrate sizes the length determinant from range - 1, 4 octets either way.)
+   Finding: the asn1c code generated from this same file (rc@a2282ee
+   e2sm/lib/RANParameter-ID.c) has `APC_UNCONSTRAINED` for value and size, i.e.
+   asn1c dropped the constraint. asn1c puts RANParameter-ID on the wire as an
+   unconstrained INTEGER (no extension bit, length octet, value), X.691 as an
+   extensible constrained INTEGER (extension bit, 2-bit length, value - 1). The
+   asn1c-encoded RC control messages of tools/rc-decode/fixtures therefore do not
+   decode with this codec; selftest.py pins the exact difference.
+
+pycrate
+-------
+package: pycrate 0.8.1 from PyPI, pip --require-hashes (../requirements.txt)
+  65c4dd48d93248a0a4aa2fc78bab10ea64087c6382827035fae9f8bba343db53  pycrate-0.8.1-py2.py3-none-any.whl
+  a408c942d219c646a5a81073b8036f48a81c4540dd1f25fda2f8bbde0607db98  pycrate-0.8.1.tar.gz
+source:  https://github.com/pycrate-org/pycrate tag 0.8.1 = d8c71d461cde37cf4831d6e343f6feea274d8e13
+base:    docker.io/library/python:3.12-slim@sha256:b18b261e1b4974b4f321451ad5251ded85abb22c2b8b262da527dda1d031ab30
+
+Bundled 3GPP modules used (pycrate_asn1dir, shipped compiled in the wheel)
+---------------------------------------------------------------------------
+The wheel and sdist carry only the compiled modules, not the .asn text. The text
+is in the pycrate repo at tag 0.8.1. Compiling that text with pycrate 0.8.1's
+compiler, files in load_mod.txt order, reproduces both bundled modules
+byte-for-byte (checked 2026-11-03), so the hashes below pin what the image runs.
+
+X2AP:  3GPP TS 36.423, Release 18 (pycrate commit 0f24fb76d04716b4bfa59c870d50155c98cdfbe5,
+       2025-12-30, "asn1dir: update all LTE and NR RAN specs to r18"; it removed the
+       36423-h40.txt (v17.4.0) source and records no exact 18.x.y version)
+       dir pycrate_asn1dir/3GPP_EUTRAN_X2AP_36423/ at tag 0.8.1:
+51ab58b03b561d13df7c5433aa5c8837fc71da5db95441530c2c21ff4451f1a9  X2AP-CommonDataTypes.asn
+475ff82c5eed9c72a4db9f9c1a313ec30d572ba360620c2052cb81202533e353  X2AP-Constants.asn
+ec70c1ce941ca33f1f0bc14827b035b6c8dc51b9b5300a62bf80ebc10ee956af  X2AP-Containers.asn
+69f531a714731af22e585819d1a6c3720b0af87d6b68fd6c8236cfa93c330f38  X2AP-IEs.asn
+64208481f2b166acc318cdccdf0ab8d880202a9e119a03f62137496c915a81f1  X2AP-PDU-Contents.asn
+95bbd6e3b58bdf87663d8cfd4decef09d154c827a1a0430edb625fc0df5a0979  X2AP-PDU-Descriptions.asn
+57496924f23d104210d949901124232371b00c854c7251d0e8cc064199b490d1  pycrate_asn1dir/X2AP.py (compiled, in the wheel)
+
+RRCNR: 3GPP TS 38.331, Release 18 (same pycrate commit; it removed 38331-h40.txt).
+       The text's newest extension markers are -v1860 (no -v1870), so it is
+       38.331 v18.6.0 or a later 18.x that added no v1870 IEs; exact version not recorded.
+       dir pycrate_asn1dir/3GPP_NR_RRC_38331/ at tag 0.8.1:
+c6a83a40660e9fec103b4b25ab44c3337b690350fae504ce206e458ea639e0ab  NR-InterNodeDefinitions.asn
+e95183f8a408630310e5021cee78e6564607263b445680ef9d06d9f520fbd232  NR-RRC-Definitions.asn
+adb1b09a73689bbc3c45c161dfe2617fc25729ccd96140a9e2fc3e89fe4bd23c  NR-Sidelink-DiscoveryMessage.asn
+2447979e8081fae1205771cabdd4b98b50748a7c7270117c209ab8afb5673557  NR-Sidelink-Preconf.asn
+84f11379aa6cbeda058259dcc4a1ed2aa54c2f153f5b2fd698465df0b536cbfb  NR-UE-Variables.asn
+0713b1827759ae979ee8164b3c6384c459982b6fa6450a12a8edd302e4822dc5  PC5-RRC-Definitions.asn
+a89ead6578465106450055f3461014e9dc043169352174feb11b67dfbad649dc  pycrate_asn1dir/RRCNR.py (compiled, in the wheel)
