@@ -221,8 +221,8 @@ disconnected() {
 check e2id_probe_nodebs_disconnected_after_graceful_close disconnected
 check e2id_capture_stopped capture_stop e2id
 wire() {
-    tshark -r "$e/e2id.pcap" -Y 'sctp.data_payload_proto_id' -T fields -e ip.src -e ip.dst -e sctp.data_payload_proto_id \
-        -e e2ap.procedureCode >"$e/e2id-wire.tsv" 2>"$e/e2id-wire.err" || return 1
+    tshark -r "$e/e2id.pcap" -o sctp.reassembly:TRUE -Y 'sctp.data_payload_proto_id' -T fields -e ip.src -e ip.dst \
+        -e sctp.data_payload_proto_id -e e2ap.procedureCode -e sctp.data_e_bit >"$e/e2id-wire.tsv" 2>"$e/e2id-wire.err" || return 1
     python3 -I - "$e/e2id-wire.tsv" "$e/probe-node-ips.txt" <<'PY'
 import sys, collections
 rows = [l.rstrip("\n").split("\t") for l in open(sys.argv[1]) if l.strip()]
@@ -230,11 +230,15 @@ nodes = {l.strip() for l in open(sys.argv[2]) if l.strip()}
 by = collections.Counter((r[0], r[2], r[3] if len(r) > 3 else "") for r in rows)
 for k, v in sorted(by.items()):
     print("src %s%s ppid %s procedureCode %s: %d" % (k[0], " (probe node)" if k[0] in nodes else "", k[1], k[2], v))
-# AC11 direction: every DATA chunk a probe node sent carries PPID 70 and tshark decodes it as E2AP with no -d
-mine = [r for r in rows if r[0] in nodes]
-bad = [r for r in mine if r[2] != "70" or len(r) < 4 or not r[3]]
-print("probe-node chunks %d (from %s), without PPID 70 or E2AP decode: %d" % (len(mine), sorted(nodes), len(bad)))
-sys.exit(0 if mine and not bad else 1)
+# AC11 direction: every DATA chunk a probe node sent carries PPID 70, and every frame that ends a message (E bit
+# set; a large setup is fragmented over several chunks) decodes as E2AP with no -d override
+mine = [r + [""] * (5 - len(r)) for r in rows if r[0] in nodes]
+noppid = [r for r in mine if set(r[2].split(",")) != {"70"}]
+ends = [r for r in mine if "1" in r[4].split(",") or "True" in r[4].split(",")]
+undecoded = [r for r in ends if not r[3]]
+print("probe-node frames %d (from %s): PPID other than 70 %d; message-final frames %d, not decoded as E2AP %d" % (
+    len(mine), sorted(nodes), len(noppid), len(ends), len(undecoded)))
+sys.exit(0 if mine and ends and not noppid and not undecoded else 1)
 PY
 }
 check e2id_wire_every_chunk_ppid_and_e2ap_without_override wire
