@@ -1,0 +1,27 @@
+[18:03:05] gate scale10 start; evidence /home/uc/evidence/probes/ns3-scale-ten-gnbs/20261102T180303Z; harness da17fd7c5ff95e9382456c48860495bc1c2a104b
+[18:03:06] ric watchdog started (pid 7795, threshold 600s)
+[18:03:06] PASS scale10_ns3_binary_located
+[18:03:06] PASS scale10_capture_started_before_agents
+[18:07:22] PASS scale10_agents_connected_set_exact
+[18:07:22] PASS scale10_e2mgr_all_eleven_connected_distinct
+[18:07:23] PASS scale10_every_agent_ready_and_subscribed
+[18:22:24] FAIL scale10_lockstep_run_exits_clean: exit 1: ns-3 started pid/pgid 23259 at 1793642844.183150167: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=10 --handoverMode=NoAuto --simTime=10 --indicationPeriodicity=0.1 --RngRun=1 --simStartEpochMs=1767225600000 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/probes/ns3-scale-ten-gnbs/20261102T180303Z/run/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10
+ns-3 exit code 124
+ns-3 exit 124, pacer exit 3 (want 0 and 0); wall s, wall per sim s: 900.043 90.004
+[18:22:44] FAIL scale10_agent_stats_after_bye: exit 1: agent 11: no stats line after bye within 20 s
+[18:22:48] PASS scale10_agents_stopped
+[18:22:49] PASS scale10_capture_stopped
+[18:22:49] FAIL scale10_ipc_traces_clean_every_node: exit 1: PROBLEM: node 5 hello=1 bye=0 (want 1/1)
+PROBLEM: node 6 hello=1 bye=0 (want 1/1)
+PROBLEM: node 7 hello=1 bye=0 (want 1/1)
+PROBLEM: node 8 hello=1 bye=0 (want 1/1)
+PROBLEM: node 9 hello=1 bye=0 (want 1/1)
+[18:22:50] FAIL scale10_agent_counters_clean_forwarded_equals_trace: exit 1: FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/probes/ns3-scale-ten-gnbs/20261102T180303Z/run/agent-9-stats.json'
+node 10: Traceback (most recent call last):
+  File "<stdin>", line 2, in <module>
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/probes/ns3-scale-ten-gnbs/20261102T180303Z/run/agent-10-stats.json'
+node 11: state=READY subs=1 samplesIn=50 forwarded=50 (trace 50) indTx=99 (cell 50 ue 49) chunkSplits=0 nonzero={}
+[18:22:50] PASS scale10_hygiene
+Terminated
+[18:22:50] ric watchdog stopped (pid 7795)
+verdict scale10: FAIL failed=['scale10_lockstep_run_exits_clean', 'scale10_agent_stats_after_bye', 'scale10_ipc_traces_clean_every_node', 'scale10_agent_counters_clean_forwarded_equals_trace']

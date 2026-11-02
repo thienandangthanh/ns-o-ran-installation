@@ -14,6 +14,11 @@
 # trace's samples with zero drop counters. Facts: wallPerSimS, simTimeS, wallS, vmRootUsedDeltaGiB, evidenceBytes
 # (traces + capture), pcapBytes. Host-side overlay growth is measured by the caller around the run.
 # Starts from a snapshot with the RIC, kpimon and the M4 ns-3 build (f7-rerun-green or later); leaves no agent running.
+# ns-3's wall timeout scales with simTime: the first run (2026-11-03) measured ~17.5 wall s per 100 ms step and was
+# cut by the default 900 s; parsed here, before agents-ns3-run.sh reads NS3_TIMEOUT_S
+SIMTIME=10
+for ((i = 1; i <= $#; i++)); do [ "${!i}" = --simtime ] && { j=$((i + 1)); SIMTIME="${!j}"; }; done
+export NS3_TIMEOUT_S="${NS3_TIMEOUT_S:-$((SIMTIME * 300 + 600))}"
 source "$(dirname "$0")/../gates/lib.sh"
 gate_init scale10
 source "$HARNESS_DIR/scripts/gates/bringup.sh"
@@ -22,7 +27,6 @@ source "$HARNESS_DIR/scripts/gates/kpimon.sh"
 source "$HARNESS_DIR/scripts/gates/agents.sh"
 source "$HARNESS_DIR/scripts/gates/paced-lib.sh"
 
-SIMTIME=10
 while [ $# -gt 0 ]; do
     case "$1" in
         --simtime) SIMTIME="$2"; shift 2 ;;
@@ -86,6 +90,18 @@ check scale10_lockstep_run_exits_clean run_it
 read -r WALL WPS <"$rd/wall.txt" 2>/dev/null || { WALL=null; WPS=null; }
 fact wallS "$WALL"
 fact wallPerSimS "$WPS"
+fact ns3TimeoutS "$NS3_TIMEOUT_S"
+# steady-state rate: wall seconds per simulated second over the ready lines after the first simulated second
+steady() {
+    python3 -I - "$rd/pacer/pacer-log.jsonl" <<'PY'
+import json, sys
+rd = [(r["t"], r["msg"]["simTimeNs"]) for r in map(json.loads, filter(str.strip, open(sys.argv[1])))
+      if r["msg"].get("type") == "ready" and r["msg"]["simTimeNs"] >= 1_000_000_000]
+(t0, s0), (t1, s1) = rd[0], rd[-1]
+print("%.3f" % ((t1 - t0) / ((s1 - s0) / 1e9)))
+PY
+}
+fact wallPerSimSSteady "$(steady 2>/dev/null || echo null)"
 
 logs_after_bye() {
     local c n deadline=$(($(date +%s) + 20))

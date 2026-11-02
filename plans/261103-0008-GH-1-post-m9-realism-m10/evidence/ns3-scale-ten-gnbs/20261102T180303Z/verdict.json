@@ -1,0 +1,97 @@
+{
+  "gate": "scale10",
+  "ts": "20261102T180303Z",
+  "harness_sha": "da17fd7c5ff95e9382456c48860495bc1c2a104b",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "c6d1434a793f36ae7d08b303f19f63921cf560bf",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "ba954440d008b17e20da07c168b3e96ef48db6de",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "96efc40eeb46e9c6cf19f1cc2184890f8e109bea",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+  },
+  "duration_s": 1185,
+  "pass": false,
+  "failed": [
+    "scale10_lockstep_run_exits_clean",
+    "scale10_agent_stats_after_bye",
+    "scale10_ipc_traces_clean_every_node",
+    "scale10_agent_counters_clean_forwarded_equals_trace"
+  ],
+  "checks": [
+    {
+      "name": "scale10_ns3_binary_located",
+      "pass": true,
+      "detail": "/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"
+    },
+    {
+      "name": "scale10_capture_started_before_agents",
+      "pass": true,
+      "detail": "[18:03:06] capture scale10 started on docker0 (pid 7924, filter 'ip proto 132')"
+    },
+    {
+      "name": "scale10_agents_connected_set_exact",
+      "pass": true,
+      "detail": "NS3_E2_AGENT_METRIC_MAP_SHA256=9cfcbbcdd71514e4e2627cfbb4aa950760b42f85d5045de2c1b71d6215f16923\n[18:07:17] bringup agents: e2mgr CONNECTED set equals the expected agents: gnb_001_001_00000001 gnb_001_001_00000002 gnb_001_001_00000003 gnb_001_001_00000004 gnb_001_001_00000005 gnb_001_001_00000006 gnb_001_001_00000007 gnb_001_001_00000008 gnb_001_001_00000009 gnb_001_001_0000000a gnb_001_001_0000000b \n[18:07:22] bringup agents: every agent READY with an E2 setup: 1 0 true READY 1 0;2 0 true READY 1 0;3 0 true READY 1 0;4 0 true READY 1 0;5 0 true READY 1 0;6 0 true READY 1 0;7 0 true READY 1 0;8 0 true READY 1 0;9 0 true READY 1 0;10 0 true READY 1 0;11 0 true READY 1 0;"
+    },
+    {
+      "name": "scale10_e2mgr_all_eleven_connected_distinct",
+      "pass": true,
+      "detail": "CONNECTED (11): gnb_001_001_00000001 gnb_001_001_00000002 gnb_001_001_00000003 gnb_001_001_00000004 gnb_001_001_00000005 gnb_001_001_00000006 gnb_001_001_00000007 gnb_001_001_00000008 gnb_001_001_00000009 gnb_001_001_0000000a gnb_001_001_0000000b "
+    },
+    {
+      "name": "scale10_every_agent_ready_and_subscribed",
+      "pass": true,
+      "detail": "9 0 true READY 1 0\n10 0 true READY 1 0\n11 0 true READY 1 0"
+    },
+    {
+      "name": "scale10_lockstep_run_exits_clean",
+      "pass": false,
+      "detail": "exit 1: ns-3 started pid/pgid 23259 at 1793642844.183150167: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=10 --handoverMode=NoAuto --simTime=10 --indicationPeriodicity=0.1 --RngRun=1 --simStartEpochMs=1767225600000 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/probes/ns3-scale-ten-gnbs/20261102T180303Z/run/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 124\nns-3 exit 124, pacer exit 3 (want 0 and 0); wall s, wall per sim s: 900.043 90.004"
+    },
+    {
+      "name": "scale10_agent_stats_after_bye",
+      "pass": false,
+      "detail": "exit 1: agent 11: no stats line after bye within 20 s"
+    },
+    {
+      "name": "scale10_agents_stopped",
+      "pass": true,
+      "detail": "ns3-e2-agent-2 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1793643762474,\"nodeId\":2,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":49,\"samplesIn\":50,\"samplesForwarded\":50,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":148,\"indTxCell\":50,\"indTxUe\":98,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":0,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":2,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":0,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":0,\"applied\":0,\"refused\":0,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":51}\nns3-e2-agent-1 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1793643764423,\"nodeId\":1,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":49,\"samplesIn\":50,\"samplesForwarded\":50,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":442,\"indTxCell\":50,\"indTxUe\":392,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":0,\"unknownType\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":2,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":0,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":0,\"applied\":0,\"refused\":0,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":51}\nRemoved 11 ns3-e2-agent container(s)."
+    },
+    {
+      "name": "scale10_capture_stopped",
+      "pass": true,
+      "detail": "[18:22:49] capture scale10 stopped: 6899 packets captured 6899 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "scale10_ipc_traces_clean_every_node",
+      "pass": false,
+      "detail": "exit 1: PROBLEM: node 5 hello=1 bye=0 (want 1/1)\nPROBLEM: node 6 hello=1 bye=0 (want 1/1)\nPROBLEM: node 7 hello=1 bye=0 (want 1/1)\nPROBLEM: node 8 hello=1 bye=0 (want 1/1)\nPROBLEM: node 9 hello=1 bye=0 (want 1/1)"
+    },
+    {
+      "name": "scale10_agent_counters_clean_forwarded_equals_trace",
+      "pass": false,
+      "detail": "exit 1: FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/probes/ns3-scale-ten-gnbs/20261102T180303Z/run/agent-9-stats.json'\nnode 10: Traceback (most recent call last):\n  File \"<stdin>\", line 2, in <module>\nFileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/probes/ns3-scale-ten-gnbs/20261102T180303Z/run/agent-10-stats.json'\nnode 11: state=READY subs=1 samplesIn=50 forwarded=50 (trace 50) indTx=99 (cell 50 ue 49) chunkSplits=0 nonzero={}"
+    },
+    {
+      "name": "scale10_hygiene",
+      "pass": true,
+      "detail": "no ns-3 process, no agent container, no listener on 3847x"
+    }
+  ],
+  "simTimeS": 10,
+  "useIdealRrc": true,
+  "nodes": "enb:1,gnb:2,gnb:3,gnb:4,gnb:5,gnb:6,gnb:7,gnb:8,gnb:9,gnb:10,gnb:11",
+  "wallS": 900.043,
+  "wallPerSimS": 90.004,
+  "disk": {
+    "vmRootUsedDeltaGiB": 0.0,
+    "evidenceBytes": 69721364,
+    "traceBytes": 3231450,
+    "pcapBytes": 3144358
+  }
+}

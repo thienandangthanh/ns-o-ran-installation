@@ -23,7 +23,17 @@ Source: OSC `ric-app-rc` at `a2282eedc9e32f60298bf530456ad367bef0824b` (`scripts
 - **UseIdealRrc smoke (informational): not runnable at the M9 pins.** scenario-zero sets `ns3::MmWaveHelper::UseIdealRrc` to `true` with `Config::SetDefault` after `cmd.Parse` (`ns-3-mmwave-oran/scratch/scenario-zero.cc:356`, `:483`), so no command-line value reaches it. Making it settable is T-C code, which may not land before checkpoint 2. AC17's real probe stays in P10. The s10 budget therefore uses the ideal-RRC rate, and P10/P11 re-measure.
 
 ## Toolchain (`tools/asn1-indep`)
-(pending)
+- Commit `735e2a7`. Image `localhost/asn1-indep:aab70be470e0803c`, 167 MB, saved as `tools/asn1-indep/dist/asn1-indep-aab70be470e0803c.tar` (sha256 `9bfed29f426e045a7a6b058491b342cc8ffe52455eea9e898bd2d9fba76917b2`; the tarball is not in git).
+- pycrate 0.8.1 pinned by hash. Inputs: E2AP v03.01, E2SM v03.01 and E2SM-KPM v03.00 from OSC `sim/e2-interface`; E2SM common and E2SM-RC from rc `a2282ee`; X2AP (3GPP TS 36.423 Rel-18) and NR RRC (3GPP TS 38.331 Rel-18, ≥ v18.6.0) from pycrate's bundled modules, recompiled byte-equal from pinned text. Pins are in `tools/asn1-indep/asn/SOURCES.txt`.
+- Self-test 45/45 offline (`--network=none`). Every committed asn1c capture of E2AP (RIC control ACK and failure) and all 30 E2SM-RC control headers decode and re-encode byte-equal.
+- Three build-time edits to a temporary copy of the ASN.1, none of which changes a wire byte against the spec: a missing `RICtimeToWait` import, the `RICQuery*` import spelling, and `RANParameter-ID` written with the spec's bound `(1..4294967295, ...)` instead of rc's `(1..2^32, ...)`.
+
+### New deviation found: RANParameter-ID is encoded unconstrained (proposed row P14)
+- **Spec:** O-RAN E2SM-RC v03.00 ASN.1, `RANParameter-ID ::= INTEGER (1..4294967295, ...)` (Zotero `JRDTL7XS`, p. 287). Under X.691 APER this is an extensible constrained whole number: id 1 encodes as `00 00`.
+- **Deployed:** rc `a2282ee` `e2sm/e2sm-rc-2.0.asn:200` writes `INTEGER (1..2^32, ...)`, which is not valid ASN.1 value notation. asn1c dropped the constraint (`e2sm/lib/RANParameter-ID.c:36-38`, `APC_UNCONSTRAINED`), so rc puts each id on the wire as an unconstrained INTEGER (`01 01` for id 1). The agent's RC codec is generated from the same rc tree (`rc-lib.sh` header: "the agent's codec uses the same one"), so rc and the agent agree with each other and disagree with the spec. Every RC control message, every outcome with items and every RC RAN function definition is affected.
+- **Effect on this goal:** the P01 probes do not decode RAN parameters. AC12, however, requires a target encoded by an independent spec encoder to be applied, which the current agent cannot decode. Fixing it means correcting the bound in the rc fork's ASN.1 and regenerating rc's and the agent's codecs inside the T-A fork patches (P06/P07). No code is written for it before checkpoint 1.
+- **Status:** registered for the user at Stop A, as a scope confirmation: it is not one of P1–P13/N5, but AC12 and R1 ("fix to spec") imply it.
+
 
 ## Standards preflight (F11)
 
