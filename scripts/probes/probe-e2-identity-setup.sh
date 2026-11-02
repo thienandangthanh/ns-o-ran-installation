@@ -32,7 +32,7 @@ IMG="localhost/asn1-indep:$TAG"
 NODE_PY=/probes/e2-probe-node.py
 ENGNB=en_gnb_001_001_7f000001   # e2term BuildRunName: "en_gnb_" + PLMN + 32-bit gNB ID in 8 hex digits
 ENB=""                          # "enB_macro_" + PLMN + the 20-bit ID as e2term renders it, read back from e2mgr
-SUBMGR_REST=/api/v1/namespaces/ricplt/services/http:service-ricplt-submgr-http:3800/proxy/ric/v1/subscriptions
+SUBMGR_REST=""                  # set after bring-up: submgr's xapp-frame REST on its pod's port 8088
 fact imageTag "$(json_str "$TAG")"
 ric_watchdog_bg
 
@@ -49,6 +49,10 @@ s = [s for s in json.load(sys.stdin)["items"] if s["metadata"]["name"].startswit
 assert len(s) == 1, len(s)
 print("%s:%d" % (s[0]["spec"]["clusterIP"], s[0]["spec"]["ports"][0]["port"]))' >"$e/e2term-addr.txt" && cat "$e/e2term-addr.txt"
 }
+# a fresh revert cold-boots the RIC: wait for every ricplt pod and for e2mgr/submgr's route readers first
+check e2id_ric_ready_after_cold_boot gate_bringup ric
+readers() { { rt_reader_ok e2mgr probe && rt_reader_ok submgr probe; } || ric_refresh_routes ric; }
+check e2id_e2mgr_submgr_route_readers_ok readers
 check e2id_e2term_service_resolved e2term_addr
 E2TERM=$(cat "$e/e2term-addr.txt" 2>/dev/null)
 
@@ -133,6 +137,10 @@ kpm_sub_bytes() {
         --meas DRB.UEThpDl --meas RRU.PrbUsedDl >"$e/kpm-sub-bytes.json" && cat "$e/kpm-sub-bytes.json"
 }
 check e2id_kpm_subscription_octets_encoded kpm_sub_bytes
+# the deployed service-ricplt-submgr-http is headless and maps only port 3800, while submgr serves its REST API on
+# 8088 (xApps reach the pod through DNS), so the probe goes through the pod proxy
+SUBMGR_REST="/api/v1/namespaces/ricplt/pods/http:$(ric_pod submgr):8088/proxy/ric/v1/subscriptions"
+fact submgrRest "$(json_str "$SUBMGR_REST")"
 enb_subscribe() {
     python3 -I - "$e/kpm-sub-bytes.json" "$ENB" >"$e/enb-sub-request.json" <<'PY'
 import json, sys
