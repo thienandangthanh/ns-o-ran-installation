@@ -104,7 +104,7 @@ On VM `ubuntu24.04`, the ops prelude and all three tracks land. Then a new unatt
 | Approach | Assumption it depends on most | Fails first when | Worst plausible case |
 |---|---|---|---|
 | Fixed sweep {100, 150, 200, 500} | Values anchored to the spec bracket a real loop | A reviewer asks "why 200?" | Disclosed and repeatable, but a model rather than a measurement |
-| Free-run campaign first | Free run reveals RIC latency | At 2 gNB, C ≈ 0.70 s per period is far above L ≈ 5–13 ms [V `rung-config.json:15,19`], so every control lands at k+1 and δ_eff = 100 ms always [I]. It also needs a live-RIC free-run harness, which does not exist [C] | A phase spent learning "1 period"; the result depends on the host |
+| Free-run campaign first | Free run reveals RIC latency | At 2 gNB, C ≈ 0.70 s per period is far above L ≈ 5–13 ms [V `rung-config.json:14,18`], so every control lands at k+1 and δ_eff = 100 ms always [I]. It also needs a live-RIC free-run harness, which does not exist [C] | A phase spent learning "1 period"; the result depends on the host |
 | Both | The campaign adds information | Same as the campaign | The cost of both, plus a mid-goal redesign if the campaign "disagrees" |
 
 **Goal shape**
@@ -164,6 +164,8 @@ T-A design choices (gNB ID length, the UE ID choice, the serving node) are pre-r
 - **Scale step:** its simTime is chosen so the step takes ≤ 45 min.
 
 ### 8. Draft `ak:goal-warmup` Outcome Contract
+> Superseded on 2026-11-03 by `contract-261103-0001-GH-1-post-m9-realism-outcome-contract.md` (kongming fixes and user rulings R1–R12 applied). Kept as the historical draft.
+
 - **Intended result:** §1. All fork code is pushed on `dev/l-release-nist180` and pinned in `scripts/pins.conf`.
 - **In scope:**
   - ops prelude FU1, 2, 3, 5 and the FU4 note;
