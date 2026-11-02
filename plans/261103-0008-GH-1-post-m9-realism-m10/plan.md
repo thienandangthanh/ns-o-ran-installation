@@ -34,9 +34,10 @@ After each checkpoint the compliant behaviour is the only behaviour (R1, R8). Ev
 
 ## Resume card (filled at execution; update before every VM operation > 10 min and at every phase exit)
 ```text
-last-updated: 2026-11-03 03:00 KST
-current phase: P01 (P00 done: AC1 self-test case; AC2 0 orphans after M0 probe d11021754 + second revert, evidence/fu2/; AC3 fixture fails old/new as intended; AC4 dev h = 12.0 ≤ 12; AC5 findings-261103-0247)
-VM / snapshots / host free: VM running at fresh-install (fresh overlay); snapshots fresh-install f7-rerun-green m0-probe-{d11021754,n,o,p,q} r0-green r2-green r3p-green; /home 96 GiB (leaked M9 overlay ubuntu24.1793206761 deleted under the 2026-10-28 ruling, 42.4 GiB freed, log evidence/fu2/20261102T174920Z/leak-deletion/), /mnt/data 20 GiB
+last-updated: 2026-11-03 04:45 KST
+current phase: P01 PAUSED (T3): AC6a en-gNB refused by e2mgr 6.0.6 (XML tag global-gNB-ID, e2_setup_request_message.go:54); journal docs/journals/2026-11-03-m10-p01-pause-t3-ac6a-en-gnb-refusal.md; kongming-261103-0440 recommends option A (e2mgr fork patch, Amendment 2); AC6 ✓ runtime (evidence/e2-identity-setup/20261102T192656Z); AC6b ✓ (171 wall-s/sim-s, s10 simTime 8 s)
+VM / snapshots / host free: VM running at fresh-install (0 orphans, pending check ok); snapshots fresh-install f7-rerun-green m0-probe-{d11021754,n,o,p,q} r0-green r2-green r3p-green; /home 96 GiB (post-M9 leak deleted under the 2026-10-28 ruling, 42.4 GiB, log evidence/fu2/20261102T174920Z/leak-deletion/), /mnt/data 20 GiB
+uncommitted: P02 δ-seam WIP in oran-interface/model/e2-control-hub.{h,cc}, e2-ipc-emitter.cc and ns-3-mmwave-oran/scratch/scenario-zero.cc (not compiled, not pinned)
 open T4 (deferred to Stop A, deviation from "PAUSE T4 now" logged): 3GPP TS 38.331 not in Zotero (needed by P06 R-3 MeasurementTimingConfiguration); user notified 03:10 KST; the other 12 keys are present
 for Stop A: new deviation "P14" RANParameter-ID unconstrained in rc/agent asn1c (spec INTEGER (1..4294967295, ...)); AC12 implies the fix in the T-A fork patches; user confirms scope at Stop A (probe-261103-0315 report)
 fork SHAs (pins.conf): Testbed c6d1434a, ns-3 ba954440, oran-interface 96efc40e, e2sim 2209995a (M9 values)
@@ -59,7 +60,7 @@ in-flight jobs: none
 | # | Milestone | Phase | Exit gate | Status |
 |---|---|---|---|---|
 | P00 | MA | [Ops prelude: runner finish, overlay orphans, receiver readiness, headroom, FU4 note](phase-00-ops-prelude-runner-overlays-readiness-headroom.md) | AC1–AC5 | done 2026-11-03 (harness 6cc7798) |
-| P01 | MA | [rc claims, identity probe, scale probe, ASN.1 toolchain, standards preflight](phase-01-rc-claims-identity-and-scale-probes.md) | AC6, AC6a, AC6b; F10/F11 preflight | pending |
+| P01 | MA | [rc claims, identity probe, scale probe, ASN.1 toolchain, standards preflight](phase-01-rc-claims-identity-and-scale-probes.md) | AC6, AC6a, AC6b; F10/F11 preflight | AC6 ✓, AC6b ✓, F10 ✓ (static), F11 12/13 (T4 38.331); **AC6a en-gNB REFUSED → PAUSE T3** (2026-11-03 04:45) |
 | P02 | MB | [δ actuation seam](phase-02-delta-actuation-seam.md) | AC7; AC8 run 1 | pending |
 | P03 | MB | [P12: KPM reporting period and granularity](phase-03-p12-kpm-reporting-period-granularity.md) | AC10; AC8 run 2 | pending |
 | P04 | MB | [Checkpoint 1 tag, δ sweep references, predicate registration](phase-04-checkpoint-1-tag-delta-references.md) | AC8 tag, AC9, AC18 #9 registration | pending |

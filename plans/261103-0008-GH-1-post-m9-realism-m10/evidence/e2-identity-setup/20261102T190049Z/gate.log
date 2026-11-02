@@ -1,0 +1,76 @@
+[19:00:51] gate e2id start; evidence /home/uc/evidence/probes/e2-identity-setup/20261102T190049Z; harness 1bca3cbfb8debf8ef8f4e69f6bdf34044c046100
+[19:00:51] ric watchdog started (pid 4757, threshold 600s)
+[19:00:53] PASS e2id_image_checksum_verified_and_loaded
+[19:04:41] PASS e2id_ric_ready_after_cold_boot
+[19:04:58] PASS e2id_e2mgr_submgr_route_readers_ok
+[19:04:58] PASS e2id_e2term_service_resolved
+[19:05:22] PASS e2id_fu3_rtmgr_restarted
+[19:05:30] PASS e2id_fu3_rc_ready_on_its_route_reader
+[19:05:30] FAIL e2id_ran_functions_copied_from_an_agent_nodeb: exit 1: 
+[19:05:31] PASS e2id_capture_started
+[19:05:32] PASS e2id_engnb_node_started
+[19:06:03] FAIL e2id_engnb_setup_response_decoded: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/json/decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[19:06:34] FAIL e2id_engnb_meid_and_nodeb_connected_nbid_32: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[19:06:35] PASS e2id_enb_node_started
+[19:07:05] FAIL e2id_enb_setup_response_decoded: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/json/decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[19:07:05] FAIL e2id_enb_meid_matches_enb_macro: exit 1: eNB meid(s): 
+[19:07:36] FAIL e2id_enb_meid_and_nodeb_connected_nbid_20: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[19:07:36] PASS e2id_e2mgr_setup_log_saved
+[19:07:36] PASS e2id_enb_nodeb_ranfunctions_recorded
+[19:07:37] PASS e2id_kpm_subscription_octets_encoded
+[19:07:37] FAIL e2id_enb_kpm_subscription_accepted_by_submgr_rest: exit 1: Error from server (UnsupportedMediaType): unknown
+[19:08:07] FAIL e2id_enb_received_ric_subscription_request: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/json/decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[19:08:12] FAIL e2id_enb_answered_ric_subscription_response: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/json/decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[19:08:13] FAIL e2id_enb_kpm_subscription_deleted: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[19:08:33] PASS e2id_enb_subscription_delete_seen
+[19:08:48] FAIL e2id_ac6_fixture_b_late_ack_timer_expires_ack_dropped_rc_alive: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/json/decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[19:09:49] FAIL e2id_ac6_fixture_a_ack_without_outcome_panics_rc: exit 1: {
+  "rspCode": -1,
+  "description": "The client specified an invalid argument. or some parameters are missing "
+}
+rc restarts: before 1, after 1
+[19:09:54] FAIL e2id_node_sent_ack_without_outcome: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/json/decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[19:10:18] PASS e2id_post_panic_rtmgr_restarted
+[19:10:27] PASS e2id_post_panic_rc_ready_on_its_route_reader
+[19:10:27] PASS e2id_probe_nodes_stopped
+[19:10:32] FAIL e2id_probe_nodebs_disconnected_after_graceful_close: exit 1: en_gnb_001_001_7f000001 ABSENT;  ABSENT
+[19:10:33] PASS e2id_capture_stopped
+[19:10:33] FAIL e2id_wire_every_chunk_ppid_and_e2ap_without_override: exit 1: probe-node frames 0 (from ['invalid IP']): PPID other than 70 0; message-final frames 0, not decoded as E2AP 0
+[19:10:33] ric watchdog stopped (pid 4757)
+verdict e2id: FAIL failed=['e2id_ran_functions_copied_from_an_agent_nodeb', 'e2id_engnb_setup_response_decoded', 'e2id_engnb_meid_and_nodeb_connected_nbid_32', 'e2id_enb_setup_response_decoded', 'e2id_enb_meid_matches_enb_macro', 'e2id_enb_meid_and_nodeb_connected_nbid_20', 'e2id_enb_kpm_subscription_accepted_by_submgr_rest', 'e2id_enb_received_ric_subscription_request', 'e2id_enb_answered_ric_subscription_response', 'e2id_enb_kpm_subscription_deleted', 'e2id_ac6_fixture_b_late_ack_timer_expires_ack_dropped_rc_alive', 'e2id_ac6_fixture_a_ack_without_outcome_panics_rc', 'e2id_node_sent_ack_without_outcome', 'e2id_probe_nodebs_disconnected_after_graceful_close', 'e2id_wire_every_chunk_ppid_and_e2ap_without_override']

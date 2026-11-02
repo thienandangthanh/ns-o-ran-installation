@@ -1,0 +1,17 @@
+[18:25:50] gate scale10 start; evidence /home/uc/evidence/probes/ns3-scale-ten-gnbs/20261102T182547Z; harness bc76d590cf1099408c3579ba4be6b9ee78d2665a
+[18:25:50] ric watchdog started (pid 4768, threshold 600s)
+[18:25:51] PASS scale10_ns3_binary_located
+[18:25:52] PASS scale10_capture_started_before_agents
+[18:31:29] PASS scale10_agents_connected_set_exact
+[18:31:29] PASS scale10_e2mgr_all_eleven_connected_distinct
+[18:31:30] PASS scale10_every_agent_ready_and_subscribed
+[18:43:02] PASS scale10_lockstep_run_exits_clean
+[18:43:08] PASS scale10_agent_stats_after_bye
+[18:43:11] PASS scale10_agents_stopped
+[18:43:12] PASS scale10_capture_stopped
+[18:43:12] PASS scale10_ipc_traces_clean_every_node
+[18:43:12] PASS scale10_agent_counters_clean_forwarded_equals_trace
+[18:43:12] PASS scale10_hygiene
+Terminated
+[18:43:12] ric watchdog stopped (pid 4768)
+verdict scale10: PASS failed=[]

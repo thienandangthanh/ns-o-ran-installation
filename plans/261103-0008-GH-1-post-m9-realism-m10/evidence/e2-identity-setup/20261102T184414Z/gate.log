@@ -1,0 +1,66 @@
+[18:44:15] gate e2id start; evidence /home/uc/evidence/probes/e2-identity-setup/20261102T184414Z; harness be1d4311ec4536174ef9a0e6094cc7b7a2d25680
+[18:44:15] ric watchdog started (pid 45994, threshold 600s)
+[18:44:17] PASS e2id_image_checksum_verified_and_loaded
+[18:44:17] PASS e2id_e2term_service_resolved
+[18:44:42] PASS e2id_fu3_rtmgr_restarted
+[18:44:50] PASS e2id_fu3_rc_ready_on_its_route_reader
+[18:44:50] PASS e2id_ran_functions_copied_from_an_agent_nodeb
+[18:44:51] PASS e2id_capture_started
+[18:44:52] PASS e2id_engnb_node_started
+[18:45:22] FAIL e2id_engnb_setup_response_decoded: exit 1: node engnb: no rx E2setupResponse within 30 s
+{"t": 1793645091.8297741, "dir": "info", "msg": "connected", "e2term": "10.97.131.139:36422", "ppid": 70}
+{"t": 1793645092.068327, "dir": "tx", "msg": "E2setupRequest", "hex": "00010089ad000004003100020001000300092000f110507f000001000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d6170207631203963666362626
+[18:45:52] FAIL e2id_engnb_meid_and_nodeb_connected_nbid_32: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[18:45:53] PASS e2id_enb_node_started
+[18:45:56] PASS e2id_enb_setup_response_decoded
+[18:46:26] FAIL e2id_enb_meid_and_nodeb_connected_nbid_20: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[18:46:26] PASS e2id_enb_nodeb_ranfunctions_recorded
+[18:46:26] PASS e2id_kpm_subscription_octets_encoded
+[18:46:27] FAIL e2id_enb_kpm_subscription_accepted_by_submgr_rest: exit 1: Error from server (ServiceUnavailable): no service port 8088 found for service "service-ricplt-submgr-http"
+[18:46:57] FAIL e2id_enb_received_ric_subscription_request: exit 1: node enb: no rx RICsubscriptionRequest within 30 s
+{"t": 1793645152.811386, "dir": "info", "msg": "connected", "e2term": "10.97.131.139:36422", "ppid": 70}
+{"t": 1793645153.0401273, "dir": "tx", "msg": "E2setupRequest", "hex": "000100899e000004003100020001000300086000f11000ffffe0000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d61702076312039636663626263
+{"t": 1793645156.1017268, "dir": "rx", "msg": "E2setupResponse", "hex": "200100370000040031000200010004000700131014aacce00009000a000006400500000200020034001100000035000b331000f110507f00000100", "ies": {"id-TransactionID": 1, "id-GlobalRIC-ID": {"pLMN-Identity": "131014", "ric-ID": [699598, 20]}, "id
+[18:47:02] FAIL e2id_enb_answered_ric_subscription_response: exit 1: node enb: no tx RICsubscriptionResponse within 5 s
+{"t": 1793645152.811386, "dir": "info", "msg": "connected", "e2term": "10.97.131.139:36422", "ppid": 70}
+{"t": 1793645153.0401273, "dir": "tx", "msg": "E2setupRequest", "hex": "000100899e000004003100020001000300086000f11000ffffe0000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d61702076312039636663626263
+{"t": 1793645156.1017268, "dir": "rx", "msg": "E2setupResponse", "hex": "200100370000040031000200010004000700131014aacce00009000a000006400500000200020034001100000035000b331000f110507f00000100", "ies": {"id-TransactionID": 1, "id-GlobalRIC-ID": {"pLMN-Identity": "131014", "ric-ID": [699598, 20]}, "id
+[18:47:02] FAIL e2id_enb_kpm_subscription_deleted: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[18:47:22] PASS e2id_enb_subscription_delete_seen
+[18:47:37] FAIL e2id_ac6_fixture_b_late_ack_timer_expires_ack_dropped_rc_alive: exit 1:   "description": "Success Response"
+}
+node engnb: no rx RICcontrolRequest within 15 s
+{"t": 1793645091.8297741, "dir": "info", "msg": "connected", "e2term": "10.97.131.139:36422", "ppid": 70}
+{"t": 1793645092.068327, "dir": "tx", "msg": "E2setupRequest", "hex": "00010089ad000004003100020001000300092000f110507f000001000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d6170207631203963666362626
+[18:48:39] FAIL e2id_ac6_fixture_a_ack_without_outcome_panics_rc: exit 1: {
+  "description": "Success Response"
+}
+rc restarts: before 1, after 1
+[18:48:44] FAIL e2id_engnb_sent_ack_without_outcome: exit 1: node engnb: no tx RICcontrolAcknowledge within 5 s
+{"t": 1793645091.8297741, "dir": "info", "msg": "connected", "e2term": "10.97.131.139:36422", "ppid": 70}
+{"t": 1793645092.068327, "dir": "tx", "msg": "E2setupRequest", "hex": "00010089ad000004003100020001000300092000f110507f000001000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d6170207631203963666362626
+[18:49:08] PASS e2id_post_panic_rtmgr_restarted
+[18:49:17] PASS e2id_post_panic_rc_ready_on_its_route_reader
+[18:49:17] PASS e2id_probe_nodes_stopped
+[18:49:22] FAIL e2id_probe_nodebs_disconnected_after_graceful_close: exit 1: en_gnb_001_001_7f000001 ABSENT; enB_macro_001_001_ffffe ABSENT
+[18:49:23] PASS e2id_capture_stopped
+[18:49:24] FAIL e2id_wire_every_chunk_ppid_and_e2ap_without_override: exit 1: src 172.17.0.2 (probe node) ppid 70 procedureCode : 2
+src 172.17.0.2 (probe node) ppid 70 procedureCode 1: 1
+src 172.17.0.3 (probe node) ppid 70 procedureCode : 2
+src 172.17.0.3 (probe node) ppid 70 procedureCode 1: 1
+probe-node chunks 6 (from ['172.17.0.2', '172.17.0.3']), without PPID 70 or E2AP decode: 4
+Terminated
+[18:49:24] ric watchdog stopped (pid 45994)
+verdict e2id: FAIL failed=['e2id_engnb_setup_response_decoded', 'e2id_engnb_meid_and_nodeb_connected_nbid_32', 'e2id_enb_meid_and_nodeb_connected_nbid_20', 'e2id_enb_kpm_subscription_accepted_by_submgr_rest', 'e2id_enb_received_ric_subscription_request', 'e2id_enb_answered_ric_subscription_response', 'e2id_enb_kpm_subscription_deleted', 'e2id_ac6_fixture_b_late_ack_timer_expires_ack_dropped_rc_alive', 'e2id_ac6_fixture_a_ack_without_outcome_panics_rc', 'e2id_engnb_sent_ack_without_outcome', 'e2id_probe_nodebs_disconnected_after_graceful_close', 'e2id_wire_every_chunk_ppid_and_e2ap_without_override']

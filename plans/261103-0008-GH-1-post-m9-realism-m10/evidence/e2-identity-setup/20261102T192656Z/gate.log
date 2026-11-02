@@ -1,0 +1,45 @@
+[19:26:57] gate e2id start; evidence /home/uc/evidence/probes/e2-identity-setup/20261102T192656Z; harness eecc23a55af08c318c242aae585851822b8a64f7
+[19:26:57] ric watchdog started (pid 4818, threshold 600s)
+[19:27:06] PASS e2id_image_checksum_verified_and_loaded
+[19:31:55] PASS e2id_ric_ready_after_cold_boot
+[19:32:11] PASS e2id_e2mgr_submgr_route_readers_ok
+[19:32:11] PASS e2id_e2term_service_resolved
+[19:32:36] PASS e2id_fu3_rtmgr_restarted
+[19:32:44] PASS e2id_fu3_rc_ready_on_its_route_reader
+[19:32:44] PASS e2id_ran_functions_copied_from_an_agent_nodeb
+[19:32:45] PASS e2id_capture_started
+[19:32:46] PASS e2id_engnb_node_started
+[19:33:16] FAIL e2id_engnb_setup_response_decoded: exit 1: node engnb: no rx E2setupResponse within 30 s
+{"t": 1793647965.704389, "dir": "info", "msg": "connected", "e2term": "10.97.131.139:36422", "ppid": 70}
+{"t": 1793647965.9564211, "dir": "tx", "msg": "E2setupRequest", "hex": "00010089ad000004003100020001000300092000f110507f000001000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d617020763120396366636262
+[19:33:46] FAIL e2id_engnb_meid_and_nodeb_connected_nbid_32: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[19:33:47] PASS e2id_enb_node_started
+[19:33:50] PASS e2id_enb_setup_response_decoded
+[19:33:50] PASS e2id_enb_meid_matches_enb_macro
+[19:33:50] PASS e2id_enb_meid_and_nodeb_connected_nbid_20
+[19:33:50] PASS e2id_e2mgr_setup_log_saved
+[19:33:50] PASS e2id_enb_nodeb_ranfunctions_recorded
+[19:33:51] PASS e2id_kpm_subscription_octets_encoded
+[19:33:51] PASS e2id_enb_kpm_subscription_accepted_by_submgr_rest
+[19:33:51] PASS e2id_enb_received_ric_subscription_request
+[19:33:51] PASS e2id_enb_answered_ric_subscription_response
+[19:33:51] PASS e2id_enb_kpm_subscription_deleted
+[19:33:51] PASS e2id_enb_subscription_delete_seen
+[19:33:52] PASS e2id_ac6_outcome_less_acks_encoded
+[19:33:54] PASS e2id_ac6_rmr_injector_up_12041_to_rc
+[19:34:12] PASS e2id_ac6_fixture_b_ack_after_timer_is_dropped_rc_alive
+[19:34:27] PASS e2id_ac6_fixture_a_ack_without_outcome_inside_timer_panics_rc
+[19:34:27] PASS e2id_ac6_injector_tx_log
+[19:34:51] PASS e2id_post_panic_rtmgr_restarted
+[19:34:59] PASS e2id_post_panic_rc_ready_on_its_route_reader
+[19:35:00] PASS e2id_probe_nodes_stopped
+[19:35:05] PASS e2id_probe_nodebs_disconnected_after_graceful_close
+[19:35:05] PASS e2id_capture_stopped
+[19:35:06] PASS e2id_wire_every_chunk_ppid_and_e2ap_without_override
+Terminated
+[19:35:06] ric watchdog stopped (pid 4818)
+verdict e2id: FAIL failed=['e2id_engnb_setup_response_decoded', 'e2id_engnb_meid_and_nodeb_connected_nbid_32']

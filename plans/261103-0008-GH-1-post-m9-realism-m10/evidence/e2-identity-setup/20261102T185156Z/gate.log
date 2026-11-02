@@ -1,0 +1,71 @@
+[18:51:58] gate e2id start; evidence /home/uc/evidence/probes/e2-identity-setup/20261102T185156Z; harness 57c98f0075388b5093f8b25794e60c7b3737e9c2
+[18:51:58] ric watchdog started (pid 4562, threshold 600s)
+[18:52:01] PASS e2id_image_checksum_verified_and_loaded
+[18:52:01] PASS e2id_e2term_service_resolved
+[18:52:46] PASS e2id_fu3_rtmgr_restarted
+[18:52:55] PASS e2id_fu3_rc_ready_on_its_route_reader
+[18:52:55] FAIL e2id_ran_functions_copied_from_an_agent_nodeb: exit 1: 
+[18:52:55] PASS e2id_capture_started
+[18:52:57] PASS e2id_engnb_node_started
+[18:53:27] FAIL e2id_engnb_setup_response_decoded: exit 1: node engnb: no rx E2setupResponse within 30 s
+[18:53:58] FAIL e2id_engnb_meid_and_nodeb_connected_nbid_32: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[18:54:00] PASS e2id_enb_node_started
+[18:54:30] FAIL e2id_enb_setup_response_decoded: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/json/decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[18:54:30] FAIL e2id_enb_meid_matches_enb_macro: exit 1: eNB meid(s): 
+[18:55:01] FAIL e2id_enb_meid_and_nodeb_connected_nbid_20: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[18:55:01] PASS e2id_e2mgr_setup_log_saved
+[18:55:02] PASS e2id_enb_nodeb_ranfunctions_recorded
+[18:55:02] PASS e2id_kpm_subscription_octets_encoded
+[18:55:02] FAIL e2id_enb_kpm_subscription_accepted_by_submgr_rest: exit 1: Error from server (ServiceUnavailable): error trying to reach service: dial tcp 10.244.0.171:3800: connect: connection refused
+[18:55:32] FAIL e2id_enb_received_ric_subscription_request: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/json/decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[18:55:37] FAIL e2id_enb_answered_ric_subscription_response: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/json/decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[18:55:37] FAIL e2id_enb_kpm_subscription_deleted: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[18:55:57] PASS e2id_enb_subscription_delete_seen
+[18:56:12] FAIL e2id_ac6_fixture_b_late_ack_timer_expires_ack_dropped_rc_alive: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/json/decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[18:57:14] FAIL e2id_ac6_fixture_a_ack_without_outcome_panics_rc: exit 1: {
+  "rspCode": -1,
+  "description": "The client specified an invalid argument. or some parameters are missing "
+}
+rc restarts: before 1, after 1
+[18:57:19] FAIL e2id_node_sent_ack_without_outcome: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/json/decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[18:57:43] PASS e2id_post_panic_rtmgr_restarted
+[18:57:51] PASS e2id_post_panic_rc_ready_on_its_route_reader
+[18:57:51] PASS e2id_probe_nodes_stopped
+[18:57:56] FAIL e2id_probe_nodebs_disconnected_after_graceful_close: exit 1: en_gnb_001_001_7f000001 ABSENT;  ABSENT
+[18:57:57] PASS e2id_capture_stopped
+[18:57:58] FAIL e2id_wire_every_chunk_ppid_and_e2ap_without_override: exit 1: probe-node chunks 0 (from ['172.17.0.2', '172.17.0.3']), without PPID 70 or E2AP decode: 0
+Terminated
+[18:57:58] ric watchdog stopped (pid 4562)
+verdict e2id: FAIL failed=['e2id_ran_functions_copied_from_an_agent_nodeb', 'e2id_engnb_setup_response_decoded', 'e2id_engnb_meid_and_nodeb_connected_nbid_32', 'e2id_enb_setup_response_decoded', 'e2id_enb_meid_matches_enb_macro', 'e2id_enb_meid_and_nodeb_connected_nbid_20', 'e2id_enb_kpm_subscription_accepted_by_submgr_rest', 'e2id_enb_received_ric_subscription_request', 'e2id_enb_answered_ric_subscription_response', 'e2id_enb_kpm_subscription_deleted', 'e2id_ac6_fixture_b_late_ack_timer_expires_ack_dropped_rc_alive', 'e2id_ac6_fixture_a_ack_without_outcome_panics_rc', 'e2id_node_sent_ack_without_outcome', 'e2id_probe_nodebs_disconnected_after_graceful_close', 'e2id_wire_every_chunk_ppid_and_e2ap_without_override']

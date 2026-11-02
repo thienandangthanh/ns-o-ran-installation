@@ -1,0 +1,21 @@
+[19:27:06] bringup ric: waiting up to 1200s for ricplt pods
+[19:27:06] bringup ric: rc=0 unready: deployment-ricplt-a1mediator-78f79cbb6b-94wj2 deployment-ricplt-alarmmanager-5b49476676-nwxvm deployment-ricplt-appmgr-5564b65869-dg6px deployment-ricplt-e2mgr-9b6b8f99f-qms4v deployment-ricplt-e2term-alpha-88fd95787-z62md deployment-ricplt-o1mediator-bf4fb5758-cjjcz deployment-ricplt-rtmgr-74fb47b69d-s5drl deployment-ricplt-submgr-858956fbdc-55dwq deployment-ricplt-vespamgr-848f7bb874-mmbd5 r4-influxdb-influxdb2-0 r4-infrastructure-kong-78657d8f48-dxr5n r4-infrastructure-prometheus-alertmanager-b9cc56766-8hqk9 r4-infrastructure-prometheus-server-6476958975-r9nfv statefulset-ricplt-dbaas-server-0 
+[19:27:21] bringup ric: rc=0 unready: deployment-ricplt-a1mediator-78f79cbb6b-94wj2 deployment-ricplt-e2mgr-9b6b8f99f-qms4v deployment-ricplt-e2term-alpha-88fd95787-z62md deployment-ricplt-rtmgr-74fb47b69d-s5drl deployment-ricplt-submgr-858956fbdc-55dwq r4-infrastructure-prometheus-alertmanager-b9cc56766-8hqk9 r4-infrastructure-prometheus-server-6476958975-r9nfv 
+[19:27:36] bringup ric: rc=0 unready: deployment-ricplt-e2mgr-9b6b8f99f-qms4v deployment-ricplt-e2term-alpha-88fd95787-z62md deployment-ricplt-rtmgr-74fb47b69d-s5drl r4-infrastructure-prometheus-alertmanager-b9cc56766-8hqk9 r4-infrastructure-prometheus-server-6476958975-r9nfv 
+[19:27:52] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-z62md deployment-ricplt-rtmgr-74fb47b69d-s5drl 
+[19:28:07] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-z62md 
+[19:28:22] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-z62md 
+[19:28:37] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-z62md 
+[19:28:52] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-z62md 
+[19:29:07] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-z62md 
+[19:29:22] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-z62md 
+[19:29:37] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-z62md 
+[19:29:52] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-z62md 
+[19:30:07] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-z62md 
+[19:30:22] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-z62md 
+[19:30:37] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-z62md 
+[19:30:52] bringup ric: rc=0 unready: deployment-ricplt-e2term-alpha-88fd95787-z62md 
+[19:31:08] bringup ric: all ricplt pods Ready
+[19:31:18] bringup ric: e2term registered with e2mgr: [{"e2tAddress":"10.101.123.229:38000","ranNames":[]}]
+rt reader e2mgr deployment-ricplt-e2mgr-9b6b8f99f-qms4v: OK (5 samples, 1 sockets now, stuck [])
+rt reader submgr deployment-ricplt-submgr-858956fbdc-55dwq: OK (5 samples, 1 sockets now, stuck [])

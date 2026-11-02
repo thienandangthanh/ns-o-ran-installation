@@ -1,0 +1,11 @@
+{
+  "rspCode": -1,
+  "description": "The client specified an invalid argument. or some parameters are missing "
+}
+node enb: no rx RICcontrolRequest within 15 s
+{"t": 1793645660.7236485, "dir": "info", "msg": "connected", "e2term": "10.97.131.139:36422", "ppid": 70}
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/json/decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)

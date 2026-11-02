@@ -1,0 +1,177 @@
+{
+  "gate": "e2id",
+  "ts": "20261102T184414Z",
+  "harness_sha": "be1d4311ec4536174ef9a0e6094cc7b7a2d25680",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "c6d1434a793f36ae7d08b303f19f63921cf560bf",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "ba954440d008b17e20da07c168b3e96ef48db6de",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "96efc40eeb46e9c6cf19f1cc2184890f8e109bea",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+  },
+  "duration_s": 309,
+  "pass": false,
+  "failed": [
+    "e2id_engnb_setup_response_decoded",
+    "e2id_engnb_meid_and_nodeb_connected_nbid_32",
+    "e2id_enb_meid_and_nodeb_connected_nbid_20",
+    "e2id_enb_kpm_subscription_accepted_by_submgr_rest",
+    "e2id_enb_received_ric_subscription_request",
+    "e2id_enb_answered_ric_subscription_response",
+    "e2id_enb_kpm_subscription_deleted",
+    "e2id_ac6_fixture_b_late_ack_timer_expires_ack_dropped_rc_alive",
+    "e2id_ac6_fixture_a_ack_without_outcome_panics_rc",
+    "e2id_engnb_sent_ack_without_outcome",
+    "e2id_probe_nodebs_disconnected_after_graceful_close",
+    "e2id_wire_every_chunk_ppid_and_e2ap_without_override"
+  ],
+  "checks": [
+    {
+      "name": "e2id_image_checksum_verified_and_loaded",
+      "pass": true,
+      "detail": "asn1-indep-aab70be470e0803c.tar: OK\nLoaded image: localhost/asn1-indep:aab70be470e0803c\nsha256:ac0616da81cbe0874f24119d905b1a50b7ec46e02c44e98db828634cad1c2911"
+    },
+    {
+      "name": "e2id_e2term_service_resolved",
+      "pass": true,
+      "detail": "10.97.131.139:36422"
+    },
+    {
+      "name": "e2id_fu3_rtmgr_restarted",
+      "pass": true,
+      "detail": "rtmgr deployment-ricplt-rtmgr-74fb47b69d-s5drl -> deployment-ricplt-rtmgr-74fb47b69d-ghlrt"
+    },
+    {
+      "name": "e2id_fu3_rc_ready_on_its_route_reader",
+      "pass": true,
+      "detail": "rmrClient: RMR is ready after 33 seconds waiting...\nrtmgr deployment-ricplt-rtmgr-74fb47b69d-ghlrt: Update Routes to Endpoint: service-ricxapp-rc-rmr.ricxapp:4560 successful, call_id: 1, Payload length: 3841, Route Update Status: (# of Entries:69\nrt reader rc ricxapp-rc-6db9dcd964-k99f8: OK (5 samples, 1 sockets now, stuck [])"
+    },
+    {
+      "name": "e2id_ran_functions_copied_from_an_agent_nodeb",
+      "pass": true,
+      "detail": "source nodeb gnb_001_001_00000002 functions [(2, '1.3.6.1.4.1.53148.1.3.2.2')]"
+    },
+    {
+      "name": "e2id_capture_started",
+      "pass": true,
+      "detail": "[18:44:51] capture e2id started on docker0 (pid 48124, filter 'ip proto 132')"
+    },
+    {
+      "name": "e2id_engnb_node_started",
+      "pass": true,
+      "detail": "216397c42cbcdbb3708474ae9f3a71ad38442ace50ab3ae24761f3f80ce8f364\n172.17.0.2"
+    },
+    {
+      "name": "e2id_engnb_setup_response_decoded",
+      "pass": false,
+      "detail": "exit 1: node engnb: no rx E2setupResponse within 30 s\n{\"t\": 1793645091.8297741, \"dir\": \"info\", \"msg\": \"connected\", \"e2term\": \"10.97.131.139:36422\", \"ppid\": 70}\n{\"t\": 1793645092.068327, \"dir\": \"tx\", \"msg\": \"E2setupRequest\", \"hex\": \"00010089ad000004003100020001000300092000f110507f000001000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d6170207631203963666362626"
+    },
+    {
+      "name": "e2id_engnb_meid_and_nodeb_connected_nbid_32",
+      "pass": false,
+      "detail": "exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 355, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "name": "e2id_enb_node_started",
+      "pass": true,
+      "detail": "a35b6692b424ff3c3413e84ca726fa6ca0141bc36288259a9f2b7f646f5d74dd\n172.17.0.3"
+    },
+    {
+      "name": "e2id_enb_setup_response_decoded",
+      "pass": true,
+      "detail": "{\"t\": 1793645156.1017268, \"dir\": \"rx\", \"msg\": \"E2setupResponse\", \"hex\": \"200100370000040031000200010004000700131014aacce00009000a000006400500000200020034001100000035000b331000f110507f00000100\", \"ies\": {\"id-TransactionID\": 1, \"id-GlobalRIC-ID\": {\"pLMN-Identity\": \"131014\", \"ric-ID\": [699598, 20]}, \"id-RANfunctionsAccepted\": [{\"id\": 6, \"criticality\": \"ignore\", \"value\": [\"RANfunctionID-Item\", {\"ranFun"
+    },
+    {
+      "name": "e2id_enb_meid_and_nodeb_connected_nbid_20",
+      "pass": false,
+      "detail": "exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 355, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "name": "e2id_enb_nodeb_ranfunctions_recorded",
+      "pass": true,
+      "detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/usr/lib/python3.12/json/__init__.py\", line 293, in load\n    return loads(fp.read(),\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/__init__.py\", line 346, in loads\n    return _default_decoder.decode(s)\n "
+    },
+    {
+      "name": "e2id_kpm_subscription_octets_encoded",
+      "pass": true,
+      "detail": "{\"eventTrigger\": [0, 99], \"actionDefinition\": [0, 1, 1, 0, 0, 1, 0, 160, 68, 82, 66, 46, 85, 69, 84, 104, 112, 68, 108, 1, 32, 0, 0, 0, 192, 82, 82, 85, 46, 80, 114, 98, 85, 115, 101, 100, 68, 108, 1, 32, 0, 0, 0, 99], \"eventTriggerHex\": \"0063\", \"actionDefinitionHex\": \"00010100000100a04452422e5545546870446c0120000000c05252552e50726255736564446c012000000063\"}"
+    },
+    {
+      "name": "e2id_enb_kpm_subscription_accepted_by_submgr_rest",
+      "pass": false,
+      "detail": "exit 1: Error from server (ServiceUnavailable): no service port 8088 found for service \"service-ricplt-submgr-http\""
+    },
+    {
+      "name": "e2id_enb_received_ric_subscription_request",
+      "pass": false,
+      "detail": "exit 1: node enb: no rx RICsubscriptionRequest within 30 s\n{\"t\": 1793645152.811386, \"dir\": \"info\", \"msg\": \"connected\", \"e2term\": \"10.97.131.139:36422\", \"ppid\": 70}\n{\"t\": 1793645153.0401273, \"dir\": \"tx\", \"msg\": \"E2setupRequest\", \"hex\": \"000100899e000004003100020001000300086000f11000ffffe0000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d61702076312039636663626263\n{\"t\": 1793645156.1017268, \"dir\": \"rx\", \"msg\": \"E2setupResponse\", \"hex\": \"200100370000040031000200010004000700131014aacce00009000a000006400500000200020034001100000035000b331000f110507f00000100\", \"ies\": {\"id-TransactionID\": 1, \"id-GlobalRIC-ID\": {\"pLMN-Identity\": \"131014\", \"ric-ID\": [699598, 20]}, \"id"
+    },
+    {
+      "name": "e2id_enb_answered_ric_subscription_response",
+      "pass": false,
+      "detail": "exit 1: node enb: no tx RICsubscriptionResponse within 5 s\n{\"t\": 1793645152.811386, \"dir\": \"info\", \"msg\": \"connected\", \"e2term\": \"10.97.131.139:36422\", \"ppid\": 70}\n{\"t\": 1793645153.0401273, \"dir\": \"tx\", \"msg\": \"E2setupRequest\", \"hex\": \"000100899e000004003100020001000300086000f11000ffffe0000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d61702076312039636663626263\n{\"t\": 1793645156.1017268, \"dir\": \"rx\", \"msg\": \"E2setupResponse\", \"hex\": \"200100370000040031000200010004000700131014aacce00009000a000006400500000200020034001100000035000b331000f110507f00000100\", \"ies\": {\"id-TransactionID\": 1, \"id-GlobalRIC-ID\": {\"pLMN-Identity\": \"131014\", \"ric-ID\": [699598, 20]}, \"id"
+    },
+    {
+      "name": "e2id_enb_kpm_subscription_deleted",
+      "pass": false,
+      "detail": "exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 355, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "name": "e2id_enb_subscription_delete_seen",
+      "pass": true,
+      "detail": "node enb: no rx RICsubscriptionDeleteRequest within 20 s\n{\"t\": 1793645152.811386, \"dir\": \"info\", \"msg\": \"connected\", \"e2term\": \"10.97.131.139:36422\", \"ppid\": 70}\n{\"t\": 1793645153.0401273, \"dir\": \"tx\","
+    },
+    {
+      "name": "e2id_ac6_fixture_b_late_ack_timer_expires_ack_dropped_rc_alive",
+      "pass": false,
+      "detail": "exit 1:   \"description\": \"Success Response\"\n}\nnode engnb: no rx RICcontrolRequest within 15 s\n{\"t\": 1793645091.8297741, \"dir\": \"info\", \"msg\": \"connected\", \"e2term\": \"10.97.131.139:36422\", \"ppid\": 70}\n{\"t\": 1793645092.068327, \"dir\": \"tx\", \"msg\": \"E2setupRequest\", \"hex\": \"00010089ad000004003100020001000300092000f110507f000001000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d6170207631203963666362626"
+    },
+    {
+      "name": "e2id_ac6_fixture_a_ack_without_outcome_panics_rc",
+      "pass": false,
+      "detail": "exit 1: {\n  \"description\": \"Success Response\"\n}\nrc restarts: before 1, after 1"
+    },
+    {
+      "name": "e2id_engnb_sent_ack_without_outcome",
+      "pass": false,
+      "detail": "exit 1: node engnb: no tx RICcontrolAcknowledge within 5 s\n{\"t\": 1793645091.8297741, \"dir\": \"info\", \"msg\": \"connected\", \"e2term\": \"10.97.131.139:36422\", \"ppid\": 70}\n{\"t\": 1793645092.068327, \"dir\": \"tx\", \"msg\": \"E2setupRequest\", \"hex\": \"00010089ad000004003100020001000300092000f110507f000001000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d6170207631203963666362626"
+    },
+    {
+      "name": "e2id_post_panic_rtmgr_restarted",
+      "pass": true,
+      "detail": "rtmgr deployment-ricplt-rtmgr-74fb47b69d-ghlrt -> deployment-ricplt-rtmgr-74fb47b69d-8jtbq"
+    },
+    {
+      "name": "e2id_post_panic_rc_ready_on_its_route_reader",
+      "pass": true,
+      "detail": "rmrClient: RMR is ready after 33 seconds waiting...\nrtmgr deployment-ricplt-rtmgr-74fb47b69d-8jtbq: Update Routes to Endpoint: service-ricxapp-rc-rmr.ricxapp:4560 successful, call_id: 1, Payload length: 3894, Route Update Status: OK(# of Entries:70\nrt reader rc ricxapp-rc-6db9dcd964-k99f8: OK (5 samples, 1 sockets now, stuck [])"
+    },
+    {
+      "name": "e2id_probe_nodes_stopped",
+      "pass": true,
+      "detail": "e2probe-enb\ne2probe-engnb\ne2probe-enb"
+    },
+    {
+      "name": "e2id_probe_nodebs_disconnected_after_graceful_close",
+      "pass": false,
+      "detail": "exit 1: en_gnb_001_001_7f000001 ABSENT; enB_macro_001_001_ffffe ABSENT"
+    },
+    {
+      "name": "e2id_capture_stopped",
+      "pass": true,
+      "detail": "[18:49:23] capture e2id stopped: 86 packets captured 86 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "e2id_wire_every_chunk_ppid_and_e2ap_without_override",
+      "pass": false,
+      "detail": "exit 1: src 172.17.0.2 (probe node) ppid 70 procedureCode : 2\nsrc 172.17.0.2 (probe node) ppid 70 procedureCode 1: 1\nsrc 172.17.0.3 (probe node) ppid 70 procedureCode : 2\nsrc 172.17.0.3 (probe node) ppid 70 procedureCode 1: 1\nprobe-node chunks 6 (from ['172.17.0.2', '172.17.0.3']), without PPID 70 or E2AP decode: 4"
+    }
+  ],
+  "imageTag": "aab70be470e0803c",
+  "rcRestartsBefore": 1,
+  "rcRestartsAfter": 1
+}
