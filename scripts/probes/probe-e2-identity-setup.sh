@@ -11,9 +11,10 @@
 #    Recorded: the decoded E2 Setup outcome, the meids, e2mgr's nodeb JSONs (nodeType, nbId length, ranFunctions);
 #    then one KPM subscription to the eNB node through submgr's REST API under kpimon's client endpoint, with the
 #    decoded request the node received and its answer.
-# 3. AC6 runtime, through rc's gRPC towards the en-gNB probe node: fixture B (the node acknowledges 3 s late: rc's
-#    2 s timer expires and the late ACK is dropped, rc keeps running), then fixture A (an ACK without
-#    RICcontrolOutcome: rc panics and restarts); rc's RestartCount before and after each, then rc readiness again.
+# 3. AC6 runtime: a control through rc's gRPC to a registered probe node, then an ACK without RICcontrolOutcome
+#    delivered straight to rc's RMR port (rtmgr routes 12041 elsewhere here): 3 s late (fixture B: the 2 s timer
+#    has dropped the entry, rc keeps running), then at once (fixture A: rc panics and restarts); rc's RestartCount
+#    before and after each, then rc readiness again.
 # Everything the probe nodes send and receive is in node-*.jsonl; the docker0 capture holds the wire.
 source "$(dirname "$0")/../gates/lib.sh"
 gate_init e2id
@@ -105,10 +106,10 @@ PY
     done
     return 1
 }
-check e2id_engnb_node_started node_start engnb en-gnb 7F000001 --sub-answer response --ctl-answers late:3,no-outcome
+check e2id_engnb_node_started node_start engnb en-gnb 7F000001 --sub-answer response
 check e2id_engnb_setup_response_decoded node_saw engnb rx E2setupResponse
 check e2id_engnb_meid_and_nodeb_connected_nbid_32 nodeb_record "$ENGNB" 32
-check e2id_enb_node_started node_start enb enb FFFFE --sub-answer response --ctl-answers late:3,no-outcome
+check e2id_enb_node_started node_start enb enb FFFFE --sub-answer response
 check e2id_enb_setup_response_decoded node_saw enb rx E2setupResponse
 enb_meid() {
     ENB=$(e2mgr_states | python3 -I -c 'import json,sys; print("\n".join(n["inventoryName"] for n in json.load(sys.stdin) if n.get("inventoryName","").startswith("enB_macro_001_001_")))')
@@ -183,35 +184,69 @@ if [ "$(e2mgr_node_status "$ENGNB")" = CONNECTED ]; then CTL_MEID=$ENGNB; CTL_NO
 fact ac6ControlNode "$(json_str "$CTL_MEID")"
 RC0=$(rc_restarts); fact rcRestartsBefore "${RC0:-null}"
 POD=$(kc -n ricxapp get pods --no-headers | awk '/^ricxapp-rc-/ { print $1 }')
-fixture_b() {
-    local t0; t0=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-    rc_ctl || return 1
-    node_saw "$CTL_NODE" rx RICcontrolRequest 15 || return 1
-    sleep 6
-    kc -n ricxapp logs "$POD" --since-time="$t0" >"$e/rc-log-fixture-b.txt" 2>&1
-    grep -c "Timer experied" "$e/rc-log-fixture-b.txt" | sed 's/^/timer-expired lines: /'
-    grep -c "RIC_CONTROL_REQ has been deleted" "$e/rc-log-fixture-b.txt" | sed 's/^/late-ACK-dropped lines: /'
-    echo "rc restarts: before $RC0, after $(rc_restarts)"
-    grep -q "Timer experied" "$e/rc-log-fixture-b.txt" && grep -q "RIC_CONTROL_REQ has been deleted" "$e/rc-log-fixture-b.txt" &&
-        [ "$(rc_restarts)" = "$RC0" ]
+# rtmgr routes RIC_CONTROL_ACK (12041) to another xApp in this deployment (the M9 route-owner rows), so rc never
+# receives an E2 node's ACK. The fixtures deliver an ACK without RICcontrolOutcome straight to rc's RMR port through
+# the RMR injector (static seed route, rtmgr bypassed), for the instance id the probe node saw in rc's request.
+# Within the 2 s timer the entry is still awaited and GetControlOutcome indexes an empty slice (fixture A: rc
+# restarts); 3 s later the timer has deleted the entry and the ACK is dropped before the decode (fixture B: rc runs).
+INJ=e2id-rmr-injector; INJ_CTL=38511
+acks_encoded() {
+    mkdir -p "$e/acks" && dk run --rm --user "$(id -u):$(id -g)" -v "$HARNESS_DIR/scripts/probes:/probes:ro" -v "$e/acks:/o" \
+        "$IMG" python3 "$NODE_PY" acks --requestor 1 --func 3 --first 1 --last 60 --out /o && ls "$e/acks" | wc -l
 }
-check e2id_ac6_fixture_b_late_ack_timer_expires_ack_dropped_rc_alive fixture_b
+check e2id_ac6_outcome_less_acks_encoded acks_encoded
+injector_up() {
+    local ip nip img
+    ip=$(kc -n ricxapp get svc service-ricxapp-rc-rmr -o jsonpath='{.spec.clusterIP}') || return 1
+    nip=$(kc get node -o jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}') || return 1
+    img="127.0.0.1:80/stubqp:$(git -C "$HARNESS_DIR" rev-parse --short=12 HEAD:tools/rmr-peer)"
+    mkdir -p "$e/injector"
+    printf 'newrt|start\nmse|12041|-1|%s:4560\nnewrt|end\n' "$ip" >"$e/injector/seed.rt"
+    dk rm -f "$INJ" >/dev/null 2>&1
+    dk run -d --name "$INJ" --network host --user "$(id -u):$(id -g)" -v "$e/injector:/out" -e RMR_SEED_RT=/out/seed.rt \
+        -e RMR_RTG_SVC=-1 -e "RMR_SRC_ID=$nip" "$img" python3 -I /app/rmr-injector.py --rmr-port 4591 --ctl-port "$INJ_CTL" \
+        --out /out >/dev/null || return 1
+    for _ in $(seq 60); do dk logs "$INJ" 2>&1 | grep -q READY && { echo "injector READY, 12041 -> $ip:4560 ($img)"; return 0; }; sleep 1; done
+    dk logs "$INJ" 2>&1 | tail -n 5; return 1
+}
+check e2id_ac6_rmr_injector_up_12041_to_rc injector_up
+requests() { grep -c '"dir": "rx", "msg": "RICcontrolRequest"' "$e/node-$CTL_NODE.jsonl" 2>/dev/null; }
+last_instance() {
+    grep '"dir": "rx", "msg": "RICcontrolRequest"' "$e/node-$CTL_NODE.jsonl" | tail -n 1 |
+        python3 -I -c 'import json, sys; print(json.loads(sys.stdin.read())["ies"]["id-RICrequestID"]["ricInstanceID"])'
+}
+control_then_ack() {  # control_then_ack <delay-s before the ACK>: echo "<instance> <ack-wall-delay>"
+    local n0 inst t0 deadline
+    n0=$(requests); t0=$(date +%s.%N)
+    rc_ctl >/dev/null || return 1
+    deadline=$(($(date +%s) + 10))
+    until [ "$(requests)" -gt "$n0" ]; do [ "$(date +%s)" -lt "$deadline" ] || { echo "no request at the node"; return 1; }; sleep 0.05; done
+    inst=$(last_instance)
+    sleep "$1"
+    bash "$HARNESS_DIR/scripts/gates/send-rmr.sh" "$INJ_CTL" raw 12041 "$e/acks/ack-$inst.hex" >/dev/null || { echo "inject failed"; return 1; }
+    echo "$inst $(python3 -I -c 'import sys,time; print("%.2f" % (time.time() - float(sys.argv[1])))' "$t0")"
+}
+fixture_b() {
+    local r0 out; r0=$(rc_restarts)
+    out=$(control_then_ack 3) || { echo "$out"; return 1; }
+    sleep 15
+    echo "instance, ACK sent at s after the gRPC call: $out; rc restarts before $r0, after $(rc_restarts)"
+    [ "$(rc_restarts)" = "$r0" ]
+}
+check e2id_ac6_fixture_b_ack_after_timer_is_dropped_rc_alive fixture_b
 fixture_a() {
-    local r0 deadline
-    r0=$(rc_restarts)
-    rc_ctl || return 1
+    local r0 out deadline; r0=$(rc_restarts)
+    out=$(control_then_ack 0) || { echo "$out"; return 1; }
     deadline=$(($(date +%s) + 60))
-    while [ "$(date +%s)" -lt "$deadline" ]; do
-        [ "$(rc_restarts)" -gt "$r0" ] && break
-        sleep 2
-    done
+    while [ "$(rc_restarts)" -le "$r0" ] && [ "$(date +%s)" -lt "$deadline" ]; do sleep 2; done
     kc -n ricxapp logs "$POD" --previous >"$e/rc-log-fixture-a-previous.txt" 2>&1
-    grep -m 3 -E "panic|index out of range|goroutine" "$e/rc-log-fixture-a-previous.txt"
-    echo "rc restarts: before $r0, after $(rc_restarts)"
+    grep -m 3 -E "panic|index out of range" "$e/rc-log-fixture-a-previous.txt"
+    echo "instance, ACK sent at s after the gRPC call: $out; rc restarts before $r0, after $(rc_restarts)"
     [ "$(rc_restarts)" -gt "$r0" ] && grep -q "index out of range" "$e/rc-log-fixture-a-previous.txt"
 }
-check e2id_ac6_fixture_a_ack_without_outcome_panics_rc fixture_a
-check e2id_node_sent_ack_without_outcome node_saw "$CTL_NODE" tx RICcontrolAcknowledge 5
+check e2id_ac6_fixture_a_ack_without_outcome_inside_timer_panics_rc fixture_a
+record e2id_ac6_injector_tx_log true "$(tail -n 2 "$e/injector/tx.jsonl" 2>/dev/null | cut -c1-200 | tr '\n' ' ')"
+dk rm -f "$INJ" >/dev/null 2>&1
 fact rcRestartsAfter "$(rc_restarts)"
 check e2id_post_panic_rtmgr_restarted rc_restart_rtmgr
 check e2id_post_panic_rc_ready_on_its_route_reader rc_rmr_ready_after_rtmgr

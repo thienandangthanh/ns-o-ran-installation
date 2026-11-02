@@ -4,6 +4,8 @@
   node     --kind en-gnb|enb --id HEX --e2term IP:PORT --ranfunc-json NODEB.json --log OUT.jsonl
            [--sub-answer response|failure|none] [--ctl-answers ack,late:3,no-outcome,...] [--hold S]
   kpm-sub  --period-ms MS --meas NAME [--meas NAME ...]     print the KPM v03.00 event trigger and action definition
+  acks     --requestor R --func F --first N --last M --out DIR  write ack-<n>.hex: RICcontrolAcknowledge without the
+           optional RICcontrolOutcome for instance ids N..M (for direct RMR delivery to an xApp)
 
 The node opens one SCTP association to e2term with PPID 70 on every DATA chunk (O-RAN E2GAP: E2AP over SCTP), sends
 an E2 Setup Request (Global ENB ID with a 20-bit macro eNB ID, or Global en-gNB ID with a 32-bit gNB ID; the RAN
@@ -162,6 +164,12 @@ def kpm_sub(a):
                       "eventTriggerHex": trig.hex(), "actionDefinitionHex": act.hex()}))
 
 
+def acks(a):
+    for n in range(a.first, a.last + 1):
+        with open("%s/ack-%d.hex" % (a.out, n), "w") as f:
+            f.write(e2ap.ric_control_ack((a.requestor, n), a.func).hex() + "\n")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -177,9 +185,17 @@ def main():
     k = sub.add_parser("kpm-sub")
     k.add_argument("--period-ms", type=int, default=100)
     k.add_argument("--meas", action="append", required=True)
+    c = sub.add_parser("acks")
+    c.add_argument("--requestor", type=int, required=True)
+    c.add_argument("--func", type=int, required=True)
+    c.add_argument("--first", type=int, default=1)
+    c.add_argument("--last", type=int, default=40)
+    c.add_argument("--out", required=True)
     a = ap.parse_args()
     if a.cmd == "kpm-sub":
         return kpm_sub(a)
+    if a.cmd == "acks":
+        return acks(a)
     node = Node(a)
     signal.signal(signal.SIGTERM, lambda *_: (node.close("SIGTERM"), sys.exit(0)))
     node.run()
