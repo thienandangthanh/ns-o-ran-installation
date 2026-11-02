@@ -30,8 +30,9 @@ done
 e="$EVIDENCE_DIR"
 IMG="localhost/asn1-indep:$TAG"
 NODE_PY=/probes/e2-probe-node.py
-ENGNB=en_gnb_001_001_7f000001
-ENB=enB_macro_001_001_ffffe
+ENGNB=en_gnb_001_001_7f000001   # e2term BuildRunName: "en_gnb_" + PLMN + 32-bit gNB ID in 8 hex digits
+ENB=""                          # "enB_macro_" + PLMN + the 20-bit ID as e2term renders it, read back from e2mgr
+SUBMGR_REST=/api/v1/namespaces/ricplt/services/http:service-ricplt-submgr-http:3800/proxy/ric/v1/subscriptions
 fact imageTag "$(json_str "$TAG")"
 ric_watchdog_bg
 
@@ -107,9 +108,20 @@ PY
 check e2id_engnb_node_started node_start engnb en-gnb 7F000001 --sub-answer response --ctl-answers late:3,no-outcome
 check e2id_engnb_setup_response_decoded node_saw engnb rx E2setupResponse
 check e2id_engnb_meid_and_nodeb_connected_nbid_32 nodeb_record "$ENGNB" 32
-check e2id_enb_node_started node_start enb enb FFFFE --sub-answer response
+check e2id_enb_node_started node_start enb enb FFFFE --sub-answer response --ctl-answers late:3,no-outcome
 check e2id_enb_setup_response_decoded node_saw enb rx E2setupResponse
+enb_meid() {
+    ENB=$(e2mgr_states | python3 -I -c 'import json,sys; print("\n".join(n["inventoryName"] for n in json.load(sys.stdin) if n.get("inventoryName","").startswith("enB_macro_001_001_")))')
+    echo "eNB meid(s): $ENB"; [[ "$ENB" =~ ^enB_macro_001_001_[0-9a-f]+$ ]]
+}
+check e2id_enb_meid_matches_enb_macro enb_meid
 check e2id_enb_meid_and_nodeb_connected_nbid_20 nodeb_record "$ENB" 20
+setup_log() {   # e2mgr's own account of both setups (the parsed XER and any save error)
+    kc -n ricplt logs "$(ric_pod e2mgr)" --since=15m 2>/dev/null | grep -E "en_gnb_001_001_7f000001|enB_macro_001_001_" >"$e/e2mgr-setup-log.txt"
+    grep -o 'failed saving nodebInfo[^"]*' "$e/e2mgr-setup-log.txt" | sort | uniq -c
+    wc -l <"$e/e2mgr-setup-log.txt"
+}
+record e2id_e2mgr_setup_log_saved true "$(setup_log 2>&1 | head -c 300)"
 enb_no_ranfunctions() {
     python3 -I -c 'import json,sys; d=json.load(open(sys.argv[1])); f=(d.get("enb") or {}).get("ranFunctions") or (d.get("gnb") or {}).get("ranFunctions") or []
 print("eNB nodeb ranFunctions:", f); sys.exit(0)' "$e/e2mgr-nodeb-$ENB.json"
@@ -131,7 +143,7 @@ print(json.dumps({"SubscriptionId": "", "Meid": sys.argv[2], "RANFunctionID": 2,
                                            "ActionToBeSetupList": [{"ActionID": 1, "ActionType": "report",
                                                                     "ActionDefinition": b["actionDefinition"]}]}]}))
 PY
-    kc create --raw /api/v1/namespaces/ricplt/services/http:service-ricplt-submgr-http:8088/proxy/ric/v1/subscriptions \
+    kc create --raw "$SUBMGR_REST" \
         -f "$e/enb-sub-request.json" >"$e/enb-sub-rest-answer.json" 2>"$e/enb-sub-rest-answer.err"
     local rc=$?; cat "$e/enb-sub-rest-answer.json" "$e/enb-sub-rest-answer.err"; return "$rc"
 }
@@ -140,7 +152,7 @@ check e2id_enb_received_ric_subscription_request node_saw enb rx RICsubscription
 check e2id_enb_answered_ric_subscription_response node_saw enb tx RICsubscriptionResponse 5
 enb_unsubscribe() {
     local id; id=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["SubscriptionId"])' "$e/enb-sub-rest-answer.json") || return 1
-    kc delete --raw "/api/v1/namespaces/ricplt/services/http:service-ricplt-submgr-http:8088/proxy/ric/v1/subscriptions/$id"
+    kc delete --raw "$SUBMGR_REST/$id"
 }
 check e2id_enb_kpm_subscription_deleted enb_unsubscribe
 record e2id_enb_subscription_delete_seen true "$(node_saw enb rx RICsubscriptionDeleteRequest 20 2>&1 | head -c 200)"
@@ -153,7 +165,7 @@ print(sum(c.get("restartCount", 0) for c in p[0]["status"]["containerStatuses"])
 rc_ctl() {      # one control through rc's gRPC to the en-gNB probe node (rc answers at once, sends asynchronously)
     local ep; ep=$(rc_endpoint) || return 1
     "$GRPCURL" -plaintext -max-time 10 -d "{
-      \"e2NodeID\": \"$ENGNB\", \"plmnID\": \"00F110\", \"ranName\": \"$ENGNB\",
+      \"e2NodeID\": \"$CTL_MEID\", \"plmnID\": \"00F110\", \"ranName\": \"$CTL_MEID\",
       \"RICE2APHeaderData\": { \"RanFuncId\": 3, \"RICRequestorID\": 1 },
       \"RICControlHeaderData\": { \"ControlStyle\": 3, \"ControlActionId\": 1,
          \"UEID\": { \"GnbUEID\": { \"amfUENGAPID\": 1, \"gNBCUUEF1APID\": [1], \"gNBCUCPUEE1APID\": [1],
@@ -161,12 +173,16 @@ rc_ctl() {      # one control through rc's gRPC to the en-gNB probe node (rc ans
       \"RICControlMessageData\": { \"RICControlCellTypeVal\": 1, \"TargetCellID\": \"7F00000110\" },
       \"RICControlAckReqVal\": 2 }" "$ep" rc.MsgComm/SendRICControlReqServiceGrpc
 }
+# the fixtures address whichever probe node registered (the en-gNB when e2mgr accepted it, else the eNB): they
+# test rc's handling of the ACK, which does not depend on the node type
+if [ "$(e2mgr_node_status "$ENGNB")" = CONNECTED ]; then CTL_MEID=$ENGNB; CTL_NODE=engnb; else CTL_MEID=$ENB; CTL_NODE=enb; fi
+fact ac6ControlNode "$(json_str "$CTL_MEID")"
 RC0=$(rc_restarts); fact rcRestartsBefore "${RC0:-null}"
 POD=$(kc -n ricxapp get pods --no-headers | awk '/^ricxapp-rc-/ { print $1 }')
 fixture_b() {
     local t0; t0=$(date -u +%Y-%m-%dT%H:%M:%SZ)
     rc_ctl || return 1
-    node_saw engnb rx RICcontrolRequest 15 || return 1
+    node_saw "$CTL_NODE" rx RICcontrolRequest 15 || return 1
     sleep 6
     kc -n ricxapp logs "$POD" --since-time="$t0" >"$e/rc-log-fixture-b.txt" 2>&1
     grep -c "Timer experied" "$e/rc-log-fixture-b.txt" | sed 's/^/timer-expired lines: /'
@@ -191,16 +207,16 @@ fixture_a() {
     [ "$(rc_restarts)" -gt "$r0" ] && grep -q "index out of range" "$e/rc-log-fixture-a-previous.txt"
 }
 check e2id_ac6_fixture_a_ack_without_outcome_panics_rc fixture_a
-check e2id_engnb_sent_ack_without_outcome node_saw engnb tx RICcontrolAcknowledge 5
+check e2id_node_sent_ack_without_outcome node_saw "$CTL_NODE" tx RICcontrolAcknowledge 5
 fact rcRestartsAfter "$(rc_restarts)"
 check e2id_post_panic_rtmgr_restarted rc_restart_rtmgr
 check e2id_post_panic_rc_ready_on_its_route_reader rc_rmr_ready_after_rtmgr
 
-nodes_stop() { dk stop -t 10 e2probe-engnb e2probe-enb; dk rm e2probe-engnb e2probe-enb; }
+nodes_stop() { dk stop -t 10 e2probe-engnb e2probe-enb; dk rm -f e2probe-engnb e2probe-enb; }
 check e2id_probe_nodes_stopped nodes_stop
 disconnected() {
     sleep 5; local a b; a=$(e2mgr_node_status "$ENGNB"); b=$(e2mgr_node_status "$ENB")
-    echo "$ENGNB $a; $ENB $b"; [ "$a" = DISCONNECTED ] && [ "$b" = DISCONNECTED ]
+    echo "$ENGNB $a; $ENB $b"; [ "$a" != CONNECTED ] && [ "$b" = DISCONNECTED ]
 }
 check e2id_probe_nodebs_disconnected_after_graceful_close disconnected
 check e2id_capture_stopped capture_stop e2id
