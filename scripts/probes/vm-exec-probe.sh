@@ -3,13 +3,13 @@
 #
 # Pre-M8 pacing probes: same mechanics as scripts/vm/vm-exec.sh (detached systemd unit on the VM, harness
 # cloned at a pushed SHA, scrub, tar back), but for scripts/probes/<probe-script>. Evidence lands in
-# plans/261022-1026-GH-1-pre-m8-pacing-planning-gate/evidence/<probe>/<ts>/, where <probe> is the script name
+# plans/261022-1026-GH-1-pre-m8-pacing-planning-gate/evidence/<probe>/<ts>/ (override with PROBE_EVIDENCE_ROOT), where <probe> is the script name
 # without "probe-" and ".sh". Probes start from a reverted f7-rerun-green; this script does not revert.
 
 source "$(dirname "$0")/../vm/vm-common.sh"
 
 HARNESS_URL="${HARNESS_URL:-https://github.com/thienandangthanh/ns-o-ran-installation.git}"
-PROBE_EVIDENCE_ROOT="$REPO_ROOT/plans/261022-1026-GH-1-pre-m8-pacing-planning-gate/evidence"
+PROBE_EVIDENCE_ROOT="${PROBE_EVIDENCE_ROOT:-$REPO_ROOT/plans/261022-1026-GH-1-pre-m8-pacing-planning-gate/evidence}"
 script="${1:-}"; shift $(($# > 0))
 [ -n "$script" ] || die "usage: vm-exec-probe.sh <probe-script> [--harness-sha SHA] [--timeout S] [-- args]"
 harness_sha="$(git -C "$REPO_ROOT" rev-parse HEAD)"

@@ -36,7 +36,8 @@ After each checkpoint the compliant behaviour is the only behaviour (R1, R8). Ev
 ```text
 last-updated: 2026-11-03 03:00 KST
 current phase: P01 (P00 done: AC1 self-test case; AC2 0 orphans after M0 probe d11021754 + second revert, evidence/fu2/; AC3 fixture fails old/new as intended; AC4 dev h = 12.0 ≤ 12; AC5 findings-261103-0247)
-VM / snapshots / host free: VM running at fresh-install (fresh overlay); snapshots fresh-install f7-rerun-green m0-probe-{d11021754,n,o,p,q} r0-green r2-green r3p-green; /home 96 GiB (leaked M9 overlay ubuntu24.1793206761 deleted under the 2026-10-28 ruling, 42.4 GiB freed, log evidence/fu2/20261102T174921Z/leak-deletion/), /mnt/data 20 GiB
+VM / snapshots / host free: VM running at fresh-install (fresh overlay); snapshots fresh-install f7-rerun-green m0-probe-{d11021754,n,o,p,q} r0-green r2-green r3p-green; /home 96 GiB (leaked M9 overlay ubuntu24.1793206761 deleted under the 2026-10-28 ruling, 42.4 GiB freed, log evidence/fu2/20261102T174920Z/leak-deletion/), /mnt/data 20 GiB
+open T4 (deferred to Stop A, deviation from "PAUSE T4 now" logged): 3GPP TS 38.331 not in Zotero (needed by P06 R-3 MeasurementTimingConfiguration); user notified 03:10 KST; the other 12 keys are present
 fork SHAs (pins.conf): Testbed c6d1434a, ns-3 ba954440, oran-interface 96efc40e, e2sim 2209995a (M9 values)
 checkpoint tags: m10-cp1 (none), m10-cp2 (none), m10-cp3 (none)
 in-flight jobs: none
