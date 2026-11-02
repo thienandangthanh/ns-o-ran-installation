@@ -116,6 +116,7 @@ The mechanism is the same as M8–M9: a journal in `docs/journals/`, a kongming 
   - N_new is the growth of the new steps (e2i, d150, d100/d200/d500, s10, p12). It is inferred at 8–15 GiB [I] and is **pending AC6b** and the P11 rehearsals.
   - With today's numbers T′_method ≈ 100–107 GiB is the binding value and T′_measured ≈ 87–94 GiB the lower reference. The user may rule which base applies (flagged at Stop A, decided at Stop B).
   - Reachable: 54 GiB free now plus about 42 GiB of the post-M9 overlay leak ≈ 96 GiB [kongming §4]. Expect a shortfall that the user frees.
+  - **Update 2026-11-03 (P00):** the post-M9 leak `ubuntu24.1793206761` was deleted under the 2026-10-28 ruling (42.4 GiB freed; log `evidence/fu2/20261102T174920Z/leak-deletion/`, kept in this plan instead of the M8–M9 `p10-disk/` folder the ruling names). /home is now 96 GiB free, which is the "reachable" figure above.
 - **Disk, /mnt/data:** 20 GiB free, 91 % used [V `df`]. It holds rootless podman storage (new images: `asn1-indep`, the protoc containers) and the raw-evidence archive (M9's evidence was 5.8 GB).
   - Every phase records `df -BG /mnt/data`.
   - Only images this plan built may be pruned.

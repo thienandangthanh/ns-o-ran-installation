@@ -91,3 +91,8 @@ The deployed e2mgr is 6.0.6 [V `plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/
 
 ## Rollback
 Probes and tools are additive. VM: revert to the start snapshot (also mandatory after AC6a).
+
+## Review amendments (kongming P00-exit review, `plans/reports/kongming-261103-0305-GH-1-m10-p00-exit-review.md`)
+- Snapshot discipline: create no temporary snapshots; return the VM by revert only; run `scripts/vm/vm-orphan-overlays.sh` and `--pending` after every revert and at phase exit.
+- Live smoke of the FU3 predicate: `rc_restart_rtmgr` then `rc_rmr_ready_after_rtmgr` on the live RIC, keeping `rt-readers-rc-*.txt`, before P02's AC8 run 1 depends on it.
+- AC6 order: after the ACK-without-outcome fixture crashes rc, re-check rc readiness with the new predicate (restarting rtmgr if needed) before the 2 s timer fixture.

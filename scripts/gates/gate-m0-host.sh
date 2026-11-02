@@ -56,6 +56,7 @@ disk_chain >"$EVIDENCE_DIR/disk-chain-after-revert.txt"
 check marker_absent_after_revert bash -c "! ssh ${SSH_OPTS[*]} $VM_SSH test -e $marker"
 check probe_still_listed bash -c "${VIRSH[*]} snapshot-list $VM_DOMAIN --name | grep -x $probe >/dev/null"
 check no_untracked_overlays "$REPO_ROOT/scripts/vm/vm-orphan-overlays.sh" --evidence "$EVIDENCE_DIR/orphans"
+check revert_overlay_recorded_for_unlink "$REPO_ROOT/scripts/vm/vm-orphan-overlays.sh" --pending
 check vm_up_after_probe wait_ssh 300
 "${VIRSH[@]}" snapshot-list "$VM_DOMAIN" --tree >"$EVIDENCE_DIR/snapshot-tree.txt"
 

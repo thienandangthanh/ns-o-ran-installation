@@ -44,3 +44,6 @@ M10 repeats M9's launch route: a release order, then one transient user unit. Th
 
 ## Rollback
 The run changes nothing in code. A failed run leaves its evidence; it is re-run only after the cause is recorded and a change committed (Failure Protocol, then a full fresh M10).
+
+## Review amendment (kongming P00-exit review)
+The release order names both overlay checks explicitly: `vm-orphan-overlays.sh` (zero untracked files) and `vm-orphan-overlays.sh --pending` (the active overlay is recorded for unlink), once after the pre-run revert and before launch, and again before and after the post-run revert (AC2). The m0 checks of the same name are a backstop only.

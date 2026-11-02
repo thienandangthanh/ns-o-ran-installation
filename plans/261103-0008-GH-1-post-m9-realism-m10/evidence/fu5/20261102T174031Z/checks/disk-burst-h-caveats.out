@@ -1,0 +1,5 @@
+Caveats on the AC4 dev result (kongming P00-exit review, 2026-11-03):
+- Window sensitivity: --window 400 and 430 also give worst 12.0 GiB, so the 370 s window does not hide a larger burst.
+- Resolution: free-series.tsv records whole GiB, so a recorded drop of 12 is a true drop of about 11 to 13 GiB.
+  The h = 12 ruling (R11) was made on the same data; this is a recorded caveat, not a new decision.
+- The rehearsal half of AC4 runs in P11, and only rehearsals run under the disk watchdog produce a free-series.tsv.
