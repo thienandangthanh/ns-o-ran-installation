@@ -1,0 +1,32 @@
+== e2mgr last state
+{"terminated":{"containerID":"containerd://9d6abcdc2c3e3a3da7150677ae78b085f09e486a69903db5d8d9785b4714a0c6","exitCode":1,"finishedAt":"2026-11-02T17:43:24Z","reason":"Error","startedAt":"2026-11-02T17:43:04Z"}}
+== e2mgr previous log tail
+{"ts":1793641384413,"crit":"INFO","id":"e2mgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","e2mgr":"0.2.2","time":"2026-11-02T17:43:04Z"},"msg":"#app.main - Configuration {logging.logLevel: info, http.port: 3800, rmr: { port: 3801, maxMsgSize:
+{"ts":1793641384413,"crit":"INFO","id":"e2mgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","e2mgr":"0.2.2","time":"2026-11-02T17:43:04Z"},"msg":"Using config file: /etc/config/log-level.yaml\n"}
+{"ts":1793641384436,"crit":"INFO","id":"e2mgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","e2mgr":"0.2.2","time":"2026-11-02T17:43:04Z"},"msg":"LOGLEVEL is set to INFO\n"}
+dial tcp: i/o timeout
+{"ts":1793641404509,"crit":"ERROR","id":"e2mgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"7","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","e2mgr":"0.2.2","time":"2026-11-02T17:43:24Z"},"msg":"#app.main - Failed setting GENERAL key"}
+== rtmgr endpoint pushes since boot
+      3 Update Routes to Endpoint: 10.102.26.73:38000 successful
+     10 Update Routes to Endpoint: service-ricplt-a1mediator-rmr.ricplt:4562 successful
+     11 Update Routes to Endpoint: service-ricplt-e2mgr-rmr.ricplt:3801 successful
+      3 Update Routes to Endpoint: service-ricplt-e2term-rmr-alpha.ricplt:38000 successful
+     11 Update Routes to Endpoint: service-ricplt-submgr-rmr.ricplt:4560 successful
+     11 Update Routes to Endpoint: service-ricxapp-hw-go-rmr.ricxapp:4560 successful
+     11 Update Routes to Endpoint: service-ricxapp-kpimon-go-rmr.ricxapp:4560 successful
+     11 Update Routes to Endpoint: service-ricxapp-rc-rmr.ricxapp:4560 successful
+== rtmgr errors
+      2 {"ts":1793641541608,"crit":"DEBUG","id":"rtmgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-11-02T17:45:41"},"msg":"file.fileReadAll returns: &{[{rc deployed 1.0.0 [{rc deployed se
+      2 {"ts":1793641510813,"crit":"DEBUG","id":"rtmgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-11-02T17:45:10"},"msg":"file.fileReadAll returns: &{[{rc deployed 1.0.0 [{rc deployed se
+      2 {"ts":1793641450807,"crit":"ERROR","id":"rtmgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-11-02T17:44:10"},"msg":"Addition of route skipped due to either TX or RX endpoint not pr
+      1 {"ts":1793641645818,"crit":"DEBUG","id":"rtmgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-11-02T17:47:25"},"msg":"rmr.GeneratePolicies returns: &{[{rc deployed 1.0.0 [{rc deploye
+      1 {"ts":1793641645818,"crit":"DEBUG","id":"rtmgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-11-02T17:47:25"},"msg":"file.fileReadAll returns: &{[{rc deployed 1.0.0 [{rc deployed se
+      1 {"ts":1793641645818,"crit":"DEBUG","id":"rtmgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-11-02T17:47:25"},"msg":"RecvxAppEp.RxMessages Endpoint: rc, xAppType: rc and rxmsg: RIC_
+      1 {"ts":1793641645818,"crit":"DEBUG","id":"rtmgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-11-02T17:47:25"},"msg":"Message type RIC_CONTROL_ACK, RIC_CONTROL_FAILURE, RIC_ERROR_IND
+      1 {"ts":1793641640817,"crit":"DEBUG","id":"rtmgr","mdc":{"CONTAINER_NAME":"","HOST_NAME":"","PID":"1","POD_NAME":"","SERVICE_NAME":"","SYSTEM_NAME":"","time":"2026-11-02T17:47:20"},"msg":"file.fileReadAll returns: &{[{rc deployed 1.0.0 [{rc deployed se
+== ricxapp restarts
+ricxapp-hw-go-c84579888-bknzr          1/1   Running   1 (2d10h ago)   4d21h
+ricxapp-kpimon-go-85dc5fdf8b-fg8sp     1/1   Running   1 (2d10h ago)   4d21h
+ricxapp-rc-6db9dcd964-zf8dr            1/1   Running   1 (2d10h ago)   4d21h
+ricxapp-stubqp-685cb7ddf4-xdlqj        1/1   Running   1 (4m42s ago)   4d21h
+ricxapp-trafficxapp-7c46768578-7z8t7   1/1   Running   1 (4m42s ago)   4d21h

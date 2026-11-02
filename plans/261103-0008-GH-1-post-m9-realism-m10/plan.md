@@ -34,9 +34,9 @@ After each checkpoint the compliant behaviour is the only behaviour (R1, R8). Ev
 
 ## Resume card (filled at execution; update before every VM operation > 10 min and at every phase exit)
 ```text
-last-updated: (not started)
-current phase: none (plan rev 3)
-VM / snapshots / host free: (record at P00 start: virsh domstate, snapshot-current, vm-snapshot.sh list, df -BG /home /mnt/data)
+last-updated: 2026-11-03 03:05 KST
+current phase: P00 (FU1 done + self-test; FU5 dev h = 12.0 GiB ≤ 12; orphan checker written, 0 orphans pre-revert; next: boot post-M9 state for FU3/FU4, then FU2)
+VM / snapshots / host free: P00 start: ubuntu24.04 shut off, current snapshot fresh-install (revert record cleared by the M9 M0 probe, so the active overlay ubuntu24.1793206761 ≈ 42 GiB leaks at the next revert); snapshots fresh-install f7-rerun-green m0-probe-{n,o,p,q} r0-green r2-green r3p-green; /home 54 GiB, /mnt/data 20 GiB
 fork SHAs (pins.conf): Testbed c6d1434a, ns-3 ba954440, oran-interface 96efc40e, e2sim 2209995a (M9 values)
 checkpoint tags: m10-cp1 (none), m10-cp2 (none), m10-cp3 (none)
 in-flight jobs: none

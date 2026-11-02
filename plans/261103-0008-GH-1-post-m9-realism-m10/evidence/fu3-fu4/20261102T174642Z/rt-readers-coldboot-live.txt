@@ -1,0 +1,30 @@
+ 17:46:43 up 3 min,  1 user,  load average: 0.13, 0.15, 0.07
+deployment-ricplt-a1mediator-78f79cbb6b-xdg65 1/1 Running 1 (2d10h
+deployment-ricplt-alarmmanager-5b49476676-g98mx 1/1 Running 8 (2d10h
+deployment-ricplt-appmgr-5564b65869-hbxzt 1/1 Running 8 (2d10h
+deployment-ricplt-e2mgr-9b6b8f99f-tw5bk 1/1 Running 11 (3m19s
+deployment-ricplt-e2term-alpha-f8f7d7855-qh4rp 1/1 Running 2 (2d10h
+deployment-ricplt-o1mediator-bf4fb5758-s5nfj 1/1 Running 8 (3m52s
+deployment-ricplt-rtmgr-74fb47b69d-5drjj 1/1 Running 1 (2d10h
+deployment-ricplt-submgr-858956fbdc-rfjjc 1/1 Running 8 (2d10h
+deployment-ricplt-vespamgr-848f7bb874-vtbgz 1/1 Running 8 (2d10h
+r4-influxdb-influxdb2-0 1/1 Running 6 (2d10h
+r4-infrastructure-kong-78657d8f48-2jhn5 2/2 Running 16 (2d10h
+r4-infrastructure-prometheus-alertmanager-b9cc56766-wcrlp 2/2 Running 16 (2d10h
+r4-infrastructure-prometheus-server-6476958975-wm29v 1/1 Running 8 (2d10h
+statefulset-ricplt-dbaas-server-0 1/1 Running 8 (2d10h
+rt reader e2mgr deployment-ricplt-e2mgr-9b6b8f99f-tw5bk: OK (5 samples, 1 sockets now, stuck [])
+rc=0
+rt reader submgr deployment-ricplt-submgr-858956fbdc-rfjjc: OK (5 samples, 1 sockets now, stuck [])
+rc=0
+rt reader rc ricxapp-rc-6db9dcd964-zf8dr: OK (5 samples, 1 sockets now, stuck [])
+rc=0
+rt reader trafficxapp ricxapp-trafficxapp-7c46768578-7z8t7: no ESTABLISHED socket on :4561 within 10s
+rc=1
+rt reader e2mgr deployment-ricplt-e2mgr-9b6b8f99f-tw5bk: peer F400F40A:A624 rx_queue [0, 0, 0, 0, 0]
+rt reader e2mgr deployment-ricplt-e2mgr-9b6b8f99f-tw5bk: OK (5 samples, 1 sockets now, stuck [])
+rt reader submgr deployment-ricplt-submgr-858956fbdc-rfjjc: peer F400F40A:95E6 rx_queue [0, 0, 0, 0, 0]
+rt reader submgr deployment-ricplt-submgr-858956fbdc-rfjjc: OK (5 samples, 1 sockets now, stuck [])
+rt reader rc ricxapp-rc-6db9dcd964-zf8dr: peer F400F40A:849C rx_queue [0, 0, 0, 0, 0]
+rt reader rc ricxapp-rc-6db9dcd964-zf8dr: OK (5 samples, 1 sockets now, stuck [])
+rt reader trafficxapp ricxapp-trafficxapp-7c46768578-7z8t7: no ESTABLISHED socket on :4561 within 10s

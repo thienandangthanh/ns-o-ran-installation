@@ -1,0 +1,35 @@
+== check 1: not in domblklist
+ file   disk    vda   /home/andang/VMs/ubuntu24.1793641851
+ file   cdrom   sda   -
+matches: 0
+== check 2: not in dumpxml / --inactive
+dumpxml matches: 0
+inactive matches: 0
+== check 3: no snapshot references it
+f7-rerun-green: 0
+fresh-install: 0
+m0-probe-n10280921: 0
+m0-probe-o10281122: 0
+m0-probe-p10281349: 0
+m0-probe-q10281658: 0
+r0-green: 0
+r2-green: 0
+r3p-green: 0
+== check 4: no image backs onto it
+ubuntu24.04 -> none
+ubuntu24.04-r0-green.qcow2 -> /home/andang/VMs/ubuntu24.1792653312
+ubuntu24.04-r2-green.qcow2 -> /home/andang/VMs/ubuntu24.04-r0-green.qcow2
+ubuntu24.1792618143 -> /home/andang/VMs/ubuntu24.04
+ubuntu24.1792653312 -> /home/andang/VMs/ubuntu24.1792618143
+ubuntu24.1793179273 -> /home/andang/VMs/ubuntu24.04
+ubuntu24.1793186494 -> /home/andang/VMs/ubuntu24.04
+ubuntu24.1793195253 -> /home/andang/VMs/ubuntu24.04
+ubuntu24.1793206609 -> /home/andang/VMs/ubuntu24.04
+ubuntu24.1793206761 -> /home/andang/VMs/ubuntu24.04
+ubuntu24.1793641851 -> /home/andang/VMs/ubuntu24.04
+== check 5: not open, last writer stopped, evidence archived
+domstate: running
+mtime 2026-11-03 02:50:50.902777791 +0900 size 45557940224
+writers since M9 (20261028T165825Z verdict): VM left idle after M9; shut down 2026-10-31 16:06 KST by a Claude session at the user's request (session 50d725db, 'nothing critical running'); booted 2026-11-03 02:42-02:49 KST for FU3/FU4 (evidence evidence/fu3-fu4/20261102T174642Z, in git); reverted 02:50:51 KST (mtime = revert flush)
+M9 evidence archived: /mnt/data/andang-data/ns-o-ran-installation-evidence/plans-evidence-raw-20261029.list0 /mnt/data/andang-data/ns-o-ran-installation-evidence/plans-evidence-raw-20261029.tar.zst /mnt/data/andang-data/ns-o-ran-installation-evidence/SHA256SUMS 
+qemu: 545937 active disk /home/andang/VMs/ubuntu24.1793641851 (not the leaked file)
