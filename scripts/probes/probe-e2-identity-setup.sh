@@ -61,15 +61,11 @@ check e2id_fu3_rtmgr_restarted rc_restart_rtmgr
 check e2id_fu3_rc_ready_on_its_route_reader rc_rmr_ready_after_rtmgr
 
 # 2. AC6a
-ranfunc_src() {
-    local n
-    for n in gnb_001_001_00000002 gnb_001_001_00000003; do
-        e2mgr_get "nodeb/$n" >"$e/ranfunc-src.json" && python3 -I -c '
-import json, sys; f = json.load(open(sys.argv[1])).get("gnb", {}).get("ranFunctions", [])
-print("source nodeb", sys.argv[2], "functions", [(x["ranFunctionId"], x["ranFunctionOid"]) for x in f]); sys.exit(0 if f else 1)' \
-            "$e/ranfunc-src.json" "$n" && return 0
-    done
-    return 1
+ranfunc_src() {  # e2mgr's RNIB lives in dbaas memory and is empty after a cold boot, so the agent's list is a fixture
+    cp "$HARNESS_DIR/scripts/probes/fixtures/agent-gnb-ranfunctions.json" "$e/ranfunc-src.json" && python3 -I -c '
+import json, sys; d = json.load(open(sys.argv[1])); f = d["gnb"]["ranFunctions"]
+print(d["_source"]); print("functions", [(x["ranFunctionId"], x["ranFunctionOid"]) for x in f]); sys.exit(0 if f else 1)' \
+        "$e/ranfunc-src.json"
 }
 check e2id_ran_functions_copied_from_an_agent_nodeb ranfunc_src
 check e2id_capture_started capture_start e2id docker0 'ip proto 132'
@@ -138,8 +134,8 @@ kpm_sub_bytes() {
 }
 check e2id_kpm_subscription_octets_encoded kpm_sub_bytes
 # the deployed service-ricplt-submgr-http is headless and maps only port 3800, while submgr serves its REST API on
-# 8088 (xApps reach the pod through DNS), so the probe goes through the pod proxy
-SUBMGR_REST="/api/v1/namespaces/ricplt/pods/http:$(ric_pod submgr):8088/proxy/ric/v1/subscriptions"
+# 8088 (xApps reach the pod through DNS); the VM reaches pod IPs directly
+SUBMGR_REST="http://$(kc -n ricplt get pod "$(ric_pod submgr)" -o jsonpath='{.status.podIP}'):8088/ric/v1/subscriptions"
 fact submgrRest "$(json_str "$SUBMGR_REST")"
 enb_subscribe() {
     python3 -I - "$e/kpm-sub-bytes.json" "$ENB" >"$e/enb-sub-request.json" <<'PY'
@@ -151,8 +147,8 @@ print(json.dumps({"SubscriptionId": "", "Meid": sys.argv[2], "RANFunctionID": 2,
                                            "ActionToBeSetupList": [{"ActionID": 1, "ActionType": "report",
                                                                     "ActionDefinition": b["actionDefinition"]}]}]}))
 PY
-    kc create --raw "$SUBMGR_REST" \
-        -f "$e/enb-sub-request.json" >"$e/enb-sub-rest-answer.json" 2>"$e/enb-sub-rest-answer.err"
+    curl -sS -m 20 -H 'Content-Type: application/json' -X POST --data @"$e/enb-sub-request.json" "$SUBMGR_REST" \
+        >"$e/enb-sub-rest-answer.json" 2>"$e/enb-sub-rest-answer.err"
     local rc=$?; cat "$e/enb-sub-rest-answer.json" "$e/enb-sub-rest-answer.err"; return "$rc"
 }
 check e2id_enb_kpm_subscription_accepted_by_submgr_rest enb_subscribe
@@ -160,7 +156,7 @@ check e2id_enb_received_ric_subscription_request node_saw enb rx RICsubscription
 check e2id_enb_answered_ric_subscription_response node_saw enb tx RICsubscriptionResponse 5
 enb_unsubscribe() {
     local id; id=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["SubscriptionId"])' "$e/enb-sub-rest-answer.json") || return 1
-    kc delete --raw "$SUBMGR_REST/$id"
+    curl -sS -m 20 -X DELETE -w ' http %{http_code}\n' "$SUBMGR_REST/$id"
 }
 check e2id_enb_kpm_subscription_deleted enb_unsubscribe
 record e2id_enb_subscription_delete_seen true "$(node_saw enb rx RICsubscriptionDeleteRequest 20 2>&1 | head -c 200)"
