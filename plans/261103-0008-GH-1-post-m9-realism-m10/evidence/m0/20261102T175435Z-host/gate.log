@@ -1,0 +1,19 @@
+[17:54:35] gate m0-host start; evidence /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261103-0008-GH-1-post-m9-realism-m10/evidence/m0/20261102T175435Z-host; harness b4a8d88b20fb0e65f2817597774b9ea8dbf1c20e
+[17:54:35] PASS host_free_ge_20g
+[17:54:35] PASS fresh_install_present
+[17:54:36] PASS harness_repo_public
+[17:54:48] PASS harness_anonymous_clone
+[17:54:59] PASS probe_create
+[17:55:00] PASS probe_marker_written
+[17:55:12] PASS branch_create
+[17:55:12] PASS branch_overlay_exists
+[17:55:12] PASS branch_delete
+[17:55:12] PASS branch_unlisted
+[17:55:12] PASS branch_overlay_gone
+[17:55:25] PASS revert_fresh_install
+[17:55:25] PASS marker_absent_after_revert
+[17:55:25] PASS probe_still_listed
+[17:55:25] PASS no_untracked_overlays
+[17:55:26] PASS vm_up_after_probe
+[17:55:26] PASS vm_no_git_credentials
+verdict m0-host: PASS failed=[]
