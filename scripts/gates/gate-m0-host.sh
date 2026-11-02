@@ -36,13 +36,14 @@ check harness_repo_public bash -c 'gh repo view thienandangthanh/ns-o-ran-instal
 check harness_anonymous_clone bash -c "d=\$(mktemp -d) && GIT_TERMINAL_PROMPT=0 git -c credential.helper= clone -q https://github.com/thienandangthanh/ns-o-ran-installation.git \$d/h && git -C \$d/h cat-file -e $HARNESS_SHA^{commit}; rc=\$?; rm -rf \$d; exit \$rc"
 
 # --- snapshot probe -----------------------------------------------------------
+# Order matters for disk space. libvirt records the overlay a revert creates on the snapshot reverted to, and
+# unlinks it at the next revert; creating a snapshot while fresh-install is current clears that record (the
+# overlay becomes the new snapshot's frozen data). So the branch is created and deleted while the probe is
+# current, and the revert to fresh-install comes last: it unlinks the probe's overlay, and the overlay it
+# creates stays recorded, so the next revert (before the next run) unlinks it instead of leaking it.
 disk_chain >"$EVIDENCE_DIR/disk-chain-before.txt"
 check probe_create "$SNAP" create "$probe" --evidence "$EVIDENCE_DIR"
 check probe_marker_written vm_ssh "touch $marker && test -e $marker"
-check revert_fresh_install "$SNAP" revert "$VM_PROTECTED_SNAPSHOT"
-disk_chain >"$EVIDENCE_DIR/disk-chain-after-revert.txt"
-check marker_absent_after_revert bash -c "! ssh ${SSH_OPTS[*]} $VM_SSH test -e $marker"
-check probe_still_listed bash -c "${VIRSH[*]} snapshot-list $VM_DOMAIN --name | grep -x $probe >/dev/null"
 check branch_create "$SNAP" create "$branch" --evidence "$EVIDENCE_DIR"
 branch_file="$VM_IMAGE_DIR/ubuntu24.04-$branch.qcow2"
 check branch_overlay_exists test -e "$branch_file"
@@ -50,6 +51,11 @@ check branch_delete "$SNAP" delete "$branch"
 disk_chain >"$EVIDENCE_DIR/disk-chain-after-branch-delete.txt"
 check branch_unlisted bash -c "! ${VIRSH[*]} snapshot-list $VM_DOMAIN --name | grep -x $branch >/dev/null"
 check branch_overlay_gone bash -c "! test -e '$branch_file'"
+check revert_fresh_install "$SNAP" revert "$VM_PROTECTED_SNAPSHOT"
+disk_chain >"$EVIDENCE_DIR/disk-chain-after-revert.txt"
+check marker_absent_after_revert bash -c "! ssh ${SSH_OPTS[*]} $VM_SSH test -e $marker"
+check probe_still_listed bash -c "${VIRSH[*]} snapshot-list $VM_DOMAIN --name | grep -x $probe >/dev/null"
+check no_untracked_overlays "$REPO_ROOT/scripts/vm/vm-orphan-overlays.sh" --evidence "$EVIDENCE_DIR/orphans"
 check vm_up_after_probe wait_ssh 300
 "${VIRSH[@]}" snapshot-list "$VM_DOMAIN" --tree >"$EVIDENCE_DIR/snapshot-tree.txt"
 

@@ -200,7 +200,9 @@ _wait_e2t_registered() {
 RT_READER_WAIT_S="${RT_READER_WAIT_S:-120}"
 RT_READER_SAMPLES="${RT_READER_SAMPLES:-5}"
 # ric_pod <component>: the Running ricplt pod whose name contains <component> (e.g. e2mgr, rtmgr).
-ric_pod() { kc -n ricplt get pods --no-headers | awk -v c="ricplt-$1-" 'index($1, c) && $3 == "Running" { print $1 }' | head -n 1; }
+# ns_pod <ns> <comp>: the first Running pod named <ns>-<comp>-… (ricplt-e2mgr-…, ricxapp-rc-…)
+ns_pod() { kc -n "$1" get pods --no-headers | awk -v c="$1-$2-" 'index($1, c) && $3 == "Running" { print $1 }' | head -n 1; }
+ric_pod() { ns_pod ricplt "$1"; }
 
 # ric_restart_rtmgr: delete rtmgr's pod and wait for the new one. rtmgr only opens a connection to an
 # endpoint the first time it sees it, and never reconnects to a replaced pod, so it restarts after them.
@@ -218,23 +220,25 @@ ric_restart_rtmgr() {
     echo "rtmgr did not come back"; return 1
 }
 
-# rt_reader_ok <e2mgr|submgr> <tag>: the component's RMR route-table reader drains what rtmgr sends it.
+# rt_reader_ok <comp> <tag> [ns]: the component's RMR route-table reader drains what rtmgr sends it. <comp> is
+# e2mgr or submgr in ricplt (the default namespace), or an xApp such as rc in ricxapp: every RMR endpoint
+# receives its route table from rtmgr on local port 4561, so rtmgr's own "successful" push log is never enough.
 # After a cold boot (2026-10-28, M9 attempt 3, m6) the readers in e2mgr and submgr stopped reading: the
 # session from rtmgr stayed ESTABLISHED with ~126 KB unread, so neither a session check nor rtmgr's own
 # "successful" log line shows it, and e2mgr had no route for the E2 Setup Response. Pass: an ESTABLISHED
 # socket on local port 4561 exists (bounded wait), and every such socket shows rx_queue 0 in at least one
 # of RT_READER_SAMPLES samples 2 s apart (a live reader drains each push at once). Rows go to rt-readers-<tag>.txt.
 rt_reader_ok() {
-    local comp="$1" tag="$2" pod deadline i out="$EVIDENCE_DIR/rt-readers-$2.txt" samples
-    pod=$(ric_pod "$comp")
+    local comp="$1" tag="$2" ns="${3:-ricplt}" pod deadline i out="$EVIDENCE_DIR/rt-readers-$2.txt" samples
+    pod=$(ns_pod "$ns" "$comp")
     [ -n "$pod" ] || { echo "rt reader $comp: no Running pod" | tee -a "$out"; return 1; }
     deadline=$(($(date +%s) + RT_READER_WAIT_S))
-    until { kc -n ricplt exec "$pod" -- cat /proc/net/tcp /proc/net/tcp6 2>/dev/null || true; } | awk '$2 ~ /:11D1$/ && $4 == "01" { f = 1 } END { exit !f }'; do
+    until { kc -n "$ns" exec "$pod" -- cat /proc/net/tcp /proc/net/tcp6 2>/dev/null || true; } | awk '$2 ~ /:11D1$/ && $4 == "01" { f = 1 } END { exit !f }'; do
         [ "$(date +%s)" -lt "$deadline" ] || { echo "rt reader $comp $pod: no ESTABLISHED socket on :4561 within ${RT_READER_WAIT_S}s" | tee -a "$out"; return 1; }
         sleep 3
     done
     samples=$(for ((i = 1; i <= RT_READER_SAMPLES; i++)); do
-        echo "sample $i"; kc -n ricplt exec "$pod" -- cat /proc/net/tcp /proc/net/tcp6 2>/dev/null
+        echo "sample $i"; kc -n "$ns" exec "$pod" -- cat /proc/net/tcp /proc/net/tcp6 2>/dev/null
         [ "$i" -lt "$RT_READER_SAMPLES" ] && sleep 2
     done)
     echo "$samples" | python3 -I -c '

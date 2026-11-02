@@ -111,6 +111,19 @@ if [ -n "$step" ] && ! alive "$r" && ! alive "$step" && [ -e "$d/stopped" ]; the
 else echo "FAIL finish on TERM: runner alive $(alive "$r" && echo yes || echo no), step ${step:-none} alive $([ -n "$step" ] && alive "$step" && echo yes || echo no)"; rc=1
     [ -n "$step" ] && kill "$step" 2>/dev/null; fi
 kill "$mons" 2>/dev/null
+# (7b) finish stops a still-running gate unit even when the step's host process has already exited (kill -0 on
+# the step pid is false): the stand-in unit is a sleep that vm_stop_gates kills
+d="$tmp/finish-exited"; mkdir -p "$d"
+sleep 300 & unit=$!
+sleep 0 & gone=$!; wait "$gone"
+sleep 300 & mons=$!
+bash -c "hlog() { :; }; vm_stop_gates() { kill $unit; }; write_verdict() { :; }
+    $(fn finish); wd_pid=$mons; mon_pid=$mons; step_ran=1; step_pid=$gone; finish 3" >/dev/null 2>&1
+t0=$SECONDS; while alive "$unit" && [ $((SECONDS - t0)) -lt 5 ]; do sleep 0.2; done
+if ! alive "$gone" && ! alive "$unit"; then
+    echo "ok   finish stops the gate units when the step pid has already exited"
+else echo "FAIL finish with an exited step: gate unit alive $(alive "$unit" && echo yes || echo no)"; rc=1; kill "$unit" 2>/dev/null; fi
+kill "$mons" 2>/dev/null
 
 # (8) a live watchdog's heartbeat is never read torn: the shipped watchdog in a tight loop, its date slowed so a
 # truncate-then-write heartbeat would sit empty for 0.3 s of every ~0.6 s loop, against the monitor at 1 s

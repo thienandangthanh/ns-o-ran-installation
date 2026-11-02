@@ -116,11 +116,12 @@ write_verdict() {
 }
 
 # a TERM to the runner (a trip sweep, the monitor's cancel, or an operator) must not orphan the running step:
-# finish stops it and the VM gate units (bounded) before writing the verdict
+# finish stops it, then stops the VM gate units (bounded) whenever any step ran, even when the step's host-side
+# process has already exited (a gate unit can outlive it), before writing the verdict
 finish() {
     local rc="$1"
-    if [ -n "${step_pid:-}" ] && kill -0 "$step_pid" 2>/dev/null; then
-        kill -TERM "$step_pid" 2>/dev/null
+    [ -n "${step_pid:-}" ] && kill -TERM "$step_pid" 2>/dev/null
+    if [ "${step_ran:-0}" = 1 ]; then
         vm_stop_gates || hlog "stopping the VM gate units failed or exceeded ${CANCEL_TIMEOUT_S} s"
     fi
     [ -n "${mon_pid:-}" ] && kill "$mon_pid" 2>/dev/null
@@ -128,7 +129,7 @@ finish() {
     write_verdict || rc=1
     exit "$rc"
 }
-trap 'hlog "stopped by the disk watchdog or the heartbeat monitor"; finish 3' TERM
+trap 'hlog "received TERM (disk watchdog trip, heartbeat monitor cancel or operator): stopping"; finish 3' TERM
 
 rm -f "$wd"/{watchdog-tripped.json,min-host-free-gb.txt,free-series.tsv,heartbeat,watchdog-alive.json,watchdog-lost.json,wall-deadline.json,monitor-lost.json}
 "$here/vm/host-disk-watchdog.sh" --runner-pid $$ --min-gb "$trip_gb" --interval "$interval" --out "$wd" &
@@ -142,6 +143,7 @@ hlog "M9 run $run_ts: steps ${ORDER[*]} (full $full), watchdog trip ${trip_gb} G
 # when one has exited, records monitor-lost.json and cancels as the heartbeat monitor would (stop CMD and the VM
 # gate units, bounded, then shut the VM down gracefully) and returns 1. The step's PID is kept for finish.
 supervised() {
+    step_ran=1
     "$@" &
     step_pid=$!
     local c=$step_pid who

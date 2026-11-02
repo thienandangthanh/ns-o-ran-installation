@@ -21,7 +21,8 @@
 #   rc_rmr_ready                  rc's own `RMR is ready after` log line in its current container (bounded wait)
 #   rtmgr_push_acked <svc> [ns]   the running rtmgr pod logged a successful route push to <svc>'s RMR port 4560
 #                                 (written only when that endpoint's RMR answered the route-table call; bounded wait)
-#   rc_rmr_ready_after_rtmgr      rc_rmr_ready, then rtmgr_push_acked for rc's RMR Service
+#   rc_rmr_ready_after_rtmgr      rc_rmr_ready, rtmgr_push_acked for rc's RMR Service (supporting only), then
+#                                 rt_reader_ok on rc's own :4561 route-table socket (receiver-side evidence)
 #   rc_at_pin                     rc's source tree at RC_SHA and rc ready; install nothing
 # rc_install is NOT part of any per-run path: NIST's script always runs `dms_cli uninstall` first, which deletes
 # rc's Services and leaves rtmgr holding a dead connection to the old pod. Use it once (gate i0), then rc_restart_rtmgr.
@@ -120,7 +121,11 @@ rtmgr_push_acked() {
     echo "rtmgr $pod: no successful route push to $ep within ${RTMGR_PUSH_ACK_TIMEOUT_S:-90} s"; return 1
 }
 
-rc_rmr_ready_after_rtmgr() { rc_rmr_ready && rtmgr_push_acked service-ricxapp-rc-rmr; }
+# rtmgr's "successful" push line is written even for an endpoint whose reader never drains the table, so it is
+# supporting evidence only: readiness also needs rc's own route-table socket drained (rt_reader_ok, bringup.sh)
+rc_rmr_ready_after_rtmgr() {
+    rc_rmr_ready && rtmgr_push_acked service-ricxapp-rc-rmr && rt_reader_ok rc "rc-$(date -u +%H%M%S)" ricxapp
+}
 
 rc_at_pin() {
     [ "$(git -C "$RIC_DIR/xApps/rc" rev-parse HEAD)" = "$RC_SHA" ] && rc_ready
