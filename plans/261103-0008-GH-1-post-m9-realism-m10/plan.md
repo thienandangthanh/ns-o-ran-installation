@@ -34,8 +34,8 @@ After each checkpoint the compliant behaviour is the only behaviour (R1, R8). Ev
 
 ## Resume card (filled at execution; update before every VM operation > 10 min and at every phase exit)
 ```text
-last-updated: 2026-11-03 18:45 KST
-current phase: STOP A (after P04). Journal docs/journals/2026-11-03-m10-stop-a.md; waiting for rulings (gap 5, gap 15, M1/P15, d* step path, T′ base flag, confirm 25 #9 rows). Next on resume: P05 (T-A). Rulings D1–D4 in force.
+last-updated: 2026-11-03 19:10 KST
+current phase: STOP A (PAUSE A printed 2026-11-03 19:10 KST). Journal docs/journals/2026-11-03-m10-stop-a.md (kongming note kongming-261103-1840: FIX-FIRST, applied). Waiting for 7 rulings + G1/G2; handoff plans/handoffs/m10-stop-a-resume-20261103-1857.md. Next on resume: rulings, then P05 (T-A). Rulings D1–D4 in force.
 P02: DONE (AC8 run 1 ✓ evidence/r3p/20261103T024628Z; M4–M7 ✓; verdicts in 73068f1). kongming GO-WITH-CHANGES: KPM move judge δ-aware 281d709 (ledger row 56); seam smoke extended 1cf145f (d100tie, d150stop, pins + emitter SHAs) — run it via `vm-exec.sh probes/probe-delta-seam-smoke.sh` (08f72bc) after the P03 chain, before any P04 δ run. Exit record in phase-02.
 P03: DONE (p12 ✓ 52/52, AC8 run 2 ✓ evidence/r3p/20261103T063029Z at 83443e1). kongming exit review GO-WITH-CHANGES (kongming-261103-1600): must = seam smoke at pins ✓ 25/25 (evidence/delta-seam-smoke/20261103T071157Z); shoulds done (rows 59 amended, 60 stricter p12 judge 1794f97; R-6 unit-test record evidence/p03-unit; standards ledger; raw archive). Exit record in phase-03.
 AC18 #9: ledger rows 10–55 + 56 (119c91d, 281d709): 25 registered (P1/N5), 12 P5 held per D2 until the P06 AC6a re-probe, 5 pending Stop A rulings (gap 5 row 31, gap 15 rows 43–45, 48). Planner report planner-261103-1150 (NR-CGI APER = 9 octets; eNB meid enB_macro_001_001_000001 verified).
