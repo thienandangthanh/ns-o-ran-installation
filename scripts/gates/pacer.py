@@ -41,7 +41,9 @@ timeout); the result goes to pacer-summary.json "stopTrigger".
 injected at its rxSeq with its viaNodeId, ctlId, imsi, targetCell and
 afterSeq, so a replay reproduces the run without the RIC (a line refused late
 mid-run, afterSeq < rxSeq, is injected at its rxSeq and refused again; one
-refused late at the stop is sent at the stop handshake).
+refused late at the stop because it arrived after the last barrier (answered at its
+rx time) is sent at the stop handshake; one pending at the stop under δ > 0 (answered after its barrier) is
+injected at its rxSeq, and the replay must run with the same δ).
 
 Outputs in --out: pacer-log.jsonl (every message with wall time) and
 pacer-summary.json (per trigger step: L of each control = trigger start ->
@@ -70,9 +72,12 @@ def load_schedule(args):
                     continue
                 c = {"nodeId": m["viaNodeId"], "ctlId": m["ctlId"], "imsi": m["imsi"],
                      "targetCellId": m["targetCell"], "afterSeq": m["afterSeq"]}
-                if m["cause"] == "late" and m["afterSeq"] >= m["rxSeq"]:
+                if m["cause"] == "late" and m["afterSeq"] >= m["rxSeq"] and m["applySimTimeNs"] == m["rxSimTimeNs"]:
                     late.append(c)  # arrived after the last barrier: replayed at the stop handshake
                 else:
+                    # every other line is injected at its rxSeq, including one refused late at the stop while its
+                    # apply was pending (δ > 0: answered later than its barrier); replayed with the same δ it is
+                    # deferred and pending at the stop again
                     steps.setdefault(str(m["rxSeq"]), {"inject": []})["inject"].append(c)
         return {"steps": steps, "late": late}
     if args.schedule:

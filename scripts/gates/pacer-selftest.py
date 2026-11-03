@@ -7,7 +7,8 @@ until its confirm command exits 0; (4) a confirm that outlives timeoutS is recor
 goes out; (5) a "prepare" runs after `steps` and before the trigger, and its wall time is not in L; (6) a prepare
 that exits non-zero aborts the run naming "prepare" and the trigger never runs; (7) a prepare past its timeoutS
 aborts; (8) with "mayFail" a failed prepare is recorded and the step goes on; (9) a prepare-only entry is
-followed by `go`. A trigger command creates a marker file; the stub answers each new marker with one controlRx.
+followed by `go`; (10) --replay puts a line refused late after the last barrier at the stop handshake, and a
+line pending at the stop under δ > 0 (and a mid-run late one) at its rxSeq. A trigger command creates a marker file; the stub answers each new marker with one controlRx.
 """
 import json
 import os
@@ -178,6 +179,25 @@ def main():
     r = s["steps"].get("1", {})
     if rc != 0 or r.get("prepareRc") != 0 or not os.path.exists(os.path.join(tmp, "p")) or s.get("aborted"):
         problems.append("prepare-only: rc %s step %r" % (rc, r))
+    # (10) the replay schedule: stop-handshake late vs pending at stop under δ > 0 vs late mid-run
+    import argparse, importlib.util
+    spec = importlib.util.spec_from_file_location("pacer_mod", PACER)
+    pm = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(pm)
+    led = os.path.join(tempfile.mkdtemp(), "ledger.jsonl")
+    def ln(ctl, rx, after, rx_ns, ap_ns, cause):
+        return {"viaNodeId": 2, "ctlId": ctl, "imsi": 1, "targetCell": 2, "rxSeq": rx, "afterSeq": after,
+                "rxSimTimeNs": rx_ns, "applySimTimeNs": ap_ns, "outcome": "refused", "cause": cause}
+    with open(led, "w") as f:
+        f.write(json.dumps({"type": "ledgerHeader", "v": 1, "delta-model": "fixed 150"}) + "\n")
+        for x in (ln(1, 100, 100, 10_000_000_000, 10_000_000_000, "late"),     # after the last barrier
+                  ln(2, 99, 99, 9_900_000_000, 10_000_000_000, "late"),        # pending at the stop (δ = 150)
+                  ln(3, 30, 29, 3_000_000_000, 3_000_000_000, "late")):        # missed its barrier mid-run
+            f.write(json.dumps(x) + "\n")
+    sc = pm.load_schedule(argparse.Namespace(replay=led, schedule=None))
+    got = ([c["ctlId"] for c in sc["late"]], sorted((k, [c["ctlId"] for c in v["inject"]]) for k, v in sc["steps"].items()))
+    if got != ([1], [("30", [3]), ("99", [2])]):
+        problems.append("replay schedule: %r" % (got,))
     for q in problems:
         print("FAIL " + q)
     print("pacer self-test: %s" % ("ok" if not problems else "%d failure(s)" % len(problems)))
