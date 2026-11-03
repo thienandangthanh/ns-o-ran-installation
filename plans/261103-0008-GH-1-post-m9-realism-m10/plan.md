@@ -38,7 +38,7 @@ last-updated: 2026-11-03 11:45 KST
 current phase: P02 exit running + P03 code delegated. Rulings D1–D4 (decisions-261103-0450; contract Amendment 2) in force.
 P02: seam committed+pinned (ns-3 48d41a5, oran-interface b2342c6; harness 73bbda6); dev smoke green (evidence/delta-seam-smoke/20261103T014710Z). Exit chain = user unit `m10-p02-chain` (script scratchpad p02-chain.sh pinned to harness 73bbda6, log scratchpad p02-chain.log; bg waiter task reports `===` lines): m4 PASS 02:17Z, m5 PASS 02:19Z, m6 running, then m7, r3p --mode c1 --reference M9 reference/r3p (AC8 run 1); evidence under this plan's evidence/<gate>/.
 P03: harness pieces DONE (ddc6c44, ledger rows 6–8 in 6ad6bb2): rung-config kpm.* 100/100; kpimon_install passes KPIMON_REPORTING_PERIOD_MS / KPIMON_GRANULARITY_PERIOD_MS; rung check `<rung>_<label>_kpimon_subscription_reporting_period_decoded` (ts-rung-lib, r0, r1); pcap facts: sub_failures + reportingPeriod/granulPeriod/cause (tshark KPM v3 dissector can stop on Format 3 action defs → granularity evidenced by records/indication); e2-facts-query sub-period / sub-failure (cause ricRequest:17); influx-vs-trace --every-seq; scripts/gates/gate-p12-kpm-period.sh (a P=1000/G=100 → p12-records-check.py, b P=150 → failure, c restore). Subagent a41f6b514024140c6 (Testbed agent+kpimon, uncommitted) was told: installer env names above, default 100/100; P/T>1 → exactly P/T measData items, no partial period at bye (count samplesUnreportedAtBye). Next: review+commit subagent code; align agent_counters_assert/gate p12 with its stats fields; pin Testbed; VM: M3 at 100/100 (F10), p12 gate, M5–M7, AC8 run 2.
-P04 prep done (harness 97b4fdd): r3p gate --delta-ms (CLI --actuationDelayMs, check-actuation-delay.py per live run, c2 --delta-ms), reference-compare --components (sim-side refs), identity-map-extract.py (matches R-8). P04 still: tag m10-cp1 (+forks), promote M9 raw to reference/m9-r3p-raw, freeze identity-map-cp1.json, δ C1s 100/150/200/500 + make refs, outcome-vs-δ table, AC18 #9 rows (P1/N5 now; P5 rows use en_gnb_ per D1), budget re-projection, Stop A packet.
+P04 prep done (harness 97b4fdd): r3p gate --delta-ms (CLI --actuationDelayMs, check-actuation-delay.py per live run, c2 --delta-ms), reference-compare --components (sim-side refs), identity-map-extract.py (matches R-8). P04 still: tag m10-cp1 (+forks), promote M9 raw to reference/m9-r3p-raw, freeze identity-map-cp1.json, δ C1s 100/150/200/500 + make refs, outcome-vs-δ table, AC18 #9 rows (P1/N5 now; P5 rows held per D2 until the P06 AC6a re-probe, literals pinned in planner-261103-1150), budget re-projection, Stop A packet.
 VM / snapshots / host free: VM busy with the chain (r3p-green lineage); snapshots fresh-install f7-rerun-green m0-probe-{d11021754,n,o,p,q} r0-green r2-green r3p-green; /home 96 GiB, /mnt/data 20 GiB
 T4 closed 2026-11-03 10:55 KST: 3GPP TS 38.331 added by the user, Zotero WF2FTADX (ETSI TS 138 331 V19.4.0; MeasurementTimingConfiguration message p. 1775); pycrate encodes from Rel-18 ASN.1, so P06 compares the MTC clause across Rel-18/19
 for Stop A: new deviation "P14" RANParameter-ID unconstrained in rc/agent asn1c (spec INTEGER (1..4294967295, ...)); AC12 implies the fix in the T-A fork patches; user confirms scope at Stop A (probe-261103-0315 report)
@@ -99,6 +99,7 @@ in-flight jobs: user unit m10-p02-chain (VM); P03 subagent a41f6b514024140c6 (ho
 - `install_patch_files/xApps/ts/*` and `scripts/gates/ts-lib.sh`: P06, P07.
 - `scripts/gates/pacer.py`: P02, P07.
 - `scripts/gates/r3p-checks.py`: P02, P07, P10.
+- `tools/e2-evidence/wire-c1-extract.py`: P06, P07.
 
 ## Stops and pause triggers
 The mechanism is the same as M8–M9: a journal in `docs/journals/`, a kongming note, a resume-card update and a push, then one terminal line `PAUSE <id> evidence=<path> journal=<path>`. T1–T9 keep their M8–M9 meanings. T3 also covers every contract "Decision required": an AC6a refusal, AC14 finding no X2AP-type UE ID, or an FU5 burst over 12 GiB.
@@ -153,13 +154,14 @@ The mechanism is the same as M8–M9: a journal in `docs/journals/`, a kongming 
   - `imsi` → `ueId` per R-4 (P4), using the **frozen cp1 identity map** (R-8). The M9 entry `"imsi": 1` becomes `"ueId": {"type": "en-gNB-UEID", "mEnbUeX2apId": 3, "globalEnbId": {"plmn": "00F110", "macroEnbId": "00001"}}`. That is exactly the representation the migrated `wire-c1-extract.py` writes; no other key changes;
   - `style`/`action` 3/1 → 5/3 (P13);
   - `targetKey` → the NCI key (P11/N5).
-- **meid:** `gnb_001_001_%08x` → `en_gnb_001_001_%08x` for the gNBs, and the eNB → `enB_macro_001_001_<6 hex>` (AC6a confirms).
+- **meid:** `gnb_001_001_%08x` → `en_gnb_001_001_%08x` for the gNBs, and the eNB → `enB_macro_001_001_000001` (macro eNB ID 1, 20 bits; e2term renders the bit string right-aligned, 2 hex per octet [V ric-plt-e2 `BuildRunName.h:56-118,190-192`]; AC6a: 0xFFFFE → `enB_macro_001_001_0ffffe` [V `evidence/e2-identity-setup/20261102T192656Z/`]).
 - **Scenario, schedule and predictor records = T(M9 files)** (A1, F1 option a). T is pure and pre-registered:
   - N5 key → NCI key (`%08X%02X` → `%08X` + `1` + `0`) on key-valued fields only: `r3p-scenario.json:5`; `r3p-schedule.json:10,17,33,40,48,58,65`; the predictor records' `answer` keys and `target`.
   - Schedule `via` (`r3p-schedule.json:52`): target → the source cell, taken from the M9 ledger line's `sourceCell`.
   - `scenarioSha256` (`r3p-schedule.json:2`): recomputed from T(scenario).
   - The two P1 description strings (`r3p-scenario.json:27` "via the target gNB (deviation P1)", and the schedule/fixture text that names P1) are replaced by registered text: "via the source en-gNB (SN-initiated, E2SM-RC Style 5 action 3)".
   - `ueId` (`r3p-scenario.json:17`, "decimal IMSI string") → "the KPM UE ID key of AC14b (en-gNB-UEID)".
+  - `r3p-stage-a.json` (the committed stage-A classification): key-valued fields `:15,22,30,40,47` by the same key rule; `h1.via` (`:34`) target → the M9 ledger line's `sourceCell`; `scenarioSha256` (`:58`) recomputed from T(scenario); everything else literal (incl. `stageDir`).
   - Everything else stays literal: IMSIs, steps, decisions, windows and every predictor number.
 
 **R-3. Identity layout (R5, I-6).**
@@ -167,6 +169,8 @@ The mechanism is the same as M8–M9: a journal in `docs/journals/`, a kongming 
 - NR Cell Identity = gNB ID (32 bits) ‖ cell part (4 bits); the cell part is 1 for every gNB.
 - TS xApp key: `%08X10` (gNB 2 → `0000000210`). It is the 9-hex NCI plus the APER pad digit (the take is at `ts_xapp.cpp:366`).
 - meid: `en_gnb_001_001_%08x`; e2mgr `nbId` is 32 binary characters.
+- eNB meid: `enB_macro_001_001_000001` (see R-2).
+- Target NR CGI (RAN parameter 4 `valueOctS`) = APER NR-CGI, 9 octets: `00` ‖ `00F110` ‖ NCI (36 bits) ‖ 4 zero pad bits; gNB 2 → `0000F1100000000210` [V pycrate, image `asn1-indep`]. The TS key is its last 10 hex digits; rc's gRPC `TargetCellID` is that key. The N5 form `0000F110`‖`%08X%02X` re-encodes differently (nonzero pad) for every cell ≠ 0x10.
 - The agent's internal sample `kind` stays `gnb`/`enb`, because `metric-map.cpp:76` and the hello check at `sample-forwarder.cpp:41` key on it. The wire identity is derived from the kind: `gnb` → Global en-gNB ID (scenario-zero is EN-DC only); `enb` → Global ENB ID, macro eNB ID (20 bits) = LTE cellId 1.
 - AC6a probe IDs: gNB IDs 0x7F000001 and up, macro eNB 0xFFFFE. They cannot collide with ns-3 cellIds (≤ 86), and the VM is reverted after the probe.
 - **X2AP constants (served cell info, I-5):**
@@ -214,13 +218,13 @@ The mechanism is the same as M8–M9: a journal in `docs/journals/`, a kongming 
   - An action whose granularity ≠ T (period admitted) is not admitted with `ricRequest` / `action-not-supported` (§9.2.1), in a RIC SUBSCRIPTION RESPONSE that admits the other actions; with no action left, RIC SUBSCRIPTION FAILURE with the same cause.
 
 **R-7. Check-diff ledger seed (AC18).** `check-diff-ledger.md` in this plan dir has one row per changed check: old → new, why it is not weaker, and a contract-change flag. P1/P5/N5 rows are registered at Stop A. The sites, re-grepped at P04 start:
-- **P1:** `scripts/gates/r3p-checks.py:203-207`; `r0-checks.py:92-98`; `r2-checks.py:24,181-185`; `gate-r3p-ts-predictor.sh:234`; `gate-r2-ts-stub-qp.sh:121`; `r3p-checks-fixtures.py:16,59,91`; `r3p-dry-run-fixtures.py:34`.
-- **R1 addressing (source-aware replacements in P07):** `gate-r1-rc-multi-control.sh:249-256`:
+- **P1:** `scripts/gates/r3p-checks.py:17,73,203-207,270`; `r0-checks.py:18-19,71,89-99`; `r2-checks.py:15-18,23-24,56,96,179-185`; `gate-r3p-ts-predictor.sh:240,246`; `gate-r2-ts-stub-qp.sh:121,135-137`; `gate-r0-rc-scripted.sh:238-253`; `gate-r1-rc-multi-control.sh:109,252-295`; `r0/r1/r2-scenario.json` via fields; `r3p-stage-a.json:34`; `r3p-dry-run-classifier.py:76-81`; `r3p-schedules.py:9,57-58`; `r3p-checks-fixtures.py:3,16,56,59,89,91,106,120,121`; `r3p-dry-run-fixtures.py:33-35`; `wire-c1-extract.py:178-185,230,296`.
+- **R1 addressing (source-aware replacements in P07):** `gate-r1-rc-multi-control.sh:252-267`:
   - C4 (b): a same-step pair for IMSI 2 through one node; the hub sort `(imsi, viaNodeId, targetCellId, ctlId)` [V `oran-interface/model/e2-control-hub.cc:247-250`] applies the **higher-ctlId, lower-target** control first, and the lower-ctlId one is refused `inHandover`;
   - C4 (c): arrival order [3,2] across two agents;
-  - `:275-290` fault-stop via agent 1, `failedOnBye == 1`.
-- **P5/N5 meids and keys:** `gate-m5-agent-setup.sh:25`; `gate-r0-rc-scripted.sh:150-152`; `rc-send.sh:6,12`; `rc-lib.sh:238`; the whole of `replay-ts-cell-map.py`; `gate-s0-free-control.sh:177,184`; `gate-q8-rc-smoke.sh:69-70`; `probes/probe-rc-control-latency.sh:89`; `r2-checks.py:53`; `r3p-predictor.py:7,106,154`; `r3p-checks.py:60`; the scenario/schedule/stage JSONs; `tools/rmr-peer/rmr-peer-selftest.py:76-142`; `tools/e2-evidence/recovery-eval.py:6`; `selftest.sh:93-111`.
-- **P5 node type:** `agents.sh:135`; `agents-ns3-run.sh:208`.
+  - `:276-295` fault-stop via agent 1, `failedOnBye == 1`.
+- **P5/N5 meids and keys:** `gate-m5-agent-setup.sh:25`; `gate-r0-rc-scripted.sh:150-152`; `rc-send.sh:6,12`; `rc-lib.sh:243-248`; the whole of `replay-ts-cell-map.py`; `gate-s0-free-control.sh:177,184`; `gate-q8-rc-smoke.sh:69-70`; `probes/probe-rc-control-latency.sh:89`; `r2-checks.py:53`; `r3p-predictor.py:7,106,154`; `r3p-checks.py:60`; the scenario/schedule/stage JSONs; `tools/rmr-peer/rmr-peer-selftest.py:76-142`; `tools/e2-evidence/recovery-eval.py:6,26`; `selftest.sh:109,124,127-128`; `e2ap-pcap-facts.py:84-87`; `e2-facts-query.py:26,45-70,186-189`; `gate-m5-agent-setup.sh:97-98`; Testbed `run_ns3_e2_agents.sh:86-96`; `tools/rc-decode/fixtures/*`; `test-rc-decode.sh`; `asn1-indep/selftest_kpm_and_fixtures.py:13-19,85-93`; `rc-control-test.cpp:176-205`; `ts-rung-lib.sh:208-221`. S0, S1 and the probe: per the gap-15 ruling at Stop A (`check-diff-ledger.md` rows 43–45, 48).
+- **P5 node type:** `agents.sh:128-160`; `agents-ns3-run.sh:215-224`.
 - **P4 (UE IDs):** `tools/e2-evidence/kpm-ue-list-moves.py:55`; `tools/kpimon-decode-harness/kpimon-decode-harness-records.c:51`; `tools/e2-evidence/wire-c1-extract.py:230`; the r3p stub check "decimal IMSI"; the R1 unknown-IMSI case.
 - **Replay:** `pacer.py:63-77` (rebuilds controls from the ledger IMSI) and `ts-rung-lib.sh:169` (replay in C1).
 - **R3′ preparation (Codex round 2 #1, migrated in P07):**

@@ -35,7 +35,7 @@ After T-A, only ipc (the digested sample lines) and traces stay literal. Everyth
   - (i) an rc-multiset `ueId.globalEnbId` with a wrong PLMN or macro eNB ID → fail.
 
 ## Files
-- Create: `scripts/gates/reference-transform-compare.py`, `scripts/gates/m9-transform.py`, `scripts/gates/fixtures/transform-compare/` (fixtures a–g); a `--reference-transform` mode in `scripts/gates/ts-rung-lib.sh` (next to `rung_reference`, `:207-221`), used by `gate-r3p-ts-predictor.sh`.
+- Create: `scripts/gates/reference-transform-compare.py`, `scripts/gates/m9-transform.py`, `scripts/gates/fixtures/transform-compare/` (fixtures a–i); a `--reference-transform` mode in `scripts/gates/ts-rung-lib.sh` (next to `rung_reference`, `:207-221`), used by `gate-r3p-ts-predictor.sh`.
 - Create (Markdown): `docs/journals/<date>-m10-stop-a-prime.md` (including the I-1 mapping table).
 
 ## Steps

@@ -15,7 +15,7 @@
   - the batch sort uses the IMSI [V `e2-control-hub.cc:247-250`].
 - **Harness:**
   - the C1 replay rebuilds controls from the ledger's `imsi` [V `scripts/gates/pacer.py:63-77`], and R2/R3′ C1 use it [V `scripts/gates/ts-rung-lib.sh:169`];
-  - R1 asserts addressing-dependent behaviour [V `gate-r1-rc-multi-control.sh:249-256` (C4 (b): a same-step IMSI 2 pair, where the hub sort `(imsi, viaNodeId, targetCellId, ctlId)` [V `e2-control-hub.cc:247-250`] applies the higher-ctlId, lower-target control first; C4 (c): arrival [3,2] across two agents), `:275-290` (fault-stop: agent 1 forwards 2 and fails 1 pending control on bye)].
+  - R1 asserts addressing-dependent behaviour [V `gate-r1-rc-multi-control.sh:252-267` (C4 (b): a same-step IMSI 2 pair, where the hub sort `(imsi, viaNodeId, targetCellId, ctlId)` [V `e2-control-hub.cc:247-250`] applies the higher-ctlId, lower-target control first; C4 (c): arrival [3,2] across two agents), `:276-295` (fault-stop: agent 1 forwards 2 and fails 1 pending control on bye)].
 
 ## Requirements (contract)
 - **AC14:**
@@ -51,22 +51,28 @@
     - Because the hub sorts on `targetCellId` before `ctlId`, the target-2, higher-ctlId control applies first, and the target-3, lower-ctlId control is refused `inHandover`.
     - The check asserts exactly this: refused `inHandover` with the lower ctlId, applied with the higher ctlId, both via 3.
     - Fixture `scripts/gates/fixtures/r1-c4-arrival-order/`: a ledger produced as if the sort were replaced by arrival order (target 3 first → refused `alreadyOnTarget`, then target 2 applied) must **fail** the C4 check.
-    - An ns-3 hub unit test with the comparator swapped for arrival order also fails the same assertion.
+    - The hub test suite (Files) also runs the comparator swapped for arrival order, which must fail the same assertion.
+    - The sort comparator becomes a named function used by `Apply`; `oran-interface/test/e2-control-order-test-suite.cc` asserts the (b) order differs from arrival order and the full `(imsi, viaNodeId, targetCellId, ctlId)` order.
     - This preserves C4's sort-not-arrival assertion.
-  - (c) two agents for one UE: the control via the non-source en-gNB is refused `unknownUe`, and the one via the source is applied. Arrival order is still recorded and asserted as [3,2] where the scenario sends them that way. This keeps wrong-node rejection.
+  - (c) two agents for one UE: the control via the non-source en-gNB is refused `unknownUe`, and the one via the source is applied. Arrival order is still recorded and asserted as [3,2] where the scenario sends them that way. This keeps wrong-node rejection. The via-3 line is refused `unknownUe` with `imsi` 0 and is matched by (viaNodeId, imsi 0, targetCell, afterSeq) and attributed to its UE through `e2-pacing-log` (`ueId`) and `e2-ue-context-1` (`lteRnti`).
+  - (a): IMSI 6's control goes via its source 2 (was the eNB); the pair still spans agents 2 and 3.
   - f2 fault-stop: the pending control goes through the **source en-gNB agent** of that UE (not agent 1). The predicate becomes `forwarded == 2`, `failedOnBye == 1`, `rejIpcDown == 0`, `pending == 0` on that agent. This keeps pending-control failure on shutdown.
-  - A control sent to the eNB → `ran-function-id-invalid`: a new negative, added, not substituted.
+  - Negatives in R0 and R1 (scenario path `"enb"`/`"nonSourceGnb"`): a control via the eNB → agent-local `ran-function-id-invalid` (no ledger line; the pacer requires none at ns-3 within W); a control via a non-source en-gNB → `unknownUe`. Both feed the shared D7.
+  - Scenario comment texts:
+    - `r0-scenario.json:2`: "… via = the E2 node whose agent receives the control: the UE's serving gNB (its source en-gNB) for every positive; node 1 (the eNB) and a non-serving gNB appear only as negatives. key = the TS key of the target NR CGI, %08X10 (gNB ID, cell part 1, APER pad)."
+    - `r1-scenario.json:2`, case (c): "… Case (c): the same UE's control is sent first through a non-source en-gNB (node 3), refused unknownUe, then through its source (node 2), applied. Case (e): a control to the eNB, answered ran-function-id-invalid by its agent."
+    - `r1-scenario.json:13`: per the gap-5 ruling (Risks).
 - **R3′ preparation migration (Codex round 2 #1).** Identities are translated consistently at the RIC boundary, and IMSIs stay in every continuity record (predictor records, `r3p-schedule.json`, ledger):
   - `r3p-prepare.py`: the trigger/prepare path resolves IMSI → `ueId` key through the run's `e2-ue-context-*.jsonl` (R-4 format), confirms the key exists in Influx (as the AD stand-in would observe it), and writes `$rd/r3p/trigger-ue-<step>.txt`. `stub_load` (`:41-52`) checks `{"ues": [<ueId key>], "entries": 1}`. The calibration branch (`:74-79`) builds `{"predictions": {<ueId key>: [answer]}}`. The `stub-log`, `answer-*.json` and window files record both the IMSI and the key.
   - `r3p-schedules.py`: `trigger_entry` (`:31-32`) runs `send-rmr.sh <port> anomaly-from <trigger-ue file>` (new op in `scripts/gates/send-rmr.sh`; the file is written by the step's prepare). Stage B (`:57`) injects `{nodeId: <source en-gNB = the M9 ledger line's sourceCell>, ctlId, ueId: <from e2-ue-context at that step>, targetCellId, afterSeq}`, the migrated IPC control schema, with no IMSI control.
   - Self-tests: `r3p-dry-run-fixtures.py` and `r3p-checks-fixtures.py` migrate, keeping their IMSI assertions on the continuity fields.
-- **D7 and P1 rows:** r0/r2/r3p d7 and `via_target` become `viaNodeId == sourceCell` on every applied line. The `wire-c1-extract.py:230` filter reads style 5 / action 3 and the en-gNB-UEID.
+- **D7 and P1 rows** per check-diff-ledger rows 10–16 (r0/r1 D7 also requires viaGnbs ⊇ {2,3}, a non-source `unknownUe` and an eNB `ran-function-id-invalid`; r2 D7 requires viaGnbs ⊇ {2,3}). The TS xApp, the r2 calibration triggers and the dry-run classifier address the UE's serving gNB. `wire-c1-extract.py` records `viaMeid` (association GlobalE2node-ID rendered by `meid_of`) and fails if it differs from `meid_of(viaNode)`.
 
 ## Files
-- ns-3 / oran-interface: `oran-interface/model/e2-control-hub.cc`, `e2-control-hub.h`, `e2-ipc-json-reader.cc`; `ns-3-mmwave-oran/src/lte/model/lte-enb-rrc.cc`, `lte-enb-rrc.h`, `lte-enb-net-device.cc`, `lte-enb-net-device.h`; `src/mmwave/model/mmwave-enb-net-device.cc`.
+- ns-3 / oran-interface: `oran-interface/model/e2-control-hub.cc`, `e2-control-hub.h`, `e2-ipc-json-reader.cc`; `ns-3-mmwave-oran/src/lte/model/lte-enb-rrc.cc`, `lte-enb-rrc.h`, `lte-enb-net-device.cc`, `lte-enb-net-device.h`; `src/mmwave/model/mmwave-enb-net-device.cc`; new `oran-interface/test/e2-control-order-test-suite.cc` and `oran-interface/CMakeLists.txt`.
 - Agent: `ns3_e2_agent/src/rc-control.cpp`, `rc-control.hpp`, `rc_codec/rc-codec.c`, `rc_codec/rc-codec.h`, `schema/ns3-e2-ipc.v1.schema.json`, `tests/rc-control-test.cpp`, `tests/fixtures/`.
 - Forks: `install_patch_files/xApps/rc/` (`wrapper.c`, `rcControl.go`, `rcE2SmRc.go`, `rcTypes.go`, `rcService.go`, `rc.proto`, regenerated `rc.pb.go`, manifest), `install_patch_files/xApps/ts/` (Style 5 + Influx read patch, `rc.proto`, regenerated `rc.pb.cc/.h`, manifest); new `tools/protoc-pinned/` (two Dockerfiles, byte-equality proof script).
-- Harness: `scripts/gates/r3p-prepare.py`, `r3p-schedules.py`, `send-rmr.sh` (`anomaly-from`), `r3p-dry-run-fixtures.py`, `fixtures/r1-c4-arrival-order/`, `scripts/gates/pacer.py`, `pacer-selftest.py`, `ts-rung-lib.sh`, `rc-send.sh` (Style 5, source node, UE ID read from Influx), `rc-lib.sh`, `r0-checks.py`, `r0-scenario.json`, `r1-scenario.json`, `gate-r0-rc-scripted.sh`, `gate-r1-rc-multi-control.sh`, `gate-r2-ts-stub-qp.sh`, `gate-r3p-ts-predictor.sh`, `r2-checks.py`, `r3p-checks.py`, `r3p-checks-fixtures.py`, `tools/e2-evidence/wire-c1-extract.py`, `tools/rc-decode/rc-decode.c`, `gate-e2i-interop.sh` (Style 5 injector cases), `scripts/pins.conf`.
+- Harness: `scripts/gates/r3p-prepare.py`, `r3p-schedules.py`, `send-rmr.sh` (`anomaly-from`), `r3p-dry-run-fixtures.py`, `fixtures/r1-c4-arrival-order/`, `scripts/gates/pacer.py`, `pacer-selftest.py`, `ts-rung-lib.sh`, `rc-send.sh` (Style 5, source node, UE ID read from Influx), `rc-lib.sh`, `r0-checks.py`, `r0-scenario.json`, `r1-scenario.json`, `gate-r0-rc-scripted.sh`, `gate-r1-rc-multi-control.sh`, `gate-r2-ts-stub-qp.sh`, `gate-r3p-ts-predictor.sh`, `r2-checks.py`, `r3p-checks.py`, `r3p-checks-fixtures.py`, `tools/e2-evidence/wire-c1-extract.py`, `tools/rc-decode/rc-decode.c`, `gate-e2i-interop.sh` (Style 5 injector cases), `scripts/pins.conf`, `scripts/gates/r2-scenario.json`, `r3p-dry-run-classifier.py`, `tools/e2-evidence/kpm-ue-list-moves.py` (imsi-0 lines carry no UE), `tools/rc-decode/fixtures/rc-control-nrcgi.hex`, `tools/rc-decode/test-rc-decode.sh`.
 
 ## Steps
 1. Standards-ledger row for I-4 from the PDFs (§8.4.6.3 table, both versions) and the I-1 mapping row, written before code.
@@ -83,9 +89,9 @@
 7. Phase exit.
 
 ## Validation
-- Decoded wire, every control: header Format 1, style 5, action 3, UEID en-gNB-UEID equal to the Influx row's IDs and the R-4 values; meid = the source en-gNB; ledger `viaNodeId == sourceCell`.
+- Decoded wire, every control: header Format 1, style 5, action 3, UEID en-gNB-UEID equal to the Influx row's IDs and the R-4 values; meid = the source en-gNB (`c1-extract-summary` `viaMeidEqualsNode: true`, joined to the ledger); ledger `viaNodeId == sourceCell`.
 - rc RestartCount 0 across every run, including the nil-`GnbUEID` fixture.
-- R0/R1 under the registered predicates; the C4 arrival-order fixture and the swapped-comparator hub test both fail the C4 check, while the live run passes it.
+- R0/R1 under the registered predicates; the C4 arrival-order fixture fails `c4_used`; `e2-control-order` test suite passes, while the live run passes it.
 - R3′ preparation: every live prepare loads the stub with exactly the `ueId` key; calibration answers are keyed by `ueId`; the stage-B injection is applied via the source en-gNB; IMSIs are unchanged in the predictor records and the schedule.
 - R2 C1 and R3′ C1 green with `replayEqual: true` (AC14b integration).
 - e2i: an independently encoded Style 5 control is applied; Style 3/1 → `action-not-supported`; a control to the non-source en-gNB → `unknownUe`; a control to the eNB → `ran-function-id-invalid`.
@@ -105,6 +111,7 @@
 - The zero-latency admission changes event order (High/Low). The step 3 byte-compare is a hard gate.
 - A stale SN context (Medium/Medium) is handled by the current-SN check; a fixture covers it.
 - The TS xApp's Influx read adds latency inside the lock-step window (Medium/Medium). The read happens in the TS xApp's request path before rc; T_ctl is re-measured, and a red is handled under the Failure Protocol.
+- Pending Stop A ruling (gap 5): the f2 bullet above cannot pass as written (ns-3 reads agent 2's forwarded control at emitter-2 stop and answers it `late`) — option A (recommended) makes `E2IpcEmitter::Stop()` skip `DeliverInbound()` once the hub is stopping (Files + `oran-interface/model/e2-ipc-emitter.cc`, `e2-control-hub.h`; plan file ownership `e2-ipc-emitter.cc`: P06b, P07), f2 via agent 2 with `agent-forward-wait.sh 2 2 5`, failedOnBye 1 and the `r1-scenario.json:13` comment restated; option B keeps ns-3 unchanged and judges the late-at-stop path (one `late` ledger line, failedOnBye 0), which is weaker; check-diff-ledger row 31.
 
 ## Rollback
 Re-pin the P06b SHAs; `m10-cp1` reproduces checkpoint 1.

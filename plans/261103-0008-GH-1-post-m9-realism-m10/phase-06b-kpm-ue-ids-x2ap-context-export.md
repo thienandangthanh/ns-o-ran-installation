@@ -22,7 +22,7 @@
 
 ## Design (plan R-4)
 - **ns-3 / oran-interface:**
-  - `E2IpcEmitter::SendUeContext(line)` sends a `ueContext` line on the existing TCP connection and writes it to `e2-ue-context-<node>.jsonl`, never to `e2-ipc-trace-<node>.jsonl`.
+  - `E2IpcEmitter::SendUeContext(line)` sends a `ueContext` line on the existing TCP connection and writes it to `e2-ue-context-<node>.jsonl`, never to `e2-ipc-trace-<node>.jsonl`. The file sits in the run's `--e2TraceDir`, next to `e2-control-ledger.jsonl` and `e2-pacing-log.jsonl`, where the `unknownUe` matcher (ledger row 16) reads it.
   - Each node emits its UE contexts {imsi, lteRnti, mnCellId, mmeUeS1apId} before the sample of a seq, whenever they changed since its last emission. For a gNB these are the UEs in its UE map; for the eNB, all of its UEs.
   - The emission reads state only, so it schedules no events and samples and traces stay byte-identical. A local byte-compare against checkpoint 1 proves it before any VM run.
 - **IPC schema:** `schema/ns3-e2-ipc.v1.schema.json` gains the `ueContext` message. Sample messages are unchanged.
