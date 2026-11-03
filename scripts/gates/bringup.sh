@@ -270,21 +270,27 @@ sys.exit(0 if last and not stuck else 1)' "$comp" "$pod" | tee -a "$out" | tail 
     return "${PIPESTATUS[1]}"
 }
 
-# ric_refresh_routes <ric|agents>: replace e2mgr and submgr (pod delete, not a rollout, so no surge copy
+# ric_refresh_routes <level> [--e2term]: replace e2mgr and submgr (pod delete, not a rollout, so no surge copy
 # runs beside them), wait for e2term's registration, restart rtmgr last, then require both readers OK. Bounded
 # and logged; at most once per level in a gate run (atomic marker). rNIB lives in dbaas, which stays.
+# --e2term (after an e2mgr image change): e2term is replaced too, after e2mgr, and e2mgr must log the new e2term's
+# E2_TERM_INIT before rtmgr restarts. Seen on the VM (2026-11-03): after the e2mgr pod was replaced under a
+# running e2term, e2term's RMR kept a connection to the new pod but no E2 Setup Request reached e2mgr for 10
+# minutes; after an e2term restart, setups were received and answered within 3 s.
 ric_refresh_routes() {
-    local level="$1" e="$EVIDENCE_DIR" tag c old new deadline
+    local level="$1" with_e2term="${2:-}" e="$EVIDENCE_DIR" tag c old new deadline comps=(e2mgr submgr) since
+    [ "$with_e2term" = --e2term ] && comps+=(e2term)
     tag="refresh-$level-$(date -u +%H%M%S)"
     mkdir "$e/.ric-refresh-$level" 2>/dev/null || { log "ric refresh ($level): already used once in this gate run"; return 1; }
-    log "ric refresh ($level): replacing e2mgr and submgr, then rtmgr"
+    log "ric refresh ($level): replacing ${comps[*]}, then rtmgr"
     echo "$(date -u +%FT%TZ) ric refresh ($level) started" >>"$e/watchdog.log"
     for c in rtmgr e2mgr submgr; do
         kc -n ricplt exec "$(ric_pod $c)" -- cat /proc/net/tcp /proc/net/tcp6 >"$e/$tag-tcp-$c.txt" 2>&1
     done
     e2mgr_get e2t/list >"$e/$tag-e2t-list.json"
-    for c in e2mgr submgr; do
+    for c in "${comps[@]}"; do
         old=$(ric_pod "$c")
+        [ "$c" = e2term ] && since=$(date -u +%FT%TZ)
         kc -n ricplt logs "$old" --since=5m --timestamps >"$e/$tag-$c-before.log" 2>&1
         if [ -z "$old" ] || ! kc -n ricplt delete pod "$old" --wait=true >/dev/null; then log "ric refresh: delete $c failed"; return 1; fi
         deadline=$(($(date +%s) + 180))
@@ -296,6 +302,14 @@ ric_refresh_routes() {
         done
     done
     _wait_e2t_registered || return 1
+    if [ -n "$since" ]; then
+        deadline=$(($(date +%s) + 180))
+        until [ "$(kc -n ricplt logs "$(ric_pod e2mgr)" --since-time="$since" 2>/dev/null | grep -c 'handling E2_TERM_INIT')" -gt 0 ]; do
+            [ "$(date +%s)" -lt "$deadline" ] || { log "ric refresh: e2mgr logged no E2_TERM_INIT from the new e2term in 180s"; return 1; }
+            sleep 3
+        done
+        log "ric refresh: e2mgr handled the new e2term's E2_TERM_INIT"
+    fi
     ric_restart_rtmgr | while read -r l; do log "ric refresh: $l"; done
     [ "${PIPESTATUS[0]}" -eq 0 ] || return 1
     if ! { rt_reader_ok e2mgr "$tag" && rt_reader_ok submgr "$tag"; }; then log "ric refresh ($level): a reader is still stuck"; return 1; fi
@@ -402,7 +416,7 @@ e2mgr_image_patched() {
         --set e2mgr.image.registry=127.0.0.1:80 --set e2mgr.image.name=ric-plt-e2mgr --set "e2mgr.image.tag=${img##*:}" \
         >"$EVIDENCE_DIR/helm-upgrade-e2mgr.log" 2>&1 || { cat "$EVIDENCE_DIR/helm-upgrade-e2mgr.log"; return 1; }
     kc -n ricplt rollout status deployment/deployment-ricplt-e2mgr --timeout=300s || return 1
-    ric_refresh_routes e2mgr-image || return 1
+    ric_refresh_routes e2mgr-image --e2term || return 1
     _e2mgr_image_judge "$img" "$src" "$digest"
 }
 

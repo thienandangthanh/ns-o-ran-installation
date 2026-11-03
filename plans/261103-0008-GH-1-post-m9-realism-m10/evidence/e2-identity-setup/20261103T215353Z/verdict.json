@@ -1,0 +1,297 @@
+{
+  "gate": "e2id",
+  "ts": "20261103T215353Z",
+  "harness_sha": "d6a8bb5593b501cbb36bd50c0ef937ed70e27094",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "4bc4b715113b4f6d6bd3ea068175ad504144b872",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "48d41a50d6359043dd4b758d97f3da16da1e3133",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "b2342c664003c0ee409fb87ace345e28bd1257a3",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "e27058163dc0bb05ce279ad3fa1bd15a22fc24ab"
+  },
+  "duration_s": 837,
+  "pass": false,
+  "failed": [
+    "e2id_engnb_setup_response_decoded",
+    "e2id_engnb_meid_and_nodeb_connected_nbid_32",
+    "e2id_engnb_nodeb_gnb_en_gnb_plmn_nbid_ranfunction2",
+    "e2id_enb_setup_response_decoded",
+    "e2id_enb_meid_matches_enb_macro",
+    "e2id_enb_meid_and_nodeb_connected_nbid_20",
+    "e2id_engnb_stored_x2_request_part_decodes_and_equals_sent",
+    "e2id_enb_stored_x2_request_part_decodes_and_equals_sent",
+    "e2id_enb_received_ric_subscription_request",
+    "e2id_enb_answered_ric_subscription_response",
+    "e2id_enb_kpm_subscription_deleted",
+    "e2id_engnb_received_ric_subscription_request",
+    "e2id_engnb_answered_ric_subscription_response",
+    "e2id_engnb_kpm_subscription_deleted",
+    "e2id_engnb_subscription_delete_seen",
+    "e2id_ac6_fixture_b_ack_after_timer_is_dropped_rc_alive",
+    "e2id_ac6_fixture_a_ack_without_outcome_inside_timer_panics_rc",
+    "e2id_probe_nodebs_disconnected_after_graceful_close",
+    "e2id_engnb_resetup_setup_response_decoded",
+    "e2id_engnb_resetup_nodeb_connected_nbid_32"
+  ],
+  "checks": [
+    {
+      "name": "e2id_image_checksum_verified_and_loaded",
+      "pass": true,
+      "detail": "asn1-indep-aab70be470e0803c.tar: OK\nLoaded image: localhost/asn1-indep:aab70be470e0803c\nsha256:ac0616da81cbe0874f24119d905b1a50b7ec46e02c44e98db828634cad1c2911"
+    },
+    {
+      "name": "e2id_ric_ready_after_cold_boot",
+      "pass": true,
+      "detail": "[21:56:28] bringup ric: e2term registered with e2mgr: [{\"e2tAddress\":\"10.101.123.229:38000\",\"ranNames\":[]}]\nrt reader e2mgr deployment-ricplt-e2mgr-9b6b8f99f-qms4v: OK (5 samples, 1 sockets now, stuck [])\nrt reader submgr deployment-ricplt-submgr-858956fbdc-55dwq: OK (5 samples, 1 sockets now, stuck [])"
+    },
+    {
+      "name": "e2id_e2mgr_submgr_route_readers_ok",
+      "pass": true,
+      "detail": "rt reader e2mgr deployment-ricplt-e2mgr-9b6b8f99f-qms4v: OK (5 samples, 1 sockets now, stuck [])\nrt reader submgr deployment-ricplt-submgr-858956fbdc-55dwq: OK (5 samples, 1 sockets now, stuck [])"
+    },
+    {
+      "name": "e2id_e2term_service_resolved",
+      "pass": true,
+      "detail": "10.97.131.139:36422"
+    },
+    {
+      "name": "e2id_e2mgr_image_patched_from_pin",
+      "pass": true,
+      "detail": "expected image 127.0.0.1:80/ric-plt-e2mgr:6.0.6-nist180-85dfecb925f9 (source 09036c6ff70f15aa3e8655612c6d9681346a1943, patch set 85dfecb925f9e0529cf8fa7ea408cae77196a0228d56f01d6174106e5c814e1c; from 4bc4b715113b4f6d6bd3ea068175ad504144b872)\npod deployment-ricplt-e2mgr-cd56d8d5c-d2m8l: image 127.0.0.1:80/ric-plt-e2mgr:6.0.6-nist180-85dfecb925f9, imageID sha256:bd8379880a3b08dde397f28e1110c0ed28f6fcb75ce5b97d0fb8cbfbd0d58150, ready true\ndocker image: ID sha256:bd8379880a3b08dde397f28e1110c0ed28f6fcb75ce5b97d0fb8cbfbd0d58150, e2mgr.source.sha 09036c6ff70f15aa3e8655612c6d9681346a1943, patchset.sha256 85dfecb925f9e0529cf8fa7ea408cae77196a0228d56f01d6174106e5c814e1c"
+    },
+    {
+      "name": "e2id_fu3_rtmgr_restarted",
+      "pass": true,
+      "detail": "rtmgr deployment-ricplt-rtmgr-74fb47b69d-lnjgh -> deployment-ricplt-rtmgr-74fb47b69d-55b6h"
+    },
+    {
+      "name": "e2id_fu3_rc_ready_on_its_route_reader",
+      "pass": true,
+      "detail": "rmrClient: RMR is ready after 34 seconds waiting...\nrtmgr deployment-ricplt-rtmgr-74fb47b69d-55b6h: Update Routes to Endpoint: service-ricxapp-rc-rmr.ricxapp:4560 successful, call_id: 1, Payload length: 3841, Route Update Status: OK(# of Entries:69\nrt reader rc ricxapp-rc-6db9dcd964-k99f8: OK (5 samples, 1 sockets now, stuck [])"
+    },
+    {
+      "name": "e2id_ran_functions_copied_from_an_agent_nodeb",
+      "pass": true,
+      "detail": "e2mgr GET /v1/nodeb/gnb_001_001_00000002 on 2026-11-03 (M9-pinned ns3_e2_agent, Testbed c6d1434a), copied from probe run evidence/e2-identity-setup/20261102T184414Z; only ranFunctions is used\nfunctions [(2, '1.3.6.1.4.1.53148.1.3.2.2')]"
+    },
+    {
+      "name": "e2id_capture_started",
+      "pass": true,
+      "detail": "[22:01:38] capture e2id started on docker0 (pid 41994, filter 'ip proto 132')"
+    },
+    {
+      "name": "e2id_engnb_node_started",
+      "pass": true,
+      "detail": "505e18d3aeb0f1a3080db16c3a2c2666e11c1b7388e76513a46de4319dd03f2b\n172.17.0.2"
+    },
+    {
+      "name": "e2id_engnb_setup_response_decoded",
+      "pass": false,
+      "detail": "exit 1: node engnb: no rx E2setupResponse within 30 s\n{\"t\": 1793743298.6005929, \"dir\": \"info\", \"msg\": \"connected\", \"e2term\": \"10.97.131.139:36422\", \"ppid\": 70}\n{\"t\": 1793743298.8271677, \"dir\": \"tx\", \"msg\": \"E2setupRequest\", \"hex\": \"00010089ad000004003100020001000300092000f110507f000001000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d617020763120396366636262"
+    },
+    {
+      "name": "e2id_engnb_meid_and_nodeb_connected_nbid_32",
+      "pass": false,
+      "detail": "exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 355, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "name": "e2id_engnb_nodeb_gnb_en_gnb_plmn_nbid_ranfunction2",
+      "pass": false,
+      "detail": "exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 355, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "name": "e2id_enb_node_started",
+      "pass": true,
+      "detail": "cabf61c3f87e4ae639b973d7240b9c42df3cb8c44ae2ce85dd51ff8ccf5ffc5b\n172.17.0.3"
+    },
+    {
+      "name": "e2id_enb_setup_response_decoded",
+      "pass": false,
+      "detail": "exit 1: node enb: no rx E2setupResponse within 30 s\n{\"t\": 1793743361.7020967, \"dir\": \"info\", \"msg\": \"connected\", \"e2term\": \"10.97.131.139:36422\", \"ppid\": 70}\n{\"t\": 1793743361.924445, \"dir\": \"tx\", \"msg\": \"E2setupRequest\", \"hex\": \"000100899e000004003100020001000300086000f11000ffffe0000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d617020763120396366636262636"
+    },
+    {
+      "name": "e2id_enb_meid_matches_enb_macro",
+      "pass": false,
+      "detail": "exit 1: eNB meid(s): "
+    },
+    {
+      "name": "e2id_enb_meid_and_nodeb_connected_nbid_20",
+      "pass": false,
+      "detail": "exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 355, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "name": "e2id_e2mgr_setup_log_saved",
+      "pass": true,
+      "detail": "30"
+    },
+    {
+      "name": "e2id_e2mgr_log_has_no_empty_plmnid",
+      "pass": true,
+      "detail": "no \"empty plmnId\" line for the probe nodes"
+    },
+    {
+      "name": "e2id_engnb_stored_x2_request_part_decodes_and_equals_sent",
+      "pass": false,
+      "detail": "exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 355, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "name": "e2id_enb_stored_x2_request_part_decodes_and_equals_sent",
+      "pass": false,
+      "detail": "exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 355, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "name": "e2id_enb_nodeb_ranfunctions_recorded",
+      "pass": true,
+      "detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/usr/lib/python3.12/json/__init__.py\", line 293, in load\n    return loads(fp.read(),\n           ^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/__init__.py\", line 346, in loads\n    return _default_decoder.decode(s)\n "
+    },
+    {
+      "name": "e2id_kpm_subscription_octets_encoded",
+      "pass": true,
+      "detail": "{\"eventTrigger\": [0, 99], \"actionDefinition\": [0, 1, 1, 0, 0, 1, 0, 160, 68, 82, 66, 46, 85, 69, 84, 104, 112, 68, 108, 1, 32, 0, 0, 0, 192, 82, 82, 85, 46, 80, 114, 98, 85, 115, 101, 100, 68, 108, 1, 32, 0, 0, 0, 99], \"eventTriggerHex\": \"0063\", \"actionDefinitionHex\": \"00010100000100a04452422e5545546870446c0120000000c05252552e50726255736564446c012000000063\"}"
+    },
+    {
+      "name": "e2id_enb_kpm_subscription_accepted_by_submgr_rest",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "e2id_enb_received_ric_subscription_request",
+      "pass": false,
+      "detail": "exit 1: node enb: no rx RICsubscriptionRequest within 30 s\n{\"t\": 1793743361.7020967, \"dir\": \"info\", \"msg\": \"connected\", \"e2term\": \"10.97.131.139:36422\", \"ppid\": 70}\n{\"t\": 1793743361.924445, \"dir\": \"tx\", \"msg\": \"E2setupRequest\", \"hex\": \"000100899e000004003100020001000300086000f11000ffffe0000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d617020763120396366636262636"
+    },
+    {
+      "name": "e2id_enb_answered_ric_subscription_response",
+      "pass": false,
+      "detail": "exit 1: node enb: no tx RICsubscriptionResponse within 5 s\n{\"t\": 1793743361.7020967, \"dir\": \"info\", \"msg\": \"connected\", \"e2term\": \"10.97.131.139:36422\", \"ppid\": 70}\n{\"t\": 1793743361.924445, \"dir\": \"tx\", \"msg\": \"E2setupRequest\", \"hex\": \"000100899e000004003100020001000300086000f11000ffffe0000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d617020763120396366636262636"
+    },
+    {
+      "name": "e2id_enb_kpm_subscription_deleted",
+      "pass": false,
+      "detail": "exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 355, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "name": "e2id_enb_subscription_delete_seen",
+      "pass": true,
+      "detail": "node enb: no rx RICsubscriptionDeleteRequest within 20 s\n{\"t\": 1793743361.7020967, \"dir\": \"info\", \"msg\": \"connected\", \"e2term\": \"10.97.131.139:36422\", \"ppid\": 70}\n{\"t\": 1793743361.924445, \"dir\": \"tx\","
+    },
+    {
+      "name": "e2id_engnb_kpm_subscription_accepted_by_submgr_rest",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "e2id_engnb_received_ric_subscription_request",
+      "pass": false,
+      "detail": "exit 1: node engnb: no rx RICsubscriptionRequest within 30 s\n{\"t\": 1793743298.6005929, \"dir\": \"info\", \"msg\": \"connected\", \"e2term\": \"10.97.131.139:36422\", \"ppid\": 70}\n{\"t\": 1793743298.8271677, \"dir\": \"tx\", \"msg\": \"E2setupRequest\", \"hex\": \"00010089ad000004003100020001000300092000f110507f000001000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d617020763120396366636262"
+    },
+    {
+      "name": "e2id_engnb_answered_ric_subscription_response",
+      "pass": false,
+      "detail": "exit 1: node engnb: no tx RICsubscriptionResponse within 5 s\n{\"t\": 1793743298.6005929, \"dir\": \"info\", \"msg\": \"connected\", \"e2term\": \"10.97.131.139:36422\", \"ppid\": 70}\n{\"t\": 1793743298.8271677, \"dir\": \"tx\", \"msg\": \"E2setupRequest\", \"hex\": \"00010089ad000004003100020001000300092000f110507f000001000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d617020763120396366636262"
+    },
+    {
+      "name": "e2id_engnb_kpm_subscription_deleted",
+      "pass": false,
+      "detail": "exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 355, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "name": "e2id_engnb_subscription_delete_seen",
+      "pass": false,
+      "detail": "exit 1: node engnb: no rx RICsubscriptionDeleteRequest within 20 s\n{\"t\": 1793743298.6005929, \"dir\": \"info\", \"msg\": \"connected\", \"e2term\": \"10.97.131.139:36422\", \"ppid\": 70}\n{\"t\": 1793743298.8271677, \"dir\": \"tx\", \"msg\": \"E2setupRequest\", \"hex\": \"00010089ad000004003100020001000300092000f110507f000001000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d617020763120396366636262"
+    },
+    {
+      "name": "e2id_ac6_outcome_less_acks_encoded",
+      "pass": true,
+      "detail": "60"
+    },
+    {
+      "name": "e2id_ac6_rmr_injector_up_12041_to_rc",
+      "pass": true,
+      "detail": "injector READY, 12041 -> 10.105.249.184:4560 (127.0.0.1:80/stubqp:07c6dc93df2f)"
+    },
+    {
+      "name": "e2id_ac6_fixture_b_ack_after_timer_is_dropped_rc_alive",
+      "pass": false,
+      "detail": "exit 1: no request at the node"
+    },
+    {
+      "name": "e2id_ac6_fixture_a_ack_without_outcome_inside_timer_panics_rc",
+      "pass": false,
+      "detail": "exit 1: no request at the node"
+    },
+    {
+      "name": "e2id_ac6_injector_tx_log",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "e2id_post_panic_rtmgr_restarted",
+      "pass": true,
+      "detail": "rtmgr deployment-ricplt-rtmgr-74fb47b69d-55b6h -> deployment-ricplt-rtmgr-74fb47b69d-cd2x2"
+    },
+    {
+      "name": "e2id_post_panic_rc_ready_on_its_route_reader",
+      "pass": true,
+      "detail": "rmrClient: RMR is ready after 34 seconds waiting...\nrtmgr deployment-ricplt-rtmgr-74fb47b69d-cd2x2: Update Routes to Endpoint: service-ricxapp-rc-rmr.ricxapp:4560 successful, call_id: 1, Payload length: 3841, Route Update Status: OK(# of Entries:69\nrt reader rc ricxapp-rc-6db9dcd964-k99f8: OK (5 samples, 1 sockets now, stuck [])"
+    },
+    {
+      "name": "e2id_probe_nodes_stopped",
+      "pass": true,
+      "detail": "e2probe-enb\ne2probe-engnb\ne2probe-enb"
+    },
+    {
+      "name": "e2id_probe_nodebs_disconnected_after_graceful_close",
+      "pass": false,
+      "detail": "exit 1: en_gnb_001_001_7f000001 ABSENT;  ABSENT"
+    },
+    {
+      "name": "e2id_engnb_resetup_waited_more_than_10s",
+      "pass": true,
+      "detail": "waited 15 s after the close"
+    },
+    {
+      "name": "e2id_engnb_resetup_node_started",
+      "pass": true,
+      "detail": "048ff8e04e52b26069ac4b7446b04d1dd59033c0a94c69e064ec950ea9ef252b\n172.17.0.2"
+    },
+    {
+      "name": "e2id_engnb_resetup_setup_response_decoded",
+      "pass": false,
+      "detail": "exit 1: node engnb2: no rx E2setupResponse within 30 s\n{\"t\": 1793743612.63982, \"dir\": \"info\", \"msg\": \"connected\", \"e2term\": \"10.97.131.139:36422\", \"ppid\": 70}\n{\"t\": 1793743612.8714395, \"dir\": \"tx\", \"msg\": \"E2setupRequest\", \"hex\": \"00010089ad000004003100020001000300092000f110507f000001000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d617020763120396366636262"
+    },
+    {
+      "name": "e2id_engnb_resetup_nodeb_connected_nbid_32",
+      "pass": false,
+      "detail": "exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 355, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "name": "e2id_engnb_resetup_nodeb_saved",
+      "pass": true,
+      "detail": "saved"
+    },
+    {
+      "name": "e2id_engnb_resetup_node_stopped",
+      "pass": true,
+      "detail": "e2probe-engnb2\ne2probe-engnb2"
+    },
+    {
+      "name": "e2id_capture_stopped",
+      "pass": true,
+      "detail": "[22:07:53] capture e2id stopped: 107 packets captured 110 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "e2id_wire_every_chunk_ppid_and_e2ap_without_override",
+      "pass": true,
+      "detail": "src 172.17.0.3 (probe node) ppid 70 procedureCode : 2\nsrc 172.17.0.3 (probe node) ppid 70 procedureCode 1: 1\nprobe-node frames 9 (from ['172.17.0.2', '172.17.0.3']): PPID other than 70 0; message-final frames 3, not decoded as E2AP 0"
+    }
+  ],
+  "imageTag": "aab70be470e0803c",
+  "submgrRest": "http://10.244.0.187:8088/ric/v1/subscriptions",
+  "ac6ControlNode": "",
+  "rcRestartsBefore": 1,
+  "rcRestartsAfter": 1
+}

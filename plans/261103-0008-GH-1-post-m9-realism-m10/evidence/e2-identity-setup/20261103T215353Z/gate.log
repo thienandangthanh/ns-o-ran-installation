@@ -1,0 +1,103 @@
+[21:53:58] gate e2id start; evidence /home/uc/evidence/e2-identity-setup/20261103T215353Z; harness d6a8bb5593b501cbb36bd50c0ef937ed70e27094
+[21:53:58] ric watchdog started (pid 9882, threshold 600s)
+[21:54:02] PASS e2id_image_checksum_verified_and_loaded
+[21:57:05] PASS e2id_ric_ready_after_cold_boot
+[21:57:22] PASS e2id_e2mgr_submgr_route_readers_ok
+[21:57:22] PASS e2id_e2term_service_resolved
+[22:01:04] PASS e2id_e2mgr_image_patched_from_pin
+[22:01:28] PASS e2id_fu3_rtmgr_restarted
+[22:01:37] PASS e2id_fu3_rc_ready_on_its_route_reader
+[22:01:37] PASS e2id_ran_functions_copied_from_an_agent_nodeb
+[22:01:38] PASS e2id_capture_started
+[22:01:39] PASS e2id_engnb_node_started
+[22:02:09] FAIL e2id_engnb_setup_response_decoded: exit 1: node engnb: no rx E2setupResponse within 30 s
+{"t": 1793743298.6005929, "dir": "info", "msg": "connected", "e2term": "10.97.131.139:36422", "ppid": 70}
+{"t": 1793743298.8271677, "dir": "tx", "msg": "E2setupRequest", "hex": "00010089ad000004003100020001000300092000f110507f000001000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d617020763120396366636262
+[22:02:41] FAIL e2id_engnb_meid_and_nodeb_connected_nbid_32: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[22:02:41] FAIL e2id_engnb_nodeb_gnb_en_gnb_plmn_nbid_ranfunction2: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[22:02:42] PASS e2id_enb_node_started
+[22:03:12] FAIL e2id_enb_setup_response_decoded: exit 1: node enb: no rx E2setupResponse within 30 s
+{"t": 1793743361.7020967, "dir": "info", "msg": "connected", "e2term": "10.97.131.139:36422", "ppid": 70}
+{"t": 1793743361.924445, "dir": "tx", "msg": "E2setupRequest", "hex": "000100899e000004003100020001000300086000f11000ffffe0000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d617020763120396366636262636
+[22:03:12] FAIL e2id_enb_meid_matches_enb_macro: exit 1: eNB meid(s): 
+[22:03:42] FAIL e2id_enb_meid_and_nodeb_connected_nbid_20: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[22:03:42] PASS e2id_e2mgr_setup_log_saved
+[22:03:42] PASS e2id_e2mgr_log_has_no_empty_plmnid
+[22:03:43] FAIL e2id_engnb_stored_x2_request_part_decodes_and_equals_sent: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[22:03:43] FAIL e2id_enb_stored_x2_request_part_decodes_and_equals_sent: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[22:03:43] PASS e2id_enb_nodeb_ranfunctions_recorded
+[22:03:44] PASS e2id_kpm_subscription_octets_encoded
+[22:03:44] PASS e2id_enb_kpm_subscription_accepted_by_submgr_rest
+[22:04:14] FAIL e2id_enb_received_ric_subscription_request: exit 1: node enb: no rx RICsubscriptionRequest within 30 s
+{"t": 1793743361.7020967, "dir": "info", "msg": "connected", "e2term": "10.97.131.139:36422", "ppid": 70}
+{"t": 1793743361.924445, "dir": "tx", "msg": "E2setupRequest", "hex": "000100899e000004003100020001000300086000f11000ffffe0000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d617020763120396366636262636
+[22:04:20] FAIL e2id_enb_answered_ric_subscription_response: exit 1: node enb: no tx RICsubscriptionResponse within 5 s
+{"t": 1793743361.7020967, "dir": "info", "msg": "connected", "e2term": "10.97.131.139:36422", "ppid": 70}
+{"t": 1793743361.924445, "dir": "tx", "msg": "E2setupRequest", "hex": "000100899e000004003100020001000300086000f11000ffffe0000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d617020763120396366636262636
+[22:04:20] FAIL e2id_enb_kpm_subscription_deleted: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[22:04:40] PASS e2id_enb_subscription_delete_seen
+[22:04:40] PASS e2id_engnb_kpm_subscription_accepted_by_submgr_rest
+[22:05:10] FAIL e2id_engnb_received_ric_subscription_request: exit 1: node engnb: no rx RICsubscriptionRequest within 30 s
+{"t": 1793743298.6005929, "dir": "info", "msg": "connected", "e2term": "10.97.131.139:36422", "ppid": 70}
+{"t": 1793743298.8271677, "dir": "tx", "msg": "E2setupRequest", "hex": "00010089ad000004003100020001000300092000f110507f000001000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d617020763120396366636262
+[22:05:15] FAIL e2id_engnb_answered_ric_subscription_response: exit 1: node engnb: no tx RICsubscriptionResponse within 5 s
+{"t": 1793743298.6005929, "dir": "info", "msg": "connected", "e2term": "10.97.131.139:36422", "ppid": 70}
+{"t": 1793743298.8271677, "dir": "tx", "msg": "E2setupRequest", "hex": "00010089ad000004003100020001000300092000f110507f000001000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d617020763120396366636262
+[22:05:15] FAIL e2id_engnb_kpm_subscription_deleted: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[22:05:35] FAIL e2id_engnb_subscription_delete_seen: exit 1: node engnb: no rx RICsubscriptionDeleteRequest within 20 s
+{"t": 1793743298.6005929, "dir": "info", "msg": "connected", "e2term": "10.97.131.139:36422", "ppid": 70}
+{"t": 1793743298.8271677, "dir": "tx", "msg": "E2setupRequest", "hex": "00010089ad000004003100020001000300092000f110507f000001000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d617020763120396366636262
+[22:05:36] PASS e2id_ac6_outcome_less_acks_encoded
+[22:05:38] PASS e2id_ac6_rmr_injector_up_12041_to_rc
+[22:05:48] FAIL e2id_ac6_fixture_b_ack_after_timer_is_dropped_rc_alive: exit 1: no request at the node
+[22:05:58] FAIL e2id_ac6_fixture_a_ack_without_outcome_inside_timer_panics_rc: exit 1: no request at the node
+[22:05:58] PASS e2id_ac6_injector_tx_log
+[22:06:22] PASS e2id_post_panic_rtmgr_restarted
+[22:06:31] PASS e2id_post_panic_rc_ready_on_its_route_reader
+[22:06:31] PASS e2id_probe_nodes_stopped
+[22:06:37] FAIL e2id_probe_nodebs_disconnected_after_graceful_close: exit 1: en_gnb_001_001_7f000001 ABSENT;  ABSENT
+[22:06:52] PASS e2id_engnb_resetup_waited_more_than_10s
+[22:06:53] PASS e2id_engnb_resetup_node_started
+[22:07:23] FAIL e2id_engnb_resetup_setup_response_decoded: exit 1: node engnb2: no rx E2setupResponse within 30 s
+{"t": 1793743612.63982, "dir": "info", "msg": "connected", "e2term": "10.97.131.139:36422", "ppid": 70}
+{"t": 1793743612.8714395, "dir": "tx", "msg": "E2setupRequest", "hex": "00010089ad000004003100020001000300092000f110507f000001000a008938000008408932000002890f68304f52414e2d4532534d2d4b504d000018312e332e362e312e342e312e35333134382e312e332e322e320d806e732d4f2d52414e204b504d206d617020763120396366636262
+[22:07:53] FAIL e2id_engnb_resetup_nodeb_connected_nbid_32: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[22:07:53] PASS e2id_engnb_resetup_nodeb_saved
+[22:07:53] PASS e2id_engnb_resetup_node_stopped
+[22:07:53] PASS e2id_capture_stopped
+[22:07:54] PASS e2id_wire_every_chunk_ppid_and_e2ap_without_override
+Terminated
+[22:07:54] ric watchdog stopped (pid 9882)
+verdict e2id: FAIL failed=['e2id_engnb_setup_response_decoded', 'e2id_engnb_meid_and_nodeb_connected_nbid_32', 'e2id_engnb_nodeb_gnb_en_gnb_plmn_nbid_ranfunction2', 'e2id_enb_setup_response_decoded', 'e2id_enb_meid_matches_enb_macro', 'e2id_enb_meid_and_nodeb_connected_nbid_20', 'e2id_engnb_stored_x2_request_part_decodes_and_equals_sent', 'e2id_enb_stored_x2_request_part_decodes_and_equals_sent', 'e2id_enb_received_ric_subscription_request', 'e2id_enb_answered_ric_subscription_response', 'e2id_enb_kpm_subscription_deleted', 'e2id_engnb_received_ric_subscription_request', 'e2id_engnb_answered_ric_subscription_response', 'e2id_engnb_kpm_subscription_deleted', 'e2id_engnb_subscription_delete_seen', 'e2id_ac6_fixture_b_ack_after_timer_is_dropped_rc_alive', 'e2id_ac6_fixture_a_ack_without_outcome_inside_timer_panics_rc', 'e2id_probe_nodebs_disconnected_after_graceful_close', 'e2id_engnb_resetup_setup_response_decoded', 'e2id_engnb_resetup_nodeb_connected_nbid_32']
