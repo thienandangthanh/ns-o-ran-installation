@@ -1,0 +1,56 @@
+{
+  "gate": "idmap",
+  "ts": "20261103T072809Z",
+  "harness_sha": "876c8d60dd7c8b655cc3c0cf7fe243d29001d19d",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "809fb2d32cc0d2736d671a9d949718bae0320137",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "48d41a50d6359043dd4b758d97f3da16da1e3133",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "b2342c664003c0ee409fb87ace345e28bd1257a3",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+  },
+  "duration_s": 86,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "idmap_map_present",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "idmap_ns3_binary_located",
+      "pass": true,
+      "detail": "/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"
+    },
+    {
+      "name": "idmap_build_at_pins",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "idmap_run_nslog",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 483423 at 1793690891.129583773: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --RngRun=1 --simStartEpochMs=1767225600000 --e2TraceDir=/home/uc/evidence/identity-map-nslog/20261103T072809Z/runs/nslog/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nnslog (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "idmap_emitters_at_pins",
+      "pass": true,
+      "detail": "3 hellos, emitters [('48d41a50d6359043dd4b758d97f3da16da1e3133', 'b2342c664003c0ee409fb87ace345e28bd1257a3')]"
+    },
+    {
+      "name": "idmap_rrc_log_agrees_with_the_map_imsi_for_imsi",
+      "pass": true,
+      "detail": "{\"masterNode\": [5], \"imsis\": 6, \"pass\": true}"
+    },
+    {
+      "name": "idmap_pdcp_rerun_at_pins_equals_the_map",
+      "pass": true,
+      "detail": "pdcp re-run map equal: True"
+    }
+  ]
+}

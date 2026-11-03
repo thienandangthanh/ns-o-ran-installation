@@ -1,0 +1,46 @@
+{"key":"mode","value":"c1"}
+{"key":"deltaMs","value":100}
+{"key":"stage","value":""}
+{"key":"dev","value":false}
+{"key":"tCtlSeconds","value":30}
+{"key":"tCtlProvenance","value":"evidence/r0/20261023T065002Z calibration: L_max 12.919 ms over 10 complete trigger steps, T_ctl = max(30 s, ceil(20 x L_max)) = 30 s; host load 1.03 (20 CPUs), VM load 1.29; CPU hold released by the user 15:44 KST"}
+{"key":"wSeconds","value":1.0}
+{"key":"wProvenance","value":"evidence/r3p/20261028T042540Z calibration (gate-r3p --mode calibrate, harness f614311): R2's fixed-prediction block through the R3\u2032 prepare path, 25 complete one-control trigger steps, L_max 5.395 ms (= p99.9 by nearest rank at n = 25), W = max(1 s, 3 x L_max) = 1.0 s; 20 x L_max <= T_ctl"}
+{"key":"a1Threshold","value":10}
+{"key":"a1ThresholdProvenance","value":"scripts/gates/r2-scenario.json threshold 10 (n2 is a neighbour 5 % above serving, under it), set and reached in the R2 calibration evidence/r2/20261026T140350Z"}
+{"key":"substitution2Applied","value":true}
+{"key":"substitution3Applied","value":true}
+{"key":"outageThresholdDb","value":-1000}
+{"key":"outageThresholdProvenance","value":"substitution 1: the R0-config null-control run at the default -5 dB counted 5 LTE outage switches (evidence/r0/20261023T073520Z q2OutageSwitches 5; also 065002Z, 065551Z); gated runs use --outageThreshold=-1000"}
+{"key":"scenarioSha256","value":"7824c744034bb812c3f04808e9b6f1d93571521b447b357597b8e65bc47464f6"}
+{"key":"handoverTriggers","value":1}
+{"key":"vmLoadStart","value":" 07:29:47 up  3:21,  0 user,  load average: 0.89, 0.95, 0.83"}
+{"key":"a1PolicyTypeCreated","value":false}
+{"key":"xappImageIds","value":{"trafficxapp": "sha256:f521d56b24b41eed4137a0683b740e687f81e41c7d49ef68221879c59ab3d0d5", "stubqp": "sha256:b3d63a31063b5461ed4592f05515f98130057fdacf4dc693ae48a8e6fe457401", "stubqpImage": "127.0.0.1:80/stubqp:07c6dc93df2f"}}
+{"key":"a1ThresholdAttempt_live1","value":2}
+{"key":"a1DeliveredAttempt_live1","value":1}
+{"key":"a1mediatorRestart_live1","value":{"fresh": true, "problems": []}}
+{"key":"a1ThresholdAttempt_live2","value":2}
+{"key":"a1DeliveredAttempt_live2","value":1}
+{"key":"a1mediatorRestart_live2","value":{"fresh": true, "problems": []}}
+{"key":"a1ThresholdAttempt_live3","value":2}
+{"key":"a1DeliveredAttempt_live3","value":1}
+{"key":"a1mediatorRestart_live3","value":{"fresh": true, "problems": []}}
+{"key":"rng2","value":{"ns3Exit": 0, "late": 0, "droppedNoSub": 0, "minSlackTGate": 9.999164}}
+{"key":"c1","value":{"liveRunsEqual": true, "replayEqual": true, "rngRun2Differs": true}}
+{"key":"kpmUeListMoved","value":{"1": true}}
+{"key":"c2","value":{"live1": {"agentLocal": 0, "answers": 1, "holds": true, "ledgerLines": 1}, "live2": {"agentLocal": 0, "answers": 1, "holds": true, "ledgerLines": 1}, "live3": {"agentLocal": 0, "answers": 1, "holds": true, "ledgerLines": 1}}}
+{"key":"c5","value":{"answerViaNodeId": true, "pairsByReqId": true, "perRun": {"live1": {"answerViaNodeId": true, "pairsByReqId": true}, "live2": {"answerViaNodeId": true, "pairsByReqId": true}, "live3": {"answerViaNodeId": true, "pairsByReqId": true}}}}
+{"key":"resetEvidence","value":{"live1": {"bucketAfter": ["dc561ca9e48c3150"], "bucketBefore": ["930c3d5e5fd563ad"], "fresh": true, "podsAfter": {"ricxapp-hw-go": {"containerStartedAt": ["2026-11-03T07:35:50Z"], "name": "ricxapp-hw-go-c84579888-xbqgg", "startTime": "2026-11-03T07:35:49Z", "uid": "d72ecc1c-6eb0-4f16-ae40-ba3a45d2f09e"}, "ricxapp-kpimon-go": {"containerStartedAt": ["2026-11-03T07:35:50Z"], "name": "ricxapp-kpimon-go-85dc5fdf8b-gtclq", "startTime": "2026-11-03T07:35:49Z", "uid": "e49f7cdc-4c4a-4c63-b3a9-5ac3a8cdda5e"}, "xapp-rc": {"containerStartedAt": ["2026-11-03T07:35:49Z"], "name": "ricxapp-rc-6db9dcd964-nrvch", "startTime": "2026-11-03T07:35:49Z", "uid": "b6b0cc97-b598-4310-aacf-0cbd6742299b"}}, "resetStartUtc": "2026-11-03T07:35:48Z"}, "live2": {"bucketAfter": ["0a4d93bb60489b61"], "bucketBefore": ["dc561ca9e48c3150"], "fresh": true, "podsAfter": {"ricxapp-hw-go": {"containerStartedAt": ["2026-11-03T07:40:26Z"], "name": "ricxapp-hw-go-c84579888-9nl64", "startTime": "2026-11-03T07:40:26Z", "uid": "c9846080-a145-479e-9232-5faa8f94d43e"}, "ricxapp-kpimon-go": {"containerStartedAt": ["2026-11-03T07:40:26Z"], "name": "ricxapp-kpimon-go-85dc5fdf8b-qjnhk", "startTime": "2026-11-03T07:40:25Z", "uid": "570a0a4d-487f-4b16-a95d-21ced49b6ed4"}, "xapp-rc": {"containerStartedAt": ["2026-11-03T07:40:26Z"], "name": "ricxapp-rc-6db9dcd964-8mlg2", "startTime": "2026-11-03T07:40:25Z", "uid": "67a02b64-40ac-4743-8f25-286dba23a097"}}, "resetStartUtc": "2026-11-03T07:40:25Z"}, "live3": {"bucketAfter": ["dae60d837fbbe187"], "bucketBefore": ["0a4d93bb60489b61"], "fresh": true, "podsAfter": {"ricxapp-hw-go": {"containerStartedAt": ["2026-11-03T07:45:08Z"], "name": "ricxapp-hw-go-c84579888-xwxcg", "startTime": "2026-11-03T07:45:07Z", "uid": "00170ef6-af57-4210-b192-c573f25eeec1"}, "ricxapp-kpimon-go": {"containerStartedAt": ["2026-11-03T07:45:08Z"], "name": "ricxapp-kpimon-go-85dc5fdf8b-xt9xj", "startTime": "2026-11-03T07:45:07Z", "uid": "ca02069f-26ac-4cdd-8c2f-381ea0c4625b"}, "xapp-rc": {"containerStartedAt": ["2026-11-03T07:45:08Z"], "name": "ricxapp-rc-6db9dcd964-dbfwp", "startTime": "2026-11-03T07:45:07Z", "uid": "151938c7-53d1-4d3a-86da-1e423ca6ff8f"}}, "resetStartUtc": "2026-11-03T07:45:07Z"}}}
+{"key":"predictorDrivenApplied","value":{"live1": 1, "live2": 1, "live3": 1}}
+{"key":"observationChange","value":{"live1": {"h1": "none", "n1": "handover"}, "live2": {"h1": "none", "n1": "handover"}, "live3": {"h1": "none", "n1": "handover"}}}
+{"key":"minSlack","value":{"T_start": 119.999704, "T_gate": 9.99704, "T_ctl": 29.995349, "W": null}}
+{"key":"lControlLatencyS","value":[0.004393, 0.004607, 0.004651]}
+{"key":"ipcDropped","value":0}
+{"key":"droppedNoSub","value":0}
+{"key":"restartCountsAllZero","value":true}
+{"key":"restartCounts","value":{"live1/hw-go": 0, "live1/kpimon": 0, "live1/rc": 0, "live1/qp-stub": 0, "live1/ts-xapp": 0, "live1/agent-3": 0, "live1/agent-2": 0, "live1/agent-1": 0, "live2/hw-go": 0, "live2/kpimon": 0, "live2/rc": 0, "live2/qp-stub": 0, "live2/ts-xapp": 0, "live2/agent-3": 0, "live2/agent-2": 0, "live2/agent-1": 0, "live3/hw-go": 0, "live3/kpimon": 0, "live3/rc": 0, "live3/qp-stub": 0, "live3/ts-xapp": 0, "live3/agent-3": 0, "live3/agent-2": 0, "live3/agent-1": 0}}
+{"key":"routeOwner12041","value":{"live1": {"start": {"rtmgr": "service-ricxapp-trafficxapp-rmr.ricxapp:4560", "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-hw-go-rmr.ricxapp:4560", "e2term": "service-ricxapp-hw-go-rmr.ricxapp:4560"}}, "live2": {"start": {"rtmgr": "service-ricxapp-rc-rmr.ricxapp:4560", "e2term": "service-ricxapp-trafficxapp-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-kpimon-go-rmr.ricxapp:4560", "e2term": "service-ricxapp-trafficxapp-rmr.ricxapp:4560"}}, "live3": {"start": {"rtmgr": "service-ricxapp-hw-go-rmr.ricxapp:4560", "e2term": "service-ricxapp-kpimon-go-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-rc-rmr.ricxapp:4560", "e2term": "service-ricxapp-kpimon-go-rmr.ricxapp:4560"}}}}
+{"key":"routeOwner12042","value":{"live1": {"start": {"rtmgr": "service-ricxapp-trafficxapp-rmr.ricxapp:4560", "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-hw-go-rmr.ricxapp:4560", "e2term": "service-ricxapp-hw-go-rmr.ricxapp:4560"}}, "live2": {"start": {"rtmgr": "service-ricxapp-rc-rmr.ricxapp:4560", "e2term": "service-ricxapp-trafficxapp-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-kpimon-go-rmr.ricxapp:4560", "e2term": "service-ricxapp-trafficxapp-rmr.ricxapp:4560"}}, "live3": {"start": {"rtmgr": "service-ricxapp-hw-go-rmr.ricxapp:4560", "e2term": "service-ricxapp-kpimon-go-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-rc-rmr.ricxapp:4560", "e2term": "service-ricxapp-kpimon-go-rmr.ricxapp:4560"}}}}
+{"key":"tsOrStubHeldAckRoute","value":{"live1": true, "live2": true, "live3": false}}
+{"key":"vmLoadEnd","value":" 07:52:13 up  3:44,  0 user,  load average: 1.06, 0.79, 0.75"}

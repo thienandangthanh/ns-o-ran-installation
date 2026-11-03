@@ -1,0 +1,146 @@
+{
+  "gate": "dseam",
+  "ts": "20261103T072158Z",
+  "harness_sha": "876c8d60dd7c8b655cc3c0cf7fe243d29001d19d",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "809fb2d32cc0d2736d671a9d949718bae0320137",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "48d41a50d6359043dd4b758d97f3da16da1e3133",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "b2342c664003c0ee409fb87ace345e28bd1257a3",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+  },
+  "duration_s": 347,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "dseam_ns3_binary_located",
+      "pass": true,
+      "detail": "/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"
+    },
+    {
+      "name": "dseam_build_at_pins_clean_and_carries_the_seam",
+      "pass": true,
+      "detail": "ns-3 48d41a50d6359043dd4b758d97f3da16da1e3133 (pin 48d41a50d6359043dd4b758d97f3da16da1e3133)\noran-interface b2342c664003c0ee409fb87ace345e28bd1257a3 (pin b2342c664003c0ee409fb87ace345e28bd1257a3)"
+    },
+    {
+      "name": "dseam_run_d0",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 474954 at 1793690519.984143533: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --simStartEpochMs=1767225600000 --simStartEpochMs=1767225600000 --actuationDelayMs=0 --e2TraceDir=/home/uc/evidence/delta-seam-smoke/20261103T072158Z/runs/d0/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nd0 (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "dseam_d0_ledger_checks",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "dseam_d0_one_ack_per_ledger_line",
+      "pass": true,
+      "detail": "ledger 8 lines, 8 acks, outcomes [('applied', ''), ('refused', 'alreadyOnTarget'), ('refused', 'inHandover'), ('refused', 'late'), ('refused', 'lteFallback'), ('refused', 'unknownImsi'), ('refused', 'unknownTarget')]"
+    },
+    {
+      "name": "dseam_run_d150",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 476151 at 1793690577.606961214: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --simStartEpochMs=1767225600000 --simStartEpochMs=1767225600000 --actuationDelayMs=150 --e2TraceDir=/home/uc/evidence/delta-seam-smoke/20261103T072158Z/runs/d150/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nd150 (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "dseam_d150_ledger_checks",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "dseam_d150_one_ack_per_ledger_line",
+      "pass": true,
+      "detail": "ledger 8 lines, 8 acks, outcomes [('applied', ''), ('refused', 'alreadyOnTarget'), ('refused', 'inHandover'), ('refused', 'late'), ('refused', 'lteFallback'), ('refused', 'unknownImsi'), ('refused', 'unknownTarget')]"
+    },
+    {
+      "name": "dseam_run_d500",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 477412 at 1793690636.180482783: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --simStartEpochMs=1767225600000 --simStartEpochMs=1767225600000 --actuationDelayMs=500 --e2TraceDir=/home/uc/evidence/delta-seam-smoke/20261103T072158Z/runs/d500/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nd500 (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "dseam_d500_ledger_checks",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "dseam_d500_one_ack_per_ledger_line",
+      "pass": true,
+      "detail": "ledger 8 lines, 8 acks, outcomes [('applied', ''), ('refused', 'inHandover'), ('refused', 'late'), ('refused', 'lteFallback'), ('refused', 'unknownImsi'), ('refused', 'unknownTarget')]"
+    },
+    {
+      "name": "dseam_outcomes_per_delta_informational",
+      "pass": true,
+      "detail": "same at every delta: False"
+    },
+    {
+      "name": "dseam_run_d500stop",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 478684 at 1793690693.326001332: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --simStartEpochMs=1767225600000 --simStartEpochMs=1767225600000 --actuationDelayMs=500 --e2TraceDir=/home/uc/evidence/delta-seam-smoke/20261103T072158Z/runs/d500stop/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nd500stop (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "dseam_d500stop_ledger_checks",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "dseam_d0_emitters_at_pins",
+      "pass": true,
+      "detail": "3 hellos, emitters [('48d41a50d6359043dd4b758d97f3da16da1e3133', 'b2342c664003c0ee409fb87ace345e28bd1257a3')]"
+    },
+    {
+      "name": "dseam_d500stop_pending_control_gets_one_late_failure",
+      "pass": true,
+      "detail": "ledger [{'rxSeq': 97, 'rxSimTimeNs': 9700800000, 'applySimTimeNs': 10000000000, 'viaNodeId': 2, 'ctlId': 1, 'afterSeq': 97, 'imsi': 2, 'sourceCell': 0, 'targetCell': 3, 'outcome': 'refused', 'cause': 'late'}] acks [{'type': 'controlAck', 'v': 1, 'nodeId': 2, 'ctlId': 1, 'outcome': 'refused', 'cause': 'late', 'seq': 97, 'applySimTimeNs': 10000000000, 'sourceCellId': 0}]"
+    },
+    {
+      "name": "dseam_d500stop_one_ack",
+      "pass": true,
+      "detail": "ledger 1 lines, 1 acks, outcomes [('refused', 'late')]"
+    },
+    {
+      "name": "dseam_run_d150stop",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 479956 at 1793690751.343494008: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --simStartEpochMs=1767225600000 --simStartEpochMs=1767225600000 --actuationDelayMs=150 --e2TraceDir=/home/uc/evidence/delta-seam-smoke/20261103T072158Z/runs/d150stop/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nd150stop (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "dseam_d150stop_ledger_checks",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "dseam_d150stop_scheduled_event_cancelled_one_late_failure",
+      "pass": true,
+      "detail": "ledger [{'rxSeq': 99, 'rxSimTimeNs': 9900800000, 'applySimTimeNs': 10000000000, 'viaNodeId': 2, 'ctlId': 1, 'afterSeq': 99, 'imsi': 2, 'sourceCell': 0, 'targetCell': 3, 'outcome': 'refused', 'cause': 'late'}] acks [{'type': 'controlAck', 'v': 1, 'nodeId': 2, 'ctlId': 1, 'outcome': 'refused', 'cause': 'late', 'seq': 99, 'applySimTimeNs': 10000000000, 'sourceCellId': 0}]"
+    },
+    {
+      "name": "dseam_d150stop_one_ack",
+      "pass": true,
+      "detail": "ledger 1 lines, 1 acks, outcomes [('refused', 'late')]"
+    },
+    {
+      "name": "dseam_run_d100tie",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 481232 at 1793690809.102148403: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --simStartEpochMs=1767225600000 --simStartEpochMs=1767225600000 --actuationDelayMs=100 --e2TraceDir=/home/uc/evidence/delta-seam-smoke/20261103T072158Z/runs/d100tie/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nd100tie (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "dseam_d100tie_ledger_checks",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "dseam_d100tie_due_batch_before_late_refusal_new_batch_next_barrier",
+      "pass": true,
+      "detail": "got  [((2, 1), 20, False, 2100800000), ((2, 2), 21, True, 2100800000), ((3, 1), 21, False, 2200800000)]\nwant [((2, 1), 20, False, 2100800000), ((2, 2), 21, True, 2100800000), ((3, 1), 21, False, 2200800000)]"
+    },
+    {
+      "name": "dseam_d100tie_one_ack_per_ledger_line",
+      "pass": true,
+      "detail": "ledger 3 lines, 3 acks, outcomes [('refused', 'alreadyOnTarget'), ('refused', 'late'), ('refused', 'lteFallback')]"
+    }
+  ]
+}
