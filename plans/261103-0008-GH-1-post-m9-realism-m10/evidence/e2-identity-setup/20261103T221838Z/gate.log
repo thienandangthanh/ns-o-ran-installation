@@ -1,0 +1,54 @@
+[22:18:42] gate e2id start; evidence /home/uc/evidence/e2-identity-setup/20261103T221838Z; harness 01a18273cf16745390410fd3e7dc34f69cb48d58
+[22:18:42] ric watchdog started (pid 4770, threshold 600s)
+[22:18:54] PASS e2id_image_checksum_verified_and_loaded
+[22:22:32] PASS e2id_ric_ready_after_cold_boot
+[22:22:49] PASS e2id_e2mgr_submgr_route_readers_ok
+[22:22:49] PASS e2id_e2term_service_resolved
+[22:28:46] PASS e2id_e2mgr_image_patched_from_pin
+[22:29:11] PASS e2id_fu3_rtmgr_restarted
+[22:29:19] PASS e2id_fu3_rc_ready_on_its_route_reader
+[22:29:19] PASS e2id_ran_functions_copied_from_an_agent_nodeb
+[22:29:20] PASS e2id_capture_started
+[22:29:21] PASS e2id_engnb_node_started
+[22:29:24] PASS e2id_engnb_setup_response_decoded
+[22:29:24] PASS e2id_engnb_meid_and_nodeb_connected_nbid_32
+[22:29:24] PASS e2id_engnb_nodeb_gnb_en_gnb_plmn_nbid_ranfunction2
+[22:29:26] PASS e2id_enb_node_started
+[22:29:29] PASS e2id_enb_setup_response_decoded
+[22:29:29] PASS e2id_enb_meid_matches_enb_macro
+[22:29:29] PASS e2id_enb_meid_and_nodeb_connected_nbid_20
+[22:29:29] PASS e2id_e2mgr_setup_log_saved
+[22:29:29] PASS e2id_e2mgr_log_has_no_empty_plmnid
+[22:29:30] PASS e2id_engnb_stored_x2_request_part_decodes_and_equals_sent
+[22:29:31] PASS e2id_enb_stored_x2_request_part_decodes_and_equals_sent
+[22:29:31] PASS e2id_enb_nodeb_ranfunctions_recorded
+[22:29:32] PASS e2id_kpm_subscription_octets_encoded
+[22:29:32] PASS e2id_enb_kpm_subscription_accepted_by_submgr_rest
+[22:29:32] PASS e2id_enb_received_ric_subscription_request
+[22:29:32] PASS e2id_enb_answered_ric_subscription_response
+[22:29:32] PASS e2id_enb_kpm_subscription_deleted
+[22:29:32] PASS e2id_enb_subscription_delete_seen
+[22:29:32] PASS e2id_engnb_kpm_subscription_accepted_by_submgr_rest
+[22:29:32] PASS e2id_engnb_received_ric_subscription_request
+[22:29:32] PASS e2id_engnb_answered_ric_subscription_response
+[22:29:32] PASS e2id_engnb_kpm_subscription_deleted
+[22:29:32] PASS e2id_engnb_subscription_delete_seen
+[22:29:33] PASS e2id_ac6_outcome_less_acks_encoded
+[22:29:35] PASS e2id_ac6_rmr_injector_up_12041_to_rc
+[22:29:53] PASS e2id_ac6_fixture_b_ack_after_timer_is_dropped_rc_alive
+[22:29:55] PASS e2id_ac6_fixture_a_ack_without_outcome_inside_timer_panics_rc
+[22:29:55] PASS e2id_ac6_injector_tx_log
+[22:30:20] PASS e2id_post_panic_rtmgr_restarted
+[22:30:28] PASS e2id_post_panic_rc_ready_on_its_route_reader
+[22:30:29] PASS e2id_probe_nodes_stopped
+[22:30:34] PASS e2id_probe_nodebs_disconnected_after_graceful_close
+[22:30:49] PASS e2id_engnb_resetup_waited_more_than_10s
+[22:30:50] PASS e2id_engnb_resetup_node_started
+[22:30:53] PASS e2id_engnb_resetup_setup_response_decoded
+[22:30:53] PASS e2id_engnb_resetup_nodeb_connected_nbid_32
+[22:30:53] PASS e2id_engnb_resetup_nodeb_saved
+[22:30:54] PASS e2id_engnb_resetup_node_stopped
+[22:30:54] PASS e2id_capture_stopped
+[22:30:55] PASS e2id_wire_every_chunk_ppid_and_e2ap_without_override
+[22:30:55] ric watchdog stopped (pid 4770)
+verdict e2id: PASS failed=[]
