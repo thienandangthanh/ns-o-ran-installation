@@ -162,18 +162,29 @@ _agents_wait_connected_exact() {
 }
 
 # agents_install_image: build the agent image unless run/image.env names an existing image built from this
-# map at this Testbed commit (tag ns3-e2-agent:<short12 of the agent tree's HEAD>, the installer's convention).
+# map at the pinned Testbed commit. The tag is ns3-e2-agent:<short12 of $TESTBED_SHA>, passed to the installer as
+# NS3_E2_AGENT_TAG: agents_tree_at_testbed_sha has just verified that ns3_e2_agent/ equals $TESTBED_SHA's, while
+# the tree's HEAD may be older (a snapshot's tree with a partial checkout), so a HEAD-keyed tag could name an
+# image built from older agent sources.
 agents_install_image() {
-    local envf="$AGENT_DIR/run/image.env" image mapsha want
+    local envf="$AGENT_DIR/run/image.env" image mapsha want tag
     image=$(sed -n 's/^NS3_E2_AGENT_IMAGE=//p' "$envf" 2>/dev/null)
     mapsha=$(sed -n 's/^NS3_E2_AGENT_METRIC_MAP_SHA256=//p' "$envf" 2>/dev/null)
-    want="ns3-e2-agent:$(git -C "$AGENT_DIR" rev-parse --short=12 HEAD)"
+    tag=$(git -C "$AGENT_DIR" rev-parse --short=12 "$TESTBED_SHA") || return 1
+    want="ns3-e2-agent:$tag"
+    # The pin's name goes only on an image built from the pin's agent sources: a failed tree check does not stop a gate.
+    git -C "$RIC_DIR" diff --quiet "$TESTBED_SHA" -- ns3_e2_agent &&
+        [ -z "$(git -C "$RIC_DIR" ls-files --others --exclude-standard -- ns3_e2_agent)" ] || {
+        log "bringup agents: ns3_e2_agent/ is not $TESTBED_SHA's; refusing to name an image after the pin"
+        return 1
+    }
     if [ "$image" = "$want" ] && dk image inspect "$image" >/dev/null 2>&1 &&
         [ "$mapsha" = "$(sha256sum "$AGENT_DIR/schema/metric-map.v1.json" | cut -d' ' -f1)" ]; then
         log "bringup agents: image $image exists (Testbed commit and map sha match); not rebuilding"
     else
         log "bringup agents: building the agent image (install_ns3_e2_agent.sh, bound 3600s)"
-        nist_run 3600 "$AGENT_DIR/install_scripts/install_ns3_e2_agent.sh" >"$EVIDENCE_DIR/install-agent-image.log" 2>&1 || {
+        NS3_E2_AGENT_TAG="$tag" nist_run 3600 "$AGENT_DIR/install_scripts/install_ns3_e2_agent.sh" \
+            >"$EVIDENCE_DIR/install-agent-image.log" 2>&1 || {
             tail -n 20 "$EVIDENCE_DIR/install-agent-image.log"; return 1; }
     fi
     image=$(sed -n 's/^NS3_E2_AGENT_IMAGE=//p' "$envf" 2>/dev/null)

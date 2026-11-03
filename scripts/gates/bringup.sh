@@ -322,6 +322,14 @@ kpm_sim_image_ppid_patched() {
     local patch="install_patch_files/e2-interface/e2sim/src/SCTP/e2sim_sctp.cpp" want have
     git -C "$RIC_DIR" cat-file -e "$TESTBED_SHA^{commit}" 2>/dev/null ||
         GIT_TERMINAL_PROMPT=0 git -C "$RIC_DIR" fetch -q "$TESTBED_URL" "$TESTBED_SHA" || return 1
+    # The same tree rule as M3's nist_tree_at_testbed_sha: a tree with clean tracked files moves to $TESTBED_SHA as
+    # a whole, so later gates find it at the pin. The e2sim files are then always taken from $TESTBED_SHA (a no-op on
+    # a clean tree at the pin), so the sha compared below is the pinned patch file's on a tree NIST's installer edited.
+    if [ "$(git -C "$RIC_DIR" rev-parse HEAD)" != "$TESTBED_SHA" ] &&
+        [ -z "$(git -C "$RIC_DIR" status --porcelain --untracked-files=no)" ]; then
+        git -C "$RIC_DIR" checkout -q --detach "$TESTBED_SHA" || return 1
+        echo "clean tree: detached checkout of $TESTBED_SHA"
+    fi
     git -C "$RIC_DIR" checkout "$TESTBED_SHA" -- install_scripts/install_e2sim.sh install_patch_files/e2-interface || return 1
     want=$(sha256sum <"$RIC_DIR/$patch" | cut -d' ' -f1)
     have=$(dk image inspect --format '{{index .Config.Labels "e2sim.sctp.sha256"}}' oransim:0.0.999 2>/dev/null)
