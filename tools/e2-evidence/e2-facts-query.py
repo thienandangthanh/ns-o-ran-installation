@@ -7,6 +7,13 @@ its evidence and exits 0 (pass) or 1 (fail).
   setup-request   --func-id N --oid OID --short-name S --gnb-id N --plmn HEX [--not-gnb-id-hex HEX]
   setup-response  --func-id N
   subscription    --func-id N [--after EPOCH]      request (RIC->agent) answered by a response
+  sub-period      --period-ms P [--granul-ms G] [--after EPOCH]   every request has KPM reportingPeriod P (and every
+                                                    action granulPeriod G) and is answered by a response
+                                                    (granulPeriod only decodes where tshark's KPM v3 dissector gets
+                                                    through the action definition; it stops on some Format 3 lists,
+                                                    so gates evidence the granularity by records per indication)
+  sub-failure     --cause GROUP:INDEX [--after EPOCH]   a request answered by a RIC SUBSCRIPTION FAILURE with that
+                                                    cause, and no request in the window answered by a response
   assoc-start     --service-ip IP --before EPOCH [--sctp-port 36422]   one ESTABLISHED association per node before EPOCH
   no-abort        --from EPOCH --to EPOCH           ABORT chunks inside the window (also lists the rest)
   post-delete     --service-ip IP --after EPOCH --func-id N [--timeline-out F]
@@ -84,6 +91,46 @@ def q_subscription(f, a):
     answered = {(r["requestor"], r["instance"]) for r in resps}
     if not any((r["requestor"], r["instance"]) in answered for r in reqs):
         bad.append("no response matches a request (requestor, instance)")
+    return bad
+
+
+def _window(f, key, a):
+    return [r for r in f.get(key, []) if r["t"] >= (a.after or 0)]
+
+
+def q_sub_period(f, a):
+    reqs, resps = _window(f, "sub_requests", a), _window(f, "sub_responses", a)
+    print("RICsubscriptionRequests (frame, reportingPeriod, granulPeriods): %s" % [
+        (r["frame"], r.get("reporting_period_ms"), r.get("granul_periods_ms")) for r in reqs])
+    if not reqs:
+        return ["no RICsubscriptionRequest in the window"]
+    bad = []
+    for r in reqs:
+        if r.get("reporting_period_ms") != a.period_ms:
+            bad.append("frame %d: reportingPeriod %s != %d" % (r["frame"], r.get("reporting_period_ms"), a.period_ms))
+        g = r.get("granul_periods_ms") or []
+        if a.granul_ms is not None and (not g or any(x != a.granul_ms for x in g)):
+            bad.append("frame %d: granulPeriods %s != %d" % (r["frame"], g, a.granul_ms))
+    answered = {(r["requestor"], r["instance"]) for r in resps}
+    if not any((r["requestor"], r["instance"]) in answered for r in reqs):
+        bad.append("no request answered by a RIC SUBSCRIPTION RESPONSE")
+    return bad
+
+
+def q_sub_failure(f, a):
+    reqs, resps, fails = _window(f, "sub_requests", a), _window(f, "sub_responses", a), _window(f, "sub_failures", a)
+    print("RICsubscriptionRequests: %s" % [(r["frame"], r["requestor"], r["instance"], r.get("reporting_period_ms")) for r in reqs])
+    print("RICsubscriptionFailures: %s" % [(r["frame"], r["requestor"], r["instance"], r.get("cause"), r.get("cause_label")) for r in fails])
+    print("RICsubscriptionResponses: %s" % [(r["frame"], r["requestor"], r["instance"]) for r in resps])
+    bad = []
+    asked = {(r["requestor"], r["instance"]) for r in reqs}
+    hit = [r for r in fails if (r["requestor"], r["instance"]) in asked]
+    if not hit:
+        bad.append("no RIC SUBSCRIPTION FAILURE answers a request in the window")
+    if any(r.get("cause") != a.cause for r in hit):
+        bad.append("failure cause %s != %s" % (sorted({r.get("cause") for r in hit}, key=str), a.cause))
+    if resps:
+        bad.append("%d RIC SUBSCRIPTION RESPONSE(s) in the window" % len(resps))
     return bad
 
 
@@ -320,6 +367,7 @@ def q_indications(f, a):
 
 
 QUERIES = {"setup-request": q_setup_request, "setup-response": q_setup_response, "subscription": q_subscription,
+           "sub-period": q_sub_period, "sub-failure": q_sub_failure,
            "assoc-start": q_assoc_start, "no-abort": q_no_abort, "post-delete": q_post_delete,
            "indications": q_indications, "service-ip": q_service_ip, "associations": q_associations}
 
@@ -335,6 +383,9 @@ def main():
     ap.add_argument("--plmn")
     ap.add_argument("--not-gnb-id-hex")
     ap.add_argument("--after", type=float)
+    ap.add_argument("--period-ms", type=int)
+    ap.add_argument("--granul-ms", type=int)
+    ap.add_argument("--cause")
     ap.add_argument("--before", type=float)
     ap.add_argument("--from", dest="from_", type=float)
     ap.add_argument("--to", type=float)

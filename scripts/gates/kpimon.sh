@@ -7,7 +7,7 @@
 #   nist_run <timeout-s> <cmd...>        OVERRIDE of lib.sh nist_run (see below)
 #   nist_tree_at_testbed_sha             make ~/nist carry the fork files at $TESTBED_SHA
 #   kpimon_pod_info                      "<name> <ready:true|false> <created-epoch> <restarts>" of the newest live pod
-#   kpimon_install <true|false> <log>    NIST installer, CLEAN_INSTALL=true, KPIMON_TIMESTAMP_SIZE8=<arg>
+#   kpimon_install <true|false> <log>    NIST installer, CLEAN_INSTALL=true, KPIMON_TIMESTAMP_SIZE8=<arg>, KPM period/granularity
 #   kpimon_log_counts <logfile>          K13 counts as key=value lines
 #   influx_rows <range>                  Flux row counts (total + per measurement) via the influx CLI inside the pod
 #   harness_analyze <tag> <pcap> <so-dir> <expect-ts>   pcap -> lines -> kpimon decoder -> <tag> decode summary
@@ -183,10 +183,13 @@ kpimon_install_retry() {
     return "$rc"
 }
 
-# kpimon_install <size8:true|false> <logfile>
+# kpimon_install <size8:true|false> <logfile>: the KPM reporting period and granularity are model parameters, from
+# rung-config.json kpm.* unless KPIMON_REPORTING_PERIOD_MS / KPIMON_GRANULARITY_PERIOD_MS are set (gate p12 varies them).
 kpimon_install() {
-    local size8="$1" log="$2" rc
-    local envs="CLEAN_INSTALL=true KPIMON_TIMESTAMP_SIZE8=$size8"
+    local size8="$1" log="$2" rc rp gp
+    rp="${KPIMON_REPORTING_PERIOD_MS:-$(python3 -I "$HARNESS_DIR/scripts/gates/rung-config.py" get kpm.reportingPeriodMs)}" || return 1
+    gp="${KPIMON_GRANULARITY_PERIOD_MS:-$(python3 -I "$HARNESS_DIR/scripts/gates/rung-config.py" get kpm.granularityPeriodMs)}" || return 1
+    local envs="CLEAN_INSTALL=true KPIMON_TIMESTAMP_SIZE8=$size8 KPIMON_REPORTING_PERIOD_MS=$rp KPIMON_GRANULARITY_PERIOD_MS=$gp"
     (
         cd "$RIC_DIR" || exit 1
         # shellcheck disable=SC2086
@@ -196,7 +199,7 @@ kpimon_install() {
     # hold a pipe open forever); redact the file afterwards instead.
     rc=$?
     redact_stream <"$log.raw" >"$log"; rm -f "$log.raw"
-    echo "installer exit $rc (size8=$size8); log $log"
+    echo "installer exit $rc (size8=$size8, reporting period $rp ms, granularity $gp ms); log $log"
     tail -n 8 "$log"
     return "$rc"
 }

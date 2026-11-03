@@ -54,6 +54,22 @@ good["ind_events"] = [ev(20 + i, ts, ip, svc, sp, 36422) for i, (ts, ip, sp) in 
     ((150, "172.17.0.2", 40001), (214.5, "172.17.0.2", 40011), (220, "172.17.0.2", 40011),
      (150, "172.17.0.3", 40002), (216, "172.17.0.3", 40012), (221, "172.17.0.3", 40012)))]
 json.dump(good, open(t + "/good.json", "w"))
+# subscription period and failure: P = G = 100 answered; P = 150 answered by RIC SUBSCRIPTION FAILURE ricRequest:17
+sub = json.loads(json.dumps(good))
+for r in sub["sub_requests"]:
+    r.update(reporting_period_ms=100, granul_periods_ms=[100])
+json.dump(sub, open(t + "/sub-ok.json", "w"))
+sub["sub_requests"][1]["granul_periods_ms"] = [100, 200]
+json.dump(sub, open(t + "/sub-granul.json", "w"))
+fail = json.loads(json.dumps(good))
+for r in fail["sub_requests"]:
+    r.update(reporting_period_ms=150, granul_periods_ms=[100])
+fail["sub_failures"] = [dict(r, frame=r["frame"] + 100, cause="ricRequest:17", cause_label="ricRequest:eventTriggerNotSupported")
+                        for r in fail["sub_responses"]]
+fail["sub_responses"] = []
+json.dump(fail, open(t + "/sub-fail.json", "w"))
+fail["sub_failures"][0]["cause"] = "ricRequest:1"
+json.dump(fail, open(t + "/sub-fail-cause.json", "w"))
 # (a) IP swap after the restart: node 1 comes back as 172.17.0.3, node 2 as 172.17.0.2; node-ips.json holds the union
 # (b) unanswered INIT retries (nobody listens) from both IPs before the new associations form
 swap = json.loads(json.dumps(good))
@@ -125,6 +141,26 @@ expect 1 "facts: post-delete old port / missing subscription" py "$q" "$t/bad.js
 expect 0 "facts: indications for every node" py "$q" "$t/good.json" indications --node-ips "$t/ips.json"
 expect 0 "facts: subscription request answered" py "$q" "$t/good.json" subscription --func-id 2
 expect 0 "facts: setup-response accepts 2" py "$q" "$t/good.json" setup-response --func-id 2
+expect 0 "facts: sub-period 100/100 answered" py "$q" "$t/sub-ok.json" sub-period --period-ms 100 --granul-ms 100
+expect 1 "facts: sub-period wrong period" py "$q" "$t/sub-ok.json" sub-period --period-ms 1000 --granul-ms 100
+expect 1 "facts: sub-period one action at another granularity" py "$q" "$t/sub-granul.json" sub-period --period-ms 100 --granul-ms 100
+expect 1 "facts: sub-period without the KPM fields (old fact sheet)" py "$q" "$t/good.json" sub-period --period-ms 100
+expect 0 "facts: sub-failure with the registered cause" py "$q" "$t/sub-fail.json" sub-failure --cause ricRequest:17
+expect 1 "facts: sub-failure with another cause" py "$q" "$t/sub-fail-cause.json" sub-failure --cause ricRequest:17
+expect 1 "facts: sub-failure when the requests were answered by responses" py "$q" "$t/sub-ok.json" sub-failure --cause ricRequest:17
+expect 0 "facts: tshark subscription text -> period, granularities, cause index" py - "$here/e2ap-pcap-facts.py" <<'PYT'
+import importlib.util, sys
+spec = importlib.util.spec_from_file_location("facts", sys.argv[1]); m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+req = m.parse_subscription(["ricRequestorID: 1001", "ricInstanceID: 3", "ranFunctionID: 2", "E2SM-KPM-EventTriggerDefinition",
+                            "    reportingPeriod: 1000", "    granulPeriod: 100", "    granulPeriod: 100"])
+fail = m.parse_subscription(["ricRequestorID: 1001", "ricInstanceID: 4", "ranFunctionID: 2", "Cause: ricRequest (0)",
+                             "    ricRequest: eventTriggerNotSupported (17)"])
+old = m.parse_subscription(["Cause: ricRequest (0)", "    ricRequest: Unknown (17)"])
+print(req, fail, old)
+sys.exit(0 if req["reporting_period_ms"] == 1000 and req["granul_periods_ms"] == [100, 100] and req["cause"] is None
+         and fail["cause"] == "ricRequest:17" and fail["cause_label"] == "ricRequest:eventTriggerNotSupported"
+         and old["cause"] == "ricRequest:17" else 1)
+PYT
 expect 0 "facts: service-ip" py "$q" "$t/good.json" service-ip --node-ips "$t/ips.json" --service-ip $svc
 # (a) IP swap after restart: attribution follows the association, node-ips.json (union, both nodes on both IPs) is no help
 expect 0 "facts: assoc-start before the restart, unanswered INIT retries ignored" py "$q" "$t/swap.json" assoc-start --node-ips "$t/ips-union.json" --service-ip $svc --before 200

@@ -12,10 +12,12 @@ frame can bundle several PDUs; exact indication counts come from
 pcap-to-lines.py (TSN-deduped), not from here.
 Pass 2 (-V text, only procedureCode 1 and 8 frames): E2Setup request/response
 and RICsubscription request/response details (RAN function ID, OID, short
-name, global gNB-ID, PLMN, accepted RAN functions, requestor/instance IDs).
+name, global gNB-ID, PLMN, accepted RAN functions, requestor/instance IDs; for subscriptions also the
+KPM reportingPeriod, the granulPeriods, not-admitted actions and the failure cause; a RIC SUBSCRIPTION
+FAILURE goes to sub_failures, never to sub_responses).
 
 Facts: {"inits","init_acks","cookie_acks","aborts","shutdowns","pdus","setup_requests",
-"setup_responses","sub_requests","sub_responses","ind_times_by_src","ind_events"}; every event carries
+"setup_responses","sub_requests","sub_responses","sub_failures","ind_times_by_src","ind_events"}; every event carries
 frame, t (epoch s), src, dst, sport, dport. init_acks / cookie_acks (SCTP chunks 2 / 11) and ind_events
 (one per RICindication frame) let e2-facts-query.py attribute traffic by association (agent ip, source
 port) instead of by IP: the container IPs are not stable across agent restarts.
@@ -102,13 +104,26 @@ def parse_setup_response(lines):
     return {"accepted": ids}
 
 
+CAUSE_RE = re.compile(r"\b(ricRequest|ricService|e2Node|transport|protocol|misc): (\S+) \((\d+)\)")
+
+
 def parse_subscription(lines):
+    """Request ids, plus what the E2SM-KPM dissection shows: the event trigger's reportingPeriod (ms), every action's
+    granulPeriod (ms), the not-admitted action count and, on a failure, the cause as "<group>:<enum index>" (the
+    index, not the label, decides: older tshark builds may not know the v03 extension labels)."""
     txt = "\n".join(lines)
     out = {}
     for pat, key in ((r"ricRequestorID: (\d+)", "requestor"), (r"ricInstanceID: (\d+)", "instance"),
                      (r"[rR][aA][nN]functionID: (\d+)", "ran_function_id")):
         m = re.search(pat, txt)
         out[key] = int(m.group(1)) if m else None
+    rp = [int(v) for v in re.findall(r"reportingPeriod: (\d+)", txt)]
+    out["reporting_period_ms"] = rp[0] if rp and len(set(rp)) == 1 else (rp or None)
+    out["granul_periods_ms"] = [int(v) for v in re.findall(r"granulPeriod: (\d+)", txt)]
+    out["not_admitted"] = len(re.findall(r"id-RICaction-NotAdmitted-Item", txt))
+    m = CAUSE_RE.search(txt)
+    out["cause"] = "%s:%s" % (m.group(1), m.group(3)) if m else None
+    out["cause_label"] = "%s:%s" % (m.group(1), m.group(2)) if m else None
     return out
 
 
@@ -120,7 +135,7 @@ def main():
     a = ap.parse_args()
 
     facts = {"pcap": a.pcap, "frames": 0, "inits": [], "init_acks": [], "cookie_acks": [], "ind_events": [], "aborts": [], "shutdowns": [], "pdus": [],
-             "setup_requests": [], "setup_responses": [], "sub_requests": [], "sub_responses": [],
+             "setup_requests": [], "setup_responses": [], "sub_requests": [], "sub_responses": [], "sub_failures": [],
              "ind_times_by_src": {}}
     by_frame = {}
     for r in field_rows(a.pcap):
@@ -161,12 +176,13 @@ def main():
             else:
                 facts["setup_responses"].append(dict(ev, **parse_setup_response(lines)))
         elif proc == 8:
-            facts["sub_requests" if init else "sub_responses"].append(dict(ev, **parse_subscription(lines)))
+            kind = "sub_requests" if init else ("sub_failures" if pdu.group(1).startswith("unsuccessful") else "sub_responses")
+            facts[kind].append(dict(ev, **parse_subscription(lines)))
     json.dump(facts, open(a.o, "w"), indent=1, sort_keys=True)
-    print("frames=%d inits=%d aborts=%d shutdowns=%d setup_req=%d setup_resp=%d sub_req=%d sub_resp=%d ind_srcs=%s" % (
+    print("frames=%d inits=%d aborts=%d shutdowns=%d setup_req=%d setup_resp=%d sub_req=%d sub_resp=%d sub_fail=%d ind_srcs=%s" % (
         facts["frames"], len(facts["inits"]), len(facts["aborts"]), len(facts["shutdowns"]),
         len(facts["setup_requests"]), len(facts["setup_responses"]), len(facts["sub_requests"]),
-        len(facts["sub_responses"]), {k: len(v) for k, v in facts["ind_times_by_src"].items()}))
+        len(facts["sub_responses"]), len(facts["sub_failures"]), {k: len(v) for k, v in facts["ind_times_by_src"].items()}))
 
 
 if __name__ == "__main__":

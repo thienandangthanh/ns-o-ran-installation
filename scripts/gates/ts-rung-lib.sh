@@ -94,6 +94,7 @@ rung_live() {
     fi
     check "${RUNG}_${label}_agents_stopped" agents_stop
     check "${RUNG}_${label}_capture_stopped" capture_stop "$label"
+    check "${RUNG}_${label}_kpimon_subscription_reporting_period_decoded" kpm_sub_period_check "$e/$label.pcap" "$label-sub" "$cap_t0"
     kpimon_window() { kpimon_logs_since "$cap_t0" "$rd/kpimon.log" && kpimon_log_window_summary "$rd/kpimon.log"; }
     check "${RUNG}_${label}_kpimon_log_window_complete" kpimon_window
     wmore0() { local c; c=$(kpimon_log_counts "$rd/kpimon.log"); echo "$c" | tr '\n' ' '; echo "$c" | awk -F= '($1=="hdr_wmore"||$1=="msg_wmore") && $2!=0 {bad=1} END{exit bad}'; }

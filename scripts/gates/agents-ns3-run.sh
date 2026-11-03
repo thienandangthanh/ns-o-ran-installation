@@ -10,6 +10,7 @@
 #   kpimon_logs_since <epoch> <out>   kpimon pod log from an epoch
 #   pcap_facts <pcap> <tag>           facts JSON + decoded setup/subscription text
 #   wire_sub_counts <pcap>            "<requests> <responses>" of RICsubscription seen so far (live pcap is fine)
+#   kpm_sub_period_check <pcap> <tag> <after>   decoded subscription reportingPeriod = rung-config kpm.reportingPeriodMs
 #   ranfunc_decode <node.json> <sodir> <out.jsonl>   e2mgr's ranFunctionDefinition hex through kpimon's library
 #   agent_counters_assert <stats-line-file> <expected-samples>
 #   endurance_sample <dir> <n>        one 60 s sample (pods, agents, RSS, e2mgr, ns-3, load, kpimon)
@@ -193,6 +194,16 @@ print("files %d, rotations in window %s, coverage %s, retries %s" % (len(fs), m.
 ################################################################################
 pcap_facts() {
     python3 -I "$E2EV/e2ap-pcap-facts.py" "$1" -o "$EVIDENCE_DIR/$2-facts.json" --text-out "$EVIDENCE_DIR/$2-e2ap-setup-subscription-decoded.txt"
+}
+
+# kpm_sub_period_check <pcap> <tag> <after-epoch>: every RIC SUBSCRIPTION REQUEST in the capture after the epoch
+# carries the KPM reportingPeriod of rung-config.json kpm.reportingPeriodMs (tshark-decoded event trigger) and is
+# answered by a RIC SUBSCRIPTION RESPONSE. Facts land in <tag>-facts.json.
+kpm_sub_period_check() {
+    local want
+    want=$(python3 -I "$HARNESS_DIR/scripts/gates/rung-config.py" get kpm.reportingPeriodMs) || return 1
+    pcap_facts "$1" "$2" || return 1
+    python3 -I "$E2EV/e2-facts-query.py" "$EVIDENCE_DIR/$2-facts.json" sub-period --period-ms "$want" --after "$3"
 }
 
 wire_sub_counts() {

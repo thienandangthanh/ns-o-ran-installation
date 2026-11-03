@@ -20,6 +20,10 @@ sample. If a pick has no complete rows in Influx the nearest complete sample is
 used and the substitution is recorded (`fallback_from`); a pick with no
 candidate at all fails. All samples are also compared (informational numbers).
 Exit 0 when all picks are found and equal.
+
+--every-seq (multi-record indications, one indication carrying several samples): the all-samples comparison
+becomes the verdict too, so every trace sample must have its cell row and every UE row in Influx, with no
+field differing and no duplicate key. The join is unchanged: each record carries its own ns3.seq.
 """
 import argparse
 import csv
@@ -125,6 +129,7 @@ def main():
     ap.add_argument("--influx-ue", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--node", type=int)
+    ap.add_argument("--every-seq", action="store_true", help="every trace sample must be complete and equal")
     a = ap.parse_args()
 
     samples, hello = {}, None
@@ -189,6 +194,11 @@ def main():
         "all_samples_complete": sum(r["complete"] for r in allres), "all_fields_compared": sum(r["fields"] for r in allres),
         "all_fields_differ": sum(r["differ"] for r in allres), "all_first_diffs": [d for r in allres for d in r["diffs"]][:5],
     }
+    if a.every_seq:
+        every = (summary["all_samples_complete"] == len(seqs) and summary["all_fields_differ"] == 0
+                 and summary["duplicate_keys"] == 0 and summary["all_fields_compared"] > 0)
+        summary["every_seq_equal"] = every
+        ok = ok and every
     json.dump({"picks": picks, "all": summary, "ok": ok}, open(a.out, "w"), indent=1, sort_keys=True)
     for p in picks:
         print("pick %-15s seq=%s fallback_from=%s ues=%s cell_row=%s ue_rows=%s fields=%s differ=%s %s" % (

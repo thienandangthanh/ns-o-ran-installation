@@ -57,6 +57,7 @@ timeout 60 bash scripts/gates/rt-reader-selftest.sh >/dev/null 2>&1 || { echo "r
 python3 -I scripts/disk-burst-h.py --self-test >/dev/null || { echo "disk-burst-h self-test failed"; rc=1; }
 python3 -I scripts/gates/check-actuation-delay.py --self-test >/dev/null || { echo "check-actuation-delay self-test failed"; rc=1; }
 python3 -I scripts/gates/identity-map-extract.py --self-test >/dev/null || { echo "identity-map-extract self-test failed"; rc=1; }
+python3 -I scripts/gates/p12-records-check.py --self-test >/dev/null || { echo "p12 multi-record indication judge self-test failed"; rc=1; }
 if grep -nE '(\blogs\b[^|#]*|"\$[a-z_]*logs?"\s*)\|\s*(grep\s+-[a-zA-Z]*[qm]|head\b)' scripts/gates/*.sh |
     grep -vE '^[^:]+:[0-9]+:\s*#'; then
     echo "an early-exit reader on a log pipe (see above): SIGPIPE under pipefail"; rc=1

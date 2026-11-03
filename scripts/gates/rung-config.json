@@ -153,5 +153,16 @@
       "value": 20,
       "provenance": "pre-registered in scripts/gates/r3p-scenario.json n6.deadlineS (kongming-261028-1220 \u00a73)"
     }
+  },
+  "kpm": {
+    "_comment": "kpimon's KPM subscription: the reporting period (event trigger Style 1) and granularity (action definition) it installs with and every rung asserts on the decoded wire.",
+    "reportingPeriodMs": {
+      "value": 100,
+      "provenance": "plan 261103-0008 R-6 / contract AC10: gated rungs use T/T with T = ns-3 indicationPeriodicity 0.1 s"
+    },
+    "granularityPeriodMs": {
+      "value": 100,
+      "provenance": "plan 261103-0008 R-6 / contract AC10: granularity = T"
+    }
   }
 }
