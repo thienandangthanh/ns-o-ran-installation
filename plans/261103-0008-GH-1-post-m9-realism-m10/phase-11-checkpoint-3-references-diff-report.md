@@ -46,6 +46,7 @@ All of this happens **before** the cp3 tag, so that a fix forced by a rehearsal 
 - r3p and the four δ C1 verdicts are green, with `equalsReference: true` on a fresh run against the new dirs.
 - The diff report attributes every changed component to exactly one T-C commit; every other component is "equal to cp2".
 - G1: the seam smoke is green at the cp3 pins. S5: per-step host growth is tabulated for every changed or new step. The diff report attributes P15's p12 change to its T-C commit.
+- `gate-d-delta-identity.sh` carries a per-node PPID 70 check on its live capture (`--node-ips`), as every rung does since P05 (AC11 in P13).
 - Every rehearsal verdict is green; s10 is green at the cp3 pins; `disk-burst-h.py` gives `worstGiB ≤ 12`.
 - `codex-pre-ship.md` ends `Status: complete`, or the journal records `Codex skipped: <reason>`.
 - `git rev-parse m10-cp3` equals the harness SHA of the final references and rehearsals.

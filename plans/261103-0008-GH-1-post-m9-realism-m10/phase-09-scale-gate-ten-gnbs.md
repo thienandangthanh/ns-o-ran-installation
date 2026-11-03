@@ -32,6 +32,7 @@ M9 ran 2 gNBs, so cell IDs ≥ 10 and the 8-neighbour cap have never been exerci
 
 ## Validation
 - `verdict.json`: `agentsConnected == 11`, `influxEqualsIpc: true` (all nodes, all seqs), `ueTicksWithMoreThan8Measured ≥ 1` with `decodedNeighbours == 8` for those ticks, `cellIdsGe10InKpm ⊇ {10, 11}`, `tsCellMapKeysGe10 ⊇ {10, 11}` (NCI keys per R-3), `appliedPscellChangesToGe10 ≥ 1`, `stepWallS ≤ 2700`.
+- `s10_e2ap_ppid70_every_node`: every one of the 11 nodes sends PPID-70 chunks and nothing else toward e2term, judged with `--node-ips` (AC11 judged per node in P13; P05 exit review).
 
 ## Standards ledger (stub)
 | Decision | Document, section | Zotero | Read |
