@@ -4,6 +4,8 @@
   node     --kind en-gnb|enb --id HEX --e2term IP:PORT --ranfunc-json NODEB.json --log OUT.jsonl
            [--sub-answer response|failure|none] [--ctl-answers ack,late:3,no-outcome,...] [--hold S]
   kpm-sub  --period-ms MS --meas NAME [--meas NAME ...]     print the KPM v03.00 event trigger and action definition
+  stored-x2 --kind en-gnb|enb --id HEX --nodeb-json NODEB.json   decode e2mgr's stored X2 request part of the node and
+           compare it with the request the node sends (exit 0 iff equal and an ENDCX2SetupRequest of the node's type)
   acks     --requestor R --func F --first N --last M --out DIR  write ack-<n>.hex: RICcontrolAcknowledge without the
            optional RICcontrolOutcome for instance ids N..M (for direct RMR delivery to an xApp)
 
@@ -85,17 +87,7 @@ class Node:
         if not rf:
             raise SystemExit("no ranFunctions in %s" % a.ranfunc_json)
         nid = int(a.id, 16)
-        mtc = x2ap.measurement_timing_configuration(633333)
-        if a.kind == "en-gnb":
-            node = e2ap.e2node_en_gnb(PLMN, nid)
-            cell = x2ap.served_nr_cell(1, PLMN, x2ap.nr_cell_identity(nid, 1), 633333, 78, mtc, configured_tac=b"\x00\x01")
-            req = x2ap.endc_x2_setup_request_en_gnb(PLMN, nid, [cell])
-            peer = e2ap.x2_component_id(global_enb=e2ap.global_enb_id(PLMN, 0xFFFFE))
-        else:
-            node = e2ap.e2node_enb(PLMN, nid)
-            cell = x2ap.served_eutra_cell(1, PLMN, (nid << 8) | 1, b"\x00\x01", 100, 18100)
-            req = x2ap.endc_x2_setup_request_enb(PLMN, nid, [cell])
-            peer = e2ap.x2_component_id(global_en_gnb=e2ap.global_en_gnb_id(PLMN, 0x7F000001))
+        node, peer, req = x2_component(a.kind, nid)
         self.send(e2ap.e2_setup_request(1, node, rf, [e2ap.Component("x2", peer, req, b"")]))
 
     def answer(self, msg, ies):
@@ -139,6 +131,43 @@ class Node:
             self.s.shutdown(socket.SHUT_RDWR)
         finally:
             self.s.close()
+
+
+def x2_component(kind, nid):
+    """(Global E2 Node ID, X2 component ID (the peer), X2 request part) of a probe node; the request part is the
+    node's EN-DC X2 SETUP REQUEST, deterministic for a given kind and id."""
+    mtc = x2ap.measurement_timing_configuration(633333)
+    if kind == "en-gnb":
+        cell = x2ap.served_nr_cell(1, PLMN, x2ap.nr_cell_identity(nid, 1), 633333, 78, mtc, configured_tac=b"\x00\x01")
+        return (e2ap.e2node_en_gnb(PLMN, nid), e2ap.x2_component_id(global_enb=e2ap.global_enb_id(PLMN, 0xFFFFE)),
+                x2ap.endc_x2_setup_request_en_gnb(PLMN, nid, [cell]))
+    cell = x2ap.served_eutra_cell(1, PLMN, (nid << 8) | 1, b"\x00\x01", 100, 18100)
+    return (e2ap.e2node_enb(PLMN, nid), e2ap.x2_component_id(global_en_gnb=e2ap.global_en_gnb_id(PLMN, 0x7F000001)),
+            x2ap.endc_x2_setup_request_enb(PLMN, nid, [cell]))
+
+
+def stored_x2(a):
+    """e2mgr's stored copy of the node's X2 request part: e2mgr keeps the XER hex text of the octets, which its JSON
+    shows as base64. Decode base64, then hex, then APER; pass iff the octets equal the request the node sends and
+    decode as an ENDCX2SetupRequest of the expected initiating node type. Prints one JSON object."""
+    import base64
+    d = json.load(open(a.nodeb_json))
+    body = d.get("gnb") or d.get("enb") or {}
+    x2 = [c for c in body.get("nodeConfigs", []) if c.get("e2nodeComponentInterfaceType") == "x2"]
+    out = {"meid": d.get("ranName"), "x2Components": len(x2)}
+    ok = len(x2) == 1
+    if ok:
+        text = base64.b64decode(x2[0].get("e2nodeComponentRequestPart", ""))
+        stored = bytes.fromhex(text.decode("ascii").replace(" ", "").replace("\n", ""))
+        sent = x2_component(a.kind, int(a.id, 16))[2]
+        dec = x2ap.decode_endc_x2_setup_request(stored)
+        want = "init-en-gNB" if a.kind == "en-gnb" else "init-eNB"
+        out.update({"storedHex": stored.hex(), "sentHex": sent.hex(), "storedEqualsSent": stored == sent,
+                    "initiatingNodeType": dec["node"], "decodedIes": dec["ies"]})
+        ok = stored == sent and dec["node"] == want
+    out["pass"] = ok
+    print(json.dumps(out, default=jsonable))
+    return 0 if ok else 1
 
 
 def find_all(obj, key):
@@ -191,7 +220,13 @@ def main():
     c.add_argument("--first", type=int, default=1)
     c.add_argument("--last", type=int, default=40)
     c.add_argument("--out", required=True)
+    x = sub.add_parser("stored-x2")
+    x.add_argument("--kind", choices=("en-gnb", "enb"), required=True)
+    x.add_argument("--id", required=True)
+    x.add_argument("--nodeb-json", required=True)
     a = ap.parse_args()
+    if a.cmd == "stored-x2":
+        return stored_x2(a)
     if a.cmd == "kpm-sub":
         return kpm_sub(a)
     if a.cmd == "acks":
@@ -202,4 +237,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

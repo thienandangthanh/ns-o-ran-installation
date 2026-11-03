@@ -32,6 +32,7 @@ ric_watchdog_bg
 # 1. prerequisites
 ################################################################################
 check m5_nist_tree_at_testbed_sha_with_agent_dir agents_tree_at_testbed_sha
+check m5_e2mgr_image_patched_from_pin e2mgr_image_patched
 check m5_build_tools_present agents_ensure_build_tools
 check m5_sctp_module_loaded_and_persisted agents_sctp_module
 check m5_kpimon_so_extracted_from_image kpimon_extract_so "$SODIR"

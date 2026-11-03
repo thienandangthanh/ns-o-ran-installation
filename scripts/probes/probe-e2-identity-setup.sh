@@ -55,6 +55,8 @@ check e2id_ric_ready_after_cold_boot gate_bringup ric
 readers() { { rt_reader_ok e2mgr probe && rt_reader_ok submgr probe; } || ric_refresh_routes ric; }
 check e2id_e2mgr_submgr_route_readers_ok readers
 check e2id_e2term_service_resolved e2term_addr
+# AC6a runs on the Testbed's patched E2 Manager (contract Amendment 2): deployed here when the snapshot runs the stock one
+check e2id_e2mgr_image_patched_from_pin e2mgr_image_patched --deploy
 E2TERM=$(cat "$e/e2term-addr.txt" 2>/dev/null)
 
 # 1. the FU3 predicate on the live RIC (kongming P00-exit change 4)
@@ -109,6 +111,17 @@ PY
 check e2id_engnb_node_started node_start engnb en-gnb 7F000001 --sub-answer response
 check e2id_engnb_setup_response_decoded node_saw engnb rx E2setupResponse
 check e2id_engnb_meid_and_nodeb_connected_nbid_32 nodeb_record "$ENGNB" 32
+engnb_nodeb_fields() {  # e2mgr stores an en-gNB as nodeType GNB with gnbType EN_GNB (kongming-261103-0440 item 4)
+    python3 -I - "$e/e2mgr-nodeb-$ENGNB.json" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1])); nb = d.get("globalNbId", {}); g = d.get("gnb") or {}
+f = sorted(x.get("ranFunctionId") for x in g.get("ranFunctions", []))
+got = (d.get("nodeType"), g.get("gnbType"), nb.get("plmnId"), nb.get("nbId"))
+print("nodeType %s gnbType %s plmnId %s nbId %s ranFunctions %s" % (got + (f,)))
+sys.exit(0 if got == ("GNB", "EN_GNB", "00F110", "01111111000000000000000000000001") and 2 in f else 1)
+PY
+}
+check e2id_engnb_nodeb_gnb_en_gnb_plmn_nbid_ranfunction2 engnb_nodeb_fields
 check e2id_enb_node_started node_start enb enb FFFFE --sub-answer response
 check e2id_enb_setup_response_decoded node_saw enb rx E2setupResponse
 enb_meid() {
@@ -123,6 +136,20 @@ setup_log() {   # e2mgr's own account of both setups (the parsed XER and any sav
     wc -l <"$e/e2mgr-setup-log.txt"
 }
 record e2id_e2mgr_setup_log_saved true "$(setup_log 2>&1 | head -c 300)"
+no_empty_plmn() { ! grep -i "empty plmnId" "$e/e2mgr-setup-log.txt" && echo "no \"empty plmnId\" line for the probe nodes"; }
+check e2id_e2mgr_log_has_no_empty_plmnid no_empty_plmn
+# e2mgr's stored copy of each node's X2 request part (base64 of the XER hex text), decoded with the independent codec
+# on the VM, before the evidence scrubber can redact a long base64 string: it equals the request the node sent and is
+# an ENDCX2SetupRequest of the node's type (stored-x2-<meid>.json holds the octets and the decoded IEs)
+stored_x2() {   # stored_x2 <kind> <id> <meid>
+    dk run --rm -v "$HARNESS_DIR/scripts/probes:/probes:ro" -v "$e:/ev:ro" "$IMG" python3 "$NODE_PY" stored-x2 \
+        --kind "$1" --id "$2" --nodeb-json "/ev/e2mgr-nodeb-$3.json" >"$e/stored-x2-$3.json"
+    local rc=$?
+    python3 -I -c 'import json,sys; d=json.load(open(sys.argv[1])); print({k: d.get(k) for k in ("meid", "x2Components", "storedEqualsSent", "initiatingNodeType", "pass")})' "$e/stored-x2-$3.json"
+    return "$rc"
+}
+check e2id_engnb_stored_x2_request_part_decodes_and_equals_sent stored_x2 en-gnb 7F000001 "$ENGNB"
+check e2id_enb_stored_x2_request_part_decodes_and_equals_sent stored_x2 enb FFFFE "$ENB"
 enb_no_ranfunctions() {
     python3 -I -c 'import json,sys; d=json.load(open(sys.argv[1])); f=(d.get("enb") or {}).get("ranFunctions") or (d.get("gnb") or {}).get("ranFunctions") or []
 print("eNB nodeb ranFunctions:", f); sys.exit(0)' "$e/e2mgr-nodeb-$ENB.json"
@@ -138,8 +165,9 @@ check e2id_kpm_subscription_octets_encoded kpm_sub_bytes
 # 8088 (xApps reach the pod through DNS); the VM reaches pod IPs directly
 SUBMGR_REST="http://$(kc -n ricplt get pod "$(ric_pod submgr)" -o jsonpath='{.status.podIP}'):8088/ric/v1/subscriptions"
 fact submgrRest "$(json_str "$SUBMGR_REST")"
-enb_subscribe() {
-    python3 -I - "$e/kpm-sub-bytes.json" "$ENB" >"$e/enb-sub-request.json" <<'PY'
+node_subscribe() {   # node_subscribe <tag> <meid>: one KPM subscription through submgr REST (kpimon's endpoint)
+    local t="$1" meid="$2"
+    python3 -I - "$e/kpm-sub-bytes.json" "$meid" >"$e/$t-sub-request.json" <<'PY'
 import json, sys
 b = json.load(open(sys.argv[1]))
 print(json.dumps({"SubscriptionId": "", "Meid": sys.argv[2], "RANFunctionID": 2,
@@ -148,19 +176,25 @@ print(json.dumps({"SubscriptionId": "", "Meid": sys.argv[2], "RANFunctionID": 2,
                                            "ActionToBeSetupList": [{"ActionID": 1, "ActionType": "report",
                                                                     "ActionDefinition": b["actionDefinition"]}]}]}))
 PY
-    curl -sS -m 20 -H 'Content-Type: application/json' -X POST --data @"$e/enb-sub-request.json" "$SUBMGR_REST" \
-        >"$e/enb-sub-rest-answer.json" 2>"$e/enb-sub-rest-answer.err"
-    local rc=$?; cat "$e/enb-sub-rest-answer.json" "$e/enb-sub-rest-answer.err"; return "$rc"
+    curl -sS -m 20 -H 'Content-Type: application/json' -X POST --data @"$e/$t-sub-request.json" "$SUBMGR_REST" \
+        >"$e/$t-sub-rest-answer.json" 2>"$e/$t-sub-rest-answer.err"
+    local rc=$?; cat "$e/$t-sub-rest-answer.json" "$e/$t-sub-rest-answer.err"; return "$rc"
 }
-check e2id_enb_kpm_subscription_accepted_by_submgr_rest enb_subscribe
-check e2id_enb_received_ric_subscription_request node_saw enb rx RICsubscriptionRequest 30
-check e2id_enb_answered_ric_subscription_response node_saw enb tx RICsubscriptionResponse 5
-enb_unsubscribe() {
-    local id; id=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["SubscriptionId"])' "$e/enb-sub-rest-answer.json") || return 1
+node_unsubscribe() {   # node_unsubscribe <tag>
+    local id; id=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["SubscriptionId"])' "$e/$1-sub-rest-answer.json") || return 1
     curl -sS -m 20 -X DELETE -w ' http %{http_code}\n' "$SUBMGR_REST/$id"
 }
-check e2id_enb_kpm_subscription_deleted enb_unsubscribe
+check e2id_enb_kpm_subscription_accepted_by_submgr_rest node_subscribe enb "$ENB"
+check e2id_enb_received_ric_subscription_request node_saw enb rx RICsubscriptionRequest 30
+check e2id_enb_answered_ric_subscription_response node_saw enb tx RICsubscriptionResponse 5
+check e2id_enb_kpm_subscription_deleted node_unsubscribe enb
 record e2id_enb_subscription_delete_seen true "$(node_saw enb rx RICsubscriptionDeleteRequest 20 2>&1 | head -c 200)"
+# the gNB-branch consumer path (kongming-261103-0440 item 5): the same subscription to the en-gNB, admitted then deleted
+check e2id_engnb_kpm_subscription_accepted_by_submgr_rest node_subscribe engnb "$ENGNB"
+check e2id_engnb_received_ric_subscription_request node_saw engnb rx RICsubscriptionRequest 30
+check e2id_engnb_answered_ric_subscription_response node_saw engnb tx RICsubscriptionResponse 5
+check e2id_engnb_kpm_subscription_deleted node_unsubscribe engnb
+check e2id_engnb_subscription_delete_seen node_saw engnb rx RICsubscriptionDeleteRequest 20
 
 # 3. AC6 runtime
 rc_restarts() { kc -n ricxapp get pods -o json | python3 -I -c '
@@ -255,9 +289,19 @@ nodes_stop() { dk stop -t 10 e2probe-engnb e2probe-enb; dk rm -f e2probe-engnb e
 check e2id_probe_nodes_stopped nodes_stop
 disconnected() {
     sleep 5; local a b; a=$(e2mgr_node_status "$ENGNB"); b=$(e2mgr_node_status "$ENB")
-    echo "$ENGNB $a; $ENB $b"; [ "$a" != CONNECTED ] && [ "$b" = DISCONNECTED ]
+    echo "$ENGNB $a; $ENB $b"; [ "$a" = DISCONNECTED ] && [ "$b" = DISCONNECTED ]
 }
 check e2id_probe_nodebs_disconnected_after_graceful_close disconnected
+# a second E2 Setup from the same en-gNB after a graceful close and more than 10 s is accepted (e2mgr's existing-RAN
+# path, which agent restarts in M5-M7 take; kongming-261103-0440 item 6)
+resetup_wait() { cp "$e/e2mgr-nodeb-$ENGNB.json" "$e/e2mgr-nodeb-$ENGNB-first.json" && sleep 15 && echo "waited 15 s after the close"; }
+check e2id_engnb_resetup_waited_more_than_10s resetup_wait
+check e2id_engnb_resetup_node_started node_start engnb2 en-gnb 7F000001 --sub-answer response --hold 60
+check e2id_engnb_resetup_setup_response_decoded node_saw engnb2 rx E2setupResponse
+check e2id_engnb_resetup_nodeb_connected_nbid_32 nodeb_record "$ENGNB" 32
+record e2id_engnb_resetup_nodeb_saved true "$(cp "$e/e2mgr-nodeb-$ENGNB.json" "$e/e2mgr-nodeb-$ENGNB-resetup.json" && echo saved)"
+resetup_stop() { dk stop -t 10 e2probe-engnb2; dk rm -f e2probe-engnb2; }
+check e2id_engnb_resetup_node_stopped resetup_stop
 check e2id_capture_stopped capture_stop e2id
 wire() {
     tshark -r "$e/e2id.pcap" -o sctp.reassembly:TRUE -Y 'sctp.data_payload_proto_id' -T fields -e ip.src -e ip.dst \

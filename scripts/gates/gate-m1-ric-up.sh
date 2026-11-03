@@ -99,8 +99,11 @@ check versions_recorded write_versions
 ################################################################################
 # 5. image tags
 ################################################################################
-# Expected L recipe tags.
-EXPECT_E2TERM=6.0.6; EXPECT_E2MGR=6.0.6; EXPECT_APPMGR=0.5.8; EXPECT_RTMGR=0.9.6; EXPECT_SUBMGR=0.10.2
+# Expected L recipe tags. e2mgr runs the Testbed's patched build of 6.0.6 (the en-gNB Global E2 Node ID fix): its tag
+# names the patch-set digest computed from the Testbed objects at $TESTBED_SHA (empty when that fails, so the
+# comparison fails).
+EXPECT_E2TERM=6.0.6; EXPECT_APPMGR=0.5.8; EXPECT_RTMGR=0.9.6; EXPECT_SUBMGR=0.10.2
+EXPECT_E2MGR=$(e2mgr_patched_expected 2>/dev/null | awk '{print $1}'); EXPECT_E2MGR=${EXPECT_E2MGR##*:}
 record_images() {
     kc -n ricplt get pods -o json | python3 -c '
 import json, sys
@@ -130,10 +133,11 @@ compare_images() {
         want="${c#*:}"; got=$(awk -v k="${c%%:*}" '$1 == k {print $2}' "$EVIDENCE_DIR/images.txt" 2>/dev/null)
         [ "$got" = "$want" ] || mism="$mism ${c%%:*}: got '${got:-none}' want $want;"
     done
-    if [ -z "$mism" ]; then echo "all five tags match the L recipe"; return 0; fi
+    if [ -z "$mism" ]; then echo "all five tags match the L recipe (e2mgr: the pinned patch set's build $EXPECT_E2MGR)"; return 0; fi
     echo "mismatch:$mism"; return 1
 }
 check image_tags_match_l_recipe compare_images
+check m1_e2mgr_image_patched_from_pin e2mgr_image_patched
 
 ################################################################################
 # 6. stability: 11 samples, 60 s apart; all Ready, restart sum never increases

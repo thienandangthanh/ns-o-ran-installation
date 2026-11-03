@@ -344,6 +344,80 @@ kpm_sim_image_ppid_patched() {
     [ "$have" = "$want" ]
 }
 
+# testbed_paths_at_pin <path>...: every path (relative to $RIC_DIR) equals $TESTBED_SHA's: no tracked difference and no
+# untracked, non-ignored file. Run before an image is built from, or named after, Testbed files.
+testbed_paths_at_pin() {
+    git -C "$RIC_DIR" diff --quiet "$TESTBED_SHA" -- "$@" &&
+        [ -z "$(git -C "$RIC_DIR" ls-files --others --exclude-standard -- "$@")" ] ||
+        { echo "Testbed paths differ from $TESTBED_SHA: $*"; git -C "$RIC_DIR" diff --stat "$TESTBED_SHA" -- "$@"; return 1; }
+}
+
+# The E2 Manager image built by the Testbed's install_scripts/install_e2mgr_patched.sh: its release, and the paths
+# its build reads.
+E2MGR_RELEASE=6.0.6
+E2MGR_PATHS=(install_scripts/install_e2mgr_patched.sh install_patch_files/ric-plt/e2mgr commit_hashes.json)
+
+# e2mgr_patched_expected: "<image> <source sha> <patch-set sha256>" from the Testbed objects at $TESTBED_SHA (git show,
+# not the working tree), by the install script's rule: the source commit pinned for ric-plt/e2mgr.git in
+# commit_hashes.json; the digest = sha256 of patches.manifest followed by each listed patch, in manifest order.
+e2mgr_patched_expected() {
+    local dir=install_patch_files/ric-plt/e2mgr src digest p
+    src=$(git -C "$RIC_DIR" show "$TESTBED_SHA:./commit_hashes.json" |
+        jq -r '.["https://gerrit.o-ran-sc.org/r/ric-plt/e2mgr.git"][1] // empty') || return 1
+    [[ "$src" =~ ^[0-9a-f]{40}$ ]] || { echo "no e2mgr commit in commit_hashes.json at $TESTBED_SHA"; return 1; }
+    digest=$( (git -C "$RIC_DIR" show "$TESTBED_SHA:./$dir/patches.manifest" &&
+        for p in $(git -C "$RIC_DIR" show "$TESTBED_SHA:./$dir/patches.manifest" | grep -vE '^\s*(#|$)'); do
+            git -C "$RIC_DIR" show "$TESTBED_SHA:./$dir/$p" || exit 1
+        done) | sha256sum | cut -d' ' -f1) || return 1
+    echo "127.0.0.1:80/ric-plt-e2mgr:$E2MGR_RELEASE-nist180-${digest:0:12} $src $digest"
+}
+
+# e2mgr_image_patched [--deploy]: the running e2mgr pod runs the patched E2 Manager built from the pin: its image is
+# e2mgr_patched_expected's tag, its imageID equals that image's docker ID, the image's labels name the pinned source
+# commit and the patch-set digest, and the pod is Ready. --deploy (dev chains on a snapshot, M2 only): when that
+# fails, build and import the image with the Testbed script (whose build runs the patch set's unit tests), point the
+# r4-e2mgr release at it (helm upgrade --reuse-values), wait for the rollout, refresh the RMR routes (e2mgr and
+# submgr replaced, rtmgr last, both readers OK) and judge again. Evidence: e2mgr-image.txt, install-e2mgr.log.
+e2mgr_image_patched() {
+    local exp img src digest
+    exp=$(e2mgr_patched_expected) || { echo "$exp"; return 1; }
+    read -r img src digest <<<"$exp"
+    _e2mgr_image_judge "$img" "$src" "$digest" && return 0
+    [ "${1:-}" = --deploy ] || return 1
+    log "e2mgr does not run the patched image $img: deploying it (bound 5400s)"
+    if [ "$(git -C "$RIC_DIR" rev-parse HEAD)" != "$TESTBED_SHA" ]; then
+        git -C "$RIC_DIR" checkout "$TESTBED_SHA" -- "${E2MGR_PATHS[@]}" || return 1
+    fi
+    testbed_paths_at_pin "${E2MGR_PATHS[@]}" || return 1
+    (cd "$RIC_DIR" && nist_run 5400 ./install_scripts/install_e2mgr_patched.sh) >"$EVIDENCE_DIR/install-e2mgr.log" 2>&1 ||
+        { tail -n 30 "$EVIDENCE_DIR/install-e2mgr.log"; return 1; }
+    grep -qxF "E2MGR_IMAGE=$img" "$EVIDENCE_DIR/install-e2mgr.log" ||
+        { echo "the Testbed script built another image than $img"; tail -n 3 "$EVIDENCE_DIR/install-e2mgr.log"; return 1; }
+    helm upgrade r4-e2mgr "$RIC_DIR/ric-dep/helm/e2mgr" -n ricplt --reuse-values \
+        --set e2mgr.image.registry=127.0.0.1:80 --set e2mgr.image.name=ric-plt-e2mgr --set "e2mgr.image.tag=${img##*:}" \
+        >"$EVIDENCE_DIR/helm-upgrade-e2mgr.log" 2>&1 || { cat "$EVIDENCE_DIR/helm-upgrade-e2mgr.log"; return 1; }
+    kc -n ricplt rollout status deployment/deployment-ricplt-e2mgr --timeout=300s || return 1
+    ric_refresh_routes e2mgr-image || return 1
+    _e2mgr_image_judge "$img" "$src" "$digest"
+}
+
+_e2mgr_image_judge() {
+    local img="$1" src="$2" digest="$3" pod pimg pid ready did lsrc ldig
+    pod=$(ric_pod e2mgr)
+    read -r pimg pid ready < <(kc -n ricplt get pod "$pod" -o \
+        jsonpath='{.status.containerStatuses[0].image} {.status.containerStatuses[0].imageID} {.status.containerStatuses[0].ready}' 2>/dev/null)
+    did=$(dk image inspect --format '{{.Id}}' "$img" 2>/dev/null)
+    lsrc=$(dk image inspect --format '{{index .Config.Labels "e2mgr.source.sha"}}' "$img" 2>/dev/null)
+    ldig=$(dk image inspect --format '{{index .Config.Labels "patchset.sha256"}}' "$img" 2>/dev/null)
+    {
+        echo "expected image $img (source $src, patch set $digest; from $TESTBED_SHA)"
+        echo "pod ${pod:-none}: image ${pimg:-none}, imageID ${pid:-none}, ready ${ready:-none}"
+        echo "docker image: ID ${did:-none}, e2mgr.source.sha ${lsrc:-none}, patchset.sha256 ${ldig:-none}"
+    } | tee "$EVIDENCE_DIR/e2mgr-image.txt"
+    [ -n "$pod" ] && [ "$pimg" = "$img" ] && [ -n "$did" ] && [ "$pid" = "$did" ] && [ "$ready" = true ] &&
+        [ "$lsrc" = "$src" ] && [ "$ldig" = "$digest" ]
+}
+
 # _bringup_refnode: start NIST's kpm_sim and wait until e2mgr lists it CONNECTED.
 # kpm_sim sends its E2SetupRequest once and never resends it, so a setup lost
 # to a not-yet-routable RIC stalls forever; attempts 2..N restart kpm_sim after
