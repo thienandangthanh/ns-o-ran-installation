@@ -23,7 +23,8 @@ Exit 0 when all picks are found and equal.
 
 --every-seq (multi-record indications, one indication carrying several samples): the all-samples comparison
 becomes the verdict too, so every trace sample must have its cell row and every UE row in Influx, with no
-field differing and no duplicate key. The join is unchanged: each record carries its own ns3.seq.
+field differing, no duplicate key, and exactly one cell row per sample and one UE row per (sample, UE): no
+Influx row the trace lacks. The join is unchanged: each record carries its own ns3.seq.
 """
 import argparse
 import csv
@@ -195,8 +196,11 @@ def main():
         "all_fields_differ": sum(r["differ"] for r in allres), "all_first_diffs": [d for r in allres for d in r["diffs"]][:5],
     }
     if a.every_seq:
+        # Row counts too: one cell row per trace sample and one UE row per (sample, UE), so Influx holds no row
+        # (such as one for a noValue UE interval) that the trace lacks.
         every = (summary["all_samples_complete"] == len(seqs) and summary["all_fields_differ"] == 0
-                 and summary["duplicate_keys"] == 0 and summary["all_fields_compared"] > 0)
+                 and summary["duplicate_keys"] == 0 and summary["all_fields_compared"] > 0
+                 and summary["influx_cell_rows"] == len(seqs) and summary["influx_ue_rows"] == summary["trace_ue_rows"])
         summary["every_seq_equal"] = every
         ok = ok and every
     json.dump({"picks": picks, "all": summary, "ok": ok}, open(a.out, "w"), indent=1, sort_keys=True)

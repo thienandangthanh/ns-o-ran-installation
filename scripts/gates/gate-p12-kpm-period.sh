@@ -46,6 +46,8 @@ check p12_sctp_module_loaded_and_persisted agents_sctp_module
 check p12_ns3_binary_located agents_ns3_locate
 check p12_kubectl_exec_it_works_without_tty kubectl_exec_it_probe
 fact granularityPeriodMs "$G_MS"
+# Option B: G = T, multi-record indications. The SUB-P12 fallback (G = P = 2T) is not implemented.
+fact substitutionP12Applied false
 
 # kpimon_config_periods <P> <G>: the deployed kpimon config carries the period and granularity it was installed with.
 kpimon_config_periods() {
@@ -136,7 +138,8 @@ records_a() {
     python3 -I "$pl" "$e/p12-a.pcap" >"$e/p12-a-lines.txt" || return 1
     LD_LIBRARY_PATH="$SODIR" "$h" --records <"$e/p12-a-lines.txt" >"$e/p12-a-records.jsonl" 2>"$e/p12-a-records.stderr" || return 1
     python3 -I "$HARNESS_DIR/scripts/gates/p12-records-check.py" "$e/p12-a-records.jsonl" --map "$AGENT_DIR/schema/metric-map.v1.json" \
-        --trace "$RUN/e2-ipc-trace-2.jsonl" --per-indication $((P_MULTI_MS / T_MS)) --out "$e/p12-a-records-check.json"
+        --trace "$RUN/e2-ipc-trace-2.jsonl" --per-indication $((P_MULTI_MS / T_MS)) --granularity-ms "$G_MS" \
+        --out "$e/p12-a-records-check.json"
 }
 check p12_a_one_indication_per_10_seqs_with_10_records records_a
 kpimon_decoded_all() {
