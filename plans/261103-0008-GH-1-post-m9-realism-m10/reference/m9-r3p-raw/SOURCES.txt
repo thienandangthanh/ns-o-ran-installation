@@ -1,0 +1,9 @@
+M9 reference run (gate r3p, attempt 4), live run 1, promoted at M10 checkpoint 1 for P08's transform-compare
+and the R-8 identity map. Files are byte copies; they are never regenerated.
+
+source run dir: plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/evidence/r3p/20261028T044557Z/runs/live1
+M9 harness SHA (verdict.json): d2e1ab40fe30e464fc9c288bf5384be535003fe6
+
+trace/, extra/, r3p/, schedule.json   git-tracked in the source run dir; each copy equals the blob at HEAD
+ns3run/DlE2PdcpStatsLte.txt           raw (not in git); sha256 equals the source run's ns3run-sha256.txt entry
+scenario/r3p-{scenario,schedule,stage-a}.json   scripts/gates/ at the M9 harness SHA (git show d2e1ab40fe30e464fc9c288bf5384be535003fe6:...)
