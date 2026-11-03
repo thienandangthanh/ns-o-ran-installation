@@ -3,7 +3,7 @@
 # and agents.sh. Judge on the wire, the ledger and the digests, never on rc's log: rc answers its gRPC
 # callers at once and sends the control asynchronously (F1).
 #
-#   rc_install                    rc at the pinned commit through NIST's installer; fail if HEAD differs
+#   rc_install                    rc through NIST's installer (pin + Testbed rc patch set); fail unless rc_at_pin then holds
 #   rc_grpcurl_fetch              pinned grpcurl release, sha256-checked -> $GRPCURL
 #   rc_ready                      pod Ready + gRPC describe through the Service + the 12040 route
 #   rc_route_dump <label>         rtmgr getdebuginfo and e2term's stash -> $e/<label>-*.txt; sets
@@ -23,7 +23,12 @@
 #                                 (written only when that endpoint's RMR answered the route-table call; bounded wait)
 #   rc_rmr_ready_after_rtmgr      rc_rmr_ready, rtmgr_push_acked for rc's RMR Service (supporting only), then
 #                                 rt_reader_ok on rc's own :4561 route-table socket (receiver-side evidence)
-#   rc_at_pin                     rc's source tree at RC_SHA and rc ready; install nothing
+#   rc_at_pin                     rc runs the pin plus the Testbed rc patch set and is ready; install nothing: the
+#                                 Testbed installer, the patch set and commit_hashes.json equal TESTBED_SHA's, which
+#                                 pins rc at RC_SHA; rc's clone HEAD = RC_SHA and its tree = git show RC_SHA: plus the
+#                                 manifest's patches in order (patchset_from_pin, tree_is_pin_plus_patchset); the rc
+#                                 pod's imageID = the docker ID of 127.0.0.1:80/rc:latest, whose labels are
+#                                 rc.source.sha = RC_SHA and patchset.sha256 = the patch-set digest; rc_ready
 # rc_install is NOT part of any per-run path: NIST's script always runs `dms_cli uninstall` first, which deletes
 # rc's Services and leaves rtmgr holding a dead connection to the old pod. Use it once (gate i0), then rc_restart_rtmgr.
 #   rc_send_control <args...>     one control through rc's gRPC (see below)
@@ -37,20 +42,27 @@ RC_SHA=a2282eedc9e32f60298bf530456ad367bef0824b
 GRPCURL_VER=1.9.1
 GRPCURL="$HOME/grpcurl-$GRPCURL_VER/grpcurl"
 RC_GRPC_MAX_TIME_S="${RC_GRPC_MAX_TIME_S:-10}"
+RC_IMAGE=127.0.0.1:80/rc:latest
+RC_PATCH_REL=install_patch_files/xApps/rc
+# the Testbed paths (relative to $RIC_DIR) rc's install and patch set read
+RC_TESTBED_PATHS=(additional_scripts/install_xapp_ric_control.sh "$RC_PATCH_REL" commit_hashes.json)
 
 rc_install() {
     local e="$EVIDENCE_DIR" deadline name ready sha
     _agents_prepare_env
+    # the installer and the patch set it applies are the pin's (the image is built from them)
+    testbed_paths_at_pin "${RC_TESTBED_PATHS[@]}" || return 1
     nist_run 3600 "$RIC_DIR/additional_scripts/install_xapp_ric_control.sh" >"$e/install-rc.log" 2>&1 || {
         tail -n 30 "$e/install-rc.log"; return 1; }
     sha=$(git -C "$RIC_DIR/xApps/rc" rev-parse HEAD) || return 1
     echo "$sha" | tee "$e/rc-sha.txt"
     [ "$sha" = "$RC_SHA" ] || { echo "rc is at $sha, pinned $RC_SHA"; return 1; }
+    git -C "$RIC_DIR/xApps/rc" diff --stat | tee "$e/rc-tree-diffstat.txt"
     deadline=$(($(date +%s) + 300))
     while [ "$(date +%s)" -lt "$deadline" ]; do
         if read -r name ready _ < <(pod_info ricxapp xapp-rc-) && [ "$ready" = true ]; then
             pod_info ricxapp xapp-rc- | tee "$e/rc-pod-after-install.txt"
-            rc_restart_rtmgr && rc_rmr_ready; return $?
+            rc_restart_rtmgr && rc_rmr_ready && rc_at_pin; return $?
         fi
         sleep 5
     done
@@ -128,7 +140,32 @@ rc_rmr_ready_after_rtmgr() {
 }
 
 rc_at_pin() {
-    [ "$(git -C "$RIC_DIR/xApps/rc" rev-parse HEAD)" = "$RC_SHA" ] && rc_ready
+    local t src head name pimg pid did lsrc ldig rc=0
+    testbed_paths_at_pin "${RC_TESTBED_PATHS[@]}" || return 1
+    src=$(git -C "$RIC_DIR" show "$TESTBED_SHA:./commit_hashes.json" |
+        jq -r '.["https://gerrit.o-ran-sc.org/r/ric-app/rc.git"][1] // empty') || return 1
+    [ "$src" = "$RC_SHA" ] || { echo "commit_hashes.json at $TESTBED_SHA pins rc at ${src:-nothing}, the harness $RC_SHA"; return 1; }
+    head=$(git -C "$RIC_DIR/xApps/rc" rev-parse HEAD) || return 1
+    [ "$head" = "$RC_SHA" ] || { echo "rc is at $head, pinned $RC_SHA"; return 1; }
+    t=$(mktemp -d) || return 1
+    patchset_from_pin "$RC_PATCH_REL" "$t" || { rm -rf "$t"; return 1; }
+    tree_is_pin_plus_patchset "$RIC_DIR/xApps/rc" "$RC_SHA" "$t" "$EVIDENCE_DIR/rc-patches-applied.diff" || rc=1
+    rm -rf "$t"
+    read -r name _ < <(pod_info ricxapp xapp-rc-)
+    read -r pimg pid < <(kc -n ricxapp get pod "$name" -o \
+        jsonpath='{.status.containerStatuses[0].image} {.status.containerStatuses[0].imageID}' 2>/dev/null)
+    did=$(dk image inspect --format '{{.Id}}' "$RC_IMAGE" 2>/dev/null)
+    lsrc=$(dk image inspect --format '{{index .Config.Labels "rc.source.sha"}}' "$RC_IMAGE" 2>/dev/null)
+    ldig=$(dk image inspect --format '{{index .Config.Labels "patchset.sha256"}}' "$RC_IMAGE" 2>/dev/null)
+    {
+        echo "expected: rc $RC_SHA + ${#PS_PATCHES[@]} patches (${PS_FILES[*]}), patch set $PS_DIGEST (from $TESTBED_SHA)"
+        echo "pod ${name:-none}: image ${pimg:-none}, imageID ${pid:-none}"
+        echo "docker $RC_IMAGE: ID ${did:-none}, rc.source.sha ${lsrc:-none}, patchset.sha256 ${ldig:-none}"
+    } | tee "$EVIDENCE_DIR/rc-image.txt"
+    [ -n "$name" ] && [ "$pimg" = "$RC_IMAGE" ] && [ -n "$did" ] && [ "$pid" = "$did" ] || {
+        echo "the rc pod does not run $RC_IMAGE as docker holds it"; rc=1; }
+    [ "$lsrc" = "$RC_SHA" ] && [ "$ldig" = "$PS_DIGEST" ] || { echo "$RC_IMAGE was not built from the pin and this patch set"; rc=1; }
+    [ "$rc" = 0 ] && rc_ready
 }
 
 rc_restart_rtmgr() { ric_restart_rtmgr; }   # defined in bringup.sh (one definition)
