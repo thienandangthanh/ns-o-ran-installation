@@ -1,0 +1,10 @@
+installer exit 1 (size8=false, reporting period 100 ms, granularity 100 ms); log /home/uc/evidence/m3/20261103T031140Z/install-stock.log.try1
+127.0.0.1:80/kpimon go:latest           	saved	
+application/vnd.oci.image.manifest.v1+json sha256:REDACTED-LONG-TOKEN
+Importing	elapsed: 81.1s	total:   0.0 B	(0.0 B/s)	
+Onboarding the KPI Monitor xApp (kpimon-go)...
+/home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/appmgr/xapp_orchestrater/dev/xapp_onboarder/venv/lib/python3.12/site-packages/xapp_onboarder/server/cli.py:21: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+2026-11-03 03:23:28,659 - DEBUG - 'rmr' is a required property - xapp_onboarder.api.onboard { "error_message": "'rmr' is a required property", "error_source": "config-file.json", "status": "Input payload validation failed" }
+Onboarding failed or 'Created' status not found.
+not a network error: no retry

@@ -1,0 +1,3 @@
+wire=0; harness hdr_ok_exact=0 hdr_clean(ts=4)=0 msg_clean=0 hdr_wmore=0 msg_wmore=0 hdr_fail=0 msg_fail=0 of 0
+kpimon log: indications=0 hdr_wmore=0 msg_wmore=0 influx_writes=0; influx rows(since install)=0
+cross-check: harness header WMORE 0 vs kpimon-logged 0; message WMORE 0 vs 0

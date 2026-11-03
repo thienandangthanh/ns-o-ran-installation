@@ -1,0 +1,288 @@
+{
+  "gate": "m3",
+  "ts": "20261103T031140Z",
+  "harness_sha": "d0887ad774be0a9e753f881fddbe305223c92f6d",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "4b4a61a6e68201947f8dfe58109ecedd6f8fcda4",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "48d41a50d6359043dd4b758d97f3da16da1e3133",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "b2342c664003c0ee409fb87ace345e28bd1257a3",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "2209995a84412b5178f2a49cb92125fd23cb7553"
+  },
+  "duration_s": 3268,
+  "pass": false,
+  "failed": [
+    "m3_stock_installer_ok",
+    "m3_stock_pod_ready_and_created_after_install",
+    "m3_stock_first_indication_logged",
+    "m3_stock_tshark_decodes_subscription_request_and_response",
+    "m3_stock_baseline_recorded",
+    "m3_stock_kpimon_pod_no_restarts",
+    "m3_patched_installer_ok",
+    "m3_patched_pod_ready_and_created_after_install",
+    "m3_patched_first_indication_logged",
+    "m3_patched_tshark_decodes_subscription_request_and_response",
+    "m3_patched_wire_indications_gt0",
+    "m3_patched_harness_every_header_clean_rc_ok",
+    "m3_patched_harness_every_message_clean_rc_ok",
+    "m3_patched_influx_rows_gt0",
+    "m3_patched_kpimon_received_indications",
+    "m3_patched_kpimon_pod_no_restarts"
+  ],
+  "checks": [
+    {
+      "name": "m3_refnode_up",
+      "pass": true,
+      "detail": "[03:15:24] bringup refnode: attempt 1: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)\n[03:15:27] bringup refnode: run_e2sim script exit 0\n[03:15:32] bringup refnode: e2mgr shows a CONNECTED node (attempt 1)"
+    },
+    {
+      "name": "m3_nist_tree_at_testbed_sha",
+      "pass": true,
+      "detail": "nist HEAD c6d1434a793f36ae7d08b303f19f63921cf560bf, want 4b4a61a6e68201947f8dfe58109ecedd6f8fcda4\nclean tree: detached checkout of 4b4a61a6e68201947f8dfe58109ecedd6f8fcda4"
+    },
+    {
+      "name": "m3_build_tools_installed",
+      "pass": true,
+      "detail": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nTShark (Wireshark) 4.4.19."
+    },
+    {
+      "name": "m3_kubectl_exec_it_works_without_tty",
+      "pass": true,
+      "detail": "exit 0 on pod/deployment-ricplt-e2mgr-9b6b8f99f-qms4v: Unable to use a TTY - input is not a terminal or the right kind of file|EXEC_IT_OK|"
+    },
+    {
+      "name": "m3_regen_check_pass",
+      "pass": true,
+      "detail": "debconf: delaying package configuration, since apt-utils is not installed\n{\"asn1c\": \"mouse07410/asn1c@584d86e22d54d401c5d349128f28b0c41fae4d24\", \"control\": {\"shipped_files\": 470, \"identical\": 470, \"differ\": [], \"missing_from_regeneration\": []}, \"size8_footprint\": [\"TimeStamp.c\"], \"shipped_patch_equals_regeneration\": true, \"pass\": true}\nregen-check container exit 0"
+    },
+    {
+      "name": "m3_stock_refnode_stopped_before_uninstall",
+      "pass": true,
+      "detail": "oransim\noransim\nE2 simulator stopped."
+    },
+    {
+      "name": "m3_stock_kpimon_uninstalled",
+      "pass": true,
+      "detail": "Failed to connect to helm chart repo http://0.0.0.0:8090 after 3 retries and 1.8019955158233643 seconds. (Caused by: ConnectionError)\nstatus: OK\nno kpimon-go pod left"
+    },
+    {
+      "name": "m3_stock_capture_started",
+      "pass": true,
+      "detail": "[03:18:08] capture m3-stock started on docker0 (pid 42180, filter 'sctp')"
+    },
+    {
+      "name": "m3_stock_installer_ok",
+      "pass": false,
+      "detail": "exit 1: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/appmgr/xapp_orchestrater/dev/xapp_onboarder/venv/lib/python3.12/site-packages/xapp_onboarder/server/cli.py:21: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.\n  import pkg_resources\n2026-11-03 03:23:28,659 - DEBUG - 'rmr' is a required property - xapp_onboarder.api.onboard { \"error_message\": \"'rmr' is a required property\", \"error_source\": \"config-file.json\", \"status\": \"Input payload validation failed\" }\nOnboarding failed or 'Created' status not found.\nnot a network error: no retry"
+    },
+    {
+      "name": "m3_stock_pod_ready_and_created_after_install",
+      "pass": false,
+      "detail": "exit 1: NAME                                   READY   STATUS    RESTARTS      AGE     IP             NODE            NOMINATED NODE   READINESS GATES\nricxapp-hw-go-c84579888-wwbcv          1/1     Running   1 (16m ago)   5d22h   10.244.0.182   oran-kvm-2404   <none>           <none>\nricxapp-rc-6db9dcd964-k99f8            1/1     Running   1 (16m ago)   5d22h   10.244.0.165   oran-kvm-2404   <none>           <none>\nricxapp-stubqp-685cb7ddf4-l2mbz        1/1     Running   1 (16m ago)   5d22h   10.244.0.180   oran-kvm-2404   <none>           <none>\nricxapp-trafficxapp-7c46768578-k6pg9   1/1     Running   1 (16m ago)   5d22h   10.244.0.176   oran-kvm-2404   <none>           <none>"
+    },
+    {
+      "name": "m3_stock_pod_image_id_informational",
+      "pass": true,
+      "detail": "pod imageID: error: resource name may not be empty; docker id: sha256:b265171bf6d6912338431785bbf930622faba6a57102341c74d631ccfa6a85f0"
+    },
+    {
+      "name": "m3_stock_so_extracted_and_harness_built",
+      "pass": true,
+      "detail": "timestamp_size: 4\nextracted_at: 2026-11-03T03:28:29+00:00\nTimeStamp SIZE in this .so: 4"
+    },
+    {
+      "name": "m3_stock_so_timestamp_size_is_4",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m3_stock_refnode_restarted",
+      "pass": true,
+      "detail": "[03:29:06] bringup refnode: attempt 1: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)\n[03:29:09] bringup refnode: run_e2sim script exit 0\n[03:29:14] bringup refnode: e2mgr shows a CONNECTED node (attempt 1)"
+    },
+    {
+      "name": "m3_stock_first_indication_logged",
+      "pass": false,
+      "detail": "exit 1: Example resource specifications include:\n   '-f rsrc.yaml'\n   '--filename=rsrc.json'\n   '<resource> <name>'\n   '<resource>'"
+    },
+    {
+      "name": "m3_stock_kpimon_log_counts_informational",
+      "pass": true,
+      "detail": "indications=0 hdr_wmore=0 msg_wmore=0 influx_wrote_ue=0 influx_wrote_cell=0  restarts=unknown"
+    },
+    {
+      "name": "m3_stock_influx_rows_since_install_informational",
+      "pass": true,
+      "detail": "total=0 "
+    },
+    {
+      "name": "m3_stock_capture_stopped",
+      "pass": true,
+      "detail": "[03:42:16] capture m3-stock stopped: 112 packets captured 112 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "m3_stock_tshark_decodes_subscription_request_and_response",
+      "pass": false,
+      "detail": "exit 1: RICsubscriptionRequest frames: 0, RICsubscriptionResponse frames: 0"
+    },
+    {
+      "name": "m3_stock_harness_ran_on_pcap",
+      "pass": true,
+      "detail": "{\"expect_ts_len\": 4, \"hdr_clean\": 0, \"hdr_fail\": 0, \"hdr_ok_exact\": 0, \"hdr_other\": 0, \"hdr_wmore\": 0, \"msg_clean\": 0, \"msg_fail\": 0, \"msg_other\": 0, \"msg_wmore\": 0, \"total\": 0}"
+    },
+    {
+      "name": "m3_stock_baseline_recorded",
+      "pass": false,
+      "detail": "exit 1: wire=0; harness hdr_ok_exact=0 hdr_clean(ts=4)=0 msg_clean=0 hdr_wmore=0 msg_wmore=0 hdr_fail=0 msg_fail=0 of 0\nkpimon log: indications=0 hdr_wmore=0 msg_wmore=0 influx_writes=0; influx rows(since install)=0\ncross-check: harness header WMORE 0 vs kpimon-logged 0; message WMORE 0 vs 0"
+    },
+    {
+      "name": "m3_stock_kpimon_pod_no_restarts",
+      "pass": false,
+      "detail": "exit 1: restarts=unknown"
+    },
+    {
+      "name": "m3_patched_refnode_stopped_before_uninstall",
+      "pass": true,
+      "detail": "oransim\noransim\nE2 simulator stopped."
+    },
+    {
+      "name": "m3_patched_kpimon_uninstalled",
+      "pass": true,
+      "detail": "No Xapp to uninstall\nstatus: NOT_OK\nno kpimon-go pod left"
+    },
+    {
+      "name": "m3_patched_capture_started",
+      "pass": true,
+      "detail": "[03:42:29] capture m3-patched started on docker0 (pid 85591, filter 'sctp')"
+    },
+    {
+      "name": "m3_patched_installer_ok",
+      "pass": false,
+      "detail": "exit 1: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/appmgr/xapp_orchestrater/dev/xapp_onboarder/venv/lib/python3.12/site-packages/xapp_onboarder/server/cli.py:21: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.\n  import pkg_resources\n2026-11-03 03:47:16,861 - DEBUG - 'rmr' is a required property - xapp_onboarder.api.onboard { \"error_message\": \"'rmr' is a required property\", \"error_source\": \"config-file.json\", \"status\": \"Input payload validation failed\" }\nOnboarding failed or 'Created' status not found.\nnot a network error: no retry"
+    },
+    {
+      "name": "m3_patched_pod_ready_and_created_after_install",
+      "pass": false,
+      "detail": "exit 1: NAME                                   READY   STATUS    RESTARTS      AGE     IP             NODE            NOMINATED NODE   READINESS GATES\nricxapp-hw-go-c84579888-wwbcv          1/1     Running   1 (40m ago)   5d22h   10.244.0.182   oran-kvm-2404   <none>           <none>\nricxapp-rc-6db9dcd964-k99f8            1/1     Running   1 (40m ago)   5d22h   10.244.0.165   oran-kvm-2404   <none>           <none>\nricxapp-stubqp-685cb7ddf4-l2mbz        1/1     Running   1 (40m ago)   5d22h   10.244.0.180   oran-kvm-2404   <none>           <none>\nricxapp-trafficxapp-7c46768578-k6pg9   1/1     Running   1 (40m ago)   5d22h   10.244.0.176   oran-kvm-2404   <none>           <none>"
+    },
+    {
+      "name": "m3_patched_pod_image_id_informational",
+      "pass": true,
+      "detail": "pod imageID: error: resource name may not be empty; docker id: sha256:e587931d03a39c4a0eec533503c8f6583f2a52c641f8f110b0453534899aef24"
+    },
+    {
+      "name": "m3_patched_so_extracted_and_harness_built",
+      "pass": true,
+      "detail": "timestamp_size: 8\nextracted_at: 2026-11-03T03:52:19+00:00\nTimeStamp SIZE in this .so: 8"
+    },
+    {
+      "name": "m3_patched_so_timestamp_size_is_8",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m3_patched_docker_image_id_changed",
+      "pass": true,
+      "detail": "before sha256:b265171bf6d6912338431785bbf930622faba6a57102341c74d631ccfa6a85f0 after sha256:e587931d03a39c4a0eec533503c8f6583f2a52c641f8f110b0453534899aef24"
+    },
+    {
+      "name": "m3_patched_refnode_restarted",
+      "pass": true,
+      "detail": "[03:52:56] bringup refnode: attempt 1: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)\n[03:52:59] bringup refnode: run_e2sim script exit 0\n[03:53:04] bringup refnode: e2mgr shows a CONNECTED node (attempt 1)"
+    },
+    {
+      "name": "m3_patched_first_indication_logged",
+      "pass": false,
+      "detail": "exit 1: Example resource specifications include:\n   '-f rsrc.yaml'\n   '--filename=rsrc.json'\n   '<resource> <name>'\n   '<resource>'"
+    },
+    {
+      "name": "m3_patched_kpimon_log_counts_informational",
+      "pass": true,
+      "detail": "indications=0 hdr_wmore=0 msg_wmore=0 influx_wrote_ue=0 influx_wrote_cell=0  restarts=unknown"
+    },
+    {
+      "name": "m3_patched_influx_rows_since_install_informational",
+      "pass": true,
+      "detail": "total=0 "
+    },
+    {
+      "name": "m3_patched_capture_stopped",
+      "pass": true,
+      "detail": "[04:06:06] capture m3-patched stopped: 112 packets captured 112 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "m3_patched_tshark_decodes_subscription_request_and_response",
+      "pass": false,
+      "detail": "exit 1: RICsubscriptionRequest frames: 0, RICsubscriptionResponse frames: 0"
+    },
+    {
+      "name": "m3_patched_harness_ran_on_pcap",
+      "pass": true,
+      "detail": "{\"expect_ts_len\": 8, \"hdr_clean\": 0, \"hdr_fail\": 0, \"hdr_ok_exact\": 0, \"hdr_other\": 0, \"hdr_wmore\": 0, \"msg_clean\": 0, \"msg_fail\": 0, \"msg_other\": 0, \"msg_wmore\": 0, \"total\": 0}"
+    },
+    {
+      "name": "m3_patched_wire_indications_gt0",
+      "pass": false,
+      "detail": "exit 1: wire indications (deduped by TSN): 0"
+    },
+    {
+      "name": "m3_patched_extractor_skipped_no_rows",
+      "pass": true,
+      "detail": "extractor rows skipped: 0"
+    },
+    {
+      "name": "m3_patched_harness_every_header_clean_rc_ok",
+      "pass": false,
+      "detail": "exit 1: headers clean (RC_OK, consumed==len, ts_len==8): 0 of 0 (hdr_ok_exact 0)"
+    },
+    {
+      "name": "m3_patched_harness_every_message_clean_rc_ok",
+      "pass": false,
+      "detail": "exit 1: messages clean (RC_OK, consumed==len): 0 of 0"
+    },
+    {
+      "name": "m3_patched_harness_zero_wmore_fail_other",
+      "pass": true,
+      "detail": "harness hdr wmore/fail 0/0, msg wmore/fail 0/0, other hdr/msg 0/0"
+    },
+    {
+      "name": "m3_patched_kpimon_log_zero_wmore",
+      "pass": true,
+      "detail": "kpimon log header RC_WMORE=0, MSG RC_WMORE=0"
+    },
+    {
+      "name": "m3_patched_influx_rows_gt0",
+      "pass": false,
+      "detail": "exit 1: total=0"
+    },
+    {
+      "name": "m3_patched_wire_vs_kpimon_count_crosscheck_informational",
+      "pass": true,
+      "detail": "wire=0 kpimon_logged=0 diff=0 tolerance=3 (max(3, ceil(2% of wire)))"
+    },
+    {
+      "name": "m3_patched_kpimon_received_indications",
+      "pass": false,
+      "detail": "exit 1: kpimon logged indications: 0"
+    },
+    {
+      "name": "m3_patched_kpimon_pod_no_restarts",
+      "pass": false,
+      "detail": "exit 1: restarts=unknown"
+    },
+    {
+      "name": "m3_no_capture_left_running",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m3_pcaps_in_evidence",
+      "pass": true,
+      "detail": "17192 /home/uc/evidence/m3/20261103T031140Z/m3-patched.pcap;17192 /home/uc/evidence/m3/20261103T031140Z/m3-stock.pcap;"
+    }
+  ]
+}
