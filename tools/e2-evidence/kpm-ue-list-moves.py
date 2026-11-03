@@ -10,6 +10,9 @@ Time of sample k, across every measCondUEidList item (E2SM-KPM v03.00 8.2.1.4.2,
 IDs"). The agent stamps sample k with epoch + max(0, k - 1) x period, so samples 0 and 1 share a time and
 k <= 1 is not judged. gNB node n serves cell n.
 
+With an actuation delay (ledger applySimTimeNs - rxSimTimeNs = delta), the radio state changes at the apply
+time, so every line is judged at the barrier ka = k + delta // period (ka = k at delta = 0; delta = 150 at a
+100 ms period applies between samples k + 1 and k + 2, so ka = k + 1) and k below means ka.
 An applied ledger line (imsi i, source s, target t, barrier k) has moved when i is in U(s) and not in U(t)
 at sample k, and not in U(s) and in U(t) at sample k + 1. A refused or late line must leave i's gNB
 membership unchanged between k and k + 1, unless the same IMSI has an applied line in the same step (a
@@ -84,24 +87,28 @@ def ue_lists(pcap, ip2node, t0, t1):
     return lists, n_f2, problems
 
 
-def judge(lines, at, gnbs):
-    """lines: ledger lines; at(node, k): the UE-ID set of node n's report of sample k, or None.
+def judge(lines, at, gnbs, period_ns):
+    """lines: ledger lines; at(node, k): the UE-ID set of node n's report of sample k, or None; period_ns: the
+    sample period. Each line is judged at ka = rxSeq + (applySimTimeNs - rxSimTimeNs) // period_ns.
     Judged per (imsi, barrier k): with exactly one applied line, that line must move the IMSI from its source
     to its target gNB between k and k + 1 (a refused line of the same IMSI and step is covered by that
     move); with none, every refused or late line must leave the IMSI's gNB membership unchanged; two
     applied lines for one IMSI in one step are a problem. Returns (per-line records, moved, problems)."""
     problems, results, moved = [], [], {}
     applied_in = {}
+    def ka(x):
+        return x["rxSeq"] + (x["applySimTimeNs"] - x["rxSimTimeNs"]) // period_ns
     for x in lines:
         if x["outcome"] == "applied":
-            applied_in[(x["imsi"], x["rxSeq"])] = applied_in.get((x["imsi"], x["rxSeq"]), 0) + 1
+            applied_in[(x["imsi"], ka(x))] = applied_in.get((x["imsi"], ka(x)), 0) + 1
     for (i, k), n in sorted(applied_in.items()):
         if n > 1:
             problems.append("imsi %d at k %d: %d applied lines in one step" % (i, k, n))
     for x in lines:
-        i, k, s, t = x["imsi"], x["rxSeq"], x["sourceCell"], x["targetCell"]
-        r = {"imsi": i, "rxSeq": k, "outcome": x["outcome"], "cause": x.get("cause", ""), "source": s, "target": t}
-        if k <= 1:
+        i, k, s, t = x["imsi"], ka(x), x["sourceCell"], x["targetCell"]
+        r = {"imsi": i, "rxSeq": x["rxSeq"], "judgedAt": k, "outcome": x["outcome"], "cause": x.get("cause", ""),
+             "source": s, "target": t}
+        if x["rxSeq"] <= 1:
             problems.append("ledger line imsi %d at k %d: samples 0 and 1 share a collection time, not judged" % (i, k))
             results.append(r)
             continue
@@ -140,18 +147,30 @@ def judge(lines, at, gnbs):
 
 def self_test():
     """The judge on synthetic UE lists: a same-step pair for one IMSI, an unknown IMSI, a wrong move."""
-    lists = {(2, 30): {3, 4}, (3, 30): {1, 2}, (2, 31): {2, 3, 4}, (3, 31): {1}}   # imsi 2: 3 -> 2 at k 30
+    lists = {(2, 30): {3, 4}, (3, 30): {1, 2}, (2, 31): {2, 3, 4}, (3, 31): {1},   # imsi 2: 3 -> 2 at k 30
+             (2, 32): {2, 3, 4}, (3, 32): {1}}                                     # no move 31 -> 32
 
     def at(n, k):
         return lists.get((n, k))
-    pair = [{"imsi": 2, "rxSeq": 30, "sourceCell": 3, "targetCell": 2, "outcome": "applied"},
-            {"imsi": 2, "rxSeq": 30, "sourceCell": 3, "targetCell": 3, "outcome": "refused", "cause": "inHandover"},
-            {"imsi": 99, "rxSeq": 30, "sourceCell": 0, "targetCell": 2, "outcome": "refused", "cause": "unknownImsi"}]
+    T = 100_000_000
+    rx = 3_000_000_000
+
+    def line(d_ns=0, rxseq=30, **kw):
+        return dict({"rxSeq": rxseq, "rxSimTimeNs": rx, "applySimTimeNs": rx + d_ns}, **kw)
+    pair = [line(imsi=2, sourceCell=3, targetCell=2, outcome="applied"),
+            line(imsi=2, sourceCell=3, targetCell=3, outcome="refused", cause="inHandover"),
+            line(imsi=99, sourceCell=0, targetCell=2, outcome="refused", cause="unknownImsi")]
+    # delta = 100 ms and 150 ms: decided at k 29 (100) / 29 (150), applied between samples 30 and 31 -> ka = 30
+    d100 = [line(100_000_000, 29, imsi=2, sourceCell=3, targetCell=2, outcome="applied")]
+    d150 = [line(150_000_000, 29, imsi=2, sourceCell=3, targetCell=2, outcome="applied")]
+    d150_at_rx = [line(150_000_000, 30, imsi=2, sourceCell=3, targetCell=2, outcome="applied")]   # ka 31: no move there
     bad = [dict(pair[0], imsi=1, targetCell=2)]                                       # imsi 1 stays on 3
     twice = [pair[0], dict(pair[0], targetCell=2)]
     lonely = [dict(pair[1], imsi=2)]                                                   # a refusal whose imsi moved
-    checks = [("pair", judge(pair, at, [2, 3]), True), ("wrong move", judge(bad, at, [2, 3]), False),
-              ("two applied", judge(twice, at, [2, 3]), False), ("refusal that moved", judge(lonely, at, [2, 3]), False)]
+    checks = [("pair", judge(pair, at, [2, 3], T), True), ("wrong move", judge(bad, at, [2, 3], T), False),
+              ("two applied", judge(twice, at, [2, 3], T), False), ("refusal that moved", judge(lonely, at, [2, 3], T), False),
+              ("delta 100 judged at k + 1", judge(d100, at, [2, 3], T), True), ("delta 150 judged at k + 1", judge(d150, at, [2, 3], T), True),
+              ("delta 150 does not judge at rx", judge(d150_at_rx, at, [2, 3], T), False)]
     fails = [n for n, (_, _, p), want in checks if (not p) != want]
     print("kpm-ue-list-moves self-test: " + ("ok" if not fails else "FAIL " + ", ".join(fails)))
     return 0 if not fails else 1
@@ -176,7 +195,7 @@ def main():
         return lists.get((node, a.epoch_ms + max(0, k - 1) * a.period_ms))
 
     lines = [json.loads(l) for l in open(a.ledger) if l.strip()][1:] if os.path.exists(a.ledger) else []
-    results, moved, p = judge(lines, at, gnbs)
+    results, moved, p = judge(lines, at, gnbs, a.period_ms * 1_000_000)
     problems += p
     out = {"format2Indications": n_f2, "reports": len(lists), "gnbNodes": gnbs, "lines": results,
            "kpmUeListMoved": moved, "problems": problems, "pass": not problems}
