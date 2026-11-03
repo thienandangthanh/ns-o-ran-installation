@@ -1,0 +1,42 @@
+== plans/261103-0008-GH-1-post-m9-realism-m10/evidence/m2/20261103T192101Z/golden-ppid-facts.json sha256 900fcecabfb62cf3
+-- kpm_sim IP 172.17.0.2 (expect exit 0)
+10.97.131.139:36422 -> :36422 PPID counts {"70": 2}
+172.17.0.2:36422 -> :36422 PPID counts {"70": 510}
+source 172.17.0.2: 510 PPID-70 chunk(s)
+E2AP frames decoded by PPID 127, forced on the port 127
+exit 0
+-- e2term-side IP 10.97.131.139 alone is not kpm_sim; wrong IP 172.17.0.99 (expect exit 1)
+10.97.131.139:36422 -> :36422 PPID counts {"70": 2}
+172.17.0.2:36422 -> :36422 PPID counts {"70": 510}
+source 172.17.0.99: 0 PPID-70 chunk(s)
+E2AP frames decoded by PPID 127, forced on the port 127
+PROBLEM: source 172.17.0.99 sent no PPID-70 DATA chunk
+exit 1
+== plans/261103-0008-GH-1-post-m9-realism-m10/evidence/m3/20261103T193519Z/m3-stock-ppid-facts.json sha256 c2bb675dfb403223
+-- kpm_sim IP 172.17.0.3 (expect exit 0)
+10.97.131.139:36422 -> :36422 PPID counts {"70": 2}
+172.17.0.3:36422 -> :36422 PPID counts {"70": 510}
+source 172.17.0.3: 510 PPID-70 chunk(s)
+E2AP frames decoded by PPID 126, forced on the port 126
+exit 0
+-- e2term-side IP 10.97.131.139 alone is not kpm_sim; wrong IP 172.17.0.99 (expect exit 1)
+10.97.131.139:36422 -> :36422 PPID counts {"70": 2}
+172.17.0.3:36422 -> :36422 PPID counts {"70": 510}
+source 172.17.0.99: 0 PPID-70 chunk(s)
+E2AP frames decoded by PPID 126, forced on the port 126
+PROBLEM: source 172.17.0.99 sent no PPID-70 DATA chunk
+exit 1
+== plans/261103-0008-GH-1-post-m9-realism-m10/evidence/m3/20261103T193519Z/m3-patched-ppid-facts.json sha256 02955ee66cc9ba48
+-- kpm_sim IP 172.17.0.3 (expect exit 0)
+10.97.131.139:36422 -> :36422 PPID counts {"70": 2}
+172.17.0.3:36422 -> :36422 PPID counts {"70": 510}
+source 172.17.0.3: 510 PPID-70 chunk(s)
+E2AP frames decoded by PPID 126, forced on the port 126
+exit 0
+-- e2term-side IP 10.97.131.139 alone is not kpm_sim; wrong IP 172.17.0.99 (expect exit 1)
+10.97.131.139:36422 -> :36422 PPID counts {"70": 2}
+172.17.0.3:36422 -> :36422 PPID counts {"70": 510}
+source 172.17.0.99: 0 PPID-70 chunk(s)
+E2AP frames decoded by PPID 126, forced on the port 126
+PROBLEM: source 172.17.0.99 sent no PPID-70 DATA chunk
+exit 1

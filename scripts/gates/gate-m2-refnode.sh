@@ -132,7 +132,7 @@ check m2_sctp_zero_abort        assert_chunks ABORT     "sctp.chunk_type == 6" 0
 # e. E2AP decode of the golden pcap
 ################################################################################
 check m2_golden_decodes_e2ap e2ap_decode "$GP" "$EVIDENCE_DIR/golden-e2ap-decode.txt"
-check m2_golden_kpm_sim_e2ap_ppid70 e2ap_ppid_check "$GP" golden
+check m2_golden_kpm_sim_e2ap_ppid70 kpm_sim_ppid_check "$GP" golden
 DEC="$EVIDENCE_DIR/golden-e2ap-decode.txt"
 
 # E2SetupRequest = initiatingMessage / procedureCode 1; E2SetupResponse = successfulOutcome / 1.

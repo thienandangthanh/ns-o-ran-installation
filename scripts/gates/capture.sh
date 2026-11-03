@@ -103,6 +103,16 @@ e2ap_ppid_check() {
     python3 -I "$ev/e2-facts-query.py" "$EVIDENCE_DIR/$tag-ppid-facts.json" ppid "$@"
 }
 
+# kpm_sim_ppid_check <pcap> <tag>: e2ap_ppid_check with kpm_sim's container IP (written by bringup refnode when kpm_sim
+# connected) as --source-ip, so kpm_sim itself must have sent PPID 70 chunks, not only some association on the port.
+kpm_sim_ppid_check() {
+    local ip
+    ip=$(cat "$EVIDENCE_DIR/kpm-sim-ip.txt" 2>/dev/null)
+    [ -n "$ip" ] || { echo "no kpm_sim container IP recorded (kpm-sim-ip.txt)"; return 1; }
+    echo "kpm_sim container IP $ip"
+    e2ap_ppid_check "$1" "$2" --source-ip "$ip"
+}
+
 # e2ap_sample_decode <pcap> <procedureCode> <n> <out>: full -V decode of the
 # first n frames carrying that E2AP procedure. tshark's -c caps packets READ,
 # not packets displayed, so "-Y ... -c n" would stop before the first match.

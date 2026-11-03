@@ -369,6 +369,8 @@ _bringup_refnode() {
         e2mgr_states >"$EVIDENCE_DIR/bringup-e2mgr-states.json"
         if e2_node_connected; then
             echo "$(date -u +%FT%TZ) attempt $attempt CONNECTED" >>"$EVIDENCE_DIR/bringup-refnode-attempts.log"
+            # kpm_sim's container IP, so a capture's PPID check can judge kpm_sim's own chunks (kpm_sim_ppid_check).
+            dk inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' oransim >"$EVIDENCE_DIR/kpm-sim-ip.txt" 2>/dev/null
             log "bringup refnode: e2mgr shows a CONNECTED node (attempt $attempt)"
             return 0
         fi
