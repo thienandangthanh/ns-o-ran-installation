@@ -46,8 +46,8 @@ Note: these four δ references are re-banked at cp3 (P11, I-7); the ones made he
 ## Standards ledger (stub)
 | Decision | Document, section | Zotero | Read |
 |---|---|---|---|
-| δ values bracket the Near-RT loop; 150 ms between barriers | E2GAP v08.00 §5.1.1; OAD v18 Near-RT RIC section | `AE3NUEDK`, `TBVJDMLF` | to cite |
-| Predicate rewrites for P1 (source en-gNB addressing) | E2SM-RC v03.00 §8.4.6.3–8.4.6.4; 3GPP TS 37.340 §10.5.1 | `JRDTL7XS`, `E6VYJPXJ` | to cite |
+| δ values bracket the Near-RT loop; 150 ms between barriers | E2GAP v08.00 §5.1.1 (p. 9: Near-RT control loops "from 10 milliseconds up to 1 second"; δ = 100–500 ms lies inside, 150 ms falls between two 100 ms barriers); OAD v18 Near-RT RIC section not read (the E2GAP text suffices) | `AE3NUEDK` (PDF `WVKTACCS`) | 2026-11-03 |
+| Predicate rewrites for P1 (source en-gNB addressing) | E2SM-RC v03.00 §8.4.6.3 (Style 5 action 3 parameter table, PDF p. 183, read for I-4); 3GPP TS 37.340 §10.5.1 (cited at P07, I-1) | `JRDTL7XS`, `E6VYJPXJ` | §8.4.6.3 read for I-4 (plan § Interpretations, kongming); rest at P07 |
 
 ## Risks
 - A δ that never yields an applied handover in the R3′ schedule (Medium/Low at 500 ms). Mitigation: the Failure Protocol; the scenario is not edited after its run.
@@ -55,3 +55,13 @@ Note: these four δ references are re-banked at cp3 (P11, I-7); the ones made he
 
 ## Rollback
 References and tags are additive. A wrong reference is replaced only by a new C1 at a new commit; tags are never moved.
+
+## Exit record (Stop A, 2026-11-03)
+- Step 1: `m10-cp1` (annotated) = harness `83443e1` and the four pins; pushed to every remote, after the extended seam smoke passed at the pins (25/25, `evidence/delta-seam-smoke/20261103T071157Z`; kongming P03 must).
+- Step 2: `reference/m9-r3p-raw/` promoted earlier; `sha256sum -c` passes.
+- Step 2b: `reference/identity-map-cp1.json` frozen (f5beca2; `reference/SHA256SUMS`); NS_LOG cross-check PASS 7/7 (`evidence/identity-map-nslog/20261103T072809Z`: one master node, all six IMSIs, RNTIs equal); the AC8 run-2 live1–3 PDCP traces have the M9 file's sha256.
+- Step 3: R3′ C1 at δ = 100/150/200/500 (harness 876c8d6), 176/176 each, one applied predictor-driven handover per live run; references `reference/r3p-d{100,150,200,500}` (`--components ledger,ipc,traces`, recorded `xapp-image-ids.json`), self-compare and live2/live3 compare equal.
+- Step 4: outcome-vs-δ table in the Stop A journal (`docs/journals/2026-11-03-m10-stop-a.md`): HandoverStart − apply = 3.0 ms at every δ (I-2).
+- Step 5: R-7 re-grep at 23f85dc recorded in the ledger status paragraph; no predicate of rows 10–55 changed; no site TBD.
+- Step 6: budget re-projection in the journal (T′ both bases, /mnt/data, W′, the 52 GiB overlay observation); `m9-budget.py` extension deferred to P11 (needs M10's own d* gate path).
+- Extra: p12 re-run live with the stricter judge (ledger row 60), 52/52 (`evidence/p12/20261103T090413Z`). Raw evidence archives `plans-evidence-raw-m10-cp1-20261103` and `-m10-p04-20261103` on /mnt/data.

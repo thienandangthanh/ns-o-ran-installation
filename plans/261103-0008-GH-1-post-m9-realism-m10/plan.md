@@ -34,17 +34,17 @@ After each checkpoint the compliant behaviour is the only behaviour (R1, R8). Ev
 
 ## Resume card (filled at execution; update before every VM operation > 10 min and at every phase exit)
 ```text
-last-updated: 2026-11-03 16:25 KST
-current phase: P04 (MB) running: chain `m10-p04-chain` at harness 876c8d6. Rulings D1–D4 (decisions-261103-0450; contract Amendment 2) in force.
+last-updated: 2026-11-03 18:45 KST
+current phase: STOP A (after P04). Journal docs/journals/2026-11-03-m10-stop-a.md; waiting for rulings (gap 5, gap 15, M1/P15, d* step path, T′ base flag, confirm 25 #9 rows). Next on resume: P05 (T-A). Rulings D1–D4 in force.
 P02: DONE (AC8 run 1 ✓ evidence/r3p/20261103T024628Z; M4–M7 ✓; verdicts in 73068f1). kongming GO-WITH-CHANGES: KPM move judge δ-aware 281d709 (ledger row 56); seam smoke extended 1cf145f (d100tie, d150stop, pins + emitter SHAs) — run it via `vm-exec.sh probes/probe-delta-seam-smoke.sh` (08f72bc) after the P03 chain, before any P04 δ run. Exit record in phase-02.
 P03: DONE (p12 ✓ 52/52, AC8 run 2 ✓ evidence/r3p/20261103T063029Z at 83443e1). kongming exit review GO-WITH-CHANGES (kongming-261103-1600): must = seam smoke at pins ✓ 25/25 (evidence/delta-seam-smoke/20261103T071157Z); shoulds done (rows 59 amended, 60 stricter p12 judge 1794f97; R-6 unit-test record evidence/p03-unit; standards ledger; raw archive). Exit record in phase-03.
 AC18 #9: ledger rows 10–55 + 56 (119c91d, 281d709): 25 registered (P1/N5), 12 P5 held per D2 until the P06 AC6a re-probe, 5 pending Stop A rulings (gap 5 row 31, gap 15 rows 43–45, 48). Planner report planner-261103-1150 (NR-CGI APER = 9 octets; eNB meid enB_macro_001_001_000001 verified).
-P04: m10-cp1 tagged + pushed (harness 83443e1, Testbed 809fb2d, ns-3 48d41a5, oran-interface b2342c6, e2sim 2209995; annotated message lists evidence). identity-map-cp1.json frozen f5beca2 (reference/SHA256SUMS; AC8 run 2 live1–3 PDCP trace sha256 = M9's). Raw evidence archive plans-evidence-raw-m10-cp1-20261103.tar.zst (3,755 files, 179 MB). Chain (scratchpad p04-chain.sh, log p04-chain.log): seam smoke (re-run at HEAD) → identity-map NS_LOG probe → r3p C1 δ 100/150/200/500 → p12 (stricter judge live). Still: reference-compare make --components ledger,ipc,traces → reference/r3p-d<δ>; outcome-vs-δ table; budget re-projection; Stop A journal + kongming note + PAUSE A.
+P04: DONE. m10-cp1 = 83443e1 (+ 4 fork pins), pushed. identity-map-cp1.json frozen f5beca2, NS_LOG cross-check ✓. δ refs reference/r3p-d{100,150,200,500} from C1 at 876c8d6 (176/176 each; 1 applied handover per live run; HandoverStart − apply = 3.0 ms all δ). p12 re-run with the stricter judge ✓. R-7 re-grep at 23f85dc: no rows 10–55 predicate moved. Raw archives m10-cp1 + m10-p04 on /mnt/data. Exit record in phase-04.
 Stop A agenda (scratchpad stop-a-agenda.txt): M1 per-action format as P15?; SubMgr 1024-octet buffer defect; K bound 20; gaps 5 and 15; D2 P5 timing; TAC width; T′ base; d100/d200/d500 single runs with a reference (gate path) vs C1 runs (kongming S3); P14 scope.
-VM / snapshots / host free: VM busy with the P04 chain; snapshots fresh-install f7-rerun-green m0-probe-{d11021754,n,o,p,q} r0-green r2-green r3p-green; /home 65 GiB, /mnt/data 20 GiB
+VM / snapshots / host free: VM idle; snapshots fresh-install f7-rerun-green m0-probe-{d11021754,n,o,p,q} r0-green r2-green r3p-green; /home 37 GiB (≈ 89 after the next revert unlinks the 52 GiB overlay), /mnt/data 20 GiB
 fork SHAs (pins.conf): Testbed 809fb2d3, ns-3 48d41a50, oran-interface b2342c66, e2sim 2209995a
 checkpoint tags: m10-cp1 = 83443e1 (pushed, all 5 repos), m10-cp2 (none), m10-cp3 (none)
-in-flight jobs: user unit m10-p04-chain (VM)
+in-flight jobs: none (VM idle on the r3p-green overlay, 52 GiB, unlinked at the next revert)
 ```
 
 ## Invariants card (never violate)
@@ -65,7 +65,7 @@ in-flight jobs: user unit m10-p04-chain (VM)
 | P01 | MA | [rc claims, identity probe, scale probe, ASN.1 toolchain, standards preflight](phase-01-rc-claims-identity-and-scale-probes.md) | AC6, AC6a, AC6b; F10/F11 preflight | AC6 ✓, AC6b ✓, F10 ✓ (static), F11 12/13 (T4 38.331); AC6a: eNB ✓, en-gNB refused by e2mgr 6.0.6 → PAUSE T3 → rulings D1–D4 (Amendment 2): e2mgr patch, AC6a en-gNB re-probe in P06 after cp1 | done 2026-11-03 (AC6a en-gNB carried to P06) |
 | P02 | MB | [δ actuation seam](phase-02-delta-actuation-seam.md) | AC7; AC8 run 1 | done 2026-11-03 (AC8 run 1 ✓ r3p/20261103T024628Z; kongming GO-WITH-CHANGES; seam smoke re-run at the pins with the tie and stop cases before P04 δ runs) |
 | P03 | MB | [P12: KPM reporting period and granularity](phase-03-p12-kpm-reporting-period-granularity.md) | AC10; AC8 run 2 | done 2026-11-03 (p12 ✓ 52/52; AC8 run 2 ✓ evidence/r3p/20261103T063029Z; cp1 = 83443e1) |
-| P04 | MB | [Checkpoint 1 tag, δ sweep references, predicate registration](phase-04-checkpoint-1-tag-delta-references.md) | AC8 tag, AC9, AC18 #9 registration | pending |
+| P04 | MB | [Checkpoint 1 tag, δ sweep references, predicate registration](phase-04-checkpoint-1-tag-delta-references.md) | AC8 tag, AC9, AC18 #9 registration | done 2026-11-03 (m10-cp1 = 83443e1; δ refs 100/150/200/500; Stop A) |
 | — | — | **Stop A** | user | — |
 | P05 | MC | [P10: SCTP PPID 70 on every E2 node (agents and kpm_sim)](phase-05-p10-sctp-ppid-70.md) | AC11 (dev form) | pending |
 | P06 | MC | [Identity cluster: P11/N5/P2/P5/P8, N1, independent RIC control injector](phase-06-identity-cluster-gnb-id-nr-cgi-e2-setup.md) | AC12, AC13 | pending |
