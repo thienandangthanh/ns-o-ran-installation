@@ -1,0 +1,60 @@
+{
+ "candidates": 420,
+ "class": "formed",
+ "decisionEligibility": {
+  "handover/handover": 140,
+  "handover/margin": 0,
+  "none/margin": 0,
+  "none/none": 280
+ },
+ "h1": {
+  "decision": "handover",
+  "expect": "applied",
+  "expectedAnswer": [
+   [
+    "0000000303",
+    [
+     66976,
+     0
+    ]
+   ],
+   [
+    "0000000202",
+    [
+     133936,
+     0
+    ]
+   ]
+  ],
+  "imsi": 1,
+  "key": "0000000202",
+  "kind": "positive",
+  "step": 30,
+  "targetCell": 2,
+  "via": 2
+ },
+ "n1": {
+  "decision": "none",
+  "expectedAnswer": [
+   [
+    "0000000202",
+    [
+     133936,
+     0
+    ]
+   ],
+   [
+    "0000000303",
+    [
+     66976,
+     0
+    ]
+   ]
+  ],
+  "imsi": 3,
+  "kind": "negative",
+  "step": 20
+ },
+ "scenarioSha256": "7824c744034bb812c3f04808e9b6f1d93571521b447b357597b8e65bc47464f6",
+ "stageDir": "/home/uc/evidence/r3p/20261028T041150Z/runs/drya"
+}
