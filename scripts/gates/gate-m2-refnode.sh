@@ -62,6 +62,7 @@ record m2_tshark_kpm_dissector_informational true \
 # b. stop the old kpm_sim, start the capture on docker0, then bring up the refnode
 ################################################################################
 check m2_old_refnode_stopped nist_run 180 "$RIC_DIR/install_scripts/stop_e2sim.sh"
+check m2_kpm_sim_image_built_with_ppid70_patch kpm_sim_image_ppid_patched --rebuild
 check m2_capture_started capture_start "$GOLDEN" docker0 sctp
 sleep 2
 check m2_refnode_up gate_bringup refnode

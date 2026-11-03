@@ -313,6 +313,29 @@ _ric_route_readers_ready() {
 }
 
 REFNODE_ATTEMPTS="${REFNODE_ATTEMPTS:-3}"
+# kpm_sim_image_ppid_patched [--rebuild]: NIST's kpm_sim image (oransim:0.0.999) was built with the Testbed's
+# SCTP send patch (every E2AP message with PPID 70): its e2sim.sctp.sha256 label equals the sha256 of the patch
+# file at $TESTBED_SHA. The installer and the e2-interface patch files are taken from $TESTBED_SHA first (a
+# snapshot's tree may be older). --rebuild runs NIST's install_e2sim.sh (bounded 3600 s) when the label differs;
+# it restarts docker as NIST's full install does, so only M2 passes it, before kpm_sim starts.
+kpm_sim_image_ppid_patched() {
+    local patch="install_patch_files/e2-interface/e2sim/src/SCTP/e2sim_sctp.cpp" want have
+    git -C "$RIC_DIR" cat-file -e "$TESTBED_SHA^{commit}" 2>/dev/null ||
+        GIT_TERMINAL_PROMPT=0 git -C "$RIC_DIR" fetch -q "$TESTBED_URL" "$TESTBED_SHA" || return 1
+    git -C "$RIC_DIR" checkout "$TESTBED_SHA" -- install_scripts/install_e2sim.sh install_patch_files/e2-interface || return 1
+    want=$(sha256sum <"$RIC_DIR/$patch" | cut -d' ' -f1)
+    have=$(dk image inspect --format '{{index .Config.Labels "e2sim.sctp.sha256"}}' oransim:0.0.999 2>/dev/null)
+    echo "oransim:0.0.999 e2sim.sctp.sha256=${have:-<none>}, patch at $TESTBED_SHA: $want"
+    if [ "$have" != "$want" ] && [ "${1:-}" = --rebuild ]; then
+        log "kpm_sim image lacks the PPID 70 patch: rebuilding with install_e2sim.sh (bound 3600s)"
+        (cd "$RIC_DIR" && nist_run 3600 sudo -n ./install_scripts/install_e2sim.sh) >"$EVIDENCE_DIR/install-e2sim.log" 2>&1 ||
+            { tail -n 20 "$EVIDENCE_DIR/install-e2sim.log"; return 1; }
+        have=$(dk image inspect --format '{{index .Config.Labels "e2sim.sctp.sha256"}}' oransim:0.0.999 2>/dev/null)
+        echo "after rebuild: e2sim.sctp.sha256=${have:-<none>}"
+    fi
+    [ "$have" = "$want" ]
+}
+
 # _bringup_refnode: start NIST's kpm_sim and wait until e2mgr lists it CONNECTED.
 # kpm_sim sends its E2SetupRequest once and never resends it, so a setup lost
 # to a not-yet-routable RIC stalls forever; attempts 2..N restart kpm_sim after

@@ -48,6 +48,7 @@ ric_watchdog_bg
 ################################################################################
 check m3_refnode_up gate_bringup refnode
 check m3_nist_tree_at_testbed_sha nist_tree_at_testbed_sha
+check m3_kpm_sim_image_built_with_ppid70_patch kpm_sim_image_ppid_patched
 
 install_build_tools() {
     if ! command -v gcc >/dev/null 2>&1 || ! command -v make >/dev/null 2>&1; then
