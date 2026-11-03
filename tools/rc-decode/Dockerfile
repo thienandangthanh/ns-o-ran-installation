@@ -1,7 +1,10 @@
 # rc-decode: an E2SM-RC v2.0 wire decoder independent of the agents' codec.
 # Generator asn1c mouse07410@584d86e (built at -O0: newer GCCs miscompile it at
 # -O2), schema = rc@a2282ee e2sm/e2sm-rc-2.0.asn + e2sm/e2sm-common.asn, the
-# exact files the deployed rc xApp was generated from.
+# exact files the deployed rc xApp was generated from, with the RANParameter-ID
+# bound written as 1..4294967295 (the Testbed rc patch
+# 0001-bound-ran-parameter-id.patch: `2^32` is not ASN.1 value notation and
+# made asn1c drop the constraint). The sed must change exactly one line.
 FROM ubuntu:24.04 AS build
 RUN apt-get update -q && DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends \
         ca-certificates git build-essential autoconf automake libtool bison flex \
@@ -13,7 +16,10 @@ RUN git clone -q https://github.com/mouse07410/asn1c.git /src/asn1c && git -C /s
     && ./configure -q --prefix=/opt/asn1c CFLAGS="-O0 -g -w -std=gnu11" >/dev/null \
     && make -j"$(nproc)" >/dev/null 2>&1 && make install >/dev/null
 RUN git clone -q https://github.com/o-ran-sc/ric-app-rc.git /src/rc && git -C /src/rc checkout -q $RC_SHA \
-    && test "$(git -C /src/rc rev-parse HEAD)" = "$RC_SHA"
+    && test "$(git -C /src/rc rev-parse HEAD)" = "$RC_SHA" \
+    && sed -i 's/^\(RANParameter-ID[[:space:]]*::= INTEGER (1\.\.\)2^32\(, \.\.\.)\)$/\14294967295\2/' /src/rc/e2sm/e2sm-rc-2.0.asn \
+    && test "$(git -C /src/rc diff --numstat | tr -s '\t' ' ')" = "1 1 e2sm/e2sm-rc-2.0.asn" \
+    && grep -q '^RANParameter-ID[[:space:]]*::= INTEGER (1\.\.4294967295, \.\.\.)$' /src/rc/e2sm/e2sm-rc-2.0.asn
 WORKDIR /gen
 RUN /opt/asn1c/bin/asn1c -pdu=auto -fincludes-quoted -fcompound-names -findirect-choice -fno-include-deps \
         -no-gen-example -gen-APER /src/rc/e2sm/e2sm-common.asn /src/rc/e2sm/e2sm-rc-2.0.asn >/gen.log 2>&1 \

@@ -5,8 +5,9 @@
  *
  *   rc-decode            stdin lines "<id> <type> <hex>", type = header |
  *                        message | outcome; prints
- *                        {"id","type","ok","len","consumed","xer"}.
- *                        ok = decode RC_OK and every octet consumed.
+ *                        {"id","type","ok","len","consumed","reenc","xer"}.
+ *                        ok = decode RC_OK and every octet consumed; reenc =
+ *                        the decoded value re-encodes (APER) to the same octets.
  *   rc-decode --selftest-outcome
  *                        encodes an E2SM-RC-ControlOutcome Format 1 with an
  *                        empty ranP-List, decodes it back and prints the hex,
@@ -72,16 +73,24 @@ static asn_TYPE_descriptor_t *type_of(const char *t)
     return NULL;
 }
 
-/* Decode one value; returns 1 when RC_OK and all octets were consumed. */
+/* Decode one value; returns 1 when RC_OK and all octets were consumed. *reenc (if given) is set to 1 when the
+ * decoded value re-encodes to exactly the input octets. */
 static int decode_one(asn_TYPE_descriptor_t *td, const unsigned char *bin, size_t len,
-                      size_t *consumed, struct buf *xer)
+                      size_t *consumed, struct buf *xer, int *reenc)
 {
     void *p = NULL;
     asn_dec_rval_t r = aper_decode_complete(NULL, td, &p, bin, len);
     *consumed = r.consumed;
     int ok = r.code == RC_OK && r.consumed == len;
+    if (reenc) *reenc = 0;
     if (r.code == RC_OK)
         xer_encode(td, p, XER_F_BASIC, buf_cb, xer);
+    if (ok && reenc) {
+        unsigned char *enc = malloc(len + 16);
+        asn_enc_rval_t er = enc ? aper_encode_to_buffer(td, NULL, p, enc, len + 16) : (asn_enc_rval_t){-1, 0, 0};
+        *reenc = er.encoded >= 0 && (size_t)((er.encoded + 7) / 8) == len && !memcmp(enc, bin, len);
+        free(enc);
+    }
     ASN_STRUCT_FREE(*td, p);
     return ok;
 }
@@ -100,7 +109,7 @@ static int selftest_outcome(void)
     struct buf x1 = {0}, x2 = {0};
     xer_encode(&asn_DEF_E2SM_RC_ControlOutcome, o, XER_F_BASIC, buf_cb, &x1);
     size_t consumed;
-    int ok = decode_one(&asn_DEF_E2SM_RC_ControlOutcome, enc, len, &consumed, &x2);
+    int ok = decode_one(&asn_DEF_E2SM_RC_ControlOutcome, enc, len, &consumed, &x2, NULL);
     ok = ok && x1.p && x2.p && !strcmp(x1.p, x2.p);
     printf("{\"ok\":%s,\"hex\":\"", ok ? "true" : "false");
     for (size_t i = 0; i < len; i++) printf("%02x", enc[i]);
@@ -123,12 +132,13 @@ int main(int argc, char **argv)
         if (!td) { fprintf(stderr, "unknown type %s\n", type); bad = 1; continue; }
         size_t len = hex2bin(hex, bin, sizeof(bin)), consumed = 0;
         struct buf xer = {0};
-        int ok = decode_one(td, bin, len, &consumed, &xer);
+        int reenc = 0;
+        int ok = decode_one(td, bin, len, &consumed, &xer, &reenc);
         bad |= !ok;
         printf("{\"id\":");
         json_str(id);
-        printf(",\"type\":\"%s\",\"ok\":%s,\"len\":%zu,\"consumed\":%zu,\"xer\":", type,
-               ok ? "true" : "false", len, consumed);
+        printf(",\"type\":\"%s\",\"ok\":%s,\"len\":%zu,\"consumed\":%zu,\"reenc\":%s,\"xer\":", type,
+               ok ? "true" : "false", len, consumed, reenc ? "true" : "false");
         json_str(xer.p ? xer.p : "");
         printf("}\n");
         free(xer.p);

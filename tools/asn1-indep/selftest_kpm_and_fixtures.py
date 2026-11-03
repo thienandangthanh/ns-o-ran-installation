@@ -17,6 +17,10 @@ from e2indep_gen import E2SM_RC_v0200
 ASN1C_MSG = "0000010001014400000001024400000001034400000001042a00090000f1100000000003"
 X691_MSG = "00000100004400000001440000000244000000032a00090000f1100000000003"
 FIXTURE_NR_CGI = bytes.fromhex("0000f1100000000003")
+# rc with the Testbed patch set (RANParameter-ID bounded 1..4294967295, ...; RAN parameter 4 = APER NR-CGI) encoding
+# TS key 0000000310 at PLMN 00F110, captured from its libe2smwrapper (e2sm_encode_nrcgi then
+# e2sm_encode_ric_control_message, the calls its gRPC path makes).
+ASN1C_P14_MSG_GNB3 = "00000100004400000001440000000244000000032a00090000f1100000000310"
 
 
 def kpm_checks(check, kpm):
@@ -93,6 +97,32 @@ def _rc_decode_checks(check, root, handover_params):
     print(f"INFO fixture valueOctS {FIXTURE_NR_CGI.hex()} read as an APER NR-CGI: {nr}")
 
 
+def _rc_nrcgi_checks(check, root, handover_params):
+    """rc-control-nrcgi.hex (make-nrcgi-fixture.py): X.691 header and message of a Style 3/1 control per line id
+    '...-gnb<n>'; each re-encodes byte-equal, the target is the NR-CGI of gNB n, and rc's P14-fixed asn1c output for
+    gNB 3 equals the fixture's X.691 message."""
+    with open(os.path.join(root, "rc-decode", "rc-control-nrcgi.hex")) as f:
+        rows = [line.split() for line in f if line.strip()]
+    bad = []
+    msg_of = {}
+    for name, hdr, msg in rows:
+        gnb = int(name.rsplit("gnb", 1)[1])
+        cgi = encode(E2SM_RC_v0200.E2SM_COMMON_IEs.NR_CGI, {"pLMNIdentity": bytes.fromhex("00f110"),
+                                                            "nRCellIdentity": ((gnb << 4) | 1, 36)})
+        d = rc.decode_control_header(bytes.fromhex(hdr))
+        ok = (rc.control_header(d["ue_id"], d["style_type"], d["action_id"], d["decision"]).hex() == hdr
+              and d["style_type"] == 3 and d["action_id"] == 1
+              and rc.control_message(handover_params(cgi)).hex() == msg)
+        msg_of[gnb] = msg
+        if not ok:
+            bad.append(name)
+    check(f"X.691 RC fixture ({len(rows)}): header round-trip style 3/1, message = 1>2>3>4 with the gNB's NR-CGI",
+          rows and not bad, repr(bad))
+    check("asn1c (rc, P14-fixed) RC message == X.691 for the gNB 3 target", msg_of.get(3) == ASN1C_P14_MSG_GNB3,
+          f"fixture {msg_of.get(3)} vs asn1c {ASN1C_P14_MSG_GNB3}")
+
+
 def fixture_checks(check, root, handover_params):
     _rmr_peer_checks(check, root)
     _rc_decode_checks(check, root, handover_params)
+    _rc_nrcgi_checks(check, root, handover_params)
