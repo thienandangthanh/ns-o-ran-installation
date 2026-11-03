@@ -38,6 +38,10 @@ kpimon subscribes with a fixed 10 s reporting period (event trigger bytes `8, 39
 | Granularity = collection interval within the reporting period; records per indication | KPM v03.00 §8.2.1.2.3, §8.3.8, §8.2.1.4.1 | `F82PYZVK` | to cite |
 | Not-admitted action answer | E2AP v03.00 §8.2.1.2 (RIC Subscription, unsuccessful/partial), §9.2.x RIC Action Not Admitted List | `WEE5IEXF` [C] | to cite |
 
+## Exit chain record
+- Attempt 1 (2026-11-03 03:09Z, harness d0887ad, Testbed 4b4a61a, from `r3p-green`): RED at M3 (`evidence/m3/20261103T031140Z`). Both the stock and the patched kpimon installs were refused at onboarding: `'rmr' is a required property` (error source `config-file.json`). Cause, verified on the VM: the xApp onboarder validates the descriptor's `controls` section against the schema file it is given (`xapp_onboarder/api/onboard.py`: `schema["properties"]["controls"] = controls_schema_file`), and kpimon's `deploy/schema.json` requires an `rmr` object, so the new `controls.reportingPeriodMs/granularityPeriodMs` section failed. The P03 tests never ran the installer end to end. Fix: Testbed 809fb2d (the installer writes `deploy/schema_updated.json`: both periods required, integers 1..4294967295, and onboards with it; checked offline with the onboarder's own schema and Draft 7 validator: the generated descriptor passes; a 0 period and a missing granularity are rejected). Pinned at harness b71ad2c. No check changed.
+- Attempt 2: the same chain at harness b71ad2c (AC8 run 2 then runs with the δ-aware judge, the pacer replay fix and the emitter-SHA guard; all are no-ops at δ = 0).
+
 ## Risks
 - kpimon's patched decoder may mis-store 10 records (High/Medium). SUB-P12 is the approved fallback; it is used only on evidence.
 - At T/T, any byte change in the KPM header or message breaks AC8 (High/Low). Mitigation: a codec-probe byte-compare of T/T indications against M9 captures before the VM run.
