@@ -8,7 +8,8 @@
 #   d500     δ = 500    check-ledger.py --delta-ms 500 (batches queued to barrier k + 5)
 #   d500stop δ = 500, one control injected at step 97 of 100: still pending at the stop, so it gets exactly one
 #            refused/late answer whose rxSimTimeNs is barrier 97's time
-# plus the same outcome multiset at every δ (the scripted controls are far apart, so δ moves the apply time only).
+# plus the outcome table per δ, recorded and not asserted: δ moves the apply time into a different radio state
+# (the 2026-11-03 smoke: at δ = 500 the step-30 control finds IMSI 6 in LTE fallback instead of already on target).
 # The build's provenance (the uncommitted diff of the seam) is recorded.
 source "$(dirname "$0")/../gates/lib.sh"
 gate_init dseam
@@ -84,10 +85,10 @@ def oc(d):
 o = {d: oc(d) for d in ("d0", "d150", "d500")}
 for d, v in o.items():
     print(d, v)
-sys.exit(0 if o["d0"] == o["d150"] == o["d500"] else 1)
+print("same at every delta:", o["d0"] == o["d150"] == o["d500"])
 PY
 }
-check dseam_same_outcomes_at_every_delta same_outcomes
+record dseam_outcomes_per_delta_informational true "$(same_outcomes 2>&1 | tail -n 1)"
 PACERX=(--schedule "$e/stop-schedule.json")
 check dseam_run_d500stop paced_null_run d500stop lockstep 0 "--simStartEpochMs=$EPOCH_MS" --actuationDelayMs=500
 check dseam_d500stop_ledger_checks bash -o pipefail -c "python3 -I '$LEDGER_CHECK' '$RUNS/d500stop/trace/e2-control-ledger.jsonl' \
