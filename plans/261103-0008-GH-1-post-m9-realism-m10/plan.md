@@ -34,17 +34,17 @@ After each checkpoint the compliant behaviour is the only behaviour (R1, R8). Ev
 
 ## Resume card (filled at execution; update before every VM operation > 10 min and at every phase exit)
 ```text
-last-updated: 2026-11-04 02:30 KST
-current phase: STOP A RULED (2026-11-04, plans/reports/decisions-261104-0214-GH-1-m10-stop-a-rulings.md: S1–S7 + G1, G2, all the recommended option). Next: G2 promotion of the δ raw files (host-only), then P05 (T-A) with the P15 scoping read; chain scripts record df + overlay size at every gate boundary (S5). Rulings D1–D4 and S1–S7 in force.
+last-updated: 2026-11-04 03:20 KST
+current phase: P05 IN PROGRESS. G2 done (58629fc); S3 scoping read done (P15 stays a fix: kpimon's cells come from an F1-only sidecar, not e2mgr RAN-function cell lists; phase-05 exit record); S5 host-disk.tsv per gate (601c988). Fixes pinned: Testbed d84068c (agent PPID 70 + kpm_sim patch + image label), e2sim e270581; harness b39595a (decode by PPID, ppid checks, kpm_sim image guard; ledger rows 61–63). VM chain m10-p05-chain-1 (M2 → M3 → M5 → M6 → M7 → r3p single) running from r3p-green since 18:13Z.
 P02: DONE (AC8 run 1 ✓ evidence/r3p/20261103T024628Z; M4–M7 ✓; verdicts in 73068f1). kongming GO-WITH-CHANGES: KPM move judge δ-aware 281d709 (ledger row 56); seam smoke extended 1cf145f (d100tie, d150stop, pins + emitter SHAs) — run it via `vm-exec.sh probes/probe-delta-seam-smoke.sh` (08f72bc) after the P03 chain, before any P04 δ run. Exit record in phase-02.
 P03: DONE (p12 ✓ 52/52, AC8 run 2 ✓ evidence/r3p/20261103T063029Z at 83443e1). kongming exit review GO-WITH-CHANGES (kongming-261103-1600): must = seam smoke at pins ✓ 25/25 (evidence/delta-seam-smoke/20261103T071157Z); shoulds done (rows 59 amended, 60 stricter p12 judge 1794f97; R-6 unit-test record evidence/p03-unit; standards ledger; raw archive). Exit record in phase-03.
 AC18 #9: ledger rows 10–55 + 56 (119c91d, 281d709): 25 registered (P1/N5), 12 P5 held per D2 until the P06 AC6a re-probe, 5 pending Stop A rulings (gap 5 row 31, gap 15 rows 43–45, 48). Planner report planner-261103-1150 (NR-CGI APER = 9 octets; eNB meid enB_macro_001_001_000001 verified).
 P04: DONE. m10-cp1 = 83443e1 (+ 4 fork pins), pushed. identity-map-cp1.json frozen f5beca2, NS_LOG cross-check ✓. δ refs reference/r3p-d{100,150,200,500} from C1 at 876c8d6 (176/176 each; 1 applied handover per live run; HandoverStart − apply = 3.0 ms all δ). p12 re-run with the stricter judge ✓. R-7 re-grep at 23f85dc: no rows 10–55 predicate moved. Raw archives m10-cp1 + m10-p04 on /mnt/data. Exit record in phase-04.
 Stop A rulings (2026-11-04): S1 gap 5 = A (P07 emitter change); S2 gap 15 = A + required fail-fast header (P06); S3 P15 in scope, fix in P10, scoping read in P05, record-only exit only on the F7 limit; S4 d100/d200/d500 single-run gate confirmed; S5 T′ base deferred to Stop B + per-step host measurement from P05; S6 25 #9 rows + row 45 confirmed; S7 /mnt/data floor 5 GiB; G1 seam smoke migrated (#9 row before P07 code, re-run at P07 exit and P11); G2 δ raw promotion before P05 VM work, d150/d500 transform-compare in P08.
 VM / snapshots / host free: VM idle; snapshots fresh-install f7-rerun-green m0-probe-{d11021754,n,o,p,q} r0-green r2-green r3p-green; /home 37 GiB (≈ 89 after the next revert unlinks the 52 GiB overlay), /mnt/data 20 GiB
-fork SHAs (pins.conf): Testbed 809fb2d3, ns-3 48d41a50, oran-interface b2342c66, e2sim 2209995a
+fork SHAs (pins.conf): Testbed d84068ca, ns-3 48d41a50, oran-interface b2342c66, e2sim e2705816 (cp1 pins: Testbed 809fb2d3, e2sim 2209995a)
 checkpoint tags: m10-cp1 = 83443e1 (pushed, all 5 repos), m10-cp2 (none), m10-cp3 (none)
-in-flight jobs: none (VM idle on the r3p-green overlay, 52 GiB, unlinked at the next revert)
+in-flight jobs: user unit m10-p05-chain-1 (log evidence/.p05-chain.log); VM reverted to r3p-green 18:12Z (52 GiB overlay unlinked; /home 88 GiB)
 ```
 
 ## Invariants card (never violate)
@@ -67,7 +67,7 @@ in-flight jobs: none (VM idle on the r3p-green overlay, 52 GiB, unlinked at the 
 | P03 | MB | [P12: KPM reporting period and granularity](phase-03-p12-kpm-reporting-period-granularity.md) | AC10; AC8 run 2 | done 2026-11-03 (p12 ✓ 52/52; AC8 run 2 ✓ evidence/r3p/20261103T063029Z; cp1 = 83443e1) |
 | P04 | MB | [Checkpoint 1 tag, δ sweep references, predicate registration](phase-04-checkpoint-1-tag-delta-references.md) | AC8 tag, AC9, AC18 #9 registration | done 2026-11-03 (m10-cp1 = 83443e1; δ refs 100/150/200/500; Stop A) |
 | — | — | **Stop A** | user | ruled 2026-11-04 (S1–S7, G1, G2) |
-| P05 | MC | [P10: SCTP PPID 70 on every E2 node (agents and kpm_sim)](phase-05-p10-sctp-ppid-70.md) | AC11 (dev form); P15 scoping read (S3) | pending |
+| P05 | MC | [P10: SCTP PPID 70 on every E2 node (agents and kpm_sim)](phase-05-p10-sctp-ppid-70.md) | AC11 (dev form); P15 scoping read (S3) | in progress (G2, S3, S5, fixes done; VM chain running) |
 | P06 | MC | [Identity cluster: P11/N5/P2/P5/P8, N1, independent RIC control injector](phase-06-identity-cluster-gnb-id-nr-cgi-e2-setup.md) | AC12, AC13 | pending |
 | P06b | MC | [P4 KPM UE IDs: X2AP context export, en-gNB-UEID/eNB-UEID in KPM, kpimon → Influx](phase-06b-kpm-ue-ids-x2ap-context-export.md) | AC14b (codec, context, Influx gates; R2/R3′ integration exits in P07) | pending |
 | P07 | MC | [P4/P1/P13: Style 5 action 3 to the source en-gNB](phase-07-rc-style5-pscell-change-source-en-gnb.md) | AC14; AC14b integration (R2/R3′ green with the migrated UE-ID consumers); gap 5 option A (S1); seam smoke migrated and re-run (G1) | pending |
