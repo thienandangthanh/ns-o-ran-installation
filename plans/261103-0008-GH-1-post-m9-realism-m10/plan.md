@@ -64,7 +64,7 @@ in-flight jobs: user unit m10-p03-chain-3 (VM; p12 → m6 → m7 → r3p c1)
 | P00 | MA | [Ops prelude: runner finish, overlay orphans, receiver readiness, headroom, FU4 note](phase-00-ops-prelude-runner-overlays-readiness-headroom.md) | AC1–AC5 | done 2026-11-03 (harness 6cc7798) |
 | P01 | MA | [rc claims, identity probe, scale probe, ASN.1 toolchain, standards preflight](phase-01-rc-claims-identity-and-scale-probes.md) | AC6, AC6a, AC6b; F10/F11 preflight | AC6 ✓, AC6b ✓, F10 ✓ (static), F11 12/13 (T4 38.331); AC6a: eNB ✓, en-gNB refused by e2mgr 6.0.6 → PAUSE T3 → rulings D1–D4 (Amendment 2): e2mgr patch, AC6a en-gNB re-probe in P06 after cp1 | done 2026-11-03 (AC6a en-gNB carried to P06) |
 | P02 | MB | [δ actuation seam](phase-02-delta-actuation-seam.md) | AC7; AC8 run 1 | done 2026-11-03 (AC8 run 1 ✓ r3p/20261103T024628Z; kongming GO-WITH-CHANGES; seam smoke re-run at the pins with the tie and stop cases before P04 δ runs) |
-| P03 | MB | [P12: KPM reporting period and granularity](phase-03-p12-kpm-reporting-period-granularity.md) | AC10; AC8 run 2 | pending |
+| P03 | MB | [P12: KPM reporting period and granularity](phase-03-p12-kpm-reporting-period-granularity.md) | AC10; AC8 run 2 | done 2026-11-03 (p12 ✓ 52/52; AC8 run 2 ✓ evidence/r3p/20261103T063029Z; cp1 = 83443e1) |
 | P04 | MB | [Checkpoint 1 tag, δ sweep references, predicate registration](phase-04-checkpoint-1-tag-delta-references.md) | AC8 tag, AC9, AC18 #9 registration | pending |
 | — | — | **Stop A** | user | — |
 | P05 | MC | [P10: SCTP PPID 70 on every E2 node (agents and kpm_sim)](phase-05-p10-sctp-ppid-70.md) | AC11 (dev form) | pending |

@@ -1,0 +1,57 @@
+[05:42:42] gate p12 start; evidence /home/uc/evidence/p12/20261103T054241Z; harness 83443e1d15f913dd8a1a02d2805ca2d7e562d773
+[05:42:42] ric watchdog started (pid 216119, threshold 600s)
+[05:42:42] PASS p12_nist_tree_at_testbed_sha_with_agent_dir
+[05:42:43] PASS p12_build_tools_present
+[05:42:43] PASS p12_sctp_module_loaded_and_persisted
+[05:42:43] PASS p12_ns3_binary_located
+[05:42:43] PASS p12_kubectl_exec_it_works_without_tty
+[05:43:19] PASS p12_a_kpimon_uninstalled
+[05:47:45] PASS p12_a_kpimon_installed_p1000_g100
+[05:48:21] PASS p12_a_kpimon_pod_ready_after_install
+[05:48:21] PASS p12_a_kpimon_config_carries_p1000_g100
+[05:48:21] PASS p12_a_kpimon_so_extracted_from_image
+[05:48:22] PASS p12_a_capture_started_before_agents
+[05:49:15] PASS p12_a_bringup_agents_connected_set_exact
+[05:49:15] PASS p12_a_agent_container_ip_recorded
+[05:49:16] PASS p12_a_wire_subscription_request_and_response
+[05:49:18] PASS p12_a_ns3_started_single_gnb
+[05:49:32] PASS p12_a_ns3_completes_exit0
+[05:49:32] draining 8s
+[05:49:40] PASS p12_a_kpimon_log_window_complete
+[05:49:40] PASS p12_a_influx_exported
+[05:49:43] PASS p12_a_agents_stopped
+[05:49:43] PASS p12_a_capture_stopped
+[05:49:44] PASS p12_a_decoded_subscription_period_1000_answered
+[05:49:44] PASS p12_a_one_indication_per_10_seqs_with_10_records
+[05:49:44] PASS p12_a_kpimon_logged_every_wire_indication_zero_wmore
+[05:49:44] PASS p12_a_influx_equals_ipc_trace_every_seq
+[05:49:45] PASS p12_a_emitter_bye_sent_equals_built_zero_drops
+[05:49:45] PASS p12_a_agent_counters_forwarded_plus_unreported_equal_trace
+[05:50:20] PASS p12_b_kpimon_uninstalled
+[05:53:05] PASS p12_b_kpimon_installed_p150_g100
+[05:54:16] PASS p12_b_kpimon_pod_ready_after_install
+[05:54:16] PASS p12_b_kpimon_config_carries_p150_g100
+[05:54:17] PASS p12_b_capture_started_before_agents
+[05:55:10] PASS p12_b_bringup_agents_connected_set_exact
+[05:55:10] PASS p12_b_agent_container_ip_recorded
+[05:55:11] PASS p12_b_wire_subscription_request_and_failure
+[05:55:17] PASS p12_b_agent_counts_the_refused_subscription_and_holds_none
+[05:55:19] PASS p12_b_agents_stopped
+[05:55:19] PASS p12_b_capture_stopped
+[05:55:20] PASS p12_b_decoded_subscription_failure_cause_event_trigger_not_supported
+[05:55:56] PASS p12_c_kpimon_uninstalled
+[05:58:44] PASS p12_c_kpimon_installed_p100_g100
+[06:01:56] PASS p12_c_kpimon_pod_ready_after_install
+[06:01:56] PASS p12_c_kpimon_config_carries_p100_g100
+[06:01:57] PASS p12_c_capture_started_before_agents
+[06:02:50] PASS p12_c_bringup_agents_connected_set_exact
+[06:02:50] PASS p12_c_agent_container_ip_recorded
+[06:02:50] PASS p12_c_wire_subscription_request_and_response
+[06:02:53] PASS p12_c_agents_stopped
+[06:02:53] PASS p12_c_capture_stopped
+[06:02:54] PASS p12_c_restored_subscription_period_decoded
+[06:02:54] PASS p12_no_stray_ns3_agent_process_or_3847x_listener
+[06:02:54] PASS p12_no_capture_left_running
+[06:02:54] PASS p12_pcaps_in_evidence
+[06:02:54] ric watchdog stopped (pid 216119)
+verdict p12: PASS failed=[]
