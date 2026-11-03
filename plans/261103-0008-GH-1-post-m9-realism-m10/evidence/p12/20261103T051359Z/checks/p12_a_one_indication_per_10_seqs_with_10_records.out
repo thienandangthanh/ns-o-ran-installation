@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/home/uc/harness/scripts/gates/p12-records-check.py", line 218, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/uc/harness/scripts/gates/p12-records-check.py", line 209, in main
+    r = check(a.records, layout(a.map), load_traces(a.trace), a.per_indication)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/uc/harness/scripts/gates/p12-records-check.py", line 129, in check
+    header_ok(tag, node, seqs[0], ts)
+  File "/home/uc/harness/scripts/gates/p12-records-check.py", line 113, in header_ok
+    want = nodes[node]["epochMs"] + max(0, s["simTimeMs"] - nodes[node]["periodMs"])
+                                           ~^^^^^^^^^^^^^
+KeyError: 'simTimeMs'

@@ -34,17 +34,17 @@ After each checkpoint the compliant behaviour is the only behaviour (R1, R8). Ev
 
 ## Resume card (filled at execution; update before every VM operation > 10 min and at every phase exit)
 ```text
-last-updated: 2026-11-03 13:05 KST
-current phase: P03 exit chain running on the VM; P04 prep. Rulings D1–D4 (decisions-261103-0450; contract Amendment 2) in force.
+last-updated: 2026-11-03 14:45 KST
+current phase: P03 exit chain attempt 3 (resume at p12) running on the VM; P04 prep. Rulings D1–D4 (decisions-261103-0450; contract Amendment 2) in force.
 P02: DONE (AC8 run 1 ✓ evidence/r3p/20261103T024628Z; M4–M7 ✓; verdicts in 73068f1). kongming GO-WITH-CHANGES: KPM move judge δ-aware 281d709 (ledger row 56); seam smoke extended 1cf145f (d100tie, d150stop, pins + emitter SHAs) — run it via `vm-exec.sh probes/probe-delta-seam-smoke.sh` (08f72bc) after the P03 chain, before any P04 δ run. Exit record in phase-02.
-P03: attempt 1 (harness d0887ad, Testbed 4b4a61a) RED at M3: kpimon onboarding refused ('rmr' is a required property: onboarder validates controls against deploy/schema.json); fix Testbed 809fb2d (schema_updated.json), pinned b71ad2c; record in phase-03. Attempt 2 = user unit `m10-p03-chain-2` (scratchpad p03-chain.sh, log p03-chain-2.log, harness b71ad2c): revert r3p-green → m3 → m4 → m5 → p12 → m6 → m7 → r3p c1 --reference M9 (AC8 run 2). If green, cp1 = b71ad2c.
+P03: attempt 1 (d0887ad) RED at M3 (kpimon onboarding schema; fix Testbed 809fb2d, pin b71ad2c). Attempt 2 (b71ad2c): M3/M4/M5 PASS, p12 51/52 RED on a judge bug (trace simTimeNs; Format 2 item 0 noValue); fix 83443e1 (ledger row 59). Attempt 3 = user unit `m10-p03-chain-3` (scratchpad p03-chain-resume.sh, log p03-chain-3.log, harness 83443e1, no revert): p12 → m6 → m7 → r3p c1 --reference M9 (AC8 run 2). If green, cp1 = 83443e1. Record in phase-03.
 AC18 #9: ledger rows 10–55 + 56 (119c91d, 281d709): 25 registered (P1/N5), 12 P5 held per D2 until the P06 AC6a re-probe, 5 pending Stop A rulings (gap 5 row 31, gap 15 rows 43–45, 48). Planner report planner-261103-1150 (NR-CGI APER = 9 octets; eNB meid enB_macro_001_001_000001 verified).
 P04 still: seam smoke at pins; tag m10-cp1 (harness + forks) on the AC8 run 2 commit; freeze identity-map-cp1.json (NS_LOG cross-check, SHA256SUMS); δ C1s 100/150/200/500 (≈ 1,370 s each) + reference-compare make --components ledger,ipc,traces → reference/r3p-d<δ>; outcome-vs-δ table; budget re-projection; Stop A journal + kongming note + PAUSE A.
 Stop A agenda (scratchpad stop-a-agenda.txt): M1 per-action format as P15?; SubMgr 1024-octet buffer defect; K bound 20; gaps 5 and 15; D2 P5 timing; TAC width; T′ base; d100/d200/d500 single runs with a reference (gate path) vs C1 runs (kongming S3); P14 scope.
-VM / snapshots / host free: VM busy with the P03 chain; snapshots fresh-install f7-rerun-green m0-probe-{d11021754,n,o,p,q} r0-green r2-green r3p-green; /home 91 GiB, /mnt/data 20 GiB
+VM / snapshots / host free: VM busy with P03 attempt 3; snapshots fresh-install f7-rerun-green m0-probe-{d11021754,n,o,p,q} r0-green r2-green r3p-green; /home 65 GiB, /mnt/data 20 GiB
 fork SHAs (pins.conf): Testbed 809fb2d3, ns-3 48d41a50, oran-interface b2342c66, e2sim 2209995a
 checkpoint tags: m10-cp1 (none), m10-cp2 (none), m10-cp3 (none)
-in-flight jobs: user unit m10-p03-chain (attempt 1, finishing M3 red) then m10-p03-chain-2 (VM)
+in-flight jobs: user unit m10-p03-chain-3 (VM; p12 → m6 → m7 → r3p c1)
 ```
 
 ## Invariants card (never violate)

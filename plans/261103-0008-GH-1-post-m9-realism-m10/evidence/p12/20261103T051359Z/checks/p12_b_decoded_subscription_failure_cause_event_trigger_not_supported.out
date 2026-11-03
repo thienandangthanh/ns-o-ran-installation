@@ -1,0 +1,5 @@
+frames=25 inits=1 aborts=0 shutdowns=3 setup_req=1 setup_resp=1 sub_req=2 sub_resp=0 sub_fail=2 ind_srcs={}
+RICsubscriptionRequests (frame, reportingPeriod, granulPeriods): [(12, 150, [100]), (15, 150, [100])]
+RICsubscriptionRequests: [(12, 123, 6, 150), (15, 123, 6, 150)]
+RICsubscriptionFailures: [(13, 123, 6, 'ricRequest:17', 'ricRequest:eventTriggerNotSupported'), (16, 123, 6, 'ricRequest:17', 'ricRequest:eventTriggerNotSupported')]
+RICsubscriptionResponses: []
