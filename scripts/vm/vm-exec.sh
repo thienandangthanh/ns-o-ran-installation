@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # vm-exec.sh <gate-script> [--harness-sha SHA] [--timeout S] [-- gate args...]
+# vm-exec.sh probes/probe-<name>.sh [...]    (a probe: evidence under <name>/)
 #
-# Runs scripts/gates/<gate-script> on the VM as a detached systemd unit, so an
+# Runs scripts/gates/<gate-script> (or scripts/probes/probe-<name>.sh) on the VM as a detached systemd unit, so an
 # ssh drop never kills a gate. Polls for its exit code, scrubs the evidence on
 # the VM, and copies it to $EVIDENCE_HOST_ROOT/<gate>/<ts>/. Exit status is the
 # gate's verdict (0 = pass).
@@ -25,8 +26,11 @@ while [ $# -gt 0 ]; do
         *) die "unknown arg $1" ;;
     esac
 done
-[ -f "$REPO_ROOT/scripts/gates/$script" ] || die "no gate script $script"
-gate=$(gate_id "$script")
+case "$script" in
+    probes/probe-*.sh) sdir=scripts; gate=$(basename "$script" .sh); gate=${gate#probe-} ;;
+    *) sdir=scripts/gates; gate=$(gate_id "$script") ;;
+esac
+[ -f "$REPO_ROOT/$sdir/$script" ] || die "no gate script $sdir/$script"
 git -C "$REPO_ROOT" fetch -q origin 2>/dev/null || true
 git -C "$REPO_ROOT" branch -r --contains "$harness_sha" 2>/dev/null | grep . >/dev/null ||
     die "harness $harness_sha is not on any origin branch; push it first"
@@ -56,7 +60,7 @@ vm_ssh "mkdir -p $ev && sudo systemd-run --quiet --unit=$unit --uid=uc --gid=uc 
     --working-directory=/home/uc --setenv=HOME=/home/uc \
     --setenv=HARNESS_DIR=/home/uc/harness --setenv=HARNESS_SHA=$harness_sha \
     --setenv=GATE_TS=$ts --setenv=EVIDENCE_DIR=$ev \
-    bash -c 'bash /home/uc/harness/scripts/gates/$script $qargs >$ev/launch.log 2>&1 </dev/null; echo \$? >$ev/exit_code'" ||
+    bash -c 'bash /home/uc/harness/$sdir/$script $qargs >$ev/launch.log 2>&1 </dev/null; echo \$? >$ev/exit_code'" ||
     die "could not start unit $unit"
 
 # Poll; tolerate ssh drops.
