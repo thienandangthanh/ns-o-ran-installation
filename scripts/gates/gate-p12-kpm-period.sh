@@ -152,6 +152,10 @@ check p12_a_influx_equals_ipc_trace_every_seq python3 -I "$E2EV/influx-vs-trace.
     --influx-ue "$e/p12-a-influx-ue.csv" --out "$e/p12-a-influx-vs-trace.json"
 check p12_a_emitter_bye_sent_equals_built_zero_drops python3 -I "$E2EV/trace-facts.py" "$RUN/e2-ipc-trace-2.jsonl" --require-clean \
     --expect-nodes 2 --out "$e/p12-a-trace-facts.json"
+NSAMPLES=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))[0]["samples"])' "$e/p12-a-trace-facts.json" 2>/dev/null || echo 0)
+# the samples of the period still open at bye are not reported: n mod (P / T)
+check p12_a_agent_counters_forwarded_plus_unreported_equal_trace agent_counters_assert "$e/p12-a-agent-stats-final.json" \
+    "$NSAMPLES" "$((NSAMPLES % (P_MULTI_MS / T_MS)))"
 jf() {   # jf <json-file> <dotted.key>: the value as JSON, null when absent
     python3 -I - "$1" "$2" 2>/dev/null <<'PY' || echo null
 import json, sys
@@ -172,6 +176,10 @@ fact influxEqualsIpcEverySeq "$(jf "$e/p12-a-influx-vs-trace.json" all.every_seq
 kpimon_at b "$P_BAD_MS" "$G_MS"
 agents_up b p12-b
 check p12_b_wire_subscription_request_and_failure wait_wire "$e/p12-b.pcap" unsuccessful
+sleep 6   # the agent prints a stats line every 5 s
+agents_stats_last ns3-e2-agent-2 >"$e/p12-b-agent-stats-final.json"
+refused() { python3 -I -c 'import json,sys; s=json.loads(open(sys.argv[1]).read()); print("subs %s, subsRefused %s" % (s["subs"], s["e2"]["subsRefused"])); sys.exit(0 if s["subs"] == 0 and s["e2"]["subsRefused"] >= 1 else 1)' "$e/p12-b-agent-stats-final.json"; }
+check p12_b_agent_counts_the_refused_subscription_and_holds_none refused
 check p12_b_agents_stopped agents_stop
 check p12_b_capture_stopped capture_stop p12-b
 sub_b() {

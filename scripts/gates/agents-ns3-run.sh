@@ -12,7 +12,7 @@
 #   wire_sub_counts <pcap>            "<requests> <responses>" of RICsubscription seen so far (live pcap is fine)
 #   kpm_sub_period_check <pcap> <tag> <after>   decoded subscription reportingPeriod = rung-config kpm.reportingPeriodMs
 #   ranfunc_decode <node.json> <sodir> <out.jsonl>   e2mgr's ranFunctionDefinition hex through kpimon's library
-#   agent_counters_assert <stats-line-file> <expected-samples>
+#   agent_counters_assert <stats-line-file> <expected-samples> [<expected-unreported>]
 #   endurance_sample <dir> <n>        one 60 s sample (pods, agents, RSS, e2mgr, ns-3, load, kpimon)
 #   agents_hygiene                    no ns-3/agent process or container, no 3847x listener
 # Environment knobs: M4_WORKDIR (default $HOME/m4-build), NS3_TIMEOUT_S (default 900).
@@ -222,22 +222,28 @@ print("ranfunc", next(f["ranFunctionDefinition"] for f in fs if f["ranFunctionId
     [ -s "$out" ]
 }
 
-# agent_counters_assert <stats-line-file> <expected-samples>: every drop/overflow counter zero, samples in == forwarded.
+# agent_counters_assert <stats-line-file> <expected-samples> [<expected-unreported>]: every drop/overflow counter zero
+# (also the report-gap and report-failure counters), samples in == expected, and every sample went out in a report
+# except the <expected-unreported> (default 0) of a reporting period still open at bye: forwarded == in - unreported.
+# At P = T a period is one sample, so nothing is ever unreported.
 agent_counters_assert() {
-    python3 -I - "$1" "$2" <<'PY'
+    python3 -I - "$1" "$2" "${3:-0}" <<'PY'
 import json, sys
 s = json.loads(open(sys.argv[1]).read().strip().splitlines()[-1])
-exp = int(sys.argv[2])
+exp, unrep = int(sys.argv[2]), int(sys.argv[3])
 zero = dict(s["dropped"])
 zero.update({"uesDropped." + k: v for k, v in s["uesDropped"].items()})
 zero.update(int32Overflow=s["int32Overflow"], typeMismatch=s["typeMismatch"], realInexact=s["realInexact"],
             rxPduUndecodable=s["e2"]["rxPduUndecodable"], ctrlSendFailed=s["e2"]["ctrlSendFailed"],
-            ipcBadJson=s["ipc"]["badJson"], ipcLineTooLong=s["ipc"]["lineTooLong"], helloRejected=s["ipc"]["helloRejected"])
+            ipcBadJson=s["ipc"]["badJson"], ipcLineTooLong=s["ipc"]["lineTooLong"], helloRejected=s["ipc"]["helloRejected"],
+            samplesGapDiscarded=s["samplesGapDiscarded"], samplesReportFailed=s["samplesReportFailed"])
 nz = {k: v for k, v in zero.items() if v}
-print("state=%s subs=%s samplesIn=%s forwarded=%s (trace %d) indTx=%s (cell %s ue %s) chunkSplits=%s nonzero=%s" % (
-    s["state"], s["subs"], s["samplesIn"], s["samplesForwarded"], exp, s["indTx"], s["indTxCell"], s["indTxUe"],
-    s["chunkSplits"], nz))
-sys.exit(0 if not nz and s["samplesIn"] == exp == s["samplesForwarded"] and s["subs"] >= 1 else 1)
+print("state=%s subs=%s samplesIn=%s forwarded=%s unreported=%s (trace %d, want unreported %d) indTx=%s (cell %s ue %s) "
+      "chunkSplits=%s nonzero=%s" % (s["state"], s["subs"], s["samplesIn"], s["samplesForwarded"], s["samplesUnreported"],
+                                      exp, unrep, s["indTx"], s["indTxCell"], s["indTxUe"], s["chunkSplits"], nz))
+ok = (not nz and s["samplesIn"] == exp and s["samplesUnreported"] == unrep
+      and s["samplesForwarded"] == exp - unrep and s["subs"] >= 1)
+sys.exit(0 if ok else 1)
 PY
 }
 
