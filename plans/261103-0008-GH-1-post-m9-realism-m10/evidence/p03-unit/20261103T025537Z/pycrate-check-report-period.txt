@@ -1,0 +1,31 @@
+p1000 header: {'format': 'indicationHeader-Format1', 'collect_start_time': b'\xed\x007\x82\x80\x00\x00\x00', 'sender_name': 'ns3-cell-2', 'sender_type': 'ns-3-sim', 'vendor_name': 'ns-O-RAN', 'file_format_version': None, 'raw': {'colletStartTime': b'\xed\x007\x82\x80\x00\x00\x00', 'senderName': 'ns3-cell-2', 'senderType': 'ns-3-sim', 'vendorName': 'ns-O-RAN'}}
+p1000 cell: format indicationMessage-Format1 granulPeriod 100 measData items 10
+PASS p1000 cell: Format 1, 10 measData items, granulPeriod 100
+PASS p1000 cell: item t == T/T record list of seq 26+t (10/10)
+PASS p1000 header == seq 26's T/T header (colletStartTime of the first sample)
+PASS p1000 UE: Format 2, 10 measData items, granulPeriod 100 in every UE message
+PASS p1000 UE: 45/45 (seq, UE) record lists equal T/T; 5 absent pairs all noValue
+PASS p1000: E2AP RICindication decodes, carries the 10-item message
+p1000-request eventTrigger 0803e7 actions [(1, 'report', 472)]
+p150-request eventTrigger 0095 actions [(1, 'report', 472)]
+g200-request eventTrigger 0803e7 actions [(1, 'report', 472)]
+p100 answer: successfulOutcome RICsubscriptionResponse {'id-RICrequestID': {'ricRequestorID': 1100, 'ricInstanceID': 1}, 'id-RANfunctionID': 2, 'id-RICactions-Admitted': [{'id': 14, 'criticality': 'reject', 'value': ('RICaction-Admitted-Item', {'ricActionID': 1})}]}
+PASS p100: RICsubscriptionResponse
+p1000 answer: successfulOutcome RICsubscriptionResponse {'id-RICrequestID': {'ricRequestorID': 1000, 'ricInstanceID': 1}, 'id-RANfunctionID': 2, 'id-RICactions-Admitted': [{'id': 14, 'criticality': 'reject', 'value': ('RICaction-Admitted-Item', {'ricActionID': 1})}]}
+PASS p1000: RICsubscriptionResponse
+p150 answer: unsuccessfulOutcome RICsubscriptionFailure {'id-RICrequestID': {'ricRequestorID': 150, 'ricInstanceID': 1}, 'id-RANfunctionID': 2, 'id-Cause': ('ricRequest', 'eventTriggerNotSupported')}
+PASS p150: RICsubscriptionFailure, Cause ricRequest eventTriggerNotSupported
+badtrigger answer: unsuccessfulOutcome RICsubscriptionFailure {'id-RICrequestID': {'ricRequestorID': 151, 'ricInstanceID': 1}, 'id-RANfunctionID': 2, 'id-Cause': ('ricRequest', 'eventTriggerNotSupported')}
+PASS badtrigger: RICsubscriptionFailure, Cause ricRequest eventTriggerNotSupported
+g200 answer: unsuccessfulOutcome RICsubscriptionFailure {'id-RICrequestID': {'ricRequestorID': 200, 'ricInstanceID': 1}, 'id-RANfunctionID': 2, 'id-Cause': ('ricRequest', 'action-not-supported')}
+PASS g200: RICsubscriptionFailure, Cause ricRequest action-not-supported
+mixed answer: successfulOutcome RICsubscriptionResponse {'id-RICrequestID': {'ricRequestorID': 201, 'ricInstanceID': 1}, 'id-RANfunctionID': 2, 'id-RICactions-Admitted': [{'id': 14, 'criticality': 'reject', 'value': ('RICaction-Admitted-Item', {'ricActionID': 1})}, {'id': 14, 'criticality': 'reject', 'value': ('RICaction-Admitted-Item', {'ricActionID': 6})}], 'id-RICactions-NotAdmitted': [{'id': 16, 'criticality': 'ignore', 'value': ('RICaction-NotAdmitted-Item', {'ricActionID': 2, 'cause': ('ricRequest', 'action-not-supported')})}, {'id': 16, 'criticality': 'ignore', 'value': ('RICaction-NotAdmitted-Item', {'ricActionID': 3, 'cause': ('ricRequest', 'action-not-supported')})}, {'id': 16, 'criticality': 'ignore', 'value': ('RICaction-NotAdmitted-Item', {'ricActionID': 4, 'cause': ('ricRequest', 'action-not-supported')})}, {'id': 16, 'criticality': 'ignore', 'value': ('RICaction-NotAdmitted-Item', {'ricActionID': 5, 'cause': ('ricRequest', 'action-not-supported')})}]}
+PASS mixed: RICsubscriptionResponse
+k20 answer: successfulOutcome RICsubscriptionResponse {'id-RICrequestID': {'ricRequestorID': 2000, 'ricInstanceID': 1}, 'id-RANfunctionID': 2, 'id-RICactions-Admitted': [{'id': 14, 'criticality': 'reject', 'value': ('RICaction-Admitted-Item', {'ricActionID': 1})}]}
+PASS k20: RICsubscriptionResponse
+k21 answer: unsuccessfulOutcome RICsubscriptionFailure {'id-RICrequestID': {'ricRequestorID': 2100, 'ricInstanceID': 1}, 'id-RANfunctionID': 2, 'id-Cause': ('ricRequest', 'function-resource-limit')}
+PASS k21: RICsubscriptionFailure, Cause ricRequest function-resource-limit
+p10000 answer: unsuccessfulOutcome RICsubscriptionFailure {'id-RICrequestID': {'ricRequestorID': 10000, 'ricInstanceID': 1}, 'id-RANfunctionID': 2, 'id-Cause': ('ricRequest', 'function-resource-limit')}
+PASS p10000: RICsubscriptionFailure, Cause ricRequest function-resource-limit
+PASS mixed: 4 not admitted, action-not-supported
+check-report-period: ok

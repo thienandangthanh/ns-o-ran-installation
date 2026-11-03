@@ -1,0 +1,82 @@
+PASS fixture: hello accepted, 10 samples built
+PASS duplicate IMSI: kept once, uesDropped.duplicateImsi + 1
+PASS hello periodNs 100 ms == E2_INDICATION_PERIOD_MS accepted
+PASS hello periodNs 200 ms != E2_INDICATION_PERIOD_MS rejected: 
+PASS tt-byte-identical: 35/35 header/cell/UE octet strings equal the pre-change encoder's
+PASS kpimon trigger 00 63 decodes to 100 ms
+PASS kpimon trigger encoded from 10000 ms == the old literal 08 27 0f: 08270f
+PASS kpimon Format 3 by-ID definition (472 octets) decodes: G = 100 ms
+PASS kpimon Format 3 by-name definition (1474 octets) decodes: G = 100 ms
+PASS the by-name definition as SubMgr put it on the wire does not decode: periodNs 200000000 does not match E2_INDICATION_PERIOD_MS=100
+PASS Format 1 definition: G = 100 ms
+PASS p100: request decodes as RICsubscriptionRequest 
+PASS p100: P = T = 100 ms -> 1 sample per report
+PASS p100: admission decision ()
+PASS p100: answer built 
+PASS p100: answer decodes cleanly (33 octets) 
+PASS p100: RICsubscriptionResponse admits 1, not admitted 0 (ricRequest action-not-supported)
+PASS p1000: request decodes as RICsubscriptionRequest 
+PASS p1000: P = 1000 ms, G = 100 ms -> 10 samples per report
+PASS p1000: admission decision ()
+PASS p1000: answer built 
+PASS p1000: answer decodes cleanly (33 octets) 
+PASS p1000: RICsubscriptionResponse admits 1, not admitted 0 (ricRequest action-not-supported)
+PASS p1000: report of seq 26..35 encoded E2SM-KPM-ActionDefinition: decode RC_FAIL consumed 0 of 1475
+PASS p1000: header colletStartTime = the first sample's (seq 26) header octets
+PASS p1000: cell Format 1 with 10 measData items, granulPeriod 100 (1132 octets)
+PASS p1000: cell measData item t == the T/T message of seq 26+t, octet for octet (10/10)
+PASS p1000: 2 UE Format 2 message(s), each with 10 measData items, granulPeriod 100
+PASS p1000: UE records equal the T/T records for all 45 (seq, UE) pairs; 5 (seq, UE) pairs of a UE absent from that sample are noValue
+PASS p1000: cell RICindication built
+PASS p150: request decodes as RICsubscriptionRequest 
+PASS p150: refused with ricRequest cause 17 (reporting period 150 ms is not a multiple of T = 100 ms)
+PASS p150: answer built 
+PASS p150: answer decodes cleanly (28 octets) 
+PASS p150: RICsubscriptionFailure (procedure 8) for requestor 150, Cause ricRequest 17
+PASS badtrigger: request decodes as RICsubscriptionRequest 
+PASS badtrigger: refused with ricRequest cause 17 (E2SM-KPM-EventTriggerDefinition: decode RC_WMORE consumed 0 of 2)
+PASS badtrigger: answer built 
+PASS badtrigger: answer decodes cleanly (28 octets) 
+PASS badtrigger: RICsubscriptionFailure (procedure 8) for requestor 151, Cause ricRequest 17
+PASS g200: request decodes as RICsubscriptionRequest 
+PASS g200: refused with ricRequest cause 1 (no action admitted (action 1: Format 3 granularity 200 ms != T = 100 ms))
+PASS g200: answer built 
+PASS g200: answer decodes cleanly (28 octets) 
+PASS g200: RICsubscriptionFailure (procedure 8) for requestor 200, Cause ricRequest 1
+PASS mixed: request decodes as RICsubscriptionRequest 
+PASS mixed: admission decision (action 2: Format 3 granularity 200 ms != T = 100 ms; action 3: type 1 is not REPORT; action 4: no action definition; action 5: E2SM-KPM-ActionDefinition: decode RC_FAIL consumed 0 of 1475)
+PASS mixed: answer built 
+PASS mixed: answer decodes cleanly (76 octets) 
+PASS mixed: RICsubscriptionResponse admits 2, not admitted 4 (ricRequest action-not-supported)
+PASS k20: request decodes as RICsubscriptionRequest 
+PASS k20: P = 2000 ms -> K = 20 = E2_MAX_REPORT_RECORDS default, admitted
+PASS k20: admission decision ()
+PASS k20: answer built 
+PASS k20: answer decodes cleanly (33 octets) 
+PASS k20: RICsubscriptionResponse admits 1, not admitted 0 (ricRequest action-not-supported)
+PASS k20: worst-case cell Format 1, 20 items: 1996 octets <= E2_MAX_E2SM_BYTES=7000 
+PASS k20: worst-case UE Format 2, all 5 UEs in every item, in 3 message(s), largest 6930 octets <= E2_MAX_E2SM_BYTES, none dropped as oversize
+PASS k21: request decodes as RICsubscriptionRequest 
+PASS k21: refused with ricRequest cause 5 (reporting period 2100 ms needs 21 records per report > E2_MAX_REPORT_RECORDS=20)
+PASS k21: answer built 
+PASS k21: answer decodes cleanly (28 octets) 
+PASS k21: RICsubscriptionFailure (procedure 8) for requestor 2100, Cause ricRequest 5
+PASS p10000: request decodes as RICsubscriptionRequest 
+PASS p10000: refused with ricRequest cause 5 (reporting period 10000 ms needs 100 records per report > E2_MAX_REPORT_RECORDS=20)
+PASS p10000: answer built 
+PASS p10000: answer decodes cleanly (28 octets) 
+PASS p10000: RICsubscriptionFailure (procedure 8) for requestor 10000, Cause ricRequest 5
+PASS period-pt: samplesIn 3 == forwarded 3 + gapDiscarded 0 + failed 0 + unreported at bye 0
+PASS period-pt: P = T reports every sample at once: [5][6][7]
+PASS period-p3: samplesIn 8 == forwarded 6 + gapDiscarded 0 + failed 0 + unreported at bye 2
+PASS period-p3: aligned to the first sample (seq 10), 3 per report, 16..17 cut by bye: [10,11,12][13,14,15]
+PASS period-gap: samplesIn 6 == forwarded 3 + gapDiscarded 2 + failed 0 + unreported at bye 1
+PASS period-gap: seq 3 missing restarts the period at 4: [4,5,6], reportGaps 1
+PASS period-gap-after-report: samplesIn 6 == forwarded 6 + gapDiscarded 0 + failed 0 + unreported at bye 0
+PASS period-gap-after-report: a gap right after a completed period counts: [1,2,3][5,6,7], reportGaps 1
+PASS period-bye-rerun: seqs restarting after bye are no gap
+PASS period-fail: samplesIn 3 == forwarded 0 + gapDiscarded 0 + failed 2 + unreported at bye 1
+PASS period-fail: a report that is not sent still ends its period: [1,2]
+PASS period-replace: a replaced subscription's period restarts
+{"event":"test","unixMs":1793674537817,"nodeId":0,"state":"HOLDOFF","subs":0,"setupFuncAccepted":false,"lastSeq":-1,"samplesIn":0,"samplesForwarded":0,"samplesUnreported":0,"samplesGapDiscarded":0,"samplesReportFailed":0,"dropped":{"e2Down":0,"noSub":0,"sendBusy":0,"encode":0,"beforeHello":0,"badNode":0,"reportGaps":0},"uesDropped":{"oversize":0,"badImsi":0,"duplicateImsi":1},"chunkSplits":3,"int32Overflow":0,"typeMismatch":0,"realInexact":0,"indTx":0,"indTxCell":0,"indTxUe":0,"ipc":{"accepted":0,"rejectedSecond":0,"lineTooLong":0,"badJson":0,"helloAccepted":0,"helloRejected":0,"bye":0,"unknownType":0},"e2":{"connectAttempts":0,"connectFailures":0,"setups":0,"rxPdu":0,"rxPduUndecodable":0,"subsAdded":0,"subsReplaced":0,"subsDeleted":0,"subsOtherFunc":0,"subsRefused":0,"actionsNotAdmitted":0,"serviceQueries":0,"errorIndications":0,"otherPdus":0,"ctrlSendFailed":0},"rc":{"rx":0,"rejFunc":0,"rejDecode":0,"rejAction":0,"rejIpcDown":0,"forwarded":0,"applied":0,"refused":0,"failedOnBye":0,"ackTx":0,"failTx":0,"ackSuppressed":0,"ackUnknown":0,"ackBad":0,"pending":0},"stepsTx":0}
+kpm-report-period-test: ok

@@ -18,6 +18,8 @@
 !/*/evidence/*/*/**/*.manifest.json
 !/*/evidence/*/*/**/versions*.txt
 !/*/evidence/*/*/**/images.txt
+# Agent unit-test output (small text octet dumps): the only record of the R-6 admission paths.
+!/*/evidence/p03-unit/**
 # The M9 run directory is the run-level record: keep its top-level files.
 !/*/evidence/m9/*/*
 # Host live state, rewritten by every run (steps.tsv and m9/<ts>/ keep the values).

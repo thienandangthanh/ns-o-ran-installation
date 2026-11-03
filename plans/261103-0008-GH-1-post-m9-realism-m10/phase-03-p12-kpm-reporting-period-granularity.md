@@ -35,8 +35,9 @@ kpimon subscribes with a fixed 10 s reporting period (event trigger bytes `8, 39
 | Decision | Document, section | Zotero | Read |
 |---|---|---|---|
 | Reporting period from Event Trigger Style 1 | KPM v03.00 §7.3.2, §8.2.1.1.1 | `F82PYZVK` (R4 read) | 2026-11-02 |
-| Granularity = collection interval within the reporting period; records per indication | KPM v03.00 §8.2.1.2.3, §8.3.8, §8.2.1.4.1 | `F82PYZVK` | to cite |
-| Not-admitted action answer | E2AP v03.00 §8.2.1.2 (RIC Subscription, unsuccessful/partial), §9.2.x RIC Action Not Admitted List | `WEE5IEXF` [C] | to cite |
+| Granularity = collection interval within the reporting period; records per indication | KPM v03.00 §8.3.8 ("measurement collection interval within a reporting period", INTEGER (1..4294967295) ms), §7.4.2.4 (Format 1: "a set of measurement records, each collected at every granularity period during the reporting period"), §8.2.1.2.3 (Action Definition Format 3) | `F82PYZVK` (docx attachment `XCFUBF5K`) | 2026-11-03 |
+| Format 2: noValue for a listed UE in an interval where it is absent | KPM v03.00 §7.4.4.4 ("NULL should be reported for the granularity periods prior to the UE appearing"; NULL also for periods where the UE is no longer RRC_CONNECTED/INACTIVE) | `F82PYZVK` (`XCFUBF5K`) | 2026-11-03 |
+| Not admitted: trigger period not a multiple of T → RIC SUBSCRIPTION FAILURE, cause ricRequest eventTriggerNotSupported; granularity ≠ T → action not admitted, cause ricRequest action-not-supported (FAILURE with the same cause when no action is left) | E2AP v03.00 §8.2.1.4 (p. 17, Subscription Details not aligned with the service model → RIC SUBSCRIPTION FAILURE), §9.2.1 cause table (p. 62), as in plan R-6 | `WEE5IEXF` | 2026-11-03 |
 
 ## Exit chain record
 - Attempt 1 (2026-11-03 03:09Z, harness d0887ad, Testbed 4b4a61a, from `r3p-green`): RED at M3 (`evidence/m3/20261103T031140Z`). Both the stock and the patched kpimon installs were refused at onboarding: `'rmr' is a required property` (error source `config-file.json`). Cause, verified on the VM: the xApp onboarder validates the descriptor's `controls` section against the schema file it is given (`xapp_onboarder/api/onboard.py`: `schema["properties"]["controls"] = controls_schema_file`), and kpimon's `deploy/schema.json` requires an `rmr` object, so the new `controls.reportingPeriodMs/granularityPeriodMs` section failed. The P03 tests never ran the installer end to end. Fix: Testbed 809fb2d (the installer writes `deploy/schema_updated.json`: both periods required, integers 1..4294967295, and onboards with it; checked offline with the onboarder's own schema and Draft 7 validator: the generated descriptor passes; a 0 period and a missing granularity are rejected). Pinned at harness b71ad2c. No check changed.
@@ -49,8 +50,12 @@ kpimon subscribes with a fixed 10 s reporting period (event trigger bytes `8, 39
 ## Exit record
 - AC10 met (option B, no SUB-P12). AC8 run 2 met at harness 83443e1, which becomes checkpoint 1 (P04 tags it).
 - Pins at exit: Testbed 809fb2d, ns-3 48d41a5, oran-interface b2342c6, e2sim 2209995 (unchanged from P02 except the Testbed).
-- Check changes this phase: ledger row 59 (p12 judge fix, not a #9 rewrite). M3 predicates unchanged.
-- Raw evidence: archived with P04's runs at Stop A (evidence-retention ruling).
+- Check changes this phase: ledger rows 6–9 (subscription-period assertion on every R-rung run, subscription failures kept apart from responses, `influx-vs-trace --every-seq`, agent counters with unreported samples), 59 (p12 judge fix) and 60 (stricter p12 judge after the kongming exit review). None is a #9 rewrite. M3 predicates unchanged.
+- kpimon: besides the configurable period and granularity, its Format 2 handler was patched to loop over every measData item (Testbed 4b4a61a, `control.go.patch`); Format 1 already looped.
+- `substitutionP12Applied: false` (option B). From harness 1794f97 the gate also emits it as a fact.
+- R-6 unit-test record: `evidence/p03-unit/20261103T025537Z` (`kpm-report-period-test: ok`, incl. g200 → cause 1, p150 → cause 17, K = 20 admitted, K = 21 refused; and the independent pycrate decode of the same octets, `check-report-period.py`, rc 0, 16 PASS).
+- kongming P03 exit review: GO-WITH-CHANGES (`plans/reports/kongming-261103-1600-GH-1-p03-exit-review.md`). Must (extended seam smoke at the pins before the tag): PASS 25/25, `evidence/delta-seam-smoke/20261103T071157Z`. Shoulds done: unit-test record banked; row 59 amended; row 60 stricter judge (1794f97, all six of kongming's mutations now fail the judge alone); standards ledger filled; this record; raw evidence archived; annotated tag message; identity map checked against AC8 run 2 (all three live runs' `DlE2PdcpStatsLte.txt` have the M9 file's sha256). Could items (p12 simTime 10.5 s, a test PASS label) not done.
+- Raw evidence: `/mnt/data/andang-data/ns-o-ran-installation-evidence/plans-evidence-raw-m10-cp1-20261103.tar.zst` (3,755 files, 179 MB; `.list0` and `SHA256SUMS` beside it), every run dir's `evidence-sha256.txt` in git.
 
 ## Risks
 - kpimon's patched decoder may mis-store 10 records (High/Medium). SUB-P12 is the approved fallback; it is used only on evidence.
