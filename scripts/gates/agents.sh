@@ -31,14 +31,18 @@ export E2AP_SHORT_NAME=ORAN-E2SM-KPM
 ################################################################################
 # tree, tools, kernel module
 ################################################################################
+# the Testbed paths (relative to $RIC_DIR) the agent image is built from: the agent, the rc patch set its Dockerfile
+# applies to rc's e2sm code (librc_codec), and kpimon's eNB measurement lists (the installer lints them against the map)
+AGENT_TESTBED_PATHS=(ns3_e2_agent install_patch_files/xApps/rc install_patch_files/xApps/kpimon-go/control/enb-kpm-measurements.json)
+
 agents_tree_at_testbed_sha() {
     nist_tree_at_testbed_sha || return 1
-    if ! git -C "$RIC_DIR" diff --quiet "$TESTBED_SHA" -- ns3_e2_agent 2>/dev/null || [ ! -d "$AGENT_DIR" ]; then
-        git -C "$RIC_DIR" checkout -q "$TESTBED_SHA" -- ns3_e2_agent || return 1
+    if ! git -C "$RIC_DIR" diff --quiet "$TESTBED_SHA" -- "${AGENT_TESTBED_PATHS[@]}" 2>/dev/null || [ ! -d "$AGENT_DIR" ]; then
+        git -C "$RIC_DIR" checkout -q "$TESTBED_SHA" -- "${AGENT_TESTBED_PATHS[@]}" || return 1
     fi
-    git -C "$RIC_DIR" diff --quiet "$TESTBED_SHA" -- ns3_e2_agent &&
+    testbed_paths_at_pin "${AGENT_TESTBED_PATHS[@]}" &&
         [ -f "$AGENT_DIR/schema/metric-map.v1.json" ] && [ -x "$AGENT_DIR/install_scripts/run_ns3_e2_agents.sh" ] || return 1
-    echo "ns3_e2_agent matches $TESTBED_SHA; metric-map sha256 $(sha256sum "$AGENT_DIR/schema/metric-map.v1.json" | cut -d' ' -f1)"
+    echo "${AGENT_TESTBED_PATHS[*]} match $TESTBED_SHA; metric-map sha256 $(sha256sum "$AGENT_DIR/schema/metric-map.v1.json" | cut -d' ' -f1)"
 }
 
 agents_sctp_module() {
@@ -173,9 +177,8 @@ agents_install_image() {
     tag=$(git -C "$AGENT_DIR" rev-parse --short=12 "$TESTBED_SHA") || return 1
     want="ns3-e2-agent:$tag"
     # The pin's name goes only on an image built from the pin's agent sources: a failed tree check does not stop a gate.
-    git -C "$RIC_DIR" diff --quiet "$TESTBED_SHA" -- ns3_e2_agent &&
-        [ -z "$(git -C "$RIC_DIR" ls-files --others --exclude-standard -- ns3_e2_agent)" ] || {
-        log "bringup agents: ns3_e2_agent/ is not $TESTBED_SHA's; refusing to name an image after the pin"
+    testbed_paths_at_pin "${AGENT_TESTBED_PATHS[@]}" || {
+        log "bringup agents: ${AGENT_TESTBED_PATHS[*]} are not $TESTBED_SHA's; refusing to name an image after the pin"
         return 1
     }
     if [ "$image" = "$want" ] && dk image inspect "$image" >/dev/null 2>&1 &&

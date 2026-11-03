@@ -7,7 +7,8 @@
 #      with "No such file or directory" at run time;
 #   4. no `<logs> | grep -q|-m` or `| head`: the reader exits early, the writer dies of SIGPIPE and pipefail
 #      turns that into a false failure (use a here-string, process substitution or a file);
-#   5. ts_threshold_logged on a real TS xApp log fixture.
+#   5. ts_threshold_logged on a real TS xApp log fixture;
+#   6. the self-tests of the judges (patch-set checks of the TS xApp, rc and kpimon, the TS cell-map replay, ...).
 set -uo pipefail
 cd "$(dirname "$0")/../.." || exit 1
 rc=0
@@ -54,6 +55,10 @@ python3 -I scripts/gates/r3p-checks.py --self-test >/dev/null || { echo "r3p che
 python3 -I scripts/gates/reference-compare.py --self-test >/dev/null || { echo "reference-compare self-test failed"; rc=1; }
 timeout 120 bash scripts/vm/m9-runner-selftest.sh >/dev/null 2>&1 || { echo "M9 runner self-test (verdict, heartbeat monitor) failed"; rc=1; }
 timeout 60 bash scripts/gates/rt-reader-selftest.sh >/dev/null 2>&1 || { echo "rc receiver-side RMR readiness self-test failed"; rc=1; }
+timeout 120 bash scripts/gates/ts-patches-selftest.sh >/dev/null 2>&1 || { echo "TS xApp patch-set check self-test failed"; rc=1; }
+timeout 120 bash scripts/gates/rc-at-pin-selftest.sh >/dev/null 2>&1 || { echo "rc pin + patch-set check self-test failed"; rc=1; }
+timeout 120 bash scripts/gates/kpimon-guard-selftest.sh >/dev/null 2>&1 || { echo "kpimon install guard self-test failed"; rc=1; }
+python3 -I scripts/gates/replay-ts-cell-map.py --self-test >/dev/null || { echo "TS cell-map replay self-test failed"; rc=1; }
 python3 -I scripts/disk-burst-h.py --self-test >/dev/null || { echo "disk-burst-h self-test failed"; rc=1; }
 python3 -I scripts/gates/check-actuation-delay.py --self-test >/dev/null || { echo "check-actuation-delay self-test failed"; rc=1; }
 python3 -I scripts/gates/identity-map-extract.py --self-test >/dev/null || { echo "identity-map-extract self-test failed"; rc=1; }

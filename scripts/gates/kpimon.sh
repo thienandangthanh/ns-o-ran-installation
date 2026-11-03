@@ -5,7 +5,11 @@
 #
 #   dk <docker args>                     docker as the current user, else via sudo
 #   nist_run <timeout-s> <cmd...>        OVERRIDE of lib.sh nist_run (see below)
-#   nist_tree_at_testbed_sha             make ~/nist carry the fork files at $TESTBED_SHA
+#   nist_tree_at_testbed_sha             make ~/nist carry the fork files at $TESTBED_SHA; then the kpimon install's
+#                                        Testbed paths (KPIMON_TESTBED_PATHS) equal TESTBED_SHA's, in every mode
+#   kpimon_image_labelled <size8>        the kpimon image's labels: patchset.sha256 = the digest of the kpimon patch
+#                                        set at TESTBED_SHA (manifest + listed files, eNB measurement config included),
+#                                        kpimon.timestamp-size8 = <size8>
 #   kpimon_pod_info                      "<name> <ready:true|false> <created-epoch> <restarts>" of the newest live pod
 #   kpimon_install <true|false> <log>    NIST installer, CLEAN_INSTALL=true, KPIMON_TIMESTAMP_SIZE8=<arg>, KPM period/granularity
 #   kpimon_log_counts <logfile>          K13 counts as key=value lines
@@ -26,6 +30,11 @@ KPIMON_NS=ricxapp
 INFLUX_POD=r4-influxdb-influxdb2-0
 HARNESS_TOOLS="$HARNESS_DIR/tools/kpimon-decode-harness"
 KPIMON_POD=""  # set by kpimon_wait_ready
+KPIMON_PATCH_REL=install_patch_files/xApps/kpimon-go
+# the Testbed paths (relative to $RIC_DIR) the kpimon install reads: the installer, its patch set, and the agent's
+# metric map and lint (the installer checks the eNB measurement config against the map's eNB rows)
+KPIMON_TESTBED_PATHS=(additional_scripts/install_xapp_kpi_monitor.sh "$KPIMON_PATCH_REL"
+    ns3_e2_agent/schema/metric-map.v1.json ns3_e2_agent/tests/lint-metric-map.py)
 
 
 
@@ -70,14 +79,15 @@ nist_tree_at_testbed_sha() {
                 echo "# git status --porcelain (tracked)"; echo "$dirty"
                 echo "# git diff --stat"; git -C "$RIC_DIR" diff --stat
             } >"$EVIDENCE_DIR/nist-tree-dirty-before-checkout.txt"
-            git -C "$RIC_DIR" checkout "$TESTBED_SHA" -- \
-                additional_scripts/install_xapp_kpi_monitor.sh install_patch_files/xApps/kpimon-go || return 1
-            echo "dirty tree: only installer + install_patch_files/xApps/kpimon-go taken from $TESTBED_SHA"
+            git -C "$RIC_DIR" checkout "$TESTBED_SHA" -- "${KPIMON_TESTBED_PATHS[@]}" || return 1
+            echo "dirty tree: only ${KPIMON_TESTBED_PATHS[*]} taken from $TESTBED_SHA"
             echo "partial-checkout" >"$EVIDENCE_DIR/nist-tree-mode.txt"
         fi
     else
         echo "already at $TESTBED_SHA" ; echo "already-at-sha" >"$EVIDENCE_DIR/nist-tree-mode.txt"
     fi
+    # every mode (already-at-sha included): no tracked edit and no untracked file in the kpimon install's paths
+    testbed_paths_at_pin "${KPIMON_TESTBED_PATHS[@]}" || return 1
     # The fork files M3 depends on must be present now.
     # shellcheck disable=SC2016  # literal text searched for in the installer
     grep -q 'KPIMON_TIMESTAMP_SIZE8' "$RIC_DIR/additional_scripts/install_xapp_kpi_monitor.sh" &&
@@ -190,6 +200,8 @@ kpimon_install() {
     rp="${KPIMON_REPORTING_PERIOD_MS:-$(python3 -I "$HARNESS_DIR/scripts/gates/rung-config.py" get kpm.reportingPeriodMs)}" || return 1
     gp="${KPIMON_GRANULARITY_PERIOD_MS:-$(python3 -I "$HARNESS_DIR/scripts/gates/rung-config.py" get kpm.granularityPeriodMs)}" || return 1
     local envs="CLEAN_INSTALL=true KPIMON_TIMESTAMP_SIZE8=$size8 KPIMON_REPORTING_PERIOD_MS=$rp KPIMON_GRANULARITY_PERIOD_MS=$gp"
+    # the installer, the patch set and the inputs it applies are the pin's (the image is built from them)
+    testbed_paths_at_pin "${KPIMON_TESTBED_PATHS[@]}" || return 1
     (
         cd "$RIC_DIR" || exit 1
         # shellcheck disable=SC2086
@@ -201,10 +213,23 @@ kpimon_install() {
     redact_stream <"$log.raw" >"$log"; rm -f "$log.raw"
     echo "installer exit $rc (size8=$size8, reporting period $rp ms, granularity $gp ms); log $log"
     tail -n 8 "$log"
-    return "$rc"
+    [ "$rc" = 0 ] || return "$rc"
+    # a warm install that kept an image of another patch set fails here
+    kpimon_image_labelled "$size8"
 }
 
 kpimon_image_id() { dk image inspect --format '{{.Id}}' "$KPIMON_IMAGE" 2>/dev/null; }
+
+kpimon_image_labelled() {
+    local size8="$1" t have
+    t=$(mktemp -d) || return 1
+    patchset_digest_at_pin "$KPIMON_PATCH_REL" "$t" || { rm -rf "$t"; return 1; }
+    rm -rf "$t"
+    have=$(dk image inspect --format '{{index .Config.Labels "patchset.sha256"}} {{index .Config.Labels "kpimon.timestamp-size8"}}' \
+        "$KPIMON_IMAGE" 2>/dev/null)
+    echo "$KPIMON_IMAGE labels: ${have:-none}; want $PS_DIGEST $size8 (${#PS_PATCHES[@]} files at $TESTBED_SHA)"
+    [ "$have" = "$PS_DIGEST $size8" ]
+}
 
 # kpimon_extract_so <out-dir>: .so + harness from the CURRENT docker image; prints SIZE (4|8) on
 # the last line. docker may need sudo when the group is not active yet.
