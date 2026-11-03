@@ -34,17 +34,17 @@ After each checkpoint the compliant behaviour is the only behaviour (R1, R8). Ev
 
 ## Resume card (filled at execution; update before every VM operation > 10 min and at every phase exit)
 ```text
-last-updated: 2026-11-03 11:05 KST
+last-updated: 2026-11-03 11:45 KST
 current phase: P02 exit running + P03 code delegated. Rulings D1–D4 (decisions-261103-0450; contract Amendment 2) in force.
-P02: seam committed+pinned (ns-3 48d41a5, oran-interface b2342c6; harness 73bbda6); dev smoke green (evidence/delta-seam-smoke/20261103T014710Z: apply−rx=δ, one ack per line, pending-at-stop late FAILURE; outcome table differs at δ=500 by physics, informational). Exit chain = user unit `m10-p02-chain` (script scratchpad p02-chain.sh, log scratchpad p02-chain.log): revert r3p-green → m4 → m5 → m6 → m7 → r3p --mode c1 --reference M9 reference/r3p (AC8 run 1); evidence under this plan's evidence/<gate>/.
-P03: subagent implementing agent subscription honouring (period/granularity, eventTriggerNotSupported failure, multi-record indications, T/T byte-identical) + kpimon config-driven period patches in O-RAN-Testbed-Automation (uncommitted until reviewed). Still to write myself: scripts/gates/gate-p12-kpm-period.sh, kpimon.sh install values, influx-vs-trace multi-record, rung check "decoded subscription period = 100 ms"; then VM: M3 at 100/100 (F10), p12 gate, M5–M7, AC8 run 2.
+P02: seam committed+pinned (ns-3 48d41a5, oran-interface b2342c6; harness 73bbda6); dev smoke green (evidence/delta-seam-smoke/20261103T014710Z). Exit chain = user unit `m10-p02-chain` (script scratchpad p02-chain.sh pinned to harness 73bbda6, log scratchpad p02-chain.log; bg waiter task reports `===` lines): m4 PASS 02:17Z, m5 PASS 02:19Z, m6 running, then m7, r3p --mode c1 --reference M9 reference/r3p (AC8 run 1); evidence under this plan's evidence/<gate>/.
+P03: harness pieces DONE (ddc6c44, ledger rows 6–8 in 6ad6bb2): rung-config kpm.* 100/100; kpimon_install passes KPIMON_REPORTING_PERIOD_MS / KPIMON_GRANULARITY_PERIOD_MS; rung check `<rung>_<label>_kpimon_subscription_reporting_period_decoded` (ts-rung-lib, r0, r1); pcap facts: sub_failures + reportingPeriod/granulPeriod/cause (tshark KPM v3 dissector can stop on Format 3 action defs → granularity evidenced by records/indication); e2-facts-query sub-period / sub-failure (cause ricRequest:17); influx-vs-trace --every-seq; scripts/gates/gate-p12-kpm-period.sh (a P=1000/G=100 → p12-records-check.py, b P=150 → failure, c restore). Subagent a41f6b514024140c6 (Testbed agent+kpimon, uncommitted) was told: installer env names above, default 100/100; P/T>1 → exactly P/T measData items, no partial period at bye (count samplesUnreportedAtBye). Next: review+commit subagent code; align agent_counters_assert/gate p12 with its stats fields; pin Testbed; VM: M3 at 100/100 (F10), p12 gate, M5–M7, AC8 run 2.
 P04 prep done (harness 97b4fdd): r3p gate --delta-ms (CLI --actuationDelayMs, check-actuation-delay.py per live run, c2 --delta-ms), reference-compare --components (sim-side refs), identity-map-extract.py (matches R-8). P04 still: tag m10-cp1 (+forks), promote M9 raw to reference/m9-r3p-raw, freeze identity-map-cp1.json, δ C1s 100/150/200/500 + make refs, outcome-vs-δ table, AC18 #9 rows (P1/N5 now; P5 rows use en_gnb_ per D1), budget re-projection, Stop A packet.
 VM / snapshots / host free: VM busy with the chain (r3p-green lineage); snapshots fresh-install f7-rerun-green m0-probe-{d11021754,n,o,p,q} r0-green r2-green r3p-green; /home 96 GiB, /mnt/data 20 GiB
 T4 closed 2026-11-03 10:55 KST: 3GPP TS 38.331 added by the user, Zotero WF2FTADX (ETSI TS 138 331 V19.4.0; MeasurementTimingConfiguration message p. 1775); pycrate encodes from Rel-18 ASN.1, so P06 compares the MTC clause across Rel-18/19
 for Stop A: new deviation "P14" RANParameter-ID unconstrained in rc/agent asn1c (spec INTEGER (1..4294967295, ...)); AC12 implies the fix in the T-A fork patches; user confirms scope at Stop A (probe-261103-0315 report)
 fork SHAs (pins.conf): Testbed c6d1434a, ns-3 ba954440, oran-interface 96efc40e, e2sim 2209995a (M9 values)
 checkpoint tags: m10-cp1 (none), m10-cp2 (none), m10-cp3 (none)
-in-flight jobs: none
+in-flight jobs: user unit m10-p02-chain (VM); P03 subagent a41f6b514024140c6 (host, Testbed tree)
 ```
 
 ## Invariants card (never violate)
