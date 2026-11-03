@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Frozen at tag m10-cp1: its predicates encode the checkpoint-1 node identities and control form. It runs only from
+# that tag (git worktree add <dir> m10-cp1); at any later commit it stops here, before doing anything.
+echo "frozen at m10-cp1: run it from the tag" >&2; exit 3
 # Gate S0 (VM side): the P1 control path in free-run, without the RIC for V1/V3.
 #
 #   gate-s0-free-control.sh --ref-ns3 SHA --ref-oi SHA --a-ns3 SHA

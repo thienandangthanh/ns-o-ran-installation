@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Frozen at tag m10-cp1: its predicates encode the checkpoint-1 node identities and control form. It runs only from
+# that tag (git worktree add <dir> m10-cp1); at any later commit it stops here, before doing anything.
+echo "frozen at m10-cp1: run it from the tag" >&2; exit 3
 # Probe (VM side, pre-M8 pacing gate): wall latency from a gRPC call to the rc xApp (:7777) until the
 # RICcontrolRequest reaches the target agent's container on docker0, with the default 5-node agent set and
 # ns-3 default config running free (realistic CPU load).

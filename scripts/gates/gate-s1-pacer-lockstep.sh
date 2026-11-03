@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Frozen at tag m10-cp1: its predicates encode the checkpoint-1 node identities and control form. It runs only from
+# that tag (git worktree add <dir> m10-cp1); at any later commit it stops here, before doing anything.
+echo "frozen at m10-cp1: run it from the tag" >&2; exit 3
 # Gate S1 (VM side): lock-step pacing (pacer + barrier) without the RIC, then one
 # fault run with real agents. R0 config, null sink as the agent stand-in.
 #
