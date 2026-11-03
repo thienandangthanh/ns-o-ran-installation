@@ -206,6 +206,19 @@ kpm_sub_period_check() {
     python3 -I "$E2EV/e2-facts-query.py" "$EVIDENCE_DIR/$2-facts.json" sub-period --period-ms "$want" --after "$3"
 }
 
+# ns3_emitters_at_pins <trace dir>: every e2-ipc-trace-*.jsonl hello names the pinned ns-3 and oran-interface commits
+# (pins.conf NS3_SHA, ORAN_INTERFACE_SHA), so the run used a binary built at the pins, not a stale build.
+ns3_emitters_at_pins() {
+    python3 -I - "$1" "$NS3_SHA" "$ORAN_INTERFACE_SHA" <<'PY'
+import glob, json, sys
+d, ns3, oi = sys.argv[1:4]
+hs = [json.loads(open(p).readline()) for p in sorted(glob.glob(d + "/e2-ipc-trace-*.jsonl"))]
+em = sorted({(h.get("emitter", {}).get("ns3Sha"), h.get("emitter", {}).get("oranInterfaceSha")) for h in hs})
+print(len(hs), "hellos, emitters", em)
+sys.exit(0 if hs and em == [(ns3, oi)] else 1)
+PY
+}
+
 wire_sub_counts() {
     tshark -r "$1" -d sctp.port==36422,e2ap -Y 'e2ap.procedureCode == 8' -T fields \
         -e e2ap.initiatingMessage_element -e e2ap.successfulOutcome_element 2>/dev/null |

@@ -109,17 +109,7 @@ PACERX=(--schedule "$e/stop-schedule.json")
 check dseam_run_d500stop paced_null_run d500stop lockstep 0 "--simStartEpochMs=$EPOCH_MS" --actuationDelayMs=500
 check dseam_d500stop_ledger_checks bash -o pipefail -c "python3 -I '$LEDGER_CHECK' '$RUNS/d500stop/trace/e2-control-ledger.jsonl' \
     '$RUNS/d500stop/pacer/pacer-log.jsonl' --expect 1 --delta-ms 500 | tee '$e/d500stop-ledger-check.json'"
-emitters_at_pins() {   # every node's trace hello names the pinned ns-3 and oran-interface commits
-    python3 -I - "$RUNS/$1/trace" "$NS3_SHA" "$ORAN_INTERFACE_SHA" <<'PY'
-import glob, json, sys
-d, ns3, oi = sys.argv[1:4]
-hs = [json.loads(open(p).readline()) for p in sorted(glob.glob(d + "/e2-ipc-trace-*.jsonl"))]
-em = sorted({(h["emitter"]["ns3Sha"], h["emitter"]["oranInterfaceSha"]) for h in hs})
-print(len(hs), "hellos, emitters", em)
-sys.exit(0 if hs and em == [(ns3, oi)] else 1)
-PY
-}
-check dseam_d0_emitters_at_pins emitters_at_pins d0
+check dseam_d0_emitters_at_pins ns3_emitters_at_pins "$RUNS/d0/trace"
 pending_at_stop() {   # run, rxSeq, δ ms: exactly one line, refused late, rx at barrier rxSeq, answered before rx + δ
     python3 -I - "$RUNS/$1" "$2" "$3" <<'PY'
 import json, sys
