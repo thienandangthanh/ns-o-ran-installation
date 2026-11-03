@@ -26,12 +26,15 @@
 
   A consumer that cannot tell the bearer type fails loudly; it never guesses.
 - **P9:** credit `DRB.PdcpSduVolume*` (NRCellCU) only with PDCP SDU volume that the en-gNB's own CU handles. In EN-DC with an MN-terminated split bearer, the honest value for the en-gNB cell is the SDU volume routed via the SN [I: exact definition per 28.552 §5.1.2.1.1.1, read at the phase]. The header size comes from the NR header (P7). The predictor keeps its formula and reads the corrected counter (approved open point 2). Any predictor predicate change gets an AC18 row.
+- **P15 (contract Amendment 3, Stop A ruling S3, `plans/reports/decisions-261104-0214-GH-1-m10-stop-a-rulings.md`):** the agent answers a KPM action with the format that action asked for. Today it sends cell Format 1 and UE Format 2 under the one admitted action, whatever the action definition says; kpimon asks Format 3 by ID, and E2SM-KPM v03.00 answers a Format 3 action with indication Format 2 only (Zotero `F82PYZVK`; cite the clause at the phase). The fix [I, sized by the P05 scoping read]: kpimon subscribes a Format 1 action per ns-3 cell next to the Format 3 action; the agent routes each report to its own action (Format 1 → Format 1, Format 3 → Format 2); p12's judge and its references are re-baselined, with an AC18 row. If the P05 read found the F7 limit, this item is record-only instead and this bullet is replaced by the record.
 - **UseIdealRrc probe:** one R3′-config run with `false` (scenario-zero global, default unchanged until the probe passes).
 
 ## Files
 - ns-3: `ns-3-mmwave-oran/src/lte/model/mc-enb-pdcp.cc`, `mc-enb-pdcp.h`, `mc-ue-pdcp.cc`, `mc-ue-pdcp.h`, `lte-ue-rrc.cc`, `lte-enb-rrc.cc`, `lte-rlc-am.cc`, `lte-pdcp.cc` (assertion only), new `src/lte/model/nr-pdcp-header.cc/.h`, `ns-3-mmwave-oran/src/lte/CMakeLists.txt`, `src/mmwave/model/mmwave-enb-net-device.cc`, `scratch/scenario-zero.cc` (`:483`).
 - oran-interface: `oran-interface/helper/mmwave-indication-message-helper.cc` (`:43-56`, `:88`, `:132`).
-- Agent: `ns3_e2_agent/schema/metric-map.v1.json`, `ns3_e2_agent/tests/lint-metric-map.py`.
+- Agent: `ns3_e2_agent/schema/metric-map.v1.json`, `ns3_e2_agent/tests/lint-metric-map.py`; P15: the agent's subscription/action handling and `sample-forwarder.cpp` report routing [I: exact files from the P05 scoping read].
+- kpimon (P15): `install_patch_files/xApps/kpimon-go/*` (a per-cell Format 1 action next to the Format 3 action).
+- Harness (P15): `scripts/gates/p12-records-check.py`, `gate-p12-kpm-period.sh` (re-baselined, AC18 row).
 - Harness: `scripts/gates/check-pdcp-volume-totals.py`, `scripts/gates/r3p-predictor.py` (only if the counter key changes), `tools/e2-evidence/trace-facts.py` (PDCP header check).
 
 ## Steps
@@ -42,6 +45,7 @@
    - (c) an SN rollover test: SN at its maximum, then wrap, with RLC AM recovery still indexing correctly;
    - (d) M6/M7.
 3. P9 commit; the counter totals check (`check-pdcp-volume-totals.py`) is updated with an AC18 row; R3′ single run.
+3b. P15 commit(s) (agent per-action routing, kpimon per-cell Format 1 action) on the fork branches; p12 judge change with its ledger row in the same commit; M6, p12, R3′ single run.
 4. UseIdealRrc probe: one run at `false`. Pass → commit `false` as the only setting. Fail → S-R, with evidence recorded.
 5. Phase exit (checkpoint 3 is P11).
 
@@ -49,6 +53,7 @@
 - `python3 ns3_e2_agent/tests/lint-metric-map.py` passes with a 28.552 clause per row.
 - The PDCP checks (a)–(c) pass: header bytes on every MC PDU = NR header; payload byte-equal through forwarding and handover; rollover recovery correct.
 - P9: `check-pdcp-volume-totals.py` green under the registered predicate.
+- P15: every RIC INDICATION's format equals its action's requested format in the decoded capture (Format 1 action → Format 1, Format 3 action → Format 2); p12 green under the re-baselined judge; or the record-only entry with the P05 evidence.
 - Probe verdict: `useIdealRrc: false`, `appliedPscellChanges ≥ 1`, run completed, or the S-R record.
 
 ## Standards ledger (stub)

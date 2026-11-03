@@ -6,6 +6,8 @@ Date: 2026-11-03 00:05 KST. Status: **APPROVED by the user in `ak:goal-warmup`, 
 
 **Amendment 2 (2026-11-03 ~04:50 KST, user ruling D1 on the AC6a PAUSE, `decisions-261103-0450-GH-1-m10-ac6a-pause-rulings.md`):** §2 fork patches add **e2mgr** (the en-gNB identity XML tag, `E2Manager/models/e2_setup_request_message.go:54` at 6.0.6), delivered through the Testbed as a locally built image and pinned after checkpoint 1; AC6a reads "the live e2mgr (6.0.6 plus the pinned patch) and e2term ...". **P14** (RANParameter-ID constrained per E2SM-RC v03.00) is in scope inside the rc and agent fork patches (ruling D3). Rows marked "A2" in the change log.
 
+**Amendment 3 (2026-11-04 ~02:20 KST, user ruling S3 at Stop A, `decisions-261104-0214-GH-1-m10-stop-a-rulings.md`):** **P15** is in scope in T-C (ME): the ns-3 E2 agent answers each KPM action with the indication format that action asked for (E2SM-KPM v03.00; today it sends cell Format 1 and UE Format 2 under the one admitted Format 3 action). It is fixed in the agent and kpimon fork patches and lands in P10, so checkpoint 2's AC8b is untouched and checkpoint 3 attributes the change. Pre-approved exit: if the P05 scoping read shows the fix needs e2mgr RAN-function cell lists (the F7 limit), P15 ends listed with evidence (record only), reported at Stop A′. Rows marked "A3" in the change log.
+
 Built from candidate D (`brainstorm-261029-1824-GH-1-post-m9-realism-goal-contract.md` §1–§8). It applies kongming's required fixes #1, #4, #5, #6, #7, #9 and N1 (`kongming-261029-1833-GH-1-post-m9-realism-brainstorm-go-no-go.md`) and the user rulings R1–R12 (`decisions-261102-2235-GH-1-post-m9-realism-user-rulings.md`). The change log at the end maps each edit to its source.
 
 Notation: [V] verified at file:line; [I] inferred; [C] carried from earlier evidence. "TS xApp" is the traffic-steering xApp; "3GPP TS" is a 3GPP specification.
@@ -29,7 +31,7 @@ Each item P1–P13 and N5 ends **fixed**. An item may end **listed with evidence
 - **T-B, timing (MB):** P3 via the δ seam and the sweep {100, 150, 200, 500} ms; P12 option B with a configurable kpimon reporting period and granularity.
 - **T-A, E2 interop, identity and control (MC):** P10, then the identity cluster P11/N5/P2/P5/P8, then P4/P1/P13.
 - **Scale gate (MD):** N ≥ 10 gNBs, after P11/N5.
-- **T-C, radio and counter realism (ME):** P6, P7, P9; `UseIdealRrc=false` after its probe.
+- **T-C, radio and counter realism (ME):** P6, P7, P9; P15 (A3: per-action KPM indication format); `UseIdealRrc=false` after its probe.
 - **Fork patches** through the Testbed `install_patch_files`: rc (including the A2 P14 RANParameter-ID bound), TS xApp (including the N1 `en_gnb_` meid patch), kpimon (including the AC14b UE ID), e2sim (AC11 PPID) and e2mgr (A2: the en-gNB identity tag, a locally built image), as needed. All fork code is pushed on `dev/l-release-nist180` and pinned in `scripts/pins.conf`.
 - **The M10 runner** and the records (AC20).
 
@@ -189,3 +191,4 @@ No other item may end as "listed with evidence".
 3. **S-R and SUB-P12** are proposed, not yet approved.
 | A2: §2 e2mgr fork patch (en-gNB identity XML tag); AC6a accepts 6.0.6 plus the pinned patch | AC6a PAUSE T3, user ruling D1 (2026-11-03) |
 | A2: P14 RANParameter-ID bound fixed to E2SM-RC v03.00 in rc and the agent | user ruling D3 (2026-11-03) |
+| A3: P15 per-action KPM indication format in T-C (agent, kpimon); record-only exit on the F7 limit | Stop A user ruling S3 (2026-11-04) |

@@ -75,6 +75,7 @@
 - Harness: `scripts/gates/r3p-prepare.py`, `r3p-schedules.py`, `send-rmr.sh` (`anomaly-from`), `r3p-dry-run-fixtures.py`, `fixtures/r1-c4-arrival-order/`, `scripts/gates/pacer.py`, `pacer-selftest.py`, `ts-rung-lib.sh`, `rc-send.sh` (Style 5, source node, UE ID read from Influx), `rc-lib.sh`, `r0-checks.py`, `r0-scenario.json`, `r1-scenario.json`, `gate-r0-rc-scripted.sh`, `gate-r1-rc-multi-control.sh`, `gate-r2-ts-stub-qp.sh`, `gate-r3p-ts-predictor.sh`, `r2-checks.py`, `r3p-checks.py`, `r3p-checks-fixtures.py`, `tools/e2-evidence/wire-c1-extract.py`, `tools/rc-decode/rc-decode.c`, `gate-e2i-interop.sh` (Style 5 injector cases), `scripts/pins.conf`, `scripts/gates/r2-scenario.json`, `r3p-dry-run-classifier.py`, `tools/e2-evidence/kpm-ue-list-moves.py` (imsi-0 lines carry no UE), `tools/rc-decode/fixtures/rc-control-nrcgi.hex`, `tools/rc-decode/test-rc-decode.sh`.
 
 ## Steps
+0. **G1 (Stop A, `plans/reports/decisions-261104-0214-GH-1-m10-stop-a-rulings.md`), before any P07 code:** register a #9 row in `check-diff-ledger.md` for the δ seam smoke (`scripts/probes/probe-delta-seam-smoke.sh:51-71`: its schedules address controls by IMSI and through the eNB or the target, which encodes P1 and P4), with old → new and "why not weaker". The smoke is migrated with the hub change (source-en-gNB addressee, en-gNB-UEID), keeping its tie, cancel-at-stop and pins/emitter-SHA cases.
 1. Standards-ledger row for I-4 from the PDFs (§8.4.6.3 table, both versions) and the I-1 mapping row, written before code.
 2. Protoc proof (unchanged proto byte-equal), then the proto change.
 3. ns-3 dispatch, resolution and `ApplyE2SnChange`. Local byte-compare: the R3′-config run's traces are byte-equal to checkpoint 1 with controls entering at the source SN (the I-1 invariant).
@@ -86,7 +87,8 @@
    - (c) a stage-B injection dry run.
 
    Then R3′ C1 at δ = 0 (the dry form of P08's transform-compare) and `gate-e2i-interop.sh` Style 5 injector cases. Green R2/R3′ here closes the P06b + P07 integration boundary (AC14b integration).
-7. Phase exit.
+7. Re-run the migrated seam smoke at the P07 pins (`vm-exec.sh probes/probe-delta-seam-smoke.sh`), including d150stop and d500stop after the gap-5 emitter change (G1, S1).
+8. Phase exit.
 
 ## Validation
 - Decoded wire, every control: header Format 1, style 5, action 3, UEID en-gNB-UEID equal to the Influx row's IDs and the R-4 values; meid = the source en-gNB (`c1-extract-summary` `viaMeidEqualsNode: true`, joined to the ledger); ledger `viaNodeId == sourceCell`.
@@ -96,6 +98,8 @@
 - R2 C1 and R3′ C1 green with `replayEqual: true` (AC14b integration).
 - e2i: an independently encoded Style 5 control is applied; Style 3/1 → `action-not-supported`; a control to the non-source en-gNB → `unknownUe`; a control to the eNB → `ran-function-id-invalid`.
 - HandoverStart − applySimTimeNs = c (I-2) on every applied line.
+- G1: the migrated seam smoke is green at the P07 pins, and its #9 row predates the first P07 code commit.
+- S1: R1 f2 passes via agent 2 (forwarded 2, failedOnBye 1, rejIpcDown 0, pending 0; agents 1 and 3 rc counters 0; one ledger line, IMSI 6).
 
 ## Standards ledger (stub)
 | Decision | Document, section | Zotero | Read |
@@ -111,7 +115,7 @@
 - The zero-latency admission changes event order (High/Low). The step 3 byte-compare is a hard gate.
 - A stale SN context (Medium/Medium) is handled by the current-SN check; a fixture covers it.
 - The TS xApp's Influx read adds latency inside the lock-step window (Medium/Medium). The read happens in the TS xApp's request path before rc; T_ctl is re-measured, and a red is handled under the Failure Protocol.
-- Pending Stop A ruling (gap 5): the f2 bullet above cannot pass as written (ns-3 reads agent 2's forwarded control at emitter-2 stop and answers it `late`) — option A (recommended) makes `E2IpcEmitter::Stop()` skip `DeliverInbound()` once the hub is stopping (Files + `oran-interface/model/e2-ipc-emitter.cc`, `e2-control-hub.h`; plan file ownership `e2-ipc-emitter.cc`: P06b, P07), f2 via agent 2 with `agent-forward-wait.sh 2 2 5`, failedOnBye 1 and the `r1-scenario.json:13` comment restated; option B keeps ns-3 unchanged and judges the late-at-stop path (one `late` ledger line, failedOnBye 0), which is weaker; check-diff-ledger row 31.
+- **Ruled at Stop A (S1, gap 5 = option A, `plans/reports/decisions-261104-0214-GH-1-m10-stop-a-rulings.md`):** `E2IpcEmitter::Stop()` skips `DeliverInbound()` once the hub is stopping (Files + `oran-interface/model/e2-ipc-emitter.cc`, `e2-control-hub.h`; plan file ownership `e2-ipc-emitter.cc`: P06b, P07). f2 goes via agent 2 with `agent-forward-wait.sh 2 2 5`, failedOnBye 1, and the `r1-scenario.json:13` comment is restated (ledger row 31). The seam smoke's d150stop and d500stop cases are re-run after the change (G1).
 
 ## Rollback
 Re-pin the P06b SHAs; `m10-cp1` reproduces checkpoint 1.

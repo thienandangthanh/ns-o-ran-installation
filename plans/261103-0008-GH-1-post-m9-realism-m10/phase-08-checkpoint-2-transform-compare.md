@@ -41,6 +41,7 @@ After T-A, only ipc (the digested sample lines) and traces stay literal. Everyth
 ## Steps
 1. Script and fixtures; host-only self-test.
 2. R3′ C1 at δ = 0 at the P07 pins with `--reference-transform`.
+2b. **G2 (Stop A, `plans/reports/decisions-261104-0214-GH-1-m10-stop-a-rulings.md`):** R3′ C1 at δ = 150 and δ = 500 at the P07 pins with `--reference-transform` against the cp1 δ references (`reference/r3p-d150`, `reference/r3p-d500`, raw files promoted in P05 step 0). d500 is the most δ-sensitive rung. These give AC16 its checkpoint-2 baseline for the δ rungs.
 3. On green, tag `m10-cp2` (harness and forks) and push.
 4. Budget re-projection (T′ both bases, /mnt/data, s10 and T-C rebuild costs); Stop A′ packet → `PAUSE A′`.
 
@@ -51,6 +52,7 @@ After T-A, only ipc (the digested sample lines) and traces stay literal. Everyth
   - `transformEqualsM9: true`;
   - `transformedFields` equals the R-2 list exactly;
   - `literalComponents ⊇ {ipc, traces}`.
+- G2: the d150 and d500 transform-compare verdicts are green with the same predicates as δ = 0 (`transformEqualsM9` read against the cp1 δ reference).
 - `git rev-parse m10-cp2` equals the verdict's harness SHA.
 
 ## Standards ledger (stub)

@@ -23,6 +23,10 @@
 - Harness: `tools/e2-evidence/e2ap-pcap-facts.py`, `scripts/gates/capture.sh` (decode without `-d`), PPID checks in `gate-m2-refnode.sh`, `gate-m3-xapps.sh`, `gate-m5..m7`, the rung capture checks and the new `gate-e2i-interop.sh` (P06); `scripts/pins.conf` (`TESTBED_SHA`, `E2SIM_SHA`).
 
 ## Steps
+0. Stop A carry-ins (`plans/reports/decisions-261104-0214-GH-1-m10-stop-a-rulings.md`):
+   - **G2, host-only, before any VM work:** promote each δ reference's raw ledger and predictor records into `reference/r3p-d{100,150,200,500}/raw/` the way `reference/m9-r3p-raw/` was made (`trace/e2-control-ledger.jsonl`, `r3p/predictor-records.jsonl`, `extra/*.json`, the frozen scenario), from the P04 run dirs or the `plans-evidence-raw-m10-p04-20261103.tar.zst` archive; write each dir's `SHA256SUMS`; `sha256sum -c` passes.
+   - **S3, P15 scoping read (code only, no VM):** find why kpimon's per-cell Format 1 loop builds no action for ns-3 nodes (the RAN function definition the agent sends, or e2mgr's cell list). Record the answer and the fix size in this phase's exit record. If the fix needs e2mgr RAN-function cell lists (the F7 limit), P15 exits to record-only and that exit is reported at Stop A′.
+   - **S5:** the chain scripts write `df -BG /home` and the active overlay's `du -BG` at every gate boundary into the run log, from this phase on.
 1. Implement all three fixes; rebuild the agent and kpm_sim images; a local loopback check shows PPID 70 in tshark.
 2. M2, M3 (kpm_sim), then M5–M7 (agents): PPID 70 per node; E2AP decodes without `-d`.
 3. One R3′ single run: every agent's chunks carry PPID 70; ledger and traces unchanged vs checkpoint 1.
@@ -32,6 +36,7 @@
 - `e2ap-pcap-facts.py --ppid` on every capture: `{node: {70: n, other: 0}}`, n > 0, for each agent and for kpm_sim.
 - `tshark -r <pcap> -Y e2ap` without `-d` counts as many E2AP PDUs as the old `-d` decode did.
 - M2, M3, M5–M7 green.
+- G2: `sha256sum -c reference/r3p-d*/raw/SHA256SUMS` passes. S3: the scoping answer is in the exit record. S5: every chain log has a `df`/`du` line per gate boundary.
 
 ## Standards ledger (stub)
 | Decision | Document, section | Zotero | Read |

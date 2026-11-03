@@ -37,13 +37,15 @@ All of this happens **before** the cp3 tag, so that a fix forced by a rehearsal 
 1. Confirm AC17 is final.
 2. Bisection C1s; build the attribution table.
 3. Final R3′ C1 at δ = 0 and four δ runs (C1 for d150, C1 for each of d100/d200/d500 to bank its reference). `reference-compare.py make`; commit.
-4. Rehearsals of every new step plus cold i0/i2/m3; `disk-burst-h.py` over their free-series; record durations for P12's budget.
+3b. **G1 (Stop A, `plans/reports/decisions-261104-0214-GH-1-m10-stop-a-rulings.md`):** re-run the migrated δ seam smoke at the cp3 candidate pins before the tag.
+4. Rehearsals of every new step plus cold i0/i2/m3; record `df -BG /home` and the active overlay's `du -BG` at every gate boundary (S5) so Stop B can compute T′_measured′; `disk-burst-h.py` over their free-series; record durations for P12's budget.
 5. Codex pre-ship audit and triage. If a fix lands, repeat steps 3–4 for the affected parts.
 6. Diff report; tag `m10-cp3` (harness and forks); push. Phase exit.
 
 ## Validation
 - r3p and the four δ C1 verdicts are green, with `equalsReference: true` on a fresh run against the new dirs.
 - The diff report attributes every changed component to exactly one T-C commit; every other component is "equal to cp2".
+- G1: the seam smoke is green at the cp3 pins. S5: per-step host growth is tabulated for every changed or new step. The diff report attributes P15's p12 change to its T-C commit.
 - Every rehearsal verdict is green; s10 is green at the cp3 pins; `disk-burst-h.py` gives `worstGiB ≤ 12`.
 - `codex-pre-ship.md` ends `Status: complete`, or the journal records `Codex skipped: <reason>`.
 - `git rev-parse m10-cp3` equals the harness SHA of the final references and rehearsals.

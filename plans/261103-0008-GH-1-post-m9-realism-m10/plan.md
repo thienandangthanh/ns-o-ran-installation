@@ -7,7 +7,7 @@ effort: "15 phases (P00–P13 incl. P06b); VM-sequential; wall and disk per the 
 branch: migrate-l-release-NIST-1-8-0
 tags: [l-release, e2ap, e2sm-rc, e2sm-kpm, ns-3, m10, realism]
 created: 2026-11-03
-contract: plans/reports/contract-261103-0001-GH-1-post-m9-realism-outcome-contract.md (APPROVED; Amendment 1 re-approved 2026-11-03 01:10 KST)
+contract: plans/reports/contract-261103-0001-GH-1-post-m9-realism-outcome-contract.md (APPROVED; Amendment 1 re-approved 2026-11-03 01:10 KST; Amendment 2 2026-11-03 ~04:50 KST; Amendment 3 (P15) 2026-11-04 Stop A)
 advice: --advice (kongming on Opus 5.5 at xhigh, model: opus; counsel never counts as user approval)
 ---
 
@@ -34,13 +34,13 @@ After each checkpoint the compliant behaviour is the only behaviour (R1, R8). Ev
 
 ## Resume card (filled at execution; update before every VM operation > 10 min and at every phase exit)
 ```text
-last-updated: 2026-11-03 19:10 KST
-current phase: STOP A (PAUSE A printed 2026-11-03 19:10 KST). Journal docs/journals/2026-11-03-m10-stop-a.md (kongming note kongming-261103-1840: FIX-FIRST, applied). Waiting for 7 rulings + G1/G2; handoff plans/handoffs/m10-stop-a-resume-20261103-1857.md. Next on resume: rulings, then P05 (T-A). Rulings D1–D4 in force.
+last-updated: 2026-11-04 02:30 KST
+current phase: STOP A RULED (2026-11-04, plans/reports/decisions-261104-0214-GH-1-m10-stop-a-rulings.md: S1–S7 + G1, G2, all the recommended option). Next: G2 promotion of the δ raw files (host-only), then P05 (T-A) with the P15 scoping read; chain scripts record df + overlay size at every gate boundary (S5). Rulings D1–D4 and S1–S7 in force.
 P02: DONE (AC8 run 1 ✓ evidence/r3p/20261103T024628Z; M4–M7 ✓; verdicts in 73068f1). kongming GO-WITH-CHANGES: KPM move judge δ-aware 281d709 (ledger row 56); seam smoke extended 1cf145f (d100tie, d150stop, pins + emitter SHAs) — run it via `vm-exec.sh probes/probe-delta-seam-smoke.sh` (08f72bc) after the P03 chain, before any P04 δ run. Exit record in phase-02.
 P03: DONE (p12 ✓ 52/52, AC8 run 2 ✓ evidence/r3p/20261103T063029Z at 83443e1). kongming exit review GO-WITH-CHANGES (kongming-261103-1600): must = seam smoke at pins ✓ 25/25 (evidence/delta-seam-smoke/20261103T071157Z); shoulds done (rows 59 amended, 60 stricter p12 judge 1794f97; R-6 unit-test record evidence/p03-unit; standards ledger; raw archive). Exit record in phase-03.
 AC18 #9: ledger rows 10–55 + 56 (119c91d, 281d709): 25 registered (P1/N5), 12 P5 held per D2 until the P06 AC6a re-probe, 5 pending Stop A rulings (gap 5 row 31, gap 15 rows 43–45, 48). Planner report planner-261103-1150 (NR-CGI APER = 9 octets; eNB meid enB_macro_001_001_000001 verified).
 P04: DONE. m10-cp1 = 83443e1 (+ 4 fork pins), pushed. identity-map-cp1.json frozen f5beca2, NS_LOG cross-check ✓. δ refs reference/r3p-d{100,150,200,500} from C1 at 876c8d6 (176/176 each; 1 applied handover per live run; HandoverStart − apply = 3.0 ms all δ). p12 re-run with the stricter judge ✓. R-7 re-grep at 23f85dc: no rows 10–55 predicate moved. Raw archives m10-cp1 + m10-p04 on /mnt/data. Exit record in phase-04.
-Stop A agenda (scratchpad stop-a-agenda.txt): M1 per-action format as P15?; SubMgr 1024-octet buffer defect; K bound 20; gaps 5 and 15; D2 P5 timing; TAC width; T′ base; d100/d200/d500 single runs with a reference (gate path) vs C1 runs (kongming S3); P14 scope.
+Stop A rulings (2026-11-04): S1 gap 5 = A (P07 emitter change); S2 gap 15 = A + required fail-fast header (P06); S3 P15 in scope, fix in P10, scoping read in P05, record-only exit only on the F7 limit; S4 d100/d200/d500 single-run gate confirmed; S5 T′ base deferred to Stop B + per-step host measurement from P05; S6 25 #9 rows + row 45 confirmed; S7 /mnt/data floor 5 GiB; G1 seam smoke migrated (#9 row before P07 code, re-run at P07 exit and P11); G2 δ raw promotion before P05 VM work, d150/d500 transform-compare in P08.
 VM / snapshots / host free: VM idle; snapshots fresh-install f7-rerun-green m0-probe-{d11021754,n,o,p,q} r0-green r2-green r3p-green; /home 37 GiB (≈ 89 after the next revert unlinks the 52 GiB overlay), /mnt/data 20 GiB
 fork SHAs (pins.conf): Testbed 809fb2d3, ns-3 48d41a50, oran-interface b2342c66, e2sim 2209995a
 checkpoint tags: m10-cp1 = 83443e1 (pushed, all 5 repos), m10-cp2 (none), m10-cp3 (none)
@@ -66,16 +66,16 @@ in-flight jobs: none (VM idle on the r3p-green overlay, 52 GiB, unlinked at the 
 | P02 | MB | [δ actuation seam](phase-02-delta-actuation-seam.md) | AC7; AC8 run 1 | done 2026-11-03 (AC8 run 1 ✓ r3p/20261103T024628Z; kongming GO-WITH-CHANGES; seam smoke re-run at the pins with the tie and stop cases before P04 δ runs) |
 | P03 | MB | [P12: KPM reporting period and granularity](phase-03-p12-kpm-reporting-period-granularity.md) | AC10; AC8 run 2 | done 2026-11-03 (p12 ✓ 52/52; AC8 run 2 ✓ evidence/r3p/20261103T063029Z; cp1 = 83443e1) |
 | P04 | MB | [Checkpoint 1 tag, δ sweep references, predicate registration](phase-04-checkpoint-1-tag-delta-references.md) | AC8 tag, AC9, AC18 #9 registration | done 2026-11-03 (m10-cp1 = 83443e1; δ refs 100/150/200/500; Stop A) |
-| — | — | **Stop A** | user | — |
-| P05 | MC | [P10: SCTP PPID 70 on every E2 node (agents and kpm_sim)](phase-05-p10-sctp-ppid-70.md) | AC11 (dev form) | pending |
+| — | — | **Stop A** | user | ruled 2026-11-04 (S1–S7, G1, G2) |
+| P05 | MC | [P10: SCTP PPID 70 on every E2 node (agents and kpm_sim)](phase-05-p10-sctp-ppid-70.md) | AC11 (dev form); P15 scoping read (S3) | pending |
 | P06 | MC | [Identity cluster: P11/N5/P2/P5/P8, N1, independent RIC control injector](phase-06-identity-cluster-gnb-id-nr-cgi-e2-setup.md) | AC12, AC13 | pending |
 | P06b | MC | [P4 KPM UE IDs: X2AP context export, en-gNB-UEID/eNB-UEID in KPM, kpimon → Influx](phase-06b-kpm-ue-ids-x2ap-context-export.md) | AC14b (codec, context, Influx gates; R2/R3′ integration exits in P07) | pending |
-| P07 | MC | [P4/P1/P13: Style 5 action 3 to the source en-gNB](phase-07-rc-style5-pscell-change-source-en-gnb.md) | AC14; AC14b integration (R2/R3′ green with the migrated UE-ID consumers) | pending |
-| P08 | MC | [Checkpoint 2: transform-compare, negative fixtures, tag](phase-08-checkpoint-2-transform-compare.md) | AC8b | pending |
+| P07 | MC | [P4/P1/P13: Style 5 action 3 to the source en-gNB](phase-07-rc-style5-pscell-change-source-en-gnb.md) | AC14; AC14b integration (R2/R3′ green with the migrated UE-ID consumers); gap 5 option A (S1); seam smoke migrated and re-run (G1) | pending |
+| P08 | MC | [Checkpoint 2: transform-compare, negative fixtures, tag](phase-08-checkpoint-2-transform-compare.md) | AC8b; d150 and d500 transform-compare against the cp1 δ references (G2) | pending |
 | — | — | **Stop A′** | user | — |
 | P09 | MD | [Scale gate, ≥ 10 gNBs](phase-09-scale-gate-ten-gnbs.md) | AC15 (cp2 pins; re-validated at cp3 in P11) | pending |
-| P10 | ME | [T-C fixes P6/P7/P9 and the UseIdealRrc probe](phase-10-tc-counter-pdcp-realism-ideal-rrc.md) | AC16 (fixes), AC17 | pending |
-| P11 | ME | [Checkpoint 3: rehearsals, Codex audit, new references incl. all δ, diff report, tag](phase-11-checkpoint-3-references-diff-report.md) | AC16 (checkpoint 3), AC9 re-bank, AC4 rehearsals | pending |
+| P10 | ME | [T-C fixes P6/P7/P9 and the UseIdealRrc probe](phase-10-tc-counter-pdcp-realism-ideal-rrc.md) | AC16 (fixes), AC17; P15 fix (S3, Amendment 3) | pending |
+| P11 | ME | [Checkpoint 3: rehearsals, Codex audit, new references incl. all δ, diff report, tag](phase-11-checkpoint-3-references-diff-report.md) | AC16 (checkpoint 3), AC9 re-bank, AC4 rehearsals; seam smoke re-run (G1); per-step host growth (S5) | pending |
 | P12 | — | [M10 runner, check-diff ledger close-out, budget](phase-12-m10-runner-step-set-ledger-budget.md) | AC18, AC19 groundwork | pending |
 | — | — | **Stop B** | user (disk ≥ T′) | — |
 | P13 | — | [M10 end run and records](phase-13-m10-end-run-and-records.md) | AC19, AC11, AC2 post-run, AC20 | pending |
@@ -120,12 +120,13 @@ The mechanism is the same as M8–M9: a journal in `docs/journals/`, a kongming 
   - T′_measured = 37 + 42 + N_new. The 42 GiB is M9's measured consumption, 101 → 59 GiB [V `…/evidence/m9/20261028T165825Z/free-series.tsv`].
   - N_new is the growth of the new steps (e2i, d150, d100/d200/d500, s10, p12). It is inferred at 8–15 GiB [I] and is **pending AC6b** and the P11 rehearsals.
   - With today's numbers T′_method ≈ 100–107 GiB is the binding value and T′_measured ≈ 87–94 GiB the lower reference. The user may rule which base applies (flagged at Stop A, decided at Stop B).
+  - **Stop A ruling S5 (2026-11-04):** the base is decided at Stop B. From P05 on, every chain script records `df -BG /home` and the active overlay's allocated size (`du -BG <overlay>`, allocated blocks, not apparent size) at every gate boundary. At Stop B, T′_measured′ = 37 + M9's per-step growth for unchanged steps + the P11 host measurements for changed or new steps; the user rules max(T′_method, T′_measured′) or T′_measured′ alone. Plan the revert points so P11 stays above the 20 GiB dev floor.
   - Reachable: 54 GiB free now plus about 42 GiB of the post-M9 overlay leak ≈ 96 GiB [kongming §4]. Expect a shortfall that the user frees.
   - **Update 2026-11-03 (P00):** the post-M9 leak `ubuntu24.1793206761` was deleted under the 2026-10-28 ruling (42.4 GiB freed; log `evidence/fu2/20261102T174920Z/leak-deletion/`, kept in this plan instead of the M8–M9 `p10-disk/` folder the ruling names). /home is now 96 GiB free, which is the "reachable" figure above.
 - **Disk, /mnt/data:** 20 GiB free, 91 % used [V `df`]. It holds rootless podman storage (new images: `asn1-indep`, the protoc containers) and the raw-evidence archive (M9's evidence was 5.8 GB).
   - Every phase records `df -BG /mnt/data`.
   - Only images this plan built may be pruned.
-  - If a new image or archive copy would leave < 5 GiB, that is PAUSE T2 [I: proposed floor].
+  - If a new image or archive copy would leave < 5 GiB, that is PAUSE T2 (floor confirmed at Stop A, ruling S7).
 - **Watchdog:** h = 12 GiB, trip 37 GiB (R11). `disk-burst-h.py` must confirm no measured 370 s burst exceeds 12, else Decision required.
 - **Wall:** W′ = ceil(1.5 × Σ longest green per step).
   - The M9 green run took 12,584 s, and the M9 budget sum is 13,466 s (`m9-budget.md:28`).
@@ -319,6 +320,7 @@ Every warmup round-1 item (kongming plan review, Codex run 1 items 1–6) is dis
 - Rolling back a fix means re-pinning the previous SHA, and the matching tag reproduces the earlier references (R8).
 
 ## Unresolved questions
-1. T′ base: the method sum (binding by default) or the measured base. The user rules at Stop B (flagged at Stop A).
-2. The /mnt/data 5 GiB floor is a planner proposal; confirm it.
+1. T′ base: the method sum (binding by default) or the measured base′. The user rules at Stop B (S5: deferred, with the per-step host measurement approved).
+2. ~~The /mnt/data 5 GiB floor~~ confirmed at Stop A (S7, 2026-11-04).
 3. ~~I-9~~ resolved 2026-11-03 01:45 KST: the contract's AC11 citation was corrected to the Testbed `e2-interface` tree (requirement unchanged).
+4. P15 (contract Amendment 3) stays a fix unless the P05 scoping read shows it needs e2mgr RAN-function cell lists (the F7 limit); then it exits to record-only, reported at the next Stop.
