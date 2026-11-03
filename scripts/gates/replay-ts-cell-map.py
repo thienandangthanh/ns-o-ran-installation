@@ -1,62 +1,173 @@
 #!/usr/bin/env python3
 """replay-ts-cell-map.py: the TS xApp's cell_map, rebuilt offline from e2mgr nodeb JSON files (G4).
 
-  replay-ts-cell-map.py NODEB.json [NODEB.json ...] [--expect KEY=ranName ...] [--no-key ranName ...]
+  replay-ts-cell-map.py NODEB.json [NODEB.json ...] [--expect KEY=ranName ...] [--no-key ranName ...] [--no-wrong-node]
+  replay-ts-cell-map.py --self-test
 
-Mirrors ts_xapp.cpp (the nodeb loop that fills cell_map, ric-app-ts 19e169b as installed by NIST):
-  meid      = the node's ranName, e.g. gnb_001_001_00000002
-  suffix    = meid after its third underscore, lowercased (the gNB id hex, 00000002)
-  message   = base64-decode(e2nodeComponentRequestPart), lowercased (e2mgr renders the 5 request-part
-              octets as hex text)
-  for every position where `suffix` occurs in `message`: cell_map[message[i:i+10]] = node
-so a gNB agent's `00 00 00 02 02` request part gives the key 0000000202, and an eNB's "reqpart" gives
-nothing. Prints the map as JSON ({key: [ranName...]}); a key claimed by two nodes is listed with both
-(the xApp keeps the last one it saw). --expect KEY=ranName requires exactly that owner, --no-key
-ranName requires that node to own no key. Exit 0 when every requirement holds.
+Mirrors the patched ts_xapp.cpp NodebHandler (ric-app-ts 19e169b plus the Testbed patch set, N1 =
+install_patch_files/xApps/ts/src/ts_xapp/ts_xapp.cpp.nr_cell_map.patch):
+  meid      = the last "ranName" string before the request part, e.g. en_gnb_001_001_00000002
+  only an NR node has keys: meid ^(en_gnb|gnb)_<3 digits>_<3 digits>_<[0-9a-f]+>$; the last field (the gNB ID hex),
+            upper-cased, is the suffix; any other meid (enB_macro_...) contributes no key
+  message   = the uppercase hex of base64-decode(e2nodeComponentRequestPart) (the node's binary APER X2 setup
+              message), decoded as the xApp does (stops at the first non-alphabet character)
+  for every offset where the suffix occurs in `message`: cell_map[message[i:i+10]] = node
+so gNB 2's EN-DC X2 SETUP REQUEST gives 0000000210 (its served NR CGI's NCI and 4 unused bits) and 0000000200 (its
+Global en-gNB ID followed by the next IE id). Prints the map as JSON ({key: [ranName...]}); a key claimed by two
+nodes is listed with both (the xApp keeps the last one it saw). --expect KEY=ranName requires exactly that owner,
+--no-key ranName requires that node to own no key, --no-wrong-node requires every key to have one owner whose
+suffix equals the key's first 8 hex. Exit 0 when every requirement holds.
 """
 import argparse
 import base64
 import json
+import re
 import sys
+
+NR_MEID = re.compile(r"^(en_gnb|gnb)_[0-9]{3}_[0-9]{3}_([0-9a-f]+)$")
+B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+
+
+def base64_decode(s):
+    """ts_xapp.cpp base64_decode: stop at the first character outside the alphabet ('=' included)."""
+    out, val, valb = bytearray(), 0, -8
+    for c in s:
+        if c not in B64:
+            break
+        val = (val << 6) + B64.index(c)
+        valb += 6
+        if valb >= 0:
+            out.append((val >> valb) & 0xFF)
+            valb -= 8
+    return bytes(out)
+
+
+def strings_in_order(node):
+    """(key, string value) pairs in document order, as rapidjson's SAX handler sees them."""
+    if isinstance(node, dict):
+        for k, v in node.items():
+            if isinstance(v, str):
+                yield k, v
+            else:
+                yield from strings_in_order(v)
+    elif isinstance(node, list):
+        for v in node:
+            yield from strings_in_order(v)
+
+
+def suffix_of(meid):
+    m = NR_MEID.match(meid or "")
+    return m.group(2).upper() if m else None
 
 
 def keys_of(doc):
-    name = doc["ranName"]
-    parts = (doc.get("gnb") or doc.get("enb") or {}).get("nodeConfigs", [])
-    out = []
-    for cfg in parts:
-        raw = cfg.get("e2nodeComponentRequestPart", "")
-        message = base64.b64decode(raw).decode("latin-1").lower() if raw else ""
-        suffix = name.split("_", 3)[3].lower() if name.count("_") >= 3 else ""
-        if not suffix:
-            continue
-        for i in range(0, len(message) - len(suffix) + 1):
-            if message[i:i + len(suffix)] == suffix:
-                out.append(message[i:i + 10])
+    name, meid, out = doc.get("ranName"), "", []
+    for key, value in strings_in_order(doc):
+        if key == "ranName":
+            meid = value
+        elif key == "e2nodeComponentRequestPart":
+            suffix = suffix_of(meid)
+            if suffix is None:
+                continue
+            message = base64_decode(value).hex().upper()
+            for i in range(0, len(message) - len(suffix) + 1):
+                if message[i:i + len(suffix)] == suffix:
+                    out.append(message[i:i + 10])
     return name, out
 
 
-def main():
-    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("files", nargs="+")
-    ap.add_argument("--expect", action="append", default=[])
-    ap.add_argument("--no-key", action="append", default=[])
-    a = ap.parse_args()
+def judge(docs, expect=(), no_key=(), no_wrong_node=False):
     cell_map, owners = {}, {}
-    for f in a.files:
-        name, keys = keys_of(json.load(open(f)))
+    for doc in docs:
+        name, keys = keys_of(doc)
         owners[name] = keys
         for k in keys:
-            cell_map.setdefault(k, []).append(name)
-    print(json.dumps({"cellMap": cell_map, "keysByNode": owners}, indent=1, sort_keys=True))
+            if name not in cell_map.setdefault(k, []):
+                cell_map[k].append(name)
     problems = []
-    for e in a.expect:
+    for e in expect:
         key, _, node = e.partition("=")
         if cell_map.get(key) != [node]:
             problems.append("key %s owned by %r, expected [%r]" % (key, cell_map.get(key), node))
-    for n in a.no_key:
+    for n in no_key:
         if owners.get(n):
             problems.append("%s owns keys %r, expected none" % (n, owners[n]))
+    if no_wrong_node:
+        for key, names in sorted(cell_map.items()):
+            if len(names) != 1:
+                problems.append("key %s has %d owners %r, expected one" % (key, len(names), names))
+            elif suffix_of(names[0]) != key[:8]:
+                problems.append("key %s owned by %s, whose gNB ID is %s" % (key, names[0], suffix_of(names[0])))
+    return {"cellMap": cell_map, "keysByNode": owners}, problems
+
+
+# self-test fixtures: the agents' X2 request parts (hex) per meid, as e2mgr stores them (base64)
+FIXTURE_HEX = {
+    "en_gnb_001_001_00000002": "0024004100000100f4003a40000200fc00090000f110500000000200fd002600000400020000f110000000"
+                               "0210001000f110410009a9f500004d004100071011353ea50000",
+    "en_gnb_001_001_00000003": "0024004100000100f4003a40000200fc00090000f110500000000300fd002600000400020000f110000000"
+                               "0310001000f110410009a9f500004d004100071011353ea50000",
+    "enB_macro_001_001_000001": "0024003100000100f4002a000002001500080000f1100000001000fa0017000000010000f11000001010"
+                                "001000f1100046b4006455",
+}
+
+
+def nodeb(meid, hexpart, key="gnb"):
+    part = base64.b64encode(bytes.fromhex(hexpart)).decode()
+    return {"ranName": meid, "connectionStatus": "CONNECTED",
+            key: {"nodeConfigs": [{"e2nodeComponentInterfaceType": "x2", "e2nodeComponentRequestPart": part}]}}
+
+
+def self_test():
+    g2, g3, e1 = "en_gnb_001_001_00000002", "en_gnb_001_001_00000003", "enB_macro_001_001_000001"
+    docs = [nodeb(g2, FIXTURE_HEX[g2]), nodeb(g3, FIXTURE_HEX[g3]), nodeb(e1, FIXTURE_HEX[e1], "enb")]
+    cases = []
+    out, problems = judge(docs, ["0000000210=" + g2, "0000000310=" + g3], [e1], True)
+    cases.append(("en-gNB 2/3 keys, no eNB key, no wrong node", not problems
+                  and out["keysByNode"] == {g2: ["0000000200", "0000000210"], g3: ["0000000300", "0000000310"], e1: []}))
+    # the old gnb_ form is still an NR meid; an ASCII-hex request part (the old agent) yields no key from binary hex
+    out, _ = judge([nodeb("gnb_001_001_00000002", FIXTURE_HEX[g2])])
+    cases.append(("gnb_ meid parsed", out["keysByNode"]["gnb_001_001_00000002"] == ["0000000200", "0000000210"]))
+    out, _ = judge([nodeb("gnb_001_001_00000002", "0000000202".encode().hex())])
+    cases.append(("ASCII request part gives no key", out["keysByNode"]["gnb_001_001_00000002"] == []))
+    # an eNB meid never contributes, even when its request part holds the text
+    out, problems = judge([nodeb("enB_macro_001_001_00000002", FIXTURE_HEX[g2])], no_key=["enB_macro_001_001_00000002"])
+    cases.append(("enB_macro meid gives no key", not problems))
+    # --no-wrong-node: two nodes with one gNB ID share every key; a gNB ID shorter than 8 hex gives keys whose first
+    # 8 hex are not its own
+    _, problems = judge([nodeb(g2, FIXTURE_HEX[g2]), nodeb("gnb_001_001_00000002", FIXTURE_HEX[g2])], no_wrong_node=True)
+    cases.append(("a key with two owners fails --no-wrong-node", any("2 owners" in p for p in problems)))
+    _, problems = judge([nodeb("gnb_001_001_000002", FIXTURE_HEX[g2])], no_wrong_node=True)
+    cases.append(("a key not led by its owner's gNB ID fails --no-wrong-node", any("whose gNB ID" in p for p in problems)))
+    _, problems = judge([nodeb(g2, FIXTURE_HEX[g2])], ["0000000310=" + g3])
+    cases.append(("a missing expected key fails --expect", bool(problems)))
+    _, problems = judge([nodeb(g2, FIXTURE_HEX[g2])], no_key=[g2])
+    cases.append(("a node with keys fails --no-key", bool(problems)))
+    # the xApp's decoder stops at '=': padding never adds bytes
+    cases.append(("decoder stops at padding", base64_decode("AAE=") == b"\x00\x01"))
+    for name, ok in cases:
+        print("%s %s" % ("ok  " if ok else "FAIL", name))
+    return 0 if all(ok for _, ok in cases) else 1
+
+
+def main():
+    ap = argparse.ArgumentParser(description=(__doc__ or "").split("\n")[0])
+    ap.add_argument("files", nargs="*")
+    ap.add_argument("--expect", action="append", default=[])
+    ap.add_argument("--no-key", action="append", default=[])
+    ap.add_argument("--no-wrong-node", action="store_true")
+    ap.add_argument("--self-test", action="store_true")
+    a = ap.parse_args()
+    if a.self_test:
+        return self_test()
+    if not a.files:
+        ap.error("at least one NODEB.json is required")
+    docs = []
+    for f in a.files:
+        with open(f) as fh:
+            docs.append(json.load(fh))
+    out, problems = judge(docs, a.expect, a.no_key, a.no_wrong_node)
+    print(json.dumps(out, indent=1, sort_keys=True))
     for p in problems:
         print("problem: " + p, file=sys.stderr)
     return 1 if problems else 0

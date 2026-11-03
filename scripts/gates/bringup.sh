@@ -371,6 +371,72 @@ testbed_paths_at_pin() {
         { echo "Testbed paths differ from $TESTBED_SHA: $*"; git -C "$RIC_DIR" diff --stat "$TESTBED_SHA" -- "$@"; return 1; }
 }
 
+# patchset_safe_relpath <path>: a relative path without "..", as a manifest entry or a patched file must be.
+patchset_safe_relpath() { [[ "$1" =~ ^[A-Za-z0-9._][A-Za-z0-9._/+-]*$ && "$1" != *..* ]]; }
+
+# patchset_digest_at_pin <rel-dir> <out-dir>: a Testbed fork patch set (<rel-dir>/patches.manifest and the files it
+# lists, paths relative to <rel-dir>) from the Testbed objects at $TESTBED_SHA (git show, not the working tree) into
+# <out-dir>. Sets PS_PATCHES (manifest order) and PS_DIGEST (sha256 of the manifest followed by each listed file, in
+# manifest order: the installers' rule for the image's patchset.sha256 label).
+patchset_digest_at_pin() {
+    local rel="$1" d="$2" p
+    PS_PATCHES=(); PS_DIGEST=""
+    git -C "$RIC_DIR" cat-file -e "$TESTBED_SHA^{commit}" 2>/dev/null ||
+        GIT_TERMINAL_PROMPT=0 git -C "$RIC_DIR" fetch -q "$TESTBED_URL" "$TESTBED_SHA" || return 1
+    git -C "$RIC_DIR" show "$TESTBED_SHA:./$rel/patches.manifest" >"$d/patches.manifest" ||
+        { echo "no $rel/patches.manifest at $TESTBED_SHA"; return 1; }
+    mapfile -t PS_PATCHES < <(grep -vE '^\s*(#|$)' "$d/patches.manifest")
+    [ "${#PS_PATCHES[@]}" -gt 0 ] || { echo "the $rel manifest at $TESTBED_SHA lists no patch"; return 1; }
+    for p in "${PS_PATCHES[@]}"; do
+        patchset_safe_relpath "$p" || { echo "bad manifest entry: $p"; return 1; }
+        mkdir -p "$d/$(dirname "$p")"
+        git -C "$RIC_DIR" show "$TESTBED_SHA:./$rel/$p" >"$d/$p" || { echo "$rel/$p is not at $TESTBED_SHA"; return 1; }
+    done
+    # shellcheck disable=SC2034  # PS_DIGEST is read by the callers (ts-lib.sh, rc-lib.sh, kpimon.sh)
+    PS_DIGEST=$( (cat "$d/patches.manifest" && for p in "${PS_PATCHES[@]}"; do cat "$d/$p"; done) |
+        sha256sum | cut -d' ' -f1)
+}
+
+# patchset_from_pin <rel-dir> <out-dir>: patchset_digest_at_pin, every listed file a patch; also sets PS_FILES (every
+# file the patches change, from their diff headers).
+patchset_from_pin() {
+    local p f
+    PS_FILES=()
+    patchset_digest_at_pin "$@" || return 1
+    mapfile -t PS_FILES < <(for p in "${PS_PATCHES[@]}"; do git apply --numstat "$2/$p" | cut -f3; done | sort -u)
+    [ "${#PS_FILES[@]}" -gt 0 ] || { echo "the $1 patches name no file"; return 1; }
+    for f in "${PS_FILES[@]}"; do patchset_safe_relpath "$f" || { echo "bad patched path: $f"; return 1; }; done
+}
+
+# tree_is_pin_plus_patchset <repo> <sha> <set-dir> <diff-out> [allowed-path]...: after patchset_from_pin into
+# <set-dir>, every file in PS_FILES equals git show <sha>:<file> (absent if <sha> lacks it) plus PS_PATCHES in
+# manifest order, byte for byte, and the repo's tracked changes to <sha> (staged or not) are within PS_FILES and the
+# allowed paths. Writes the repo's diff of PS_FILES to <diff-out>.
+tree_is_pin_plus_patchset() {
+    local repo="$1" sha="$2" set="$3" out="$4" t p f unexpected rc=0
+    shift 4
+    git -C "$repo" diff "$sha" -- "${PS_FILES[@]}" >"$out" || return 1
+    t=$(mktemp -d) || return 1
+    # a repository of its own, so git apply resolves the paths against it whatever the temp dir's parents are
+    git init -q "$t" || { rm -rf "$t"; return 1; }
+    for f in "${PS_FILES[@]}"; do
+        git -C "$repo" cat-file -e "$sha:$f" 2>/dev/null || continue
+        mkdir -p "$t/$(dirname "$f")"
+        git -C "$repo" show "$sha:$f" >"$t/$f" || { rm -rf "$t"; return 1; }
+    done
+    for p in "${PS_PATCHES[@]}"; do
+        (cd "$t" && git apply --whitespace=nowarn "$set/$p") ||
+            { echo "$p does not apply to the pinned files in manifest order"; rm -rf "$t"; return 1; }
+    done
+    for f in "${PS_FILES[@]}"; do
+        cmp -s "$t/$f" "$repo/$f" || { echo "$f is not the pinned file plus exactly its patches"; rc=1; }
+    done
+    rm -rf "$t"
+    unexpected=$(git -C "$repo" diff --name-only "$sha" | grep -vxF -f <(printf '%s\n' "$@" "${PS_FILES[@]}"))
+    [ -z "$unexpected" ] || { echo "tracked change outside the patch set: $(echo "$unexpected" | paste -sd' ')"; rc=1; }
+    return "$rc"
+}
+
 # The E2 Manager image built by the Testbed's install_scripts/install_e2mgr_patched.sh: its release, and the paths
 # its build reads.
 E2MGR_RELEASE=6.0.6

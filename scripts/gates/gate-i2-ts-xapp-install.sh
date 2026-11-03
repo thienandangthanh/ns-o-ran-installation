@@ -25,9 +25,9 @@ while [ $# -gt 0 ]; do
 done
 case "$PART" in all|ts|stub) ;; *) log "bad --part $PART"; exit 2 ;; esac
 fact part "$(json_str "$PART")"
-record i2_args true "part $PART; TS pin $TS_SHA; substitutions 3 (A1 payload) and 2 (default RMR handler) applied; rc pin $RC_SHA; rmr-peer image $RMR_PEER_IMAGE"
+record i2_args true "part $PART; TS pin $TS_SHA; TS patch set install_patch_files/xApps/ts/patches.manifest (A1 payload, default RMR handler, NR cell map); rc pin $RC_SHA + install_patch_files/xApps/rc; rmr-peer image $RMR_PEER_IMAGE"
 
-# the installer that runs, and the patches it applies (substitutions 3 and 2), are the Testbed fork's at TESTBED_SHA
+# the installer that runs, and the patch set it applies (its manifest and patches), are the Testbed fork's at TESTBED_SHA
 installer_at_pin() {
     local d=RAN_Intelligent_Controllers/Near-Real-Time-RIC
     local f=("$d/additional_scripts/install_xapp_traffic_steering.sh" "$d/install_patch_files/xApps/ts")

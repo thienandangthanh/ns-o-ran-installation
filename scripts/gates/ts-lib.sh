@@ -5,10 +5,17 @@
 #   ts_install                    the TS xApp at TS_SHA through NIST's installer, then switched to gRPC towards rc
 #                                 (the descriptor default is REST): re-onboarded and reinstalled (no rtmgr restart:
 #                                 the caller registers, then restarts rtmgr)
-#   ts_patches_check              the TS xApp source is the pinned file plus exactly the Testbed fork's patches, in the
-#                                 installer's order: the A1 payload patch (the Go a1mediator sends the policy body as a
-#                                 JSON string; the pinned TS xApp reads an object) and the default RMR handler (a stray
-#                                 12041/12042 otherwise makes xapp-frame-cpp 2.3.6 free its buffer twice)
+#   ts_patches_check              the TS xApp tree and image are the pin plus exactly the Testbed fork's patch set at
+#                                 TESTBED_SHA: the ordered manifest install_patch_files/xApps/ts/patches.manifest and
+#                                 its patches, read with git show from TESTBED_SHA (the Testbed paths first equal the
+#                                 pin); every file the patches change = git show TS_SHA:<file> + its patches in
+#                                 manifest order, byte for byte; no other tracked change than assets/bootstrap.rt and
+#                                 routes.txt; the trafficxapp image's patchset.sha256 label = the patch-set digest
+#                                 (sha256 of the manifest followed by each listed patch, in manifest order). Today: the
+#                                 A1 payload patch (the Go a1mediator sends the policy body as a JSON string; the
+#                                 pinned TS xApp reads an object), the default RMR handler (a stray 12041/12042
+#                                 otherwise makes xapp-frame-cpp 2.3.6 free its buffer twice) and the NR cell map
+#                                 (keys only from en_gnb_/gnb_ meids, from the hex of the binary X2 request part)
 #   ts_ready                      TS pod Ready, its log says it listens, and no control-API error
 #   rmr_peer_build                the rmr-peer image (stub QP + injector) from tools/rmr-peer, self-tested, imported
 #                                 into containerd; RMR_PEER_IMAGE names it (tag = git tree id of tools/rmr-peer)
@@ -54,9 +61,14 @@ TS_SHA=19e169b2e81a0dbaf3d9dc526de0415cc995ee8b
 TS_DIR="$RIC_DIR/xApps/ts"
 TS_RC_EP="service-ricxapp-rc-grpc-server.ricxapp:7777"
 TS_POLICY_TYPE=20008
-TS_PATCH_DIR="$RIC_DIR/install_patch_files/xApps/ts/src/ts_xapp"
-TS_PATCHES=("$TS_PATCH_DIR/ts_xapp.cpp.patch" "$TS_PATCH_DIR/ts_xapp.cpp.default_handler.patch")
-TS_PATCHED_FILE=src/ts_xapp/ts_xapp.cpp
+TS_IMAGE=127.0.0.1:80/trafficxapp:latest
+# the Testbed paths (relative to $RIC_DIR) the TS xApp's install and patch set read
+TS_PATCH_REL=install_patch_files/xApps/ts
+TS_TESTBED_PATHS=(additional_scripts/install_xapp_traffic_steering.sh "$TS_PATCH_REL")
+# the working tree's manifest and listed patches (an existence list for callers; ts_patches_check reads TESTBED_SHA's)
+# shellcheck disable=SC2034  # read by gate-i2-ts-xapp-install.sh
+mapfile -t TS_PATCHES < <(echo "$RIC_DIR/$TS_PATCH_REL/patches.manifest"
+    grep -vE '^\s*(#|$)' "$RIC_DIR/$TS_PATCH_REL/patches.manifest" 2>/dev/null | sed "s|^|$RIC_DIR/$TS_PATCH_REL/|")
 STUB_NAME=stubqp
 STUB_VERSION=0.1.0
 INJ_NAME=r2-rmr-injector
@@ -96,18 +108,20 @@ _wait_new_ready() {
 }
 
 ts_patches_check() {
-    local t p rc
-    git -C "$TS_DIR" diff -- "$TS_PATCHED_FILE" >"$EVIDENCE_DIR/ts-patches-applied.diff" || return 1
+    local t have rc=0
+    testbed_paths_at_pin "${TS_TESTBED_PATHS[@]}" || return 1
     t=$(mktemp -d) || return 1
-    mkdir -p "$t/$(dirname "$TS_PATCHED_FILE")"
-    git -C "$TS_DIR" show "$TS_SHA:$TS_PATCHED_FILE" >"$t/$TS_PATCHED_FILE" || { rm -rf "$t"; return 1; }
-    for p in "${TS_PATCHES[@]}"; do
-        [ -f "$p" ] && (cd "$t" && git apply "$p") || { echo "$p missing or not applicable to the pinned file"; rm -rf "$t"; return 1; }
-    done
-    cmp -s "$t/$TS_PATCHED_FILE" "$TS_DIR/$TS_PATCHED_FILE"; rc=$?
+    patchset_from_pin "$TS_PATCH_REL" "$t" || { rm -rf "$t"; return 1; }
+    # the installer edits the seed routes (AD Service FQDN) and applies the patch set; any other tracked change (to
+    # the pinned commit, staged or not) is a change
+    tree_is_pin_plus_patchset "$TS_DIR" "$TS_SHA" "$t" "$EVIDENCE_DIR/ts-patches-applied.diff" \
+        assets/bootstrap.rt routes.txt || rc=1
     rm -rf "$t"
-    [ "$rc" = 0 ] || { echo "$TS_PATCHED_FILE is not the pinned file plus exactly the Testbed fork's patches"; return 1; }
-    echo "$TS_PATCHED_FILE = pin + A1 payload patch + default RMR handler patch ($(cat "${TS_PATCHES[@]}" | grep -c '^+[^+]') added lines)"
+    have=$(dk image inspect --format '{{index .Config.Labels "patchset.sha256"}}' "$TS_IMAGE" 2>/dev/null)
+    [ "$have" = "$PS_DIGEST" ] ||
+        { echo "$TS_IMAGE patchset.sha256=${have:-<none>}, patch set at $TESTBED_SHA: $PS_DIGEST"; rc=1; }
+    [ "$rc" = 0 ] || return 1
+    echo "${PS_FILES[*]} = pin + ${#PS_PATCHES[@]} patches in manifest order ($(grep -c '^+[^+]' "$EVIDENCE_DIR/ts-patches-applied.diff") added lines); $TS_IMAGE patchset.sha256=$PS_DIGEST"
 }
 
 ts_install() {
@@ -115,11 +129,13 @@ ts_install() {
     _agents_prepare_env
     # an image built before the patch existed must not survive the install (the installer skips a build when no
     # source is newer than its tar)
-    img_before=$(dk image inspect --format '{{.Id}}' 127.0.0.1:80/trafficxapp:latest 2>/dev/null)
+    img_before=$(dk image inspect --format '{{.Id}}' "$TS_IMAGE" 2>/dev/null)
     git -C "$TS_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1 && ts_patches_check >/dev/null 2>&1 && patched_before=1
     echo "image before: ${img_before:-none}; tree patched before: $patched_before" | tee "$e/ts-image-before.txt"
     # never pipe NIST output: nist_run's idle-stdin sleep and the chartmuseum daemon inherit stdout and would
     # hold a pipe open; redact the file afterwards (as kpimon_install does)
+    # the installer and the patch set it applies are the pin's (the image is built from them)
+    testbed_paths_at_pin "${TS_TESTBED_PATHS[@]}" || return 1
     nist_run 3600 "$RIC_DIR/additional_scripts/install_xapp_traffic_steering.sh" >"$e/install-ts.log.raw" 2>&1
     local rc=$?
     redact_stream <"$e/install-ts.log.raw" >"$e/install-ts.log"; rm -f "$e/install-ts.log.raw"
@@ -127,13 +143,12 @@ ts_install() {
     sha=$(git -C "$TS_DIR" rev-parse HEAD) || return 1
     echo "$sha" | tee "$e/ts-sha.txt"
     [ "$sha" = "$TS_SHA" ] || { echo "the TS xApp is at $sha, pinned $TS_SHA"; return 1; }
-    # the installer edits the seed routes (AD Service FQDN) and applies the Testbed fork's patches; anything else
-    # in the tree is a change
+    # the installer edits the seed routes (AD Service FQDN) and applies the Testbed fork's patch set; ts_patches_check
+    # fails on anything else in the tree and on an image without the patch set's label
     git -C "$TS_DIR" status --short | tee "$e/ts-tree-status.txt"
     git -C "$TS_DIR" diff --stat | tee "$e/ts-tree-diffstat.txt"
-    git -C "$TS_DIR" diff --name-only | grep -vxE "assets/bootstrap.rt|routes.txt|$TS_PATCHED_FILE" && { echo "unexpected tracked change in the TS tree"; return 1; }
     ts_patches_check || return 1
-    img_after=$(dk image inspect --format '{{.Id}}' 127.0.0.1:80/trafficxapp:latest 2>/dev/null)
+    img_after=$(dk image inspect --format '{{.Id}}' "$TS_IMAGE" 2>/dev/null)
     echo "image after: ${img_after:-none}" | tee -a "$e/ts-image-before.txt"
     [ -n "$img_after" ] || { echo "no trafficxapp image after the install"; return 1; }
     if [ "$patched_before" = 0 ] && [ -n "$img_before" ] && [ "$img_after" = "$img_before" ]; then
@@ -477,6 +492,6 @@ injector_stop() {
 
 ts_image_ids() {
     python3 -I -c 'import json,sys; print(json.dumps({"trafficxapp": sys.argv[1], "stubqp": sys.argv[2], "stubqpImage": sys.argv[3]}))' \
-        "$(dk image inspect --format '{{.Id}}' 127.0.0.1:80/trafficxapp:latest 2>/dev/null)" \
+        "$(dk image inspect --format '{{.Id}}' "$TS_IMAGE" 2>/dev/null)" \
         "$(dk image inspect --format '{{.Id}}' "$RMR_PEER_IMAGE" 2>/dev/null)" "$RMR_PEER_IMAGE" | tee "$EVIDENCE_DIR/xapp-image-ids.json"
 }
