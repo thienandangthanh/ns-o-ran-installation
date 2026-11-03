@@ -22,6 +22,8 @@
 !/*/evidence/p03-unit/**
 # Offline PPID 70 proofs (agent loopback, judge fixtures, self-test): small text, no captures.
 !/*/evidence/p05-ppid-offline/**
+# A run directory's comparison against a committed reference (reference-compare.py output): a small verdict.
+!/*/evidence/*/*/**/reference-compare*.json
 # Host /home free and active-overlay size at each gate boundary (vm-exec.sh): the per-step disk measurement.
 !/*/evidence/*/*/**/host-disk.tsv
 # The M9 run directory is the run-level record: keep its top-level files.

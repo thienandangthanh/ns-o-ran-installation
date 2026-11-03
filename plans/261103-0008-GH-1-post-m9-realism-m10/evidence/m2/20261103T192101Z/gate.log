@@ -1,0 +1,36 @@
+[19:21:03] gate m2 start; evidence /home/uc/evidence/m2/20261103T192101Z; harness 9a955049a8f72db8ae940d6e43d5ea9c1e80fa7f
+[19:21:05] PASS m2_tshark_installed
+[19:21:05] PASS m2_tshark_has_e2ap_dissector
+[19:21:06] PASS m2_tshark_kpm_dissector_informational
+[19:21:06] PASS m2_old_refnode_stopped
+[19:23:01] PASS m2_kpm_sim_image_built_with_ppid70_patch
+[19:23:01] PASS m2_capture_started
+[19:24:33] PASS m2_refnode_up
+[19:28:34] PASS m2_fetch_connected_e2_nodes_shows_connected
+[19:28:34] PASS m2_check_e2ap_version_recorded_informational
+[19:29:34] PASS m2_e2mgr_stays_connected_during_hold
+[19:29:34] PASS m2_e2mgr_connected_at_end
+[19:29:34] PASS m2_golden_capture_stopped
+[19:29:35] PASS m2_sctp_init_present
+[19:29:35] PASS m2_sctp_init_ack_present
+[19:29:35] PASS m2_sctp_heartbeat_present
+[19:29:36] PASS m2_sctp_heartbeat_ack_present
+[19:29:36] PASS m2_sctp_sack_present
+[19:29:37] PASS m2_sctp_zero_abort
+[19:29:38] PASS m2_golden_decodes_e2ap
+[19:29:39] PASS m2_golden_kpm_sim_e2ap_ppid70
+[19:29:39] PASS m2_decodes_e2setup_request
+[19:29:39] PASS m2_decodes_e2setup_response
+[19:29:39] PASS m2_e2setup_facts_recorded
+[19:29:39] PASS m2_e2setup_ran_functions_informational
+[19:29:39] PASS m2_e2setup_node_id_informational
+[19:29:39] PASS m2_probe_e2term_service_resolved
+[19:29:40] PASS m2_probe_image_ready
+[19:34:43] PASS m2_probe_both_containers_exit_0
+[19:34:44] PASS m2_probe_capture_stopped
+[19:34:45] PASS m2_probe_two_distinct_associations
+[19:34:46] PASS m2_probe_heartbeats_during_hold
+[19:34:47] PASS m2_probe_zero_abort
+[19:34:48] PASS m2_no_capture_left_running
+[19:34:48] PASS m2_pcaps_in_evidence
+verdict m2: PASS failed=[]

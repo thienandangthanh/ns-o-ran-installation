@@ -1,0 +1,8 @@
+[19:35:20] bringup ric: waiting up to 1200s for ricplt pods
+[19:35:20] bringup ric: all ricplt pods Ready
+[19:35:20] bringup ric: e2term registered with e2mgr: [{"e2tAddress":"10.101.123.229:38000","ranNames":["gnb_734_373_16b8cef1"]}]
+rt reader e2mgr deployment-ricplt-e2mgr-9b6b8f99f-qms4v: OK (5 samples, 1 sockets now, stuck [])
+rt reader submgr deployment-ricplt-submgr-858956fbdc-55dwq: OK (5 samples, 1 sockets now, stuck [])
+[19:35:57] bringup refnode: attempt 1: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)
+[19:36:10] bringup refnode: run_e2sim script exit 0
+[19:36:15] bringup refnode: e2mgr shows a CONNECTED node (attempt 1)

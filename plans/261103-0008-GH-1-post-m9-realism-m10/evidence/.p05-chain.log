@@ -1,0 +1,86 @@
+2026-11-03T18:13:24Z chain start harness b39595a3eec8ae5a086896f17c785602d058a5d0
+2026-11-03T18:13:24Z start gate-m2-refnode.sh 
+[host 18:13:27] gate m2 (gate-m2-refnode.sh) harness b39595a3ee -> unit gate-m2-20261103T181327Z
+[host 18:13:27] host disk: start	20261103T181327Z	88	/home/andang/VMs/ubuntu24.04-r2-green.1793729567	1
+[host 18:27:14] gate m2 exit 0
+[host 18:27:14] host disk: end	20261103T182714Z	87	/home/andang/VMs/ubuntu24.04-r2-green.1793729567	1
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 18:27:14] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261103-0008-GH-1-post-m9-realism-m10/evidence/m2/20261103T181327Z
+verdict m2 PASS []
+2026-11-03T18:27:14Z end gate-m2-refnode.sh rc=0
+2026-11-03T18:27:14Z start gate-m3-xapps.sh 
+[host 18:27:17] gate m3 (gate-m3-xapps.sh) harness b39595a3ee -> unit gate-m3-20261103T182717Z
+[host 18:27:17] host disk: start	20261103T182717Z	87	/home/andang/VMs/ubuntu24.04-r2-green.1793729567	1
+[host 19:03:43] gate m3 exit 0
+[host 19:03:43] host disk: end	20261103T190343Z	74	/home/andang/VMs/ubuntu24.04-r2-green.1793729567	14
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 19:03:44] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261103-0008-GH-1-post-m9-realism-m10/evidence/m3/20261103T182717Z
+verdict m3 PASS []
+2026-11-03T19:03:44Z end gate-m3-xapps.sh rc=0
+2026-11-03T19:03:44Z start gate-m5-agent-setup.sh 
+[host 19:03:46] gate m5 (gate-m5-agent-setup.sh) harness b39595a3ee -> unit gate-m5-20261103T190346Z
+[host 19:03:46] host disk: start	20261103T190346Z	74	/home/andang/VMs/ubuntu24.04-r2-green.1793729567	14
+[host 19:05:19] gate m5 exit 1
+[host 19:05:19] host disk: end	20261103T190519Z	74	/home/andang/VMs/ubuntu24.04-r2-green.1793729567	14
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 19:05:19] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261103-0008-GH-1-post-m9-realism-m10/evidence/m5/20261103T190346Z
+verdict m5 FAIL ['m5_e2ap_ppid70_every_node', 'm5_tshark_setup_request_func2_oid_shortname_gnbid2_not_kpm_sim', 'm5_gnb_id_differs_from_reference_node_b5c67788']
+2026-11-03T19:05:19Z end gate-m5-agent-setup.sh rc=1
+2026-11-03T19:05:19Z chain RED at gate-m5-agent-setup.sh
+2026-11-03T19:20:59Z attempt 2 after fix 9a95504 (kongming-261104-0410); VM reverted to r3p-green 19:20:51Z
+2026-11-03T19:20:59Z chain start harness 9a955049a8f72db8ae940d6e43d5ea9c1e80fa7f
+2026-11-03T19:20:59Z start gate-m2-refnode.sh 
+[host 19:21:01] gate m2 (gate-m2-refnode.sh) harness 9a955049a8 -> unit gate-m2-20261103T192101Z
+[host 19:21:01] host disk: start	20261103T192101Z	88	/home/andang/VMs/ubuntu24.04-r2-green.1793733643	1
+[host 19:35:16] gate m2 exit 0
+[host 19:35:16] host disk: end	20261103T193516Z	87	/home/andang/VMs/ubuntu24.04-r2-green.1793733643	2
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 19:35:17] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261103-0008-GH-1-post-m9-realism-m10/evidence/m2/20261103T192101Z
+verdict m2 PASS []
+2026-11-03T19:35:17Z end gate-m2-refnode.sh rc=0
+2026-11-03T19:35:17Z start gate-m3-xapps.sh 
+[host 19:35:19] gate m3 (gate-m3-xapps.sh) harness 9a955049a8 -> unit gate-m3-20261103T193519Z
+[host 19:35:19] host disk: start	20261103T193519Z	87	/home/andang/VMs/ubuntu24.04-r2-green.1793733643	2
+[host 20:10:46] gate m3 exit 0
+[host 20:10:46] host disk: end	20261103T201046Z	73	/home/andang/VMs/ubuntu24.04-r2-green.1793733643	16
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 20:10:46] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261103-0008-GH-1-post-m9-realism-m10/evidence/m3/20261103T193519Z
+verdict m3 PASS []
+2026-11-03T20:10:46Z end gate-m3-xapps.sh rc=0
+2026-11-03T20:10:46Z start gate-m5-agent-setup.sh 
+[host 20:10:49] gate m5 (gate-m5-agent-setup.sh) harness 9a955049a8 -> unit gate-m5-20261103T201049Z
+[host 20:10:49] host disk: start	20261103T201049Z	73	/home/andang/VMs/ubuntu24.04-r2-green.1793733643	16
+[host 20:13:22] gate m5 exit 0
+[host 20:13:22] host disk: end	20261103T201322Z	73	/home/andang/VMs/ubuntu24.04-r2-green.1793733643	16
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 20:13:22] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261103-0008-GH-1-post-m9-realism-m10/evidence/m5/20261103T201049Z
+verdict m5 PASS []
+2026-11-03T20:13:22Z end gate-m5-agent-setup.sh rc=0
+2026-11-03T20:13:22Z start gate-m6-kpm.sh 
+[host 20:13:25] gate m6 (gate-m6-kpm.sh) harness 9a955049a8 -> unit gate-m6-20261103T201325Z
+[host 20:13:25] host disk: start	20261103T201325Z	73	/home/andang/VMs/ubuntu24.04-r2-green.1793733643	16
+[host 20:18:00] gate m6 exit 0
+[host 20:18:00] host disk: end	20261103T201800Z	69	/home/andang/VMs/ubuntu24.04-r2-green.1793733643	19
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 20:18:02] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261103-0008-GH-1-post-m9-realism-m10/evidence/m6/20261103T201325Z
+verdict m6 PASS []
+2026-11-03T20:18:02Z end gate-m6-kpm.sh rc=0
+2026-11-03T20:18:02Z start gate-m7-multignb.sh 
+[host 20:18:04] gate m7 (gate-m7-multignb.sh) harness 9a955049a8 -> unit gate-m7-20261103T201804Z
+[host 20:18:04] host disk: start	20261103T201804Z	69	/home/andang/VMs/ubuntu24.04-r2-green.1793733643	19
+[host 20:42:58] gate m7 exit 0
+[host 20:42:58] host disk: end	20261103T204258Z	69	/home/andang/VMs/ubuntu24.04-r2-green.1793733643	20
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 20:43:39] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261103-0008-GH-1-post-m9-realism-m10/evidence/m7/20261103T201804Z
+verdict m7 PASS []
+2026-11-03T20:43:39Z end gate-m7-multignb.sh rc=0
+2026-11-03T20:43:39Z start gate-r3p-ts-predictor.sh -- --mode single
+[host 20:43:41] gate r3p (gate-r3p-ts-predictor.sh) harness 9a955049a8 -> unit gate-r3p-20261103T204341Z
+[host 20:43:41] host disk: start	20261103T204341Z	69	/home/andang/VMs/ubuntu24.04-r2-green.1793733643	20
+[host 20:54:22] gate r3p exit 0
+[host 20:54:22] host disk: end	20261103T205422Z	68	/home/andang/VMs/ubuntu24.04-r2-green.1793733643	20
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 20:54:24] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261103-0008-GH-1-post-m9-realism-m10/evidence/r3p/20261103T204341Z
+verdict r3p PASS []
+2026-11-03T20:54:24Z end gate-r3p-ts-predictor.sh rc=0
+2026-11-03T20:54:24Z chain GREEN

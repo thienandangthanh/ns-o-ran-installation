@@ -1,0 +1,32 @@
+[19:03:47] gate m5 start; evidence /home/uc/evidence/m5/20261103T190346Z; harness b39595a3eec8ae5a086896f17c785602d058a5d0
+[19:03:47] ric watchdog started (pid 136495, threshold 600s)
+[19:03:47] PASS m5_nist_tree_at_testbed_sha_with_agent_dir
+[19:03:47] PASS m5_build_tools_present
+[19:03:48] PASS m5_sctp_module_loaded_and_persisted
+[19:03:48] PASS m5_kpimon_so_extracted_from_image
+[19:03:48] PASS m5_kpimon_so_is_the_size8_patched_build
+[19:03:48] PASS m5_capture_started_before_agents
+[19:04:52] PASS m5_bringup_agents_kpm_sim_stopped_connected_set_exact
+[19:04:52] PASS m5_e2mgr_node_connected_name_plmn_gnbid
+[19:04:52] PASS m5_agent_image_informational
+[19:04:52] PASS m5_agent_stats_line_connected_ready_setup_accepted
+[19:04:52] PASS m5_ranfunc_definition_decodes_clean_via_kpimon_lists_equal_map_sha8
+[19:04:54] PASS m5_agents_stopped_no_container_left
+[19:04:54] PASS m5_e2mgr_node_disconnected_or_removed_after_stop
+[19:04:58] PASS m5_capture_stopped
+[19:04:59] PASS m5_pcap_facts_extracted
+[19:04:59] FAIL m5_e2ap_ppid70_every_node: exit 1: node 2: 0 PPID-70 chunk(s) over []
+E2AP frames decoded by PPID 2, forced on the port 4
+PROBLEM: 172.17.0.3:42366 sent 4 DATA chunk(s) with PPID ['0']
+PROBLEM: node 2: no PPID-70 DATA chunk (associations [])
+PROBLEM: E2AP decoded by PPID (2 frames) != forced on the port (4)
+[19:04:59] FAIL m5_tshark_setup_request_func2_oid_shortname_gnbid2_not_kpm_sim: exit 1: E2SetupRequests on the wire: 0
+PROBLEM: no E2SetupRequest decoded
+[19:04:59] PASS m5_tshark_setup_response_accepts_func2
+[19:04:59] FAIL m5_gnb_id_differs_from_reference_node_b5c67788: exit 1: gNB-IDs on the wire: [] (reference node: 3049682824 / 381210353)
+[19:04:59] PASS m5_no_capture_left_running
+[19:05:00] PASS m5_no_agent_container_left
+[19:05:00] PASS m5_pcap_in_evidence
+Terminated
+[19:05:00] ric watchdog stopped (pid 136495)
+verdict m5: FAIL failed=['m5_e2ap_ppid70_every_node', 'm5_tshark_setup_request_func2_oid_shortname_gnbid2_not_kpm_sim', 'm5_gnb_id_differs_from_reference_node_b5c67788']
