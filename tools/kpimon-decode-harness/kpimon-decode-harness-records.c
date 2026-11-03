@@ -1,7 +1,8 @@
 /*
  * --records output of kpimon-decode-harness: the decoded KPM record values of
  * an indication message (as kpimon reads them: Format1 measData items in
- * order, Format2 measData[0] records metric-major) and the decoded header
+ * order, Format2 measData[0] records metric-major, plus every Format2 item's
+ * records as itemRecords) and the decoded header
  * fields. REAL records are printed as the 16-hex-digit IEEE-754 bit pattern of
  * the double kpimon would read, so a caller can compare bit-exactly.
  */
@@ -80,6 +81,14 @@ void print_message_records(const E2SM_KPM_IndicationMessage_t *msg) {
 		const E2SM_KPM_IndicationMessage_Format2_t *f2 = f->choice.indicationMessage_Format2;
 		printf(",\"measDataItems\":%d,\"records\":[", f2->measData.list.count);
 		if (f2->measData.list.count > 0) print_record_list(&f2->measData.list.array[0]->measRecord);
+		/* Every item's records too: a UE absent from a granularity interval is
+		 * noValue there, so item 0 alone may carry no node or seq. */
+		printf("],\"itemRecords\":[");
+		for (int i = 0; i < f2->measData.list.count; i++) {
+			printf("%s[", i ? "," : "");
+			print_record_list(&f2->measData.list.array[i]->measRecord);
+			printf("]");
+		}
 		printf("]");
 		if (f2->granulPeriod) printf(",\"granulPeriod\":%lu", (unsigned long)*f2->granulPeriod);
 		print_ue_ids(f2);
