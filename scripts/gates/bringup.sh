@@ -318,19 +318,24 @@ REFNODE_ATTEMPTS="${REFNODE_ATTEMPTS:-3}"
 # file at $TESTBED_SHA. The installer and the e2-interface patch files are taken from $TESTBED_SHA first (a
 # snapshot's tree may be older). --rebuild runs NIST's install_e2sim.sh (bounded 3600 s) when the label differs;
 # it restarts docker as NIST's full install does, so only M2 passes it, before kpm_sim starts.
-kpm_sim_image_ppid_patched() {
-    local patch="install_patch_files/e2-interface/e2sim/src/SCTP/e2sim_sctp.cpp" want have
+# testbed_tree_to_pin <path>...: the Testbed commit $TESTBED_SHA is present (fetched when missing); a tree with clean
+# tracked files and another HEAD moves to it as a whole (M3's nist_tree_at_testbed_sha rule), so later gates find it at
+# the pin; the listed paths are then always taken from it (a no-op on a clean tree at the pin), so a tree NIST's
+# installer edited still builds from the pinned files.
+testbed_tree_to_pin() {
     git -C "$RIC_DIR" cat-file -e "$TESTBED_SHA^{commit}" 2>/dev/null ||
         GIT_TERMINAL_PROMPT=0 git -C "$RIC_DIR" fetch -q "$TESTBED_URL" "$TESTBED_SHA" || return 1
-    # The same tree rule as M3's nist_tree_at_testbed_sha: a tree with clean tracked files moves to $TESTBED_SHA as
-    # a whole, so later gates find it at the pin. The e2sim files are then always taken from $TESTBED_SHA (a no-op on
-    # a clean tree at the pin), so the sha compared below is the pinned patch file's on a tree NIST's installer edited.
     if [ "$(git -C "$RIC_DIR" rev-parse HEAD)" != "$TESTBED_SHA" ] &&
         [ -z "$(git -C "$RIC_DIR" status --porcelain --untracked-files=no)" ]; then
         git -C "$RIC_DIR" checkout -q --detach "$TESTBED_SHA" || return 1
         echo "clean tree: detached checkout of $TESTBED_SHA"
     fi
-    git -C "$RIC_DIR" checkout "$TESTBED_SHA" -- install_scripts/install_e2sim.sh install_patch_files/e2-interface || return 1
+    [ $# -eq 0 ] || git -C "$RIC_DIR" checkout "$TESTBED_SHA" -- "$@"
+}
+
+kpm_sim_image_ppid_patched() {
+    local patch="install_patch_files/e2-interface/e2sim/src/SCTP/e2sim_sctp.cpp" want have
+    testbed_tree_to_pin install_scripts/install_e2sim.sh install_patch_files/e2-interface || return 1
     want=$(sha256sum <"$RIC_DIR/$patch" | cut -d' ' -f1)
     have=$(dk image inspect --format '{{index .Config.Labels "e2sim.sctp.sha256"}}' oransim:0.0.999 2>/dev/null)
     echo "oransim:0.0.999 e2sim.sctp.sha256=${have:-<none>}, patch at $TESTBED_SHA: $want"
@@ -362,6 +367,8 @@ E2MGR_PATHS=(install_scripts/install_e2mgr_patched.sh install_patch_files/ric-pl
 # commit_hashes.json; the digest = sha256 of patches.manifest followed by each listed patch, in manifest order.
 e2mgr_patched_expected() {
     local dir=install_patch_files/ric-plt/e2mgr src digest p
+    git -C "$RIC_DIR" cat-file -e "$TESTBED_SHA^{commit}" 2>/dev/null ||
+        GIT_TERMINAL_PROMPT=0 git -C "$RIC_DIR" fetch -q "$TESTBED_URL" "$TESTBED_SHA" || return 1
     src=$(git -C "$RIC_DIR" show "$TESTBED_SHA:./commit_hashes.json" |
         jq -r '.["https://gerrit.o-ran-sc.org/r/ric-plt/e2mgr.git"][1] // empty') || return 1
     [[ "$src" =~ ^[0-9a-f]{40}$ ]] || { echo "no e2mgr commit in commit_hashes.json at $TESTBED_SHA"; return 1; }
@@ -385,9 +392,7 @@ e2mgr_image_patched() {
     _e2mgr_image_judge "$img" "$src" "$digest" && return 0
     [ "${1:-}" = --deploy ] || return 1
     log "e2mgr does not run the patched image $img: deploying it (bound 5400s)"
-    if [ "$(git -C "$RIC_DIR" rev-parse HEAD)" != "$TESTBED_SHA" ]; then
-        git -C "$RIC_DIR" checkout "$TESTBED_SHA" -- "${E2MGR_PATHS[@]}" || return 1
-    fi
+    testbed_tree_to_pin "${E2MGR_PATHS[@]}" || return 1
     testbed_paths_at_pin "${E2MGR_PATHS[@]}" || return 1
     (cd "$RIC_DIR" && nist_run 5400 ./install_scripts/install_e2mgr_patched.sh) >"$EVIDENCE_DIR/install-e2mgr.log" 2>&1 ||
         { tail -n 30 "$EVIDENCE_DIR/install-e2mgr.log"; return 1; }
