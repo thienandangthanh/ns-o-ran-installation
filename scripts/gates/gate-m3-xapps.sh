@@ -169,6 +169,7 @@ phase() {
     record "m3_${tag}_kpimon_log_counts_informational" true "$(echo "$counts" | tr '\n' ' ') restarts=$RESTARTS"
     record "m3_${tag}_influx_rows_since_install_informational" true "$(echo "$influx" | tr '\n' ' ')"
     check "m3_${tag}_capture_stopped" capture_stop "$cap"
+    check "m3_${tag}_kpm_sim_e2ap_ppid70" e2ap_ppid_check "$pcap" "m3-$tag"
 
     # tshark: subscription request / response and a sample of indications
     sub_counts=$(e2ap_proc_counts "$pcap" 8 "$e/m3-$tag-subscription-decode.txt")

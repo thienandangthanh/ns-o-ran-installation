@@ -197,6 +197,7 @@ r0_live() {
     check "r0_${label}_agents_stopped" agents_stop
     check "r0_${label}_capture_stopped" capture_stop "$label"
     check "r0_${label}_kpimon_subscription_reporting_period_decoded" kpm_sub_period_check "$e/$label.pcap" "$label-sub" "$cap_t0"
+    check "r0_${label}_e2ap_ppid70_every_node" python3 -I "$E2EV/e2-facts-query.py" "$e/$label-sub-facts.json" ppid --node-ips "$rd/node-ips.json"
     check "r0_${label}_ns3_emitters_at_pins" ns3_emitters_at_pins "$rd/trace"
     kpimon_window() { kpimon_logs_since "$cap_t0" "$rd/kpimon.log" && kpimon_log_window_summary "$rd/kpimon.log"; }
     check "r0_${label}_kpimon_log_window_complete" kpimon_window

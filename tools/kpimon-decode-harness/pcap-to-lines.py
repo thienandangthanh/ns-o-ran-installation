@@ -5,7 +5,7 @@ Extract E2AP RICindication header/message octets from a pcap and print
 "<id> <hdr_hex> <msg_hex>" lines for kpimon-decode-harness.
 
 tshark command (E2AP on SCTP 36422, procedureCode 5 = RICindication):
-  tshark -r <pcap> -d sctp.port==36422,e2ap \
+  tshark -r <pcap> \
     -Y 'e2ap.procedureCode == 5 && e2ap.initiatingMessage_element' -T fields \
     -e frame.number -e sctp.data_tsn_raw -e sctp.assoc_index \
     -e e2ap.RICindicationHeader -e e2ap.RICindicationMessage
@@ -31,7 +31,7 @@ FIELDS = ["frame.number", "sctp.data_tsn_raw", "sctp.assoc_index",
 
 
 def run_tshark(pcap):
-    cmd = ["tshark", "-r", pcap, "-d", "sctp.port==36422,e2ap",
+    cmd = ["tshark", "-r", pcap,  # E2AP selected by SCTP PPID 70 (E2GAP v08.00 section 6.1)
            "-Y", "e2ap.procedureCode == 5 && e2ap.initiatingMessage_element",
            "-T", "fields", "-E", "separator=\t", "-E", "occurrence=a",
            "-E", "aggregator=,"]

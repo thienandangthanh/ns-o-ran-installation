@@ -20,6 +20,11 @@ its evidence and exits 0 (pass) or 1 (fail).
   indications                                       every node's associations carried RICindications
   service-ip      --service-ip IP                   every agent INIT in the capture went to the Service IP
   associations    [--after EPOCH]                   list associations (informational)
+  ppid            [--nodes L | --node-ips F] [--source-ip IP]   (facts from e2ap-pcap-facts.py --ppid) every DATA chunk
+                                                    sent to the SCTP port carries PPID 70 (E2AP, O-RAN E2GAP v08.00
+                                                    section 6.1); every expected node's associations, or the
+                                                    --source-ip's, sent PPID 70 chunks; and E2AP decoded by PPID
+                                                    counts as many frames as E2AP forced on the port
 
 Attribution is by ASSOCIATION, never by container IP (Docker reassigns IPs when agents restart). An association
 is (agent ip, agent source port) <-> Service, born at the INIT_ACK that answers an INIT; its node is the global
@@ -366,10 +371,47 @@ def q_indications(f, a):
     return bad
 
 
+E2AP_PPID = 70
+
+
+def q_ppid(f, a):
+    if "ppid" not in f:
+        sys.exit("fact sheet has no ppid facts: re-run e2ap-pcap-facts.py --ppid")
+    pf, bad = f["ppid"], []
+    per = pf["to_port_by_assoc"]
+    for k, v in sorted(per.items()):
+        other = {p: n for p, n in v["counts"].items() if int(p) != E2AP_PPID}
+        print("%s -> :%d PPID counts %s" % (k, pf["sctp_port"], json.dumps(v["counts"], sort_keys=True)))
+        if other:
+            bad.append("%s sent %d DATA chunk(s) with PPID %s" % (k, sum(other.values()), sorted(other, key=int)))
+    n70 = lambda v: v["counts"].get(str(E2AP_PPID), 0)
+    if a.nodes or a.node_ips:
+        assocs, _ = build_assocs(f)
+        for nid in expected_nodes(a):
+            keys = {"%s:%d" % (x["ip"], x["sport"]) for x in assocs if x["node"] == nid}
+            n = sum(n70(per[k]) for k in keys if k in per)
+            print("node %s: %d PPID-70 chunk(s) over %s" % (nid, n, sorted(keys)))
+            if n == 0:
+                bad.append("node %s: no PPID-70 DATA chunk (associations %s)" % (nid, sorted(keys)))
+    if a.source_ip:
+        n = sum(n70(v) for v in per.values() if v["src"] == a.source_ip)
+        print("source %s: %d PPID-70 chunk(s)" % (a.source_ip, n))
+        if n == 0:
+            bad.append("source %s sent no PPID-70 DATA chunk" % a.source_ip)
+    if not per:
+        bad.append("no DATA chunk was sent to port %d" % pf["sctp_port"])
+    fr = pf["e2ap_frames"]
+    print("E2AP frames decoded by PPID %d, forced on the port %d" % (fr["by_ppid"], fr["forced_port"]))
+    if fr["by_ppid"] != fr["forced_port"]:
+        bad.append("E2AP decoded by PPID (%d frames) != forced on the port (%d)" % (fr["by_ppid"], fr["forced_port"]))
+    return bad
+
+
 QUERIES = {"setup-request": q_setup_request, "setup-response": q_setup_response, "subscription": q_subscription,
            "sub-period": q_sub_period, "sub-failure": q_sub_failure,
            "assoc-start": q_assoc_start, "no-abort": q_no_abort, "post-delete": q_post_delete,
-           "indications": q_indications, "service-ip": q_service_ip, "associations": q_associations}
+           "indications": q_indications, "service-ip": q_service_ip, "associations": q_associations,
+           "ppid": q_ppid}
 
 
 def main():
@@ -392,6 +434,7 @@ def main():
     ap.add_argument("--node-ips")
     ap.add_argument("--nodes", help="comma list of expected node ids (default: keys of --node-ips)")
     ap.add_argument("--service-ip")
+    ap.add_argument("--source-ip")
     ap.add_argument("--sctp-port", type=int, default=36422)
     ap.add_argument("--timeline-out")
     a = ap.parse_args()

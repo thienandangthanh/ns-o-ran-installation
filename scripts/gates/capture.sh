@@ -4,6 +4,10 @@
 #   capture_start <name> <iface> [filter]   tcpdump -> $EVIDENCE_DIR/<name>.pcap (filter default: sctp)
 #   capture_stop  <name>                    SIGINT, wait, assert the pcap holds packets
 #   e2ap_decode   <pcap> <out.txt>          tshark -V decode plus a -T fields summary (<out>.fields.tsv)
+#   e2ap_ppid_check <pcap> <tag> [ppid query options]   every E2 node -> e2term DATA chunk carries PPID 70
+#
+# tshark selects E2AP by its SCTP PPID 70 (O-RAN E2GAP v08.00 section 6.1); no port decode-as is forced, so a
+# PDU an E2 node sent with another PPID does not decode as E2AP.
 #
 # One interface per capture, never `-i any` (plan.md K10). Each capture runs in its
 # own session/process group as root (tcpdump -Z root keeps the pcap writable in
@@ -82,12 +86,21 @@ capture_stop() {
 # e2ap_decode <pcap> <out.txt>: full -V decode, plus <out>.fields.tsv summary.
 e2ap_decode() {
     local pcap="$1" out="$2"
-    tshark -r "$pcap" -d sctp.port==36422,e2ap -V >"$out" 2>"$out.err" || return 1
-    tshark -r "$pcap" -d sctp.port==36422,e2ap -T fields -E header=y -E separator=/t \
+    tshark -r "$pcap" -V >"$out" 2>"$out.err" || return 1
+    tshark -r "$pcap" -T fields -E header=y -E separator=/t \
         -e frame.number -e frame.time_relative -e ip.src -e ip.dst \
         -e sctp.verification_tag -e sctp.chunk_type -e e2ap.procedureCode -e e2ap.E2AP_PDU \
         >"$out.fields.tsv" 2>>"$out.err"
     [ -s "$out" ]
+}
+
+# e2ap_ppid_check <pcap> <tag> [e2-facts-query.py ppid options]: fact sheet with the per-association PPID
+# histogram in $EVIDENCE_DIR/<tag>-ppid-facts.json, judged by e2-facts-query.py ppid.
+e2ap_ppid_check() {
+    local pcap="$1" tag="$2" ev="${E2EV:-$HARNESS_DIR/tools/e2-evidence}"
+    shift 2
+    python3 -I "$ev/e2ap-pcap-facts.py" "$pcap" -o "$EVIDENCE_DIR/$tag-ppid-facts.json" --ppid || return 1
+    python3 -I "$ev/e2-facts-query.py" "$EVIDENCE_DIR/$tag-ppid-facts.json" ppid "$@"
 }
 
 # e2ap_sample_decode <pcap> <procedureCode> <n> <out>: full -V decode of the
@@ -95,8 +108,8 @@ e2ap_decode() {
 # not packets displayed, so "-Y ... -c n" would stop before the first match.
 e2ap_sample_decode() {
     local pcap="$1" code="$2" n="$3" out="$4" frames
-    frames=$(tshark -r "$pcap" -d sctp.port==36422,e2ap -Y "e2ap.procedureCode == $code" \
+    frames=$(tshark -r "$pcap" -Y "e2ap.procedureCode == $code" \
         -T fields -e frame.number 2>/dev/null | head -n "$n" | paste -sd',')
     [ -n "$frames" ] || { : >"$out"; return 1; }
-    tshark -r "$pcap" -d sctp.port==36422,e2ap -Y "frame.number in {$frames}" -V >"$out" 2>/dev/null
+    tshark -r "$pcap" -Y "frame.number in {$frames}" -V >"$out" 2>/dev/null
 }

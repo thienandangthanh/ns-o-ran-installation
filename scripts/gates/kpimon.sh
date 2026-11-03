@@ -319,7 +319,7 @@ PY
 # the E2AP procedure, decoded by tshark (-V text kept as evidence).
 e2ap_proc_counts() {
     local pcap="$1" code="$2" out="$3"
-    tshark -r "$pcap" -d sctp.port==36422,e2ap -Y "e2ap.procedureCode == $code" -V >"$out" 2>"$out.err" || return 1
+    tshark -r "$pcap" -Y "e2ap.procedureCode == $code" -V >"$out" 2>"$out.err" || return 1
     awk '/^[ ]*E2AP-PDU: / { pdu = $2 }
          /procedureCode: id-/ { if (pdu ~ /^initiatingMessage/) i++; else if (pdu ~ /^successfulOutcome/) s++ }
          END { printf "initiating=%d successful=%d\n", i, s }' "$out"

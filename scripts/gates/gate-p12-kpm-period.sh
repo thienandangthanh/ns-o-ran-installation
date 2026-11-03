@@ -91,7 +91,7 @@ kpimon_at() {
 wait_wire() {
     local pcap="$1" kind="$2" deadline=$(($(date +%s) + SUB_WAIT_S)) c
     while [ "$(date +%s)" -lt "$deadline" ]; do
-        c=$(tshark -r "$pcap" -d sctp.port==36422,e2ap -Y 'e2ap.procedureCode == 8' -T fields \
+        c=$(tshark -r "$pcap" -Y 'e2ap.procedureCode == 8' -T fields \
             -e e2ap.initiatingMessage_element -e "e2ap.${kind}Outcome_element" 2>/dev/null |
             awk -F'\t' '{ if ($1 != "") i++; if ($2 != "") o++ } END { print i + 0, o + 0 }')
         echo "wire RICsubscription (requests ${kind}Outcomes): $c"
@@ -133,6 +133,7 @@ check p12_a_capture_stopped capture_stop p12-a
 
 sub_a() { pcap_facts "$e/p12-a.pcap" p12-a-sub && python3 -I "$E2EV/e2-facts-query.py" "$e/p12-a-sub-facts.json" sub-period --period-ms "$P_MULTI_MS" --after "$CAP_T0"; }
 check p12_a_decoded_subscription_period_1000_answered sub_a
+check p12_a_e2ap_ppid70_every_node python3 -I "$E2EV/e2-facts-query.py" "$e/p12-a-sub-facts.json" ppid --nodes 2
 records_a() {
     local pl="$HARNESS_TOOLS/pcap-to-lines.py" h="$SODIR/kpimon-decode-harness"
     python3 -I "$pl" "$e/p12-a.pcap" >"$e/p12-a-lines.txt" || return 1

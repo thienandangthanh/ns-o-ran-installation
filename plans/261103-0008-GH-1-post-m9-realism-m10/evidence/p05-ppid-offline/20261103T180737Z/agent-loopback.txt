@@ -1,0 +1,13 @@
+# host loopback, agent SctpAssociation (default SCTP_DEFAULT_SNDINFO path), Testbed d48c792
+message 0 ppid 70
+message 1 ppid 70
+message 2 ppid 70
+PASS
+exit=0
+# forced per-message SCTP_SNDINFO fallback (scratch copy)
+2026-11-03T18:07:37.925Z ns3-e2-agent WARN ; PPID 70 set per message
+message 0 ppid 70
+message 1 ppid 70
+message 2 ppid 70
+PASS
+exit=0

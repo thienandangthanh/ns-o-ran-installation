@@ -1,0 +1,52 @@
+ok   facts: assoc-start good
+ok   facts: assoc-start wrong service ip
+ok   facts: no-abort window without the ABORT
+ok   facts: no-abort window with the ABORT
+ok   facts: post-delete good
+ok   facts: post-delete old port / missing subscription
+ok   facts: indications for every node
+ok   facts: subscription request answered
+ok   facts: setup-response accepts 2
+ok   facts: sub-period 100/100 answered
+ok   facts: sub-period wrong period
+ok   facts: sub-period one action at another granularity
+ok   facts: sub-period without the KPM fields (old fact sheet)
+ok   facts: sub-failure with the registered cause
+ok   facts: sub-failure with another cause
+ok   facts: sub-failure when the requests were answered by responses
+ok   facts: tshark subscription text -> period, granularities, cause index
+ok   facts: service-ip
+ok   facts: assoc-start before the restart, unanswered INIT retries ignored
+ok   facts: assoc-start counts a second established association per node
+ok   facts: post-delete after an IP swap
+ok   facts: IP swap attributes node 1 to 172.17.0.3:40021 and node 2 to 172.17.0.2:40022
+ok   facts: indications per node after an IP swap
+ok   facts: unanswered INIT retries are reported, not counted
+ok   facts: a node whose only association has no E2SetupRequest has no association
+ok   facts: service-ip with unanswered retries
+ok   trace: reconnects and drops accepted, counters balance
+ok   trace: --require-clean still rejects reconnects
+ok   trace: seq gap rejected
+ok   trace: built != sent + drops rejected
+ok   endurance: pods good
+ok   endurance: agents good
+ok   endurance: e2mgr good
+ok   endurance: ns3 good
+ok   endurance: kpimon good
+ok   endurance: rss good
+ok   endurance: load good
+ok   endurance: pods broken
+ok   endurance: agents broken
+ok   endurance: ns3 broken
+ok   recovery: restart, reconnect, indications resume
+ok   recovery: delete after the last poll
+ok   influx-node-rows: both nodes have rows after the delete
+ok   influx-node-rows: node 4 has none
+ok   ppid: every node PPID 70, decode counts equal
+ok   ppid: source IP sent PPID 70
+ok   ppid: one chunk with PPID 0
+ok   ppid: decode by PPID != forced on the port
+ok   ppid: node 3 sent no PPID-70 chunk
+ok   ppid: absent source IP
+selftest: ok
+selftest exit=0

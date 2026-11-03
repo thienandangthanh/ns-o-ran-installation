@@ -191,6 +191,7 @@ check m7_capture_stopped capture_stop m7
 # analysis
 ################################################################################
 check m7_pcap_facts_extracted pcap_facts "$e/m7.pcap" m7
+check m7_e2ap_ppid70_every_node python3 -I "$E2EV/e2-facts-query.py" "$e/m7-facts.json" ppid --node-ips "$e/node-ips.json"
 F="$e/m7-facts.json"; Q="$E2EV/e2-facts-query.py"; W="$e"
 SERVICE_IP=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["agents"][0]["e2Term"].split(":")[0])' "$e/agents.json")
 export F Q W SERVICE_IP   # read by the sourced m7-wire-trace-checks.sh

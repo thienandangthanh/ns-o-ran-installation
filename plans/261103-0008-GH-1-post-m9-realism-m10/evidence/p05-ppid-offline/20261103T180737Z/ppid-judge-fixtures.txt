@@ -1,0 +1,25 @@
+# negative: cp1 live1.pcap (nodes PPID 0)
+172.17.0.3:57960 -> :36422 PPID counts {"0": 300}
+172.17.0.4:34342 -> :36422 PPID counts {"0": 538}
+172.17.0.5:40752 -> :36422 PPID counts {"0": 302}
+node 1: 0 PPID-70 chunk(s) over []
+node 2: 0 PPID-70 chunk(s) over []
+node 3: 0 PPID-70 chunk(s) over []
+E2AP frames decoded by PPID 7, forced on the port 778
+PROBLEM: 172.17.0.3:57960 sent 300 DATA chunk(s) with PPID ['0']
+PROBLEM: 172.17.0.4:34342 sent 538 DATA chunk(s) with PPID ['0']
+PROBLEM: 172.17.0.5:40752 sent 302 DATA chunk(s) with PPID ['0']
+PROBLEM: node 1: no PPID-70 DATA chunk (associations [])
+PROBLEM: node 2: no PPID-70 DATA chunk (associations [])
+PROBLEM: node 3: no PPID-70 DATA chunk (associations [])
+PROBLEM: E2AP decoded by PPID (7 frames) != forced on the port (778)
+exit=1
+# positive: same capture, node->e2term DATA chunk PPIDs rewritten to 70
+172.17.0.3:57960 -> :36422 PPID counts {"70": 300}
+172.17.0.4:34342 -> :36422 PPID counts {"70": 538}
+172.17.0.5:40752 -> :36422 PPID counts {"70": 302}
+node 1: 300 PPID-70 chunk(s) over ['172.17.0.3:57960']
+node 2: 538 PPID-70 chunk(s) over ['172.17.0.4:34342']
+node 3: 302 PPID-70 chunk(s) over ['172.17.0.5:40752']
+E2AP frames decoded by PPID 778, forced on the port 778
+exit=0

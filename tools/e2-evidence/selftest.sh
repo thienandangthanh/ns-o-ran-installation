@@ -192,6 +192,37 @@ expect 1 "recovery: delete after the last poll" py "$here/recovery-eval.py" "$t/
 expect 0 "influx-node-rows: both nodes have rows after the delete" py "$here/influx-node-rows.py" "$t/nodes.csv" --after 1792601200 --nodes 2,3
 expect 1 "influx-node-rows: node 4 has none" py "$here/influx-node-rows.py" "$t/nodes.csv" --after 1792601200 --nodes 2,4
 
+# ppid (e2ap-pcap-facts.py --ppid facts): node 2 on 172.17.0.3:40002 and node 3 on 172.17.0.4:40003.
+python3 -I - "$t" <<'PY'
+import copy, json, sys
+t = sys.argv[1]
+svc = "10.96.0.5"
+ev = lambda f, ts, s, d, sp, dp, **k: dict(frame=f, t=ts, src=s, dst=d, sport=sp, dport=dp, **k)
+f = {"inits": [], "init_acks": [], "cookie_acks": [], "setup_requests": [], "setup_responses": [], "sub_requests": [],
+     "sub_responses": [], "ind_events": [], "ppid": {"sctp_port": 36422, "to_port_by_assoc": {},
+                                                     "e2ap_frames": {"by_ppid": 40, "forced_port": 40}}}
+for n, (ip, port) in {2: ("172.17.0.3", 40002), 3: ("172.17.0.4", 40003)}.items():
+    f["inits"].append(ev(n, 100, ip, svc, port, 36422))
+    f["init_acks"].append(ev(10 + n, 100.1, svc, ip, 36422, port))
+    f["cookie_acks"].append(ev(20 + n, 100.2, svc, ip, 36422, port))
+    f["setup_requests"].append(ev(30 + n, 100.3, ip, svc, port, 36422, gnb_id=n))
+    f["ppid"]["to_port_by_assoc"]["%s:%d" % (ip, port)] = {"src": ip, "sport": port, "counts": {"70": 20},
+                                                           "t_first": 100.3, "t_last": 110}
+json.dump(f, open(t + "/ppid-good.json", "w"))
+b = copy.deepcopy(f); b["ppid"]["to_port_by_assoc"]["172.17.0.4:40003"]["counts"] = {"70": 19, "0": 1}
+json.dump(b, open(t + "/ppid-wrong.json", "w"))
+b = copy.deepcopy(f); b["ppid"]["e2ap_frames"]["by_ppid"] = 39
+json.dump(b, open(t + "/ppid-count.json", "w"))
+b = copy.deepcopy(f); del b["ppid"]["to_port_by_assoc"]["172.17.0.4:40003"]
+json.dump(b, open(t + "/ppid-missing.json", "w"))
+PY
+expect 0 "ppid: every node PPID 70, decode counts equal" py "$q" "$t/ppid-good.json" ppid --nodes 2,3
+expect 0 "ppid: source IP sent PPID 70" py "$q" "$t/ppid-good.json" ppid --source-ip 172.17.0.3
+expect 1 "ppid: one chunk with PPID 0" py "$q" "$t/ppid-wrong.json" ppid --nodes 2,3
+expect 1 "ppid: decode by PPID != forced on the port" py "$q" "$t/ppid-count.json" ppid --nodes 2,3
+expect 1 "ppid: node 3 sent no PPID-70 chunk" py "$q" "$t/ppid-missing.json" ppid --nodes 2,3
+expect 1 "ppid: absent source IP" py "$q" "$t/ppid-good.json" ppid --source-ip 172.17.0.9
+
 smoke="${1:-}"
 if [ -n "$smoke" ] && [ -f "$smoke/agent.pcap" ] && command -v tshark >/dev/null; then
     py "$here/e2ap-pcap-facts.py" "$smoke/agent.pcap" -o "$t/real.json" >"$t/facts.out" 2>&1 || cat "$t/facts.out"

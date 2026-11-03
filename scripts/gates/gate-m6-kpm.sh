@@ -95,6 +95,7 @@ check m6_capture_stopped capture_stop m6
 # analysis
 ################################################################################
 check m6_pcap_facts_extracted pcap_facts "$e/m6.pcap" m6
+check m6_e2ap_ppid70_every_node python3 -I "$E2EV/e2-facts-query.py" "$e/m6-facts.json" ppid --node-ips "$e/node-ips.json"
 ind_decoded() {
     e2ap_sample_decode "$e/m6.pcap" 5 3 "$e/m6-indication-sample-decode.txt"
     grep -c 'id-RICindication' "$e/m6-indication-sample-decode.txt"
@@ -102,7 +103,7 @@ ind_decoded() {
     grep -q 'E2SM-KPM-IndicationHeader' "$e/m6-indication-sample-decode.txt" && grep -q 'indicationMessage-formats' "$e/m6-indication-sample-decode.txt" || return 1
     # Every indication must dissect without a malformed-packet exception.
     local bad
-    bad=$(tshark -r "$e/m6.pcap" -d sctp.port==36422,e2ap -Y 'e2ap.procedureCode == 5 && _ws.malformed' -T fields -e frame.number 2>/dev/null | wc -l)
+    bad=$(tshark -r "$e/m6.pcap" -Y 'e2ap.procedureCode == 5 && _ws.malformed' -T fields -e frame.number 2>/dev/null | wc -l)
     echo "tshark $(tshark --version | head -n 1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1): malformed indication frames $bad"
     [ "$bad" -eq 0 ] && python3 -I "$E2EV/e2-facts-query.py" "$e/m6-facts.json" indications --node-ips "$e/node-ips.json"
 }

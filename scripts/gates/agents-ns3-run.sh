@@ -193,7 +193,8 @@ print("files %d, rotations in window %s, coverage %s, retries %s" % (len(fs), m.
 # wire / decoder helpers
 ################################################################################
 pcap_facts() {
-    python3 -I "$E2EV/e2ap-pcap-facts.py" "$1" -o "$EVIDENCE_DIR/$2-facts.json" --text-out "$EVIDENCE_DIR/$2-e2ap-setup-subscription-decoded.txt"
+    python3 -I "$E2EV/e2ap-pcap-facts.py" "$1" -o "$EVIDENCE_DIR/$2-facts.json" --ppid \
+        --text-out "$EVIDENCE_DIR/$2-e2ap-setup-subscription-decoded.txt"
 }
 
 # kpm_sub_period_check <pcap> <tag> <after-epoch>: every RIC SUBSCRIPTION REQUEST in the capture after the epoch
@@ -220,7 +221,7 @@ PY
 }
 
 wire_sub_counts() {
-    tshark -r "$1" -d sctp.port==36422,e2ap -Y 'e2ap.procedureCode == 8' -T fields \
+    tshark -r "$1" -Y 'e2ap.procedureCode == 8' -T fields \
         -e e2ap.initiatingMessage_element -e e2ap.successfulOutcome_element 2>/dev/null |
         awk -F'\t' '{ if ($1 != "") i++; if ($2 != "") s++ } END { print i + 0, s + 0 }'
 }

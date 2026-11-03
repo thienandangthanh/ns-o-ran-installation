@@ -20,6 +20,10 @@
 !/*/evidence/*/*/**/images.txt
 # Agent unit-test output (small text octet dumps): the only record of the R-6 admission paths.
 !/*/evidence/p03-unit/**
+# Offline PPID 70 proofs (agent loopback, judge fixtures, self-test): small text, no captures.
+!/*/evidence/p05-ppid-offline/**
+# Host /home free and active-overlay size at each gate boundary (vm-exec.sh): the per-step disk measurement.
+!/*/evidence/*/*/**/host-disk.tsv
 # The M9 run directory is the run-level record: keep its top-level files.
 !/*/evidence/m9/*/*
 # Host live state, rewritten by every run (steps.tsv and m9/<ts>/ keep the values).

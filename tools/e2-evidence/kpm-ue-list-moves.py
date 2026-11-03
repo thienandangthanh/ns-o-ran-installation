@@ -27,7 +27,8 @@ import os
 import subprocess
 import sys
 
-DISSECT = ["-d", "sctp.port==36422,e2ap"]
+# E2AP is selected by its SCTP PPID 70 (O-RAN E2GAP v08.00 section 6.1); no port decode-as is forced.
+DISSECT = []
 NTP_UNIX_OFFSET_S = 2208988800
 
 

@@ -36,7 +36,8 @@ import shlex
 import subprocess
 import sys
 
-DISSECT = ["-d", "sctp.port==36422,e2ap"]
+# E2AP is selected by its SCTP PPID 70 (O-RAN E2GAP v08.00 section 6.1); no port decode-as is forced.
+DISSECT = []
 CAUSES = {  # CauseRICrequest, E2AP v03.00 9.2.1 (index order of the ASN.1 enumeration)
     "ran-function-id-invalid": 0, "action-not-supported": 1, "excessive-actions": 2, "duplicate-action": 3,
     "duplicate-event-trigger": 4, "function-resource-limit": 5, "request-id-unknown": 6,

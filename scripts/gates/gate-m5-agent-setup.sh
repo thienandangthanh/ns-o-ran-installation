@@ -8,7 +8,7 @@
 #   4. e2mgr node check, agent stats, RAN function definition through kpimon's own library (--ranfunc)
 #   5. stop agents, e2mgr must show DISCONNECTED or ABSENT, stop capture, tshark decode of the wire
 #
-# Wire facts are tshark's (E2AP dissector, -d sctp.port==36422,e2ap); the RAN function definition is decoded by
+# Wire facts are tshark's (E2AP dissector, selected by SCTP PPID 70); the RAN function definition is decoded by
 # kpimon's libe2smwrapper.so (the .so extracted from the patched kpimon image, see M3), never by log lines.
 #
 # Knobs: AGENTS_CONNECT_TIMEOUT_S (300), DISCONNECT_WAIT_S (120), STATS_WAIT_S (60).
@@ -92,6 +92,7 @@ check m5_e2mgr_node_disconnected_or_removed_after_stop node_disconnected
 sleep 3
 check m5_capture_stopped capture_stop m5
 check m5_pcap_facts_extracted pcap_facts "$e/m5.pcap" m5
+check m5_e2ap_ppid70_every_node python3 -I "$E2EV/e2-facts-query.py" "$e/m5-facts.json" ppid --nodes 2
 
 setup_req() {
     python3 -I "$E2EV/e2-facts-query.py" "$e/m5-facts.json" setup-request --func-id 2 --oid "$E2AP_OID_KPM" \

@@ -39,6 +39,8 @@ ts=$(date -u +%Y%m%dT%H%M%SZ)
 ev="/home/uc/evidence/$gate/$ts"
 unit="gate-$gate-$ts"
 hlog "gate $gate ($script) harness ${harness_sha:0:10} -> unit $unit"
+disk_start=$(host_disk_line start)
+hlog "host disk: $disk_start"
 
 # Bootstrap: git, then the harness clone at the exact SHA (no credentials).
 vm_ssh bash -s -- "$HARNESS_URL" "$harness_sha" <<'BOOT' || die "VM bootstrap failed"
@@ -79,6 +81,8 @@ while :; do
     sleep 30
 done
 hlog "gate $gate exit $code"
+disk_end=$(host_disk_line end)
+hlog "host disk: $disk_end"
 
 # Scrub on the VM, then copy back; pcaps and ns-3 trace text files get sha256
 # manifests (they stay out of git).
@@ -91,6 +95,7 @@ dest="$EVIDENCE_HOST_ROOT/$gate/$ts"
 mkdir -p "$dest"
 # fresh-install has no rsync; tar over ssh needs nothing extra.
 vm_ssh "tar -C $ev -cf - ." | tar -C "$dest" -xf - || die "evidence copy failed"
+printf 'boundary\tutc\thome_free_gib\toverlay\toverlay_alloc_gib\n%s\n%s\n' "$disk_start" "$disk_end" >"$dest/host-disk.tsv"
 hlog "evidence -> $dest"
 [ -f "$dest/verdict.json" ] && python3 -c 'import json,sys; v=json.load(open(sys.argv[1])); print("verdict", v["gate"], "PASS" if v["pass"] else "FAIL", v["failed"])' "$dest/verdict.json"
 echo "$dest" >"$EVIDENCE_HOST_ROOT/.last-$gate"

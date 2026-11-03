@@ -34,7 +34,7 @@ PROBE_NAMES="m2probe-a m2probe-b"
 # docker as the current user, else via sudo (group membership may not be active yet).
 
 # tshark_count <pcap> <display filter>: number of matching frames on stdout.
-tshark_count() { tshark -r "$1" -d "sctp.port==$E2_PORT,e2ap" -Y "$2" 2>/dev/null | wc -l; }
+tshark_count() { tshark -r "$1" -Y "$2" 2>/dev/null | wc -l; }
 
 probe_cleanup() { local n; for n in $PROBE_NAMES; do dk rm -f "$n" >/dev/null 2>&1 || true; done; }
 
@@ -131,6 +131,7 @@ check m2_sctp_zero_abort        assert_chunks ABORT     "sctp.chunk_type == 6" 0
 # e. E2AP decode of the golden pcap
 ################################################################################
 check m2_golden_decodes_e2ap e2ap_decode "$GP" "$EVIDENCE_DIR/golden-e2ap-decode.txt"
+check m2_golden_kpm_sim_e2ap_ppid70 e2ap_ppid_check "$GP" golden
 DEC="$EVIDENCE_DIR/golden-e2ap-decode.txt"
 
 # E2SetupRequest = initiatingMessage / procedureCode 1; E2SetupResponse = successfulOutcome / 1.

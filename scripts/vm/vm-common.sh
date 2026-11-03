@@ -80,6 +80,15 @@ is_protected() {
 
 host_free_gb() { df -BG --output=avail /home | tail -1 | tr -dc '0-9'; }
 
+# host_disk_line <label>: "<label> <utc> <free /home GiB> <active vda overlay> <its allocated GiB>" (allocated
+# blocks, du -BG, not the apparent size): the per-gate-boundary host disk measurement.
+host_disk_line() {
+    local vda
+    vda=$("${VIRSH[@]}" domblklist "$VM_DOMAIN" --details 2>/dev/null | awk '$3 == "vda" { print $4 }')
+    printf '%s\t%s\t%s\t%s\t%s\n' "$1" "$(date -u +%Y%m%dT%H%M%SZ)" "$(host_free_gb)" "${vda:-?}" \
+        "$( [ -n "$vda" ] && du -BG "$vda" 2>/dev/null | cut -f1 | tr -dc '0-9' || echo '?')"
+}
+
 # Disk chain as libvirt sees it, plus allocated bytes of every image file.
 disk_chain() {
     "${VIRSH[@]}" domblklist "$VM_DOMAIN" --details

@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
-"""e2ap-pcap-facts.py <pcap> -o <facts.json> [--text-out <decoded.txt>]
+"""e2ap-pcap-facts.py <pcap> -o <facts.json> [--text-out <decoded.txt>] [--ppid] [--sctp-port 36422]
 
 Turns a docker0 `ip proto 132` capture into a JSON fact sheet that the gate
 assertions (e2-facts-query.py) read. Everything comes from tshark's E2AP
-dissector (E2AP on SCTP 36422), never from log lines.
+dissector, never from log lines. tshark selects E2AP by the SCTP Payload
+Protocol Identifier 70 that IANA assigned to it (O-RAN E2GAP v08.00 section
+6.1); no port-based decode-as is forced, so a PDU sent with another PPID is not
+E2AP here.
+
+--ppid adds facts["ppid"]: every DATA chunk sent TO the SCTP port (E2 node ->
+e2term) counted by PPID per association (src ip, src port), and the E2AP frame
+count decoded by PPID next to the count with E2AP forced on the port (the old
+`-d sctp.port==<port>,e2ap` decode). e2-facts-query.py ppid judges them.
 
 Pass 1 (-T fields, one row per frame): SCTP chunk events (INIT = chunk 1,
 ABORT = 6, SHUTDOWN/-ACK/-COMPLETE = 7/8/14) and E2AP PDU kinds. RICindication
@@ -28,15 +36,14 @@ import re
 import subprocess
 import sys
 
-DISSECT = ["-d", "sctp.port==36422,e2ap"]
 FIELDS = ["frame.number", "frame.time_epoch", "ip.src", "ip.dst", "sctp.srcport", "sctp.dstport",
           "sctp.chunk_type", "e2ap.procedureCode", "e2ap.initiatingMessage_element",
-          "e2ap.successfulOutcome_element", "e2ap.unsuccessfulOutcome_element"]
+          "e2ap.successfulOutcome_element", "e2ap.unsuccessfulOutcome_element", "sctp.data_payload_proto_id"]
 PROC = {1: "E2setup", 5: "RICindication", 8: "RICsubscription"}
 
 
-def tshark(args):
-    res = subprocess.run(["tshark", "-r", args[0]] + DISSECT + args[1:], capture_output=True, text=True)
+def tshark(args, extra=()):
+    res = subprocess.run(["tshark", "-r", args[0]] + list(extra) + args[1:], capture_output=True, text=True)
     # A capture that is still being written can end in a partial packet: keep what was decoded.
     if res.returncode != 0 and "cut short" not in res.stderr:
         sys.exit("tshark failed: " + res.stderr.strip()[-400:])
@@ -55,7 +62,29 @@ def field_rows(pcap):
                "sport": int(c[4] or 0), "dport": int(c[5] or 0),
                "chunks": {int(x) for x in c[6].split(",") if x.strip().isdigit()},
                "procs": [int(x) for x in c[7].split(",") if x.strip().isdigit()],
-               "kind": "initiating" if c[8] else "successful" if c[9] else "unsuccessful" if c[10] else ""}
+               "kind": "initiating" if c[8] else "successful" if c[9] else "unsuccessful" if c[10] else "",
+               "ppids": [int(x) for x in c[11].split(",") if x.strip().isdigit()]}
+
+
+def e2ap_frame_count(pcap, extra=()):
+    return sum(1 for ln in tshark([pcap, "-Y", "e2ap", "-T", "fields", "-e", "frame.number"], extra).splitlines() if ln)
+
+
+def ppid_facts(pcap, rows, port):
+    """DATA chunks sent to the port, counted by PPID per association (src ip, src port), plus the E2AP frame count
+    decoded by PPID and with E2AP forced on the port. A frame can bundle several DATA chunks."""
+    assoc = {}
+    for r in rows:
+        if r["dport"] != port or not r["ppids"]:
+            continue
+        a = assoc.setdefault("%s:%d" % (r["src"], r["sport"]), {"src": r["src"], "sport": r["sport"], "counts": {},
+                                                                  "t_first": r["t"], "t_last": r["t"]})
+        for p in r["ppids"]:
+            a["counts"][str(p)] = a["counts"].get(str(p), 0) + 1
+        a["t_last"] = r["t"]
+    return {"sctp_port": port, "to_port_by_assoc": assoc,
+            "e2ap_frames": {"by_ppid": e2ap_frame_count(pcap),
+                            "forced_port": e2ap_frame_count(pcap, ["-d", "sctp.port==%d,e2ap" % port])}}
 
 
 def blocks(text):
@@ -132,13 +161,16 @@ def main():
     ap.add_argument("pcap")
     ap.add_argument("-o", required=True)
     ap.add_argument("--text-out")
+    ap.add_argument("--ppid", action="store_true", help="add facts['ppid'] (per-association PPID histogram)")
+    ap.add_argument("--sctp-port", type=int, default=36422)
     a = ap.parse_args()
 
     facts = {"pcap": a.pcap, "frames": 0, "inits": [], "init_acks": [], "cookie_acks": [], "ind_events": [], "aborts": [], "shutdowns": [], "pdus": [],
              "setup_requests": [], "setup_responses": [], "sub_requests": [], "sub_responses": [], "sub_failures": [],
              "ind_times_by_src": {}}
     by_frame = {}
-    for r in field_rows(a.pcap):
+    rows = list(field_rows(a.pcap))
+    for r in rows:
         facts["frames"] += 1
         by_frame[r["frame"]] = r
         ev = {k: r[k] for k in ("frame", "t", "src", "dst", "sport", "dport")}
@@ -178,6 +210,11 @@ def main():
         elif proc == 8:
             kind = "sub_requests" if init else ("sub_failures" if pdu.group(1).startswith("unsuccessful") else "sub_responses")
             facts[kind].append(dict(ev, **parse_subscription(lines)))
+    if a.ppid:
+        facts["ppid"] = ppid_facts(a.pcap, rows, a.sctp_port)
+        for k, v in sorted(facts["ppid"]["to_port_by_assoc"].items()):
+            print("ppid %s -> :%d %s" % (k, a.sctp_port, json.dumps(v["counts"], sort_keys=True)))
+        print("e2ap frames by PPID %(by_ppid)d, forced on the port %(forced_port)d" % facts["ppid"]["e2ap_frames"])
     json.dump(facts, open(a.o, "w"), indent=1, sort_keys=True)
     print("frames=%d inits=%d aborts=%d shutdowns=%d setup_req=%d setup_resp=%d sub_req=%d sub_resp=%d sub_fail=%d ind_srcs=%s" % (
         facts["frames"], len(facts["inits"]), len(facts["aborts"]), len(facts["shutdowns"]),
