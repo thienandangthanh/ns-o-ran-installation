@@ -102,3 +102,9 @@ The control path stays Style 3 action 1 in this phase. P07 switches it to Style 
 
 ## Rollback
 Re-pin the `m10-cp1` SHAs; rc, the TS xApp and kpimon reinstall from the pinned manifests.
+
+## Amendment 2 work items (user rulings D1, D3, 2026-11-03; kongming-261103-0440)
+- **e2mgr fork patch (D1):** `EnGnb.GlobalGNBID` tag `global-gNB-ID` → `global-en-gNB-ID` (`E2Manager/models/e2_setup_request_message.go:54` at 6.0.6, SHA `09036c6`), plus the upstream fixture `tests/resources/setupRequest/setupRequest_en-gNB.xml:27,32` and a negative unit test (the v01 tag yields an empty plmnId). Built from gerrit 6.0.6 in the Testbed install path, `ctr import`ed, and the recipe's e2mgr image overridden (`ric-dep RECIPE_EXAMPLE/example_recipe_latest_stable.yaml:97-101`; yq as in `full_install.sh:315`). The image carries the source SHA and patch-set digest as labels; `gate-m1-ric-up.sh:103,127-136` gets a stronger predicate (patched tag, source label, digest) registered in the check-diff ledger first; the patched image is never tagged `6.0.6`.
+- **AC6a re-probe (closes AC6a):** `scripts/probes/probe-e2-identity-setup.sh` on the patched e2mgr: en-gNB E2setupResponse, meid `en_gnb_001_001_7f000001`, nodeb CONNECTED GNB/EN_GNB with 32-char nbId and RAN function 2, no "empty plmnId" log line, KPM subscription admitted and deleted, a second setup after a graceful close accepted; eNB rows unchanged. Evidence run `…/e2-identity-setup/20261102T192656Z` stays as the "before" record.
+- **P14 (D3):** rc fork ASN.1 `RANParameter-ID ::= INTEGER (1..4294967295, ...)`; regenerate rc's and the agent's asn1c codecs and `tools/rc-decode`; an asn1c/pycrate cross-check on a control message is part of AC12.
+- **Correction:** the X2 component ID names the **neighbour** eNB or en-gNB (E2AP §9.2.32), not the node itself.

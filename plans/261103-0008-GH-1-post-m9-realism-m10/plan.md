@@ -34,9 +34,9 @@ After each checkpoint the compliant behaviour is the only behaviour (R1, R8). Ev
 
 ## Resume card (filled at execution; update before every VM operation > 10 min and at every phase exit)
 ```text
-last-updated: 2026-11-03 04:45 KST
-current phase: P01 PAUSED (T3): AC6a en-gNB refused by e2mgr 6.0.6 (XML tag global-gNB-ID, e2_setup_request_message.go:54); journal docs/journals/2026-11-03-m10-p01-pause-t3-ac6a-en-gnb-refusal.md; kongming-261103-0440 recommends option A (e2mgr fork patch, Amendment 2); AC6 ✓ runtime (evidence/e2-identity-setup/20261102T192656Z); AC6b ✓ (171 wall-s/sim-s, s10 simTime 8 s)
-VM / snapshots / host free: VM running at fresh-install (0 orphans, pending check ok); snapshots fresh-install f7-rerun-green m0-probe-{d11021754,n,o,p,q} r0-green r2-green r3p-green; /home 96 GiB (post-M9 leak deleted under the 2026-10-28 ruling, 42.4 GiB, log evidence/fu2/20261102T174920Z/leak-deletion/), /mnt/data 20 GiB
+last-updated: 2026-11-03 04:55 KST
+current phase: P02 (δ seam). PAUSE T3 resolved by user rulings D1–D4 (plans/reports/decisions-261103-0450-GH-1-m10-ac6a-pause-rulings.md; contract Amendment 2): e2mgr fork patch after cp1 with the AC6a en-gNB re-probe in P06; T-B continues; P14 in scope; user adds 3GPP TS 38.331 to Zotero
+VM / snapshots / host free: VM running at fresh-install (0 orphans, pending check ok); snapshots fresh-install f7-rerun-green m0-probe-{d11021754,n,o,p,q} r0-green r2-green r3p-green; /home 96 GiB, /mnt/data 20 GiB
 uncommitted: P02 δ-seam WIP in oran-interface/model/e2-control-hub.{h,cc}, e2-ipc-emitter.cc and ns-3-mmwave-oran/scratch/scenario-zero.cc (not compiled, not pinned)
 open T4 (deferred to Stop A, deviation from "PAUSE T4 now" logged): 3GPP TS 38.331 not in Zotero (needed by P06 R-3 MeasurementTimingConfiguration); user notified 03:10 KST; the other 12 keys are present
 for Stop A: new deviation "P14" RANParameter-ID unconstrained in rc/agent asn1c (spec INTEGER (1..4294967295, ...)); AC12 implies the fix in the T-A fork patches; user confirms scope at Stop A (probe-261103-0315 report)
@@ -60,7 +60,7 @@ in-flight jobs: none
 | # | Milestone | Phase | Exit gate | Status |
 |---|---|---|---|---|
 | P00 | MA | [Ops prelude: runner finish, overlay orphans, receiver readiness, headroom, FU4 note](phase-00-ops-prelude-runner-overlays-readiness-headroom.md) | AC1–AC5 | done 2026-11-03 (harness 6cc7798) |
-| P01 | MA | [rc claims, identity probe, scale probe, ASN.1 toolchain, standards preflight](phase-01-rc-claims-identity-and-scale-probes.md) | AC6, AC6a, AC6b; F10/F11 preflight | AC6 ✓, AC6b ✓, F10 ✓ (static), F11 12/13 (T4 38.331); **AC6a en-gNB REFUSED → PAUSE T3** (2026-11-03 04:45) |
+| P01 | MA | [rc claims, identity probe, scale probe, ASN.1 toolchain, standards preflight](phase-01-rc-claims-identity-and-scale-probes.md) | AC6, AC6a, AC6b; F10/F11 preflight | AC6 ✓, AC6b ✓, F10 ✓ (static), F11 12/13 (T4 38.331); AC6a: eNB ✓, en-gNB refused by e2mgr 6.0.6 → PAUSE T3 → rulings D1–D4 (Amendment 2): e2mgr patch, AC6a en-gNB re-probe in P06 after cp1 | done 2026-11-03 (AC6a en-gNB carried to P06) |
 | P02 | MB | [δ actuation seam](phase-02-delta-actuation-seam.md) | AC7; AC8 run 1 | pending |
 | P03 | MB | [P12: KPM reporting period and granularity](phase-03-p12-kpm-reporting-period-granularity.md) | AC10; AC8 run 2 | pending |
 | P04 | MB | [Checkpoint 1 tag, δ sweep references, predicate registration](phase-04-checkpoint-1-tag-delta-references.md) | AC8 tag, AC9, AC18 #9 registration | pending |

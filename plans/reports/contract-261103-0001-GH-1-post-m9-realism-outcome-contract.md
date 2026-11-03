@@ -4,6 +4,8 @@ Date: 2026-11-03 00:05 KST. Status: **APPROVED by the user in `ak:goal-warmup`, 
 
 **Amendment 1 (2026-11-03 01:05 KST, user rulings on warmup review findings):** AC8b (F1, option a), AC11 (e2sim PPID), AC14 and new AC14b (F5, option A). Sources: `kongming-261103-0034-GH-1-m10-plan-review.md`, Codex plan review run 1. Rows marked "A1" in the change log. **Re-approved by the user 2026-11-03 01:10 KST.**
 
+**Amendment 2 (2026-11-03 ~04:50 KST, user ruling D1 on the AC6a PAUSE, `decisions-261103-0450-GH-1-m10-ac6a-pause-rulings.md`):** §2 fork patches add **e2mgr** (the en-gNB identity XML tag, `E2Manager/models/e2_setup_request_message.go:54` at 6.0.6), delivered through the Testbed as a locally built image and pinned after checkpoint 1; AC6a reads "the live e2mgr (6.0.6 plus the pinned patch) and e2term ...". **P14** (RANParameter-ID constrained per E2SM-RC v03.00) is in scope inside the rc and agent fork patches (ruling D3). Rows marked "A2" in the change log.
+
 Built from candidate D (`brainstorm-261029-1824-GH-1-post-m9-realism-goal-contract.md` §1–§8). It applies kongming's required fixes #1, #4, #5, #6, #7, #9 and N1 (`kongming-261029-1833-GH-1-post-m9-realism-brainstorm-go-no-go.md`) and the user rulings R1–R12 (`decisions-261102-2235-GH-1-post-m9-realism-user-rulings.md`). The change log at the end maps each edit to its source.
 
 Notation: [V] verified at file:line; [I] inferred; [C] carried from earlier evidence. "TS xApp" is the traffic-steering xApp; "3GPP TS" is a 3GPP specification.
@@ -28,7 +30,7 @@ Each item P1–P13 and N5 ends **fixed**. An item may end **listed with evidence
 - **T-A, E2 interop, identity and control (MC):** P10, then the identity cluster P11/N5/P2/P5/P8, then P4/P1/P13.
 - **Scale gate (MD):** N ≥ 10 gNBs, after P11/N5.
 - **T-C, radio and counter realism (ME):** P6, P7, P9; `UseIdealRrc=false` after its probe.
-- **Fork patches** through the Testbed `install_patch_files`: rc, TS xApp (including the N1 `en_gnb_` meid patch), kpimon (including the AC14b UE ID), and e2sim (AC11 PPID), as needed. All fork code is pushed on `dev/l-release-nist180` and pinned in `scripts/pins.conf`.
+- **Fork patches** through the Testbed `install_patch_files`: rc (including the A2 P14 RANParameter-ID bound), TS xApp (including the N1 `en_gnb_` meid patch), kpimon (including the AC14b UE ID), e2sim (AC11 PPID) and e2mgr (A2: the en-gNB identity tag, a locally built image), as needed. All fork code is pushed on `dev/l-release-nist180` and pinned in `scripts/pins.conf`.
 - **The M10 runner** and the records (AC20).
 
 ## 3. Out of scope
@@ -50,7 +52,7 @@ Each item P1–P13 and N5 ends **fixed**. An item may end **listed with evidence
 4. **FU5:** a script computes h as the largest host-free drop over any 370 s window across every M9 attempt's `free-series.tsv` and every dev rehearsal of the new steps. **h = 12 GiB, trip = 37 GiB** (R11). If the script's worst burst exceeds 12, the run stops for a user ruling instead of raising h silently.
 5. **FU4:** a findings note on the stuck route readers (hypotheses, reproduction attempts). The F″ remedy is unchanged.
 6. **rc claims:** rc's outcome-less-ACK panic and its 2 s ACK timer are verified with file:line at the deployed rc SHA before δ > 0 code lands.
-   - **6a, identity probe:** the live e2mgr and e2term of the deployed L-release images accept an E2 Setup from an eNB (Global ENB ID) and from an en-gNB (32-bit Global en-gNB ID). The probe records the meids e2term produces (expected `enB_macro_…`, `en_gnb_…` [V master `BuildRunName.h:150-200`]) and the e2mgr nodeb JSON. If either is refused, the goal stops with Decision required.
+   - **6a, identity probe:** the live e2mgr (6.0.6 plus the pinned A2 patch for en-gNB) and e2term of the deployed L-release images accept an E2 Setup from an eNB (Global ENB ID) and from an en-gNB (32-bit Global en-gNB ID). The probe records the meids e2term produces (expected `enB_macro_…`, `en_gnb_…` [V master `BuildRunName.h:150-200`]) and the e2mgr nodeb JSON. If either is refused, the goal stops with Decision required.
    - **6b, scale probe:** one 10-gNB ns-3 run measures the wall seconds per sim second and the disk growth. The result sets the AC15 simTime and the disk budget (Stop B).
 
 ### T-B: timing (MB)
@@ -185,3 +187,5 @@ No other item may end as "listed with evidence".
 1. **P4 RC UE ID = en-gNB-UEID** follows from R6 (source en-gNB addressee) but was not ruled separately.
 2. **P9:** the predictor reads the corrected counter, which may move R3′'s outcome; this resolves brainstorm Q6.
 3. **S-R and SUB-P12** are proposed, not yet approved.
+| A2: §2 e2mgr fork patch (en-gNB identity XML tag); AC6a accepts 6.0.6 plus the pinned patch | AC6a PAUSE T3, user ruling D1 (2026-11-03) |
+| A2: P14 RANParameter-ID bound fixed to E2SM-RC v03.00 in rc and the agent | user ruling D3 (2026-11-03) |
