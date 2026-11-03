@@ -76,6 +76,28 @@ def endc_x2_setup_request_enb(plmn_id, macro_enb_id, cells):
     return X2.build("ENDCX2SetupRequest", [("id-InitiatingNodeType-EndcX2Setup", ("init-eNB", node))])
 
 
+def endc_x2_setup_response_en_gnb(plmn_id, gnb_id, cells, gnb_id_bits=32):
+    """ENDCX2SetupResponse from an en-gNB (respond-en-gNB) with served NR cells (served_nr_cell())."""
+    if not cells:
+        raise CodecError("need at least one served NR cell")
+    gid = {"pLMN-Identity": plmn(plmn_id), "gNB-ID": ("gNB-ID", bitstr(gnb_id, gnb_id_bits))}
+    node = X2.fields("En-gNB-ENDCX2SetupReqAckIEs", [
+        ("id-Globalen-gNB-ID", gid),
+        ("id-ServedNRcellsENDCX2ManagementList", [{"servedNRCellInfo": c} for c in cells])])
+    return X2.build("ENDCX2SetupResponse", [("id-RespondingNodeType-EndcX2Setup", ("respond-en-gNB", node))])
+
+
+def endc_x2_setup_response_enb(plmn_id, macro_enb_id, cells):
+    """ENDCX2SetupResponse from an eNB (respond-eNB) with served E-UTRA cells (served_eutra_cell())."""
+    if not cells:
+        raise CodecError("need at least one served E-UTRA cell")
+    gid = {"pLMN-Identity": plmn(plmn_id), "eNB-ID": ("macro-eNB-ID", bitstr(macro_enb_id, 20))}
+    node = X2.fields("ENB-ENDCX2SetupReqAckIEs", [
+        ("id-GlobalENB-ID", gid),
+        ("id-ServedEUTRAcellsENDCX2ManagementList", [{"servedEUTRACellInfo": c} for c in cells])])
+    return X2.build("ENDCX2SetupResponse", [("id-RespondingNodeType-EndcX2Setup", ("respond-eNB", node))])
+
+
 def decode_x2ap(buf):
     """Decode any X2AP PDU: {kind, procedure_code, criticality, message, ies, raw}."""
     return X2.decode(buf)
@@ -87,6 +109,15 @@ def decode_endc_x2_setup_request(buf):
     if d["message"] != "ENDCX2SetupRequest":
         raise CodecError(f"expected ENDCX2SetupRequest, got {d['message']}")
     node, container = d["ies"]["id-InitiatingNodeType-EndcX2Setup"]
+    return {"node": node, "ies": X2.named(container)}
+
+
+def decode_endc_x2_setup_response(buf):
+    """{'node': 'respond-en-gNB' | 'respond-eNB', 'ies': {IE id name: value}} of an ENDCX2SetupResponse."""
+    d = decode_x2ap(buf)
+    if d["message"] != "ENDCX2SetupResponse":
+        raise CodecError(f"expected ENDCX2SetupResponse, got {d['message']}")
+    node, container = d["ies"]["id-RespondingNodeType-EndcX2Setup"]
     return {"node": node, "ies": X2.named(container)}
 
 

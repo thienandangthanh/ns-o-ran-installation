@@ -147,6 +147,12 @@ def x2ap_checks():
     enb = x2ap.endc_x2_setup_request_enb(PLMN, 0x00001, [x2ap.served_eutra_cell(1, PLMN, 0x0000101, b"\x00\x01", 100, 18100)])
     roundtrip("X2AP ENDCX2SetupRequest eNB", enb, x2ap.decode_x2ap, lambda v: encode(x2ap.X2.pdu, v["raw"]))
     check("X2AP eNB node type", x2ap.decode_endc_x2_setup_request(enb)["node"] == "init-eNB")
+    gr = x2ap.endc_x2_setup_response_en_gnb(PLMN, 0x00000002, [cell])
+    roundtrip("X2AP ENDCX2SetupResponse en-gNB", gr, x2ap.decode_x2ap, lambda v: encode(x2ap.X2.pdu, v["raw"]))
+    check("X2AP en-gNB response node type", x2ap.decode_endc_x2_setup_response(gr)["node"] == "respond-en-gNB")
+    er = x2ap.endc_x2_setup_response_enb(PLMN, 0x00001, [x2ap.served_eutra_cell(1, PLMN, 0x0000101, b"\x00\x01", 100, 18100)])
+    roundtrip("X2AP ENDCX2SetupResponse eNB", er, x2ap.decode_x2ap, lambda v: encode(x2ap.X2.pdu, v["raw"]))
+    check("X2AP eNB response node type", x2ap.decode_endc_x2_setup_response(er)["node"] == "respond-eNB")
 
 
 def main():
