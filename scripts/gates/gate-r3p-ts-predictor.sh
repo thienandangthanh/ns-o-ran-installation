@@ -274,8 +274,10 @@ sys.exit(0 if o["live1"] and o["live1"] == o["live2"] == o["live3"] else 1)
 PY
     }
     check r3p_c1_every_trigger_outcome_identical_across_live_runs same_outcomes
+    # a δ > 0 reference is sim-side (ledger, ipc, traces): the wire and xApp components follow the δ = 0 references
+    SIMSIDE=(); [ "$DELTA_MS" = 0 ] || SIMSIDE=(--components ledger,ipc,traces)
     [ -z "$REF" ] || rung_reference "$REF" --file "predictor-records=$RUNS/live1/r3p/predictor-records.jsonl" \
-        --file "schedule=$SCHED" --file "scenario=$SCEN" --recorded "xapp-image-ids.json=$e/xapp-image-ids.json"
+        --file "schedule=$SCHED" --file "scenario=$SCEN" --recorded "xapp-image-ids.json=$e/xapp-image-ids.json" "${SIMSIDE[@]}"
 fi
 
 if [ "$MODE" != calibrate ]; then

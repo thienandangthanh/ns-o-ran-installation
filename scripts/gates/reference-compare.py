@@ -10,6 +10,9 @@
         SHA256SUMS verifies; RUN's digests equal equal/digests.json on every component; each --file's sha256
         equals equal/files.json (same names); --recorded files are diffed and reported only.
         Prints {"equalsReference": bool, ...}; exit 0 iff equal.
+  --components C,C,...   (make and compare; default ledger,ipc,traces,extra) the digest components the reference
+        holds. A δ > 0 reference is sim-side only (ledger,ipc,traces). compare fails unless the reference holds
+        exactly the requested set, so a sim-side reference never passes a full comparison.
   reference-compare.py --self-test
 """
 import hashlib
@@ -39,12 +42,12 @@ def pairs(av, flag):
     return dict(av[i + 1].split("=", 1) for i, x in enumerate(av) if x == flag)
 
 
-def make(run, ref, files, recorded):
+def make(run, ref, files, recorded, components=COMPONENTS):
     ref = pathlib.Path(ref)
     (ref / "equal").mkdir(parents=True, exist_ok=True)
     (ref / "recorded").mkdir(exist_ok=True)
     d = digest_run().digests(run)
-    json.dump({c: d[c] for c in COMPONENTS}, open(ref / "equal" / "digests.json", "w"), indent=1, sort_keys=True)
+    json.dump({c: d[c] for c in components}, open(ref / "equal" / "digests.json", "w"), indent=1, sort_keys=True)
     json.dump({n: sha(p) for n, p in files.items()}, open(ref / "equal" / "files.json", "w"), indent=1, sort_keys=True)
     for n, p in recorded.items():
         shutil.copyfile(p, ref / "recorded" / n)
@@ -52,7 +55,7 @@ def make(run, ref, files, recorded):
     (ref / "SHA256SUMS").write_text("".join("%s  %s\n" % (sha(ref / p), p) for p in sums))
 
 
-def compare(run, ref, files, recorded):
+def compare(run, ref, files, recorded, components=COMPONENTS):
     ref, probs, out = pathlib.Path(ref), [], {}
     sums = ref / "SHA256SUMS"
     if not sums.exists():
@@ -68,7 +71,9 @@ def compare(run, ref, files, recorded):
         probs += ["SHA256SUMS: %s is not listed" % p for p in sorted(extra)]
     if not probs:
         want, d = json.load(open(ref / "equal" / "digests.json")), digest_run().digests(run)
-        out["differingComponents"] = [c for c in COMPONENTS if d.get(c) != want.get(c)]
+        if set(want) != set(components):
+            probs.append("reference components %r, requested %r" % (sorted(want), sorted(components)))
+        out["differingComponents"] = [c for c in components if d.get(c) != want.get(c)]
         probs += ["component %s differs from the reference" % c for c in out["differingComponents"]]
         wf = json.load(open(ref / "equal" / "files.json"))
         if set(wf) != set(files):
@@ -114,6 +119,11 @@ def self_test():
         (t / "ref" / "equal" / "files.json").write_text("{}")
         if compare(run, t / "ref", files, recd)["equalsReference"]:
             bad.append("a tampered reference passes SHA256SUMS")
+        make(run, t / "sim", files, recd, ("ledger", "ipc", "traces"))
+        if not compare(run, t / "sim", files, recd, ("ledger", "ipc", "traces"))["equalsReference"]:
+            bad.append("a run equal to its own sim-side reference")
+        if compare(run, t / "sim", files, recd)["equalsReference"]:
+            bad.append("a sim-side reference passes a full comparison")
     for b in bad:
         print("FAIL " + b)
     print("reference-compare self-test: %s" % ("ok" if not bad else "%d failure(s)" % len(bad)))
@@ -128,9 +138,15 @@ if __name__ == "__main__":
         print(__doc__, file=sys.stderr)
         sys.exit(2)
     f, r = pairs(av[3:], "--file"), pairs(av[3:], "--recorded")
+    comp = COMPONENTS
+    if "--components" in av:
+        comp = tuple(av[av.index("--components") + 1].split(","))
+        if not comp or set(comp) - set(COMPONENTS):
+            print("unknown components %r" % (comp,), file=sys.stderr)
+            sys.exit(2)
     if av[0] == "make":
-        make(av[1], av[2], f, r)
+        make(av[1], av[2], f, r, comp)
         sys.exit(0)
-    res = compare(av[1], av[2], f, r)
+    res = compare(av[1], av[2], f, r, comp)
     print(json.dumps(res, indent=1, sort_keys=True))
     sys.exit(0 if res["equalsReference"] else 1)
