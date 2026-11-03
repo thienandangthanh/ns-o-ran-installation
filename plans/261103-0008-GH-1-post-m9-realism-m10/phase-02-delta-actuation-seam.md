@@ -38,11 +38,23 @@ P3 (run report row: "d = 0: controls apply at the next step") is fixed by a whol
 - M5, M6, M7 verdicts pass at the new pins.
 - Dev smoke: the pending-at-stop fixture yields exactly one RICcontrolFailure per pending control on the decoded wire.
 
-## Standards ledger (stub)
+## Standards ledger
 | Decision | Document, section | Zotero | Read |
 |---|---|---|---|
-| Whole-loop delay δ ∈ {100, 150, 200, 500} ms inside the Near-RT loop bracket | E2GAP v08.00 §5.1.1 (10 ms–1 s); OAD v18 (Near-RT RIC control loop) | `AE3NUEDK`, `TBVJDMLF` | to cite |
-| Control applied in one event (precheck, handover, answer) | E2AP v03.00 §8.2.4 (RIC Control) | `WEE5IEXF` [C] | to cite |
+| Whole-loop delay δ ∈ {100, 150, 200, 500} ms inside the Near-RT loop bracket | E2GAP v08.00 §5.1.1: "E2 interface shall support latency requirements for near-real-time optimization, i.e. from 10 milliseconds up to 1 second" (p. 9); OAD v18 is the source it cites | `AE3NUEDK` (parent item; `WVKTACCS` is its PDF attachment, not a second edition) | read 2026-11-03 |
+| A control pending at the stop is answered FAILURE | E2AP v03.00 §8.2.4.3: "If the E2 Node fails to execute the requested RIC Control procedure E2SM specific action, then the E2 Node shall respond with the RIC CONTROL FAILURE message with an appropriate cause value" (p. 23) | `WEE5IEXF` | read 2026-11-03 |
+| Precheck, handover and answer in one event at the apply time | Design choice (no clause prescribes when inside the node an action executes); keeps one answer per control (§8.2.4.3) | — | design |
+
+## Exit record (2026-11-03, kongming GO-WITH-CHANGES, plans/reports/kongming-261103-1210-GH-1-m10-p02-exit-review.md)
+- AC8 run 1: `evidence/r3p/20261103T024628Z` at harness 73bbda6 (pins ns-3 48d41a5, oran-interface b2342c6): 168 checks, 0 failed; `equalsReference` true on the default components incl. `extra`; liveRunsEqual, replayEqual, rngRun2Differs true; ledger header `fixed 0`. The live1 trace hellos name the pinned emitter SHAs, and the binary sha is the same in m5, m7 and r3p (no stale M9 build). M4 20261103T015440Z, M5 …021740Z, M6 …021915Z, M7 …022052Z pass.
+- Step 1 as written (a local byte-compare against a free run) was not run; it is replaced by the M9-reference compare of AC8 run 1 plus the C8 digests, which cover the same δ = 0 identity on the VM.
+- Dev smoke `evidence/delta-seam-smoke/20261103T014710Z` ran at harness fee75dc on an uncommitted tree; its build diff equals the pinned fork commits and its binary sha equals the exit chain's. Its committed verdict is FAIL: `dseam_same_outcomes_at_every_delta` failed because δ = 500 moves the step-30 apply into a different radio state, and 73bbda6 made that table informational after it was observed. That relaxation is recorded here; the outcomes per δ were never an AC7 predicate.
+- Not evidenced by the first smoke, required before the P04 δ runs: the R-5 tie self-test (due batch, late refusal and new batch at one barrier) and the δ = 150 event cancelled at stop. Added to the probe at 1cf145f (d100tie, d150stop; runs at the pins, checks the emitter SHAs); its run at the pins replaces the FAIL verdict layer.
+- The wire RIC CONTROL FAILURE for a control pending at stop is inferred, not observed: the hub answers it `late` before the emitter's bye (`e2-ipc-emitter.cc:188` before `:197`), and the agent turns a `late` answer into RICcontrolFailure on the existing path (M9 r0 k9).
+- `deltaMs` is not a rung-config key: δ is the gate option `--delta-ms` (`gate-r3p-ts-predictor.sh`, fact `deltaMs`).
+- The δ-coupled KPM move judge (`kpm-ue-list-moves.py`) judged at rxSeq and would fail every δ > 0 run; fixed at 281d709 (judged at the apply barrier; ledger row 56).
+- Carried: the pacer replay of a δ > 0 line pending at stop (`pacer.py:73` replays it at the stop handshake, so replay ≠ live; R3′ is not exposed), to fix with a self-test before P11; a stale-build guard on every rung (trace hello emitter SHAs = pins.conf, needs a ledger row); P07: the current-SN check runs at apply time.
+- Budget: about 1,370 s per δ C1 and about 170 MB raw evidence per run, about 92 min for 100/150/200/500. Disk at exit: /home 91 GiB free, /mnt/data 20 GiB.
 
 ## Risks
 - A zero-delay event at δ = 0 would reorder ties and break AC8 (High/Low with the synchronous rule). Mitigation: δ == 0 takes the unchanged code path, and a byte-compare test runs before any VM run.
