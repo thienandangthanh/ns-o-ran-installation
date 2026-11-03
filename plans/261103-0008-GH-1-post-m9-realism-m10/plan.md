@@ -208,7 +208,8 @@ The mechanism is the same as M8–M9: a journal in `docs/journals/`, a kongming 
 - T = ns-3 `indicationPeriodicity` = 100 ms; gated rungs use 100/100 ms.
 - P12 tests:
   - G = 100, P = 1,000 → 10 records per indication;
-  - P = 150 → a RIC SUBSCRIPTION FAILURE, because the period sits in the event trigger, which applies to the whole subscription. The cause is cited from E2AP v03.00 in P03 before code [I: expected "RIC request: action not supported" or the E2SM event-trigger cause].
+  - P = 150 → a RIC SUBSCRIPTION FAILURE, because the period sits in the event trigger, which applies to the whole subscription. **Cause (pre-registered 2026-11-03 before P03 code): `ricRequest` / `eventTriggerNotSupported`** [V E2AP v03.00 §8.2.1.4 ("RIC Subscription Details IE that does not align with the Near-RT RIC Service Model → RIC SUBSCRIPTION FAILURE with an appropriate cause value", Zotero `WEE5IEXF` p. 17) and §9.2.1 cause table "Event Trigger not supported: Requested event trigger definition or modification not supported" (p. 62); the value exists in the agent's E2AP v03.01 ASN.1 (`CauseRICrequest`, extension `eventTriggerNotSupported`)].
+  - An action whose granularity ≠ T (period admitted) is not admitted with `ricRequest` / `action-not-supported` (§9.2.1), in a RIC SUBSCRIPTION RESPONSE that admits the other actions; with no action left, RIC SUBSCRIPTION FAILURE with the same cause.
 
 **R-7. Check-diff ledger seed (AC18).** `check-diff-ledger.md` in this plan dir has one row per changed check: old → new, why it is not weaker, and a contract-change flag. P1/P5/N5 rows are registered at Stop A. The sites, re-grepped at P04 start:
 - **P1:** `scripts/gates/r3p-checks.py:203-207`; `r0-checks.py:92-98`; `r2-checks.py:24,181-185`; `gate-r3p-ts-predictor.sh:234`; `gate-r2-ts-stub-qp.sh:121`; `r3p-checks-fixtures.py:16,59,91`; `r3p-dry-run-fixtures.py:34`.
