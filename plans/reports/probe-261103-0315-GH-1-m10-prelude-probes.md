@@ -81,7 +81,7 @@ Probe `scripts/probes/probe-ns3-scale-ten-gnbs.sh` (lock-step, empty pacer sched
 | O-RAN E2SM common v07.00 (carried) | `QW6VJ83M` | yes |
 | O-RAN E2AP v03.00 (carried) | `WEE5IEXF` | yes |
 | 3GPP TS 28.552 (carried) | `5SZUBP6M` | yes |
-| 3GPP TS 38.331 (R-3 `MeasurementTimingConfiguration`) | none | **missing** |
+| 3GPP TS 38.331 (R-3 `MeasurementTimingConfiguration`) | `WF2FTADX` | **added by the user 2026-11-03 10:55 KST** (ETSI TS 138 331 V19.4.0; T4 closed) |
 
 **T4 on 3GPP TS 38.331.** The phase file says a missing document is PAUSE T4 now. The document is first needed in P06 (R-3's X2AP served-cell constants), and Stop A comes before P06, so the T4 is deferred to Stop A with the user notified on 2026-11-03 at 03:10 KST. This is a recorded deviation from "PAUSE T4 now". No P01–P05 decision depends on 3GPP TS 38.331.
 

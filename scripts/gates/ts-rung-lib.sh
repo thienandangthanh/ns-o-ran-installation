@@ -113,7 +113,7 @@ rung_live() {
         [ -n "$k" ] && [ "$k" = "$w" ] && [ "$k" -gt 0 ]
     }
     check "${RUNG}_${label}_kpm_continuity_kpimon_equals_wire_indications" kpm_cont
-    c2() { python3 -I "$HARNESS_DIR/scripts/gates/check-ledger.py" "$rd/trace/e2-control-ledger.jsonl" "$rd/pacer/pacer-log.jsonl" --expect "$N_POS"; }
+    c2() { python3 -I "$HARNESS_DIR/scripts/gates/check-ledger.py" "$rd/trace/e2-control-ledger.jsonl" "$rd/pacer/pacer-log.jsonl" --expect "$N_POS" --delta-ms "${DELTA_MS:-0}"; }
     check "${RUNG}_${label}_c2_ledger" c2
     check "${RUNG}_${label}_c9_handover_rows_match_applied_lines" python3 -I "$HARNESS_DIR/scripts/gates/check-c9-handover-trace.py" "$rd"
     kpm_moves() {
@@ -170,7 +170,7 @@ rung_c1() {
     check ${RUNG}_replay_run_without_the_ric paced_null_run replay lockstep 0 --RngRun=1
     check ${RUNG}_rng2_run_without_the_ric paced_null_run rng2 lockstep 0 --RngRun=2
     PACERX=()
-    rng2_c2() { python3 -I "$HARNESS_DIR/scripts/gates/check-ledger.py" "$RUNS/rng2/trace/e2-control-ledger.jsonl" "$RUNS/rng2/pacer/pacer-log.jsonl"; }
+    rng2_c2() { python3 -I "$HARNESS_DIR/scripts/gates/check-ledger.py" "$RUNS/rng2/trace/e2-control-ledger.jsonl" "$RUNS/rng2/pacer/pacer-log.jsonl" --delta-ms "${DELTA_MS:-0}"; }
     check ${RUNG}_rng2_c2_holds rng2_c2
     rng2_c7() {
         python3 -I - "$RUNS/rng2" <<'PY' | tee "$e/rng2-c7.json"

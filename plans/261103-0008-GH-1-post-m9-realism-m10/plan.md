@@ -38,7 +38,7 @@ last-updated: 2026-11-03 04:55 KST
 current phase: P02 (δ seam). PAUSE T3 resolved by user rulings D1–D4 (plans/reports/decisions-261103-0450-GH-1-m10-ac6a-pause-rulings.md; contract Amendment 2): e2mgr fork patch after cp1 with the AC6a en-gNB re-probe in P06; T-B continues; P14 in scope; user adds 3GPP TS 38.331 to Zotero
 VM / snapshots / host free: VM running at fresh-install (0 orphans, pending check ok); snapshots fresh-install f7-rerun-green m0-probe-{d11021754,n,o,p,q} r0-green r2-green r3p-green; /home 96 GiB, /mnt/data 20 GiB
 uncommitted: P02 δ-seam WIP in oran-interface/model/e2-control-hub.{h,cc}, e2-ipc-emitter.cc and ns-3-mmwave-oran/scratch/scenario-zero.cc (not compiled, not pinned)
-open T4 (deferred to Stop A, deviation from "PAUSE T4 now" logged): 3GPP TS 38.331 not in Zotero (needed by P06 R-3 MeasurementTimingConfiguration); user notified 03:10 KST; the other 12 keys are present
+T4 closed 2026-11-03 10:55 KST: 3GPP TS 38.331 added by the user, Zotero WF2FTADX (ETSI TS 138 331 V19.4.0; MeasurementTimingConfiguration message p. 1775); pycrate encodes from Rel-18 ASN.1, so P06 compares the MTC clause across Rel-18/19
 for Stop A: new deviation "P14" RANParameter-ID unconstrained in rc/agent asn1c (spec INTEGER (1..4294967295, ...)); AC12 implies the fix in the T-A fork patches; user confirms scope at Stop A (probe-261103-0315 report)
 fork SHAs (pins.conf): Testbed c6d1434a, ns-3 ba954440, oran-interface 96efc40e, e2sim 2209995a (M9 values)
 checkpoint tags: m10-cp1 (none), m10-cp2 (none), m10-cp3 (none)
@@ -275,7 +275,7 @@ The mechanism is the same as M8–M9: a journal in `docs/journals/`, a kongming 
 | P11 | §1 checkpoint 3 | AC16 refs, diff, tag; AC9 re-bank of all four δ; AC4 rehearsals; s10 at cp3 pins; Codex pre-ship audit | [I] I-7; [V] `reference-compare.py:42-48`; [U] R3 (Codex, no cap) |
 | P12 | §2 runner | AC18 complete; AC19 runner, budget, self-test | [V] `run-to-m9.sh:70-90`, `m9-verdict.py:39-86`, `m9-budget.json` |
 | P13 | §1 outcome; Stop B | AC19 run; AC11 on every end-run capture per E2 node; AC2 post-run; AC20 records | [V] M9 launch route (README:51); [P] /home ≥ T′, /mnt/data line |
-| all | §5 standards | standards ledger per phase; journals at Stops; handoff | Zotero: OAD v18 `TBVJDMLF`, E2GAP v08 `AE3NUEDK`, KPM v03.00 `F82PYZVK`, E2SM-RC v03.00 `JRDTL7XS` and v01.03 `PSHY8566`, 3GPP TS 37.340 `E6VYJPXJ`, 3GPP TS 38.300 `PSYCJSXT`, 3GPP TS 38.323 `MSNDDXJH`, 3GPP TS 36.423 `3ML7Y29A`; [C] re-verify in P01: E2SM common v07.00 `QW6VJ83M`, E2AP v03.00 `WEE5IEXF`, 3GPP TS 28.552 `5SZUBP6M` |
+| all | §5 standards | standards ledger per phase; journals at Stops; handoff | Zotero: OAD v18 `TBVJDMLF`, E2GAP v08 `AE3NUEDK`, KPM v03.00 `F82PYZVK`, E2SM-RC v03.00 `JRDTL7XS` and v01.03 `PSHY8566`, 3GPP TS 37.340 `E6VYJPXJ`, 3GPP TS 38.300 `PSYCJSXT`, 3GPP TS 38.323 `MSNDDXJH`, 3GPP TS 36.423 `3ML7Y29A`; [C] re-verify in P01: E2SM common v07.00 `QW6VJ83M`, E2AP v03.00 `WEE5IEXF`, 3GPP TS 28.552 `5SZUBP6M`; 3GPP TS 38.331 `WF2FTADX` (V19.4.0, added 2026-11-03) |
 
 ## Findings for warmup review: disposition (round 1)
 - **F1:** resolved by Amendment 1 (AC8b, option a) → R-2 transform T, P08 fixtures.

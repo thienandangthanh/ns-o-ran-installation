@@ -31,7 +31,7 @@ source "$(dirname "$0")/influx-dump.sh"
 source "$(dirname "$0")/ts-rung-lib.sh"
 RUNG=r3p
 
-DEV=0; MODE=c1; REF=""; STAGE=""; STAGE_A=""
+DEV=0; MODE=c1; REF=""; STAGE=""; STAGE_A=""; DELTA_MS=0
 while [ $# -gt 0 ]; do
     case "$1" in
         --mode) MODE="$2"; shift 2 ;;
@@ -39,10 +39,15 @@ while [ $# -gt 0 ]; do
         --stage-a-class) STAGE_A="$2"; shift 2 ;;
         --reference) REF="$2"; shift 2 ;;
         --dev) DEV=1; shift ;;
+        --delta-ms) DELTA_MS="$2"; shift 2 ;;
         *) log "unknown arg $1"; exit 2 ;;
     esac
 done
 case "$MODE" in c1|single|calibrate|dryrun) ;; *) log "bad --mode $MODE"; exit 2 ;; esac
+# δ (ns3::E2ControlHub::ActuationDelay, ms of sim time): a model parameter every run of this gate shares (live,
+# replay, RngRun 2); 0 applies a control at its barrier
+[[ "$DELTA_MS" =~ ^[0-9]+$ ]] || { log "bad --delta-ms $DELTA_MS"; exit 2; }
+export DELTA_MS
 [ -z "$REF" ] || [ "$MODE" = c1 ] || { log "--reference needs --mode c1"; exit 2; }
 if [ "$MODE" = dryrun ]; then
     case "$STAGE" in a) ;; b) [ -n "$STAGE_A" ] || { log "--stage b needs --stage-a-class"; exit 2; } ;;
@@ -74,7 +79,7 @@ SEND="$G/send-rmr.sh"
 SINK="$HARNESS_DIR/tools/ipc-null-sink/ipc-null-sink.py"
 PACER="$G/pacer.py"
 TOKEN_FILE="${NIST_RIC_DIR:-$HOME/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC}/influxdb_auth_token.json"
-CLI=(--nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 "--outageThreshold=$THRESH")
+CLI=(--nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 "--outageThreshold=$THRESH" "--actuationDelayMs=$DELTA_MS")
 SINKX=(); PACERX=()
 SCEN_TH=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["threshold"])' "$SCEN")
 SCEN_SHA=$(sha256sum "$SCEN" | cut -d' ' -f1)
@@ -86,6 +91,7 @@ case "$MODE" in
     *) N_POS=$(python3 -I -c 'import json,sys; print(sum(1 for t in json.load(open(sys.argv[1]))["triggers"] if t["decision"] == "handover"))' "$SCHED" 2>/dev/null || echo 0) ;;
 esac
 fact mode "$(json_str "$MODE")"
+fact deltaMs "$DELTA_MS"
 fact stage "$(json_str "$STAGE")"
 fact dev "$([ "$DEV" = 1 ] && echo true || echo false)"
 fact tCtlSeconds "$T_CTL_S"
@@ -235,6 +241,8 @@ rung_judges() {
     check "r3p_${label}_injector_and_stub_sent_exactly_the_predictor_answer" bash -o pipefail -c "python3 -I '$CHK' stub '$SCHED' '$rd' '$rd/injector/tx.jsonl' | tee '$rd/r3p-stub.json'"
     check "r3p_${label}_predictor_answer_equals_formula_on_n6_certified_window" bash -o pipefail -c "python3 -I '$CHK' predictor '$SCEN' '$SCHED' '$rd' | tee '$rd/r3p-predictor.json'"
     check "r3p_${label}_influx_equals_ipc_full_for_the_read_counter" bash -o pipefail -c "python3 -I '$CHK' influx-ipc '$SCEN' '$rd' | tee '$rd/r3p-influx-ipc.json'"
+    check "r3p_${label}_actuation_delay_applied_at_rx_plus_delta_handover_start_at_apply_plus_c" bash -o pipefail -c \
+        "python3 -I '$G/check-actuation-delay.py' '$L' '$rd/ns3run' --delta-ms $DELTA_MS | tee '$rd/r3p-delta.json'"
     check "r3p_${label}_d7_target_addressed" bash -o pipefail -c "python3 -I '$CHK' d7 '$L' | tee '$rd/r3p-d7.json'"
     check "r3p_${label}_observation_change_gives_the_preregistered_decisions" bash -o pipefail -c "python3 -I '$CHK' observation '$SCEN' '$SCHED' '$rd' | tee '$rd/r3p-observation.json'"
     check "r3p_${label}_post_handover_membership_observed" bash -o pipefail -c "python3 -I '$CHK' membership '$SCHED' '$rd' | tee '$rd/r3p-membership.json'"

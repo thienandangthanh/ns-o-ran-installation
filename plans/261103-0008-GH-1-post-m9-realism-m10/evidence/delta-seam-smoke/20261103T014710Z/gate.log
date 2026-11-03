@@ -1,0 +1,20 @@
+[01:47:12] gate dseam start; evidence /home/uc/evidence/probes/delta-seam-smoke/20261103T014710Z; harness fee75dc00aa1f0bc45fbf812d86b1e073f12cf71
+[01:47:12] PASS dseam_ns3_binary_located
+[01:47:12] PASS dseam_build_carries_the_seam
+[01:48:09] PASS dseam_run_d0
+[01:48:09] PASS dseam_d0_ledger_checks
+[01:48:09] PASS dseam_d0_one_ack_per_ledger_line
+[01:49:07] PASS dseam_run_d150
+[01:49:07] PASS dseam_d150_ledger_checks
+[01:49:07] PASS dseam_d150_one_ack_per_ledger_line
+[01:50:04] PASS dseam_run_d500
+[01:50:04] PASS dseam_d500_ledger_checks
+[01:50:04] PASS dseam_d500_one_ack_per_ledger_line
+[01:50:04] FAIL dseam_same_outcomes_at_every_delta: exit 1: d0 [(1, 1, 6, 'applied', '', 2), (2, 1, 6, 'refused', 'inHandover', 2), (2, 2, 6, 'refused', 'alreadyOnTarget', 3), (2, 3, 3, 'refused', 'unknownTarget', 2), (2, 4, 3, 'refused', 'unknownTarget', 2), (2, 9, 4, 'refused', 'late', 0), (3, 1, 1, 'refused', 'lteFallback', 3), (3, 2, 99, 'refused', 'unknownImsi', 0)]
+d150 [(1, 1, 6, 'applied', '', 2), (2, 1, 6, 'refused', 'inHandover', 2), (2, 2, 6, 'refused', 'alreadyOnTarget', 3), (2, 3, 3, 'refused', 'unknownTarget', 2), (2, 4, 3, 'refused', 'unknownTarget', 2), (2, 9, 4, 'refused', 'late', 0), (3, 1, 1, 'refused', 'lteFallback', 3), (3, 2, 99, 'refused', 'unknownImsi', 0)]
+d500 [(1, 1, 6, 'applied', '', 2), (2, 1, 6, 'refused', 'inHandover', 2), (2, 2, 6, 'refused', 'lteFallback', 3), (2, 3, 3, 'refused', 'unknownTarget', 2), (2, 4, 3, 'refused', 'unknownTarget', 2), (2, 9, 4, 'refused', 'late', 0), (3, 1, 1, 'refused', 'lteFallback', 3), (3, 2, 99, 'refused', 'unknownImsi', 0)]
+[01:51:02] PASS dseam_run_d500stop
+[01:51:02] PASS dseam_d500stop_ledger_checks
+[01:51:02] PASS dseam_d500stop_pending_control_gets_one_late_failure
+[01:51:03] PASS dseam_d500stop_one_ack
+verdict dseam: FAIL failed=['dseam_same_outcomes_at_every_delta']
