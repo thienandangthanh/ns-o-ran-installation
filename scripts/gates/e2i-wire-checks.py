@@ -59,10 +59,30 @@ def decode_x2(hexpart):
         return {"error": "%s: %s" % (type(ex).__name__, ex)}
 
 
+def global_id(body):
+    """[type, plmn hex, id, bits] of a decoded {global-en-gNB-ID | global-eNB-ID: {...}} (E2AP)."""
+    kind = "en-gNB" if "global-en-gNB-ID" in body else "eNB" if "global-eNB-ID" in body else None
+    gid = body.get("global-en-gNB-ID") or body.get("global-eNB-ID") or {}
+    _, (val, bits) = gid.get("gNB-ID") or gid.get("eNB-ID") or (None, (None, None))
+    return [kind, plain(gid.get("pLMN-Identity")), val, bits]
+
+
+# Frames are attributed to nodes by source IP (--node-ips, recorded after bring-up). That holds only while no agent
+# container restarts: docker may hand a restarted container another's former address, so a run with restarts (which
+# e2i_restart_counts_zero fails) can show swapped identities here as well.
+def x2_peers(nid, nodes):
+    """The X2 neighbours an agent is configured with, as global_id values: the eNB has X2 to every en-gNB of the run,
+    an en-gNB to the eNB."""
+    if nid == 1:
+        return sorted(["en-gNB", PLMN, n, 32] for n in nodes if n != 1)
+    return [["eNB", PLMN, 1, 20]]
+
+
 def decode_setup(hexpdu):
     """One E2AP PDU, inside the image: for an E2setupRequest {message, globalId: [type, plmn, id, bits],
-    ranFunctionIds, x2: [decoded X2 request part per x2 component], components, rcdef (RAN function 3's definition,
-    decoded, when announced)}; otherwise {message} or {error}."""
+    ranFunctionIds, x2: [decoded X2 request part per x2 component], x2peers: [the peer named by each x2 component's
+    E2nodeComponentID-InterfaceX2, as [type, plmn, id, bits]], components, rcdef (RAN function 3's definition, decoded,
+    when announced)}; otherwise {message} or {error}."""
     from e2indep import e2ap, e2sm_rc
     try:
         d = e2ap.decode_e2ap(bytes.fromhex(hexpdu))
@@ -72,14 +92,13 @@ def decode_setup(hexpdu):
         return {"message": d["message"]}
     ies = d["ies"]
     kind, body = ies["id-GlobalE2node-ID"]
-    gid = body.get("global-en-gNB-ID") or body.get("global-eNB-ID") or {}
-    _, (val, bits) = gid.get("gNB-ID") or gid.get("eNB-ID") or (None, (None, None))
     funcs = e2ap.items(ies.get("id-RANfunctionsAdded", []))
     comps = e2ap.items(ies.get("id-E2nodeComponentConfigAddition", []))
-    out = {"message": d["message"], "globalId": [kind, plain(gid.get("pLMN-Identity")), val, bits],
+    x2 = [c for c in comps if c["e2nodeComponentInterfaceType"] == "x2"]
+    out = {"message": d["message"], "globalId": [kind] + global_id(body)[1:],
            "ranFunctionIds": sorted(f["ranFunctionID"] for f in funcs), "components": len(comps),
-           "x2": [decode_x2(c["e2nodeComponentConfiguration"]["e2nodeComponentRequestPart"].hex())
-                  for c in comps if c["e2nodeComponentInterfaceType"] == "x2"]}
+           "x2": [decode_x2(c["e2nodeComponentConfiguration"]["e2nodeComponentRequestPart"].hex()) for c in x2],
+           "x2peers": [global_id(c["e2nodeComponentID"][1]) for c in x2]}
     rc = [f["ranFunctionDefinition"] for f in funcs if f["ranFunctionID"] == 3]
     if rc:
         try:
@@ -107,9 +126,10 @@ def tshark_setup_pdus(pcap):
     return out
 
 
-def judge_node(nid, reqs, decoded, subs):
+def judge_node(nid, reqs, decoded, subs, peers):
     """Problems per check name for one node: reqs = its setup-request facts (tshark), decoded = frame id -> the
-    independent decodes of that frame's PDUs. Identity and RAN functions must agree in both."""
+    independent decodes of that frame's PDUs, peers = its X2 neighbours (x2_peers). Identity and RAN functions must
+    agree in both; there is one X2 component per neighbour, named by it, and no other component."""
     enb = nid == 1
     p = {k: [] for k in ("globalIds", "ranFunctions", "x2apRequestPartDecodes", "style5Action3Announced",
                          "kpimonSubscribedAll")}
@@ -136,8 +156,9 @@ def judge_node(nid, reqs, decoded, subs):
         if sorted(r.get("ran_function_ids") or []) != want_funcs or d["ranFunctionIds"] != want_funcs:
             p["ranFunctions"].append("%s: RAN functions tshark %s, decoded %s, want %s" % (
                 f, sorted(r.get("ran_function_ids") or []), d["ranFunctionIds"], want_funcs))
-        if len(d["x2"]) != 1 or d["components"] != 1:
-            p["x2apRequestPartDecodes"].append("%s: %d components, %d X2, want one X2" % (f, d["components"], len(d["x2"])))
+        if sorted(d["x2peers"]) != peers or d["components"] != len(peers):
+            p["x2apRequestPartDecodes"].append("%s: %d components, X2 peers %s, want one X2 component per peer %s" % (
+                f, d["components"], sorted(d["x2peers"]), peers))
         for x in d["x2"]:
             p["x2apRequestPartDecodes"] += ["%s: %s" % (f, b) for b in x2_problems(nid, x)]
         if not enb:
@@ -219,7 +240,7 @@ def setup(a):
                 "responses": sum(1 for s in facts["sub_responses"] if s["src"] in ips)}
         nodes[n] = {"setupFrames": [r["frame"] for r in reqs], "subscriptions": subs,
                     "decoded": {"f%d" % r["frame"]: decoded.get("f%d" % r["frame"]) for r in reqs}}
-        for k, bad in judge_node(n, reqs, decoded, subs).items():
+        for k, bad in judge_node(n, reqs, decoded, subs, x2_peers(n, by_node)).items():
             checks.setdefault(k, []).extend(bad)
     out = {"checks": {k: {"pass": not v, "detail": v or ["every node as expected"]} for k, v in checks.items()},
            "nodes": nodes}
@@ -265,6 +286,9 @@ def verdict(path, name):
     return 0 if c and c["pass"] else 1
 
 
+NODES = [1, 2, 3]
+
+
 def self_test():
     """The judge on decodes shaped as the image returns them (pycrate values made plain)."""
     def gnb(n, nci=None, bits=32, pci=None):
@@ -288,14 +312,16 @@ def self_test():
         """req overrides the tshark facts, dec the independent decode of the setup PDU."""
         enb = nid == 1
         d = {"message": "E2setupRequest", "globalId": ["eNB", PLMN, 1, 20] if enb else ["en-gNB", PLMN, nid, 32],
-             "ranFunctionIds": [2] if enb else [2, 3], "components": 1, "x2": [x2]}
+             "ranFunctionIds": [2] if enb else [2, 3], "components": 2 if enb else 1, "x2": [x2] * (2 if enb else 1),
+             "x2peers": x2_peers(nid, NODES)}
         if rc is not None:
             d["rcdef"] = rc
         d.update(dec or {})
         r = {"frame": 7, "e2node_type": "eNB" if enb else "en-gNB", "node_id": nid, "node_id_bits": 20 if enb else 32,
              "plmn": PLMN, "ran_function_ids": [2] if enb else [2, 3]}
         r.update(req or {})
-        got = judge_node(nid, [r], {"f7": [{"message": "RICserviceUpdate"}, d]}, {"requests": subs[0], "responses": subs[1]})
+        got = judge_node(nid, [r], {"f7": [{"message": "RICserviceUpdate"}, d]}, {"requests": subs[0], "responses": subs[1]},
+                         x2_peers(nid, NODES))
         return {k: v for k, v in got.items() if v}
 
     cases = [
@@ -320,11 +346,18 @@ def self_test():
                                                                          dec={"globalId": ["en-gNB", PLMN, 3, 32]})),
         ("decoded RAN functions differ from tshark's", "ranFunctions" in run(2, gnb(2), rcdef(), dec={"ranFunctionIds": [2]})),
         ("an NG component beside the X2 one", "x2apRequestPartDecodes" in run(2, gnb(2), rcdef(), dec={"components": 2})),
+        ("eNB with one X2 component for two en-gNB neighbours", "x2apRequestPartDecodes" in run(
+            1, enb, dec={"components": 1, "x2": [enb], "x2peers": [["en-gNB", PLMN, 2, 32]]})),
+        ("eNB X2 component naming a node that is not its neighbour", "x2apRequestPartDecodes" in run(
+            1, enb, dec={"x2peers": [["en-gNB", PLMN, 2, 32], ["en-gNB", PLMN, 4, 32]]})),
+        ("en-gNB X2 component naming another en-gNB", "x2apRequestPartDecodes" in run(
+            2, gnb(2), rcdef(), dec={"x2peers": [["en-gNB", PLMN, 3, 32]]})),
+        ("the second eNB X2 request part fails", "x2apRequestPartDecodes" in run(1, enb, dec={"x2": [enb, {"error": "x"}]})),
         ("no independently decoded setup request in the frame", set(judge_node(
-            2, [{"frame": 7}], {"f7": [{"error": "x"}]}, {"requests": 1, "responses": 1})) >= {"globalIds"} and all(
-            judge_node(2, [{"frame": 7}], {"f7": [{"error": "x"}]}, {"requests": 1, "responses": 1})[k]
+            2, [{"frame": 7}], {"f7": [{"error": "x"}]}, {"requests": 1, "responses": 1}, [])) >= {"globalIds"} and all(
+            judge_node(2, [{"frame": 7}], {"f7": [{"error": "x"}]}, {"requests": 1, "responses": 1}, [])[k]
             for k in ("globalIds", "ranFunctions", "x2apRequestPartDecodes", "style5Action3Announced"))),
-        ("node without a setup request fails every check", len([v for v in judge_node(3, [], {}, {}).values() if v]) == 5),
+        ("node without a setup request fails every check", len([v for v in judge_node(3, [], {}, {}, []).values() if v]) == 5),
     ]
     for name, ok in cases:
         print("%s %s" % ("ok  " if ok else "FAIL", name))

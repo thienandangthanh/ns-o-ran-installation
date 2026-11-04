@@ -98,7 +98,7 @@ all_subscribed() {
 check e2i_every_agent_ready_and_subscribed_by_kpimon all_subscribed
 check e2i_e2mgr_en_gnb_2_record e2mgr_node_check "$(meid_of 2)" 00F110 2
 check e2i_e2mgr_en_gnb_3_record e2mgr_node_check "$(meid_of 3)" 00F110 3
-check e2i_e2mgr_enb_1_record e2mgr_enb_check "$(meid_of 1)" 00F110 1
+check e2i_e2mgr_enb_1_record_x2_to_en_gnbs_2_3 e2mgr_enb_check "$(meid_of 1)" 00F110 1 2 3
 check e2i_route_dump_agents_subscribed rc_route_dump subscribed
 check e2i_injector_routes_to_e2term_for_both_en_gnbs injector_routes_check subscribed "$(meid_of 2)" "$(meid_of 3)"
 
