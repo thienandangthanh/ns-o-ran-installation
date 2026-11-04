@@ -113,6 +113,12 @@ for t in selftest-records.sh selftest.sh; do
     if [ "$s" -eq 77 ]; then sed -n 1p "$tmp_kdh"; elif [ "$s" -ne 0 ]; then echo "kpimon decode harness $t failed"; rc=1; fi
 done
 rm -f "$tmp_kdh"
+# The TS xApp's UeMetrics query against InfluxDB 2.7 with mixed integer/float fields (needs podman and a local
+# influxdb:2.7 image; without them it prints SKIP, exit 77, shown, never a pass).
+tmp_tiq=$(mktemp)
+s=0; timeout 300 python3 -I scripts/gates/ts-influx-query-selftest.py >"$tmp_tiq" 2>&1 || s=$?
+if [ "$s" -eq 77 ]; then sed -n 1p "$tmp_tiq"; elif [ "$s" -ne 0 ]; then cat "$tmp_tiq"; echo "TS xApp Influx query self-test failed"; rc=1; fi
+rm -f "$tmp_tiq"
 # agent_counters_assert: the UE-context counters join the zero set, and ipc.ueContext >= 1
 source <(sed -n '/^agent_counters_assert()/,/^}/p' scripts/gates/agents-ns3-run.sh)
 tmp=$(mktemp -d)
