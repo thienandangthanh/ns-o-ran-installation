@@ -58,7 +58,7 @@ wait_ssh() {
 vm_shutdown() {
     [ "$(vm_state)" = "shut off" ] && return 0
     hlog "graceful shutdown of $VM_DOMAIN"
-    timeout 10 "${VIRSH[@]}" shutdown "$VM_DOMAIN" >/dev/null || return 1
+    timeout --kill-after=2 10 "${VIRSH[@]}" shutdown "$VM_DOMAIN" >/dev/null || return 1
     wait_state "shut off" 240
 }
 
@@ -79,22 +79,45 @@ is_protected() {
     return 1
 }
 
+# wd_start <dir> <min GiB> <interval s> <runner pid> <log>: starts host-disk-watchdog.sh as the leader of its own
+# session (setsid) and sets WD_PID. Every ssh, virsh and timeout it runs stays in that session (timeout makes its
+# own process group, never its own session), so wd_stop_session reaches all of them.
+wd_start() {
+    setsid bash "$(dirname "${BASH_SOURCE[0]}")/host-disk-watchdog.sh" --min-gb "$2" --interval "$3" --out "$1" \
+        --runner-pid "$4" >>"$5" 2>&1 &
+    WD_PID=$!
+    sleep 0.2
+    [ "$(ps -o sid= -p "$WD_PID" 2>/dev/null | tr -d ' ')" = "$WD_PID" ] || { hlog "watchdog: not a session leader"; return 1; }
+}
+
+# wd_stop_session <watchdog pid>: TERM to every process of the watchdog's session, KILL to what is left after 5 s,
+# then reap the watchdog.
+wd_stop_session() {
+    local i
+    pkill -TERM -s "$1" 2>/dev/null
+    for ((i = 0; i < 5; i++)); do pgrep -s "$1" >/dev/null || break; sleep 1; done
+    pkill -KILL -s "$1" 2>/dev/null
+    wait "$1" 2>/dev/null
+    return 0
+}
+
 # wd_finish <watchdog dir> <watchdog pid>: ends the host disk watchdog of a finished gate. It asks the watchdog for
 # one last check (DIR/stop-request) and waits for it, without killing it: a trip under way completes, stops the gate
 # units, shuts the VM down and TERMs the runner. The wait is bounded (WD_FINISH_TIMEOUT_S, default 600 s plus the
-# cancel budget); past it, or when the stop request cannot be written, the watchdog is stopped and the finish fails.
+# cancel budget); past it, or when the stop request cannot be written, the watchdog's whole session is stopped and
+# the finish fails.
 # Returns 0 only when the watchdog stopped by itself without a trip.
 wd_finish() {
     local dir="$1" pid="$2" bound=$((${WD_FINISH_TIMEOUT_S:-600} + CANCEL_TIMEOUT_S)) end rc
     end=$(($(date +%s) + bound))
     if ! : 2>/dev/null >"$dir/stop-request"; then
         hlog "watchdog: cannot write $dir/stop-request: stopping the watchdog, the gate's end is unchecked"
-        [ -e "$dir/watchdog-tripping" ] || { kill "$pid" 2>/dev/null; wait "$pid" 2>/dev/null; return 1; }
+        [ -e "$dir/watchdog-tripping" ] || { wd_stop_session "$pid"; return 1; }
     fi
     while kill -0 "$pid" 2>/dev/null; do
         if [ "$(date +%s)" -ge "$end" ]; then
-            hlog "watchdog: still running ${bound} s after the gate ended: stopping it"
-            kill "$pid" 2>/dev/null; wait "$pid" 2>/dev/null
+            hlog "watchdog: still running ${bound} s after the gate ended: stopping its session"
+            wd_stop_session "$pid"
             return 1
         fi
         sleep 1
@@ -119,7 +142,7 @@ wd_on_exit() {
         "$3" 1
         exit 125
     fi
-    kill "$2" 2>/dev/null
+    wd_stop_session "$2"
 }
 
 host_free_gb() { df -BG --output=avail /home | tail -1 | tr -dc '0-9'; }

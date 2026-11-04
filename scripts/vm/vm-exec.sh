@@ -65,9 +65,8 @@ json.dump({"thresholdGb": int(thr), "minHostFreeGb": int(m) if m else None, "tri
 PY
 }
 mkdir -p "$wd_dir"
-bash "$(dirname "$0")/host-disk-watchdog.sh" --min-gb "$WATCHDOG_MIN_GB" --interval 20 --out "$wd_dir" \
-    --runner-pid $$ >>"$wd_dir/watchdog.log" 2>&1 &
-wd_pid=$!
+wd_start "$wd_dir" "$WATCHDOG_MIN_GB" 20 $$ "$wd_dir/watchdog.log" || die "the host disk watchdog did not start"
+wd_pid=$WD_PID
 # every exit from here passes wd_on_exit: a tripped watchdog makes it 125 (also on a die path), otherwise the
 # watchdog is stopped
 trap 'wd_on_exit "$wd_dir" "$wd_pid" wd_record' EXIT

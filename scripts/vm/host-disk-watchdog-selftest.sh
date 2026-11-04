@@ -12,6 +12,7 @@
 #       trip completes and is recorded with 1;
 #   (6) a hung virsh during a trip: wd_finish's bound fires, the finish fails (125) and the watchdog is gone;
 #   (7) an unwritable stop request: the finish fails (125) promptly and the watchdog is gone.
+# In (3)-(7) the watchdog runs as a session leader (vm-common.sh wd_start), and no process of its session survives.
 set -uo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 tmp=$(mktemp -d); trap 'rm -rf "${tmp:?}"' EXIT
@@ -59,13 +60,15 @@ rc=$?
 [ -e "$tmp/wd2/watchdog-tripped.json" ] && bad "a trip record without a trip"
 [ -s "$tmp/wd2/min-host-free-gb.txt" ] || bad "no minimum free space recorded"
 
+# gone <case>: no process of that case's watchdog session (its ssh, virsh, timeout and sleep children) is left
+gone() { local p; p=$(pgrep -s "$(cat "$tmp/wd$1.pid")" | tr '\n' ' '); [ -z "$p" ] || bad "case $1 left processes of the watchdog session: $p"; }
 # finish <threshold GiB> <dir>: a runner like vm-exec.sh: watchdog in the background, wd_finish 1.5 s later
 finish() {
     bash -c '
         source "$1/vm-common.sh"
         trap "exit 125" TERM
-        bash "$1/host-disk-watchdog.sh" --min-gb "$2" --interval 1 --out "$3" --runner-pid $$ >/dev/null 2>&1 &
-        wd=$!
+        wd_start "$3" "$2" 1 $$ /dev/null || exit 3
+        wd=$WD_PID
         echo "$wd" >"$3.pid"
         sleep 1.5
         [ "${4:-}" != ro ] || chmod 555 "$3"
@@ -78,6 +81,7 @@ rc=$?
 [ "$rc" -eq 125 ] || bad "a runner finishing during a trip exited $rc, want 125"
 [ -s "$tmp/wd3/watchdog-tripped.json" ] || bad "the trip under way did not complete (no watchdog-tripped.json)"
 kill -0 "$(cat "$tmp/wd3.pid")" 2>/dev/null && bad "the tripped watchdog is still running"
+gone 3
 # (4) a clean finish
 start=$(date +%s)
 finish 1 "$tmp/wd4"
@@ -86,14 +90,15 @@ rc=$?
 [ $(($(date +%s) - start)) -lt 10 ] || bad "a clean finish took $(($(date +%s) - start)) s"
 [ -e "$tmp/wd4/watchdog-tripping" ] && bad "a clean finish left a trip latch"
 kill -0 "$(cat "$tmp/wd4.pid")" 2>/dev/null && bad "the watchdog outlived a clean finish"
+gone 4
 
 # (5) a die during a latched trip
 rm -f "$tmp/down"
 SELFTEST_SSH_DELAY=2 bash -c '
     source "$1/vm-common.sh"
     out="$3"; rec() { echo "$1" >"$out.rec"; }
-    bash "$1/host-disk-watchdog.sh" --min-gb "$2" --interval 1 --out "$3" --runner-pid $$ >/dev/null 2>&1 &
-    wd=$!
+    wd_start "$3" "$2" 1 $$ /dev/null || exit 3
+    wd=$WD_PID
     echo "$wd" >"$3.pid"
     trap "wd_on_exit \"$3\" $wd rec" EXIT
     trap "WD_DONE=1; rec 1; exit 125" TERM
@@ -104,6 +109,7 @@ rc=$?
 [ "$(cat "$tmp/wd5.rec" 2>/dev/null)" = 1 ] || bad "a die during a latched trip recorded no trip"
 [ -s "$tmp/wd5/watchdog-tripped.json" ] || bad "the trip under a die path did not complete"
 kill -0 "$(cat "$tmp/wd5.pid")" 2>/dev/null && bad "the watchdog outlived a die during a trip"
+gone 5
 # (6) a hung virsh during a trip
 rm -f "$tmp/down"
 start=$(date +%s)
@@ -112,6 +118,7 @@ rc=$?
 [ "$rc" -eq 125 ] || bad "a finish during a hung trip exited $rc, want 125"
 [ $(($(date +%s) - start)) -lt 20 ] || bad "a hung trip held the finish $(($(date +%s) - start)) s"
 kill -0 "$(cat "$tmp/wd6.pid")" 2>/dev/null && bad "the hung watchdog was not stopped"
+gone 6
 # (7) an unwritable stop request
 start=$(date +%s)
 finish 1 "$tmp/wd7" ro 2>/dev/null
@@ -120,6 +127,7 @@ chmod 755 "$tmp/wd7"
 [ "$rc" -eq 125 ] || bad "a finish without a stop request exited $rc, want 125"
 [ $(($(date +%s) - start)) -lt 10 ] || bad "an unwritable stop request held the finish $(($(date +%s) - start)) s"
 kill -0 "$(cat "$tmp/wd7.pid")" 2>/dev/null && bad "the watchdog outlived an unwritable stop request"
+gone 7
 
 [ "$fail" -eq 0 ] && echo "host-disk-watchdog self-test: ok"
 exit "$fail"
