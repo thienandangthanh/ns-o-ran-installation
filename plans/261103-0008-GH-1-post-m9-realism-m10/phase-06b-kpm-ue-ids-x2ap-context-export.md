@@ -77,3 +77,23 @@
 
 ## Rollback
 Re-pin the P06 SHAs.
+
+## Work record (in progress, 2026-11-04)
+- Step 1: ledger rows 79–100 and the controller's rulings on the inventory's open questions are committed (56a7092), before any code commit. Inventory: `plans/reports/planner-261104-1430-GH-1-p06b-ac18-inventory.md`. Rows 88–95 (stand-in anomaly sender, stub, predictor) belong to P07's R2/R3′ integration and are implemented there.
+- Step 2 (fork commits on `dev/l-release-nist180`, pinned in 0fdc1a3):
+  - oran-interface e5ad09d: `ueContext` line `{imsi, lteRnti, mnCellId, mmeUeS1apId}` sent before a seq's sample. It is sent on the first sample, on any change, after every new connection and after a send refused by backpressure. It goes to `e2-ue-context-<node>.jsonl`, never to `e2-ipc-trace-<node>.jsonl`. Hello announces minor 3, under the schema's own minor rule.
+  - ns-3 e5b02094: the eNB passes every UE; an en-gNB passes each UE whose secondary RLC is set up, with the master's LTE RNTI and cell read from that RLC through a read-only `UeManager` getter. A gNB UE without a master identity is left out.
+  - The byte-compare against checkpoint 1 is still to run (M4 on the VM).
+- Step 3 (Testbed 2d256d2): the agent keeps each node's latest context set, which each line replaces whole, and encodes en-gNB-UEID or eNB-UEID per R-4. A sample with a UE that has no context is not encoded. It is counted in `samplesNoUeContext`, and `dropped.encode` also counts it. The agent ignores hello minor, so an older ns-3 fails loudly through that counter. Host results in the dev image: codec-probe, rc-control-test, kpm-report-period-test, check-report-period.py and sctp-ppid-loopback-test exit 0. In the report-period golden, only the 15 UE pieces were regenerated; the header and cell pieces are byte-identical to the old golden. `compare-codec-probe.py` waits for the decode harness's `ueIds` field (row 83).
+- Step 4, kpimon (Testbed 89d45af):
+  - It decodes the UE ID CHOICE and tags UeMetrics with `ueId` (`enGnbUeId:<x2apId>@00F110-<%05X>`, `enbUeId:<mmeUeS1apId>@<x2apId>`). Any other CHOICE is logged as an error and the point is written without the tag, so a tag-count check catches it.
+  - It is shipped as three layered patches listed in the manifest, following the `control.go.enb-measurements.patch` precedent, instead of a regenerated `wrapper.c.patch`.
+  - Host proof: the C formatter on the agent's real octets, and kpimon's real Go `handleIndication` into a stub Influx endpoint. The image rebuild and the live run are still to do.
+- Deviations from the Files list:
+  - The agent's dispatch and reset are in `main.cpp`, not `ipc-server.cpp`; the counters are in `agent-stats.*`. A new test file `tests/codec-probe-kpm-ue-id.cpp` was added.
+  - The kpimon change is in new patch files plus installer lines.
+  - The harness also needs `check-n6-influx-window.py`, `n6-fixtures.py`, `ipc-null-sink.py`, `agents-ns3-run.sh` and a new `tools/e2-evidence/ue-context-map.py` (rows 79–100).
+- Disclosures for Stop A′:
+  - The `ns3.imsi` vendor measurement stays in the KPM report. The contract forbids only an IMSI carried as a gNB-UEID; R-4's and the schema's "never encoded" wording is narrowed to "never encoded as the UE ID".
+  - The MME UE S1AP ID equals the IMSI by ns-3's construction.
+  - A UE that leaves a gNB in the middle of a multi-sample reporting period has no context at encode time, so that sample is not encoded. P07–P10 must use one sample per period wherever handovers happen, or the agent must keep departed UEs until the period is reported.
