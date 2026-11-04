@@ -101,14 +101,18 @@
 - G1: the migrated seam smoke is green at the P07 pins, and its #9 row predates the first P07 code commit.
 - S1: R1 f2 passes via agent 2 (forwarded 2, failedOnBye 1, rejIpcDown 0, pending 0; agents 1 and 3 rc counters 0; one ledger line, IMSI 6).
 
-## Standards ledger (stub)
+## Standards ledger
 | Decision | Document, section | Zotero | Read |
 |---|---|---|---|
-| Style 5 action 3 and its RAN parameter IDs | E2SM-RC v01.03 and v03.00 §7.6.6.1, §8.4.6.3 (identical tables, PDF pp. 180/183); outcome §7.6.6.5 | `PSHY8566`, `JRDTL7XS` | to cite (PDF) |
-| SN-initiated SN change; MN-triggered only inter-frequency | 3GPP TS 37.340 §10.5.1, §7.2 | `E6VYJPXJ` | to cite |
-| **Disclosed message mapping (I-1):** in-process call ≈ SgNB Change Required; MN→S-SN `McHandoverRequest` ≈ SgNB Change Confirm; the SN↔SN X2 leg is not §10.5.1 message by message | 3GPP TS 37.340 §10.5.1 | `E6VYJPXJ` | to cite; shown at Stop A′ |
-| UE ID en-gNB-UEID and its fields | E2SM common v07.00 §6.2.2.6 | `QW6VJ83M` [C] | to cite |
-| eNB UE X2AP ID | 3GPP TS 36.423 §9.2.24 | `3ML7Y29A` | to cite |
+| Control Style 5 "Dual Connectivity control", Control Action ID 3 = "DC PSCell Change control" ("To control PSCell change of a UE within a secondary node or to another secondary node"), RAN parameters in §8.4.6.3; action 4 (DC Secondary Node Change Control, §8.4.6.4) is not used | E2SM-RC v03.00 §7.6.6.1, PDF pp. 39–40; v01.03 §7.6.6.1, PDF pp. 38–39 (same table) | `JRDTL7XS`, `PSHY8566` | ✓ 2026-11-04 |
+| Header = RIC Control Header IE Format 1 (UE ID, Control Service Style ID, Control Action ID); message = RIC Control Message IE Format 1; outcome = RIC Control Outcome IE Format 1 with RAN parameter 1 ReceivedTimestamp OCTET STRING (SIZE(8)) | E2SM-RC v03.00 §7.6.6.2, §7.6.6.3, §7.6.6.5, PDF p. 40 | `JRDTL7XS` | ✓ 2026-11-04 |
+| **I-4:** action 3 RAN parameter IDs used: 1 Target PSCell ID (STRUCTURE) → 2 >CHOICE Target Cell (STRUCTURE) → 3 >>NR Cell (STRUCTURE) → 4 >>>NR CGI (ELEMENT, key flag FALSE, NR CGI IE in 3GPP TS 38.423 §9.2.2.7). Parameters 5–24 (E-UTRA cell, Secondary Node ID, PDU session and DRB lists) are not sent | E2SM-RC v03.00 §8.4.6.3, PDF pp. 183–184; v01.03 §8.4.6.3, PDF p. 180 (same IDs 1–4) | `JRDTL7XS`, `PSHY8566` | ✓ 2026-11-04 |
+| Inter-SN PSCell change: the E2 node invokes "*SNChange* (only SN-initiated)" | E2SM-RC v03.00 §8.4.6.3, PDF p. 183 | `JRDTL7XS` | ✓ 2026-11-04 |
+| SN change can be triggered "by both the MN (only for inter-frequency secondary node change) and the SN"; the scenario is single-carrier, so the change is SN-initiated, and the control goes to the source en-gNB | 3GPP TS 37.340 v18.7.0 §7.2, p. 18 (PDF p. 19) | `E6VYJPXJ` | ✓ 2026-11-04 |
+| SN-initiated SN change, EN-DC: 1 the source SN sends SgNB Change Required (target SN ID); 2/3 MN ↔ T-SN SgNB Addition; 4/5 RRCConnectionReconfiguration(Complete); 6 the MN confirms the release of the source SN (SgNB Change Confirm) | 3GPP TS 37.340 v18.7.0 §10.5.1, Figure 10.5.1-2, pp. 61–62 (PDF pp. 62–63) | `E6VYJPXJ` | ✓ 2026-11-04 |
+| **Disclosed message mapping (I-1):** the en-gNB's in-process call to the MN ≈ step 1 SgNB Change Required; the MN's admission and X2 `McHandoverRequest` to the source SN ≈ steps 2/3 and 6; the SN↔SN X2 leg and the RRC steps are ns-3's model, not §10.5.1 message by message | 3GPP TS 37.340 v18.7.0 §10.5.1 | `E6VYJPXJ` | ✓ 2026-11-04; shown at Stop A′ |
+| UE ID = en-gNB-UEID {MeNB UE X2AP ID, Global eNB ID} | E2SM v07.00 §6.2.2.6, p. 14 (cited in phase 06b) | `QW6VJ83M` | ✓ 2026-11-04 (P06b) |
+| eNB UE X2AP ID INTEGER (0..4095) | E2SM v07.00 §6.2.3.23, from 3GPP TS 36.423 §9.2.24, p. 24 (cited in phase 06b) | `QW6VJ83M`; `3ML7Y29A` | ✓ 2026-11-04 (P06b) |
 
 ## Risks
 - Protobuf regeneration mismatch (Medium/Medium). The byte-equality proof comes first.
@@ -150,3 +154,12 @@ Do these first, in this order, before the first P07 code commit or VM step:
    - The TS xApp never uses an `ns3.*` field for the UE identity.
 7. **The rungs' UE-list judge.** Pass `--facts` (the rung's `$label-sub-facts.json`) to every `kpm_moves` call, so a rung with an agent restart attributes frames by association instead of failing closed on a shared IP.
 8. D-06b-1 (the MeNB UE X2AP ID before DC) is scheduled in P10 with P15; see phase 10. Take it into P07 only if P07 rebuilds kpimon anyway.
+
+## Work record (in progress, 2026-11-04)
+- **Disk projection (hand-off 1), before any VM step:**
+  - Host /home has 30 GiB free. The VM's active vda is the overlay `ubuntu24.04-r2-green.1793744306` (54 GiB allocated). `vm-orphan-overlays.sh --pending` passes: it is the overlay the current snapshot's revert record unlinks at the next revert. No untracked overlay exists.
+  - P07's start state is a revert to `f7-rerun-green`. That revert unlinks the active overlay through libvirt's own record, with no manual deletion, so /home goes to about 84 GiB free.
+  - P07's VM use, from P05's and P06b's per-step `host-disk.tsv`: M2 about 1 GiB, M3 about 11–14 GiB (kpimon and kpm_sim images), M6/M7 about 4 GiB, and the rung chains and image rebuilds (rc, TS xApp, agent) about 15–20 GiB. That totals about 35–40 GiB, leaving about 45 GiB, well above the 20 GiB floor. No PAUSE is needed.
+  - The revert also resets the VM root to the snapshot's image set, so P12's 75 % guard starts from the snapshot state.
+  - **Ops rule (registered here):** a VM `docker image prune -f` is allowed only for dangling (untagged) images, which are superseded builds of this plan. Never a tagged image, never `-a`, and every prune is logged in the work record with the space freed. P06b's prune is disclosed at Stop A′.
+- **Step 1, standards ledger:** the I-4 and I-1 rows are cited from the PDFs (E2SM-RC v03.00 and v01.03 §7.6.6.1–§7.6.6.5 and §8.4.6.3; 3GPP TS 37.340 v18.7.0 §7.2 and §10.5.1). Parameters 1–4 have the same IDs in both versions.
