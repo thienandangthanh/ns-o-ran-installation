@@ -53,19 +53,26 @@ def nci_key(n5):
 
 
 def n5_keys(m9_scenario_text):
+    """The M9 scenario's cell keys, each the registered N5 encoding of its cell: %08X%02X of the cellId, both parts."""
     cells = json.loads(m9_scenario_text)["cells"]
+    for cell, key in cells.items():
+        need(str(cell).isdigit() and key == "%08X%02X" % (int(cell), int(cell)),
+             f"the M9 scenario's cell {cell} key {key!r} is not its N5 encoding")
     keys = sorted(set(cells.values()))
-    need(keys and all(N5_RE.fullmatch(k) for k in keys), f"the M9 scenario's cells are not N5 keys: {cells}")
+    need(keys, "the M9 scenario has no cells")
     return keys
 
 
 def sub_keys(text, keys):
-    """Every quoted occurrence of an N5 key becomes its NCI key; at least one must occur."""
+    """Every quoted occurrence of an N5 key becomes its NCI key; at least one must occur, and no other 10-hex key
+    may remain (a key outside the scenario's cells is drift, never rewritten or kept)."""
     n = 0
     for k in keys:
         n += text.count(f'"{k}"')
         text = text.replace(f'"{k}"', f'"{nci_key(k)}"')
     need(n > 0, "no N5 key to rewrite")
+    stray = set(re.findall(r'"([0-9A-F]{10})"', text)) - {nci_key(k) for k in keys}
+    need(not stray, f"cell keys outside the scenario's cells: {sorted(stray)}")
     return text
 
 
@@ -133,7 +140,7 @@ def meid(s):
     return s
 
 
-def t_rc_multiset(text, m9_ledger_text, idmap):
+def t_rc_multiset(text, m9_ledger_text, idmap, m9_scenario_text):
     need(json.dumps(json.loads(text), indent=1, sort_keys=True) + "\n" == text,
          "the M9 rc-multiset is not in the extractor's format (indent 1, sorted keys)")
     ctl, _ = m9_applied(m9_ledger_text)
@@ -142,6 +149,7 @@ def t_rc_multiset(text, m9_ledger_text, idmap):
         src = [d["sourceCell"] for d in ctl if d["afterSeq"] == e["step"] and d["imsi"] == e["imsi"]]
         need(len(src) == 1, f"rc-multiset entry step {e['step']} imsi {e['imsi']} matches {len(src)} M9 ledger lines")
         need((e["style"], e["action"]) == (3, 1), f"M9 rc-multiset style/action {(e['style'], e['action'])}, want (3, 1)")
+        need(e["targetKey"] in n5_keys(m9_scenario_text), f"M9 rc-multiset targetKey {e['targetKey']!r} is not a scenario cell key")
         ue = idmap["ues"][str(e.pop("imsi"))]
         e.update(viaNode=src[0], style=5, action=3, targetKey=nci_key(e["targetKey"]),
                  ueId={"type": "en-gNB-UEID", "mEnbUeX2apId": ue["mEnbUeX2apId"], "globalEnbId": idmap["globalEnbId"]})
@@ -170,7 +178,7 @@ def main(av):
         elif kind == "ledger":
             out = t_ledger(text)
         else:
-            out = t_rc_multiset(text, led, json.load(open(opt["--identity-map"])))
+            out = t_rc_multiset(text, led, json.load(open(opt["--identity-map"])), scen)
     except (TransformError, KeyError, TypeError, ValueError) as e:
         print(f"m9-transform: {kind}: {e}", file=sys.stderr)
         return 1

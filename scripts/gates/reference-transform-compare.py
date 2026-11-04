@@ -168,7 +168,7 @@ def compare(run, m9raw, m9ref, files):
         "stage-a": lambda t: T.t_schedule_like(t, m9["scenario"], m9["ledger"], "stage-a"),
         "predictor-records": lambda t: T.t_predictor_records(t, m9["scenario"]),
         "ledger": lambda t: T.t_ledger(t),
-        "rc-multiset": lambda t: T.t_rc_multiset(t, m9["ledger"], idmap),
+        "rc-multiset": lambda t: T.t_rc_multiset(t, m9["ledger"], idmap, m9["scenario"]),
     }
     meid_seen = False
     for kind, old in m9.items():
@@ -233,7 +233,7 @@ def build_world(t):
         files[k].write_text(T.t_schedule_like((m9raw / f"scenario/r3p-{k}.json").read_text(), scen, led, k))
     (run / "r3p/predictor-records.jsonl").write_text(T.t_predictor_records((m9raw / "r3p/predictor-records.jsonl").read_text(), scen))
     (run / "trace/e2-control-ledger.jsonl").write_text(T.t_ledger(led))
-    (run / "extra/rc-multiset.json").write_text(T.t_rc_multiset((m9raw / "extra/rc-multiset.json").read_text(), led, idmap))
+    (run / "extra/rc-multiset.json").write_text(T.t_rc_multiset((m9raw / "extra/rc-multiset.json").read_text(), led, idmap, scen))
     m9ref.mkdir(parents=True)
     d = DIGEST.digests(run)
     (m9ref / "digests.json").write_text(json.dumps({k: d[k] for k in ("ipc", "ledger", "traces", "extra")}, indent=1))
@@ -266,8 +266,8 @@ def mutate(world, fx):
 def self_test():
     bad = []
     fixtures = sorted(FIXTURES.glob("*.json"))
-    if [f.name[0] for f in fixtures] != list("abcdefghi"):
-        print("FAIL: fixtures a-i are not exactly present:", [f.name for f in fixtures])
+    if [f.name[0] for f in fixtures] != list("abcdefghij"):
+        print("FAIL: fixtures a-j are not exactly present:", [f.name for f in fixtures])
         return 1
     for f in fixtures:
         fx = json.loads(f.read_text())
