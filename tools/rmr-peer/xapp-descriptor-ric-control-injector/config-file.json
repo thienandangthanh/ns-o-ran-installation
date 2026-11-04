@@ -1,0 +1,49 @@
+{
+  "name": "ric-control-injector",
+  "version": "0.1.0",
+  "containers": [
+    {
+      "name": "ric-control-injector",
+      "image": {
+        "registry": "127.0.0.1:80",
+        "name": "stubqp",
+        "tag": "SET-AT-INSTALL"
+      },
+      "command": ["python3", "-I", "/app/rmr-injector.py", "--rmr-port", "4560", "--ctl-host", "0.0.0.0",
+                  "--ctl-port", "8080", "--ready-timeout", "0", "--out", "/tmp/injector"]
+    }
+  ],
+  "messaging": {
+    "ports": [
+      {
+        "name": "http",
+        "container": "ric-control-injector",
+        "port": 8080,
+        "description": "control socket, one JSON request per line (rmr-injector.py)"
+      },
+      {
+        "name": "rmr-data",
+        "container": "ric-control-injector",
+        "port": 4560,
+        "rxMessages": ["RIC_CONTROL_ACK", "RIC_CONTROL_FAILURE"],
+        "txMessages": ["RIC_CONTROL_REQ"],
+        "policies": [],
+        "description": "rmr receive data port for the RIC control injector"
+      },
+      {
+        "name": "rmr-route",
+        "container": "ric-control-injector",
+        "port": 4561,
+        "description": "rmr route port for the RIC control injector"
+      }
+    ]
+  },
+  "rmr": {
+    "protPort": "tcp:4560",
+    "maxSize": 2072,
+    "numWorkers": 1,
+    "rxMessages": ["RIC_CONTROL_ACK", "RIC_CONTROL_FAILURE"],
+    "txMessages": ["RIC_CONTROL_REQ"],
+    "policies": []
+  }
+}

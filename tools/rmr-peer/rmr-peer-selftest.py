@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""rmr-peer-selftest.py: checks the stub's prediction builder, an injector -> RMR receiver loopback, and that
-the injector and the stub survive idle receive timeouts.
+"""rmr-peer-selftest.py: checks the stub's prediction builder, an injector -> RMR receiver loopback, the injector's
+meid-routed RIC control, and that the injector and the stub survive idle receive timeouts.
 
 Runs inside the rmr-peer image (no RIC needed): the injector and the stub are started as subprocesses with one
-static seed route table. One anomaly request must arrive here as 30003 with the exact payload; after an idle
+static seed route table. One anomaly request must arrive here as 30003 with the exact payload; one control request
+for a meid in the seed meid map must arrive here as 12040 with that meid and the exact payload, and one for a meid
+outside the map must be refused by RMR (no endpoint: routing is by meid, not by type alone); after an idle
 wait the injector must still run and log one message sent to it; the stub must stay up while idle, answer one
 30000 with 30002, stay up after a second idle wait and log exactly that one request.
 Exit 0 when every check passes.
@@ -19,6 +21,11 @@ import time
 import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+MEID = "en_gnb_001_001_00000003"
+# a RICcontrolRequest from the independent codec (e2-probe-node.py control --requestor 1 --instance 5 --func 3
+# --imsi 2 --target-gnb 3); RMR carries it as opaque octets
+CONTROL_HEX = ("00040052000004001d000500000100050005000200030016001716006000020000f1100100000001000000010103000000"
+               "001700212000000100004400000001440000000244000000032a00090000f1100000000310")
 
 
 def load(name):
@@ -34,8 +41,8 @@ def check(cond, what, problems):
         problems.append(what)
 
 
-def rcv(rmr, ctx, mtype, timeout):
-    """(mtype, payload) of the first message of that type within timeout seconds, else None."""
+def rcv(rmr, ctx, mtype, timeout, with_meid=False):
+    """(mtype, payload[, meid]) of the first message of that type within timeout seconds, else None."""
     buf, deadline = None, time.time() + timeout
     while time.time() < deadline:
         buf = rmr.rmr_torcv_msg(ctx, buf, 500)
@@ -43,7 +50,8 @@ def rcv(rmr, ctx, mtype, timeout):
             continue
         summ = rmr.message_summary(buf)
         if summ[rmr.RMR_MS_MSG_STATE] == rmr.RMR_OK and summ[rmr.RMR_MS_MSG_TYPE] == mtype:
-            return mtype, rmr.get_payload(buf)
+            got = (mtype, rmr.get_payload(buf))
+            return got + (rmr.rmr_get_meid(buf).decode(),) if with_meid else got
     return None
 
 
@@ -94,7 +102,8 @@ def main():
     with open(seed, "w") as f:
         # 4593 this process, 4592 the injector, 4594 the stub
         f.write("newrt|start\nmse|30003|-1|127.0.0.1:4593\nmse|30002|-1|127.0.0.1:4593\n"
-                "mse|30004|-1|127.0.0.1:4592\nmse|30000|-1|127.0.0.1:4594\nnewrt|end\n")
+                "mse|30004|-1|127.0.0.1:4592\nmse|30000|-1|127.0.0.1:4594\nmse|12040|-1|%%meid\nnewrt|end\n"
+                "meid_map|start\nmme_ar|127.0.0.1:4593|%s\nmeid_map|end|1\n" % MEID)
     env = dict(os.environ, RMR_SEED_RT=seed, RMR_RTG_SVC="-1", RMR_SRC_ID="127.0.0.1")
     os.environ.update(RMR_SEED_RT=seed, RMR_RTG_SVC="-1")
     from ricxappframe.rmr import rmr
@@ -112,6 +121,19 @@ def main():
         check(reply.get("ok") is True, "injector reply %r" % reply, problems)
         got = rcv(rmr, ctx, 30003, 10)
         check(got == (30003, want), "loopback received 30003 with the exact payload: %r" % (got,), problems)
+        s.sendall(json.dumps({"op": "control", "meid": MEID, "hex": CONTROL_HEX}).encode() + b"\n")
+        reply = json.loads(s.makefile().readline())
+        check(reply.get("ok") is True, "injector control reply %r" % reply, problems)
+        got = rcv(rmr, ctx, 12040, 10, with_meid=True)
+        check(got == (12040, bytes.fromhex(CONTROL_HEX), MEID),
+              "loopback received 12040 with the meid and the exact payload: %r" % (got,), problems)
+        s.sendall(json.dumps({"op": "control", "meid": "en_gnb_001_001_00000009", "hex": CONTROL_HEX}).encode() + b"\n")
+        reply = json.loads(s.makefile().readline())
+        check(reply.get("ok") is False, "a control for a meid outside the map is refused by RMR: %r" % reply, problems)
+        s.sendall(b'{"op": "control", "meid": "", "hex": "00"}\n')
+        reply = json.loads(s.makefile().readline())
+        check(reply.get("ok") is False and "meid" in reply.get("error", ""), "a control without a meid is refused: %r"
+              % reply, problems)
         time.sleep(2.5)
         check(p.poll() is None, "injector still running after 2.5 s of idle receive timeouts", problems)
         check(send(rmr, ctx, 30004, b"idle-check"), "sent one 30004 to the injector", problems)
