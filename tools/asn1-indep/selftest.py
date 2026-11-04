@@ -87,6 +87,14 @@ def ric_response_checks():
     check("RICcontrolAcknowledge omits the outcome", "id-RICcontrolOutcome" not in d["ies"], repr(d["ies"]))
     e2ap_rt("RICcontrolFailure", e2ap.ric_control_failure((1, 2), 3, ("ricRequest", "control-failed-to-execute")))
     check("procedure_name", e2ap.procedure_name(e2ap.ric_control_ack((1, 2), 3)) == "RICcontrolAcknowledge")
+    hdr, msg = bytes.fromhex("0102"), bytes.fromhex("0304")
+    d = e2ap_rt("RICcontrolRequest", e2ap.ric_control_request((7, 9), 3, hdr, msg, ack_request="ack"))
+    check("RICcontrolRequest IEs", d["message"] == "RICcontrolRequest" and d["ies"]["id-RICrequestID"] == {
+        "ricRequestorID": 7, "ricInstanceID": 9} and d["ies"]["id-RANfunctionID"] == 3
+        and d["ies"]["id-RICcontrolHeader"] == hdr and d["ies"]["id-RICcontrolMessage"] == msg
+        and d["ies"]["id-RICcontrolAckRequest"] == "ack" and "id-RICcallProcessID" not in d["ies"], repr(d["ies"]))
+    d = e2ap_rt("RICcontrolRequest without ack request", e2ap.ric_control_request((7, 9), 3, hdr, msg))
+    check("RICcontrolRequest omits the ack request", "id-RICcontrolAckRequest" not in d["ies"], repr(d["ies"]))
 
 
 def handover_params(nr_cgi):

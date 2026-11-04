@@ -116,6 +116,16 @@ def _control_ies(request_id, ran_function_id, call_process_id):
     return ies
 
 
+def ric_control_request(request_id, ran_function_id, header, message, call_process_id=None, ack_request=None):
+    """RICcontrolRequest (E2AP v03.01 §9.1.1.7, IEs in the ASN.1 order); header and message = E2SM control header
+    and message octets; ack_request = RICcontrolAckRequest name ('noAck', 'ack') or None to omit the optional IE."""
+    ies = _control_ies(request_id, ran_function_id, call_process_id)
+    ies += [("id-RICcontrolHeader", header), ("id-RICcontrolMessage", message)]
+    if ack_request is not None:
+        ies.append(("id-RICcontrolAckRequest", ack_request))
+    return build("RICcontrolRequest", ies)
+
+
 def ric_control_ack(request_id, ran_function_id, outcome=None, call_process_id=None):
     """RICcontrolAcknowledge; outcome = E2SM control outcome octets, or None to omit the optional IE."""
     ies = _control_ies(request_id, ran_function_id, call_process_id)
