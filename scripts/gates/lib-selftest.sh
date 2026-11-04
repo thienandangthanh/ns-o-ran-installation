@@ -42,13 +42,16 @@ rc=$?
 grep -q 'guest root .* > .*: stopping sleep' "$tmp/guard.err" || bad "nist_run logged no stop line"
 pgrep -f '^sleep 100$' >/dev/null && bad "the stopped command is still running"
 [ -z "$(jobs -rp)" ] || bad "a helper process of nist_run outlived it: $(jobs -rp | tr '\n' ' ')"
+pgrep -fx 'sleep 240' >/dev/null && bad "the stdin producer of a stopped nist_run (sleep 240) survived"
 
 NIST_RUN_MAX_ROOT_PCT=100 nist_run 30 sh -c 'exit 7'
 rc=$?
 [ "$rc" -eq 7 ] || bad "nist_run under the threshold returned $rc, want the command's 7"
+pgrep -fx 'sleep 150' >/dev/null && bad "the stdin producer of a normal nist_run exit (sleep 150) survived"
 NIST_RUN_MAX_ROOT_PCT=100 nist_run 2 sleep 30
 rc=$?
 [ "$rc" -eq 124 ] || bad "nist_run past its time bound returned $rc, want timeout's 124"
+pgrep -fx 'sleep 122' >/dev/null && bad "the stdin producer of a timed-out nist_run (sleep 122) survived"
 
 # shellcheck source=agents.sh
 source "$here/agents.sh" >/dev/null 2>&1

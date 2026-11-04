@@ -108,23 +108,31 @@ retry() {
 #
 # While the command runs, the guest root's use is read every NIST_RUN_POLL_S seconds (default 2). Above
 # NIST_RUN_MAX_ROOT_PCT (default 85) the command is stopped (TERM to timeout, which forwards it and sends KILL
-# itself 60 s later; no helper process outlives nist_run) and nist_run returns 1, so a build that writes without end cannot fill the guest disk before the time bound.
+# itself 60 s later) and nist_run returns 1, so a build that writes without end cannot fill the guest disk before the
+# time bound. No helper process outlives nist_run: the stdin producer is stopped and reaped on every return.
 nist_run() {
     local t="$1"; shift
-    local max="${NIST_RUN_MAX_ROOT_PCT:-85}" poll="${NIST_RUN_POLL_S:-2}" pid used rc
-    timeout --kill-after=60 "$t" "$@" < <(exec sleep $((t + 120))) &
+    local max="${NIST_RUN_MAX_ROOT_PCT:-85}" poll="${NIST_RUN_POLL_S:-2}" pid spid fd used rc
+    # the idle stdin's producer is owned here: started first, stopped and reaped on every return
+    exec {fd}< <(exec sleep $((t + 120)))
+    spid=$!
+    timeout --kill-after=60 "$t" "$@" <&"$fd" &
     pid=$!
+    exec {fd}<&-
+    rc=""
     while kill -0 "$pid" 2>/dev/null; do
         used=$(df --output=pcent / | tail -1 | tr -dc '0-9')
         if [ "${used:-0}" -gt "$max" ]; then
             echo "nist_run: guest root ${used} % > ${max} %: stopping $1" >&2
             kill -TERM "$pid" 2>/dev/null   # timeout forwards it and, after --kill-after, sends KILL itself
             wait "$pid" 2>/dev/null
-            return 1
+            rc=1
+            break
         fi
         sleep "$poll"
     done
-    wait "$pid"; rc=$?
+    [ -n "$rc" ] || { wait "$pid"; rc=$?; }
+    kill "$spid" 2>/dev/null; wait "$spid" 2>/dev/null
     return "$rc"
 }
 
