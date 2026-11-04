@@ -103,3 +103,16 @@ Re-pin the P06 SHAs.
   - The `ns3.imsi` vendor measurement stays in the KPM report. The contract forbids only an IMSI carried as a gNB-UEID; R-4's and the schema's "never encoded" wording is narrowed to "never encoded as the UE ID".
   - The MME UE S1AP ID equals the IMSI by ns-3's construction.
   - A UE that leaves a gNB in the middle of a multi-sample reporting period has no context at encode time, so that sample is not encoded. P07–P10 must use one sample per period wherever handovers happen, or the agent must keep departed UEs until the period is reported.
+- Harness (9a64fd3): rows 79–87 and 96–100. Lint and every self-test pass. On the gNB-UEID-era e2i capture (`evidence/e2i/20261104T025747Z`), the new UE ID check fails as it must (44550 gNB-UEIDs), and the sub-actions check passes (3 requests, one action, ID 1, Format 3).
+- VM gates. Evidence is under `evidence/`.
+  - M4 PASS `m4/20261104T061448Z` (18/18).
+  - M5 attempt 1 FAIL `m5/20261104T063714Z`: run before M3, so the decode harness linked against the old kpimon image's .so, which has no tag function. This was an order error, not a defect.
+  - M3 PASS `m3/20261104T064159Z` (kpimon rebuilt at Testbed 89d45af).
+  - M5 PASS `m5/20261104T072003Z`. M6 PASS `m6/20261104T072138Z`.
+  - M7 attempt 1 FAIL `m7/20261104T072315Z`, on `m7_kpm_ue_ids_en_gnb_and_enb_ueid_resolved_by_ue_context` only. After the e2term delete, Docker reassigned agent IPs, and the flattened `node-ips.json` map judged node 2's indications against node 3's context. The wire IDs equal node 2's own context file.
+  - Fix: row 101 (ae937f7), then d8e7692, which attributes each frame by its SCTP association's E2 Setup node, still requires the IP to be listed for that node, and fails closed on a shared IP without facts. Replayed on attempt 1's capture: PASS with facts (all five nodes, 0 gNB-UEID), FAIL without.
+  - At d8e7692: M6 PASS `m6/20261104T075343Z`, M7 PASS `m7/20261104T075520Z`.
+- Step 2 and step 5 (R3′ single, `r3p/20261104T082155Z`, d8e7692):
+  - Live1 against the M9/cp1 reference (`plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/reference/r3p`): ledger, ipc (100 samples per node) and traces are byte-equal. `extra` differs only in `rc-multiset` targetKey `0000000202` → `0000000210`, which is P06's registered key transform (row 22). kpm-headers and collet-start-time are equal. `ipcTraceUeContextLines` = 0. The scenario, schedule and predictor-records files differ by the same T, which P08 judges.
+  - `r3p_live1_ue_context_equals_identity_map_cp1` PASS, the R-8 live cross-check. The UE context tie to ns-3's PDCP trace, the Format-3-only subscription and the KPM UE-list moves all PASS.
+  - The gate's verdict is FAIL on `r3p_live1_expected_outcomes_step_scoped_late_zero` and `r3p_live1_wire_requests_equal_handovers_via_target_with_predictor_key`. Both expect h1 via the source en-gNB 3 (row 22's T on the schedule), while the TS xApp still sends via the target gNB 2, as in P05's green run, whose ledger line is identical. Rows 14, 15 and 25 change that in P07. This is the P06b + P07 integration boundary of step 5: R3′ is judged at P07's exit.
