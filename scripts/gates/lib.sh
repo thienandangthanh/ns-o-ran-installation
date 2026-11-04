@@ -76,9 +76,17 @@ check() {
 # wins; it never replaces the fields gate_finish writes itself). The value is
 # re-serialized onto one line, because facts.jsonl is read line by line and a
 # pretty-printed value (an indented report file) would break the verdict.
+# An empty value is written as null and any other value that is not JSON as a JSON string of its text, so one
+# missing or broken input never makes facts.jsonl unparseable (which would leave the run without a verdict.json).
 fact() {
     local v
-    v=$(python3 -I -c 'import json,sys; print(json.dumps(json.loads(sys.argv[1])))' "$2" 2>/dev/null) || v="$2"
+    v=$(python3 -I -c '
+import json, sys
+s = sys.argv[1]
+try:
+    print(json.dumps(json.loads(s)))
+except ValueError:
+    print(json.dumps(None if not s.strip() else s))' "$2")
     printf '{"key":%s,"value":%s}\n' "$(json_str "$1")" "$v" >>"$EVIDENCE_DIR/facts.jsonl"
 }
 
@@ -97,9 +105,28 @@ retry() {
 # EOF (busy-loop guard for `read -t`), and the whole call is bounded. The idle
 # stdin comes from a process substitution, not a pipeline: bash waits for every
 # pipeline member, so `sleep infinity | cmd` would never return.
+#
+# While the command runs, the guest root's use is read every NIST_RUN_POLL_S seconds (default 2). Above
+# NIST_RUN_MAX_ROOT_PCT (default 85) the command is stopped (TERM to timeout, which forwards it, then KILL after
+# 60 s) and nist_run returns 1, so a build that writes without end cannot fill the guest disk before the time bound.
 nist_run() {
     local t="$1"; shift
-    timeout --kill-after=60 "$t" "$@" < <(exec sleep $((t + 120)))
+    local max="${NIST_RUN_MAX_ROOT_PCT:-85}" poll="${NIST_RUN_POLL_S:-2}" pid used rc
+    timeout --kill-after=60 "$t" "$@" < <(exec sleep $((t + 120))) &
+    pid=$!
+    while kill -0 "$pid" 2>/dev/null; do
+        used=$(df --output=pcent / | tail -1 | tr -dc '0-9')
+        if [ "${used:-0}" -gt "$max" ]; then
+            echo "nist_run: guest root ${used} % > ${max} %: stopping $1" >&2
+            kill -TERM "$pid" 2>/dev/null
+            (sleep 60; kill -KILL "$pid" 2>/dev/null) &
+            wait "$pid" 2>/dev/null
+            return 1
+        fi
+        sleep "$poll"
+    done
+    wait "$pid"; rc=$?
+    return "$rc"
 }
 
 # dk: docker as the current user when the socket allows it, else via sudo.

@@ -60,6 +60,8 @@ timeout 60 bash scripts/gates/rt-reader-selftest.sh >/dev/null 2>&1 || { echo "r
 timeout 120 bash scripts/gates/ts-patches-selftest.sh >/dev/null 2>&1 || { echo "TS xApp patch-set check self-test failed"; rc=1; }
 timeout 120 bash scripts/gates/rc-at-pin-selftest.sh >/dev/null 2>&1 || { echo "rc pin + patch-set check self-test failed"; rc=1; }
 timeout 120 bash scripts/gates/kpimon-guard-selftest.sh >/dev/null 2>&1 || { echo "kpimon install guard self-test failed"; rc=1; }
+timeout 120 bash scripts/gates/lib-selftest.sh >/dev/null 2>&1 || { echo "lib.sh fact/nist_run self-test failed"; rc=1; }
+timeout 60 bash scripts/vm/host-disk-watchdog-selftest.sh >/dev/null 2>&1 || { echo "host disk watchdog self-test failed"; rc=1; }
 python3 -I scripts/gates/replay-ts-cell-map.py --self-test >/dev/null || { echo "TS cell-map replay self-test failed"; rc=1; }
 python3 -I scripts/gates/e2i-wire-checks.py --self-test >/dev/null || { echo "e2i wire judge self-test failed"; rc=1; }
 python3 -I scripts/disk-burst-h.py --self-test >/dev/null || { echo "disk-burst-h self-test failed"; rc=1; }

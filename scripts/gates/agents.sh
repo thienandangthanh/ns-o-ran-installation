@@ -76,6 +76,22 @@ agents_reserve_ports() {
     now=$(cat /proc/sys/net/ipv4/ip_local_reserved_ports)
     [ "$now" = "$AGENT_RESERVED_PORTS" ] || { echo "$key reads '$now', want $AGENT_RESERVED_PORTS"; return 1; }
     echo "$key = $now; $AGENT_RESERVED_PORTS_CONF: $(cat "$AGENT_RESERVED_PORTS_CONF")"
+    # The reservation keeps new connections off these ports; a socket taken before it (or a leftover listener) would
+    # still block `docker run -p`. TIME_WAIT is allowed: it does not block the publish.
+    local held
+    held=$(agents_ports_held) || { echo "ss cannot list TCP sockets"; return 1; }
+    [ -z "$held" ] || { echo "sockets other than TIME_WAIT hold ports in $AGENT_RESERVED_PORTS:"; echo "$held"; return 1; }
+    echo "no socket other than TIME_WAIT holds a port in $AGENT_RESERVED_PORTS"
+}
+
+# shellcheck disable=SC2120  # the file argument is the self-test's; the check calls it without one
+# agents_ports_held [ss output file]: the `ss -Htan` lines (state, local and peer address) whose local port lies in
+# AGENT_RESERVED_PORTS and whose state is not TIME-WAIT; reads the file instead of running ss (the self-test).
+agents_ports_held() {
+    local lo=${AGENT_RESERVED_PORTS%-*} hi=${AGENT_RESERVED_PORTS#*-} src
+    if [ -n "${1:-}" ]; then src=$(cat "$1") || return 1; else src=$(ss -Htan) || return 1; fi
+    awk -v lo="$lo" -v hi="$hi" '{ n = split($4, a, ":"); p = a[n] + 0
+        if ($1 != "TIME-WAIT" && p >= lo && p <= hi) print $1, $4, $5 }' <<<"$src"
 }
 
 agents_ensure_build_tools() {
