@@ -15,13 +15,18 @@
 #   injector_rmr_ready [timeout]  its log prints READY (RMR has a route table: after registration and an rtmgr push)
 #   injector_routes_check <label> <meid...>  rtmgr's table (rc_route_dump <label>) has the injector's 12040 %meid
 #                                 entry and maps every meid to one e2term endpoint (mme_ar)
+#   injector_ip                   the injector pod's IP
+#   injector_send_argv <meid> <pdu-hex>  one argv per line: tools/rmr-peer/injector-send.py towards the control socket
 #   injector_control <tag> <meid> <pdu-hex>  one control through the control socket (pod IP:8080); pass iff RMR
 #                                 accepted it; reply in <tag>-injector-reply.json
 #   injector_logs_save <label>    the injector's tx.jsonl and rx.jsonl into the evidence
 #   injector_uninstall            deregister from appmgr (when listed) and uninstall
+#   ts_scale_down | ts_absent | ts_scale_up   the TS xApp's Deployment at 0 replicas with no pod left; back to one
+#                                 new Ready pod (ts_ready)
 INJECTOR_NAME=ric-control-injector
 INJECTOR_VERSION=0.1.0
 INJECTOR_DESC_DIR="${RMR_PEER_DIR:-$HARNESS_DIR/tools/rmr-peer}/xapp-descriptor-ric-control-injector"
+INJECTOR_SEND="${RMR_PEER_DIR:-$HARNESS_DIR/tools/rmr-peer}/injector-send.py"
 INJECTOR_CTL_PORT=8080
 
 _injector_pod() { local pod; read -r pod _ < <(pod_info ricxapp "ricxapp-$INJECTOR_NAME-") && echo "$pod"; }
@@ -69,21 +74,49 @@ injector_routes_check() {
     return $bad
 }
 
+injector_ip() {
+    local pod
+    pod=$(_injector_pod) || { echo "no injector pod" >&2; return 1; }
+    kc -n ricxapp get pod "$pod" -o jsonpath='{.status.podIP}'
+}
+
+# injector_send_argv <meid> <pdu-hex>: the argv of one control through the control socket (a pacer trigger command)
+injector_send_argv() {
+    local ip
+    ip=$(injector_ip) || return 1
+    printf '%s\n' python3 -I "$INJECTOR_SEND" --host "$ip" --port "$INJECTOR_CTL_PORT" --meid "$1" --hex "$2"
+}
+
 injector_control() {
-    local tag="$1" meid="$2" hex="$3" pod ip
-    pod=$(_injector_pod) || { echo "no injector pod"; return 1; }
-    ip=$(kc -n ricxapp get pod "$pod" -o jsonpath='{.status.podIP}') || return 1
-    python3 -I - "$ip" "$INJECTOR_CTL_PORT" "$meid" "$hex" >"$EVIDENCE_DIR/$tag-injector-reply.json" <<'EOF' || {
-import json, socket, sys
-ip, port, meid, hexpdu = sys.argv[1], int(sys.argv[2]), sys.argv[3], sys.argv[4]
-s = socket.create_connection((ip, port), timeout=10)
-s.sendall(json.dumps({"op": "control", "meid": meid, "hex": hexpdu}).encode() + b"\n")
-reply = json.loads(s.makefile().readline())
-print(json.dumps(reply))
-sys.exit(0 if reply.get("ok") is True else 1)
-EOF
-        echo "injector refused $tag: $(cat "$EVIDENCE_DIR/$tag-injector-reply.json")"; return 1; }
-    echo "injector sent $tag to $meid: $(cat "$EVIDENCE_DIR/$tag-injector-reply.json")"
+    local tag="$1" argv
+    mapfile -t argv < <(injector_send_argv "$2" "$3")
+    [ "${#argv[@]}" -gt 0 ] || return 1
+    "${argv[@]}" >"$EVIDENCE_DIR/$tag-injector-reply.json" ||
+        { echo "injector refused $tag: $(cat "$EVIDENCE_DIR/$tag-injector-reply.json")"; return 1; }
+    echo "injector sent $tag to $2: $(cat "$EVIDENCE_DIR/$tag-injector-reply.json")"
+}
+
+# ts_scale_down: the TS xApp's Deployment at 0 replicas and no TS pod left (a stray RIC control ack is freed twice
+# by its xapp-frame-cpp 2.3.6, so it must be absent while another xApp's controls are answered)
+ts_scale_down() {
+    kc -n ricxapp scale deploy ricxapp-trafficxapp --replicas=0 >/dev/null || return 1
+    for _ in $(seq 60); do ts_absent >/dev/null && { ts_absent; return 0; }; sleep 2; done
+    ts_absent
+}
+
+# ts_absent: the Deployment wants 0 replicas and no TS pod exists in any phase
+ts_absent() {
+    local want pods
+    want=$(kc -n ricxapp get deploy ricxapp-trafficxapp -o jsonpath='{.spec.replicas}') || return 1
+    pods=$(kc -n ricxapp get pods --no-headers 2>/dev/null | grep -c '^ricxapp-trafficxapp-')
+    echo "TS xApp: replicas $want, pods $pods"
+    [ "$want" = 0 ] && [ "$pods" = 0 ]
+}
+
+# ts_scale_up: one new TS pod, Ready and listening (it reads e2mgr's nodeb list once, at start-up)
+ts_scale_up() {
+    kc -n ricxapp scale deploy ricxapp-trafficxapp --replicas=1 >/dev/null || return 1
+    _wait_new_ready ricxapp-trafficxapp- - 300 && ts_ready
 }
 
 injector_logs_save() {

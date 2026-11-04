@@ -17,6 +17,8 @@
 #   e2mgr_node_status <name>          connectionStatus or ABSENT
 #   e2mgr_node_check <name> <plmn> <gnbId>   en-gNB node JSON: CONNECTED, plmnId, nodeType GNB, gnbType EN_GNB, nbId
 #                                     32 binary digits equal to gnbId, RAN functions 2 and 3 listed
+#   e2mgr_enb_check <name> <plmn> <macroEnbId>   eNB node JSON: CONNECTED, plmnId, nodeType ENB, enbType MACRO_ENB,
+#                                     nbId 20 binary digits equal to the ID, one X2 component
 #   pod_info <ns> <substr>            "<name> <ready> <created-epoch> <restarts>" of the newest live matching pod
 #
 # Environment knobs: AGENTS_CONNECT_TIMEOUT_S (default 300), AGENTS_STOP_E2SIM_TIMEOUT_S (180).
@@ -149,6 +151,26 @@ print("ranName=%s status=%s plmnId=%s nbId=%s (%d digits, decimal %s) nodeType=%
 ok = (d.get("ranName") == name and d.get("connectionStatus") == "CONNECTED" and nb.get("plmnId") == plmn
       and nbid == int(gid) and 2 in funcs and d.get("nodeType") == "GNB" and gnb.get("gnbType") == "EN_GNB"
       and len(nb.get("nbId", "")) == 32 and {2, 3} <= set(funcs))
+sys.exit(0 if ok else 1)
+PY
+}
+
+e2mgr_enb_check() {
+    e2mgr_get "nodeb/$1" >"$EVIDENCE_DIR/e2mgr-node-$1.json"
+    python3 -I - "$EVIDENCE_DIR/e2mgr-node-$1.json" "$1" "$2" "$3" <<'PY'
+import json, sys
+path, name, plmn, eid = sys.argv[1:]
+d = json.load(open(path))
+nb = d.get("globalNbId", {})
+enb = d.get("enb", {})
+x2 = [c for c in enb.get("nodeConfigs", []) if c.get("e2nodeComponentInterfaceType") == "x2"]
+nbid = int(nb.get("nbId", "x"), 2) if set(nb.get("nbId", "x")) <= {"0", "1"} else None
+print("ranName=%s status=%s plmnId=%s nbId=%s (%d digits, decimal %s) nodeType=%s enbType=%s x2 components=%d" % (
+    d.get("ranName"), d.get("connectionStatus"), nb.get("plmnId"), nb.get("nbId"), len(nb.get("nbId", "")), nbid,
+    d.get("nodeType"), enb.get("enbType"), len(x2)))
+ok = (d.get("ranName") == name and d.get("connectionStatus") == "CONNECTED" and nb.get("plmnId") == plmn
+      and nbid == int(eid) and d.get("nodeType") == "ENB" and enb.get("enbType") == "MACRO_ENB"
+      and len(nb.get("nbId", "")) == 20 and len(x2) == 1)
 sys.exit(0 if ok else 1)
 PY
 }

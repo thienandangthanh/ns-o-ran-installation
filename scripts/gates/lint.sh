@@ -59,6 +59,7 @@ timeout 120 bash scripts/gates/ts-patches-selftest.sh >/dev/null 2>&1 || { echo 
 timeout 120 bash scripts/gates/rc-at-pin-selftest.sh >/dev/null 2>&1 || { echo "rc pin + patch-set check self-test failed"; rc=1; }
 timeout 120 bash scripts/gates/kpimon-guard-selftest.sh >/dev/null 2>&1 || { echo "kpimon install guard self-test failed"; rc=1; }
 python3 -I scripts/gates/replay-ts-cell-map.py --self-test >/dev/null || { echo "TS cell-map replay self-test failed"; rc=1; }
+python3 -I scripts/gates/e2i-wire-checks.py --self-test >/dev/null || { echo "e2i wire judge self-test failed"; rc=1; }
 python3 -I scripts/disk-burst-h.py --self-test >/dev/null || { echo "disk-burst-h self-test failed"; rc=1; }
 python3 -I scripts/gates/check-actuation-delay.py --self-test >/dev/null || { echo "check-actuation-delay self-test failed"; rc=1; }
 python3 -I scripts/gates/identity-map-extract.py --self-test >/dev/null || { echo "identity-map-extract self-test failed"; rc=1; }
