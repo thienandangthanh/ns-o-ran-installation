@@ -184,3 +184,11 @@ Do these first, in this order, before the first P07 code commit or VM step:
   - The revert also resets the VM root to the snapshot's image set, so P12's 75 % guard starts from the snapshot state.
   - **Ops rule (registered here):** a VM `docker image prune -f` is allowed only for dangling (untagged) images, which are superseded builds of this plan. Never a tagged image, never `-a`, and every prune is logged in the work record with the space freed. P06b's prune is disclosed at Stop A′.
 - **Step 1, standards ledger:** the I-4 and I-1 rows are cited from the PDFs (E2SM-RC v03.00 and v01.03 §7.6.6.1–§7.6.6.5 and §8.4.6.3; 3GPP TS 37.340 v18.7.0 §7.2 and §10.5.1). Parameters 1–4 have the same IDs in both versions.
+- **Step 0 and the hand-off rows (e66b263):** ledger rows 106–127 come from the AC18 inventory (`plans/reports/planner-261104-2100-GH-1-p07-ac18-inventory.md`); row 128 and the controller's rulings on the inventory's 13 questions were written before any P07 code commit. The G1 seam-smoke row is 106. Rows 106, 120 and 121 are registered contract changes (#9), shown for confirmation at Stop A′ (ruling 1).
+- **Step 2, protoc toolchain proof (760ce3e, after the rows):** `tools/protoc-pinned/` regenerates the unchanged `rc.proto` of rc (a2282eed) and of the TS xApp (19e169b2) byte for byte, all five files (`evidence/p07-protoc-proof/20261104T114648Z/proof.json`).
+  - **Go side:** `rc.pb.go` needs protoc 3.6.1 (Ubuntu 20.04), whose FileDescriptorProto for `rc.proto` equals the gzipped one in `rc.pb.go`, with protoc-gen-go from golang/protobuf's 2016-11-16 snapshot (source from Debian 9's golang-goprotobuf-dev) compiled with Go 1.10.
+    - Debian 9's own binary (Go 1.7) differs only in the gzip MTIME field.
+    - Ubuntu 18.04's protoc 3.0.0 lower-cases `json_name`, and its 2017 protoc-gen-go uses the newer header.
+  - **C++ side:** Ubuntu 20.04's protoc 3.6.1 and grpc_cpp_plugin 1.16.1.
+  - Everything comes from distro packages and Debian source; no binary is downloaded. The commit was first made before the rows, undone locally before any push, and made again after them.
+- **Interfaces (1270008):** the binding forms between rc, the agent, ns-3 and the harness are in the section "Integration interfaces".
