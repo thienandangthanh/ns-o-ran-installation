@@ -87,12 +87,13 @@ svc_ip() { kc -n "$1" get svc "$2" -o jsonpath='{.spec.clusterIP}'; }
 # _dms_reinstall <name> <version> <descriptor> <schema> <log>: onboard, uninstall if present, install.
 _dms_reinstall() {
     local name="$1" ver="$2" desc="$3" schema="$4" lg="$5" out
-    out=$(sudo -n dms_cli onboard "$desc" "$schema" 2>&1); echo "onboard: $out" >>"$lg"
-    echo "$out" | grep -q '"status": "Created"' || { echo "onboard of $name failed: $out"; return 1; }
+    # the descriptor may hold the TS xApp's Influx token: the log is redacted and only it is printed on failure
+    out=$(sudo -n dms_cli onboard "$desc" "$schema" 2>&1); echo "onboard: $out" >>"$lg"; _ts_token_redact "$lg"
+    echo "$out" | grep -q '"status": "Created"' || { echo "onboard of $name failed:"; tail -n 5 "$lg"; return 1; }
     dms_cli uninstall "$name" ricxapp >>"$lg" 2>&1 || true
     for _ in $(seq 60); do kc -n ricxapp get pods --no-headers 2>/dev/null | grep -q "ricxapp-$name-" || break; sleep 2; done
-    out=$(dms_cli install "$name" "$ver" ricxapp 2>&1); echo "install: $out" >>"$lg"
-    echo "$out" | grep -qE '"?status"?:\s*"?\bOK\b"?' || { echo "install of $name failed: $out"; return 1; }
+    out=$(dms_cli install "$name" "$ver" ricxapp 2>&1); echo "install: $out" >>"$lg"; _ts_token_redact "$lg"
+    echo "$out" | grep -qE '"?status"?:\s*"?\bOK\b"?' || { echo "install of $name failed:"; tail -n 5 "$lg"; return 1; }
 }
 
 # _wait_new_ready <prefix> <old-name|-> <timeout-s>: a Ready pod named <prefix>* other than old.
@@ -154,13 +155,20 @@ ts_install() {
     if [ "$patched_before" = 0 ] && [ -n "$img_before" ] && [ "$img_after" = "$img_before" ]; then
         echo "the image predates the patches and was not rebuilt"; return 1
     fi
-    jq --arg ep "$TS_RC_EP" '.controls.ts_control_api = "grpc" | .controls.ts_control_ep = $ep' "$f" >"$e/ts-config-file.json" || return 1
-    cp "$e/ts-config-file.json" "$f"
+    # the descriptor's controls carry the Influx token (written by the installer into the git-ignored file): it is
+    # edited in place and copied to the evidence only without the token
+    jq --arg ep "$TS_RC_EP" '.controls.ts_control_api = "grpc" | .controls.ts_control_ep = $ep' "$f" >"$f.tmp" || { rm -f "$f.tmp"; return 1; }
+    mv "$f.tmp" "$f"
+    jq 'del(.controls.influx_token)' "$f" >"$e/ts-config-file.json" || return 1
     ver=$(jq -r .version "$f")
     (cd "$TS_DIR" && _dms_reinstall trafficxapp "$ver" ./xapp-descriptor/config-file_updated.json ./xapp-descriptor/schema.json "$e/install-ts-grpc.log") || return 1
     _wait_new_ready ricxapp-trafficxapp- - 300 || return 1
-    kc -n ricxapp get cm configmap-ricxapp-trafficxapp-appconfig -o jsonpath='{.data.config-file\.json}' |
-        jq '.controls' | tee "$e/ts-deployed-controls.json"
+    # the deployed controls hold the Influx token: checked present without printing it, logged and saved without it
+    local deployed
+    deployed=$(kc -n ricxapp get cm configmap-ricxapp-trafficxapp-appconfig -o jsonpath='{.data.config-file\.json}') || return 1
+    jq '.controls | del(.influx_token)' <<<"$deployed" | tee "$e/ts-deployed-controls.json"
+    jq -e '.controls.influx_token | type == "string" and length > 0' <<<"$deployed" >/dev/null ||
+        { echo "deployed TS config has no Influx token"; return 1; }
     [ "$(jq -r .ts_control_api "$e/ts-deployed-controls.json")" = grpc ] || { echo "deployed TS config is not gRPC"; return 1; }
 }
 
@@ -213,7 +221,33 @@ stub_install() {
 
 _appmgr() { local ip; ip=$(svc_ip ricplt service-ricplt-appmgr-http) || return 1; echo "http://$ip:8080/ric/v1"; }
 
-xapp_list_save() { local u; u=$(_appmgr) && curl -sf -m 10 "$u/xapps" | jq . >"$1"; }
+# _ts_token_redact <file>...: replaces the TS xApp's Influx token (read into memory from its deployed config map and
+# from the installer's descriptor, never printed) in each file; a no-op when neither holds a token. appmgr's answers
+# and dms_cli's output can carry the descriptor, whose controls hold the token.
+_ts_token_redact() {
+    kc -n ricxapp get cm configmap-ricxapp-trafficxapp-appconfig -o jsonpath='{.data.config-file\.json}' 2>/dev/null |
+        python3 -I -c '
+import json, sys
+toks = set()
+for src in (sys.stdin, sys.argv[1]):
+    try:
+        d = json.load(src) if src is sys.stdin else json.load(open(src))
+        t = (d.get("controls") or {}).get("influx_token")
+    except (OSError, ValueError, AttributeError):
+        t = None
+    if isinstance(t, str) and t:
+        toks.add(t)
+for p in sys.argv[2:] if toks else []:
+    text = open(p, errors="replace").read()
+    new = text
+    for t in toks:
+        new = new.replace(t, "REDACTED-INFLUX-TOKEN")
+    if new != text:
+        open(p, "w").write(new)
+' "${TS_DIR:-/nonexistent}/xapp-descriptor/config-file_updated.json" "$@"
+}
+
+xapp_list_save() { local u; u=$(_appmgr) && curl -sf -m 10 "$u/xapps" | jq . >"$1" && _ts_token_redact "$1"; }
 
 # _xapp_body <name>: the registration body built from the deployed descriptor (as ricxappframe 3.2.2 builds its own)
 _xapp_body() {
@@ -242,6 +276,7 @@ xapp_register() {
     u=$(_appmgr) || return 1
     body=$(_xapp_body "$1") || { echo "no deployed descriptor for $1"; return 1; }
     code=$(curl -s -m 10 -o "$EVIDENCE_DIR/register-$1.out" -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d "$body" "$u/register")
+    _ts_token_redact "$EVIDENCE_DIR/register-$1.out"
     echo "register $1: HTTP $code"
     [ "$code" = 201 ] || { cat "$EVIDENCE_DIR/register-$1.out"; return 1; }
     _xapp_listed_ok "$1" || { echo "appmgr does not list $1 as registered"; return 1; }
