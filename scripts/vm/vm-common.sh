@@ -32,12 +32,13 @@ CANCEL_TIMEOUT_S="${CANCEL_TIMEOUT_S:-30}"
 vm_gate_units() { timeout --kill-after=2 10 ssh -n "${SSH_OPTS[@]}" "$VM_SSH" "systemctl list-units --plain --no-legend --state=active 'gate-*' | awk '{print \$1}'" 2>/dev/null | paste -sd, -; }
 vm_stop_gates() { timeout --kill-after=2 "$CANCEL_TIMEOUT_S" ssh -n "${SSH_OPTS[@]}" "$VM_SSH" "sudo systemctl stop 'gate-*'" 2>/dev/null; }
 
-vm_state() { "${VIRSH[@]}" domstate "$VM_DOMAIN" 2>/dev/null | head -1; }
+# bounded: a stalled libvirt never holds a stop path back
+vm_state() { timeout --kill-after=2 10 "${VIRSH[@]}" domstate "$VM_DOMAIN" 2>/dev/null | head -1; }
 
 # wait_state <state> <timeout-s>
 wait_state() {
-    local want="$1" t="$2" i
-    for ((i = 0; i < t; i += 3)); do
+    local want="$1" end=$(($(date +%s) + $2))
+    while [ "$(date +%s)" -lt "$end" ]; do
         [ "$(vm_state)" = "$want" ] && return 0
         sleep 3
     done
@@ -79,12 +80,46 @@ is_protected() {
 }
 
 # wd_finish <watchdog dir> <watchdog pid>: ends the host disk watchdog of a finished gate. It asks the watchdog for
-# one last check (DIR/stop-request) and waits for it, never killing it: a trip under way completes, stops the gate
-# units, shuts the VM down and TERMs the runner. Returns 0 only when the watchdog stopped without a trip.
+# one last check (DIR/stop-request) and waits for it, without killing it: a trip under way completes, stops the gate
+# units, shuts the VM down and TERMs the runner. The wait is bounded (WD_FINISH_TIMEOUT_S, default 600 s plus the
+# cancel budget); past it, or when the stop request cannot be written, the watchdog is stopped and the finish fails.
+# Returns 0 only when the watchdog stopped by itself without a trip.
 wd_finish() {
-    : >"$1/stop-request"
-    wait "$2"; local rc=$?
-    [ "$rc" -eq 0 ] && [ ! -e "$1/watchdog-tripping" ]
+    local dir="$1" pid="$2" bound=$((${WD_FINISH_TIMEOUT_S:-600} + CANCEL_TIMEOUT_S)) end rc
+    end=$(($(date +%s) + bound))
+    if ! : 2>/dev/null >"$dir/stop-request"; then
+        hlog "watchdog: cannot write $dir/stop-request: stopping the watchdog, the gate's end is unchecked"
+        [ -e "$dir/watchdog-tripping" ] || { kill "$pid" 2>/dev/null; wait "$pid" 2>/dev/null; return 1; }
+    fi
+    while kill -0 "$pid" 2>/dev/null; do
+        if [ "$(date +%s)" -ge "$end" ]; then
+            hlog "watchdog: still running ${bound} s after the gate ended: stopping it"
+            kill "$pid" 2>/dev/null; wait "$pid" 2>/dev/null
+            return 1
+        fi
+        sleep 1
+    done
+    wait "$pid"; rc=$?
+    [ "$rc" -eq 0 ] && [ ! -e "$dir/watchdog-tripping" ]
+}
+
+# wd_on_exit <watchdog dir> <watchdog pid> <record function>: the runner's EXIT trap once the watchdog runs. A
+# runner that ended normally sets WD_DONE first. Otherwise, with the trip latch present (a trip under way, also when
+# a die path brought the runner here), it waits for the trip (wd_finish), calls the record function with 1 and exits
+# 125; without the latch it stops the watchdog and keeps the runner's status.
+wd_on_exit() {
+    [ -z "${WD_DONE:-}" ] || return 0
+    WD_DONE=1
+    if [ -e "$1/watchdog-tripping" ]; then
+        hlog "the host disk watchdog tripped: failing the gate with 125"
+        # inside an EXIT trap the watchdog's closing TERM would kill this shell (143) before the record: the trip is
+        # already being handled here, so TERM is ignored while it completes
+        trap '' TERM
+        wd_finish "$1" "$2" || true
+        "$3" 1
+        exit 125
+    fi
+    kill "$2" 2>/dev/null
 }
 
 host_free_gb() { df -BG --output=avail /home | tail -1 | tr -dc '0-9'; }
