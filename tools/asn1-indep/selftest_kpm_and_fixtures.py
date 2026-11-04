@@ -98,9 +98,10 @@ def _rc_decode_checks(check, root, handover_params):
 
 
 def _rc_nrcgi_checks(check, root, handover_params):
-    """rc-control-nrcgi.hex (make-nrcgi-fixture.py): X.691 header and message of a Style 3/1 control per line id
-    '...-gnb<n>'; each re-encodes byte-equal, the target is the NR-CGI of gNB n, and rc's P14-fixed asn1c output for
-    gNB 3 equals the fixture's X.691 message."""
+    """rc-control-nrcgi.hex (make-nrcgi-fixture.py): X.691 header and message of a control per line id
+    '<s3a1|s5a3>-...-gnb<n>' (Style 3/1 with a gNB-UEID, or Style 5/3 with an en-gNB-UEID); each re-encodes
+    byte-equal with the style and action its prefix names, the target is the NR-CGI of gNB n, and rc's P14-fixed
+    asn1c output for gNB 3 equals the fixture's X.691 message."""
     with open(os.path.join(root, "rc-decode", "rc-control-nrcgi.hex")) as f:
         rows = [line.split() for line in f if line.strip()]
     bad = []
@@ -110,13 +111,16 @@ def _rc_nrcgi_checks(check, root, handover_params):
         cgi = encode(E2SM_RC_v0200.E2SM_COMMON_IEs.NR_CGI, {"pLMNIdentity": bytes.fromhex("00f110"),
                                                             "nRCellIdentity": ((gnb << 4) | 1, 36)})
         d = rc.decode_control_header(bytes.fromhex(hdr))
-        ok = (rc.control_header(d["ue_id"], d["style_type"], d["action_id"], d["decision"]).hex() == hdr
-              and d["style_type"] == 3 and d["action_id"] == 1
+        want = {"s3a1": (3, 1, "gNB-UEID"), "s5a3": (5, 3, "en-gNB-UEID")}.get(name[:4])
+        ok = (want is not None
+              and rc.control_header(d["ue_id"], d["style_type"], d["action_id"], d["decision"]).hex() == hdr
+              and (d["style_type"], d["action_id"], d["ue_id"][0]) == want
               and rc.control_message(handover_params(cgi)).hex() == msg)
         msg_of[gnb] = msg
         if not ok:
             bad.append(name)
-    check(f"X.691 RC fixture ({len(rows)}): header round-trip style 3/1, message = 1>2>3>4 with the gNB's NR-CGI",
+    check(f"X.691 RC fixture ({len(rows)}): header round-trip with its prefix's style/action and UE ID, message = 1>2>3>4 "
+          "with the gNB's NR-CGI",
           rows and not bad, repr(bad))
     check("asn1c (rc, P14-fixed) RC message == X.691 for the gNB 3 target", msg_of.get(3) == ASN1C_P14_MSG_GNB3,
           f"fixture {msg_of.get(3)} vs asn1c {ASN1C_P14_MSG_GNB3}")

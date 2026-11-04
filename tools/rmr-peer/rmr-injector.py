@@ -13,7 +13,10 @@ A persistent process keeps a trigger's cost to one local TCP round trip.
 Control socket on 127.0.0.1:--ctl-port, one JSON request per line, one JSON reply per line:
   {"op": "anomaly", "ue": "<ue-id>"}   30003 TS_ANOMALY_UPDATE, payload
                                       [{"du-id": 1010, "ue-id": "<ue-id>", "measTimeStampRf": 0,
-                                        "Degradation": "RSRP RSSINR"}]  (one UE, its ue-id a JSON string)
+                                        "Degradation": "RSRP RSSINR"}]  (one UE, its ue-id a JSON string); the
+                                      ue-id must be an en-gNB-UEID key enGnbUeId:<X2AP ID>@00F110-<macro eNB ID,
+                                      5 hex digits> (the key the TS xApp looks up in Influx), else the request is
+                                      refused and nothing is sent
   {"op": "raw", "mtype": N, "subId": S, "hex": "<payload hex>"}   any message (the stray-ack probe)
   {"op": "control", "meid": "<ranName>", "hex": "<E2AP PDU hex>"}  12040 RIC_CONTROL_REQ, subId -1, that meid
                                       (an E2AP RICcontrolRequest from the independent codec; e2term forwards the
@@ -27,6 +30,7 @@ for RMR without a limit (an xApp gets its first route table only after it is reg
 import argparse
 import json
 import os
+import re
 import socket
 import socketserver
 import sys
@@ -35,9 +39,13 @@ import time
 import traceback
 
 TS_ANOMALY_UPDATE, RIC_CONTROL_REQ = 30003, 12040
+UE_ID_RE = re.compile(r"^enGnbUeId:[0-9]{1,4}@00F110-[0-9A-F]{5}$")
 
 
 def anomaly_payload(ue):
+    """The 30003 payload naming one UE; ValueError unless ue is an en-gNB-UEID key."""
+    if not isinstance(ue, str) or not UE_ID_RE.match(ue):
+        raise ValueError("ue-id %r is not an en-gNB-UEID key" % (ue,))
     return json.dumps([{"du-id": 1010, "ue-id": str(ue), "measTimeStampRf": 0,
                         "Degradation": "RSRP RSSINR"}], separators=(", ", ": ")).encode()
 

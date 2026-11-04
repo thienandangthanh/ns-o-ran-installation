@@ -1,18 +1,26 @@
 #!/usr/bin/env python3
 """wire-c1-extract.py: the live-only C1 components, read from the decoded E2AP wire.
 
-  wire-c1-extract.py PCAP --node-ips node-ips.json --out-dir DIR
-                     [--ledger e2-control-ledger.jsonl] [--decode-cmd "docker run --rm -i rc-decode:TAG"]
+  wire-c1-extract.py PCAP --node-ips node-ips.json --facts FACTS --out-dir DIR
+                     [--ledger e2-control-ledger.jsonl --ue-context-dir TRACE_DIR]
+                     [--decode-cmd "docker run --rm -i rc-decode:TAG"]
                      [--t0 EPOCH] [--t1 EPOCH] [--expect-requests N] [--expect-agent-local N]
 
 Writes into DIR (a run's `extra/` directory):
   rc-multiset.json        one record per RICcontrolRequest, without the RIC request IDs and wall times:
-                          step (ledger rxSeq), viaNode, style, action, imsi (AMF-UE-NGAP-ID), target key (the
+                          step (ledger rxSeq), viaNode, style, action, ueId (the header's en-gNB-UEID as
+                          {"type": "en-gNB-UEID", "mEnbUeX2apId": N, "globalEnbId": {"plmn": "00F110",
+                          "macroEnbId": "%05X"}}; it must carry no optional member), target key (the
                           last 10 hex of RAN parameter 4, which must be the APER NR-CGI 0000F110 + gNB ID (8 hex)
                           + 10: PLMN 001/01, cell part 1, pad 0; the TS xApp cell key), answer (ack|failure|none),
-                          cause, outcome octets; sorted. Steps come from joining
-                          the k-th request to a node with the ledger line (viaNodeId, ctlId = k) the agent
-                          numbered it with; the join is asserted one to one and consistent (imsi, target).
+                          cause, outcome octets; sorted (step, viaNode, mEnbUeX2apId, targetCell, t). Steps come
+                          from joining the k-th request to a node with the ledger line (viaNodeId, ctlId = k) the
+                          agent numbered it with; the join is asserted one to one and consistent: a line with
+                          imsi != 0 needs I(wire ueId) = its imsi, where I(X, M) is the IMSI whose (lteRnti,
+                          mnCellId) in the run's e2-ue-context files (--ue-context-dir) equals (mEnbUeX2apId, macro
+                          eNB ID); a line with imsi 0 must be refused unknownUe; the e2-pacing-log.jsonl record of
+                          the line's (viaNodeId, ctlId) carries the wire ueId's {mEnbUeX2apId, mnCellId}; target
+                          and answer as before. Every request must be Style 5 / action 3 with an en-gNB-UEID.
   kpm-headers.json        per node, the E2SM-KPM RICindicationHeader octets of its indications in order
                           (retransmissions dropped by association and TSN)
   collet-start-time.json  per node, octets 1-8 of every header (the NTP-format colletStartTime of the
@@ -21,7 +29,12 @@ Writes into DIR (a run's `extra/` directory):
                           answer count identity (answers = ledger lines + agent-local answers), the C5
                           summary (pairsByReqId; answerViaNodeId: each answer comes from the node the request
                           went to) and every problem found; exit 1 when there is a problem.
-RIC request IDs and frame times stay in rc-requests.json / rc-answers.json (diagnostics, not digested).
+RIC request IDs and frame times stay in rc-requests.json / rc-answers.json (diagnostics, not digested). There each
+request also carries viaMeid: the meid (e2term's rendering, as lib.sh meid_of) of the Global E2 Node ID in the E2
+Setup Request of the SCTP association (agent IP, port; the latest INIT_ACK at or before the request, FACTS = the
+e2ap-pcap-facts.py sheet of PCAP) that carried it; viaMeid != meid_of(viaNode) is a problem and the summary
+records viaMeidEqualsNode. A request's viaNode comes from its destination IP and an answer's from its source IP;
+an IP that node-ips.json lists for more than one node is a problem for every request or answer to or from it.
 The RC decoder (tools/rc-decode) turns the control header/message octets into XER; a decode that is not
 RC_OK with every octet consumed is a problem. Every ACK's RIC Control Outcome goes through the same decoder
 and must decode to E2SM-RC Control Outcome Format 1. Every request needs exactly one terminal answer.
@@ -29,6 +42,7 @@ and must decode to E2SM-RC Control Outcome Format 1. Every request needs exactly
 is given): requests the agent answered itself, without a ledger line. KPM headers are compared as octets, so the decode of the
 timestamp is not needed for equality.
 --t0/--t1 keep only frames in [t0, t1) (a capture can span a whole gate).
+--self-test checks the UE ID parse, the meid rendering and the shared-IP map on synthetic input.
 """
 import argparse
 import json
@@ -67,8 +81,89 @@ def clean(h):
     return h.replace(":", "").upper()
 
 
+def ip_map(node_ips):
+    """node-ips.json {node: [ip, ...]} -> {ip: node}, an IP listed for several nodes mapped to the tuple of them."""
+    multi = {}
+    for n, ips in node_ips.items():
+        for ip in ips:
+            multi.setdefault(ip, set()).add(int(n))
+    return {ip: (next(iter(ns)) if len(ns) == 1 else tuple(sorted(ns))) for ip, ns in multi.items()}
+
+
 def node_of(ip, ip2node):
-    return ip2node.get(ip)
+    """The node of an IP; None for an unknown or a shared IP (shared_ip reports the latter)."""
+    v = ip2node.get(ip)
+    return v if isinstance(v, int) else None
+
+
+def shared_ip(ip, ip2node):
+    v = ip2node.get(ip)
+    return v if isinstance(v, tuple) else None
+
+
+def meid_of(node):
+    """lib.sh meid_of: the eNB (node 1) and the en-gNBs (node n >= 2) of the testbed."""
+    return "enB_macro_001_001_000001" if node == 1 else "en_gnb_001_001_%08x" % node
+
+
+def plmn_digits(plmn):
+    """(MCC, MNC) of a PLMN Identity in hex (3GPP TS 24.008 BCD order), each zero-padded to 3 digits as e2term's
+    run name does; None for a malformed PLMN."""
+    if not isinstance(plmn, str) or not re.fullmatch(r"[0-9a-fA-F]{6}", plmn):
+        return None
+    o = bytes.fromhex(plmn)
+    d = [o[0] & 15, o[0] >> 4, o[1] & 15, o[1] >> 4, o[2] & 15, o[2] >> 4]
+    mcc, mnc = d[0:3], [d[4], d[5]] + ([d[3]] if d[3] != 15 else [])
+    if any(x > 9 for x in mcc + mnc):
+        return None
+    return "".join(map(str, mcc)), "".join(map(str, mnc)).zfill(3)
+
+
+def render_meid(setup):
+    """e2term's RAN name of an E2 Setup Request's Global E2 Node ID (fact-sheet fields e2node_type, plmn, node_id,
+    node_id_bits), for the node kinds of this testbed; None for any other kind."""
+    pd = plmn_digits(setup.get("plmn"))
+    nid, bits, kind = setup.get("node_id"), setup.get("node_id_bits"), setup.get("e2node_type")
+    if pd is None or not isinstance(nid, int):
+        return None
+    if kind == "en-gNB" and bits == 32:
+        return "en_gnb_%s_%s_%08x" % (pd[0], pd[1], nid)
+    if kind == "eNB" and bits == 20:
+        return "enB_macro_%s_%s_%06x" % (pd[0], pd[1], nid)
+    return None
+
+
+def _module(name, filename):
+    import importlib.util
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)
+    spec = importlib.util.spec_from_file_location(name, path)
+    assert spec is not None and spec.loader is not None, path
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+
+
+def assoc_meid(facts):
+    """meid_at(ip, port, t): (the rendered meid of the E2 Setup Request on the SCTP association (ip, port) with the
+    latest INIT_ACK at or before t, or None; problem text or None)."""
+    assocs, _ = _module("e2_facts_query", "e2-facts-query.py").build_assocs(facts)
+    by = {}
+    for x in assocs:  # sorted by INIT_ACK time
+        by.setdefault((x["ip"], x["sport"]), []).append(x)
+
+    def meid_at(ip, port, t):
+        best = None
+        for x in by.get((ip, port), []):
+            if x["t_init_ack"] <= t:
+                best = x
+        if best is None:
+            return None, "no SCTP association of %s:%s at t %.3f in the fact sheet" % (ip, port, t)
+        if best["setup_request"] is None:
+            return None, "association %s:%s has no E2 Setup Request" % (ip, port)
+        m = render_meid(best["setup_request"])
+        return m, (None if m else "association %s:%s: E2 Setup Global E2 Node ID %r has no meid rendering" % (
+            ip, port, {k: best["setup_request"].get(k) for k in ("e2node_type", "plmn", "node_id", "node_id_bits")}))
+    return meid_at
 
 
 def in_window(t, t0, t1):
@@ -97,12 +192,13 @@ def rc_requests(pcap, ip2node, t0, t1):
     rows = tshark(pcap, "e2ap.procedureCode == 4 && e2ap.initiatingMessage_element",
                   ["frame.number", "frame.time_epoch", "ip.dst", "sctp.data_tsn_raw", "sctp.assoc_index",
                    "e2ap.ricRequestorID", "e2ap.ricInstanceID", "e2ap.RANfunctionID",
-                   "e2ap.RICcontrolAckRequest", "e2ap.RICcontrolHeader", "e2ap.RICcontrolMessage"])
+                   "e2ap.RICcontrolAckRequest", "e2ap.RICcontrolHeader", "e2ap.RICcontrolMessage", "sctp.dstport"])
     out, seen, problems = [], set(), []
     for c in rows:
-        c += [""] * (11 - len(c))
+        c += [""] * (12 - len(c))
         frame, t, dst, tsn, assoc = c[0], float(c[1]), c[2], c[3], c[4]
         req, inst, func, ackreq, hdr, msg = map(split, c[5:11])
+        dport = int(split(c[11])[0]) if split(c[11]) else None
         if not in_window(t, t0, t1):
             continue
         n = len(hdr)
@@ -115,8 +211,11 @@ def rc_requests(pcap, ip2node, t0, t1):
             if key in seen:
                 continue  # SCTP retransmission
             seen.add(key)
+            if shared_ip(dst, ip2node):
+                problems.append("request f%s.%d goes to %s, which node-ips.json lists for nodes %s" % (
+                    frame, k, dst, list(shared_ip(dst, ip2node))))
             out.append({"id": "f%s.%d" % (frame, k), "frame": int(frame), "t": t, "viaNode": node_of(dst, ip2node),
-                        "dst": dst, "requestorId": int(req[k]), "instanceId": int(inst[k]),
+                        "dst": dst, "dport": dport, "requestorId": int(req[k]), "instanceId": int(inst[k]),
                         "ranFunctionId": int(func[k]), "hdr": clean(hdr[k]), "msg": clean(msg[k]),
                         "ackRequestPresent": bool(split(ackreq))})
     return out, problems
@@ -126,10 +225,11 @@ def rc_answers(pcap, ip2node, t0, t1):
     rows = tshark(pcap, "e2ap.procedureCode == 4 && (e2ap.successfulOutcome_element || e2ap.unsuccessfulOutcome_element)",
                   ["frame.number", "frame.time_epoch", "ip.src", "sctp.data_tsn_raw", "sctp.assoc_index",
                    "e2ap.successfulOutcome_element", "e2ap.ricRequestorID", "e2ap.ricInstanceID",
-                   "e2ap.ricRequest", "e2ap.RICcontrolOutcome"])
+                   "e2ap.ricRequest", "e2ap.RICcontrolOutcome", "sctp.srcport"])
     out, seen, problems = [], set(), []
     for c in rows:
-        c += [""] * (10 - len(c))
+        c += [""] * (11 - len(c))
+        sport = int(split(c[10])[0]) if split(c[10]) else None
         frame, t, src, tsn, assoc = c[0], float(c[1]), c[2], c[3], c[4]
         okcol, req, inst, cause, outc = split(c[5]), split(c[6]), split(c[7]), split(c[8]), split(c[9])
         if not in_window(t, t0, t1):
@@ -144,10 +244,13 @@ def rc_answers(pcap, ip2node, t0, t1):
             if key in seen:
                 continue
             seen.add(key)
+            if shared_ip(src, ip2node):
+                problems.append("answer f%s.%d comes from %s, which node-ips.json lists for nodes %s" % (
+                    frame, k, src, list(shared_ip(src, ip2node))))
             kind = "ack" if okcol else "failure"
             cs = cause[k] if k < len(cause) else ""
             out.append({"id": "f%s.%d" % (frame, k), "frame": int(frame), "t": t, "viaNode": node_of(src, ip2node),
-                        "kind": kind, "requestorId": int(req[k]), "instanceId": int(inst[k]),
+                        "src": src, "sport": sport, "kind": kind, "requestorId": int(req[k]), "instanceId": int(inst[k]),
                         "cause": cs, "outcome": clean(outc[k]) if k < len(outc) else ""})
     return out, problems
 
@@ -183,20 +286,37 @@ P4_RE = re.compile(r"<ranParameter-ID>4</ranParameter-ID><ranParameter-valueType
 NRCGI_RE = re.compile(r"0000F110([0-9A-F]{8})10")
 
 
+# the header's UE ID when it is an en-gNB-UEID with exactly m-eNB-UE-X2AP-ID and globalENB-ID {pLMN, macro eNB ID}
+# (whitespace-free XER): any optional member, another eNB-ID kind or another UEID CHOICE fails the full match
+UEID_EN_GNB_RE = re.compile(r"<ueID><en-gNB-UEID><m-eNB-UE-X2AP-ID>(\d+)</m-eNB-UE-X2AP-ID><globalENB-ID>"
+                            r"<pLMNIdentity>([0-9A-F]{6})</pLMNIdentity><eNB-ID><macro-eNB-ID>([01]{20})</macro-eNB-ID>"
+                            r"</eNB-ID></globalENB-ID></en-gNB-UEID></ueID>")
+UE_PLMN = "00F110"
+
+
+def parse_ue_id(hdr_x):
+    """The en-gNB-UEID of a control header XER in the R-2 representation, or None."""
+    blocks = re.findall(r"<ueID>.*?</ueID>", hdr_x)
+    m = UEID_EN_GNB_RE.fullmatch(blocks[0]) if len(blocks) == 1 else None
+    if not m or m.group(2) != UE_PLMN or int(m.group(1)) > 4095:
+        return None
+    return {"type": "en-gNB-UEID", "mEnbUeX2apId": int(m.group(1)),
+            "globalEnbId": {"plmn": m.group(2), "macroEnbId": "%05X" % int(m.group(3), 2)}}
+
+
 def parse_rc(hdr_x, msg_x):
-    """Style, action, IMSI and target of one control. The target counts only when the message holds exactly one
+    """Style, action, UE ID and target of one control. The target counts only when the message holds exactly one
     RAN parameter 4, RAN parameters 1, 2 and 3 appear before it, and its value is the APER NR-CGI; targetKey is
     then its last 10 hex digits and targetCell the gNB ID. Otherwise both are None (a problem in main)."""
     style = re.search(r"<ric-Style-Type>(\d+)<", hdr_x)
     action = re.search(r"<ric-ControlAction-ID>(\d+)<", hdr_x)
-    amf = re.search(r"<amf-UE-NGAP-ID>(\d+)<", hdr_x)
     p4 = list(P4_RE.finditer(msg_x))
     target = p4[0].group(1) if len(p4) == 1 else None
     before = msg_x[:p4[0].start()] if len(p4) == 1 else ""
     path = all("<ranParameter-ID>%d</ranParameter-ID>" % i in before for i in (1, 2, 3))
     cgi = NRCGI_RE.fullmatch(target) if target and path else None
     return {"style": int(style.group(1)) if style else None, "action": int(action.group(1)) if action else None,
-            "imsi": int(amf.group(1)) if amf else None, "targetOctets": target,
+            "ueId": parse_ue_id(hdr_x), "targetOctets": target,
             "targetKey": target[-10:] if cgi else None,
             "targetCell": int(cgi.group(1), 16) if cgi else None}
 
@@ -216,17 +336,28 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("pcap")
     ap.add_argument("--node-ips", required=True)
+    ap.add_argument("--facts", help="the e2ap-pcap-facts.py sheet of PCAP (the association of each request)")
     ap.add_argument("--out-dir", required=True)
     ap.add_argument("--ledger")
+    ap.add_argument("--ue-context-dir", help="the run's trace/ (e2-ue-context-*.jsonl and e2-pacing-log.jsonl)")
     ap.add_argument("--decode-cmd", default="docker run --rm -i rc-decode")
     ap.add_argument("--t0", type=float)
     ap.add_argument("--t1", type=float)
     ap.add_argument("--expect-requests", type=int)
     ap.add_argument("--expect-agent-local", type=int, default=0)
     a = ap.parse_args()
-    ip2node = {ip: int(n) for n, ips in json.load(open(a.node_ips)).items() for ip in ips}
+    node_ips = json.load(open(a.node_ips))
+    ip2node = ip_map(node_ips)
+    # the KPM headers keep the plain map (an IP listed twice goes to the last node listed)
+    kpm_ip2node = {ip: int(n) for n, ips in node_ips.items() for ip in ips}
     os.makedirs(a.out_dir, exist_ok=True)
     problems = []
+    meid_at = assoc_meid(json.load(open(a.facts))) if a.facts else None
+    ucm = _module("ue_context_map", "ue-context-map.py") if a.ue_context_dir else None
+    cmap = ucm.UeContextMap(a.ue_context_dir) if ucm else None
+    pacing = ucm.pacing_controls(a.ue_context_dir) if ucm else {}
+    if cmap is not None and cmap.problems:
+        problems += ["UE context: " + q for q in cmap.problems[:10]]
 
     reqs, p = rc_requests(a.pcap, ip2node, a.t0, a.t1)
     problems += p
@@ -242,10 +373,21 @@ def main():
     problems += p
     for r in reqs:
         r.update(parse_rc(xers.get(r["id"] + ".h", ""), xers.get(r["id"] + ".m", "")))
-        if r["style"] != 3 or r["action"] != 1 or r["targetKey"] is None or r["imsi"] is None:
-            problems.append("request %s does not decode to style 3 / action 1 / an APER NR-CGI target" % r["id"])
-        if r["viaNode"] is None:
+        if r["style"] != 5 or r["action"] != 3 or r["targetKey"] is None or r["ueId"] is None:
+            problems.append("request %s does not decode to style 5 / action 3 / an en-gNB-UEID / an APER NR-CGI target"
+                            % r["id"])
+        if r["viaNode"] is None and not shared_ip(r["dst"], ip2node):
             problems.append("request %s goes to unknown address %s" % (r["id"], r["dst"]))
+        if meid_at is None:
+            r["viaMeid"] = None
+            problems.append("request %s: no --facts, so its association meid cannot be checked" % r["id"])
+        else:
+            r["viaMeid"], why = meid_at(r["dst"], r["dport"], r["t"])
+            if why:
+                problems.append("request %s: %s" % (r["id"], why))
+            elif r["viaNode"] is not None and r["viaMeid"] != meid_of(r["viaNode"]):
+                problems.append("request %s: association meid %s, meid_of(viaNode %d) %s" % (
+                    r["id"], r["viaMeid"], r["viaNode"], meid_of(r["viaNode"])))
 
     # exactly one terminal answer per request, paired by the RIC request ID (requestorId, instanceId)
     by_id = {}
@@ -291,6 +433,8 @@ def main():
 
     # join with the ledger: the k-th request to a node is the agent's ctlId k
     multiset, c2 = [], None
+    if a.ledger and cmap is None:
+        problems.append("--ledger without --ue-context-dir: the wire UE IDs cannot be joined to the ledger's IMSIs")
     if a.ledger:
         rows = []
         if os.path.exists(a.ledger):
@@ -308,9 +452,22 @@ def main():
                 r["step"] = None
                 continue
             r["step"] = x["rxSeq"]
-            if x["imsi"] != r["imsi"] or x["targetCell"] != r["targetCell"]:
-                problems.append("request %s (node %s ctl %d) imsi/target %s/%s differ from ledger %s/%s" % (
-                    r["id"], r["viaNode"], r["ctlId"], r["imsi"], r["targetCell"], x["imsi"], x["targetCell"]))
+            ue = ucm.x2_of(r["ueId"]) if ucm and r["ueId"] else None
+            r["ueImsi"] = cmap.imsi_of(*ue) if cmap is not None and ue else None
+            if x["imsi"] != 0 and r["ueImsi"] != x["imsi"]:
+                problems.append("request %s (node %s ctl %d): I(ueId %s) = %s, ledger imsi %s" % (
+                    r["id"], r["viaNode"], r["ctlId"], ue, r["ueImsi"], x["imsi"]))
+            if x["imsi"] == 0 and (x["outcome"], x["cause"]) != ("refused", "unknownUe"):
+                problems.append("request %s (node %s ctl %d): ledger imsi 0 but %s/%s, not refused unknownUe" % (
+                    r["id"], r["viaNode"], r["ctlId"], x["outcome"], x["cause"]))
+            recs = pacing.get((r["viaNode"], r["ctlId"]), [])
+            rue = ucm.x2_of(recs[0].get("ueId")) if ucm and len(recs) == 1 else None
+            if len(recs) != 1 or rue is None or rue != ue:
+                problems.append("request %s (node %s ctl %d): wire ueId %s, e2-pacing-log records %s" % (
+                    r["id"], r["viaNode"], r["ctlId"], ue, [q.get("ueId") for q in recs]))
+            if x["targetCell"] != r["targetCell"]:
+                problems.append("request %s (node %s ctl %d) target %s differs from ledger %s" % (
+                    r["id"], r["viaNode"], r["ctlId"], r["targetCell"], x["targetCell"]))
             want = "ack" if x["outcome"] == "applied" else "failure"
             if r["answer"] != want:
                 problems.append("request %s: ledger %s but wire answer %s" % (r["id"], x["outcome"], r["answer"]))
@@ -324,12 +481,12 @@ def main():
         if not c2["holds"]:
             problems.append("answers %d != ledger lines %d + agent-local %d" % (len(ans), len(rows), agent_failed))
     for r in sorted(reqs, key=lambda q: (q.get("step") if q.get("step") is not None else -1, q["viaNode"] or 0,
-                                         q["imsi"] or 0, q["targetCell"] or 0, q["t"])):
+                                         (q["ueId"] or {}).get("mEnbUeX2apId", -1), q["targetCell"] or 0, q["t"])):
         multiset.append({"step": r.get("step"), "viaNode": r["viaNode"], "style": r["style"], "action": r["action"],
-                         "imsi": r["imsi"], "targetKey": r["targetKey"], "answer": r["answer"],
+                         "ueId": r["ueId"], "targetKey": r["targetKey"], "answer": r["answer"],
                          "cause": r["cause"], "outcome": r["outcome"]})
 
-    per, p = kpm_headers(a.pcap, ip2node, a.t0, a.t1)
+    per, p = kpm_headers(a.pcap, kpm_ip2node, a.t0, a.t1)
     problems += p
     collet = {n: [h[2:18] for h in hs] for n, hs in per.items()}
     for n, hs in per.items():
@@ -349,7 +506,10 @@ def main():
     summary = {"rcRequests": len(reqs), "rcAnswers": len(ans),
                "acks": sum(1 for x in ans if x["kind"] == "ack"), "failures": sum(1 for x in ans if x["kind"] == "failure"),
                "kpmHeadersByNode": {n: len(h) for n, h in sorted(per.items())}, "c2": c2,
-               "c5": {"pairsByReqId": pairs_by_req_id, "answerViaNodeId": answer_via_node}, "problems": problems,
+               "c5": {"pairsByReqId": pairs_by_req_id, "answerViaNodeId": answer_via_node},
+               "viaMeidEqualsNode": bool(reqs) and all(r.get("viaMeid") is not None and r["viaNode"] is not None
+                                                       and r["viaMeid"] == meid_of(r["viaNode"]) for r in reqs),
+               "problems": problems,
                "pass": not problems}
     dump("c1-extract-summary.json", summary)
     print(json.dumps({k: v for k, v in summary.items() if k != "problems"}), file=sys.stderr)
@@ -358,5 +518,40 @@ def main():
     return 0 if not problems else 1
 
 
+def self_test():
+    ue = ("<ueID><en-gNB-UEID><m-eNB-UE-X2AP-ID>%s</m-eNB-UE-X2AP-ID><globalENB-ID><pLMNIdentity>%s</pLMNIdentity>"
+          "<eNB-ID><macro-eNB-ID>%s</macro-eNB-ID></eNB-ID></globalENB-ID>%s</en-gNB-UEID></ueID>")
+    hdr = lambda x2="3", plmn="00F110", macro="0" * 19 + "1", extra="": (
+        "<E2SM-RC-ControlHeader><ric-controlHeader-formats><controlHeader-Format1>" + ue % (x2, plmn, macro, extra) +
+        "<ric-Style-Type>5</ric-Style-Type><ric-ControlAction-ID>3</ric-ControlAction-ID></controlHeader-Format1>"
+        "</ric-controlHeader-formats></E2SM-RC-ControlHeader>")
+    want = {"type": "en-gNB-UEID", "mEnbUeX2apId": 3, "globalEnbId": {"plmn": "00F110", "macroEnbId": "00001"}}
+    gnb = "<ueID><gNB-UEID><amf-UE-NGAP-ID>3</amf-UE-NGAP-ID></gNB-UEID></ueID>"
+    cases = [
+        ("an en-gNB-UEID header parses", parse_ue_id(hdr()) == want and parse_rc(hdr(), "")["style"] == 5),
+        ("an optional member fails", parse_ue_id(hdr(extra="<gNB-CU-UE-F1AP-ID>1</gNB-CU-UE-F1AP-ID>")) is None),
+        ("another PLMN fails", parse_ue_id(hdr(plmn="00F120")) is None),
+        ("an X2AP ID above 4095 fails", parse_ue_id(hdr(x2="4096")) is None),
+        ("a gNB-UEID (the IMSI form) fails", parse_ue_id(gnb) is None),
+        ("the macro eNB ID is rendered %05X", parse_ue_id(hdr(macro="0" * 15 + "11111"))["globalEnbId"]["macroEnbId"] == "0001F"),
+        ("en-gNB meid", render_meid({"e2node_type": "en-gNB", "plmn": "00f110", "node_id": 2, "node_id_bits": 32})
+         == meid_of(2) == "en_gnb_001_001_00000002"),
+        ("eNB meid", render_meid({"e2node_type": "eNB", "plmn": "00f110", "node_id": 1, "node_id_bits": 20})
+         == meid_of(1) == "enB_macro_001_001_000001"),
+        ("a gNB (NR standalone) has no rendering here", render_meid({"e2node_type": "gNB", "plmn": "00f110",
+                                                                     "node_id": 2, "node_id_bits": 32}) is None),
+        ("a shared IP maps to no node", node_of("10.0.0.2", ip_map({"2": ["10.0.0.2"], "3": ["10.0.0.2"]})) is None
+         and shared_ip("10.0.0.2", ip_map({"2": ["10.0.0.2"], "3": ["10.0.0.2"]})) == (2, 3)),
+        ("an unshared IP maps to its node", node_of("10.0.0.3", ip_map({"2": ["10.0.0.2"], "3": ["10.0.0.3"]})) == 3),
+    ]
+    for name, ok in cases:
+        print("%s %s" % ("ok  " if ok else "FAIL", name))
+    ok = all(c[1] for c in cases)
+    print("wire-c1-extract self-test: %s" % ("ok" if ok else "FAIL"))
+    return 0 if ok else 1
+
+
 if __name__ == "__main__":
+    if sys.argv[1:] == ["--self-test"]:
+        sys.exit(self_test())
     sys.exit(main())

@@ -22,7 +22,12 @@ time, so every line is judged at the barrier ka = k + delta // period (ka = k at
 An applied ledger line (imsi i, source s, target t, barrier k) has moved when i is in U(s) and not in U(t)
 at sample k, and not in U(s) and in U(t) at sample k + 1. A refused or late line must leave i's gNB
 membership unchanged between k and k + 1, unless the same IMSI has an applied line in the same step (a
-same-step pair: the applied line's move judges it). A missing ledger is no lines. --self-test runs the
+same-step pair: the applied line's move judges it). A line with imsi 0 (refused unknownUe: ns-3 resolved no UE at
+the node it was sent through) is attributed through the e2-pacing-log.jsonl record of its (viaNodeId, ctlId) in
+TRACE_DIR: i := I(ueId), the IMSI whose (lteRnti, mnCellId) in the context files equals the record's
+(mEnbUeX2apId, mnCellId). If i exists, the line is judged as a refused line of IMSI i; if no IMSI holds the ID, the
+line carries no UE and is recorded judgedBy "no UE holds the ID"; imsi 0 with another outcome or cause, or without
+exactly one pacing record, is a problem. A missing ledger is no lines. --self-test runs the
 judge on synthetic lists and the UE ID decode and resolution on synthetic tshark rows. Problems (exit 1): a missing
 report, k <= 1, a frame whose indications carry different times, a Format 2 indication without UE IDs, a UE ID that
 is not of its node's form or does not resolve, a gNB-UEID, a listed node without a Format 2 indication, an applied
@@ -270,6 +275,8 @@ def judge(lines, at, gnbs, period_ns):
         i, k, s, t = x["imsi"], ka(x), x["sourceCell"], x["targetCell"]
         r = {"imsi": i, "rxSeq": x["rxSeq"], "judgedAt": k, "outcome": x["outcome"], "cause": x.get("cause", ""),
              "source": s, "target": t}
+        if "attributedFrom" in x:
+            r["attributedFrom"] = x["attributedFrom"]
         if x["rxSeq"] <= 1:
             problems.append("ledger line imsi %d at k %d: samples 0 and 1 share a collection time, not judged" % (i, k))
             results.append(r)
@@ -307,8 +314,65 @@ def judge(lines, at, gnbs, period_ns):
     return results, moved, problems
 
 
+def attribute_unresolved(lines, imsi_of, pacing, x2_of):
+    """Lines with imsi 0 attributed to the UE their pacing-log record names: (lines to judge, records of the lines
+    that carry no UE, problems). imsi_of(X, M) is I(id); pacing {(viaNodeId, ctlId): [records]}."""
+    out, unheld, problems = [], [], []
+    for x in lines:
+        if x.get("imsi") != 0:
+            out.append(x)
+            continue
+        key = (x["viaNodeId"], x["ctlId"])
+        if (x.get("outcome"), x.get("cause")) != ("refused", "unknownUe"):
+            problems.append("ledger line %s has imsi 0 but %s/%s, not refused unknownUe" % (key, x.get("outcome"), x.get("cause")))
+            continue
+        recs = pacing.get(key, [])
+        ue = x2_of(recs[0].get("ueId")) if len(recs) == 1 else None
+        if ue is None:
+            problems.append("ledger line %s (imsi 0) has %d e2-pacing-log records with a ueId, want 1" % (key, len(recs)))
+            continue
+        i = imsi_of(*ue)
+        if i is None:
+            unheld.append({"imsi": 0, "viaNodeId": key[0], "ctlId": key[1], "rxSeq": x["rxSeq"], "ueId": list(ue),
+                           "outcome": x["outcome"], "cause": x["cause"], "judgedBy": "no UE holds the ID"})
+        else:
+            out.append(dict(x, imsi=i, attributedFrom={"ledgerImsi": 0, "ueId": list(ue)}))
+    return out, unheld, problems
+
+
+def attribution_self_test(at, period_ns):
+    """imsi-0 lines: a non-source unknownUe line of IMSI 2, which moved 3 -> 2 at k 30, fails alone and passes beside
+    the applied line of IMSI 2; an unheld-ID line passes and is recorded; imsi 0 without a pacing record fails."""
+    rx = 3_000_000_000
+    ids = {(12, 1): 2, (11, 1): 1}
+    x2_of = lambda u: (u["mEnbUeX2apId"], u["mnCellId"]) if isinstance(u, dict) else None
+    pacing = {(2, 5): [{"ueId": {"mEnbUeX2apId": 12, "mnCellId": 1}}], (2, 6): [{"ueId": {"mEnbUeX2apId": 4095, "mnCellId": 1}}]}
+    base = {"rxSeq": 30, "rxSimTimeNs": rx, "applySimTimeNs": rx, "outcome": "refused", "cause": "unknownUe", "imsi": 0,
+            "sourceCell": 0, "targetCell": 2}
+    non_source = dict(base, viaNodeId=2, ctlId=5)
+    unheld = dict(base, viaNodeId=2, ctlId=6)
+    applied = dict(base, viaNodeId=3, ctlId=1, imsi=2, sourceCell=3, outcome="applied", cause="")
+    fails = []
+
+    def run(lines):
+        ls, uh, p = attribute_unresolved(lines, lambda x, m: ids.get((x, m)), pacing, x2_of)
+        return ls, uh, p + judge(ls, at, [2, 3], period_ns)[2]
+    if not run([non_source])[2]:
+        fails.append("a non-source unknownUe line of a UE that moved without an applied line passed")
+    if run([non_source, applied])[2]:
+        fails.append("a non-source unknownUe line beside the UE's applied line failed: %s" % run([non_source, applied])[2])
+    ls, uh, p = run([unheld])
+    if p or ls or [u["judgedBy"] for u in uh] != ["no UE holds the ID"]:
+        fails.append("an unheld-ID line: %s %s %s" % (ls, uh, p))
+    if not run([dict(base, viaNodeId=3, ctlId=9)])[2]:
+        fails.append("imsi 0 without a pacing record passed")
+    if not run([dict(non_source, cause="alreadyOnTarget")])[2]:
+        fails.append("imsi 0 with another cause passed")
+    return fails
+
+
 def self_test():
-    """The judge on synthetic UE lists: a same-step pair for one IMSI, an unknown IMSI, a wrong move."""
+    """The judge on synthetic UE lists: a same-step pair for one IMSI, a wrong move, the imsi-0 attribution."""
     lists = {(2, 30): {3, 4}, (3, 30): {1, 2}, (2, 31): {2, 3, 4}, (3, 31): {1},   # imsi 2: 3 -> 2 at k 30
              (2, 32): {2, 3, 4}, (3, 32): {1}}                                     # no move 31 -> 32
 
@@ -320,8 +384,7 @@ def self_test():
     def line(d_ns=0, rxseq=30, **kw):
         return dict({"rxSeq": rxseq, "rxSimTimeNs": rx, "applySimTimeNs": rx + d_ns}, **kw)
     pair = [line(imsi=2, sourceCell=3, targetCell=2, outcome="applied"),
-            line(imsi=2, sourceCell=3, targetCell=3, outcome="refused", cause="inHandover"),
-            line(imsi=99, sourceCell=0, targetCell=2, outcome="refused", cause="unknownImsi")]
+            line(imsi=2, sourceCell=3, targetCell=3, outcome="refused", cause="inHandover")]
     # delta = 100 ms and 150 ms: decided at k 29 (100) / 29 (150), applied between samples 30 and 31 -> ka = 30
     d100 = [line(100_000_000, 29, imsi=2, sourceCell=3, targetCell=2, outcome="applied")]
     d150 = [line(150_000_000, 29, imsi=2, sourceCell=3, targetCell=2, outcome="applied")]
@@ -334,6 +397,7 @@ def self_test():
               ("delta 100 judged at k + 1", judge(d100, at, [2, 3], T), True), ("delta 150 judged at k + 1", judge(d150, at, [2, 3], T), True),
               ("delta 150 does not judge at rx", judge(d150_at_rx, at, [2, 3], T), False)]
     fails = [n for n, (_, _, p), want in checks if (not p) != want]
+    fails += attribution_self_test(at, T)
     fails += ue_id_self_test(lists, pair, T)
     print("kpm-ue-list-moves self-test: " + ("ok" if not fails else "FAIL " + ", ".join(fails)))
     return 0 if not fails else 1
@@ -493,7 +557,11 @@ def main():
         return lists.get((node, a.epoch_ms + max(0, k - 1) * a.period_ms))
 
     lines = [json.loads(l) for l in open(a.ledger) if l.strip()][1:] if os.path.exists(a.ledger) else []
+    ucm = _ue_context_map()
+    lines, unheld, p = attribute_unresolved(lines, cm.imsi_of, ucm.pacing_controls(a.ue_context_dir), ucm.x2_of)
+    problems += p
     results, moved, p = judge(lines, at, gnbs, a.period_ms * 1_000_000)
+    results += unheld
     problems += p
     out = {"format2Indications": n_f2, "format2ByNode": {str(n): v for n, v in sorted(f2.items())},
            "gnbUeIdCount": n_gnb_ueid, "reports": len(lists), "gnbNodes": gnbs, "lines": results,

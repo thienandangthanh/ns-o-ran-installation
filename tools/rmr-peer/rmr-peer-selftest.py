@@ -22,6 +22,8 @@ import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MEID = "en_gnb_001_001_00000003"
+# the KPM UE ID key of IMSI 3 in the frozen cp1 identity map (lteRnti 1 on MN cell 1)
+UE = "enGnbUeId:1@00F110-00001"
 # a RICcontrolRequest from the independent codec (e2-probe-node.py control --requestor 1 --instance 5 --func 3
 # --imsi 2 --target-gnb 3); RMR carries it as opaque octets
 CONTROL_HEX = ("00040052000004001d000500000100050005000200030016001716006000020000f1100100000001000000010103000000"
@@ -81,21 +83,27 @@ def http(url, data=None, method="GET"):
 def main():
     problems = []
     stub = load("stub-qp-rmr-peer")
-    table = {"3": [[["0000000210", [100, 0]], ["0000000310", [200, 0]]]]}
+    table = {UE: [[["0000000210", [100, 0]], ["0000000310", [200, 0]]]]}
     counts = {}
-    ans, _ = stub.build_prediction(table, counts, b'{"UEPredictionSet": ["3"]}')
-    check(ans == b'{"3":{"0000000210":[100,0],"0000000310":[200,0]}}', "prediction keeps the table's cell order", problems)
-    ans2, note = stub.build_prediction(table, counts, b'{"UEPredictionSet": ["3"]}')
+    ans, _ = stub.build_prediction(table, counts, b'{"UEPredictionSet": ["%s"]}' % UE.encode())
+    check(ans == b'{"%s":{"0000000210":[100,0],"0000000310":[200,0]}}' % UE.encode(), "prediction keeps the table's cell order",
+          problems)
+    ans2, note = stub.build_prediction(table, counts, b'{"UEPredictionSet": ["%s"]}' % UE.encode())
     check(ans2 is None and "no prediction left" in note, "a used-up UE gets no answer", problems)
-    ans3, _ = stub.build_prediction(table, {}, b'{"UEPredictionSet": ["3", "4"]}')
+    ans3, _ = stub.build_prediction(table, {}, b'{"UEPredictionSet": ["%s", "enGnbUeId:2@00F110-00001"]}' % UE.encode())
     check(ans3 is None, "a request naming two UEs gets no answer", problems)
     ans4, _ = stub.build_prediction(table, {}, b'{"UEPredictionSet": []}')
     check(ans4 is None, "an empty UE list gets no answer", problems)
 
     inj = load("rmr-injector")
-    want = inj.anomaly_payload("3")
-    check(json.loads(want) == [{"du-id": 1010, "ue-id": "3", "measTimeStampRf": 0, "Degradation": "RSRP RSSINR"}],
+    want = inj.anomaly_payload(UE)
+    check(json.loads(want) == [{"du-id": 1010, "ue-id": UE, "measTimeStampRf": 0, "Degradation": "RSRP RSSINR"}],
           "anomaly payload: one UE, ue-id a JSON string", problems)
+    try:
+        inj.anomaly_payload("3")
+        check(False, "anomaly payload refuses the decimal IMSI as ue-id", problems)
+    except ValueError:
+        check(True, "anomaly payload refuses the decimal IMSI as ue-id", problems)
 
     d = tempfile.mkdtemp()
     seed = os.path.join(d, "seed.rt")
@@ -118,9 +126,14 @@ def main():
         s = socket.create_connection(("127.0.0.1", 38599), timeout=10)
         s.sendall(b'{"op": "anomaly", "ue": "3"}\n')
         reply = json.loads(s.makefile().readline())
+        check(reply.get("ok") is False and "en-gNB-UEID" in reply.get("error", ""),
+              "an anomaly naming the decimal IMSI is refused: %r" % reply, problems)
+        s.sendall(json.dumps({"op": "anomaly", "ue": UE}).encode() + b"\n")
+        reply = json.loads(s.makefile().readline())
         check(reply.get("ok") is True, "injector reply %r" % reply, problems)
         got = rcv(rmr, ctx, 30003, 10)
-        check(got == (30003, want), "loopback received 30003 with the exact payload: %r" % (got,), problems)
+        check(got == (30003, want), "loopback received 30003 with the exact payload (and nothing for the refused one): %r"
+              % (got,), problems)
         s.sendall(json.dumps({"op": "control", "meid": MEID, "hex": CONTROL_HEX}).encode() + b"\n")
         reply = json.loads(s.makefile().readline())
         check(reply.get("ok") is True, "injector control reply %r" % reply, problems)
@@ -159,9 +172,9 @@ def main():
         check(q.poll() is None and http(base + "/health")[0] == 200, "stub up and healthy after 2.5 s idle", problems)
         code, _ = http(base + "/table", json.dumps({"predictions": table}).encode(), "PUT")
         check(code == 200, "stub accepted a table", problems)
-        check(send(rmr, ctx, 30000, b'{"UEPredictionSet": ["3"]}'), "sent one 30000 to the stub", problems)
+        check(send(rmr, ctx, 30000, b'{"UEPredictionSet": ["%s"]}' % UE.encode()), "sent one 30000 to the stub", problems)
         got = rcv(rmr, ctx, 30002, 10)
-        check(got == (30002, b'{"3":{"0000000210":[100,0],"0000000310":[200,0]}}'),
+        check(got == (30002, b'{"%s":{"0000000210":[100,0],"0000000310":[200,0]}}' % UE.encode()),
               "stub answered 30002 with the table's prediction: %r" % (got,), problems)
         time.sleep(2.5)
         code, body = http(base + "/log")

@@ -2,7 +2,9 @@
 # test-rc-decode.sh [image-tag]: the decoder (RANParameter-ID bounded 1..4294967295, ...) must
 #   1. on fixtures/rc-control-nrcgi.hex (X.691 octets from tools/asn1-indep, make-nrcgi-fixture.py):
 #      decode every header and message with RC_OK, every octet consumed and an exact APER re-encode
-#      (asn1c == X.691), headers ric-Style-Type 3 / ric-ControlAction-ID 1, messages the RAN parameter
+#      (asn1c == X.691); s3a1-* headers ric-Style-Type 3 / ric-ControlAction-ID 1 with a gNB-UEID, s5a3-x2ap<X>-*
+#      headers ric-Style-Type 5 / ric-ControlAction-ID 3 with exactly the en-gNB-UEID {m-eNB-UE-X2AP-ID X,
+#      globalENB-ID {00F110, macro eNB ID 1}} and no optional member; messages the RAN parameter
 #      path 1 > 2 > 3 > 4 with parameter 4 = the APER NR-CGI named by the line id (gNB n: 0000F110 0000000n 10);
 #   2. on fixtures/rc-control-requests.hex (the 30 M8 captures, kept byte-identical as history): decode
 #      every header as above, and refuse every message (the unbounded RANParameter-ID encoding is not
@@ -26,9 +28,15 @@ PATH = (r"<ranParameter-ID>1</ranParameter-ID><ranParameter-valueType><ranP-Choi
         r"<ranParameter-ID>3</ranParameter-ID>.*?<ranParameter-ID>4</ranParameter-ID><ranParameter-valueType>"
         r"<ranP-Choice-ElementFalse><ranParameter-value><valueOctS>([0-9A-F]+)</valueOctS>")
 def flat(r): return re.sub(r"\s+", "", r["xer"])
-def header_ok(r):
+def header_ok(r, kind="s3a1", x2ap=None):
     x = flat(r)
-    return r["ok"] and r["reenc"] and "<ric-Style-Type>3</ric-Style-Type>" in x and "<ric-ControlAction-ID>1</ric-ControlAction-ID>" in x
+    if not (r["ok"] and r["reenc"]):
+        return False
+    if kind == "s3a1":
+        return "<ric-Style-Type>3</ric-Style-Type>" in x and "<ric-ControlAction-ID>1</ric-ControlAction-ID>" in x and "<gNB-UEID>" in x
+    ue = ("<ueID><en-gNB-UEID><m-eNB-UE-X2AP-ID>%d</m-eNB-UE-X2AP-ID><globalENB-ID><pLMNIdentity>00F110</pLMNIdentity>"
+          "<eNB-ID><macro-eNB-ID>00000000000000000001</macro-eNB-ID></eNB-ID></globalENB-ID></en-gNB-UEID></ueID>" % x2ap)
+    return (ue + "<ric-Style-Type>5</ric-Style-Type><ric-ControlAction-ID>3</ric-ControlAction-ID>") in x
 def target(r):
     m = re.search(PATH, flat(r)) if r["ok"] and r["reenc"] else None
     return m.group(1) if m else None
@@ -38,7 +46,10 @@ for i in ids:
     gnb = int(re.search(r"gnb(\d+)$", i).group(1))
     want = "0000F110%08X10" % gnb
     h, m = rows.get(f"rc-control-nrcgi:{i}.h"), rows.get(f"rc-control-nrcgi:{i}.m")
-    if not (h and header_ok(h)): bad.append(f"nrcgi {i} header")
+    kind = i[:4]
+    x2 = re.match(r"s5a3-x2ap(\d+)-", i)
+    if kind not in ("s3a1", "s5a3") or (kind == "s5a3" and not x2): bad.append(f"nrcgi {i}: unknown fixture id")
+    elif not (h and header_ok(h, kind, int(x2.group(1)) if x2 else None)): bad.append(f"nrcgi {i} header")
     if not (m and target(m) == want): bad.append(f"nrcgi {i} message (want {want}, got {m and target(m)})")
 m8 = [l.split()[0] for l in open(m8_fx) if l.strip()]
 for i in m8:
@@ -47,6 +58,8 @@ for i in m8:
     if not m or target(m) is not None: bad.append(f"m8 {i} message decoded strictly")
 print(f"nrcgi fixture: {len(ids)} lines decoded strictly with the NR-CGI target; "
       f"M8 fixture: {len(m8)} headers decoded, {len(m8)} messages refused" if not bad else "FAIL " + "; ".join(bad))
+if not any(i.startswith("s5a3-") for i in ids): bad.append("no Style 5 / action 3 fixture line")
+if bad: print("FAIL " + "; ".join(bad))
 sys.exit(0 if ids and len(m8) == 30 and not bad else 1)
 PY
 rc=$?

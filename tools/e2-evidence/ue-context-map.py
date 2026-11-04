@@ -2,6 +2,8 @@
 """ue-context-map.py: a run's UE context map (ns-3's X2AP UE contexts) and the resolution of KPM UE IDs to IMSIs.
 
   ue-context-map.py check --trace-dir DIR --pdcp DlE2PdcpStatsLte.txt [--expect-map identity-map.json] [--out FILE]
+  ue-context-map.py injected --trace-dir DIR --pdcp DlE2PdcpStatsLte.txt --schedule SCHED --annotations ANN [--out FILE]
+  ue-context-map.py unheld --trace-dir DIR --x2ap X --mn-cell M
   ue-context-map.py --self-test
 
 ns-3 writes e2-ue-context-<n>.jsonl next to e2-ipc-trace-<n>.jsonl (--e2TraceDir): one ns3-e2-ipc v1 `ueContext`
@@ -20,6 +22,11 @@ reconnected). `check` passes iff:
       ns-3's own MN PDCP trace, not on the IPC channel it is checked for;
   (e) no `ueContext` record in any e2-ipc-trace-*.jsonl of the trace dir (the context belongs in its own file; any
       count fails).
+`injected` passes iff `check` passes and every control injected by the pacer schedule SCHED (steps' "inject" and
+"late") is annotated in ANN ({"<nodeId>/<ctlId>": imsi or null}, harness-side, never sent to ns-3) and vice versa,
+and per control I(ueId) = the annotated IMSI, where I(X, M) is the IMSI whose (lteRnti, mnCellId) over the run's
+context files equals (X, M); null means no line of any context file holds (X, M). `unheld` passes iff no line of
+any context file of the run holds (X, M) (the unheld UE ID of the negative cases).
 --expect-map adds the live cross-check against a frozen identity map (identity-map-extract.py output): the run's
 IMSI set equals the map's, per IMSI lteRnti = ues[imsi].mEnbUeX2apId and mnCellId = the map's mnCellId, the map's
 globalEnbId is {00F110, 00001}, and the map's sha256 is the one listed for it in the SHA256SUMS of its directory.
@@ -30,7 +37,7 @@ KPM UE IDs (the representation the kpimon decode harness prints and the RC UE ID
   eNB node: {"type": "eNB-UEID", "mmeUeS1apId": m, "gummei": {"plmn": "00F110", "mmeGroupId": "0001", "mmeCode": "01"},
             "mEnbUeX2apId": lteRnti} (globalENB-ID absent), Influx tag enbUeId:<mmeUeS1apId>@<lteRnti>.
 R(n, S, id) := the unique IMSI i in ctx(n, s) for some s in S whose ID of node n's kind equals id, else unresolved.
-Other tools load this file with importlib (UeContextMap, wire_id_problems, wire_id_tag).
+Other tools load this file with importlib (UeContextMap, wire_id_problems, wire_id_tag, x2_of, pacing_controls).
 """
 import argparse
 import hashlib
@@ -117,6 +124,35 @@ def wire_id_tag(kind, uid):
         g = uid["globalEnbId"]
         return "enGnbUeId:%d@%s-%s" % (uid["mEnbUeX2apId"], g["plmn"], g["macroEnbId"])
     return enb_tag(uid["mmeUeS1apId"], uid["mEnbUeX2apId"])
+
+
+def x2_of(uid):
+    """(X2AP ID, MN cell) of a UE ID in any of its forms: the IPC/pacing-log {"mEnbUeX2apId", "mnCellId"}, the decoded
+    wire en-gNB-UEID (wire_id_problems must pass) or the gNB Influx tag; None for anything else."""
+    if isinstance(uid, str):
+        m = GNB_TAG_RE.match(uid)
+        return (int(m.group(1)), int(m.group(3), 16)) if m and m.group(2) == PLMN else None
+    if not isinstance(uid, dict):
+        return None
+    if set(uid) == {"mEnbUeX2apId", "mnCellId"}:
+        x, mn = uid["mEnbUeX2apId"], uid["mnCellId"]
+        return (x, mn) if _int(x) and _int(mn) and 0 <= x <= 4095 and 0 <= mn <= 0xFFFFF else None
+    if uid.get("type") == "en-gNB-UEID" and not wire_id_problems("gnb", uid):
+        return uid["mEnbUeX2apId"], int(uid["globalEnbId"]["macroEnbId"], 16)
+    return None
+
+
+def pacing_controls(trace_dir):
+    """{(viaNodeId, ctlId): [the hub's inbound control records]} of trace_dir/e2-pacing-log.jsonl ({} if absent)."""
+    p, out = pathlib.Path(trace_dir) / "e2-pacing-log.jsonl", {}
+    if not p.exists():
+        return out
+    for line in p.read_text().splitlines():
+        if line.strip():
+            m = json.loads(line)
+            if isinstance(m, dict) and m.get("type") == "control":
+                out.setdefault((m.get("viaNodeId"), m.get("ctlId")), []).append(m)
+    return out
 
 
 def line_problems(m, node):
@@ -247,6 +283,18 @@ class UeContextMap:
         p = wire_id_problems(kind, uid)
         return (None if p else self.resolve(node, seqs, wire_id_tag(kind, uid))), p
 
+    def imsi_of(self, x2ap, mn_cell):
+        """I(X, M): the IMSI whose (lteRnti, mnCellId) over every line of every file equals (X, M), else None (MN-scoped,
+        one per IMSI by conjunct (c))."""
+        hits = {i for _, rows in self.lines.values() for row in rows for i, u in row.items()
+                if (u["lteRnti"], u["mnCellId"]) == (x2ap, mn_cell)}
+        return next(iter(hits)) if len(hits) == 1 else None
+
+    def holds(self, x2ap, mn_cell):
+        """The IMSIs of any line of any context file with (lteRnti, mnCellId) = (X, M)."""
+        return sorted({i for _, rows in self.lines.values() for row in rows for i, u in row.items()
+                       if (u["lteRnti"], u["mnCellId"]) == (x2ap, mn_cell)})
+
     def identities(self):
         """Conjunct (c): {imsi: (lteRnti, mnCellId, mmeUeS1apId)} over every line of every file, and its problems."""
         seen, p = {}, []
@@ -338,6 +386,48 @@ def check(trace_dir, pdcp, expect_map=None):
     return out
 
 
+def schedule_controls(sched):
+    """{(nodeId, ctlId): ueId} of every control a pacer schedule injects (steps' "inject" and "late"); an inject with
+    "ueIdFrom" names the "ipcUeId" of that file, as the pacer sends it (None when the file is unreadable)."""
+    out = {}
+    for c in [c for st in sched.get("steps", {}).values() for c in st.get("inject", [])] + sched.get("late", []):
+        uid = c.get("ueId")
+        if "ueIdFrom" in c:
+            try:
+                uid = json.loads(pathlib.Path(c["ueIdFrom"]).read_text())["ipcUeId"]
+            except (OSError, ValueError, KeyError, TypeError):
+                uid = None
+        out[(c["nodeId"], c["ctlId"])] = uid
+    return out
+
+
+def injected(trace_dir, pdcp, sched, ann):
+    """The `injected` verdict: check() on the run and I(ueId) = the annotated IMSI for every injected control."""
+    r = check(trace_dir, pdcp)
+    problems = list(r["problems"])
+    cm = UeContextMap(trace_dir)
+    ctl = schedule_controls(sched)
+    want = {}
+    for k, v in ann.items():
+        n, _, c = k.partition("/")
+        want[(int(n), int(c))] = v
+    problems += ["control %s is not annotated" % (k,) for k in sorted(set(ctl) - set(want))]
+    problems += ["annotation %s names no injected control" % (k,) for k in sorted(set(want) - set(ctl))]
+    rows = []
+    for k in sorted(set(ctl) & set(want)):
+        x = x2_of(ctl[k])
+        if x is None:
+            problems.append("control %s ueId %r is not {mEnbUeX2apId, mnCellId}" % (k, ctl[k]))
+            continue
+        got, held = cm.imsi_of(*x), cm.holds(*x)
+        rows.append({"control": "%d/%d" % k, "ueId": ctl[k], "imsi": got, "annotated": want[k]})
+        if want[k] is None and held:
+            problems.append("control %s: ueId %s is held by IMSI(s) %s, annotated as unheld" % (k, x, held))
+        elif want[k] is not None and got != want[k]:
+            problems.append("control %s: I(%s) = %s, annotated IMSI %s" % (k, x, got, want[k]))
+    return {"controls": rows, "problems": problems[:40], "problemCount": len(problems), "pass": not problems}
+
+
 def _write(d, name, lines):
     (d / name).write_text("".join(json.dumps(x, separators=(",", ":")) + "\n" for x in lines))
 
@@ -410,6 +500,25 @@ def self_test():
             ("a resolution over several seqs", cm.resolve(2, {0, 1, 2}, "enGnbUeId:4@00F110-00001") == 2),
             ("a barrier hides later lines", UeContextMap(t / "resolve", max_seq=1).resolve(2, {3}, "enGnbUeId:4@00F110-00001") is None),
         ]
+        checks += [
+            ("I(X, M) is MN-scoped over every file", cm.imsi_of(4, 1) == 2 and cm.imsi_of(3, 1) == 1),
+            ("I(X, M) of an unheld ID is none", cm.imsi_of(4095, 1) is None and cm.holds(4095, 1) == []),
+            ("I(X, M) of another MN cell is none", cm.imsi_of(4, 2) is None),
+            ("x2_of reads the IPC, wire and tag forms", x2_of({"mEnbUeX2apId": 4, "mnCellId": 1}) == (4, 1) ==
+             x2_of(g(4)) == x2_of("enGnbUeId:4@00F110-00001")),
+            ("x2_of refuses an IMSI, a gNB-UEID and an out-of-range ID", x2_of(2) is None and
+             x2_of({"type": "gNB-UEID", "amfUeNgapId": 2}) is None and x2_of({"mEnbUeX2apId": 4096, "mnCellId": 1}) is None),
+        ]
+        sched = {"steps": {"2": {"inject": [{"nodeId": 2, "ctlId": 1, "ueId": {"mEnbUeX2apId": 4, "mnCellId": 1}},
+                                            {"nodeId": 2, "ctlId": 2, "ueId": {"mEnbUeX2apId": 4095, "mnCellId": 1}}]}},
+                 "late": [{"nodeId": 2, "ctlId": 3, "ueId": {"mEnbUeX2apId": 3, "mnCellId": 1}}]}
+        good = {"2/1": 2, "2/2": None, "2/3": 1}
+        for name, ann, want in (("injected IDs name the annotated IMSIs", good, True),
+                                ("an injected ID that names another IMSI fails", dict(good, **{"2/1": 1}), False),
+                                ("an ID annotated as unheld that an IMSI holds fails", dict(good, **{"2/3": None}), False),
+                                ("an unannotated control fails", {"2/1": 2, "2/2": None}, False)):
+            if injected(t / "resolve", t / "resolve" / "pdcp.txt", sched, ann)["pass"] != want:
+                fails.append(name)
         fails += [n for n, ok in checks if not ok]
         # the frozen map cross-check
         d = _fixture(t / "expect")
@@ -441,7 +550,33 @@ def main():
     c.add_argument("--pdcp", required=True, help="the run's ns3run/DlE2PdcpStatsLte.txt")
     c.add_argument("--expect-map")
     c.add_argument("--out")
+    j = sub.add_parser("injected")
+    j.add_argument("--trace-dir", required=True)
+    j.add_argument("--pdcp", required=True)
+    j.add_argument("--schedule", required=True)
+    j.add_argument("--annotations", required=True)
+    j.add_argument("--out")
+    u = sub.add_parser("unheld")
+    u.add_argument("--trace-dir", required=True)
+    u.add_argument("--x2ap", type=int, required=True)
+    u.add_argument("--mn-cell", type=int, required=True)
     a = ap.parse_args()
+    if a.cmd == "unheld":
+        cm = UeContextMap(a.trace_dir)
+        held = cm.holds(a.x2ap, a.mn_cell)
+        ok = not held and not cm.problems and bool(cm.lines)
+        print(json.dumps({"x2ap": a.x2ap, "mnCell": a.mn_cell, "heldBy": held, "contextFiles": len(cm.lines),
+                          "problems": cm.problems[:5], "pass": ok}))
+        return 0 if ok else 1
+    if a.cmd == "injected":
+        r = injected(a.trace_dir, a.pdcp, json.load(open(a.schedule)), json.load(open(a.annotations)))
+        if a.out:
+            with open(a.out, "w") as f:
+                json.dump(r, f, indent=1, sort_keys=True)
+        print(json.dumps(r["controls"]))
+        for p in r["problems"][:20]:
+            print("problem: " + p)
+        return 0 if r["pass"] else 1
     r = check(a.trace_dir, a.pdcp, a.expect_map)
     if a.out:
         with open(a.out, "w") as f:
