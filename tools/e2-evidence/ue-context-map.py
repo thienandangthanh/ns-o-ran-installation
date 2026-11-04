@@ -17,7 +17,9 @@ reconnected). `check` passes iff:
       eNB), mmeUeS1apId = imsi (ns-3's construction, disclosed), and no two IMSIs share (lteRnti, mnCellId);
   (d) that lteRnti equals the IMSI's single RNTI on cell 1 of the run's DlE2PdcpStatsLte.txt (identity-map-extract.py
       `extract`, which also requires every row on the MN cell and one RNTI per IMSI), so the map is anchored on
-      ns-3's own MN PDCP trace, not on the IPC channel it is checked for.
+      ns-3's own MN PDCP trace, not on the IPC channel it is checked for;
+  (e) no `ueContext` record in any e2-ipc-trace-*.jsonl of the trace dir (the context belongs in its own file; any
+      count fails).
 --expect-map adds the live cross-check against a frozen identity map (identity-map-extract.py output): the run's
 IMSI set equals the map's, per IMSI lteRnti = ues[imsi].mEnbUeX2apId and mnCellId = the map's mnCellId, the map's
 globalEnbId is {00F110, 00001}, and the map's sha256 is the one listed for it in the SHA256SUMS of its directory.
@@ -179,13 +181,17 @@ class UeContextMap:
     def __init__(self, trace_dir, max_seq=None):
         self.dir = pathlib.Path(trace_dir)
         self.problems, self.kinds, self.lines, self.samples = [], {}, {}, {}
+        self.ipc_trace_ue_context = {}  # node -> count of ueContext records inside its e2-ipc-trace file
         for p in sorted(self.dir.glob("e2-ipc-trace-*.jsonl")):
             n = _node_of(TRACE_RE, p.name)
             for x in read_jsonl(p, self.problems, p.name):
-                if x.get("type") == "hello":
+                t = x.get("type") if isinstance(x, dict) else None
+                if t == "hello":
                     self.kinds[n] = x.get("kind")
-                elif x.get("type") == "sample" and _int(x.get("seq")):
+                elif t == "sample" and _int(x.get("seq")):
                     self.samples.setdefault(n, {})[x["seq"]] = [u.get("imsi") for u in x.get("ues") or []]
+                elif t == "ueContext":
+                    self.ipc_trace_ue_context[n] = self.ipc_trace_ue_context.get(n, 0) + 1
         ctx_nodes = {_node_of(CTX_RE, p.name): p for p in self.dir.glob("e2-ue-context-*.jsonl")}
         if not self.kinds:
             self.problems.append("no hello in any e2-ipc-trace-*.jsonl of %s" % self.dir)
@@ -319,12 +325,16 @@ def check(trace_dir, pdcp, expect_map=None):
             problems.append("IMSI %d lteRnti %d, ns-3's MN PDCP trace RNTI %s" % (i, rnti, want))
     if not ids:
         problems.append("no UE in any context line")
+    in_trace = sum(cm.ipc_trace_ue_context.values())
+    if in_trace:
+        problems.append("%d ueContext record(s) inside e2-ipc-trace-*.jsonl (per node %s)" % (
+            in_trace, {str(n): c for n, c in sorted(cm.ipc_trace_ue_context.items())}))
     if expect_map:
         problems += expect_map_problems(ids, expect_map)
     out = {"nodes": {str(n): {"kind": cm.kinds.get(n), "lines": len(cm.lines.get(n, ([], []))[0])}
                      for n in sorted(set(cm.kinds) | set(cm.lines))},
            "identities": {str(i): {"lteRnti": r, "mnCellId": m, "mmeUeS1apId": s} for i, (r, m, s) in sorted(ids.items())},
-           "expectMap": expect_map, "problems": problems[:40], "problemCount": len(problems), "pass": not problems}
+           "ipcTraceUeContextLines": in_trace, "expectMap": expect_map, "problems": problems[:40], "problemCount": len(problems), "pass": not problems}
     return out
 
 
@@ -332,8 +342,9 @@ def _write(d, name, lines):
     (d / name).write_text("".join(json.dumps(x, separators=(",", ":")) + "\n" for x in lines))
 
 
-def _fixture(d, ctx_override=None, pdcp_rows=None, sample_ues=None):
-    """A healthy run: eNB node 1 and gNB node 2; IMSIs 1, 2 with MN RNTIs 3, 4; IMSI 2 joins gNB 2 at seq 2."""
+def _fixture(d, ctx_override=None, pdcp_rows=None, sample_ues=None, trace_extra=None):
+    """A healthy run: eNB node 1 and gNB node 2; IMSIs 1, 2 with MN RNTIs 3, 4; IMSI 2 joins gNB 2 at seq 2.
+    trace_extra {node: [lines]} appends lines to that node's IPC trace."""
     d.mkdir(parents=True, exist_ok=True)
     ue = lambda i, r: {"imsi": i, "lteRnti": r, "mnCellId": 1, "mmeUeS1apId": i}
     ctx = {1: [{"type": "ueContext", "v": 1, "nodeId": 1, "seq": 0, "ues": [ue(1, 3), ue(2, 4)]}],
@@ -343,7 +354,8 @@ def _fixture(d, ctx_override=None, pdcp_rows=None, sample_ues=None):
     ues = sample_ues or {1: lambda s: [1, 2], 2: lambda s: [1] if s < 2 else [1, 2]}
     for n, kind in ((1, "enb"), (2, "gnb")):
         _write(d, "e2-ipc-trace-%d.jsonl" % n, [{"type": "hello", "nodeId": n, "kind": kind}] +
-               [{"type": "sample", "nodeId": n, "seq": s, "ues": [{"imsi": i} for i in ues[n](s)]} for s in range(4)])
+               [{"type": "sample", "nodeId": n, "seq": s, "ues": [{"imsi": i} for i in ues[n](s)]} for s in range(4)] +
+               (trace_extra or {}).get(n, []))
         if ctx.get(n) is not None:
             _write(d, "e2-ue-context-%d.jsonl" % n, ctx[n])
     rows = pdcp_rows or [(1, 1, 3), (1, 2, 4), (1, 1, 3)]
@@ -376,6 +388,7 @@ def self_test():
         case("an RNTI that differs from the PDCP trace", False, pdcp_rows=[(1, 1, 3), (1, 2, 6)])
         case("ues not sorted by imsi", False, ctx_override={1: [line(1, 0, [ue(2, 4), ue(1, 3)])]})
         case("mnCellId not the eNB", False, ctx_override={1: [line(1, 0, [ue(1, 3), ue(2, 4, mn=2)])]})
+        case("a ueContext record inside an IPC trace", False, trace_extra={2: [line(2, 2, [ue(1, 3), ue(2, 4)])]})
         # resolution
         cm = UeContextMap(_fixture(t / "resolve"))
         g = lambda r: {"type": "en-gNB-UEID", "mEnbUeX2apId": r, "globalEnbId": {"plmn": PLMN, "macroEnbId": "00001"}}

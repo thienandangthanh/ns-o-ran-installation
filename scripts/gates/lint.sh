@@ -68,6 +68,7 @@ python3 -I scripts/gates/digest-run.py --self-test >/dev/null || { echo "digest-
 python3 -I tools/e2-evidence/ue-context-map.py --self-test >/dev/null || { echo "UE context map self-test failed"; rc=1; }
 python3 -I tools/e2-evidence/kpm-ue-list-moves.py --self-test >/dev/null || { echo "KPM UE list / UE ID judge self-test failed"; rc=1; }
 python3 -I tools/e2-evidence/e2-facts-query.py --self-test >/dev/null || { echo "e2-facts-query sub-actions self-test failed"; rc=1; }
+python3 -I tools/e2-evidence/influx-ue-ueid-every-node.py --self-test >/dev/null || { echo "Influx UE-row ueId-to-IMSI every-node judge self-test failed"; rc=1; }
 python3 -I tools/ipc-null-sink/ipc-null-sink.py --self-test >/dev/null || { echo "ipc-null-sink self-test failed"; rc=1; }
 timeout 120 bash tools/e2-evidence/selftest.sh >/dev/null 2>&1 || { echo "e2-evidence self-test (incl. influx-vs-trace ueId) failed"; rc=1; }
 # agent_counters_assert: the UE-context counters join the zero set, and ipc.ueContext >= 1

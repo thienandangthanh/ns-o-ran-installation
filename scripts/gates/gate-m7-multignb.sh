@@ -202,6 +202,14 @@ check m7_kpimon_subscription_one_action_id1_format3 kpm_sub_actions_check "$F" "
 check m7_ue_context_files_consistent_with_ns3_mn_pdcp_trace ue_context_check "$RUN" "$RUN" "$e/m7-ue-context.json"
 check m7_kpm_ue_ids_en_gnb_and_enb_ueid_resolved_by_ue_context kpm_ue_ids_check "$e/m7.pcap" "$e/node-ips.json" "$RUN" \
     "$e/m7-kpm-ue-ids.json" "$F"
+# Influx = IPC through the UE context: a pivoted UeMetrics export of the run window (the token stays in the pod), every
+# row's ueId of its node's form resolving through ctx(n, ns3.seq) to the row's ns3.imsi, every node with UE rows.
+influx_ue_ueids() {
+    influx_export m7 "$NS3_START_EPOCH" ue:UeMetrics || return 1
+    python3 -I "$E2EV/influx-ue-ueid-every-node.py" --influx-ue "$e/m7-influx-ue.csv" --node-ips "$e/node-ips.json" \
+        --ue-context-dir "$RUN" --out "$e/m7-influx-ue-ueids.json"
+}
+check m7_influx_ue_rows_ueid_resolves_to_ns3_imsi_every_node influx_ue_ueids
 
 check m7_harness_ran_on_pcap harness_analyze m7 "$e/m7.pcap" "$SODIR" 8
 if [ -s "$e/m7-decode.json" ]; then

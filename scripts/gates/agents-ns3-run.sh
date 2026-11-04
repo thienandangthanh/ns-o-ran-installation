@@ -6,7 +6,8 @@
 #   ns3_start <rundir> <args...>      scenario-zero directly, own session/process group, bounded; sets NS3_PID, NS3_START_EPOCH
 #   ns3_alive | ns3_wait | ns3_stop   liveness (zombie-safe), reap exit code into NS3_RC, kill by PGID
 #   agents_pick_simtime               M7 simTime from the M4 timing report (sets M7_SIMTIME, M7_TIMING_NOTE)
-#   influx_export <tag> <start-epoch> pivoted cellMetrics/UeMetrics CSVs for ns3.* joins; influx_node_csv: ns3.nodeId series
+#   influx_export <tag> <start-epoch> [<key>:<measurement> ...]   pivoted CSVs (default cellMetrics and UeMetrics) for ns3.*
+#                                     joins; influx_node_csv: ns3.nodeId series
 #   kpimon_logs_since <epoch> <out>   kpimon pod log from an epoch
 #   pcap_facts <pcap> <tag>           facts JSON + decoded setup/subscription text
 #   wire_sub_counts <pcap>            "<requests> <responses>" of RICsubscription seen so far (live pcap is fine)
@@ -146,11 +147,15 @@ _flux() {
     [ "$rc" -eq 0 ] && ! grep -q '^error' "$2"
 }
 
-# influx_export <tag> <start-epoch>: <tag>-influx-cell.csv and <tag>-influx-ue.csv (pivot: one row per point).
+# influx_export <tag> <start-epoch> [<key>:<measurement> ...]: <tag>-influx-<key>.csv per measurement, by default
+# <tag>-influx-cell.csv (cellMetrics) and <tag>-influx-ue.csv (UeMetrics); pivot: one row per point, one column per
+# field, the group-key tag columns (UeMetrics `ueId`) kept.
 influx_export() {
     local tag="$1" s e rc=0 m
     s=$(iso_utc $(($(printf '%.0f' "$2") - 30))); e=$(iso_utc $(($(date +%s) + 120)))
-    for m in cell:cellMetrics ue:UeMetrics; do
+    shift 2
+    [ "$#" -gt 0 ] || set -- cell:cellMetrics ue:UeMetrics
+    for m in "$@"; do
         _flux "from(bucket: \"kpimon\") |> range(start: $s, stop: $e) |> filter(fn: (r) => r._measurement == \"${m#*:}\") |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\") |> drop(columns: [\"_start\", \"_stop\"])" \
             "$EVIDENCE_DIR/$tag-influx-${m%%:*}.csv" || { echo "flux export ${m%%:*} failed: $(head -c 300 "$EVIDENCE_DIR/$tag-influx-${m%%:*}.csv.err")"; rc=1; }
     done

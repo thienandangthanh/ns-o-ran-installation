@@ -98,20 +98,43 @@ static void print_ue_id(const UEID_t *id) {
 	putchar('}');
 }
 
+/* 1 when two matchingUEidLists are structurally equal position by position: the same number of UE IDs and, at
+ * every position, the same UEID CHOICE with every member (optional ones included) equal, through asn1c's own
+ * compare_struct of the UEID type. A NULL list equals only an empty or NULL list. Fails closed (0) when the
+ * library carries no compare operation or an entry is missing. */
+static int ue_id_lists_equal(const MatchingUEidList_t *a, const MatchingUEidList_t *b) {
+	int na = a ? a->list.count : 0, nb = b ? b->list.count : 0;
+	if (na != nb) return 0;
+	asn_struct_compare_f *cmp = asn_DEF_UEID.op ? asn_DEF_UEID.op->compare_struct : NULL;
+	if (na > 0 && !cmp) return 0;
+	for (int k = 0; k < na; k++) {
+		const MatchingUEidItem_t *x = a->list.array[k], *y = b->list.array[k];
+		if (!x || !y || cmp(&asn_DEF_UEID, &x->ueID, &y->ueID) != 0) return 0;
+	}
+	return 1;
+}
+
 /* The UE IDs of the first measCondUEidList item ("ueIds"), kpimon's own ueId tag per UE position
- * ("ueIdTags": e2sm_kpm_format2_ue_id_tag, the reason string where it returns -1), and whether every item
- * carries the same number of UE IDs. */
+ * ("ueIdTags": e2sm_kpm_format2_ue_id_tag, the reason string where it returns -1), and whether every item's
+ * UE ID list is structurally equal to the first item's ("ueIdsUniform": same count, and position by position
+ * the same CHOICE and members). */
 static void print_ue_ids(const E2SM_KPM_IndicationMessage_Format2_t *f2) {
 	const MeasurementCondUEidList_t *l = &f2->measCondUEidList;
 	int n0 = -1, same = 1;
+	const MatchingUEidList_t *first = NULL;
 	for (int i = 0; i < l->list.count; i++) {
 		const MeasurementCondUEidItem_t *c = l->list.array[i];
-		int n = c->matchingUEidList ? c->matchingUEidList->list.count : 0;
-		if (n0 < 0) n0 = n; else if (n != n0) same = 0;
+		const MatchingUEidList_t *m = c ? c->matchingUEidList : NULL;
+		if (n0 < 0) {
+			n0 = m ? m->list.count : 0;
+			first = m;
+		} else if (!ue_id_lists_equal(first, m)) {
+			same = 0;
+		}
 	}
 	printf(",\"condItems\":%d,\"ueIdsPerItem\":%d,\"ueIdsUniform\":%s,\"ueIds\":[", l->list.count, n0,
 	       same ? "true" : "false");
-	const MatchingUEidList_t *u = l->list.count > 0 ? l->list.array[0]->matchingUEidList : NULL;
+	const MatchingUEidList_t *u = first;
 	for (int k = 0; u && k < u->list.count; k++) {
 		if (k) putchar(',');
 		print_ue_id(&u->list.array[k]->ueID);
