@@ -7,11 +7,13 @@
 # 30003 trigger; a handover needs one control within T_ctl, a none none within W.
 #
 #   gate-r3p-ts-predictor.sh [--mode c1|single|calibrate] [--dev] [--reference <committed reference dir>]
+#                            [--reference-transform <M9 raw dir> <M9 digests dir>]
 #   gate-r3p-ts-predictor.sh --mode dryrun --stage a
 #   gate-r3p-ts-predictor.sh --mode dryrun --stage b --stage-a-class <committed stage A classification>
 #
 # --mode c1 (default): C8 (with 0 handover rows in the null control), live1..live3, the RIC-free replay, the
-# --RngRun=2 replay, C1; --reference adds live1 = the committed reference. --mode single (the M9 chain without the
+# --RngRun=2 replay, C1; --reference adds live1 = the committed reference; --reference-transform adds live1 =
+# T(M9 files) (reference-transform-compare.py). --mode single (the M9 chain without the
 # reference): C8 and one live run. --mode calibrate: R2's calibration block through the R3′ prepare path (N6 + the
 # fixed answer); W = max(1 s, 3 x L_max) for rung-config r3pConfig.W_s. --mode dryrun: one null-control lock-step
 # run with the RIC up, a prepare-only N6 observation at every T of the domain (stage b: h1's control injected at h1's
@@ -31,13 +33,15 @@ source "$(dirname "$0")/influx-dump.sh"
 source "$(dirname "$0")/ts-rung-lib.sh"
 RUNG=r3p
 
-DEV=0; MODE=c1; REF=""; STAGE=""; STAGE_A=""; DELTA_MS=0
+DEV=0; MODE=c1; REF=""; TREF_RAW=""; TREF_DIG=""; STAGE=""; STAGE_A=""; DELTA_MS=0
 while [ $# -gt 0 ]; do
     case "$1" in
         --mode) MODE="$2"; shift 2 ;;
         --stage) STAGE="$2"; shift 2 ;;
         --stage-a-class) STAGE_A="$2"; shift 2 ;;
         --reference) REF="$2"; shift 2 ;;
+        --reference-transform) [ $# -ge 3 ] || { log "--reference-transform needs two dirs"; exit 2; }
+            TREF_RAW="$2"; TREF_DIG="$3"; shift 3 ;;
         --dev) DEV=1; shift ;;
         --delta-ms) DELTA_MS="$2"; shift 2 ;;
         *) log "unknown arg $1"; exit 2 ;;
@@ -49,6 +53,7 @@ case "$MODE" in c1|single|calibrate|dryrun) ;; *) log "bad --mode $MODE"; exit 2
 [[ "$DELTA_MS" =~ ^[0-9]+$ ]] || { log "bad --delta-ms $DELTA_MS"; exit 2; }
 export DELTA_MS
 [ -z "$REF" ] || [ "$MODE" = c1 ] || { log "--reference needs --mode c1"; exit 2; }
+[ -z "$TREF_RAW" ] || { [ "$MODE" = c1 ] && [ -n "$TREF_DIG" ]; } || { log "--reference-transform needs --mode c1 and two dirs"; exit 2; }
 if [ "$MODE" = dryrun ]; then
     case "$STAGE" in a) ;; b) [ -n "$STAGE_A" ] || { log "--stage b needs --stage-a-class"; exit 2; } ;;
         *) log "dryrun needs --stage a|b"; exit 2 ;; esac
@@ -286,6 +291,7 @@ PY
     SIMSIDE=(); [ "$DELTA_MS" = 0 ] || SIMSIDE=(--components "ledger,ipc,traces")
     [ -z "$REF" ] || rung_reference "$REF" --file "predictor-records=$RUNS/live1/r3p/predictor-records.jsonl" \
         --file "schedule=$SCHED" --file "scenario=$SCEN" --recorded "xapp-image-ids.json=$e/xapp-image-ids.json" "${SIMSIDE[@]}"
+    [ -z "$TREF_RAW" ] || rung_reference_transform "$TREF_RAW" "$TREF_DIG" "$SCEN" "$SCHED" "$G/r3p-stage-a.json"
 fi
 
 if [ "$MODE" != calibrate ]; then

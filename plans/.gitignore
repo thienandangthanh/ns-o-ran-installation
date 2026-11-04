@@ -24,6 +24,9 @@
 !/*/evidence/p05-ppid-offline/**
 # A run directory's comparison against a committed reference (reference-compare.py output): a small verdict.
 !/*/evidence/*/*/**/reference-compare*.json
+# Its transform-compare against the M9 files (reference-transform-compare.py output and its self-test lines).
+!/*/evidence/*/*/**/reference-transform-compare*.json
+!/*/evidence/*/*/**/reference-transform-selftest.txt
 # The pinned protoc toolchain proof (tools/protoc-pinned/protoc-pinned-proof.sh): a small verdict with tool versions.
 !/*/evidence/*/*/**/proof.json
 # Its generate mode's record for a changed proto: tool versions and the sha256 of each generated file.

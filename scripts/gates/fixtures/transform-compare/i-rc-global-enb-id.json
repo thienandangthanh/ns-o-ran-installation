@@ -1,0 +1,1 @@
+{"why": "the run's RC UE ID carries a wrong PLMN in the Global eNB ID", "expect": "fail", "mutation": {"side": "run", "file": "extra/rc-multiset.json", "old": "\"plmn\": \"00F110\"", "new": "\"plmn\": \"00F111\""}}

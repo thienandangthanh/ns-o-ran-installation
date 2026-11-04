@@ -217,6 +217,33 @@ rung_reference() {
     fact referenceDir "$(json_str "${ref#"$HARNESS_DIR"/}")"
 }
 
+# rung_reference_transform <M9 raw dir> <M9 digests dir> <scenario> <schedule> <stage-a>: --reference-transform mode
+# (C1 only, after rung_c1): live1 equals T(M9 files) by reference-transform-compare.py (ipc and traces literal against
+# the M9 digests; scenario, schedule, stage-A classification, predictor records, ledger and rc-multiset equal to
+# m9-transform.py of the M9 raw files; kpm-headers and collet-start-time literal). Relative dirs are taken inside the
+# harness clone, where the references are committed.
+rung_reference_transform() {
+    local raw="$1" ref="$2" scen="$3" sched="$4" stagea="$5"
+    case "$raw" in /*) ;; *) raw="$HARNESS_DIR/$raw" ;; esac
+    case "$ref" in /*) ;; *) ref="$HARNESS_DIR/$ref" ;; esac
+    local cmp="$HARNESS_DIR/scripts/gates/reference-transform-compare.py"
+    tc_self() { python3 -I "$cmp" --selftest >"$e/reference-transform-selftest.txt" 2>&1; local rc=$?; tail -3 "$e/reference-transform-selftest.txt"; return $rc; }
+    check "${RUNG}_transform_compare_self_test" tc_self
+    tc_cmp() {
+        python3 -I "$cmp" compare "$RUNS/live1" "$raw" "$ref" --file "scenario=$scen" --file "schedule=$sched" \
+            --file "stage-a=$stagea" >"$e/reference-transform-compare.json"
+        local rc=$?
+        cat "$e/reference-transform-compare.json"
+        return $rc
+    }
+    check "${RUNG}_c1_live1_transform_equals_m9" tc_cmp
+    local k
+    for k in transformEqualsM9 transformedFields fieldsWithoutOccurrence literalComponents; do
+        fact "$k" "$(python3 -I -c 'import json,sys; print(json.dumps(json.load(open(sys.argv[1])).get(sys.argv[2])))' "$e/reference-transform-compare.json" "$k" 2>/dev/null)"
+    done
+    fact transformReference "$(json_str "${raw#"$HARNESS_DIR"/} ${ref#"$HARNESS_DIR"/}")"
+}
+
 # rung_final_facts: the gate-level facts and checks after the runs: slack, L, IPC drops, restart counts (all runs and
 # per pod), the 12041/12042 -1 route owners, whether the TS xApp or the stub held an ack route, and no leftovers.
 rung_final_facts() {
