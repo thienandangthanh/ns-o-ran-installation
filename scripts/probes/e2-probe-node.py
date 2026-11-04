@@ -8,6 +8,12 @@
            compare it with the request the node sends (exit 0 iff equal and an ENDCX2SetupRequest of the node's type)
   acks     --requestor R --func F --first N --last M --out DIR  write ack-<n>.hex: RICcontrolAcknowledge without the
            optional RICcontrolOutcome for instance ids N..M (for direct RMR delivery to an xApp)
+  control  --requestor R --instance I --func F --imsi N (--target-gnb G | --target-octets HEX) [--style S --action A]
+           print a RICcontrolRequest (JSON: hex, headerHex, messageHex, targetHex) as rc sends one: Control Header
+           Format 1 with gNB-UEID (AMF UE NGAP ID = IMSI, GUAMI 00F110/1/0/0, one F1AP and one E1AP ID 1), Control
+           Message Format 1 with RAN parameters 1 > 2 > 3 > 4, parameter 4 = the APER NR-CGI of gNB G (NCI = G || 1)
+           or the given octets as they are (a malformed target), no RICcontrolAckRequest (rc sends none: its
+           e2ap/wrapper.c sets only the request ID, RAN function ID, header and message); for the RIC control injector
 
 The node opens one SCTP association to e2term with PPID 70 on every DATA chunk (O-RAN E2GAP: E2AP over SCTP), sends
 an E2 Setup Request (Global ENB ID with a 20-bit macro eNB ID, or Global en-gNB ID with a 32-bit gNB ID; the RAN
@@ -199,6 +205,22 @@ def acks(a):
             f.write(e2ap.ric_control_ack((a.requestor, n), a.func).hex() + "\n")
 
 
+def control(a):
+    from e2indep_gen import E2SM_RC_v0200
+    if a.target_octets is not None:
+        target = bytes.fromhex(a.target_octets)
+    else:
+        target = encode(E2SM_RC_v0200.E2SM_COMMON_IEs.NR_CGI,
+                        {"pLMNIdentity": PLMN, "nRCellIdentity": ((a.target_gnb << 4) | 1, 36)})
+    ue = e2sm_rc.ue_id_gnb(a.imsi, PLMN, 1, 0, 0, cu_f1ap_ids=[1], cu_cp_e1ap_ids=[1])
+    hdr = e2sm_rc.control_header(ue, a.style, a.action)
+    param4 = {"id": 4, "value": ("valueOctS", target), "key": False}
+    msg = e2sm_rc.control_message([{"id": 1, "structure": [{"id": 2, "structure": [{"id": 3, "structure": [param4]}]}]}])
+    pdu = e2ap.ric_control_request((a.requestor, a.instance), a.func, hdr, msg)
+    print(json.dumps({"hex": pdu.hex(), "headerHex": hdr.hex(), "messageHex": msg.hex(), "targetHex": target.hex()}))
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -220,6 +242,16 @@ def main():
     c.add_argument("--first", type=int, default=1)
     c.add_argument("--last", type=int, default=40)
     c.add_argument("--out", required=True)
+    r = sub.add_parser("control")
+    r.add_argument("--requestor", type=int, required=True)
+    r.add_argument("--instance", type=int, required=True)
+    r.add_argument("--func", type=int, required=True)
+    r.add_argument("--imsi", type=int, required=True)
+    t = r.add_mutually_exclusive_group(required=True)
+    t.add_argument("--target-gnb", type=int)
+    t.add_argument("--target-octets")
+    r.add_argument("--style", type=int, default=3)
+    r.add_argument("--action", type=int, default=1)
     x = sub.add_parser("stored-x2")
     x.add_argument("--kind", choices=("en-gnb", "enb"), required=True)
     x.add_argument("--id", required=True)
@@ -231,6 +263,8 @@ def main():
         return kpm_sub(a)
     if a.cmd == "acks":
         return acks(a)
+    if a.cmd == "control":
+        return control(a)
     node = Node(a)
     signal.signal(signal.SIGTERM, lambda *_: (node.close("SIGTERM"), sys.exit(0)))
     node.run()
