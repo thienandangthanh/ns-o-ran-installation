@@ -1,0 +1,8 @@
+[host 21:53:53] gate e2-identity-setup (probes/probe-e2-identity-setup.sh) harness d6a8bb5593 -> unit gate-e2-identity-setup-20261103T215353Z
+[host 21:53:53] host disk: start	20261103T215353Z	87	/home/andang/VMs/ubuntu24.04-r2-green.1793742808	1
+[host 22:08:11] gate e2-identity-setup exit 1
+[host 22:08:11] host disk: end	20261103T220811Z	86	/home/andang/VMs/ubuntu24.04-r2-green.1793742808	3
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 22:08:11] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261103-0008-GH-1-post-m9-realism-m10/evidence/e2-identity-setup/20261103T215353Z
+verdict e2id FAIL ['e2id_engnb_setup_response_decoded', 'e2id_engnb_meid_and_nodeb_connected_nbid_32', 'e2id_engnb_nodeb_gnb_en_gnb_plmn_nbid_ranfunction2', 'e2id_enb_setup_response_decoded', 'e2id_enb_meid_matches_enb_macro', 'e2id_enb_meid_and_nodeb_connected_nbid_20', 'e2id_engnb_stored_x2_request_part_decodes_and_equals_sent', 'e2id_enb_stored_x2_request_part_decodes_and_equals_sent', 'e2id_enb_received_ric_subscription_request', 'e2id_enb_answered_ric_subscription_response', 'e2id_enb_kpm_subscription_deleted', 'e2id_engnb_received_ric_subscription_request', 'e2id_engnb_answered_ric_subscription_response', 'e2id_engnb_kpm_subscription_deleted', 'e2id_engnb_subscription_delete_seen', 'e2id_ac6_fixture_b_ack_after_timer_is_dropped_rc_alive', 'e2id_ac6_fixture_a_ack_without_outcome_inside_timer_panics_rc', 'e2id_probe_nodebs_disconnected_after_graceful_close', 'e2id_engnb_resetup_setup_response_decoded', 'e2id_engnb_resetup_nodeb_connected_nbid_32']
+exit 1

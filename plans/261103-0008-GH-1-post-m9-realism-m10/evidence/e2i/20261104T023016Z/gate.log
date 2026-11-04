@@ -1,0 +1,83 @@
+[02:30:17] gate e2i start; evidence /home/uc/evidence/e2i/20261104T023016Z; harness cdd66b1aa991110b7c208f25fc0072b4c809a429
+[02:30:17] PASS e2i_args
+[02:30:17] ric watchdog started (pid 629533, threshold 600s)
+[02:30:17] PASS e2i_asn1_indep_image_checksum_verified_and_loaded
+[02:30:18] PASS e2i_independent_decoder_self_test
+[02:30:18] PASS e2i_wire_judge_self_test
+[02:30:18] PASS e2i_nist_tree_at_testbed_sha_with_agent_dir
+[02:30:19] PASS e2i_build_tools_present
+[02:30:19] PASS e2i_sctp_module_loaded
+[02:30:19] PASS e2i_ns3_binary_located_at_pins
+[02:30:19] PASS e2i_ts_tree_and_image_are_pin_plus_patch_set
+[02:30:20] PASS e2i_rc_installed_at_pin_and_ready
+[02:30:20] PASS e2i_kpimon_image_carries_its_patch_set_label
+[02:31:02] PASS e2i_ric_reset_fresh_rc_kpimon_hw_go_and_bucket
+[02:31:34] PASS e2i_ts_xapp_scaled_to_zero_and_deregistered
+[02:31:45] PASS e2i_rmr_peer_image_built_and_self_tested
+[02:31:57] PASS e2i_injector_installed
+[02:31:58] PASS e2i_injector_registered
+[02:32:21] PASS e2i_rtmgr_restarted_after_registration
+[02:32:21] PASS e2i_injector_has_a_route_table
+[02:32:22] PASS e2i_capture_started_before_agents
+[02:38:15] FAIL e2i_bringup_agents_connected_set_equals_meids: exit 1: NS3_E2_AGENT_IMAGE_ID=sha256:5548f5e1b038d46f7278e7ec760ba8588fd2ff3d8afce572c24e698a57857cca
+NS3_E2_AGENT_E2_INTERFACE=da6f82f286cdbb38af1178f82f85877b12c2f85b
+NS3_E2_AGENT_METRIC_MAP_SHA256=9cfcbbcdd71514e4e2627cfbb4aa950760b42f85d5045de2c1b71d6215f16923
+[02:33:15] bringup agents: every expectedRanName equals meid_of its nodeId
+[02:38:15] bringup agents: TIMEOUT. want: enB_macro_001_001_000001 en_gnb_001_001_00000002 en_gnb_001_001_00000003  got:  
+[02:38:16] PASS e2i_agent_container_ips_recorded
+[02:41:17] FAIL e2i_every_agent_ready_and_subscribed_by_kpimon: exit 1: 1 26 true SETUP_SENT 0 0
+2 26 true SETUP_SENT 0 0
+3 26 true SETUP_SENT 0 0
+[02:41:17] FAIL e2i_e2mgr_en_gnb_2_record: exit 1: ranName=en_gnb_001_001_00000002 status=DISCONNECTED plmnId=00F110 nbId=00000000000000000000000000000010 (32 digits, decimal 2) nodeType=GNB gnbType=EN_GNB ranFunctions=[2, 3]
+[02:41:17] PASS e2i_e2mgr_en_gnb_3_record
+[02:41:17] FAIL e2i_e2mgr_enb_1_record: exit 1: ranName=enB_macro_001_001_000001 status=DISCONNECTED plmnId=00F110 nbId=00000000000000000001 (20 digits, decimal 1) nodeType=ENB enbType=MACRO_ENB x2 components=2
+[02:41:17] PASS e2i_route_dump_agents_subscribed
+[02:41:17] FAIL e2i_injector_routes_to_e2term_for_both_en_gnbs: exit 1: mse|12040,service-ricxapp-ric-control-injector-rmr.ricxapp:4560|-1|%meid
+meid en_gnb_001_001_00000002 maps to 0 e2term endpoints, expected 1
+meid en_gnb_001_001_00000003 -> e2term 10.101.123.229:38000
+[02:41:18] FAIL e2i_agent_rc_control_unit_test_cause_paths: exit 1: PASS late-refusal-control-failed-to-execute
+PASS exactly-one-answer
+rc-control-test: ok
+missing PASS nrcgi-applied-path
+missing PASS m8-capture-refused
+[02:41:19] PASS e2i_controls_encoded_by_the_independent_codec
+[02:41:19] PASS e2i_schedule_written
+[02:41:19] PASS e2i_ts_xapp_absent_before_the_run
+[02:41:20] PASS e2i_pod_snapshot_before
+[02:43:20] FAIL e2i_lockstep_run_with_two_injected_controls: exit 1: ns-3 started pid/pgid 685317 at 1793760080.397611043: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --outageThreshold=-1000 --simStartEpochMs=1767225600000 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/e2i/20261104T023016Z/run/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10
+ns-3 exit code 5
+e2i run: ns-3 exit 5, pacer exit 3 (want 0 and 0)
+[02:43:20] PASS e2i_ts_xapp_absent_after_the_run
+[02:43:21] PASS e2i_pod_snapshot_after
+[02:43:21] FAIL e2i_independent_target_applied_ledger_and_handover_start: exit 1: Traceback (most recent call last):
+  File "<stdin>", line 2, in <module>
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/e2i/20261104T023016Z/run/trace/e2-control-ledger.jsonl'
+[02:43:21] PASS e2i_injector_logs_saved
+[02:43:22] PASS e2i_injector_uninstalled
+[02:43:25] PASS e2i_ts_xapp_recreated_ready_and_registered
+[02:43:50] PASS e2i_rtmgr_restarted_after_ts_registration
+[02:43:50] FAIL e2i_ts_xapp_nodeb_list_names_every_connected_node: exit 1: [INFO] nodeb list is [{"inventoryName":"gnb_734_373_16b8cef1","globalNbId":{"plmnId":"373437","nbId":"10110101110001100111011110001"},"connectionStatus":"DISCONNECTED"},{"inventoryName":"en_gnb_001_001_00000005","globalNbId":{"plmnId":"00F110","nbId":"00000000000000000000000000000101"},"connectionStatus":"DISCONNECTED"},{"inventoryName":"en_gnb_001_001_00000003","globalNbId":{"plmnId":"00F110","nbId":"00000000000000000000000000000011"},"connectionStatus":"DISCONNECTED"},{"inventoryName":"en_gnb_001_001_00000004","globalNbId":{"plmnId":"00F110","nbId":"00000000000000000000000000000100"},"connectionStatus":"DISCONNECTED"},{"inventoryName":"enB_macro_001_001_000001","globalNbId":{"plmnId":"00F110","nbId":"00000000000000000001"},"connectionStatus":"DISCONNECTED"},{"inventoryName":"enB_macro_001_001_0ffffe","globalNbId":{"plmnId":"00F110","nbId":"11111111111111111110"},"connectionStatus":"DISCONNECTED"},{"inventoryName":"en_gnb_001_001_7f000001","globalNbId":{"plmnId":"00F110","nbId":"01111111000000000000000000000001"},"connectionStatus":"DISCONNECTED"},{"inventoryName":"en_gnb_001_001_00000002","globalNbId":{"plmnId":"00F110","nbId":"00000000000000000000000000000010"},"connectionStatus":"DISCONNECTED"}]
+only 0 CONNECTED nodes at e2mgr
+[02:43:50] PASS e2i_ts_cell_map_en_gnb_keys_no_enb_key_no_wrong_node
+[02:43:50] FAIL e2i_restart_counts_zero: exit 1: restart count 33 for agent 3
+restart count 33 for agent 2
+restart count 33 for agent 1
+[02:43:53] PASS e2i_agents_stopped
+[02:43:53] PASS e2i_capture_stopped
+[02:43:56] PASS e2i_pcap_facts
+[02:43:57] FAIL e2i_setup_requests_decoded_and_judged: exit 1: globalIds                FAIL node 2 frame 914: tshark Global E2 Node ID ('en-gNB', 3, 32) PLMN 00f110, want ('en-gNB', 2, 32) PLMN 00f110; node 2 frame 914: decoded Global E2 Node ID ['en-gNB', '00f110', 3, 32], want ['en-gNB', 2, 32]; node 3 frame 920: tshark Global E2 Node ID ('en-gNB', 2, 32) PLMN 00f110, want ('en-gNB', 3, 32) PLMN 00f110; node 3 frame 920: decoded Global E2 Node ID ['en-gNB', '00f110', 2, 32], want ['en-
+kpimonSubscribedAll      FAIL node 1: 0 KPM subscription requests, 0 responses; node 2: 0 KPM subscription requests, 0 responses; node 3: 0 KPM subscription requests, 0 responses
+ranFunctions             PASS every node as expected
+style5Action3Announced   PASS every node as expected
+x2apRequestPartDecodes   FAIL node 1 frame 5: 2 components, 2 X2, want one X2; node 1 frame 46: 2 components, 2 X2, want one X2; node 1 frame 87: 2 components, 2 X2, want one X2; node 1 frame 128: 2 components, 2 X2, want one X2; node 1 frame 169: 2 components, 2 X2, want one X2; node 1 frame 210: 2 components, 2 X2, want one X2; node 1 frame 251: 2 components, 2 X2, want one X2; node 1 frame 292: 2 components, 2 X2, want one 
+[02:43:57] FAIL e2i_globalIds: exit 1: {"detail": ["node 2 frame 914: tshark Global E2 Node ID ('en-gNB', 3, 32) PLMN 00f110, want ('en-gNB', 2, 32) PLMN 00f110", "node 2 frame 914: decoded Global E2 Node ID ['en-gNB', '00f110', 3, 32], want ['en-gNB', 2, 32]", "node 3 frame 920: tshark Global E2 Node ID ('en-gNB', 2, 32) PLMN 00f110, want ('en-gNB', 3, 32) PLMN 00f110", "node 3 frame 920: decoded Global E2 Node ID ['en-gNB', '00f110', 2, 32], want ['en-gNB', 3, 32]"], "pass": false}
+[02:43:57] PASS e2i_ranFunctions
+[02:43:57] FAIL e2i_x2apRequestPartDecodes: exit 1: {"detail": ["node 1 frame 5: 2 components, 2 X2, want one X2", "node 1 frame 46: 2 components, 2 X2, want one X2", "node 1 frame 87: 2 components, 2 X2, want one X2", "node 1 frame 128: 2 components, 2 X2, want one X2", "node 1 frame 169: 2 components, 2 X2, want one X2", "node 1 frame 210: 2 components, 2 X2, want one X2", "node 1 frame 251: 2 components, 2 X2, want one X2", "node 1 frame 292: 2 components, 2 X2, want one X2", "node 1 frame 333: 2 components, 2 X2, want one X2", "node 1 frame 374: 2 components, 2 X2, want one X2", "node 1 frame 415: 2 components, 2 X2, want one X2", "node 1 frame 456: 2 components, 2 X2, want one X2", "node 1 frame 497: 2 components, 2 X2, want one X2", "node 1 frame 538: 2 components, 2 X2, want one X2", "node 1 frame 579: 2 components, 2 X2, want one X2", "node 1 frame 620: 2 components, 2 X2, want one X2", "node 1 frame 661: 2 components, 2 X2, want one X2", "node 1 frame 702: 2 components, 2 X2, want one X2", "node 1 frame 743: 2 components, 2 X2, want one X2", "node 1 frame 784: 2 components, 2 X2, want one X2", "node 1 frame 825: 2 components, 2 X2, want one X2", "node 1 frame 866: 2 components, 2 X2, want one X2", "node 1 frame 907: 2 components, 2 X2, want one X2", "node 1 frame 948: 2 components, 2 X2, want one X2", "node 1 frame 989: 2 components, 2 X2, want one X2", "node 1 frame 1030: 2 components, 2 X2, want one X2", "node 1 frame 1071: 2 components, 2 X2, want one X2", "node 1 frame 1112: 2 components, 2 X2, want one X2", "node 1 frame 1153: 2 components, 2 X2, want one X2", "node 1 frame 1194: 2 components, 2 X2, want one X2", "node 1 frame 1235: 2 components, 2 X2, want one X2", "node 1 frame 1276: 2 components, 2 X2, want one X2", "node 1 frame 1317: 2 components, 2 X2, want one X2", "node 1 frame 1358: 2 components, 2 X2, want one X2", "node 1 frame 1399: 2 components, 2 X2, want one X2", "node 2 frame 914: X2 Global en-gNB ID {'pLMN-Identity': '00f110', 'gNB-ID': ['gNB-ID', [3, 32]]}", "node 2 frame 914: served NR cells [{'nrpCI': 3, 'nrCellID': {'pLMN-Identity': '00f110', 'nRcellIdentifier': [49, 36]}, 'configured-TAC': '0001', 'broadcastPLMNs': ['00f110'], 'nrModeInfo': ['tdd', {'nRFreqInfo': {'nRARFCN': 633333, 'freqBandListNr': [{'freqBandIndicatorNr': 78, 'supportedSULBandList': []}]}, 'nR-TxBW': {'nRSCS': 'scs60', 'nRNRB': 'nrb24'}}], 'measurementTimingConfiguration': '1011353ea50000', 'mtcDecodes': True}], want one with {'nrCellID': {'pLMN-Identity': '00f110', 'nRcellIdentifier': [33, 36]}, 'nrpCI': 2, 'configured-TAC': '0001'}", "node 3 frame 920: X2 Global en-gNB ID {'pLMN-Identity': '00f110', 'gNB-ID': ['gNB-ID', [2, 32]]}", "node 3 frame 920: served NR cells [{'nrpCI': 2, 'nrCellID': {'pLMN-Identity': '00f110', 'nRcellIdentifier': [33, 36]}, 'configured-TAC': '0001', 'broadcastPLMNs': ['00f110'], 'nrModeInfo': ['tdd', {'nRFreqInfo': {'nRARFCN': 633333, 'freqBandListNr': [{'freqBandIndicatorNr': 78, 'supportedSULBandList': []}]}, 'nR-TxBW': {'nRSCS': 'scs60', 'nRNRB': 'nrb24'}}], 'measurementTimingConfiguration': '1011353ea50000', 'mtcDecodes': True}], want one with {'nrCellID': {'pLMN-Identity': '00f110', 'nRcellIdentifier': [49, 36]}, 'nrpCI': 3, 'configured-TAC': '0001'}"], "pass": false}
+[02:43:57] PASS e2i_style5Action3Announced
+[02:43:57] FAIL e2i_kpimonSubscribedAll: exit 1: {"detail": ["node 1: 0 KPM subscription requests, 0 responses", "node 2: 0 KPM subscription requests, 0 responses", "node 3: 0 KPM subscription requests, 0 responses"], "pass": false}
+[02:43:59] FAIL e2i_injected_controls_on_the_wire_and_answered: exit 1: [{"tag": "independent-target", "requests": []}, {"tag": "n5-form", "requests": []}]
+problems: ['independent-target: on the wire [], want once to node 2', 'n5-form: on the wire [], want once to node 3']
+[02:43:59] PASS e2i_ppid_per_node_70
+verdict e2i: FAIL failed=['e2i_bringup_agents_connected_set_equals_meids', 'e2i_every_agent_ready_and_subscribed_by_kpimon', 'e2i_e2mgr_en_gnb_2_record', 'e2i_e2mgr_enb_1_record', 'e2i_injector_routes_to_e2term_for_both_en_gnbs', 'e2i_agent_rc_control_unit_test_cause_paths', 'e2i_lockstep_run_with_two_injected_controls', 'e2i_independent_target_applied_ledger_and_handover_start', 'e2i_ts_xapp_nodeb_list_names_every_connected_node', 'e2i_restart_counts_zero', 'e2i_setup_requests_decoded_and_judged', 'e2i_globalIds', 'e2i_x2apRequestPartDecodes', 'e2i_kpimonSubscribedAll', 'e2i_injected_controls_on_the_wire_and_answered']
+Terminated
+[02:43:59] ric watchdog stopped (pid 629533)

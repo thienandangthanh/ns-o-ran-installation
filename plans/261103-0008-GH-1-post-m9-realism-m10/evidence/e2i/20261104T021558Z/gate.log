@@ -1,0 +1,23 @@
+[02:15:59] gate e2i start; evidence /home/uc/evidence/e2i/20261104T021558Z; harness 5795e4215d39bb88f0d4bc72d5e4e75a2279d84b
+[02:15:59] PASS e2i_args
+[02:15:59] ric watchdog started (pid 588939, threshold 600s)
+[02:16:00] PASS e2i_asn1_indep_image_checksum_verified_and_loaded
+[02:16:01] PASS e2i_independent_decoder_self_test
+[02:16:01] PASS e2i_wire_judge_self_test
+[02:16:01] PASS e2i_nist_tree_at_testbed_sha_with_agent_dir
+[02:16:01] PASS e2i_build_tools_present
+[02:16:01] PASS e2i_sctp_module_loaded
+[02:16:01] PASS e2i_ns3_binary_located_at_pins
+[02:16:01] PASS e2i_ts_tree_and_image_are_pin_plus_patch_set
+[02:16:02] PASS e2i_rc_installed_at_pin_and_ready
+[02:16:02] PASS e2i_kpimon_image_carries_its_patch_set_label
+[02:16:46] PASS e2i_ric_reset_fresh_rc_kpimon_hw_go_and_bucket
+[02:17:17] PASS e2i_ts_xapp_scaled_to_zero
+[02:17:34] PASS e2i_rmr_peer_image_built_and_self_tested
+[02:17:47] PASS e2i_injector_installed
+[02:17:47] PASS e2i_injector_registered
+[02:18:11] PASS e2i_rtmgr_restarted_after_registration
+[02:18:11] PASS e2i_injector_has_a_route_table
+[02:18:11] PASS e2i_capture_started_before_agents
+Terminated
+[02:25:01] ric watchdog stopped (pid 588939)

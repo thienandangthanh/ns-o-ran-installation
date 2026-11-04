@@ -1,0 +1,5 @@
+globalIds                FAIL node 2 frame 914: tshark Global E2 Node ID ('en-gNB', 3, 32) PLMN 00f110, want ('en-gNB', 2, 32) PLMN 00f110; node 2 frame 914: decoded Global E2 Node ID ['en-gNB', '00f110', 3, 32], want ['en-gNB', 2, 32]; node 3 frame 920: tshark Global E2 Node ID ('en-gNB', 2, 32) PLMN 00f110, want ('en-gNB', 3, 32) PLMN 00f110; node 3 frame 920: decoded Global E2 Node ID ['en-gNB', '00f110', 2, 32], want ['en-
+kpimonSubscribedAll      FAIL node 1: 0 KPM subscription requests, 0 responses; node 2: 0 KPM subscription requests, 0 responses; node 3: 0 KPM subscription requests, 0 responses
+ranFunctions             PASS every node as expected
+style5Action3Announced   PASS every node as expected
+x2apRequestPartDecodes   FAIL node 1 frame 5: 2 components, 2 X2, want one X2; node 1 frame 46: 2 components, 2 X2, want one X2; node 1 frame 87: 2 components, 2 X2, want one X2; node 1 frame 128: 2 components, 2 X2, want one X2; node 1 frame 169: 2 components, 2 X2, want one X2; node 1 frame 210: 2 components, 2 X2, want one X2; node 1 frame 251: 2 components, 2 X2, want one X2; node 1 frame 292: 2 components, 2 X2, want one 

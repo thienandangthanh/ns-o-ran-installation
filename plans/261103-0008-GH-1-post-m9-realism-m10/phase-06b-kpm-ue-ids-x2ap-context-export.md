@@ -57,6 +57,10 @@
 - Influx UeMetrics carry `ueId` tags in the R-4 format; `influx-vs-trace.py` passes.
 - M5–M7 green; the R-8 live cross-check passes. Exit = the codec, context and Influx gates above; the R2/R3′ integration is judged in P07.
 
+## Hand-offs from the P06 exit review (kongming-261104-1340)
+- Before this phase's kpimon changes run on the VM, add a check that kpimon stays Format-3-only: every RIC SUBSCRIPTION REQUEST to an agent has exactly one action, ID 1, action definition Format 3 (by evidence in P06's e2i run 4; never checked so far). Ledger row first.
+- Run every gate of this phase with `EVIDENCE_HOST_ROOT` set to this plan's `evidence/` folder (the `vm-common.sh` default is the M0–M7 plan's).
+
 ## Standards ledger (stub)
 | Decision | Document, section | Zotero | Read |
 |---|---|---|---|

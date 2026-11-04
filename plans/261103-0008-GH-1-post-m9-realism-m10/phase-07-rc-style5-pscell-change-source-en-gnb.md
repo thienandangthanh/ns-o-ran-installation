@@ -119,3 +119,9 @@
 
 ## Rollback
 Re-pin the P06b SHAs; `m10-cp1` reproduces checkpoint 1.
+
+## Hand-offs from the P06 exit review (kongming-261104-1340)
+- Drop Style 3/1 from the gNB's RAN function 3 definition and remove the eNB agent's RC handler (it applies controls on a RAN function it no longer announces). The definition must list every RAN parameter this phase's controls send; the e2i judge today checks only that parameters 1–4 are present, so extend it (ledger row first).
+- Re-encode the e2i N5-form negative (`0000F1100000000303`) as a Style 5/3 control. Left as Style 3/1 it is refused for its style, not its target, and AC12's negative stops testing the target.
+- Before this phase's e2i re-run, write hex sidecars beside the e2mgr record files (the scrubber replaces their request parts with `REDACTED-TOKEN`), so the records stay judgeable after the scrub.
+

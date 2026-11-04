@@ -47,3 +47,7 @@ M9 ran 2 gNBs, so cell IDs ≥ 10 and the 8-neighbour cap have never been exerci
 
 ## Rollback
 The gate is additive; delete the commits.
+
+## Hand-offs from the P06 exit review (kongming-261104-1340)
+- Before the s10 run, replay the TS xApp key parser (`replay-ts-cell-map.py`) on synthetic e2mgr records for gNB IDs 2–12 and require no cross-node key.
+

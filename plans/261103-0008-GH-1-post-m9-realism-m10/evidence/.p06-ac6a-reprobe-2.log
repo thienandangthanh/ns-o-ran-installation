@@ -1,0 +1,8 @@
+[host 22:18:38] gate e2-identity-setup (probes/probe-e2-identity-setup.sh) harness 01a18273cf -> unit gate-e2-identity-setup-20261103T221838Z
+[host 22:18:38] host disk: start	20261103T221838Z	88	/home/andang/VMs/ubuntu24.04-r2-green.1793744306	1
+[host 22:31:24] gate e2-identity-setup exit 0
+[host 22:31:24] host disk: end	20261103T223124Z	86	/home/andang/VMs/ubuntu24.04-r2-green.1793744306	2
+scrub: 2 file(s) redacted, 45 known secret(s)
+[host 22:31:25] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261021-1823-GH-1-ns-oran-l-release-m0-m7/evidence/e2-identity-setup/20261103T221838Z
+verdict e2id PASS []
+exit 0

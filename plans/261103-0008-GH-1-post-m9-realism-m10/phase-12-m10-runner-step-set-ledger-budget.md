@@ -61,3 +61,7 @@ FU1 (P00) already fixed `finish()`. The rehearsals, cold re-measures and the Cod
 
 ## Rollback
 Revert the runner commits; `run-to-m9.sh` at `39b3ba2` remains the M9 record.
+
+## Hand-offs from the P06 exit review (kongming-261104-1340)
+- The e2i step runs after r3p in the unattended end run, and its IP-based frame-to-node map turns red on any agent restart. Decide (user question at Stop A′) whether to move e2i to association-based node mapping before the runner freeze.
+
