@@ -55,7 +55,7 @@ python3 -I scripts/gates/check-n6-influx-window.py --self-test >/dev/null || { e
 python3 -I scripts/gates/r3p-dry-run-classifier.py --self-test >/dev/null || { echo "r3p dry-run classifier self-test failed"; rc=1; }
 python3 -I scripts/gates/r3p-checks.py --self-test >/dev/null || { echo "r3p checks self-test failed"; rc=1; }
 python3 -I scripts/gates/reference-compare.py --self-test >/dev/null || { echo "reference-compare self-test failed"; rc=1; }
-python3 -I scripts/gates/reference-transform-compare.py --selftest >/dev/null || { echo "reference-transform-compare self-test (fixtures a-j) failed"; rc=1; }
+python3 -I scripts/gates/reference-transform-compare.py --selftest >/dev/null || { echo "reference-transform-compare self-test (fixtures a-l) failed"; rc=1; }
 timeout 120 bash scripts/vm/m9-runner-selftest.sh >/dev/null 2>&1 || { echo "M9 runner self-test (verdict, heartbeat monitor) failed"; rc=1; }
 timeout 60 bash scripts/gates/rt-reader-selftest.sh >/dev/null 2>&1 || { echo "rc receiver-side RMR readiness self-test failed"; rc=1; }
 timeout 120 bash scripts/gates/ts-patches-selftest.sh >/dev/null 2>&1 || { echo "TS xApp patch-set check self-test failed"; rc=1; }

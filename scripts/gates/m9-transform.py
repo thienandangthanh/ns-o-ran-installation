@@ -64,8 +64,11 @@ def n5_keys(m9_scenario_text):
 
 
 def sub_keys(text, keys):
-    """Every quoted occurrence of an N5 key becomes its NCI key; at least one must occur, and no other 10-hex key
-    may remain (a key outside the scenario's cells is drift, never rewritten or kept)."""
+    """Every quoted occurrence of an N5 key becomes its NCI key; at least one must occur. The input may hold no other
+    10-hex key (a key outside the scenario's N5 keys, an already converted NCI key included, is drift), and none
+    may remain after the rewrite."""
+    before = set(re.findall(r'"([0-9A-F]{10})"', text)) - set(keys)
+    need(not before, f"cell keys other than the scenario's N5 keys in the M9 input: {sorted(before)}")
     n = 0
     for k in keys:
         n += text.count(f'"{k}"')

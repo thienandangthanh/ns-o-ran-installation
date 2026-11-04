@@ -266,8 +266,8 @@ def mutate(world, fx):
 def self_test():
     bad = []
     fixtures = sorted(FIXTURES.glob("*.json"))
-    if [f.name[0] for f in fixtures] != list("abcdefghij"):
-        print("FAIL: fixtures a-j are not exactly present:", [f.name for f in fixtures])
+    if [f.name[0] for f in fixtures] != list("abcdefghijkl"):
+        print("FAIL: fixtures a-l are not exactly present:", [f.name for f in fixtures])
         return 1
     for f in fixtures:
         fx = json.loads(f.read_text())
