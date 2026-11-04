@@ -61,13 +61,19 @@
 - Before this phase's kpimon changes run on the VM, add a check that kpimon stays Format-3-only: every RIC SUBSCRIPTION REQUEST to an agent has exactly one action, ID 1, action definition Format 3 (by evidence in P06's e2i run 4; never checked so far). Ledger row first.
 - Run every gate of this phase with `EVIDENCE_HOST_ROOT` set to this plan's `evidence/` folder (the `vm-common.sh` default is the M0–M7 plan's).
 
-## Standards ledger (stub)
+## Standards ledger
 | Decision | Document, section | Zotero | Read |
 |---|---|---|---|
-| UE ID CHOICE: en-gNB-UEID (en-gNB), eNB-UEID (eNB) | E2SM common v07.00 §6.2.2.6 | `QW6VJ83M` [C] | to cite |
-| KPM Format 2 UE IDs | KPM v03.00 §8.2.1.4.2, §8.3.24 | `F82PYZVK` | to cite |
-| eNB UE X2AP ID, MME UE S1AP ID semantics | 3GPP TS 36.423 §9.2.24; 3GPP TS 36.413 (MME UE S1AP ID) | `3ML7Y29A`; 36.413 [P01 preflight] | to cite |
-| MME UE S1AP ID equals the IMSI in ns-3 (model construction, disclosed) | ns-3 model, not a spec | — | — |
+| en-gNB UE ID = en-gNB-UEID {MeNB UE X2AP ID (M), Global eNB ID (M)}; no gNB-UEID on an EPC-connected en-gNB | E2SM v07.00 §6.2.2.6 (CHOICE UEID case, ">en-gNB: E2 Node of type en-gNB when connected to EPC and EN-DC is established"), p. 14 | `QW6VJ83M` | ✓ 2026-11-04 |
+| eNB UE ID = eNB-UEID {MME UE S1AP ID (M), GUMMEI (M), MeNB UE X2AP ID (C-ifDCSetup, "reported by MeNB and SeNB")}; Global eNB ID absent ("reported only by SeNB") | E2SM v07.00 §6.2.2.6, p. 14 | `QW6VJ83M` | ✓ 2026-11-04 |
+| eNB UE X2AP ID INTEGER (0..4095); agent refuses a larger RNTI | E2SM v07.00 §6.2.3.23 (from 3GPP TS 36.423 §9.2.24), p. 24 | `QW6VJ83M`; `3ML7Y29A` | ✓ 2026-11-04 |
+| GUMMEI = {PLMN, MME Group ID OCTET STRING (2), MME code OCTET STRING (1)} = {00F110, 0001, 01} | E2SM v07.00 §6.2.3.18 (from 3GPP TS 36.413 §9.2.3.9), p. 23 | `QW6VJ83M` | ✓ 2026-11-04 |
+| Global eNB ID macro eNB ID BIT STRING (20) | E2SM v07.00 §6.2.3.9 (from 3GPP TS 36.413 §9.2.1.37), p. 21 | `QW6VJ83M` | ✓ 2026-11-04 |
+| KPM Format 2 "List of matched UE IDs" items are UE ID 8.3.24 | KPM v03.00 §8.2.1.4.2, p. 26 | `F82PYZVK` | ✓ 2026-11-04 |
+| UE ID is the E2SM common IE | KPM v03.00 §8.3.24 ("defined in [12] clause 6.2.2.6"), p. 34 | `F82PYZVK` | ✓ 2026-11-04 |
+| MME UE S1AP ID = IMSI; eNB UE X2AP ID = LTE RNTI | ns-3 model construction (EpcMmeApplication assigns the IMSI as MME UE S1AP ID; ns-3's X2 uses the RNTI as UE X2AP ID), not a spec | — | disclosed |
+
+Deviation found while reading (P3, disclosed; Stop A′): the eNB agent always includes the MeNB UE X2AP ID, but §6.2.2.6 makes it conditional on DC being set up (ifDCSetup: "shall be present ... if DC is established"). The clause does not forbid it otherwise, and in the scenarios every reported UE that the en-gNBs report has DC set up. An eNB UE whose secondary RLC is not set up yet still carries it. Fix to spec at P07 if Stop A′ rules it a P1–P2: include the X2AP ID only for UEs with DC established, which needs a DC flag in `ueContext`.
 
 ## Risks
 - Emitting `ueContext` changes event order or emission (High/Low). It reads state only; the step 2 byte-compare is a hard gate.
