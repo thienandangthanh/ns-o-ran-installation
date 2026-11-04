@@ -148,6 +148,37 @@ ts_threshold_logged "$tmp/stale.txt" i2-20261024T032221Z 10 && { echo "ts_thresh
 ts_threshold_logged "$tmp/own.txt" i2-20261024T032221Z 10 || { echo "ts_threshold_logged missed this call's line"; rc=1; }
 ts_threshold_logged "$tmp/own.txt" i2-20261024T032221Z 20 && { echo "ts_threshold_logged ignored the threshold value"; rc=1; }
 ts_threshold_logged "$tmp/own.txt" i2-20261024T030903Z 10 && { echo "ts_threshold_logged matched another run's id"; rc=1; }
+# _ts_token_redact fails closed: with no config map (kubectl down) it still redacts through the auth-token file; a
+# malformed source or a named-but-unreadable token wipes the file and returns 1; no source at all is a no-op.
+# The token is random, in memory and in the test files only, and is never printed.
+source <(sed -n '/^_ts_token_redact()/,/^}/p' scripts/gates/ts-lib.sh)
+kc() { return 1; }
+rtmp=$(mktemp -d); mkdir -p "$rtmp/ric/xApps/ts/xapp-descriptor"
+rtok=$(python3 -I -c 'import secrets; print(secrets.token_urlsafe(66))')
+(
+    RIC_DIR="$rtmp/ric"; TS_DIR="$rtmp/ric/xApps/ts"; f="$rtmp/ev.txt"
+    printf '{"token": "%s"}' "$rtok" >"$RIC_DIR/influxdb_auth_token.json"; echo "a $rtok b" >"$f"
+    _ts_token_redact "$f" && ! grep -qF -- "$rtok" "$f" && grep -q REDACTED-INFLUX-TOKEN "$f" ||
+        { echo "_ts_token_redact did not redact through the auth-token file"; exit 1; }
+    echo '{"token": ' >"$RIC_DIR/influxdb_auth_token.json"; echo "a $rtok b" >"$f"
+    _ts_token_redact "$f" 2>/dev/null && { echo "_ts_token_redact passed a malformed auth-token file"; exit 1; }
+    grep -qF -- "$rtok" "$f" && { echo "_ts_token_redact kept the token after failing"; exit 1; }
+    rm -f "$RIC_DIR/influxdb_auth_token.json"; echo '{"controls": {"influx_token": ""}}' >"$TS_DIR/xapp-descriptor/config-file_updated.json"
+    echo "a b" >"$f"
+    _ts_token_redact "$f" 2>/dev/null && { echo "_ts_token_redact passed a named but unreadable token"; exit 1; }
+    rm -f "$TS_DIR/xapp-descriptor/config-file_updated.json"; echo "a b" >"$f"
+    _ts_token_redact "$f" && [ "$(cat "$f")" = "a b" ] || { echo "_ts_token_redact changed a file with no token source"; exit 1; }
+) || rc=1
+unset -f kc; rm -rf "$rtmp"; unset rtok
+# rc-send.sh reads exactly one UE ID line: two lines are refused, with or without a final newline, before any send.
+rtmp=$(mktemp -d)
+printf 'enGnbUeId:1@00F110-00001\nenGnbUeId:2@00F110-00001' >"$rtmp/unterminated"
+printf 'enGnbUeId:1@00F110-00001\nenGnbUeId:2@00F110-00001\n' >"$rtmp/terminated"
+for u in unterminated terminated; do
+    bash scripts/gates/rc-send.sh 127.0.0.1:1 2 --ue-from "$rtmp/$u" 0000000210 >/dev/null 2>&1
+    [ $? -eq 2 ] || { echo "rc-send.sh accepted a two-line UE ID file ($u)"; rc=1; }
+done
+rm -rf "$rtmp"
 # shellcheck disable=SC2002
 cat "$tmp/big.txt" | grep -q 'Setting Threshold for A1-P value: 10%'
 [ "${PIPESTATUS[0]}" = 141 ] || { echo "fixture of $(wc -c <"$tmp/big.txt") B did not reproduce the SIGPIPE"; rc=1; }

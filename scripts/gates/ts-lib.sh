@@ -88,11 +88,11 @@ svc_ip() { kc -n "$1" get svc "$2" -o jsonpath='{.spec.clusterIP}'; }
 _dms_reinstall() {
     local name="$1" ver="$2" desc="$3" schema="$4" lg="$5" out
     # the descriptor may hold the TS xApp's Influx token: the log is redacted and only it is printed on failure
-    out=$(sudo -n dms_cli onboard "$desc" "$schema" 2>&1); echo "onboard: $out" >>"$lg"; _ts_token_redact "$lg"
+    out=$(sudo -n dms_cli onboard "$desc" "$schema" 2>&1); echo "onboard: $out" >>"$lg"; _ts_token_redact "$lg" || return 1
     echo "$out" | grep -q '"status": "Created"' || { echo "onboard of $name failed:"; tail -n 5 "$lg"; return 1; }
     dms_cli uninstall "$name" ricxapp >>"$lg" 2>&1 || true
     for _ in $(seq 60); do kc -n ricxapp get pods --no-headers 2>/dev/null | grep -q "ricxapp-$name-" || break; sleep 2; done
-    out=$(dms_cli install "$name" "$ver" ricxapp 2>&1); echo "install: $out" >>"$lg"; _ts_token_redact "$lg"
+    out=$(dms_cli install "$name" "$ver" ricxapp 2>&1); echo "install: $out" >>"$lg"; _ts_token_redact "$lg" || return 1
     echo "$out" | grep -qE '"?status"?:\s*"?\bOK\b"?' || { echo "install of $name failed:"; tail -n 5 "$lg"; return 1; }
 }
 
@@ -222,29 +222,55 @@ stub_install() {
 _appmgr() { local ip; ip=$(svc_ip ricplt service-ricplt-appmgr-http) || return 1; echo "http://$ip:8080/ric/v1"; }
 
 # _ts_token_redact <file>...: replaces the TS xApp's Influx token (read into memory from its deployed config map and
-# from the installer's descriptor, never printed) in each file; a no-op when neither holds a token. appmgr's answers
-# and dms_cli's output can carry the descriptor, whose controls hold the token.
+# from the installer's descriptor and from NIST's influxdb_auth_token.json, the installer's own source; never printed)
+# in each file. appmgr's answers and dms_cli's output can carry the descriptor, whose controls hold the token.
+# Fails closed: when a source that exists cannot be read or parsed, or when the deployed config map or the descriptor
+# names an influx_token while no token can be read, every file is overwritten with a marker and it returns 1. It is a
+# no-op only when no source holds a token, which means nothing deployed carries one.
 _ts_token_redact() {
-    kc -n ricxapp get cm configmap-ricxapp-trafficxapp-appconfig -o jsonpath='{.data.config-file\.json}' 2>/dev/null |
-        python3 -I -c '
-import json, sys
-toks = set()
-for src in (sys.stdin, sys.argv[1]):
+    # A missing config map (the TS xApp not deployed yet) is an absent source, not a failure.
+    local cm
+    cm=$(kc -n ricxapp get cm configmap-ricxapp-trafficxapp-appconfig -o jsonpath='{.data.config-file\.json}' 2>/dev/null) ||
+        cm=""
+    printf '%s' "$cm" | python3 -I -c '
+import json, os, sys
+toks, bad, named = set(), [], False
+cm = sys.stdin.read()
+srcs = [("config map", cm if cm.strip() else None)]
+for p in sys.argv[1:3]:
     try:
-        d = json.load(src) if src is sys.stdin else json.load(open(src))
-        t = (d.get("controls") or {}).get("influx_token")
-    except (OSError, ValueError, AttributeError):
-        t = None
+        srcs.append((p, open(p).read() if os.path.exists(p) else None))
+    except OSError:
+        bad.append(p)
+for name, text in srcs:
+    if text is None:
+        continue
+    try:
+        d = json.loads(text)
+        if name == sys.argv[2]:
+            t = d.get("token")
+        else:
+            c = d.get("controls") or {}
+            named = named or "influx_token" in c
+            t = c.get("influx_token")
+    except (ValueError, AttributeError):
+        bad.append(name)
+        continue
     if isinstance(t, str) and t:
         toks.add(t)
-for p in sys.argv[2:] if toks else []:
+if bad or (named and not toks):
+    for p in sys.argv[3:]:
+        open(p, "w").write("REDACTED: the Influx token could not be read, so this file was not kept\n")
+    sys.stderr.write("token redaction failed closed (unreadable sources: %d)\n" % len(bad))
+    sys.exit(1)
+for p in sys.argv[3:]:
     text = open(p, errors="replace").read()
     new = text
     for t in toks:
         new = new.replace(t, "REDACTED-INFLUX-TOKEN")
     if new != text:
         open(p, "w").write(new)
-' "${TS_DIR:-/nonexistent}/xapp-descriptor/config-file_updated.json" "$@"
+' "${TS_DIR:-/nonexistent}/xapp-descriptor/config-file_updated.json" "${RIC_DIR:-/nonexistent}/influxdb_auth_token.json" "$@"
 }
 
 xapp_list_save() { local u; u=$(_appmgr) && curl -sf -m 10 "$u/xapps" | jq . >"$1" && _ts_token_redact "$1"; }
@@ -276,7 +302,7 @@ xapp_register() {
     u=$(_appmgr) || return 1
     body=$(_xapp_body "$1") || { echo "no deployed descriptor for $1"; return 1; }
     code=$(curl -s -m 10 -o "$EVIDENCE_DIR/register-$1.out" -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d "$body" "$u/register")
-    _ts_token_redact "$EVIDENCE_DIR/register-$1.out"
+    _ts_token_redact "$EVIDENCE_DIR/register-$1.out" || { echo "register $1: response redaction failed"; return 1; }
     echo "register $1: HTTP $code"
     [ "$code" = 201 ] || { cat "$EVIDENCE_DIR/register-$1.out"; return 1; }
     _xapp_listed_ok "$1" || { echo "appmgr does not list $1 as registered"; return 1; }

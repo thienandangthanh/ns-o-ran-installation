@@ -22,8 +22,9 @@ case "$3" in
     --ue-from)
         [ $# -ge 5 ] || usage
         [ -s "$4" ] || { echo "UE ID file '$4' is missing or empty" >&2; exit 2; }
-        [ "$(wc -l <"$4")" -le 1 ] || { echo "UE ID file '$4' has more than one line" >&2; exit 2; }
-        IFS= read -r tag <"$4" || true
+        mapfile -t ue_lines <"$4"
+        [ "${#ue_lines[@]}" -eq 1 ] || { echo "UE ID file '$4' has ${#ue_lines[@]} lines, not exactly one" >&2; exit 2; }
+        tag="${ue_lines[0]}"
         [[ "$tag" =~ ^enGnbUeId:([0-9]{1,4})@00F110-([0-9A-F]{5})$ ]] || { echo "UE ID '$tag' is not an en-gNB-UEID key" >&2; exit 2; }
         x2ap="${BASH_REMATCH[1]}"; macro="${BASH_REMATCH[2]}"; shift 4 ;;
     --en-gnb-ue-id)
