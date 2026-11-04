@@ -66,3 +66,18 @@ After T-A, only ipc (the digested sample lines) and traces stay literal. Everyth
 
 ## Rollback
 Tags are never moved. A red C1 is re-run only as a full fresh set after the cause is recorded and a change committed.
+
+## Hand-offs from the P07 exit review (kongming-261105-0536)
+Do these first, in this order, before the cp2 chain. Every new or changed check gets its ledger row before code.
+1. **Host disk-floor watchdog for dev chains.** Reuse `scripts/vm/host-disk-watchdog.sh` (it already stops the gate unit and shuts the VM down) from `vm-exec.sh` or the chain driver, with `--min-gb 22` (the 20 GiB floor plus a 2 GiB margin, because qcow2 growth continues briefly after the kill) and a 15–30 s interval. A trip fails the gate and enters the Failure Protocol. Add a guest-side guard too: agent and xApp `docker build` under `timeout`, and an abort when the guest root passes 85 %, so kubelet DiskPressure never evicts the RIC.
+2. **Evidence of red runs survives.**
+   - `scrub-evidence.sh` reads the token from a source that survives an Influx pod eviction (the k8s secret or the installer's token file), still failing closed.
+   - `fact()` (`scripts/gates/lib.sh:79`) never emits `{"value":}` for an empty input. Both failed P07 runs (`r1/20261104T175831Z`, `r2/20261104T182917Z`) lost `verdict.json` that way.
+   - The `cat … || echo null` call sites (`gate-r1-rc-multi-control.sh:257,321`, `gate-r2-ts-stub-qp.sh:151`) also treat an empty file as missing.
+3. **One harness SHA and one pin set** for the whole chain from `f7-rerun-green`: M2–M7, I0, Q8, R0, R1 single, I2, R2 C1, then the three R3′ C1 runs (δ = 0, 150, 500) with `--reference-transform`. `m10-cp2` is tagged at that SHA. This also makes P07's mixed pass set uniform.
+4. **One read-only Codex review** over harness `519d2bb..HEAD` plus Testbed `ff704ab..36dbcc3` before the cp2 tag. Never call `adversarial-review --help`.
+5. **The TS xApp's Influx test fixture.** A host test, run in the TS image build or `lint.sh`, against InfluxDB 2.7 loaded from an archived `influx-kpimon.csv` (mixed integer and float UeMetrics fields): a present tag passes, an absent tag fails. Add a parser case built from the real HTTP 400 schema-collision body.
+6. **Port reservation, second conjunct (row 129 amended first):** no socket holds a local port in 38470–38499 when the check runs (`ss -Htan`, source port in range).
+7. **D-06b-1 stays in P10.** If the user rules R-4 "as written" at Stop A′, the kpimon node tag is bundled with it there.
+- **No VM `docker image prune` before the user ratifies the prune rule at Stop A′.**
+- **Failure Protocol, literally:** each red gets one kongming-guided fix before the fix is made, and a second red is PAUSE T6, as `plan.md` "Cross-cutting rules" says.

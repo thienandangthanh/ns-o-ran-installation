@@ -1,0 +1,86 @@
+{
+ "computedOffline": true,
+ "note": "computed on the host after the run, from the worktree raw files; not a gate verdict",
+ "harnessSha": "3dfe627813e0196de8b29997a9250fbe3bf05469",
+ "run": "plans/261103-0008-GH-1-post-m9-realism-m10/evidence/r3p/20261104T194024Z/runs/live1",
+ "m9Raw": "plans/261103-0008-GH-1-post-m9-realism-m10/reference/m9-r3p-raw",
+ "referenceCompare": {
+  "differingComponents": [
+   "ledger",
+   "extra"
+  ],
+  "equalsReference": false,
+  "problems": [
+   "component ledger differs from the reference",
+   "component extra differs from the reference",
+   "file predictor-records differs from the reference",
+   "file scenario differs from the reference",
+   "file schedule differs from the reference"
+  ],
+  "recordedDiffers": []
+ },
+ "literal": {
+  "extra/kpm-headers.json": true,
+  "extra/collet-start-time.json": true
+ },
+ "ledger": {
+  "lines": [
+   2,
+   2
+  ],
+  "diffs": [
+   {
+    "field": "[1].viaNodeId",
+    "m9": 2,
+    "run": 3
+   }
+  ]
+ },
+ "rcMultiset": [
+  {
+   "field": "[0].action",
+   "m9": 1,
+   "run": 3
+  },
+  {
+   "field": "[0].imsi",
+   "m9": 1,
+   "run": null
+  },
+  {
+   "field": "[0].style",
+   "m9": 3,
+   "run": 5
+  },
+  {
+   "field": "[0].targetKey",
+   "m9": "0000000202",
+   "run": "0000000210"
+  },
+  {
+   "field": "[0].ueId.globalEnbId.macroEnbId",
+   "m9": null,
+   "run": "00001"
+  },
+  {
+   "field": "[0].ueId.globalEnbId.plmn",
+   "m9": null,
+   "run": "00F110"
+  },
+  {
+   "field": "[0].ueId.mEnbUeX2apId",
+   "m9": null,
+   "run": 3
+  },
+  {
+   "field": "[0].ueId.type",
+   "m9": null,
+   "run": "en-gNB-UEID"
+  },
+  {
+   "field": "[0].viaNode",
+   "m9": 2,
+   "run": 3
+  }
+ ]
+}
