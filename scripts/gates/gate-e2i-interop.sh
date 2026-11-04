@@ -75,7 +75,7 @@ check e2i_ric_reset_fresh_rc_kpimon_hw_go_and_bucket rc_ric_reset
 ################################################################################
 # the injector part: TS xApp down, injector registered and routed
 ################################################################################
-check e2i_ts_xapp_scaled_to_zero ts_scale_down
+check e2i_ts_xapp_scaled_to_zero_and_deregistered ts_scale_down
 check e2i_rmr_peer_image_built_and_self_tested rmr_peer_build
 check e2i_injector_installed injector_install
 check e2i_injector_registered xapp_ensure_registered "$INJECTOR_NAME"
@@ -185,7 +185,8 @@ check e2i_injector_uninstalled injector_uninstall
 ################################################################################
 # the TS xApp again, recreated while every agent is CONNECTED
 ################################################################################
-check e2i_ts_xapp_recreated_ready ts_scale_up
+check e2i_ts_xapp_recreated_ready_and_registered ts_scale_up
+check e2i_rtmgr_restarted_after_ts_registration rc_restart_rtmgr
 check e2i_ts_xapp_nodeb_list_names_every_connected_node ts_nodeb_list_check
 ts_cell_map() {
     local n

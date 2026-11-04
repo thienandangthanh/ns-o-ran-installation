@@ -278,7 +278,7 @@ sys.exit(0 if last and not stuck else 1)' "$comp" "$pod" | tee -a "$out" | tail 
 # running e2term, e2term's RMR kept a connection to the new pod but no E2 Setup Request reached e2mgr for 10
 # minutes; after an e2term restart, setups were received and answered within 3 s.
 ric_refresh_routes() {
-    local level="$1" with_e2term="${2:-}" e="$EVIDENCE_DIR" tag c old new deadline comps=(e2mgr submgr) since
+    local level="$1" with_e2term="${2:-}" e="$EVIDENCE_DIR" tag c old new deadline comps=(e2mgr submgr) since=""
     [ "$with_e2term" = --e2term ] && comps+=(e2term)
     tag="refresh-$level-$(date -u +%H%M%S)"
     mkdir "$e/.ric-refresh-$level" 2>/dev/null || { log "ric refresh ($level): already used once in this gate run"; return 1; }

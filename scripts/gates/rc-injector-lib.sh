@@ -21,8 +21,9 @@
 #                                 accepted it; reply in <tag>-injector-reply.json
 #   injector_logs_save <label>    the injector's tx.jsonl and rx.jsonl into the evidence
 #   injector_uninstall            deregister from appmgr (when listed) and uninstall
-#   ts_scale_down | ts_absent | ts_scale_up   the TS xApp's Deployment at 0 replicas with no pod left; back to one
-#                                 new Ready pod (ts_ready)
+#   ts_scale_down | ts_absent | ts_scale_up   the TS xApp's Deployment at 0 replicas with no pod left and the xApp
+#                                 deregistered from appmgr; back to one new Ready pod (ts_ready), registered again
+#                                 (rtmgr must restart after either, as after any registration change)
 INJECTOR_NAME=ric-control-injector
 INJECTOR_VERSION=0.1.0
 INJECTOR_DESC_DIR="${RMR_PEER_DIR:-$HARNESS_DIR/tools/rmr-peer}/xapp-descriptor-ric-control-injector"
@@ -96,12 +97,19 @@ injector_control() {
     echo "injector sent $tag to $2: $(cat "$EVIDENCE_DIR/$tag-injector-reply.json")"
 }
 
-# ts_scale_down: the TS xApp's Deployment at 0 replicas and no TS pod left (a stray RIC control ack is freed twice
-# by its xapp-frame-cpp 2.3.6, so it must be absent while another xApp's controls are answered)
+# ts_scale_down: the TS xApp's Deployment at 0 replicas, no TS pod left, and the xApp deregistered (a stray RIC
+# control ack is freed twice by its xapp-frame-cpp 2.3.6, so it must be absent while another xApp's controls are
+# answered). Registered with no pod behind its Service, it stays an rtmgr endpoint: seen on the VM (2026-11-04),
+# every route distribution then waited on "cannot open wormhole connection for trafficxapp", each
+# associate-ran-to-e2t that e2mgr makes before its E2 Setup Response was answered about 12 s late, and the agents'
+# setups timed out over and over.
 ts_scale_down() {
     kc -n ricxapp scale deploy ricxapp-trafficxapp --replicas=0 >/dev/null || return 1
-    for _ in $(seq 60); do ts_absent >/dev/null && { ts_absent; return 0; }; sleep 2; done
-    ts_absent
+    for _ in $(seq 60); do ts_absent >/dev/null && break; sleep 2; done
+    ts_absent || return 1
+    if _xapp_listed_ok trafficxapp; then xapp_deregister trafficxapp || return 1; fi
+    ! _xapp_listed_ok trafficxapp || { echo "appmgr still lists trafficxapp"; return 1; }
+    echo "trafficxapp not registered"
 }
 
 # ts_absent: the Deployment wants 0 replicas and no TS pod exists in any phase
@@ -113,10 +121,10 @@ ts_absent() {
     [ "$want" = 0 ] && [ "$pods" = 0 ]
 }
 
-# ts_scale_up: one new TS pod, Ready and listening (it reads e2mgr's nodeb list once, at start-up)
+# ts_scale_up: one new TS pod, Ready and listening (it reads e2mgr's nodeb list once, at start-up), and registered
 ts_scale_up() {
     kc -n ricxapp scale deploy ricxapp-trafficxapp --replicas=1 >/dev/null || return 1
-    _wait_new_ready ricxapp-trafficxapp- - 300 && ts_ready
+    _wait_new_ready ricxapp-trafficxapp- - 300 && ts_ready && xapp_ensure_registered trafficxapp
 }
 
 injector_logs_save() {
