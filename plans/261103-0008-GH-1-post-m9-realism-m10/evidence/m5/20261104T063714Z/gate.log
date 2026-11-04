@@ -1,0 +1,31 @@
+[06:37:15] gate m5 start; evidence /home/uc/evidence/m5/20261104T063714Z; harness 9a64fd3dbfb2a9da24dbcf4584fdfa49a3bdee75
+[06:37:15] ric watchdog started (pid 1105636, threshold 600s)
+[06:37:16] PASS m5_nist_tree_at_testbed_sha_with_agent_dir
+[06:37:16] PASS m5_e2mgr_image_patched_from_pin
+[06:37:16] PASS m5_build_tools_present
+[06:37:16] PASS m5_sctp_module_loaded_and_persisted
+[06:37:17] FAIL m5_kpimon_so_extracted_from_image: exit 1: /usr/bin/ld: /tmp/ccaxtXvE.o: in function `print_ue_ids':
+kpimon-decode-harness-records.c:(.text+0x7af): undefined reference to `e2sm_kpm_format2_ue_id_tag'
+collect2: error: ld returned 1 exit status
+[06:37:17] FAIL m5_kpimon_so_is_the_size8_patched_build: exit 1: /home/uc/harness/scripts/gates/kpimon.sh: line 247: /home/uc/m5-work/so/kpimon-decode-harness: No such file or directory
+TimeStamp SIZE in the extracted .so: 
+/home/uc/harness/scripts/gates/kpimon.sh: line 247: /home/uc/m5-work/so/kpimon-decode-harness: No such file or directory
+[06:37:17] PASS m5_capture_started_before_agents
+[06:40:41] PASS m5_bringup_agents_kpm_sim_stopped_connected_set_exact
+[06:40:41] PASS m5_e2mgr_node_connected_en_gnb_name_plmn_gnbid32_ranfunctions_2_3
+[06:40:41] PASS m5_agent_image_informational
+[06:40:41] PASS m5_agent_stats_line_connected_ready_setup_accepted
+[06:40:41] FAIL m5_ranfunc_definition_decodes_clean_via_kpimon_lists_equal_map_sha8: exit 1: 
+[06:40:43] PASS m5_agents_stopped_no_container_left
+[06:40:43] PASS m5_e2mgr_node_disconnected_or_removed_after_stop
+[06:40:47] PASS m5_capture_stopped
+[06:40:48] PASS m5_pcap_facts_extracted
+[06:40:48] PASS m5_e2ap_ppid70_every_node
+[06:40:48] PASS m5_tshark_setup_request_func2_oid_shortname_en_gnb2_32bit_not_kpm_sim
+[06:40:48] PASS m5_tshark_setup_response_accepts_func2
+[06:40:48] PASS m5_gnb_id_differs_from_reference_node_b5c67788
+[06:40:48] PASS m5_no_capture_left_running
+[06:40:49] PASS m5_no_agent_container_left
+[06:40:49] PASS m5_pcap_in_evidence
+[06:40:49] ric watchdog stopped (pid 1105636)
+verdict m5: FAIL failed=['m5_kpimon_so_extracted_from_image', 'm5_kpimon_so_is_the_size8_patched_build', 'm5_ranfunc_definition_decodes_clean_via_kpimon_lists_equal_map_sha8']

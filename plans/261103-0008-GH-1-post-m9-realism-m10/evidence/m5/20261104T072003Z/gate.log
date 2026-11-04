@@ -1,0 +1,28 @@
+[07:20:04] gate m5 start; evidence /home/uc/evidence/m5/20261104T072003Z; harness 9a64fd3dbfb2a9da24dbcf4584fdfa49a3bdee75
+[07:20:04] ric watchdog started (pid 1234562, threshold 600s)
+[07:20:04] PASS m5_nist_tree_at_testbed_sha_with_agent_dir
+[07:20:04] PASS m5_e2mgr_image_patched_from_pin
+[07:20:05] PASS m5_build_tools_present
+[07:20:05] PASS m5_sctp_module_loaded_and_persisted
+[07:20:05] PASS m5_kpimon_so_extracted_from_image
+[07:20:05] PASS m5_kpimon_so_is_the_size8_patched_build
+[07:20:06] PASS m5_capture_started_before_agents
+[07:21:09] PASS m5_bringup_agents_kpm_sim_stopped_connected_set_exact
+[07:21:09] PASS m5_e2mgr_node_connected_en_gnb_name_plmn_gnbid32_ranfunctions_2_3
+[07:21:09] PASS m5_agent_image_informational
+[07:21:09] PASS m5_agent_stats_line_connected_ready_setup_accepted
+[07:21:09] PASS m5_ranfunc_definition_decodes_clean_via_kpimon_lists_equal_map_sha8
+[07:21:11] PASS m5_agents_stopped_no_container_left
+[07:21:11] PASS m5_e2mgr_node_disconnected_or_removed_after_stop
+[07:21:15] PASS m5_capture_stopped
+[07:21:16] PASS m5_pcap_facts_extracted
+[07:21:16] PASS m5_e2ap_ppid70_every_node
+[07:21:16] PASS m5_tshark_setup_request_func2_oid_shortname_en_gnb2_32bit_not_kpm_sim
+[07:21:16] PASS m5_tshark_setup_response_accepts_func2
+[07:21:16] PASS m5_gnb_id_differs_from_reference_node_b5c67788
+[07:21:17] PASS m5_no_capture_left_running
+[07:21:17] PASS m5_no_agent_container_left
+[07:21:17] PASS m5_pcap_in_evidence
+Terminated
+[07:21:17] ric watchdog stopped (pid 1234562)
+verdict m5: PASS failed=[]

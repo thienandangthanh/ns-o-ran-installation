@@ -1,0 +1,65 @@
+[07:23:16] gate m7 start; evidence /home/uc/evidence/m7/20261104T072315Z; harness 9a64fd3dbfb2a9da24dbcf4584fdfa49a3bdee75
+[07:23:16] ric watchdog started (pid 1247212, threshold 600s)
+[07:23:16] PASS m7_nist_tree_at_testbed_sha_with_agent_dir
+[07:23:17] PASS m7_build_tools_present
+[07:23:17] PASS m7_sctp_module_loaded_and_persisted
+[07:23:17] PASS m7_kpimon_so_extracted_from_image
+[07:23:17] PASS m7_kpimon_so_is_the_size8_patched_build
+[07:23:17] PASS m7_ns3_binary_located
+[07:23:17] PASS m7_simtime_from_m4_timing_informational
+[07:23:18] PASS m7_capture_started_before_agents
+[07:24:12] PASS m7_bringup_agents_kpm_sim_stopped_connected_set_exact
+[07:24:12] PASS m7_e2mgr_all_nodes_connected_with_distinct_names
+[07:24:13] PASS m7_agent_container_ips_recorded
+[07:24:13] PASS m7_each_agent_has_its_own_container_ip
+[07:24:17] PASS m7_every_agent_ready_and_subscribed_before_ns3
+[07:24:19] PASS m7_ns3_started_default_config
+[07:39:20] PASS m7_endurance_window_sampled
+[07:39:20] PASS m7_endurance_ricplt_pods_no_new_restarts
+[07:39:20] PASS m7_endurance_agents_restartcount_stays_zero
+[07:39:20] PASS m7_endurance_e2mgr_all_connected_every_sample
+[07:39:20] PASS m7_endurance_ns3_alive_every_sample
+[07:39:20] PASS m7_endurance_kpimon_pod_no_restart
+[07:39:20] PASS m7_endurance_agent_rss_informational
+[07:39:21] PASS m7_cpu_load_averages_informational
+[07:39:21] PASS m7_pre_delete_counts_recorded
+[07:39:53] PASS m7_e2term_pod_deleted_without_manual_ip_change
+[07:41:35] PASS m7_replacement_e2term_pod_ready_bounded
+[07:43:08] PASS m7_recovery_every_node_restarted_reconnected_and_indicating
+[07:43:08] PASS m7_ns3_still_running_after_recovery
+[07:43:09] PASS m7_agents_restartcount_ge1_after_delete
+[07:46:55] PASS m7_ns3_completes_exit0_through_the_delete
+[07:46:55] draining 10s
+[07:47:06] PASS m7_influx_node_series_exported
+[07:47:07] PASS m7_capture_stopped
+[07:47:14] PASS m7_pcap_facts_extracted
+[07:47:14] PASS m7_e2ap_ppid70_every_node
+[07:47:14] PASS m7_pcap_one_association_per_agent_distinct_ips_no_sport_collision
+[07:47:14] PASS m7_no_sctp_abort_during_endurance_window
+[07:47:14] PASS m7_sctp_abort_shutdown_around_delete_informational
+[07:47:14] PASS m7_wire_every_agent_init_goes_to_the_same_service_ip
+[07:47:14] PASS m7_wire_new_association_per_node_new_source_port
+[07:47:14] PASS m7_wire_new_e2setup_request_and_response_per_node
+[07:47:14] PASS m7_wire_new_ricsubscription_request_and_response_per_node
+[07:47:15] PASS m7_wire_first_indication_after_delete_per_node
+[07:47:15] PASS m7_per_node_time_to_connected_and_first_indication_informational
+[07:47:15] PASS m7_per_node_ricindications_on_the_wire
+[07:47:15] PASS m7_ns3_bye_ipc_dropped_recorded_per_node
+[07:47:15] PASS m7_kpimon_subscription_one_action_id1_format3
+[07:47:15] PASS m7_ue_context_files_consistent_with_ns3_mn_pdcp_trace
+[07:47:19] FAIL m7_kpm_ue_ids_en_gnb_and_enb_ueid_resolved_by_ue_context: exit 1: problem: frame 215 node 3: UE ID {"globalEnbId": {"macroEnbId": "00001", "plmn": "00F110"}, "mEnbUeX2apId": 5, "type": "en-gNB-UEID"} unresolved in ctx(n, s) for s in [5]
+problem: frame 215 node 3: UE ID {"globalEnbId": {"macroEnbId": "00001", "plmn": "00F110"}, "mEnbUeX2apId": 3, "type": "en-gNB-UEID"} unresolved in ctx(n, s) for s in [5]
+problem: frame 215 node 3: UE ID {"globalEnbId": {"macroEnbId": "00001", "plmn": "00F110"}, "mEnbUeX2apId": 1, "type": "en-gNB-UEID"} unresolved in ctx(n, s) for s in [5]
+problem: frame 240 node 3: UE ID {"globalEnbId": {"macroEnbId": "00001", "plmn": "00F110"}, "mEnbUeX2apId": 9, "type": "en-gNB-UEID"} unresolved in ctx(n, s) for s in [6]
+problem: frame 240 node 3: UE ID {"globalEnbId": {"macroEnbId": "00001", "plmn": "00F110"}, "mEnbUeX2apId": 5, "type": "en-gNB-UEID"} unresolved in ctx(n, s) for s in [6]
+[07:47:22] PASS m7_harness_ran_on_pcap
+[07:47:23] PASS m7_harness_every_header_and_message_clean_rc_ok_whole_pcap
+[07:47:23] PASS m7_kpimon_log_counts_informational
+[07:47:23] PASS m7_influx_fresh_cellmetrics_rows_per_nodeid_after_delete
+[07:47:23] PASS m7_influx_ue_rows_per_nodeid_informational
+[07:47:26] PASS m7_agents_stopped_no_container_left
+[07:47:26] PASS m7_no_stray_ns3_agent_process_or_3847x_listener
+[07:47:26] PASS m7_no_capture_left_running
+[07:47:26] PASS m7_pcap_in_evidence
+[07:47:26] ric watchdog stopped (pid 1247212)
+verdict m7: FAIL failed=['m7_kpm_ue_ids_en_gnb_and_enb_ueid_resolved_by_ue_context']

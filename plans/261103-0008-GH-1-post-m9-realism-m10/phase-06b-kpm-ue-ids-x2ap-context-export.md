@@ -130,4 +130,9 @@ Re-pin the P06 SHAs.
 - P12 at d8e7692: FAIL `p12/20261104T091609Z` on `disk_guard` only. The VM root was 77 % used against the 75 % guard, and no check ran.
   - On the VM, `docker image prune -f` removed only dangling, untagged images (superseded agent and ns-3 builds) and reclaimed 7.7 GB, bringing the root to 68 %.
   - Every tagged image, including the current agent `ns3-e2-agent:89d45afb8cf9` and kpimon, is kept.
-- Final rerun at 28d4508: M6, M7, R0, R1, P12.
+- Final rerun at 28d4508 (rows up to 105), 09:34–10:58Z, all PASS with no failed check:
+  - M6 PASS `m6/20261104T093457Z` (41 checks): 99 Format 2 indications, 0 gNB-UEID, every en-gNB-UEID resolved by node 2's UE context.
+  - M7 PASS `m7/20261104T093642Z` (57 checks): 2,959 Format 2 indications over all five nodes, 1,131 of them from the eNB, 0 gNB-UEID. The new Influx check matched the `ueId` of every UE row to the ns-3 IMSI on every node: node 1 (eNB) 4,404 rows, nodes 2–5 1,763, 1,302, 857 and 673 rows, 0 mismatches.
+  - R0 PASS `r0/20261104T100125Z` (130 checks). R1 PASS `r1/20261104T102205Z` (144 checks). Every run's UE context files agree with ns-3's PDCP trace.
+  - P12 PASS `p12/20261104T104145Z` (56 checks): one indication per 10 samples, 10 records each, with the UE IDs and `ueIdTags` judged in every condition item.
+- Evidence: the verdict layers of the 17 P06b run dirs (1,288 files) are in git. Their 4,233 raw files are archived as `/mnt/data/andang-data/ns-o-ran-installation-evidence/plans-evidence-raw-m10-p06b-20261104.tar.zst` (160 MB) with its `.list0`; both are in that folder's `SHA256SUMS`, which verifies. Host free space at exit is 30 GiB on /home and 12 GiB on /mnt/data.
