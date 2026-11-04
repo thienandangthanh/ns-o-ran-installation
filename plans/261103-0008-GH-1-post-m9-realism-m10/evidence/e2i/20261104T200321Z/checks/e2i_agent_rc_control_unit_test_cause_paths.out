@@ -1,0 +1,23 @@
+PASS fixture-loaded: 30 M8 PDUs, 12 X.691 PDUs
+PASS fixture-decodes: 3/3 Style 5 action 3 X.691 PDUs
+PASS agent-codec-reencode-equals-x691
+PASS nrcgi-target-gnb3
+PASS n5-target-refused
+PASS m8-capture-refused: 30/30 control-message-invalid
+PASS nrcgi-wrong-plmn-or-cell-part-refused
+PASS independent-negatives-refused: 9/9
+PASS ran-function-id-invalid
+PASS enb-refuses-ran-function-id-invalid
+PASS ran-function-definition-style5-action3-only: 5/3:1,2,3,4;
+PASS control-message-invalid
+PASS action-not-supported
+PASS ipc-down-control-failed-to-execute
+PASS nrcgi-applied-path: {"type":"control","v":1,"nodeId":2,"ctlId":1,"ric":{"requestorId":15,"instanceId":2,"ranFuncId":3},"style":5,"action":3,"ueId":{"mEnbUeX2apId":5,"mnCellId":1},"targetCellId":3,"afterSeq":41,"diag":{"targetGnbId":3,"rxUnixMs":1793822790934}}
+PASS format1-on-ack
+PASS ue-id-values-forwarded: 3/3
+PASS control-failed-to-execute
+PASS bye-fails-all-pending
+PASS noack-applied-sends-nothing
+PASS late-refusal-control-failed-to-execute
+PASS exactly-one-answer
+rc-control-test: ok

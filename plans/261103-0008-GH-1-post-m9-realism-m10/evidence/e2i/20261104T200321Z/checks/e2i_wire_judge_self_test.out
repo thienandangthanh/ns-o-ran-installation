@@ -1,0 +1,31 @@
+ok   en-gNB 2 as expected
+ok   eNB 1 as expected
+ok   en-gNB with a 22-bit gNB ID on the wire
+ok   en-gNB announced as a gNB
+ok   eNB announcing RC
+ok   en-gNB without RC
+ok   served NR cell of another gNB
+ok   served NR cell in the N5 form
+ok   X2 Global en-gNB ID of 22 bits
+ok   NR PCI not the cellId
+ok   X2 part that does not decode
+ok   eNB with an init-en-gNB part
+ok   RC without Style 5 action 3
+ok   RC Style 5 action 3 without parameter 4
+ok   RC under another OID
+ok   RC parameters 1 to 4 nested (structure and list children)
+ok   RC definition still listing Style 3 action 1
+ok   RC definition lacking the nested NR CGI parameter
+ok   RC definition lacking a parameter the run's acknowledged control sent
+ok   node never subscribed
+ok   subscription never answered
+ok   tshark and the decode disagree on the gNB ID
+ok   decoded RAN functions differ from tshark's
+ok   an NG component beside the X2 one
+ok   eNB with one X2 component for two en-gNB neighbours
+ok   eNB X2 component naming a node that is not its neighbour
+ok   en-gNB X2 component naming another en-gNB
+ok   the second eNB X2 request part fails
+ok   no independently decoded setup request in the frame
+ok   node without a setup request fails every check
+e2i wire checks self-test: ok

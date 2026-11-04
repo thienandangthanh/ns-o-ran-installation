@@ -1,0 +1,113 @@
+[17:58:31] gate r1 start; evidence /home/uc/evidence/r1/20261104T175831Z; harness d04843d469eed0d4a3221e10edbfe2bf7501d1c8
+[17:58:32] PASS r1_args
+[17:58:32] PASS r1_t_ctl_and_threshold_from_r0_evidence
+[17:58:32] ric watchdog started (pid 419124, threshold 600s)
+[17:58:32] PASS r1_nist_tree_at_testbed_sha_with_agent_dir
+[17:58:32] PASS r1_build_tools_present
+[17:58:32] PASS r1_sctp_module_loaded
+[17:58:32] PASS r1_ns3_binary_located_at_pins
+[17:58:32] PASS r1_pod_log_reader_self_test
+[17:58:37] PASS r1_pacer_self_test
+[17:58:37] PASS r1_kpm_ue_list_judge_self_test
+[17:58:37] PASS r1_c4_check_fails_the_arrival_order_fixture
+[17:58:37] PASS r1_grpcurl_fetched_and_checksum_verified
+[17:59:21] PASS r1_pre_ric_reset_fresh_rc_kpimon_hw_go_and_bucket
+[17:59:21] PASS r1_rc_installed_at_pin_and_ready
+[18:00:25] PASS r1_rc_decoder_built
+[18:01:45] PASS r1_c8_free_run_at_gated_threshold
+[18:03:05] PASS r1_c8_lockstep_null_control
+[18:03:05] PASS r1_c8_null_control_equals_free_run
+[18:03:05] PASS r1_live1_run_schedule_rendered
+[18:03:48] PASS r1_live1_ric_reset_fresh_pods_and_bucket
+[18:03:48] PASS r1_live1_route_dump_start
+[18:03:49] PASS r1_live1_capture_started_before_agents
+[18:04:27] FAIL r1_live1_agents_connected_set_exact: exit 1: No ns3-e2-agent containers.
+started ns3-e2-agent-1 (enb, X2 neighbours 2,3, IPC 127.0.0.1:38471, expected RAN name enB_macro_001_001_000001)
+docker: Error response from daemon: failed to set up container networking: driver failed programming external connectivity on endpoint ns3-e2-agent-2 (7ae948834676686b21b44256fa945044925319ca47483a0ec11e2fedefb3bfc8): failed to bind host port 127.0.0.1:38472/tcp: address already in use
+
+Run 'docker run --help' for more information
+[18:04:27] PASS r1_live1_agent_ips_recorded
+[18:07:29] FAIL r1_live1_every_agent_ready_and_subscribed: exit 1: 1 0 true READY 1 0
+2 0 false ? 0 0
+[18:07:30] PASS r1_live1_pods_snapshot_before
+[18:09:30] FAIL r1_live1_lockstep_run_exits_clean: exit 1: ns-3 started pid/pgid 472018 at 1793815650.478328272: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --RngRun=1 --simStartEpochMs=1767225600000 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/r1/20261104T175831Z/runs/live1/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10
+ns-3 exit code 5
+live1: ns-3 exit 5, pacer exit 3 (want 0 and 0)
+[18:09:31] PASS r1_live1_pods_snapshot_after
+[18:09:31] PASS r1_live1_route_dump_end
+[18:09:31] PASS r1_live1_restart_counts_zero_rc_kpimon_hw_go_agents
+[18:09:46] FAIL r1_live1_agent_logs_with_stats_after_bye: exit 1: agent 2: no stats line after bye within 15 s
+[18:09:46] FAIL r1_live1_agent_ue_context_counters_zero_every_stats_line: exit 1: {"pass": false, "perNode": {"2": {"samplesNoUeContext": null, "statsLines": 0, "ueContext": null, "ueContextRejected": null}}, "problems": ["node 1: no agent log /home/uc/evidence/r1/20261104T175831Z/runs/live1/agent-1.log", "node 2: no stats line"]}
+[18:09:46] FAIL r1_live1_influx_dump_written_without_the_token: exit 1: {"rows": 0, "bytes": 1, "knownSecrets": 44, "tokenHits": 0, "tokenShapeHits": 0}
+[18:09:48] PASS r1_live1_agents_stopped
+[18:09:49] PASS r1_live1_capture_stopped
+[18:09:50] PASS r1_live1_kpimon_subscription_reporting_period_decoded
+[18:09:50] FAIL r1_live1_kpimon_subscription_one_action_id1_format3: exit 1: frame 9 to 172.17.0.3:50143 (node 1): action list 1, actions [(1, 'report', 'actionDefinition-Format3')]
+PROBLEM: node 2 received no RIC SUBSCRIPTION REQUEST
+[18:09:50] FAIL r1_live1_e2ap_ppid70_every_node: exit 1: 172.17.0.3:50143 -> :36422 PPID counts {"70": 2}
+node 1: 2 PPID-70 chunk(s) over ['172.17.0.3:50143']
+node 2: 0 PPID-70 chunk(s) over []
+E2AP frames decoded by PPID 4, forced on the port 4
+PROBLEM: node 2: no PPID-70 DATA chunk (associations [])
+[18:09:50] FAIL r1_live1_ns3_emitters_at_pins: exit 1:     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[18:09:51] FAIL r1_live1_ue_context_files_consistent_with_ns3_mn_pdcp_trace: exit 1:              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/uc/harness/scripts/gates/identity-map-extract.py", line 24, in extract
+    with open(path) as f:
+         ^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/r1/20261104T175831Z/runs/live1/ns3run/DlE2PdcpStatsLte.txt'
+[18:09:51] PASS r1_live1_kpimon_log_window_complete
+[18:09:51] PASS r1_live1_kpimon_zero_rc_wmore
+[18:09:52] FAIL r1_live1_wire_one_terminal_answer_per_request_joined_to_ledger: exit 1: {"rcRequests": 0, "rcAnswers": 0, "acks": 0, "failures": 0, "kpmHeadersByNode": {}, "c2": {"answers": 0, "ledgerLines": 0, "agentLocal": 0, "holds": true}, "c5": {"pairsByReqId": true, "answerViaNodeId": true}, "viaMeidEqualsNode": false, "pass": false}
+problem: UE context: e2-ue-context-2.jsonl has no IPC trace hello
+problem: UE context: e2-ue-context-3.jsonl has no IPC trace hello
+problem: 0 RICcontrolRequests on the wire, expected 8
+problem: 0 requests answered by the agent itself (no ledger line), expected 1
+[18:09:52] FAIL r1_live1_c2_ledger: exit 1:   "problems": [
+    "0 ledger lines, expected 7"
+  ],
+  "pass": false
+}
+[18:09:52] PASS r1_live1_c9_handover_rows_match_applied_lines
+[18:09:52] FAIL r1_live1_kpm_ue_lists_move_applied_and_keep_refused: exit 1: {"format2Indications": 0, "format2ByNode": {}, "gnbUeIdCount": 0, "kpmUeListMoved": {}, "pass": false}
+problem: UE context: e2-ue-context-2.jsonl has no IPC trace hello
+problem: UE context: e2-ue-context-3.jsonl has no IPC trace hello
+[18:09:52] FAIL r1_live1_one_connection_per_emitter_and_agent: exit 1: emitters [] agents ipc.accepted {'2': None}
+[18:09:52] FAIL r1_live1_agent_static_rejects_zero_post_bye_as_expected: exit 1: Traceback (most recent call last):
+  File "<stdin>", line 9, in <module>
+TypeError: 'NoneType' object is not subscriptable
+[18:09:52] FAIL r1_live1_expected_outcomes_and_afterseq: exit 1:             ^^^^^^^^^^^^^^^^^^
+  File "/home/uc/harness/scripts/gates/r0-checks.py", line 65, in ledger_lines
+    return [json.loads(l) for l in open(p) if l.strip()][1:]
+                                   ^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/r1/20261104T175831Z/runs/live1/trace/e2-control-ledger.jsonl'
+[18:09:53] FAIL r1_live1_c4_sort_exercised_not_arrival_order: exit 1:           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/uc/harness/scripts/gates/r0-checks.py", line 65, in ledger_lines
+    return [json.loads(l) for l in open(p) if l.strip()][1:]
+                                   ^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/r1/20261104T175831Z/runs/live1/trace/e2-control-ledger.jsonl'
+[18:09:53] FAIL r1_d7_source_applied_both_gnbs_non_source_and_enb_refused: exit 1:                                 ^^^^^^^^^^^^^^^^^^
+  File "/home/uc/harness/scripts/gates/r0-checks.py", line 65, in ledger_lines
+    return [json.loads(l) for l in open(p) if l.strip()][1:]
+                                   ^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/r1/20261104T175831Z/runs/live1/trace/e2-control-ledger.jsonl'
+[18:09:53] FAIL r1_runs_kpm_moved_c2_c5_reset_fresh: exit 1: {"c2": {"live1": {"agentLocal": 0, "answers": 0, "holds": true, "ledgerLines": 0}}, "c5": {"answerViaNodeId": true, "pairsByReqId": true, "perRun": {"live1": {"answerViaNodeId": true, "pairsByReqId": true}}}, "kpmUeListMoved": {}, "pass": false, "problems": ["live1: KPM UE-list check missing or failed"], "resetEvidence": {"live1": {"bucketAfter": ["b18b693305097f78"], "bucketBefore": ["aa1bbf0c7c599b7a"], "fresh": true, "podsAfter": {"ricxapp-hw-go": {"containerStartedAt": ["2026-11-04T18:03:06Z"], "name": "ricxapp-hw-go-c84579888-q6tc6", "startTime": "2026-11-04T18:03:06Z", "uid": "68c46f8e-6d33-4f7a-8e2a-6b2a508b2de2"}, "ricxapp-kpimon-go": {"containerStartedAt": ["2026-11-04T18:03:06Z"], "name": "ricxapp-kpimon-go-85dc5fdf8b-v5gkw", "startTime": "2026-11-04T18:03:06Z", "uid": "e4cf27c7-9dac-4917-9348-be74331c7187"}, "xapp-rc": {"containerStartedAt": ["2026-11-04T18:03:06Z"], "name": "ricxapp-rc-6db9dcd964-8ss5s", "startTime": "2026-11-04T18:03:05Z", "uid": "17f479ec-b2a2-4aa9-8d47-84ff0ab51e97"}}, "resetStartUtc": "2026-11-04T18:03:05Z"}}, "runs": ["live1"]}
+[18:09:53] PASS r1_ipc_dropped_zero_no_sub_dropped_zero_and_slack_recorded
+[18:09:53] PASS r1_restart_counts_all_zero
+[18:09:54] PASS r1_no_stray_process
+Traceback (most recent call last):
+  File "<stdin>", line 21, in <module>
+  File "/usr/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 21 (char 20)
+Terminated
+[18:09:54] ric watchdog stopped (pid 419124)

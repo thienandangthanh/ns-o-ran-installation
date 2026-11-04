@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/uc/harness/scripts/gates/check-ledger.py", line 117, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/uc/harness/scripts/gates/check-ledger.py", line 48, in main
+    with open(a.pacer_log) as f:
+         ^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/r2/20261104T182917Z/runs/rng2/pacer/pacer-log.jsonl'

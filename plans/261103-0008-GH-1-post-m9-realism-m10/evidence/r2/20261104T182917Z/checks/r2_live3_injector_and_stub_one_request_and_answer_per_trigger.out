@@ -1,0 +1,12 @@
+{
+ "injected": 1,
+ "stubRequests": 1,
+ "stubOtherMessages": 0,
+ "stubOtherTypes": [],
+ "problems": [
+  "injector: 1 30003 sends (want 7), states [0]",
+  "injector sent ues ['enGnbUeId:3@00F110-00001'], expected ['enGnbUeId:3@00F110-00001', 'enGnbUeId:1@00F110-00001', 'enGnbUeId:2@00F110-00001', 'enGnbUeId:5@00F110-00001', 'enGnbUeId:4@00F110-00001', 'enGnbUeId:6@00F110-00001', 'enGnbUeId:4095@00F110-00001']",
+  "stub got UEPredictionSets [['enGnbUeId:3@00F110-00001']], expected one per trigger [['enGnbUeId:3@00F110-00001'], ['enGnbUeId:1@00F110-00001'], ['enGnbUeId:2@00F110-00001'], ['enGnbUeId:5@00F110-00001'], ['enGnbUeId:4@00F110-00001'], ['enGnbUeId:6@00F110-00001'], ['enGnbUeId:4095@00F110-00001']]"
+ ],
+ "pass": false
+}

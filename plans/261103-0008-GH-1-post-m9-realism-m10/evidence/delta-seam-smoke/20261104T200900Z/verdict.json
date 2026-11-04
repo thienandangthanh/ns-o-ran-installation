@@ -1,0 +1,181 @@
+{
+  "gate": "dseam",
+  "ts": "20261104T200900Z",
+  "harness_sha": "7ef324f1efbba838560041afd0c6fe6906ce13e3",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "36dbcc3881ff237b3dc97b7dcfa7a1ba4f587420",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "ea6e46f6f210319e7e96923ac6a472b019638371",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "53253fe256ed305b207b607150a5e8a1dec25e42",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "e27058163dc0bb05ce279ad3fa1bd15a22fc24ab"
+  },
+  "duration_s": 335,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "dseam_ns3_binary_located",
+      "pass": true,
+      "detail": "/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"
+    },
+    {
+      "name": "dseam_e2_ports_reserved",
+      "pass": true,
+      "detail": "net.ipv4.ip_local_reserved_ports = 38470-38499; /etc/sysctl.d/60-ns3-e2-agent-ports.conf: net.ipv4.ip_local_reserved_ports = 38470-38499"
+    },
+    {
+      "name": "dseam_build_at_pins_clean_and_carries_the_seam",
+      "pass": true,
+      "detail": "ns-3 ea6e46f6f210319e7e96923ac6a472b019638371 (pin ea6e46f6f210319e7e96923ac6a472b019638371)\noran-interface 53253fe256ed305b207b607150a5e8a1dec25e42 (pin 53253fe256ed305b207b607150a5e8a1dec25e42)"
+    },
+    {
+      "name": "dseam_run_d0",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 1020250 at 1793822942.707815658: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --simStartEpochMs=1767225600000 --simStartEpochMs=1767225600000 --actuationDelayMs=0 --e2TraceDir=/home/uc/evidence/delta-seam-smoke/20261104T200900Z/runs/d0/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nd0 (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "dseam_d0_injected_ue_ids_name_the_scheduled_imsis",
+      "pass": true,
+      "detail": "[{\"control\": \"2/1\", \"ueId\": {\"mEnbUeX2apId\": 6, \"mnCellId\": 1}, \"imsi\": 6, \"annotated\": 6}, {\"control\": \"2/2\", \"ueId\": {\"mEnbUeX2apId\": 6, \"mnCellId\": 1}, \"imsi\": 6, \"annotated\": 6}, {\"control\": \"2/3\", \"ueId\": {\"mEnbUeX2apId\": 6, \"mnCellId\": 1}, \"imsi\": 6, \"annotated\": 6}, {\"control\": \"2/4\", \"ueId\": {\"mEnbUeX2apId\": 4095, \"mnCellId\": 1}, \"imsi\": null, \"annotated\": null}, {\"control\": \"2/5\", \"ueId\": {\"mEnbUeX2apId\": 1, \"mnCellId\": 1}, \"imsi\": 3, \"annotated\": 3}, {\"control\": \"2/6\", \"ueId\": {\"mEnbUeX2apId\": 1, \"mnCellId\": 1}, \"imsi\": 3, \"annotated\": 3}, {\"control\": \"2/9\", \"ueId\": {\"mEnbUeX2apId\": 2, \"mnCellId\": 1}, \"imsi\": 4, \"annotated\": 4}, {\"control\": \"3/1\", \"ueId\": {\"mEnbUeX2apId\": 3, \"mnCellId\": 1}, \"imsi\": 1, \"annotated\": 1}, {\"control\": \"3/2\", \"ueId\": {\"mEnbUeX2apId\": 6, \"mnCellId\": 1}, \"imsi\": 6, \"annotated\": 6}]"
+    },
+    {
+      "name": "dseam_d0_ledger_checks",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "dseam_d0_one_ack_per_ledger_line",
+      "pass": true,
+      "detail": "ledger 9 lines, 9 acks, outcomes [('applied', ''), ('refused', 'alreadyOnTarget'), ('refused', 'inHandover'), ('refused', 'late'), ('refused', 'lteFallback'), ('refused', 'unknownTarget'), ('refused', 'unknownUe')]"
+    },
+    {
+      "name": "dseam_run_d150",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 1021405 at 1793822997.553603656: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --simStartEpochMs=1767225600000 --simStartEpochMs=1767225600000 --actuationDelayMs=150 --e2TraceDir=/home/uc/evidence/delta-seam-smoke/20261104T200900Z/runs/d150/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nd150 (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "dseam_d150_injected_ue_ids_name_the_scheduled_imsis",
+      "pass": true,
+      "detail": "[{\"control\": \"2/1\", \"ueId\": {\"mEnbUeX2apId\": 6, \"mnCellId\": 1}, \"imsi\": 6, \"annotated\": 6}, {\"control\": \"2/2\", \"ueId\": {\"mEnbUeX2apId\": 6, \"mnCellId\": 1}, \"imsi\": 6, \"annotated\": 6}, {\"control\": \"2/3\", \"ueId\": {\"mEnbUeX2apId\": 6, \"mnCellId\": 1}, \"imsi\": 6, \"annotated\": 6}, {\"control\": \"2/4\", \"ueId\": {\"mEnbUeX2apId\": 4095, \"mnCellId\": 1}, \"imsi\": null, \"annotated\": null}, {\"control\": \"2/5\", \"ueId\": {\"mEnbUeX2apId\": 1, \"mnCellId\": 1}, \"imsi\": 3, \"annotated\": 3}, {\"control\": \"2/6\", \"ueId\": {\"mEnbUeX2apId\": 1, \"mnCellId\": 1}, \"imsi\": 3, \"annotated\": 3}, {\"control\": \"2/9\", \"ueId\": {\"mEnbUeX2apId\": 2, \"mnCellId\": 1}, \"imsi\": 4, \"annotated\": 4}, {\"control\": \"3/1\", \"ueId\": {\"mEnbUeX2apId\": 3, \"mnCellId\": 1}, \"imsi\": 1, \"annotated\": 1}, {\"control\": \"3/2\", \"ueId\": {\"mEnbUeX2apId\": 6, \"mnCellId\": 1}, \"imsi\": 6, \"annotated\": 6}]"
+    },
+    {
+      "name": "dseam_d150_ledger_checks",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "dseam_d150_one_ack_per_ledger_line",
+      "pass": true,
+      "detail": "ledger 9 lines, 9 acks, outcomes [('applied', ''), ('refused', 'alreadyOnTarget'), ('refused', 'inHandover'), ('refused', 'late'), ('refused', 'lteFallback'), ('refused', 'unknownTarget'), ('refused', 'unknownUe')]"
+    },
+    {
+      "name": "dseam_run_d500",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 1022585 at 1793823053.207603034: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --simStartEpochMs=1767225600000 --simStartEpochMs=1767225600000 --actuationDelayMs=500 --e2TraceDir=/home/uc/evidence/delta-seam-smoke/20261104T200900Z/runs/d500/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nd500 (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "dseam_d500_injected_ue_ids_name_the_scheduled_imsis",
+      "pass": true,
+      "detail": "[{\"control\": \"2/1\", \"ueId\": {\"mEnbUeX2apId\": 6, \"mnCellId\": 1}, \"imsi\": 6, \"annotated\": 6}, {\"control\": \"2/2\", \"ueId\": {\"mEnbUeX2apId\": 6, \"mnCellId\": 1}, \"imsi\": 6, \"annotated\": 6}, {\"control\": \"2/3\", \"ueId\": {\"mEnbUeX2apId\": 6, \"mnCellId\": 1}, \"imsi\": 6, \"annotated\": 6}, {\"control\": \"2/4\", \"ueId\": {\"mEnbUeX2apId\": 4095, \"mnCellId\": 1}, \"imsi\": null, \"annotated\": null}, {\"control\": \"2/5\", \"ueId\": {\"mEnbUeX2apId\": 1, \"mnCellId\": 1}, \"imsi\": 3, \"annotated\": 3}, {\"control\": \"2/6\", \"ueId\": {\"mEnbUeX2apId\": 1, \"mnCellId\": 1}, \"imsi\": 3, \"annotated\": 3}, {\"control\": \"2/9\", \"ueId\": {\"mEnbUeX2apId\": 2, \"mnCellId\": 1}, \"imsi\": 4, \"annotated\": 4}, {\"control\": \"3/1\", \"ueId\": {\"mEnbUeX2apId\": 3, \"mnCellId\": 1}, \"imsi\": 1, \"annotated\": 1}, {\"control\": \"3/2\", \"ueId\": {\"mEnbUeX2apId\": 6, \"mnCellId\": 1}, \"imsi\": 6, \"annotated\": 6}]"
+    },
+    {
+      "name": "dseam_d500_ledger_checks",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "dseam_d500_one_ack_per_ledger_line",
+      "pass": true,
+      "detail": "ledger 9 lines, 9 acks, outcomes [('applied', ''), ('refused', 'inHandover'), ('refused', 'late'), ('refused', 'lteFallback'), ('refused', 'unknownTarget'), ('refused', 'unknownUe')]"
+    },
+    {
+      "name": "dseam_outcomes_per_delta_informational",
+      "pass": true,
+      "detail": "same at every delta: False"
+    },
+    {
+      "name": "dseam_run_d500stop",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 1023750 at 1793823108.278273344: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --simStartEpochMs=1767225600000 --simStartEpochMs=1767225600000 --actuationDelayMs=500 --e2TraceDir=/home/uc/evidence/delta-seam-smoke/20261104T200900Z/runs/d500stop/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nd500stop (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "dseam_d500stop_injected_ue_ids_name_the_scheduled_imsis",
+      "pass": true,
+      "detail": "[{\"control\": \"3/1\", \"ueId\": {\"mEnbUeX2apId\": 4, \"mnCellId\": 1}, \"imsi\": 2, \"annotated\": 2}]"
+    },
+    {
+      "name": "dseam_d500stop_ledger_checks",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "dseam_d0_emitters_at_pins",
+      "pass": true,
+      "detail": "3 hellos, emitters [('ea6e46f6f210319e7e96923ac6a472b019638371', '53253fe256ed305b207b607150a5e8a1dec25e42')]"
+    },
+    {
+      "name": "dseam_d500stop_pending_control_gets_one_late_failure",
+      "pass": true,
+      "detail": "ledger [{'rxSeq': 97, 'rxSimTimeNs': 9700800000, 'applySimTimeNs': 10000000000, 'viaNodeId': 3, 'ctlId': 1, 'afterSeq': 97, 'imsi': 2, 'sourceCell': 0, 'targetCell': 2, 'outcome': 'refused', 'cause': 'late'}] acks [{'type': 'controlAck', 'v': 1, 'nodeId': 3, 'ctlId': 1, 'outcome': 'refused', 'cause': 'late', 'seq': 97, 'applySimTimeNs': 10000000000, 'sourceCellId': 0}]"
+    },
+    {
+      "name": "dseam_d500stop_one_ack",
+      "pass": true,
+      "detail": "ledger 1 lines, 1 acks, outcomes [('refused', 'late')]"
+    },
+    {
+      "name": "dseam_run_d150stop",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 1025020 at 1793823164.396362777: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --simStartEpochMs=1767225600000 --simStartEpochMs=1767225600000 --actuationDelayMs=150 --e2TraceDir=/home/uc/evidence/delta-seam-smoke/20261104T200900Z/runs/d150stop/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nd150stop (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "dseam_d150stop_injected_ue_ids_name_the_scheduled_imsis",
+      "pass": true,
+      "detail": "[{\"control\": \"3/1\", \"ueId\": {\"mEnbUeX2apId\": 4, \"mnCellId\": 1}, \"imsi\": 2, \"annotated\": 2}]"
+    },
+    {
+      "name": "dseam_d150stop_ledger_checks",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "dseam_d150stop_scheduled_event_cancelled_one_late_failure",
+      "pass": true,
+      "detail": "ledger [{'rxSeq': 99, 'rxSimTimeNs': 9900800000, 'applySimTimeNs': 10000000000, 'viaNodeId': 3, 'ctlId': 1, 'afterSeq': 99, 'imsi': 2, 'sourceCell': 0, 'targetCell': 2, 'outcome': 'refused', 'cause': 'late'}] acks [{'type': 'controlAck', 'v': 1, 'nodeId': 3, 'ctlId': 1, 'outcome': 'refused', 'cause': 'late', 'seq': 99, 'applySimTimeNs': 10000000000, 'sourceCellId': 0}]"
+    },
+    {
+      "name": "dseam_d150stop_one_ack",
+      "pass": true,
+      "detail": "ledger 1 lines, 1 acks, outcomes [('refused', 'late')]"
+    },
+    {
+      "name": "dseam_run_d100tie",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 1026255 at 1793823220.561510522: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --simStartEpochMs=1767225600000 --simStartEpochMs=1767225600000 --actuationDelayMs=100 --e2TraceDir=/home/uc/evidence/delta-seam-smoke/20261104T200900Z/runs/d100tie/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nd100tie (lockstep): ns-3 exit 0 (want 0); pacer exit 0 (want 0)"
+    },
+    {
+      "name": "dseam_d100tie_injected_ue_ids_name_the_scheduled_imsis",
+      "pass": true,
+      "detail": "[{\"control\": \"2/1\", \"ueId\": {\"mEnbUeX2apId\": 6, \"mnCellId\": 1}, \"imsi\": 6, \"annotated\": 6}, {\"control\": \"2/2\", \"ueId\": {\"mEnbUeX2apId\": 2, \"mnCellId\": 1}, \"imsi\": 4, \"annotated\": 4}, {\"control\": \"3/1\", \"ueId\": {\"mEnbUeX2apId\": 3, \"mnCellId\": 1}, \"imsi\": 1, \"annotated\": 1}]"
+    },
+    {
+      "name": "dseam_d100tie_ledger_checks",
+      "pass": true,
+      "detail": "  \"problems\": [],\n  \"pass\": true\n}"
+    },
+    {
+      "name": "dseam_d100tie_due_batch_before_late_refusal_new_batch_next_barrier",
+      "pass": true,
+      "detail": "got  [((2, 1), 20, False, 2100800000), ((2, 2), 21, True, 2100800000), ((3, 1), 21, False, 2200800000)]\nwant [((2, 1), 20, False, 2100800000), ((2, 2), 21, True, 2100800000), ((3, 1), 21, False, 2200800000)]"
+    },
+    {
+      "name": "dseam_d100tie_one_ack_per_ledger_line",
+      "pass": true,
+      "detail": "ledger 3 lines, 3 acks, outcomes [('refused', 'alreadyOnTarget'), ('refused', 'late'), ('refused', 'lteFallback')]"
+    }
+  ]
+}

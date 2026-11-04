@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/uc/harness/tools/e2-evidence/ue-context-map.py", line 592, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/uc/harness/tools/e2-evidence/ue-context-map.py", line 580, in main
+    r = check(a.trace_dir, a.pdcp, a.expect_map)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/uc/harness/tools/e2-evidence/ue-context-map.py", line 368, in check
+    pd, pp = _extract()(pdcp, MN_CELL)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/uc/harness/scripts/gates/identity-map-extract.py", line 24, in extract
+    with open(path) as f:
+         ^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/r1/20261104T175831Z/runs/live1/ns3run/DlE2PdcpStatsLte.txt'

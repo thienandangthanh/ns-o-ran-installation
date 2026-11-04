@@ -1,0 +1,247 @@
+[18:29:18] gate r2 start; evidence /home/uc/evidence/r2/20261104T182917Z; harness 5727196cb6619d1b77ea80c38f55c9902a503c45
+[18:29:18] PASS r2_args
+[18:29:18] PASS r2_config_values_from_their_evidence
+[18:29:18] ric watchdog started (pid 549108, threshold 600s)
+[18:29:18] PASS r2_nist_tree_at_testbed_sha_with_agent_dir
+[18:29:19] PASS r2_ts_source_is_pin_plus_exactly_the_testbed_patches
+[18:29:19] PASS r2_build_tools_present
+[18:29:19] PASS r2_sctp_module_loaded
+[18:29:19] PASS r2_e2_ports_reserved
+[18:29:19] PASS r2_ns3_binary_located_at_pins
+[18:29:19] PASS r2_pod_log_reader_self_test
+[18:29:23] PASS r2_pacer_self_test
+[18:29:23] PASS r2_kpm_ue_list_judge_self_test
+[18:29:24] PASS r2_grpcurl_fetched_and_checksum_verified
+[18:30:07] PASS r2_pre_ric_reset_fresh_rc_kpimon_hw_go_and_bucket
+[18:30:08] PASS r2_rc_installed_at_pin_and_ready
+[18:30:08] PASS r2_a1_policy_type_20008_present
+[18:31:08] PASS r2_pre_ts_and_stub_pods_fresh_rtmgr_sessions
+[18:31:08] PASS r2_ts_xapp_at_pin_ready_in_grpc_mode
+[18:31:25] PASS r2_rmr_peer_image_built_self_tested
+[18:31:25] PASS r2_stub_qp_deployed
+[18:31:25] PASS r2_xapp_image_ids
+[18:32:27] PASS r2_rc_decoder_built
+[18:33:46] PASS r2_c8_free_run_at_gated_threshold
+[18:35:06] PASS r2_c8_lockstep_null_control
+[18:35:06] PASS r2_c8_null_control_equals_free_run
+[18:35:49] PASS r2_live1_ric_reset_fresh_pods_and_bucket
+[18:35:49] PASS r2_live1_capture_started_before_agents
+[18:36:43] PASS r2_live1_agents_connected_set_exact
+[18:36:43] PASS r2_live1_agent_ips_recorded
+[18:36:50] PASS r2_live1_every_agent_ready_and_subscribed
+[18:37:49] PASS r2_live1_ts_and_stub_pods_fresh_after_agents_rtmgr_sessions
+[18:37:58] PASS r2_live1_rc_rmr_ready_after_rtmgr_restart
+[18:37:58] PASS r2_live1_ts_xapp_nodeb_list_has_every_connected_agent
+[18:37:58] PASS r2_live1_route_dump_start
+[18:37:58] PASS r2_live1_routes_30002_20010_to_ts_30000_only_to_stub
+[18:38:19] PASS r2_live1_a1_threshold_set_and_logged_by_the_ts_xapp
+[18:38:19] PASS r2_live1_a1mediator_connection_to_ts_xapp_clean
+[18:38:20] PASS r2_live1_stub_emptied_and_run_schedule_written
+[18:38:20] PASS r2_live1_injector_started
+[18:38:21] PASS r2_live1_pods_snapshot_before
+[18:39:07] FAIL r2_live1_lockstep_run_exits_clean: exit 1: ns-3 started pid/pgid 596750 at 1793817501.613168579: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --RngRun=1 --simStartEpochMs=1767225600000 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/r2/20261104T182917Z/runs/live1/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10
+ns-3 exit code 5
+live1: ns-3 exit 5, pacer exit 3 (want 0 and 0)
+[18:39:08] PASS r2_live1_pods_snapshot_after
+[18:39:08] PASS r2_live1_route_dump_end
+[18:39:08] PASS r2_live1_restart_counts_zero_rc_ts_stub_kpimon_hw_go_agents
+[18:39:08] PASS r2_live1_stub_log_saved
+[18:39:09] PASS r2_live1_injector_stopped
+[18:39:25] FAIL r2_live1_agent_logs_with_stats_after_bye: exit 1: agent 3: no stats line after bye within 15 s
+[18:39:25] FAIL r2_live1_agent_ue_context_counters_zero_every_stats_line: exit 1: {"pass": false, "perNode": {"3": {"samplesNoUeContext": 0, "statsLines": 35, "ueContext": 2, "ueContextRejected": 0}}, "problems": ["node 1: no agent log /home/uc/evidence/r2/20261104T182917Z/runs/live1/agent-1.log", "node 2: no agent log /home/uc/evidence/r2/20261104T182917Z/runs/live1/agent-2.log"]}
+[18:39:25] PASS r2_live1_influx_dump_written_without_the_token
+[18:39:27] PASS r2_live1_agents_stopped
+[18:39:28] PASS r2_live1_capture_stopped
+[18:39:29] PASS r2_live1_kpimon_subscription_reporting_period_decoded
+[18:39:29] PASS r2_live1_kpimon_subscription_one_action_id1_format3
+[18:39:29] PASS r2_live1_e2ap_ppid70_every_node
+[18:39:29] PASS r2_live1_ns3_emitters_at_pins
+[18:39:30] PASS r2_live1_ue_context_files_consistent_with_ns3_mn_pdcp_trace
+[18:39:30] PASS r2_live1_kpimon_log_window_complete
+[18:39:30] PASS r2_live1_kpimon_zero_rc_wmore
+[18:39:31] FAIL r2_live1_wire_one_terminal_answer_per_request_joined_to_ledger: exit 1: {"rcRequests": 0, "rcAnswers": 0, "acks": 0, "failures": 0, "kpmHeadersByNode": {"1": 61, "2": 41, "3": 41}, "c2": {"answers": 0, "ledgerLines": 0, "agentLocal": 0, "holds": true}, "c5": {"pairsByReqId": true, "answerViaNodeId": true}, "viaMeidEqualsNode": false, "pass": false}
+problem: 0 RICcontrolRequests on the wire, expected 4
+[18:39:31] PASS r2_live1_kpm_continuity_kpimon_equals_wire_indications
+[18:39:31] FAIL r2_live1_c2_ledger: exit 1:   "problems": [
+    "0 ledger lines, expected 4"
+  ],
+  "pass": false
+}
+[18:39:31] PASS r2_live1_c9_handover_rows_match_applied_lines
+[18:39:31] PASS r2_live1_kpm_ue_lists_move_applied_and_keep_refused
+[18:39:31] FAIL r2_live1_one_connection_per_emitter_and_agent: exit 1: emitters [] agents ipc.accepted {'3': 1}
+[18:39:32] PASS r2_live1_agent_static_rejects_zero_post_bye_zero
+[18:39:32] FAIL r2_live1_expected_outcomes_negatives_no_line_late_zero: exit 1:                                            ^^^^^^^^^^^^^^^^^^
+  File "/home/uc/harness/scripts/gates/r2-checks.py", line 86, in ledger_lines
+    return [json.loads(l) for l in open(p) if l.strip()][1:]
+                                   ^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/r2/20261104T182917Z/runs/live1/trace/e2-control-ledger.jsonl'
+[18:39:32] FAIL r2_live1_wire_requests_equal_positives_via_source_with_stub_key: exit 1:   "positive step 70 imsi 6: 0 RICcontrolRequests",
+  "0 RICcontrolRequests on the wire for 4 positives"
+ ],
+ "pass": false
+}
+[18:39:32] FAIL r2_live1_injector_and_stub_one_request_and_answer_per_trigger: exit 1:   "injector sent ues ['enGnbUeId:3@00F110-00001'], expected ['enGnbUeId:3@00F110-00001', 'enGnbUeId:1@00F110-00001', 'enGnbUeId:2@00F110-00001', 'enGnbUeId:5@00F110-00001', 'enGnbUeId:4@00F110-00001', 'enGnbUeId:6@00F110-00001', 'enGnbUeId:4095@00F110-00001']",
+  "stub got UEPredictionSets [['enGnbUeId:3@00F110-00001']], expected one per trigger [['enGnbUeId:3@00F110-00001'], ['enGnbUeId:1@00F110-00001'], ['enGnbUeId:2@00F110-00001'], ['enGnbUeId:5@00F110-00001'], ['enGnbUeId:4@00F110-00001'], ['enGnbUeId:6@00F110-00001'], ['enGnbUeId:4095@00F110-00001']]"
+ ],
+ "pass": false
+}
+[18:40:15] PASS r2_live2_ric_reset_fresh_pods_and_bucket
+[18:40:15] PASS r2_live2_capture_started_before_agents
+[18:41:09] PASS r2_live2_agents_connected_set_exact
+[18:41:09] PASS r2_live2_agent_ips_recorded
+[18:41:16] PASS r2_live2_every_agent_ready_and_subscribed
+[18:42:15] PASS r2_live2_ts_and_stub_pods_fresh_after_agents_rtmgr_sessions
+[18:42:23] PASS r2_live2_rc_rmr_ready_after_rtmgr_restart
+[18:42:24] PASS r2_live2_ts_xapp_nodeb_list_has_every_connected_agent
+[18:42:24] PASS r2_live2_route_dump_start
+[18:42:24] PASS r2_live2_routes_30002_20010_to_ts_30000_only_to_stub
+[18:42:45] PASS r2_live2_a1_threshold_set_and_logged_by_the_ts_xapp
+[18:42:45] PASS r2_live2_a1mediator_connection_to_ts_xapp_clean
+[18:42:45] PASS r2_live2_stub_emptied_and_run_schedule_written
+[18:42:46] PASS r2_live2_injector_started
+[18:42:46] PASS r2_live2_pods_snapshot_before
+[18:43:33] FAIL r2_live2_lockstep_run_exits_clean: exit 1: ns-3 started pid/pgid 617559 at 1793817767.148496759: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --RngRun=1 --simStartEpochMs=1767225600000 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/r2/20261104T182917Z/runs/live2/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10
+ns-3 exit code 5
+live2: ns-3 exit 5, pacer exit 3 (want 0 and 0)
+[18:43:33] PASS r2_live2_pods_snapshot_after
+[18:43:34] PASS r2_live2_route_dump_end
+[18:43:34] PASS r2_live2_restart_counts_zero_rc_ts_stub_kpimon_hw_go_agents
+[18:43:34] PASS r2_live2_stub_log_saved
+[18:43:34] PASS r2_live2_injector_stopped
+[18:43:49] FAIL r2_live2_agent_logs_with_stats_after_bye: exit 1: agent 3: no stats line after bye within 15 s
+[18:43:49] FAIL r2_live2_agent_ue_context_counters_zero_every_stats_line: exit 1: {"pass": false, "perNode": {"3": {"samplesNoUeContext": 0, "statsLines": 35, "ueContext": 2, "ueContextRejected": 0}}, "problems": ["node 1: no agent log /home/uc/evidence/r2/20261104T182917Z/runs/live2/agent-1.log", "node 2: no agent log /home/uc/evidence/r2/20261104T182917Z/runs/live2/agent-2.log"]}
+[18:43:51] PASS r2_live2_agents_stopped
+[18:43:52] PASS r2_live2_capture_stopped
+[18:43:53] PASS r2_live2_kpimon_subscription_reporting_period_decoded
+[18:43:54] PASS r2_live2_kpimon_subscription_one_action_id1_format3
+[18:43:54] PASS r2_live2_e2ap_ppid70_every_node
+[18:43:54] PASS r2_live2_ns3_emitters_at_pins
+[18:43:54] PASS r2_live2_ue_context_files_consistent_with_ns3_mn_pdcp_trace
+[18:43:54] PASS r2_live2_kpimon_log_window_complete
+[18:43:54] PASS r2_live2_kpimon_zero_rc_wmore
+[18:43:55] FAIL r2_live2_wire_one_terminal_answer_per_request_joined_to_ledger: exit 1: {"rcRequests": 0, "rcAnswers": 0, "acks": 0, "failures": 0, "kpmHeadersByNode": {"1": 61, "2": 41, "3": 41}, "c2": {"answers": 0, "ledgerLines": 0, "agentLocal": 0, "holds": true}, "c5": {"pairsByReqId": true, "answerViaNodeId": true}, "viaMeidEqualsNode": false, "pass": false}
+problem: 0 RICcontrolRequests on the wire, expected 4
+[18:43:55] PASS r2_live2_kpm_continuity_kpimon_equals_wire_indications
+[18:43:55] FAIL r2_live2_c2_ledger: exit 1:   "problems": [
+    "0 ledger lines, expected 4"
+  ],
+  "pass": false
+}
+[18:43:55] PASS r2_live2_c9_handover_rows_match_applied_lines
+[18:43:56] PASS r2_live2_kpm_ue_lists_move_applied_and_keep_refused
+[18:43:56] FAIL r2_live2_one_connection_per_emitter_and_agent: exit 1: emitters [] agents ipc.accepted {'3': 1}
+[18:43:56] PASS r2_live2_agent_static_rejects_zero_post_bye_zero
+[18:43:56] FAIL r2_live2_expected_outcomes_negatives_no_line_late_zero: exit 1:                                            ^^^^^^^^^^^^^^^^^^
+  File "/home/uc/harness/scripts/gates/r2-checks.py", line 86, in ledger_lines
+    return [json.loads(l) for l in open(p) if l.strip()][1:]
+                                   ^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/r2/20261104T182917Z/runs/live2/trace/e2-control-ledger.jsonl'
+[18:43:56] FAIL r2_live2_wire_requests_equal_positives_via_source_with_stub_key: exit 1:   "positive step 70 imsi 6: 0 RICcontrolRequests",
+  "0 RICcontrolRequests on the wire for 4 positives"
+ ],
+ "pass": false
+}
+[18:43:56] FAIL r2_live2_injector_and_stub_one_request_and_answer_per_trigger: exit 1:   "injector sent ues ['enGnbUeId:3@00F110-00001'], expected ['enGnbUeId:3@00F110-00001', 'enGnbUeId:1@00F110-00001', 'enGnbUeId:2@00F110-00001', 'enGnbUeId:5@00F110-00001', 'enGnbUeId:4@00F110-00001', 'enGnbUeId:6@00F110-00001', 'enGnbUeId:4095@00F110-00001']",
+  "stub got UEPredictionSets [['enGnbUeId:3@00F110-00001']], expected one per trigger [['enGnbUeId:3@00F110-00001'], ['enGnbUeId:1@00F110-00001'], ['enGnbUeId:2@00F110-00001'], ['enGnbUeId:5@00F110-00001'], ['enGnbUeId:4@00F110-00001'], ['enGnbUeId:6@00F110-00001'], ['enGnbUeId:4095@00F110-00001']]"
+ ],
+ "pass": false
+}
+[18:44:39] PASS r2_live3_ric_reset_fresh_pods_and_bucket
+[18:44:40] PASS r2_live3_capture_started_before_agents
+[18:45:33] PASS r2_live3_agents_connected_set_exact
+[18:45:34] PASS r2_live3_agent_ips_recorded
+[18:45:34] PASS r2_live3_every_agent_ready_and_subscribed
+[18:46:34] PASS r2_live3_ts_and_stub_pods_fresh_after_agents_rtmgr_sessions
+[18:46:42] PASS r2_live3_rc_rmr_ready_after_rtmgr_restart
+[18:46:42] PASS r2_live3_ts_xapp_nodeb_list_has_every_connected_agent
+[18:46:42] PASS r2_live3_route_dump_start
+[18:46:42] PASS r2_live3_routes_30002_20010_to_ts_30000_only_to_stub
+[18:47:03] PASS r2_live3_a1_threshold_set_and_logged_by_the_ts_xapp
+[18:47:03] PASS r2_live3_a1mediator_connection_to_ts_xapp_clean
+[18:47:04] PASS r2_live3_stub_emptied_and_run_schedule_written
+[18:47:04] PASS r2_live3_injector_started
+[18:47:05] PASS r2_live3_pods_snapshot_before
+[18:47:51] FAIL r2_live3_lockstep_run_exits_clean: exit 1: ns-3 started pid/pgid 637521 at 1793818025.752275714: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --RngRun=1 --simStartEpochMs=1767225600000 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/r2/20261104T182917Z/runs/live3/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10
+ns-3 exit code 5
+live3: ns-3 exit 5, pacer exit 3 (want 0 and 0)
+[18:47:52] PASS r2_live3_pods_snapshot_after
+[18:47:52] PASS r2_live3_route_dump_end
+[18:47:52] PASS r2_live3_restart_counts_zero_rc_ts_stub_kpimon_hw_go_agents
+[18:47:52] PASS r2_live3_stub_log_saved
+[18:47:53] PASS r2_live3_injector_stopped
+[18:48:09] FAIL r2_live3_agent_logs_with_stats_after_bye: exit 1: agent 3: no stats line after bye within 15 s
+[18:48:09] FAIL r2_live3_agent_ue_context_counters_zero_every_stats_line: exit 1: {"pass": false, "perNode": {"3": {"samplesNoUeContext": 0, "statsLines": 34, "ueContext": 2, "ueContextRejected": 0}}, "problems": ["node 1: no agent log /home/uc/evidence/r2/20261104T182917Z/runs/live3/agent-1.log", "node 2: no agent log /home/uc/evidence/r2/20261104T182917Z/runs/live3/agent-2.log"]}
+[18:48:11] PASS r2_live3_agents_stopped
+[18:48:12] PASS r2_live3_capture_stopped
+[18:48:13] PASS r2_live3_kpimon_subscription_reporting_period_decoded
+[18:48:13] PASS r2_live3_kpimon_subscription_one_action_id1_format3
+[18:48:13] PASS r2_live3_e2ap_ppid70_every_node
+[18:48:13] PASS r2_live3_ns3_emitters_at_pins
+[18:48:13] PASS r2_live3_ue_context_files_consistent_with_ns3_mn_pdcp_trace
+[18:48:14] PASS r2_live3_kpimon_log_window_complete
+[18:48:14] PASS r2_live3_kpimon_zero_rc_wmore
+[18:48:15] FAIL r2_live3_wire_one_terminal_answer_per_request_joined_to_ledger: exit 1: {"rcRequests": 0, "rcAnswers": 0, "acks": 0, "failures": 0, "kpmHeadersByNode": {"1": 61, "2": 41, "3": 41}, "c2": {"answers": 0, "ledgerLines": 0, "agentLocal": 0, "holds": true}, "c5": {"pairsByReqId": true, "answerViaNodeId": true}, "viaMeidEqualsNode": false, "pass": false}
+problem: 0 RICcontrolRequests on the wire, expected 4
+[18:48:15] PASS r2_live3_kpm_continuity_kpimon_equals_wire_indications
+[18:48:15] FAIL r2_live3_c2_ledger: exit 1:   "problems": [
+    "0 ledger lines, expected 4"
+  ],
+  "pass": false
+}
+[18:48:15] PASS r2_live3_c9_handover_rows_match_applied_lines
+[18:48:15] PASS r2_live3_kpm_ue_lists_move_applied_and_keep_refused
+[18:48:15] FAIL r2_live3_one_connection_per_emitter_and_agent: exit 1: emitters [] agents ipc.accepted {'3': 1}
+[18:48:15] PASS r2_live3_agent_static_rejects_zero_post_bye_zero
+[18:48:15] FAIL r2_live3_expected_outcomes_negatives_no_line_late_zero: exit 1:                                            ^^^^^^^^^^^^^^^^^^
+  File "/home/uc/harness/scripts/gates/r2-checks.py", line 86, in ledger_lines
+    return [json.loads(l) for l in open(p) if l.strip()][1:]
+                                   ^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/r2/20261104T182917Z/runs/live3/trace/e2-control-ledger.jsonl'
+[18:48:16] FAIL r2_live3_wire_requests_equal_positives_via_source_with_stub_key: exit 1:   "positive step 70 imsi 6: 0 RICcontrolRequests",
+  "0 RICcontrolRequests on the wire for 4 positives"
+ ],
+ "pass": false
+}
+[18:48:16] FAIL r2_live3_injector_and_stub_one_request_and_answer_per_trigger: exit 1:   "injector sent ues ['enGnbUeId:3@00F110-00001'], expected ['enGnbUeId:3@00F110-00001', 'enGnbUeId:1@00F110-00001', 'enGnbUeId:2@00F110-00001', 'enGnbUeId:5@00F110-00001', 'enGnbUeId:4@00F110-00001', 'enGnbUeId:6@00F110-00001', 'enGnbUeId:4095@00F110-00001']",
+  "stub got UEPredictionSets [['enGnbUeId:3@00F110-00001']], expected one per trigger [['enGnbUeId:3@00F110-00001'], ['enGnbUeId:1@00F110-00001'], ['enGnbUeId:2@00F110-00001'], ['enGnbUeId:5@00F110-00001'], ['enGnbUeId:4@00F110-00001'], ['enGnbUeId:6@00F110-00001'], ['enGnbUeId:4095@00F110-00001']]"
+ ],
+ "pass": false
+}
+[18:48:16] FAIL r2_d7_every_control_via_the_source_en_gnb_both_gnbs: exit 1:                      ^^^^^^^^^^^^^^^^^^
+  File "/home/uc/harness/scripts/gates/r2-checks.py", line 86, in ledger_lines
+    return [json.loads(l) for l in open(p) if l.strip()][1:]
+                                   ^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/r2/20261104T182917Z/runs/live1/trace/e2-control-ledger.jsonl'
+[18:48:26] FAIL r2_replay_run_without_the_ric: exit 1: pacer did not start: pacer: no replay: [Errno 2] No such file or directory: '/home/uc/evidence/r2/20261104T182917Z/runs/live1/trace/e2-control-ledger.jsonl'
+/home/uc/harness/scripts/gates/paced-lib.sh: line 31: kill: (642821) - No such process
+[18:48:36] FAIL r2_rng2_run_without_the_ric: exit 1: pacer did not start: pacer: no replay: [Errno 2] No such file or directory: '/home/uc/evidence/r2/20261104T182917Z/runs/live1/trace/e2-control-ledger.jsonl'
+/home/uc/harness/scripts/gates/paced-lib.sh: line 31: kill: (643093) - No such process
+[18:48:36] FAIL r2_rng2_c2_holds: exit 1:              ^^^^^^
+  File "/home/uc/harness/scripts/gates/check-ledger.py", line 48, in main
+    with open(a.pacer_log) as f:
+         ^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/r2/20261104T182917Z/runs/rng2/pacer/pacer-log.jsonl'
+[18:48:36] FAIL r2_rng2_c7_holds: exit 1: Traceback (most recent call last):
+  File "<stdin>", line 3, in <module>
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/r2/20261104T182917Z/runs/rng2/trace/e2-control-ledger.jsonl'
+[18:48:36] PASS r2_c1_three_live_runs_equal_on_all_components
+[18:48:36] FAIL r2_c1_replay_equals_live_on_ledger_ipc_traces: exit 1: 
+[18:48:36] PASS r2_c1_rng2_differs_from_live
+[18:48:37] FAIL r2_runs_kpm_moved_c2_c5_reset_fresh: exit 1: {"c2": {"live1": {"agentLocal": 0, "answers": 0, "holds": true, "ledgerLines": 0}, "live2": {"agentLocal": 0, "answers": 0, "holds": true, "ledgerLines": 0}, "live3": {"agentLocal": 0, "answers": 0, "holds": true, "ledgerLines": 0}}, "c5": {"answerViaNodeId": true, "pairsByReqId": true, "perRun": {"live1": {"answerViaNodeId": true, "pairsByReqId": true}, "live2": {"answerViaNodeId": true, "pairsByReqId": true}, "live3": {"answerViaNodeId": true, "pairsByReqId": true}}}, "kpmUeListMoved": {}, "pass": false, "problems": ["live1: no applied control to judge", "live2: no applied control to judge", "live3: no applied control to judge"], "resetEvidence": {"live1": {"bucketAfter": ["f1310e8a7980bfb9"], "bucketBefore": ["794707b407b363a9"], "fresh": true, "podsAfter": {"ricxapp-hw-go": {"containerStartedAt": ["2026-11-04T18:35:07Z"], "name": "ricxapp-hw-go-c84579888-fqddd", "startTime": "2026-11-04T18:35:07Z", "uid": "c72df35d-f243-4ab7-bdf8-ff463647ba4e"}, "ricxapp-kpimon-go": {"containerStartedAt": ["2026-11-04T18:35:07Z"], "name": "ricxapp-kpimon-go-85dc5fdf8b-qk4gm", "startTime": "2026-11-04T18:35:07Z", "uid": "8d24ad86-e5d7-4b2e-9fa5-020b7cf844ad"}, "xapp-rc": {"containerStartedAt": ["2026-11-04T18:35:07Z"], "name": "ricxapp-rc-6db9dcd964-jdd4b", "startTime": "2026-11-04T18:35:06Z", "uid": "e7a56823-7161-44ed-bcf2-6aba433cbd2d"}}, "resetStartUtc": "2026-11-04T18:35:06Z"}, "live2": {"bucketAfter": ["d01f450a177ebb03"], "bucketBefore": ["f1310e8a7980bfb9"], "fresh": true, "podsAfter": {"ricxapp-hw-go": {"containerStartedAt": ["2026-11-04T18:39:33Z"], "name": "ricxapp-hw-go-c84579888-zg9m9", "startTime": "2026-11-04T18:39:32Z", "uid": "4b02a14e-5778-44a9-bae4-6bd15c922bac"}, "ricxapp-kpimon-go": {"containerStartedAt": ["2026-11-04T18:39:33Z"], "name": "ricxapp-kpimon-go-85dc5fdf8b-hhjtn", "startTime": "2026-11-04T18:39:32Z", "uid": "5105c691-d695-4c66-9807-1991944ffcb5"}, "xapp-rc": {"containerStartedAt": ["2026-11-04T18:39:33Z"], "name": "ricxapp-rc-6db9dcd964-nvrqh", "startTime": "2026-11-04T18:39:32Z", "uid": "74054710-d2c7-4376-9da0-35e2e1f35007"}}, "resetStartUtc": "2026-11-04T18:39:32Z"}, "live3": {"bucketAfter": ["1d8857373a827631"], "bucketBefore": ["d01f450a177ebb03"], "fresh": true, "podsAfter": {"ricxapp-hw-go": {"containerStartedAt": ["2026-11-04T18:43:57Z"], "name": "ricxapp-hw-go-c84579888-hmkm2", "startTime": "2026-11-04T18:43:56Z", "uid": "9dbb5e6f-3521-46df-b0ba-b39b25789527"}, "ricxapp-kpimon-go": {"containerStartedAt": ["2026-11-04T18:43:57Z"], "name": "ricxapp-kpimon-go-85dc5fdf8b-bst9g", "startTime": "2026-11-04T18:43:56Z", "uid": "a492662b-0ba6-4dd5-95ee-63ba02447b73"}, "xapp-rc": {"containerStartedAt": ["2026-11-04T18:43:57Z"], "name": "ricxapp-rc-6db9dcd964-gh2p4", "startTime": "2026-11-04T18:43:56Z", "uid": "14a32f37-a8d6-4ce4-85a3-f5ec4ff69d76"}}, "resetStartUtc": "2026-11-04T18:43:56Z"}}, "runs": ["live1", "live2", "live3"]}
+[18:48:37] PASS r2_ipc_dropped_zero_no_sub_dropped_zero_and_slack_recorded
+[18:48:37] PASS r2_restart_counts_all_zero
+[18:48:38] PASS r2_no_stray_process
+Traceback (most recent call last):
+  File "<stdin>", line 21, in <module>
+  File "/usr/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 21 (char 20)
+Terminated
+[18:48:39] ric watchdog stopped (pid 549108)

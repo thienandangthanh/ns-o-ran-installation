@@ -1,0 +1,33 @@
+[17:45:10] gate q8 start; evidence /home/uc/evidence/q8/20261104T174509Z; harness d04843d469eed0d4a3221e10edbfe2bf7501d1c8
+[17:45:10] PASS q8_args
+[17:45:10] ric watchdog started (pid 343287, threshold 600s)
+[17:45:10] PASS q8_nist_tree_at_testbed_sha_with_agent_dir
+[17:45:11] PASS q8_build_tools_present
+[17:45:11] PASS q8_sctp_module_loaded
+[17:45:11] PASS q8_ns3_binary_located_at_pins
+[17:45:11] PASS q8_pod_log_reader_self_test
+[17:45:11] PASS q8_grpcurl_fetched_and_checksum_verified
+[17:45:12] PASS q8_rc_at_pin_and_ready
+[17:45:55] PASS q8_ric_reset_fresh_bucket_and_pods
+[17:45:55] PASS q8_route_dump_start
+[17:45:56] PASS q8_capture_started_before_agents
+[17:46:49] PASS q8_bringup_agents_connected_set_exact
+[17:46:49] PASS q8_agent_container_ips_recorded
+[17:46:50] PASS q8_every_agent_ready_and_subscribed
+[17:46:50] PASS q8_pod_snapshot_before
+[17:46:51] PASS q8_route_dump_agents_subscribed
+[17:48:02] PASS q8_lockstep_run_with_two_rc_controls
+[17:48:02] PASS q8_rc_refuses_a_control_without_ue_id_invalid_argument
+[17:48:03] PASS q8_pod_snapshot_after
+[17:48:03] PASS q8_route_dump_end
+[17:48:03] PASS q8_restart_counts_zero
+[17:48:04] PASS q8_agent_logs_with_stats_after_bye
+[17:48:04] PASS q8_agent_ue_context_counters_zero_every_stats_line
+[17:48:07] PASS q8_agents_stopped
+[17:48:08] PASS q8_capture_stopped
+[17:48:10] PASS q8_pcap_facts
+[17:49:15] PASS q8_wire_extractor_joins_requests_answers_and_ledger
+[17:49:15] PASS q8_two_controls_one_ack_format1_one_failure_matching_ledger
+[17:49:15] PASS q8_kpimon_wrote_to_the_fresh_bucket
+verdict q8: PASS failed=[]
+[17:49:16] ric watchdog stopped (pid 343287)

@@ -1,0 +1,5 @@
+{
+ "problems": [],
+ "pass": true
+}
+stop trigger {'seq': 99, 'cmdRc': 0, 'confirmRc': 0, 'cmdOut': '{\n  "description": "Success Response"\n}\n', 'confirmOut': 'node 2 forwarded 2 control(s) to ns-3\n', 'wallS': 0.062471, 'ok': True} stop control on the wire [{'action': 3, 'answer': 'failure', 'cause': 'control-failed-to-execute', 'outcome': '', 'step': None, 'style': 5, 'targetKey': '0000000310', 'ueId': {'globalEnbId': {'macroEnbId': '00001', 'plmn': '00F110'}, 'mEnbUeX2apId': 2, 'type': 'en-gNB-UEID'}, 'viaNode': 2}] ledger [(6, 'applied')] agent 2 {'rx': 2, 'forwarded': 2, 'rejFunc': 0, 'rejDecode': 0, 'rejAction': 0, 'rejIpcDown': 0, 'failedOnBye': 1, 'ackTx': 1, 'failTx': 1, 'pending': 0} agents 1 and 3 {'1': {'rx': 0, 'forwarded': 0, 'rejFunc': 0, 'rejDecode': 0, 'rejAction': 0, 'rejIpcDown': 0, 'failedOnBye': 0, 'ackTx': 0, 'failTx': 0, 'pending': 0}, '3': {'rx': 0, 'forwarded': 0, 'rejFunc': 0, 'rejDecode': 0, 'rejAction': 0, 'rejIpcDown': 0, 'failedOnBye': 0, 'ackTx': 0, 'failTx': 0, 'pending': 0}}

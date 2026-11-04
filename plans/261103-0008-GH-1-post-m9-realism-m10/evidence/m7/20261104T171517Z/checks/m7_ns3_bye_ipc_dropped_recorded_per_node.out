@@ -1,0 +1,11 @@
+node 1 (enb): samples=450 last_seq=449 gaps=0 ipcDropped_max=9 ues_max=12 hello=10 bye=1 {"built": 450, "sent": 441, "droppedDisconnected": 9, "droppedBackpressure": 0, "lastSeq": 449}
+node 1: hello=10 (reconnects 9) droppedDisconnected=9 droppedBackpressure=0
+node 2 (gnb): samples=450 last_seq=449 gaps=0 ipcDropped_max=4 ues_max=8 hello=5 bye=1 {"built": 450, "sent": 446, "droppedDisconnected": 4, "droppedBackpressure": 0, "lastSeq": 449}
+node 2: hello=5 (reconnects 4) droppedDisconnected=4 droppedBackpressure=0
+node 3 (gnb): samples=450 last_seq=449 gaps=0 ipcDropped_max=4 ues_max=6 hello=5 bye=1 {"built": 450, "sent": 446, "droppedDisconnected": 4, "droppedBackpressure": 0, "lastSeq": 449}
+node 3: hello=5 (reconnects 4) droppedDisconnected=4 droppedBackpressure=0
+node 4 (gnb): samples=450 last_seq=449 gaps=0 ipcDropped_max=4 ues_max=5 hello=5 bye=1 {"built": 450, "sent": 446, "droppedDisconnected": 4, "droppedBackpressure": 0, "lastSeq": 449}
+node 4: hello=5 (reconnects 4) droppedDisconnected=4 droppedBackpressure=0
+node 5 (gnb): samples=450 last_seq=449 gaps=0 ipcDropped_max=4 ues_max=4 hello=5 bye=1 {"built": 450, "sent": 446, "droppedDisconnected": 4, "droppedBackpressure": 0, "lastSeq": 449}
+node 5: hello=5 (reconnects 4) droppedDisconnected=4 droppedBackpressure=0
+per-node hello and drops: {1: {'hello': 10, 'droppedDisconnected': 9, 'droppedBackpressure': 0}, 2: {'hello': 5, 'droppedDisconnected': 4, 'droppedBackpressure': 0}, 3: {'hello': 5, 'droppedDisconnected': 4, 'droppedBackpressure': 0}, 4: {'hello': 5, 'droppedDisconnected': 4, 'droppedBackpressure': 0}, 5: {'hello': 5, 'droppedDisconnected': 4, 'droppedBackpressure': 0}}; total droppedDisconnected 25 (expected > 0 around the delete)

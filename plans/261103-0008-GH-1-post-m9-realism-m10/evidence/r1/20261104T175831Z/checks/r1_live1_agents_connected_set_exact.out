@@ -1,0 +1,20 @@
+[18:03:49] bringup ric: waiting up to 1200s for ricplt pods
+[18:03:49] bringup ric: all ricplt pods Ready
+[18:03:49] bringup ric: e2term registered with e2mgr: [{"e2tAddress":"10.101.123.229:38000","ranNames":[]}]
+rt reader e2mgr deployment-ricplt-e2mgr-cd56d8d5c-vp457: OK (5 samples, 1 sockets now, stuck [])
+rt reader submgr deployment-ricplt-submgr-858956fbdc-m2zzh: OK (5 samples, 1 sockets now, stuck [])
+[18:04:26] bringup agents: stopping NIST kpm_sim so its node cannot mix into the CONNECTED set
+[18:04:26] bringup agents: stop_e2sim.sh exit 0
+[18:04:26] bringup agents: image ns3-e2-agent:faeeb3482a06 exists (Testbed commit and map sha match); not rebuilding
+NS3_E2_AGENT_IMAGE=ns3-e2-agent:faeeb3482a06
+NS3_E2_AGENT_IMAGE_ID=sha256:035da81607c72c53a9174ea4a8ef0ccd269eefab9685d9ca073de0e112a6ecfd
+NS3_E2_AGENT_E2_INTERFACE=da6f82f286cdbb38af1178f82f85877b12c2f85b
+NS3_E2_AGENT_METRIC_MAP_SHA256=9cfcbbcdd71514e4e2627cfbb4aa950760b42f85d5045de2c1b71d6215f16923
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/ns3_e2_agent/install_scripts/run_ns3_e2_agents.sh --nodes enb:1,gnb:2,gnb:3
+e2term: Service service-ricplt-e2term-sctp-alpha -> 10.97.131.139:36422 (SCTP)
+# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/ns3_e2_agent/install_scripts/stop_ns3_e2_agents.sh 
+No ns3-e2-agent containers.
+started ns3-e2-agent-1 (enb, X2 neighbours 2,3, IPC 127.0.0.1:38471, expected RAN name enB_macro_001_001_000001)
+docker: Error response from daemon: failed to set up container networking: driver failed programming external connectivity on endpoint ns3-e2-agent-2 (7ae948834676686b21b44256fa945044925319ca47483a0ec11e2fedefb3bfc8): failed to bind host port 127.0.0.1:38472/tcp: address already in use
+
+Run 'docker run --help' for more information

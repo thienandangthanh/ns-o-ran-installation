@@ -1,0 +1,34 @@
+[20:09:01] gate dseam start; evidence /home/uc/evidence/delta-seam-smoke/20261104T200900Z; harness 7ef324f1efbba838560041afd0c6fe6906ce13e3
+[20:09:01] PASS dseam_ns3_binary_located
+[20:09:01] PASS dseam_e2_ports_reserved
+[20:09:02] PASS dseam_build_at_pins_clean_and_carries_the_seam
+[20:09:56] PASS dseam_run_d0
+[20:09:57] PASS dseam_d0_injected_ue_ids_name_the_scheduled_imsis
+[20:09:57] PASS dseam_d0_ledger_checks
+[20:09:57] PASS dseam_d0_one_ack_per_ledger_line
+[20:10:52] PASS dseam_run_d150
+[20:10:52] PASS dseam_d150_injected_ue_ids_name_the_scheduled_imsis
+[20:10:52] PASS dseam_d150_ledger_checks
+[20:10:52] PASS dseam_d150_one_ack_per_ledger_line
+[20:11:47] PASS dseam_run_d500
+[20:11:47] PASS dseam_d500_injected_ue_ids_name_the_scheduled_imsis
+[20:11:47] PASS dseam_d500_ledger_checks
+[20:11:47] PASS dseam_d500_one_ack_per_ledger_line
+[20:11:47] PASS dseam_outcomes_per_delta_informational
+[20:12:43] PASS dseam_run_d500stop
+[20:12:43] PASS dseam_d500stop_injected_ue_ids_name_the_scheduled_imsis
+[20:12:43] PASS dseam_d500stop_ledger_checks
+[20:12:43] PASS dseam_d0_emitters_at_pins
+[20:12:43] PASS dseam_d500stop_pending_control_gets_one_late_failure
+[20:12:43] PASS dseam_d500stop_one_ack
+[20:13:39] PASS dseam_run_d150stop
+[20:13:40] PASS dseam_d150stop_injected_ue_ids_name_the_scheduled_imsis
+[20:13:40] PASS dseam_d150stop_ledger_checks
+[20:13:40] PASS dseam_d150stop_scheduled_event_cancelled_one_late_failure
+[20:13:40] PASS dseam_d150stop_one_ack
+[20:14:35] PASS dseam_run_d100tie
+[20:14:35] PASS dseam_d100tie_injected_ue_ids_name_the_scheduled_imsis
+[20:14:35] PASS dseam_d100tie_ledger_checks
+[20:14:35] PASS dseam_d100tie_due_batch_before_late_refusal_new_batch_next_barrier
+[20:14:36] PASS dseam_d100tie_one_ack_per_ledger_line
+verdict dseam: PASS failed=[]
