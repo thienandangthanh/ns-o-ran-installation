@@ -208,3 +208,18 @@ Do these first, in this order, before the first P07 code commit or VM step:
     - The M7 configuration is byte-equal except one row of `DlE2RlcStatsLte.txt`, which also differs between two runs of the same binary. That is ns-3 nondeterminism from before this change.
   - The VM's M4 build uses `--disable-tests`, so the suite's proof is this host run. It is repeated at the pinned SHAs at the phase exit, and its output goes into the evidence.
   - The stop-time `late` lines are ruled in the ledger note on row 124 (990981a).
+- **Steps 4 and 5, the Testbed fork (pushed on `dev/l-release-nist180`, not yet pinned):**
+  - **Commits:**
+    - rc patch 0003 (0ba9812);
+    - the TS xApp's regenerated gRPC code (677a75e);
+    - the agent's Style 5/3 control path and the eNB's refusal (bebaf22);
+    - the agent's per-seq UE context (23bec08);
+    - the TS xApp's Style 5/3 control to the source en-gNB after an Influx check (990f8d2).
+  - **Generated code:** rc.pb.go, rc.pb.cc and rc.pb.h come only from `protoc-pinned-proof.sh generate`, and the rc.grpc.pb.* files are unchanged. The `generate.json` of the changed proto is committed at `evidence/p07-protoc-proof/` with the exit evidence.
+  - **Image and host tests:**
+    - rc: `go test` of `control/` passes, 1 admit case and 19 refusal cases. The wrapper header octets equal pycrate's, and the out-of-range IDs are refused.
+    - Agent: codec-probe 0 failures; rc-control-test 22 PASS; ue-context-per-seq-test 4 of 4, with two mutants that fail it; kpm-report-period-test and its golden files pass.
+    - TS xApp: the tag-parser test passes 21 of 21 and runs in the image build.
+    - The Influx check function behaves as designed against a throwaway local InfluxDB 2.7.
+  - **Ruling, the Influx window:** the TS xApp counts a UE as reported only if it has a UeMetrics row in the last 60 s (`kUeMetricsWindow`). A wider window could let an earlier run's identical MN-scoped tag pass the check. kpimon writes rows every report period, and the trigger follows a KPM-based window, so a live UE always has a recent row.
+  - **Secrets hygiene:** the token is written at install time into the git-ignored `xApps/ts/xapp-descriptor/config-file_updated.json` and is never printed. The harness's `ts-lib.sh` evidence copies of the TS xApp's controls drop `influx_token` and assert that it is present without printing it.
