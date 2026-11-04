@@ -145,11 +145,13 @@ all_subscribed() {
     echo "$rows"; return 1
 }
 
-g4() {   # G4: every gNB agent's e2mgr nodeb JSON decodes to its N5 key; the TS xApp's cell_map, replayed offline
+g4() {   # G4: every en-gNB's e2mgr nodeb JSON decodes to its key %08X10 (NCI + APER pad 0), the eNB to none, and no
+    # key names another node's gNB ID; the TS xApp's cell_map, replayed offline
     local n
-    for n in 1 2 3; do e2mgr_get "nodeb/$(printf 'gnb_001_001_%08x' "$n")" >"$e/e2mgr-node-$n.json" || return 1; done
+    for n in 1 2 3; do e2mgr_get "nodeb/$(meid_of "$n")" >"$e/e2mgr-node-$n.json" || return 1; done
     python3 -I "$HARNESS_DIR/scripts/gates/replay-ts-cell-map.py" "$e"/e2mgr-node-{1,2,3}.json \
-        --expect 0000000202=gnb_001_001_00000002 --expect 0000000303=gnb_001_001_00000003 --no-key gnb_001_001_00000001
+        --expect 0000000210=en_gnb_001_001_00000002 --expect 0000000310=en_gnb_001_001_00000003 \
+        --no-key enB_macro_001_001_000001 --no-wrong-node
 }
 
 # r0_live <label> <schedule.json> <n-controls> [--first]: one run from a fresh RIC state; the per-run checks.

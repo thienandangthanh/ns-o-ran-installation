@@ -3,13 +3,17 @@
 #
 # One control through rc's gRPC (the pacer's trigger command; standalone so a shell function is not
 # needed). rc answers at once and sends the RICcontrolRequest asynchronously, so a zero exit only
-# means "queued". viaNodeId names the E2 node (ranName gnb_001_001_%08x), amfUeNgapId carries the
-# decimal IMSI (recorded deviation: UE ID), the key is the 5-byte cell key `%08X%02X` (gNB id, cell id).
+# means "queued". viaNodeId names the E2 node (ranName = meid_of viaNodeId, lib.sh), amfUeNgapId carries the
+# decimal IMSI (recorded deviation: UE ID), the key is the TS xApp cell key `%08X10`: the 9-hex NR Cell Identity
+# (gNB ID, cell part 1) and the APER pad digit 0. rc encodes it as the APER NR-CGI and refuses any other form
+# (InvalidArgument, no RIC message).
 set -euo pipefail
+# shellcheck source=lib.sh
+source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 [ $# -ge 4 ] || { echo "usage: $0 ENDPOINT VIA IMSI KEY [ACKREQ]" >&2; exit 2; }
 ep="$1"; via="$2"; imsi="$3"; key="$4"; ackreq="${5:-2}"
 grpcurl="${GRPCURL:-$HOME/grpcurl-1.9.1/grpcurl}"
-name=$(printf 'gnb_001_001_%08x' "$via")
+name=$(meid_of "$via")
 exec "$grpcurl" -plaintext -max-time "${RC_GRPC_MAX_TIME_S:-10}" -d "{
   \"e2NodeID\": \"$name\", \"plmnID\": \"00F110\", \"ranName\": \"$name\",
   \"RICE2APHeaderData\": { \"RanFuncId\": 3, \"RICRequestorID\": 1 },

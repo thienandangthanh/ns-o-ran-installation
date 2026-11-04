@@ -81,10 +81,10 @@ def http(url, data=None, method="GET"):
 def main():
     problems = []
     stub = load("stub-qp-rmr-peer")
-    table = {"3": [[["0000000202", [100, 0]], ["0000000303", [200, 0]]]]}
+    table = {"3": [[["0000000210", [100, 0]], ["0000000310", [200, 0]]]]}
     counts = {}
     ans, _ = stub.build_prediction(table, counts, b'{"UEPredictionSet": ["3"]}')
-    check(ans == b'{"3":{"0000000202":[100,0],"0000000303":[200,0]}}', "prediction keeps the table's cell order", problems)
+    check(ans == b'{"3":{"0000000210":[100,0],"0000000310":[200,0]}}', "prediction keeps the table's cell order", problems)
     ans2, note = stub.build_prediction(table, counts, b'{"UEPredictionSet": ["3"]}')
     check(ans2 is None and "no prediction left" in note, "a used-up UE gets no answer", problems)
     ans3, _ = stub.build_prediction(table, {}, b'{"UEPredictionSet": ["3", "4"]}')
@@ -161,7 +161,7 @@ def main():
         check(code == 200, "stub accepted a table", problems)
         check(send(rmr, ctx, 30000, b'{"UEPredictionSet": ["3"]}'), "sent one 30000 to the stub", problems)
         got = rcv(rmr, ctx, 30002, 10)
-        check(got == (30002, b'{"3":{"0000000202":[100,0],"0000000303":[200,0]}}'),
+        check(got == (30002, b'{"3":{"0000000210":[100,0],"0000000310":[200,0]}}'),
               "stub answered 30002 with the table's prediction: %r" % (got,), problems)
         time.sleep(2.5)
         code, body = http(base + "/log")

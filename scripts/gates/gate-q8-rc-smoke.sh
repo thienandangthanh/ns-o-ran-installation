@@ -66,8 +66,8 @@ check q8_route_dump_agents_subscribed rc_route_dump subscribed
 RC_EP=$(rc_endpoint)
 cat >"$e/q8-schedule.json" <<JSON
 {"steps": {
-  "20": {"trigger": {"cmd": ["bash", "$HARNESS_DIR/scripts/gates/rc-send.sh", "$RC_EP", "2", "6", "0000000303"]}, "expect": 1},
-  "40": {"trigger": {"cmd": ["bash", "$HARNESS_DIR/scripts/gates/rc-send.sh", "$RC_EP", "3", "6", "0000000303"]}, "expect": 1}
+  "20": {"trigger": {"cmd": ["bash", "$HARNESS_DIR/scripts/gates/rc-send.sh", "$RC_EP", "2", "6", "0000000310"]}, "expect": 1},
+  "40": {"trigger": {"cmd": ["bash", "$HARNESS_DIR/scripts/gates/rc-send.sh", "$RC_EP", "3", "6", "0000000310"]}, "expect": 1}
  }, "late": []}
 JSON
 q8_run() {

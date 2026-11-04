@@ -277,7 +277,8 @@ rc_ric_reset() {
     python3 -I "$HARNESS_DIR/scripts/gates/check-ric-reset.py" "$r"
 }
 
-# rc_send_control <viaNodeId> <imsi> <targetKey10hex> [ackReq]: one control through rc (see rc-send.sh).
+# rc_send_control <viaNodeId> <imsi> <targetKey10hex> [ackReq]: one control through rc (see rc-send.sh) to the E2
+# node meid_of viaNodeId; the key is the TS xApp cell key %08X10 (rc refuses any other form).
 rc_send_control() {
     local ep
     ep=$(rc_endpoint) || return 1

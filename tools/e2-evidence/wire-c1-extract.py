@@ -7,8 +7,10 @@
 
 Writes into DIR (a run's `extra/` directory):
   rc-multiset.json        one record per RICcontrolRequest, without the RIC request IDs and wall times:
-                          step (ledger rxSeq), viaNode, style, action, imsi (AMF-UE-NGAP-ID), target key,
-                          answer (ack|failure|none), cause, outcome octets; sorted. Steps come from joining
+                          step (ledger rxSeq), viaNode, style, action, imsi (AMF-UE-NGAP-ID), target key (the
+                          last 10 hex of RAN parameter 4, which must be the APER NR-CGI 0000F110 + gNB ID (8 hex)
+                          + 10: PLMN 001/01, cell part 1, pad 0; the TS xApp cell key), answer (ack|failure|none),
+                          cause, outcome octets; sorted. Steps come from joining
                           the k-th request to a node with the ledger line (viaNodeId, ctlId = k) the agent
                           numbered it with; the join is asserted one to one and consistent (imsi, target).
   kpm-headers.json        per node, the E2SM-KPM RICindicationHeader octets of its indications in order
@@ -174,17 +176,29 @@ def kpm_headers(pcap, ip2node, t0, t1):
     return per, problems
 
 
+# RAN parameter 4 (NR CGI) of the control message, and the only form its value may take: the APER NR-CGI, 9 octets
+# = 00 | PLMN 00F110 | NR Cell Identity (gNB ID, 32 bits, then cell part 1, 4 bits) | 4 zero pad bits.
+P4_RE = re.compile(r"<ranParameter-ID>4</ranParameter-ID><ranParameter-valueType><ranP-Choice-ElementFalse>"
+                   r"<ranParameter-value><valueOctS>([0-9A-F]+)</valueOctS>")
+NRCGI_RE = re.compile(r"0000F110([0-9A-F]{8})10")
+
+
 def parse_rc(hdr_x, msg_x):
+    """Style, action, IMSI and target of one control. The target counts only when the message holds exactly one
+    RAN parameter 4, RAN parameters 1, 2 and 3 appear before it, and its value is the APER NR-CGI; targetKey is
+    then its last 10 hex digits and targetCell the gNB ID. Otherwise both are None (a problem in main)."""
     style = re.search(r"<ric-Style-Type>(\d+)<", hdr_x)
     action = re.search(r"<ric-ControlAction-ID>(\d+)<", hdr_x)
     amf = re.search(r"<amf-UE-NGAP-ID>(\d+)<", hdr_x)
-    octs = re.search(r"<ranParameter-ID>4</ranParameter-ID><ranParameter-valueType><ranP-Choice-ElementFalse>"
-                     r"<ranParameter-value><valueOctS>([0-9A-F]+)</valueOctS>", msg_x)
-    target = octs.group(1) if octs else None
+    p4 = list(P4_RE.finditer(msg_x))
+    target = p4[0].group(1) if len(p4) == 1 else None
+    before = msg_x[:p4[0].start()] if len(p4) == 1 else ""
+    path = all("<ranParameter-ID>%d</ranParameter-ID>" % i in before for i in (1, 2, 3))
+    cgi = NRCGI_RE.fullmatch(target) if target and path else None
     return {"style": int(style.group(1)) if style else None, "action": int(action.group(1)) if action else None,
             "imsi": int(amf.group(1)) if amf else None, "targetOctets": target,
-            "targetKey": target[-10:] if target and len(target) == 18 else None,
-            "targetCell": int(target[-2:], 16) if target and len(target) == 18 else None}
+            "targetKey": target[-10:] if cgi else None,
+            "targetCell": int(cgi.group(1), 16) if cgi else None}
 
 
 def cause_name(raw):
@@ -229,7 +243,7 @@ def main():
     for r in reqs:
         r.update(parse_rc(xers.get(r["id"] + ".h", ""), xers.get(r["id"] + ".m", "")))
         if r["style"] != 3 or r["action"] != 1 or r["targetKey"] is None or r["imsi"] is None:
-            problems.append("request %s does not decode to style 3 / action 1 / a 9-octet target" % r["id"])
+            problems.append("request %s does not decode to style 3 / action 1 / an APER NR-CGI target" % r["id"])
         if r["viaNode"] is None:
             problems.append("request %s goes to unknown address %s" % (r["id"], r["dst"]))
 

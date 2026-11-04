@@ -29,6 +29,7 @@ import glob
 import importlib.util
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -57,8 +58,9 @@ def ledger(p):
 
 
 def node_of(key):
-    """gNB node id from an uppercase cell key %08X%02X (the cell id equals the node id here)."""
-    return int(key[-2:], 16) if key else None
+    """gNB node id from an uppercase TS xApp cell key %08X10 (gNB ID, cell part 1, APER pad digit 0; the gNB ID
+    equals the node id here); None for any other string, so a key of another form names no node."""
+    return int(key[:8], 16) if isinstance(key, str) and re.fullmatch("[0-9A-F]{8}10", key) else None
 
 
 def out(problems, **kw):

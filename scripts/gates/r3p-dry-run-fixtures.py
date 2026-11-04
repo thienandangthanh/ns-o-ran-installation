@@ -31,7 +31,7 @@ def self_test(C, P):
     a = C.stage_a(sc, windows(dom, 8371, 4186), clean)
     expect("happy path: n1 and h1 formed", a, "formed")
     if a.get("class") == "formed" and ((a["n1"]["step"], a["n1"]["imsi"]) != (20, 3) or
-                                       (a["h1"]["step"], a["h1"]["imsi"], a["h1"]["key"], a["h1"]["via"]) != (30, 1, "0000000202", 2)):
+                                       (a["h1"]["step"], a["h1"]["imsi"], a["h1"]["key"], a["h1"]["via"]) != (30, 1, "0000000210", 2)):
         bad.append("happy path chose n1 %r h1 %r" % (a["n1"], a["h1"]))
     expect("a missing row inside the only handover-producing windows: invalid", C.stage_a(sc, windows(dom, 8371, 4186, fail=(30,)), clean), "invalid")
     expect("an unclean stage: invalid", C.stage_a(sc, windows(dom, 8371, 4186), {"clean": False, "why": "ns-3 exit 1"}), "invalid")

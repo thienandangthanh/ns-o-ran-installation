@@ -13,7 +13,7 @@ import tempfile
 FIELD = "DRB.PdcpSduVolumeDL"
 SCHED = {"triggers": [
     {"step": 20, "imsi": 3, "kind": "negative", "decision": "none"},
-    {"step": 30, "imsi": 1, "kind": "positive", "decision": "handover", "via": 2, "key": "0000000202", "targetCell": 2, "expect": "applied"},
+    {"step": 30, "imsi": 1, "kind": "positive", "decision": "handover", "via": 2, "key": "0000000210", "targetCell": 2, "expect": "applied"},
     {"step": 50, "imsi": 1, "kind": "negative", "decision": "none"}]}
 
 
@@ -46,6 +46,8 @@ def build(d, P, sc, mut):
         tx.append({"mtype": 30003, "state": 0, "payloadHex": json.dumps([{"ue-id": str(t["imsi"])}]).encode().hex()})
     if mut.get("recplus"):
         recs[1]["answer"][0][1][0] += 1
+    if mut.get("n5target"):
+        recs[1]["target"] = "0000000202"
     (rd / "r3p" / "predictor-records.jsonl").write_text("".join(json.dumps(r) + "\n" for r in recs))
     (rd / "r3p" / "stub-log-before-20.json").write_text("[]")
     (rd / "r3p" / "stub-log-before-30.json").write_text(json.dumps(parts[0]))
@@ -56,7 +58,7 @@ def build(d, P, sc, mut):
            [{"viaNodeId": mut.get("via", 2), "imsi": 1, "targetCell": 2, "afterSeq": 30, "rxSeq": 30, "outcome": "applied"}])
     led += mut.get("extra_ledger", [])
     (rd / "ledger.jsonl").write_text("".join(json.dumps(x) + "\n" for x in led))
-    (rd / "rc.json").write_text(json.dumps([{"imsi": 1, "step": 30, "viaNode": 2, "targetKey": "0000000202", "answer": "ack"}]
+    (rd / "rc.json").write_text(json.dumps([{"imsi": 1, "step": 30, "viaNode": 2, "targetKey": "0000000210", "answer": "ack"}]
                                            + mut.get("extra_rc", [])))
     rows = [(n, s, None if n == 1 else dl[n]) for n in (1, 2, 3) for s in range(mut.get("samples", 100))]
     if mut.get("drop"):
@@ -88,7 +90,7 @@ CASES = [
     ("expect: pass", "expect", True, {}),
     ("expect: a ledger line for a none trigger", "expect", False, {"extra_ledger": [{"viaNodeId": 3, "imsi": 3, "targetCell": 3, "afterSeq": 20, "rxSeq": 20, "outcome": "applied"}]}),
     ("wire: pass", "wire", True, {}),
-    ("wire: a request for a none trigger", "wire", False, {"extra_rc": [{"imsi": 1, "step": 50, "viaNode": 3, "targetKey": "0000000303", "answer": "ack"}]}),
+    ("wire: a request for a none trigger", "wire", False, {"extra_rc": [{"imsi": 1, "step": 50, "viaNode": 3, "targetKey": "0000000310", "answer": "ack"}]}),
     ("stub: pass", "stub", True, {}),
     ("stub: a 30002 value = formula + 1", "stub", False, {"plus": 1}),
     ("stub: serving cell not first", "stub", False, {"order": True}),
@@ -110,6 +112,7 @@ CASES = [
     ("membership: h1's IMSI still on its old cell at m1", "membership", False, {"stuck": True}),
     ("driven: pass", "driven", True, {}),
     ("driven: no applied handover", "driven", False, {"noapply": True}),
+    ("driven: a predictor target in the old %08X%02X form names no node", "driven", False, {"n5target": True}),
     ("secrets: pass", "secrets", True, {}),
     ("secrets: a token in the predictor dir", "secrets", False, {"leak": True}),
     ("dry-ledger stage A: no ledger file (no control) passes", "dry-ledger-a", True, {"noledger": True}),

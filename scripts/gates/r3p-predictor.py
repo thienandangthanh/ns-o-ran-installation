@@ -4,7 +4,8 @@
 It reads only a window file that check-n6-influx-window.py certified (integers from Influx, never a second
 read): {"T", "imsi", "cells": {"<node>": {"<seq>": dl}}, "membership": {"<imsi>": node}, "pass": true}.
 Per gNB cell the answer is the sum of DRB.PdcpSduVolumeDL over [T-15, T]; UL is 0; the serving cell (the
-gNB listing the IMSI at T) comes first, then the others by ascending nodeId; keys uppercase "%08X%02X".
+gNB listing the IMSI at T) comes first, then the others by ascending nodeId; keys are the TS xApp cell keys
+"%08X10" (NR Cell Identity = gNB ID and cell part 1, then the APER pad digit 0), uppercase.
 The decision mirrors the TS xApp (hand over iff 100 x best other > (100 + threshold) x serving).
 
   r3p-predictor.py answer SCENARIO WINDOW OUT [--records FILE] [--expect handover|none]
@@ -103,7 +104,7 @@ def lint(sc):
     if m1["offset"] < sc["window"]["length"]:
         problems.append("m1's offset %d is inside the window after h1" % m1["offset"])
     for n, key in sc["cells"].items():
-        if key != "%08X%02X" % (int(n), int(n)):
+        if key != "%08X10" % int(n):
             problems.append("cell %s key %r is not the uppercase gNB key" % (n, key))
     if sc["formula"]["id"] != "persistence-window-sum-v1" or sc["counter"]["influxType"] != "long":
         problems.append("formula or counter type changed")
@@ -151,7 +152,7 @@ def self_test():
     win = {"T": 30, "imsi": 1, "cells": cells, "membership": mem, "pass": True}
     bad = []
     a1 = answer(sc, win, 1)
-    if a1 != [["0000000303", [66976, 0]], ["0000000202", [133936, 0]]] or decide(sc, a1) != ("handover", "0000000202"):
+    if a1 != [["0000000310", [66976, 0]], ["0000000210", [133936, 0]]] or decide(sc, a1) != ("handover", "0000000210"):
         bad.append("IMSI 1 on cell 3 hands over to cell 2: %r %r" % (a1, decide(sc, a1)))
     a3 = answer(sc, win, 3)
     if decide(sc, a3) != ("none", None) or eligibility(a3) != "none":

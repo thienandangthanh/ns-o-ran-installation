@@ -50,7 +50,7 @@ def triggers(sc, calibrate):
         imsi = ues[i % len(ues)]
         src = cell[imsi]
         tgt = 2 if src == 3 else 3
-        key = lambda c: "%08X%02X" % (c, c)
+        key = lambda c: "%08X10" % c   # the TS xApp cell key: NCI (gNB ID, cell part 1) + APER pad digit 0
         out.append({"step": cal["firstStep"] + i * cal["everySteps"], "imsi": imsi, "kind": "positive",
                     "predictions": [[key(src), [100, 0]], [key(tgt), [300, 0]]],
                     "via": tgt, "key": key(tgt), "targetCell": tgt, "expect": "any"})
