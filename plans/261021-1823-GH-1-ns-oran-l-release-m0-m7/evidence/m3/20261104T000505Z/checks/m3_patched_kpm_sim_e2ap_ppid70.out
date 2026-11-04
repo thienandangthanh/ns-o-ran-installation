@@ -1,0 +1,12 @@
+kpm_sim container IP 172.17.0.3
+ppid 10.97.131.139:36422 -> :36422 {"70": 2}
+ppid 172.17.0.3:36422 -> :36422 {"0": 510}
+e2ap frames by PPID 2, forced on the port 127
+frames=335 inits=1 aborts=0 shutdowns=0 setup_req=0 setup_resp=1 sub_req=1 sub_resp=0 sub_fail=0 ind_srcs={}
+10.97.131.139:36422 -> :36422 PPID counts {"70": 2}
+172.17.0.3:36422 -> :36422 PPID counts {"0": 510}
+source 172.17.0.3: 0 PPID-70 chunk(s)
+E2AP frames decoded by PPID 2, forced on the port 127
+PROBLEM: 172.17.0.3:36422 sent 510 DATA chunk(s) with PPID ['0']
+PROBLEM: source 172.17.0.3 sent no PPID-70 DATA chunk
+PROBLEM: E2AP decoded by PPID (2 frames) != forced on the port (127)

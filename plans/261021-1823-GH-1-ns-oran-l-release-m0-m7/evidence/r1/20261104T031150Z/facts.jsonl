@@ -1,0 +1,25 @@
+{"key":"mode","value":"single"}
+{"key":"dev","value":false}
+{"key":"tCtlSeconds","value":30}
+{"key":"tCtlProvenance","value":"evidence/r0/20261023T065002Z calibration: L_max 12.919 ms over 10 complete trigger steps, T_ctl = max(30 s, ceil(20 x L_max)) = 30 s; host load 1.03 (20 CPUs), VM load 1.29; CPU hold released by the user 15:44 KST"}
+{"key":"substitution3Applied","value":false}
+{"key":"outageThresholdDb","value":-1000}
+{"key":"outageThresholdProvenance","value":"substitution 1: the R0-config null-control run at the default -5 dB counted 5 LTE outage switches (evidence/r0/20261023T073520Z q2OutageSwitches 5; also 065002Z, 065551Z); gated runs use --outageThreshold=-1000"}
+{"key":"vmLoadStart","value":" 03:11:51 up  4:53,  0 user,  load average: 0.96, 0.81, 0.66"}
+{"key":"c8NullEqualsFree","value":true}
+{"key":"d7","value":{"viaEnb": 1, "viaServingGnb": 2, "viaTargetGnb": 1, "distinctImsis": 4, "targetGnbs": [2, 3], "applied": 4}}
+{"key":"kpmUeListMoved","value":{"1": true, "2": true, "3": true, "6": true}}
+{"key":"c2","value":{"live1": {"agentLocal": 0, "answers": 7, "holds": true, "ledgerLines": 7}}}
+{"key":"c5","value":{"answerViaNodeId": true, "pairsByReqId": true, "perRun": {"live1": {"answerViaNodeId": true, "pairsByReqId": true}}}}
+{"key":"resetEvidence","value":{"live1": {"bucketAfter": ["dfe30dd20ae51ca9"], "bucketBefore": ["b232b58f6504f55b"], "fresh": true, "podsAfter": {"ricxapp-hw-go": {"containerStartedAt": ["2026-11-04T03:16:21Z"], "name": "ricxapp-hw-go-c84579888-fwmg9", "startTime": "2026-11-04T03:16:21Z", "uid": "b1e952fb-b0ef-4a7b-bd8b-2613cab6f7f7"}, "ricxapp-kpimon-go": {"containerStartedAt": ["2026-11-04T03:16:21Z"], "name": "ricxapp-kpimon-go-85dc5fdf8b-jkfb6", "startTime": "2026-11-04T03:16:21Z", "uid": "0e27d638-dba1-4dc4-8c73-18aa97b500a5"}, "xapp-rc": {"containerStartedAt": ["2026-11-04T03:16:21Z"], "name": "ricxapp-rc-6db9dcd964-xf84j", "startTime": "2026-11-04T03:16:21Z", "uid": "2bd13ab1-410b-4667-b98b-4a6c082a76ca"}}, "resetStartUtc": "2026-11-04T03:16:20Z"}}}
+{"key":"c2AgentSplit","value":{"live1": {"staticRejects": 0, "postBye": 0}}}
+{"key":"influxDump","value":{"path": "runs/live1/influx-kpimon.csv", "bytes": 4841058}}
+{"key":"minSlack","value":{"T_start": 119.999599, "T_gate": 9.997514, "T_ctl": 29.795923, "W": null}}
+{"key":"lControlLatencyS","value":[0.008781, 0.010041, 0.0101, 0.010438, 0.011361, 0.040232, 0.204077]}
+{"key":"ipcDropped","value":0}
+{"key":"droppedNoSub","value":0}
+{"key":"restartCountsAllZero","value":true}
+{"key":"restartCounts","value":{"live1/hw-go": 0, "live1/kpimon": 0, "live1/rc": 0, "live1/agent-3": 0, "live1/agent-2": 0, "live1/agent-1": 0}}
+{"key":"routeOwner12041","value":{"live1": {"start": {"rtmgr": "service-ricxapp-stubqp-rmr.ricxapp:4560", "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-stubqp-rmr.ricxapp:4560", "e2term": "service-ricxapp-trafficxapp-rmr.ricxapp:4560"}}}}
+{"key":"routeOwner12042","value":{"live1": {"start": {"rtmgr": "service-ricxapp-stubqp-rmr.ricxapp:4560", "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-stubqp-rmr.ricxapp:4560", "e2term": "service-ricxapp-trafficxapp-rmr.ricxapp:4560"}}}}
+{"key":"vmLoadEnd","value":" 03:19:27 up  5:00,  0 user,  load average: 1.61, 1.02, 0.82"}

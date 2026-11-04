@@ -1,0 +1,291 @@
+{
+  "gate": "m3",
+  "ts": "20261104T005519Z",
+  "harness_sha": "2b28b71424853426bdb5e2343fe87f961049f968",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "31639006270e1c5a9343dca0cb52a0aa41c6a52a",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "48d41a50d6359043dd4b758d97f3da16da1e3133",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "b2342c664003c0ee409fb87ace345e28bd1257a3",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "e27058163dc0bb05ce279ad3fa1bd15a22fc24ab"
+  },
+  "duration_s": 2138,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "m3_refnode_up",
+      "pass": true,
+      "detail": "[00:55:58] bringup refnode: attempt 1: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)\n[00:56:10] bringup refnode: run_e2sim script exit 0\n[00:56:15] bringup refnode: e2mgr shows a CONNECTED node (attempt 1)"
+    },
+    {
+      "name": "m3_nist_tree_at_testbed_sha",
+      "pass": true,
+      "detail": "nist HEAD 31639006270e1c5a9343dca0cb52a0aa41c6a52a, want 31639006270e1c5a9343dca0cb52a0aa41c6a52a\nalready at 31639006270e1c5a9343dca0cb52a0aa41c6a52a"
+    },
+    {
+      "name": "m3_kpm_sim_image_built_with_ppid70_patch",
+      "pass": true,
+      "detail": "oransim:0.0.999 e2sim.sctp.sha256=235b579baeaefe52503a1214c230fec9b1ad62dc3946dc72e17bc14b588d00d6, patch at 31639006270e1c5a9343dca0cb52a0aa41c6a52a: 235b579baeaefe52503a1214c230fec9b1ad62dc3946dc72e17bc14b588d00d6"
+    },
+    {
+      "name": "m3_e2mgr_image_patched_from_pin",
+      "pass": true,
+      "detail": "expected image 127.0.0.1:80/ric-plt-e2mgr:6.0.6-nist180-85dfecb925f9 (source 09036c6ff70f15aa3e8655612c6d9681346a1943, patch set 85dfecb925f9e0529cf8fa7ea408cae77196a0228d56f01d6174106e5c814e1c; from 31639006270e1c5a9343dca0cb52a0aa41c6a52a)\npod deployment-ricplt-e2mgr-cd56d8d5c-v8ftm: image 127.0.0.1:80/ric-plt-e2mgr:6.0.6-nist180-85dfecb925f9, imageID sha256:dd24a663852f12100531a5a7d64ad6431690c84ccab09d91146d9b891c6b8f0e, ready true\ndocker image: ID sha256:dd24a663852f12100531a5a7d64ad6431690c84ccab09d91146d9b891c6b8f0e, e2mgr.source.sha 09036c6ff70f15aa3e8655612c6d9681346a1943, patchset.sha256 85dfecb925f9e0529cf8fa7ea408cae77196a0228d56f01d6174106e5c814e1c"
+    },
+    {
+      "name": "m3_build_tools_installed",
+      "pass": true,
+      "detail": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nTShark (Wireshark) 4.4.19."
+    },
+    {
+      "name": "m3_kubectl_exec_it_works_without_tty",
+      "pass": true,
+      "detail": "exit 0 on pod/deployment-ricplt-e2mgr-cd56d8d5c-v8ftm: Unable to use a TTY - input is not a terminal or the right kind of file|EXEC_IT_OK|"
+    },
+    {
+      "name": "m3_regen_check_pass",
+      "pass": true,
+      "detail": "debconf: delaying package configuration, since apt-utils is not installed\n{\"asn1c\": \"mouse07410/asn1c@584d86e22d54d401c5d349128f28b0c41fae4d24\", \"control\": {\"shipped_files\": 470, \"identical\": 470, \"differ\": [], \"missing_from_regeneration\": []}, \"size8_footprint\": [\"TimeStamp.c\"], \"shipped_patch_equals_regeneration\": true, \"pass\": true}\nregen-check container exit 0"
+    },
+    {
+      "name": "m3_stock_refnode_stopped_before_uninstall",
+      "pass": true,
+      "detail": "oransim\noransim\nE2 simulator stopped."
+    },
+    {
+      "name": "m3_stock_kpimon_uninstalled",
+      "pass": true,
+      "detail": "Failed to connect to helm chart repo http://0.0.0.0:8090 after 3 retries and 1.8018949031829834 seconds. (Caused by: ConnectionError)\nstatus: OK\nno kpimon-go pod left"
+    },
+    {
+      "name": "m3_stock_capture_started",
+      "pass": true,
+      "detail": "[00:58:21] capture m3-stock started on docker0 (pid 367634, filter 'sctp')"
+    },
+    {
+      "name": "m3_stock_installer_ok",
+      "pass": true,
+      "detail": "No process found to stop.\nSudo refresh process stopped or was not running.\n127.0.0.1:80/kpimon-go:latest labels: 02d744745a341c361f34ae3fab236d0361b6e647d1ced4aff06defab75bb53a1 false; want 02d744745a341c361f34ae3fab236d0361b6e647d1ced4aff06defab75bb53a1 false (15 files at 31639006270e1c5a9343dca0cb52a0aa41c6a52a)"
+    },
+    {
+      "name": "m3_stock_pod_ready_and_created_after_install",
+      "pass": true,
+      "detail": "pod ricxapp-kpimon-go-85dc5fdf8b-7j6lv Ready, created epoch 1793754193, restarts 0"
+    },
+    {
+      "name": "m3_stock_pod_image_id_informational",
+      "pass": true,
+      "detail": "pod imageID: sha256:d581d3efa55a82595b5ce0d724c1a0a605413829bc96e8fa66fccf54bd357e0c; docker id: sha256:d581d3efa55a82595b5ce0d724c1a0a605413829bc96e8fa66fccf54bd357e0c"
+    },
+    {
+      "name": "m3_stock_so_extracted_and_harness_built",
+      "pass": true,
+      "detail": "timestamp_size: 4\nextracted_at: 2026-11-04T01:03:34+00:00\nTimeStamp SIZE in this .so: 4"
+    },
+    {
+      "name": "m3_stock_so_timestamp_size_is_4",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m3_stock_refnode_restarted",
+      "pass": true,
+      "detail": "[01:04:11] bringup refnode: attempt 1: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)\n[01:04:13] bringup refnode: run_e2sim script exit 0\n[01:04:18] bringup refnode: e2mgr shows a CONNECTED node (attempt 1)"
+    },
+    {
+      "name": "m3_stock_first_indication_logged",
+      "pass": true,
+      "detail": "first indication logged by ricxapp-kpimon-go-85dc5fdf8b-7j6lv"
+    },
+    {
+      "name": "m3_stock_kpimon_log_counts_informational",
+      "pass": true,
+      "detail": "indications=505 hdr_wmore=505 msg_wmore=0 influx_wrote_ue=0 influx_wrote_cell=330  restarts=0"
+    },
+    {
+      "name": "m3_stock_influx_rows_since_install_informational",
+      "pass": true,
+      "detail": "total=2970 m_cellMetrics=2970 "
+    },
+    {
+      "name": "m3_stock_capture_stopped",
+      "pass": true,
+      "detail": "[01:14:20] capture m3-stock stopped: 335 packets captured 335 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "m3_stock_kpm_sim_e2ap_ppid70",
+      "pass": true,
+      "detail": "172.17.0.3:36422 -> :36422 PPID counts {\"70\": 510}\nsource 172.17.0.3: 510 PPID-70 chunk(s)\nE2AP frames decoded by PPID 127, forced on the port 127"
+    },
+    {
+      "name": "m3_stock_tshark_decodes_subscription_request_and_response",
+      "pass": true,
+      "detail": "RICsubscriptionRequest frames: 1, RICsubscriptionResponse frames: 1"
+    },
+    {
+      "name": "m3_stock_harness_ran_on_pcap",
+      "pass": true,
+      "detail": "{\"expect_ts_len\": 4, \"hdr_clean\": 0, \"hdr_fail\": 0, \"hdr_ok_exact\": 0, \"hdr_other\": 0, \"hdr_wmore\": 505, \"msg_clean\": 505, \"msg_fail\": 0, \"msg_other\": 0, \"msg_wmore\": 0, \"total\": 505}"
+    },
+    {
+      "name": "m3_stock_baseline_recorded",
+      "pass": true,
+      "detail": "wire=505; harness hdr_ok_exact=0 hdr_clean(ts=4)=0 msg_clean=505 hdr_wmore=505 msg_wmore=0 hdr_fail=0 msg_fail=0 of 505\nkpimon log: indications=505 hdr_wmore=505 msg_wmore=0 influx_writes=330; influx rows(since install)=2970\ncross-check: harness header WMORE 505 vs kpimon-logged 505; message WMORE 0 vs 0"
+    },
+    {
+      "name": "m3_stock_kpimon_pod_no_restarts",
+      "pass": true,
+      "detail": "restarts=0"
+    },
+    {
+      "name": "m3_patched_refnode_stopped_before_uninstall",
+      "pass": true,
+      "detail": "oransim\noransim\nE2 simulator stopped."
+    },
+    {
+      "name": "m3_patched_kpimon_uninstalled",
+      "pass": true,
+      "detail": "  import pkg_resources\nstatus: OK\nno kpimon-go pod left"
+    },
+    {
+      "name": "m3_patched_capture_started",
+      "pass": true,
+      "detail": "[01:15:10] capture m3-patched started on docker0 (pid 401870, filter 'sctp')"
+    },
+    {
+      "name": "m3_patched_installer_ok",
+      "pass": true,
+      "detail": "No process found to stop.\nSudo refresh process stopped or was not running.\n127.0.0.1:80/kpimon-go:latest labels: 02d744745a341c361f34ae3fab236d0361b6e647d1ced4aff06defab75bb53a1 true; want 02d744745a341c361f34ae3fab236d0361b6e647d1ced4aff06defab75bb53a1 true (15 files at 31639006270e1c5a9343dca0cb52a0aa41c6a52a)"
+    },
+    {
+      "name": "m3_patched_pod_ready_and_created_after_install",
+      "pass": true,
+      "detail": "pod ricxapp-kpimon-go-85dc5fdf8b-gbcpl Ready, created epoch 1793755183, restarts 0"
+    },
+    {
+      "name": "m3_patched_pod_image_id_informational",
+      "pass": true,
+      "detail": "pod imageID: sha256:2e0d77d8f5c3e4ff266c88ddc7a90c5fd4b06115913fba506c5414cf64066459; docker id: sha256:2e0d77d8f5c3e4ff266c88ddc7a90c5fd4b06115913fba506c5414cf64066459"
+    },
+    {
+      "name": "m3_patched_so_extracted_and_harness_built",
+      "pass": true,
+      "detail": "timestamp_size: 8\nextracted_at: 2026-11-04T01:20:06+00:00\nTimeStamp SIZE in this .so: 8"
+    },
+    {
+      "name": "m3_patched_so_timestamp_size_is_8",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m3_patched_docker_image_id_changed",
+      "pass": true,
+      "detail": "before sha256:d581d3efa55a82595b5ce0d724c1a0a605413829bc96e8fa66fccf54bd357e0c after sha256:2e0d77d8f5c3e4ff266c88ddc7a90c5fd4b06115913fba506c5414cf64066459"
+    },
+    {
+      "name": "m3_patched_refnode_restarted",
+      "pass": true,
+      "detail": "[01:20:43] bringup refnode: attempt 1: running NIST run_e2sim_and_connect_to_ric.sh (bound 600s)\n[01:20:46] bringup refnode: run_e2sim script exit 0\n[01:20:51] bringup refnode: e2mgr shows a CONNECTED node (attempt 1)"
+    },
+    {
+      "name": "m3_patched_first_indication_logged",
+      "pass": true,
+      "detail": "first indication logged by ricxapp-kpimon-go-85dc5fdf8b-gbcpl"
+    },
+    {
+      "name": "m3_patched_kpimon_log_counts_informational",
+      "pass": true,
+      "detail": "indications=505 hdr_wmore=0 msg_wmore=0 influx_wrote_ue=0 influx_wrote_cell=330  restarts=0"
+    },
+    {
+      "name": "m3_patched_influx_rows_since_install_informational",
+      "pass": true,
+      "detail": "total=2970 m_cellMetrics=2970 "
+    },
+    {
+      "name": "m3_patched_capture_stopped",
+      "pass": true,
+      "detail": "[01:30:52] capture m3-patched stopped: 333 packets captured 333 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "m3_patched_kpm_sim_e2ap_ppid70",
+      "pass": true,
+      "detail": "172.17.0.3:36422 -> :36422 PPID counts {\"70\": 510}\nsource 172.17.0.3: 510 PPID-70 chunk(s)\nE2AP frames decoded by PPID 126, forced on the port 126"
+    },
+    {
+      "name": "m3_patched_tshark_decodes_subscription_request_and_response",
+      "pass": true,
+      "detail": "RICsubscriptionRequest frames: 1, RICsubscriptionResponse frames: 1"
+    },
+    {
+      "name": "m3_patched_harness_ran_on_pcap",
+      "pass": true,
+      "detail": "{\"expect_ts_len\": 8, \"hdr_clean\": 505, \"hdr_fail\": 0, \"hdr_ok_exact\": 505, \"hdr_other\": 0, \"hdr_wmore\": 0, \"msg_clean\": 505, \"msg_fail\": 0, \"msg_other\": 0, \"msg_wmore\": 0, \"total\": 505}"
+    },
+    {
+      "name": "m3_patched_wire_indications_gt0",
+      "pass": true,
+      "detail": "wire indications (deduped by TSN): 505"
+    },
+    {
+      "name": "m3_patched_extractor_skipped_no_rows",
+      "pass": true,
+      "detail": "extractor rows skipped: 0"
+    },
+    {
+      "name": "m3_patched_harness_every_header_clean_rc_ok",
+      "pass": true,
+      "detail": "headers clean (RC_OK, consumed==len, ts_len==8): 505 of 505 (hdr_ok_exact 505)"
+    },
+    {
+      "name": "m3_patched_harness_every_message_clean_rc_ok",
+      "pass": true,
+      "detail": "messages clean (RC_OK, consumed==len): 505 of 505"
+    },
+    {
+      "name": "m3_patched_harness_zero_wmore_fail_other",
+      "pass": true,
+      "detail": "harness hdr wmore/fail 0/0, msg wmore/fail 0/0, other hdr/msg 0/0"
+    },
+    {
+      "name": "m3_patched_kpimon_log_zero_wmore",
+      "pass": true,
+      "detail": "kpimon log header RC_WMORE=0, MSG RC_WMORE=0"
+    },
+    {
+      "name": "m3_patched_influx_rows_gt0",
+      "pass": true,
+      "detail": "total=2970\nm_cellMetrics=2970"
+    },
+    {
+      "name": "m3_patched_wire_vs_kpimon_count_crosscheck_informational",
+      "pass": true,
+      "detail": "wire=505 kpimon_logged=505 diff=0 tolerance=11 (max(3, ceil(2% of wire)))"
+    },
+    {
+      "name": "m3_patched_kpimon_received_indications",
+      "pass": true,
+      "detail": "kpimon logged indications: 505"
+    },
+    {
+      "name": "m3_patched_kpimon_pod_no_restarts",
+      "pass": true,
+      "detail": "restarts=0"
+    },
+    {
+      "name": "m3_no_capture_left_running",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m3_pcaps_in_evidence",
+      "pass": true,
+      "detail": "139170 /home/uc/evidence/m3/20261104T005519Z/m3-patched.pcap;139310 /home/uc/evidence/m3/20261104T005519Z/m3-stock.pcap;"
+    }
+  ]
+}

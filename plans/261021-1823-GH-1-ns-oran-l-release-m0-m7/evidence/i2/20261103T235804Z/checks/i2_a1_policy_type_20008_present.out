@@ -1,0 +1,4 @@
+policy type 20008 created: HTTP 201
+{"create_schema":{"$schema":"http://json-schema.org/draft-07/schema#","additionalProperties":false,"properties":{"threshold":{"default":0,"type":"integer"}},"type":"object"},"description":"TS xApp policy (O-RAN SC traffic steering use case): hand a UE over when a neighbour's predicted downlink throughput exceeds the serving cell's by more than threshold percent","name":"tsapolicy","policy_type_id":20008}
+
+[20008]

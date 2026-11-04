@@ -1,0 +1,19 @@
+a2282eedc9e32f60298bf530456ad367bef0824b
+ control/rcControl.go           | 17 +++++++++++++----
+ control/rcE2SmRc.go            | 27 +++++++++++++++------------
+ control/rcService.go           | 16 ++++++++++++++++
+ e2sm/e2sm-rc-2.0.asn           |  2 +-
+ e2sm/headers/RANParameter-ID.h |  3 ++-
+ e2sm/lib/RANParameter-ID.c     | 23 +++++++++++++++++------
+ e2sm/wrapper.c                 |  1 +
+ 7 files changed, 65 insertions(+), 24 deletions(-)
+ricxapp-rc-6db9dcd964-scqlv true 1793750184 0
+rtmgr deployment-ricplt-rtmgr-74fb47b69d-v2m5l -> deployment-ricplt-rtmgr-74fb47b69d-ndjtg
+rmrClient: RMR is ready after 31 seconds waiting...
+warning: e2sm/wrapper.c has type 100644, expected 100755
+expected: rc a2282eedc9e32f60298bf530456ad367bef0824b + 2 patches (control/rcControl.go control/rcE2SmRc.go control/rcService.go e2sm/e2sm-rc-2.0.asn e2sm/headers/RANParameter-ID.h e2sm/lib/RANParameter-ID.c e2sm/wrapper.c), patch set c89438971a94d691831098ad030f24aa196e89bad7efa61938a88e93e3eeecb4 (from d4fde77c135ea28cf77a4e37ba183ae27e2c301d)
+pod ricxapp-rc-6db9dcd964-scqlv: image 127.0.0.1:80/rc:latest, imageID sha256:3cc5b61f82975dd300a47f998e74bdc8f0e105d20df94a729e720c2dd843cde5
+docker 127.0.0.1:80/rc:latest: ID sha256:3cc5b61f82975dd300a47f998e74bdc8f0e105d20df94a729e720c2dd843cde5, rc.source.sha a2282eedc9e32f60298bf530456ad367bef0824b, patchset.sha256 c89438971a94d691831098ad030f24aa196e89bad7efa61938a88e93e3eeecb4
+rc ricxapp-rc-6db9dcd964-scqlv ready, gRPC endpoint 10.109.255.84:7777
+gRPC describe ok, 12040 route to rc present
+rmrClient: RMR is ready after 31 seconds waiting...
