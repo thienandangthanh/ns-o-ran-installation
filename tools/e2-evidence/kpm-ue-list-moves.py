@@ -70,7 +70,7 @@ FIELDS = ["frame.number", "frame.time_epoch", "ip.src", "sctp.data_tsn_raw", "sc
           "e2ap.colletStartTime", "e2ap.indicationMessage_formats", "e2ap.ueID", "e2ap.amf_UE_NGAP_ID",
           "e2ap.m_eNB_UE_X2AP_ID", "e2ap.m_eNB_UE_X2AP_ID_Extension", "e2ap.pLMNIdentity", "e2ap.eNB_ID",
           "e2ap.macro_eNB_ID", "e2ap.gNB_CU_UE_F1AP_ID", "e2ap.gNB_CU_CP_UE_E1AP_ID_List", "e2ap.ran_UEID",
-          "e2ap.mME_UE_S1AP_ID", "e2ap.pLMN_Identity", "e2ap.mME_Group_ID", "e2ap.mME_Code"]
+          "e2ap.mME_UE_S1AP_ID", "e2ap.pLMN_Identity", "e2ap.mME_Group_ID", "e2ap.mME_Code", "sctp.srcport"]
 F = {name: i for i, name in enumerate(FIELDS)}
 UEID_CHOICE = ["gNB-UEID", "gNB-DU-UEID", "gNB-CU-UP-UEID", "ng-eNB-UEID", "ng-eNB-DU-UEID", "en-gNB-UEID", "eNB-UEID"]
 
@@ -134,9 +134,10 @@ def decode_ue_ids(c):
     return [{"type": UEID_CHOICE[int(k)] if k.isdigit() and int(k) < len(UEID_CHOICE) else "choice " + k} for k in kinds], []
 
 
-def ue_lists(pcap, ip2node, t0, t1, rows=None):
+def ue_lists(pcap, ip2node, t0, t1, rows=None, node_of=None):
     """{(node, collection ms): [decoded UE IDs]} over the capture's indications (a Format 1 report gives an empty
-    list), the Format 2 count per node, and the problems."""
+    list), the Format 2 count per node, and the problems. node_of(src, sport, t) -> (node, problem), when given,
+    attributes a frame by its SCTP association instead of ip2node (container IPs are reassigned after restarts)."""
     rows = tshark(pcap, "e2ap.procedureCode == 5 && e2ap.initiatingMessage_element", FIELDS) if rows is None else rows
     lists, seen, problems, f2 = {}, set(), [], {}
     for c in rows:
@@ -149,10 +150,16 @@ def ue_lists(pcap, ip2node, t0, t1, rows=None):
         if key in seen:
             continue  # SCTP retransmission
         seen.add(key)
-        node = ip2node.get(src)
-        if node is None:
-            problems.append("indication frame %s from unknown source %s" % (frame, src))
-            continue
+        if node_of is not None:
+            node, why = node_of(src, int(c[F["sctp.srcport"]] or -1), t)
+            if node is None:
+                problems.append("indication frame %s: %s" % (frame, why))
+                continue
+        else:
+            node = ip2node.get(src)
+            if node is None:
+                problems.append("indication frame %s from unknown source %s" % (frame, src))
+                continue
         if len(set(times)) != 1:
             problems.append("frame %s: indications with different collection start times %r" % (frame, times))
             continue
@@ -195,13 +202,51 @@ def resolve_lists(raw, cm, epoch_ms, period_ms):
     return lists, list(dict.fromkeys(problems)), n_gnb_ueid  # one line per frame and problem (IDs repeat per metric)
 
 
-def _ue_context_map():
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ue-context-map.py")
-    spec = importlib.util.spec_from_file_location("ue_context_map", path)
+def _module(name, filename):
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)
+    spec = importlib.util.spec_from_file_location(name, path)
     assert spec is not None and spec.loader is not None, path
     m = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(m)
     return m
+
+
+def _ue_context_map():
+    return _module("ue_context_map", "ue-context-map.py")
+
+
+def ip_nodes(node_ips):
+    """node-ips.json {node: [ip, ...]} -> {ip: {nodes}}; an agent restart can hand one container IP to two nodes."""
+    out = {}
+    for n, ips in node_ips.items():
+        for ip in ips:
+            out.setdefault(ip, set()).add(int(n))
+    return out
+
+
+def assoc_node_of(facts, multi):
+    """node_of(src, sport, t) over an e2ap-pcap-facts.py fact sheet: the node of the frame's SCTP association (the
+    latest INIT_ACK to (src, sport) at or before t) is the Global E2 Node ID of that association's E2 Setup Request
+    (e2-facts-query.py build_assocs), and node-ips.json must list src for that node."""
+    assocs, _ = _module("e2_facts_query", "e2-facts-query.py").build_assocs(facts)
+    by = {}
+    for x in assocs:  # sorted by INIT_ACK time
+        by.setdefault((x["ip"], x["sport"]), []).append(x)
+
+    def node_of(src, sport, t):
+        best = None
+        for x in by.get((src, sport), []):
+            if x["t_init_ack"] <= t:
+                best = x
+        if best is None:
+            return None, "no SCTP association from %s:%d at t %.3f in the fact sheet" % (src, sport, t)
+        if best["node"] is None:
+            return None, "association %s:%d has no E2 Setup Request" % (src, sport)
+        if best["node"] not in multi.get(src, ()):
+            return None, "association %s:%d is node %d's (E2 Setup), but node-ips.json does not list %s for it" % (
+                src, sport, best["node"], src)
+        return best["node"], None
+    return node_of
 
 
 def judge(lines, at, gnbs, period_ns):
@@ -372,6 +417,43 @@ def ue_id_self_test(lists, pair, period_ns):
         raw, _, _ = ue_lists(None, {ip[1]: 1}, None, None, rows=[row(1, 1, 30, with_glob)])
         if not resolve_lists(raw, cm, epoch, period)[1]:
             fails.append("an eNB-UEID with globalENB-ID passed")
+        fails += assoc_self_test(row, en_gnb, cm, epoch, period)
+    return fails
+
+
+def assoc_self_test(row, en_gnb, cm, epoch, period):
+    """Attribution by SCTP association: node 2 sends from IP X, then node 3 restarts onto X (node-ips.json lists X
+    for both). Each frame goes to its association's E2 Setup node; an IP that node-ips.json does not list for that
+    node and an association without an E2 Setup Request are problems; ip_nodes names the shared IP."""
+    X, svc = "172.17.0.9", "10.0.0.1"
+    fails = []
+
+    def facts(setups):
+        ev = lambda ip, sport, t: {"src": svc, "sport": 36422, "dst": ip, "dport": sport, "t": t, "frame": 0}
+        return {"inits": [], "init_acks": [ev(X, 1000, 0.5), ev(X, 2000, 4.5)], "cookie_acks": [ev(X, 1000, 0.6), ev(X, 2000, 4.6)],
+                "setup_requests": [{"src": X, "sport": sp, "t": t, "node_id": n} for sp, t, n in setups],
+                "setup_responses": [], "sub_requests": [], "sub_responses": []}
+
+    def frame(num, node, sport, t, imsis):
+        r = row(num, node, 1, [en_gnb(i) for i in imsis])
+        r[FIELDS.index("ip.src")], r[FIELDS.index("sctp.srcport")], r[FIELDS.index("frame.time_epoch")] = X, str(sport), str(t)
+        return r
+
+    rows = [frame(1, 2, 1000, 1.0, [3, 4]), frame(2, 3, 2000, 5.0, [1, 2])]
+    multi = ip_nodes({"2": [X], "3": [X]})
+    if multi != {X: {2, 3}}:
+        fails.append("ip_nodes did not name the shared IP: %s" % multi)
+    setups = [(1000, 0.7, 2), (2000, 4.7, 3)]
+    raw, _, p = ue_lists(None, {}, None, None, rows=rows, node_of=assoc_node_of(facts(setups), multi))
+    got, p2, _ = resolve_lists(raw, cm, epoch, period)
+    if p or p2 or got != {(2, epoch): {3, 4}, (3, epoch): {1, 2}}:
+        fails.append("attribution by association after an IP reuse: %s %s" % (p + p2, got))
+    _, _, p = ue_lists(None, {}, None, None, rows=rows, node_of=assoc_node_of(facts(setups), ip_nodes({"2": [X]})))
+    if not any("does not list" in x for x in p):
+        fails.append("an association IP that node-ips.json does not list for its node passed")
+    _, _, p = ue_lists(None, {}, None, None, rows=rows, node_of=assoc_node_of(facts(setups[:1]), multi))
+    if not any("no E2 Setup Request" in x for x in p):
+        fails.append("an association without an E2 Setup Request passed")
     return fails
 
 
@@ -387,10 +469,17 @@ def main():
     ap.add_argument("--t1", type=float)
     ap.add_argument("--ue-context-dir", required=True, help="the run's trace dir (e2-ue-context-*.jsonl, e2-ipc-trace-*.jsonl)")
     ap.add_argument("--expect-format2-nodes", default="", help="comma list: each node sent >= 1 Format 2 indication")
+    ap.add_argument("--facts", help="e2ap-pcap-facts.py fact sheet of the capture: attribute frames by SCTP association")
     a = ap.parse_args()
-    ip2node = {ip: int(n) for n, ips in json.load(open(a.node_ips)).items() for ip in ips}
+    multi = ip_nodes(json.load(open(a.node_ips)))
+    ip2node = {ip: min(ns) for ip, ns in multi.items() if len(ns) == 1}
+    shared = {ip: sorted(ns) for ip, ns in multi.items() if len(ns) > 1}
+    node_of = assoc_node_of(json.load(open(a.facts)), multi) if a.facts else None
     cm = _ue_context_map().UeContextMap(a.ue_context_dir)
-    raw, f2, problems = ue_lists(a.pcap, ip2node, a.t0, a.t1)
+    raw, f2, problems = ue_lists(a.pcap, ip2node, a.t0, a.t1, node_of=node_of)
+    if shared and node_of is None:
+        problems.insert(0, "node-ips.json lists an IP for more than one node %s: pass --facts to attribute by association"
+                        % shared)
     problems = ["UE context: " + x for x in cm.problems] + problems
     lists, p, n_gnb_ueid = resolve_lists(raw, cm, a.epoch_ms, a.period_ms)
     problems += p

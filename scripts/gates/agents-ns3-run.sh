@@ -13,7 +13,7 @@
 #   kpm_sub_period_check <pcap> <tag> <after>   decoded subscription reportingPeriod = rung-config kpm.reportingPeriodMs
 #   kpm_sub_actions_check <facts> <node-ips.json>   every subscription: one action, ID 1, report, KPM Format 3
 #   ue_context_check <trace-dir> <ns3run-dir> <out> [--expect-map F]   UE context files vs ns-3's MN PDCP trace
-#   kpm_ue_ids_check <pcap> <node-ips.json> <trace-dir> <out>   decoded KPM UE IDs resolved by the UE context
+#   kpm_ue_ids_check <pcap> <node-ips.json> <trace-dir> <out> <facts>   decoded KPM UE IDs resolved by the UE context
 #   ranfunc_decode <node.json> <sodir> <out.jsonl>   e2mgr's ranFunctionDefinition hex through kpimon's library
 #   agent_counters_assert <stats-line-file> <expected-samples> [<expected-unreported>]
 #   endurance_sample <dir> <n>        one 60 s sample (pods, agents, RSS, e2mgr, ns-3, load, kpimon)
@@ -224,18 +224,20 @@ ue_context_check() {
     python3 -I "$E2EV/ue-context-map.py" check --trace-dir "$1" --pdcp "$2/DlE2PdcpStatsLte.txt" --out "$3" "${@:4}"
 }
 
-# kpm_ue_ids_check <pcap> <node-ips.json> <trace dir> <out.json>: every E2SM-KPM Format 2 UE ID in the capture is
+# kpm_ue_ids_check <pcap> <node-ips.json> <trace dir> <out.json> <facts.json>: every E2SM-KPM Format 2 UE ID in the capture is
 # en-gNB-UEID (gNB nodes) or eNB-UEID (the eNB) in the run's form and resolves through the trace dir's UE context;
 # zero gNB-UEID; every node of node-ips.json sent >= 1 Format 2 indication. kpm-ue-list-moves.py with no ledger, so
-# only its UE ID problems decide; epoch and period come from the trace hellos.
+# only its UE ID problems decide; epoch and period come from the trace hellos. Each frame's node is its SCTP
+# association's E2 Setup node in the capture's fact sheet (container IPs are reassigned when agents restart).
 kpm_ue_ids_check() {
+    [ -s "$5" ] || { echo "kpm_ue_ids_check: no fact sheet $5"; return 1; }
     local ep
     ep=$(python3 -I -c 'import glob, json, sys
 hs = [json.loads(open(p).readline()) for p in sorted(glob.glob(sys.argv[1] + "/e2-ipc-trace-*.jsonl"))]
 v = sorted({(h["simStartEpochMs"], h["periodNs"] // 1000000) for h in hs})
 sys.exit("trace hellos disagree on epoch/period: %s" % v) if len(v) != 1 else print(*v[0])' "$3") || return 1
     python3 -I "$E2EV/kpm-ue-list-moves.py" "$1" --node-ips "$2" --ledger "$4.no-ledger" --epoch-ms "${ep% *}" \
-        --period-ms "${ep#* }" --ue-context-dir "$3" --out "$4" \
+        --period-ms "${ep#* }" --ue-context-dir "$3" --out "$4" --facts "$5" \
         --expect-format2-nodes "$(python3 -I -c 'import json, sys; print(",".join(sorted(json.load(open(sys.argv[1])), key=int)))' "$2")"
 }
 

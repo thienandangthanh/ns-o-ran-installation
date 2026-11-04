@@ -99,7 +99,7 @@ check m6_pcap_facts_extracted pcap_facts "$e/m6.pcap" m6
 check m6_kpimon_subscription_one_action_id1_format3 kpm_sub_actions_check "$e/m6-facts.json" "$e/node-ips.json"
 check m6_ue_context_files_consistent_with_ns3_mn_pdcp_trace ue_context_check "$RUN" "$RUN" "$e/m6-ue-context.json"
 check m6_kpm_ue_ids_en_gnb_ueid_resolved_by_ue_context kpm_ue_ids_check "$e/m6.pcap" "$e/node-ips.json" "$RUN" \
-    "$e/m6-kpm-ue-ids.json"
+    "$e/m6-kpm-ue-ids.json" "$e/m6-facts.json"
 check m6_e2ap_ppid70_every_node python3 -I "$E2EV/e2-facts-query.py" "$e/m6-facts.json" ppid --node-ips "$e/node-ips.json"
 ind_decoded() {
     e2ap_sample_decode "$e/m6.pcap" 5 3 "$e/m6-indication-sample-decode.txt"
