@@ -13,7 +13,7 @@
 #   - kubectl is installed but cannot list pods;
 #   - the token file is absent while an InfluxDB pod is deployed (absent is fine
 #     only before the RIC exists: no kubectl at all, or no influx pod);
-#   - an InfluxDB pod is deployed and its admin token (the pod environment's
+#   - an InfluxDB pod is deployed and its admin token (the pod spec's
 #     DOCKER_INFLUXDB_INIT_ADMIN_TOKEN, which the harness's in-pod queries use)
 #     cannot be read into memory: it is redacted like the file's secrets and is
 #     never printed or written;
@@ -36,7 +36,7 @@ if [ ! -e "$token_file" ]; then
 fi
 
 python3 - "$dir" "$token_file" "$influx_pod" <<'PY'
-import json, os, re, subprocess, sys
+import base64, json, os, re, subprocess, sys
 root, token_file, influx_pod = sys.argv[1:]
 secrets = set()
 def walk(v):
@@ -54,15 +54,32 @@ if os.path.lexists(token_file):
     tok = json.load(open(token_file)).get("token") if secrets else None
     if not isinstance(tok, str) or len(tok) < 80:
         sys.exit(f"scrub: the token file {token_file} holds no Influx v2 token")
-if influx_pod:
-    ns, pod = influx_pod.split("/", 1)
+def kget(*args):
     try:
-        admin = subprocess.run(["kubectl", "exec", "-n", ns, pod, "--", "sh", "-c", 'printf %s "$DOCKER_INFLUXDB_INIT_ADMIN_TOKEN"'],
-                               capture_output=True, text=True, timeout=30, stdin=subprocess.DEVNULL).stdout
-    except (OSError, subprocess.TimeoutExpired):
-        admin = ""
+        r = subprocess.run(["kubectl", "get", *args, "-o", "json"], capture_output=True, text=True, timeout=30,
+                           stdin=subprocess.DEVNULL)
+        return json.loads(r.stdout) if r.returncode == 0 else None
+    except (OSError, subprocess.TimeoutExpired, ValueError):
+        return None
+if influx_pod:
+    # The admin token is read from the pod spec: the env entry's literal value, or the secret its secretKeyRef
+    # names. Both outlive the pod, so an evicted InfluxDB pod (no exec possible) still gets its token redacted.
+    ns, pod = influx_pod.split("/", 1)
+    spec = kget("pod", "-n", ns, pod) or {}
+    env = [e for c in spec.get("spec", {}).get("containers", []) for e in c.get("env", [])
+           if e.get("name") == "DOCKER_INFLUXDB_INIT_ADMIN_TOKEN"]
+    admin = ""
+    if env and isinstance(env[0].get("value"), str):
+        admin = env[0]["value"]
+    elif env:
+        ref = (env[0].get("valueFrom") or {}).get("secretKeyRef") or {}
+        sec = kget("secret", "-n", ns, ref.get("name", "")) if ref.get("name") else None
+        try:
+            admin = base64.b64decode(((sec or {}).get("data") or {})[ref["key"]]).decode()
+        except (KeyError, ValueError, UnicodeDecodeError):
+            admin = ""
     if len(admin) < 20:
-        sys.exit("scrub: cannot read the InfluxDB pod's admin token into memory")
+        sys.exit("scrub: cannot read the InfluxDB pod's admin token (pod spec or its secret) into memory")
     secrets.add(admin)
 token_re = re.compile(r'[A-Za-z0-9_\-]{80,}==')  # influx v2 shape; never matches 64-hex digests
 redacted = 0

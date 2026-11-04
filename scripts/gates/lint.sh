@@ -209,10 +209,21 @@ tmp=$(mktemp -d); mkdir -p "$tmp/ric" "$tmp/ev" "$tmp/kc" "$tmp/nokc"
 ln -s "$(command -v python3)" "$tmp/nokc/python3"; ln -s "$(command -v grep)" "$tmp/nokc/grep"
 tok="tok$(printf 'x%.0s' $(seq 85))" adm="adm$(printf 'y%.0s' $(seq 29))"
 scrub() { NIST_RIC_DIR="$tmp/ric" PATH="$1" "$BASH" scripts/gates/scrub-evidence.sh "$2" >/dev/null 2>&1; }
-# fake kubectl: `get pods` prints $1, `exec` prints $2 (the pod's admin token)
-kc() { printf '#!/bin/sh\ncase "$1" in get) %s ;; exec) %s ;; esac\n' "$1" "${2:-exit 1}" >"$tmp/kc/kubectl"; chmod +x "$tmp/kc/kubectl"; }
+# fake kubectl: `get pods` runs $1; `get pod` prints a pod spec whose DOCKER_INFLUXDB_INIT_ADMIN_TOKEN comes from
+# secret `auth` key `admin-token` (or, with $3 = literal, is the literal $2); `get secret` prints that secret holding
+# $2, or fails when $2 is empty. There is no `exec`: an evicted pod cannot be exec'd into, and the scrub must not need it.
+kc() {
+    local env sec
+    if [ "${3:-}" = literal ]; then env="{\"name\": \"DOCKER_INFLUXDB_INIT_ADMIN_TOKEN\", \"value\": \"${2:-}\"}"
+    else env='{"name": "DOCKER_INFLUXDB_INIT_ADMIN_TOKEN", "valueFrom": {"secretKeyRef": {"name": "auth", "key": "admin-token"}}}'; fi
+    if [ -n "${2:-}" ] && [ "${3:-}" != literal ]; then sec="echo '{\"data\": {\"admin-token\": \"$(printf %s "$2" | base64 -w0)\"}}'"
+    else sec="exit 1"; fi
+    printf '#!/bin/sh\ncase "$1 $2" in\n"get pods") %s ;;\n"get pod") echo '"'"'{"spec": {"containers": [{"env": [%s]}]}}'"'"' ;;\n"get secret") %s ;;\n*) exit 1 ;;\nesac\n' \
+        "$1" "$env" "$sec" >"$tmp/kc/kubectl"
+    chmod +x "$tmp/kc/kubectl"
+}
 printf '{"token": "%s"}' "$tok" >"$tmp/ric/influxdb_auth_token.json"; echo "x $tok y $adm z" >"$tmp/ev/log.txt"
-kc 'echo "ricplt r4-influxdb-influxdb2-0 1/1 Running 0 1d"' "printf %s $adm"
+kc 'echo "ricplt r4-influxdb-influxdb2-0 1/1 Running 0 1d"' "$adm"
 scrub "$tmp/kc:$PATH" "$tmp/ev" && ! grep -q "$tok" "$tmp/ev/log.txt" && ! grep -q "$adm" "$tmp/ev/log.txt" ||
     { echo "scrub: the file token or the pod's admin token was not redacted"; rc=1; }
 # an in-cluster Influx ueId read: both tokens go, every ueId string stays byte-unchanged
@@ -228,7 +239,18 @@ scrub "$tmp/kc:$PATH" "$tmp/ev" && ! grep -q "$tok" "$tmp/ev/influx-ueid-read.tx
     { echo "scrub: an Influx ueId read kept a token or changed a ueId string"; rc=1; }
 kc 'echo "ricplt r4-influxdb-influxdb2-0 1/1 Running 0 1d"'
 scrub "$tmp/kc:$PATH" "$tmp/ev" && { echo "scrub: an unreadable admin token in a deployed InfluxDB pod passed"; rc=1; }
-kc 'echo "ricplt r4-influxdb-influxdb2-0 1/1 Running 0 1d"' "printf %s $adm"
+# an evicted InfluxDB pod: its spec and secret still give the admin token
+echo "x $adm z" >"$tmp/ev/evicted.txt"
+kc 'echo "ricplt r4-influxdb-influxdb2-0 0/1 Evicted 0 1d"' "$adm"
+scrub "$tmp/kc:$PATH" "$tmp/ev" && ! grep -q "$adm" "$tmp/ev/evicted.txt" ||
+    { echo "scrub: an evicted InfluxDB pod's admin token (from its secret) was not redacted"; rc=1; }
+echo "x $adm z" >"$tmp/ev/evicted.txt"
+kc 'echo "ricplt r4-influxdb-influxdb2-0 1/1 Running 0 1d"' "$adm" literal
+scrub "$tmp/kc:$PATH" "$tmp/ev" && ! grep -q "$adm" "$tmp/ev/evicted.txt" ||
+    { echo "scrub: a literal admin token in the pod spec was not redacted"; rc=1; }
+kc 'echo "ricplt r4-influxdb-influxdb2-0 1/1 Running 0 1d"' "short" literal
+scrub "$tmp/kc:$PATH" "$tmp/ev" && { echo "scrub: an admin token under 20 characters passed"; rc=1; }
+kc 'echo "ricplt r4-influxdb-influxdb2-0 1/1 Running 0 1d"' "$adm"
 echo '{"token": ' >"$tmp/ric/influxdb_auth_token.json"
 scrub "$tmp/kc:$PATH" "$tmp/ev" && { echo "scrub: an unparseable token file passed"; rc=1; }
 echo '{"token": "short"}' >"$tmp/ric/influxdb_auth_token.json"
