@@ -11,14 +11,16 @@
 # the timestamp is wrong). "Not cleanly decoded" therefore means
 # code != RC_OK OR consumed < len, which is why summarize.py also reports
 # RC_OK-with-trailing-bytes counts.
-# Env: KP_E2SM (kpimon e2sm/ dir, SIZE(8) variant), TS_ORIG (pristine SIZE(4)
-# TimeStamp.c). Defaults point at the session scratchpad copies.
+# Env (required): KP_E2SM (kpimon e2sm/ source dir, SIZE(8) variant), TS_ORIG
+# (pristine SIZE(4) TimeStamp.c). Without them the test prints SKIP and exits 77:
+# it never passes without running.
 set -euo pipefail
 
 here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-sp=/tmp/claude-1000/-home-andang-orca-workspaces-ns-o-ran-installation-migrate-l-release-NIST-1-8-0/02de032a-7d76-4b6d-807e-d818d6b3facd/scratchpad
-KP_E2SM=${KP_E2SM:-$sp/k9/kp-nist/e2sm}
-TS_ORIG=${TS_ORIG:-$sp/ts-orig.c}
+if [ -z "${KP_E2SM:-}" ] || [ -z "${TS_ORIG:-}" ]; then
+	echo "SKIP selftest: set KP_E2SM (kpimon e2sm/ source dir) and TS_ORIG (pristine SIZE(4) TimeStamp.c)" >&2
+	exit 77
+fi
 [ -d "$KP_E2SM/lib" ] || { echo "KP_E2SM not found: $KP_E2SM" >&2; exit 1; }
 [ -f "$TS_ORIG" ] || { echo "TS_ORIG not found: $TS_ORIG" >&2; exit 1; }
 

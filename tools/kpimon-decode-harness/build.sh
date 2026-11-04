@@ -22,6 +22,8 @@
 #   pcap-to-lines.py         tshark pcap -> harness input lines (dedup by TSN)
 #   summarize.py             harness JSONL -> JSON summary
 #   selftest.sh              host test: SIZE(8) lib vs pristine SIZE(4) lib
+#   selftest-records.sh      host test: --records judges every condition item's UE IDs
+#                            (selftest-records-mutate.c, fixtures/format2-multi-item-ue-ids.lines)
 #
 # Usage:
 #   build.sh <libe2smwrapper.so> <include-dir> <out-binary>

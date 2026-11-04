@@ -71,6 +71,14 @@ python3 -I tools/e2-evidence/e2-facts-query.py --self-test >/dev/null || { echo 
 python3 -I tools/e2-evidence/influx-ue-ueid-every-node.py --self-test >/dev/null || { echo "Influx UE-row ueId-to-IMSI every-node judge self-test failed"; rc=1; }
 python3 -I tools/ipc-null-sink/ipc-null-sink.py --self-test >/dev/null || { echo "ipc-null-sink self-test failed"; rc=1; }
 timeout 120 bash tools/e2-evidence/selftest.sh >/dev/null 2>&1 || { echo "e2-evidence self-test (incl. influx-vs-trace ueId) failed"; rc=1; }
+# kpimon decode harness host tests: they need kpimon's own library (KP_SO/KP_INC, KP_E2SM/TS_ORIG; see
+# tools/kpimon-decode-harness/extract-from-image.sh). Without it each prints SKIP (exit 77), shown, never a pass.
+tmp_kdh=$(mktemp)
+for t in selftest-records.sh selftest.sh; do
+    s=0; timeout 600 bash "tools/kpimon-decode-harness/$t" >"$tmp_kdh" 2>&1 || s=$?
+    if [ "$s" -eq 77 ]; then sed -n 1p "$tmp_kdh"; elif [ "$s" -ne 0 ]; then echo "kpimon decode harness $t failed"; rc=1; fi
+done
+rm -f "$tmp_kdh"
 # agent_counters_assert: the UE-context counters join the zero set, and ipc.ueContext >= 1
 source <(sed -n '/^agent_counters_assert()/,/^}/p' scripts/gates/agents-ns3-run.sh)
 tmp=$(mktemp -d)
