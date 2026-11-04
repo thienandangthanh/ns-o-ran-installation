@@ -109,7 +109,8 @@ agent_unit_test() {
     dk run --rm --entrypoint /usr/local/bin/rc-control-test "$img" /usr/local/share/ns3-e2-agent/rc-control-requests.hex \
         /usr/local/share/ns3-e2-agent/rc-control-nrcgi.hex >"$e/rc-control-test.out" 2>"$e/rc-control-test.log" || rc=1
     grep -v '_HEX ' "$e/rc-control-test.out"
-    for n in "${UNIT_CASES[@]}"; do grep -qx "PASS $n" "$e/rc-control-test.out" || { echo "missing PASS $n"; rc=1; }; done
+    # a case line is "PASS <name>" or "PASS <name>: <detail>"
+    for n in "${UNIT_CASES[@]}"; do grep -qE "^PASS $n(:|$)" "$e/rc-control-test.out" || { echo "missing PASS $n"; rc=1; }; done
     grep -qx "rc-control-test: ok" "$e/rc-control-test.out" || rc=1
     return $rc
 }
