@@ -1,14 +1,30 @@
 #!/usr/bin/env python3
 """e2i-wire-checks.py: the E2 interop gate's wire checks, judged on the capture and on an independent decoder.
 
-  setup FACTS PCAP --node-ips F --decode-cmd CMD --out OUT   E2 Setup Requests of every node (FACTS = the
-        e2ap-pcap-facts.py output of PCAP; F = {"<nodeId>": [ip, ...]}): Global E2 Node ID, RAN functions, the X2
+  setup FACTS PCAP --node-ips F --decode-cmd CMD --out OUT [--injected F]   E2 Setup Requests of every node (FACTS =
+        the e2ap-pcap-facts.py output of PCAP; F = {"<nodeId>": [ip, ...]}): Global E2 Node ID, RAN functions, the X2
         component's request part and the RAN function 3 definition, from the whole setup PDU decoded by CMD (this
         script's `decode` mode in the asn1-indep image; identity and RAN functions must agree with tshark's), and the
-        KPM subscriptions; OUT = {"checks": {name: {pass, detail}}, "nodes": ...}
-  controls PCAP --node-ips F --injected F --out OUT   every injected control (F: JSON lines {tag, node, headerHex,
-        messageHex, expect: "ack" | "failure:<cause>"}) is on the wire once, to its node, with the injected header
-        and message octets, and is answered once by that node as expected
+        KPM subscriptions; OUT = {"checks": {name: {pass, detail}}, "nodes": ...}. With --injected, the RAN
+        parameter IDs of every Style 5 action 3 control expected to be acknowledged (decoded in the image) must be
+        announced too
+  controls PCAP --node-ips F --facts FACTS --injected F --out OUT   every injected control (F: JSON lines {tag,
+        node, headerHex, messageHex, expect: "ack" | "failure:<cause>"}) is on the wire once, to its node, with the
+        injected header and message octets, and is answered once by that node as expected
+
+Every frame is attributed to its node by its SCTP association, as kpm-ue-list-moves.py assoc_node_of does: the
+association is (agent IP, agent SCTP port), the source of setup requests, subscription responses and control
+answers and the destination of subscription requests and control requests, with the latest INIT_ACK at or before
+the frame; its node is that association's E2 Setup Global E2 Node ID, and node-ips.json must list the agent IP for
+that node. A frame on an association without an E2 Setup Request, or failing the IP cross-check, is a problem; every
+node of node-ips.json must still have its setup request.
+  x2-parts SETUP_OUT RECORD.json [RECORD.json ...]   beside each e2mgr nodeb record write RECORD.json.x2-parts.hex,
+        one line per X2 component "<peer Global ID> <request part hex>" (peer as type/plmn/id/bits; the hex is the
+        record's e2nodeComponentRequestPart base64-decoded: the hex text e2mgr stores, or the octets in hex); pass iff
+        every X2 component of every record has a line, each line's hex equals its record field decoded again, and
+        each request part equals the request part of the same X2 component (by peer) in that node's latest E2 Setup
+        Request on the wire (SETUP_OUT, the setup mode's output). Plain hex outlives the evidence scrubber, which
+        rewrites the base64 fields
   verdict OUT NAME      exit 0 iff check NAME of OUT passed (prints its detail)
   decode                (inside the image) stdin JSON {frame id: [E2AP PDU hex, ...]} -> stdout JSON {frame id:
                         [decode_setup of each PDU]}
@@ -18,9 +34,14 @@
 Expected identity (plan R-3): node 1 is the LTE eNB (Global ENB ID, macro eNB ID 1 in 20 bits; X2 init-eNB with one
 served E-UTRA cell, ECI = 1 << 8 | 1, PCI 1, TAC 0001, EARFCN 100/18100) announcing KPM only; node n >= 2 is an
 en-gNB (Global en-gNB ID, gNB ID n in 32 bits; X2 init-en-gNB with one served NR cell, NCI = n << 4 | 1, PCI n,
-TAC 0001, NR-ARFCN 633333, band n78, a decodable MTC) announcing KPM (2) and RC (3), whose definition holds Style 5
-action 3 with RAN parameters 1 to 4 under the E2SM-RC OID. PLMN 001/01 (00F110) everywhere.
+TAC 0001, NR-ARFCN 633333, band n78, a decodable MTC) announcing KPM (2) and RC (3), whose definition under the
+E2SM-RC OID announces exactly one control (style, action), Style 5 action 3 (PSCell change), with RAN parameters
+(collected through every nested RANParameter-Definition) covering 1 to 4 and P_I4, the action 3 parameters of
+E2SM-RC v03.00 §8.4.6.3: 1 Target PSCell ID > 2 CHOICE Target Cell > 3 NR Cell > 4 NR CGI. PLMN 001/01 (00F110)
+everywhere.
 """
+import base64
+import binascii
 import importlib.util
 import json
 import os
@@ -30,6 +51,7 @@ import sys
 
 PLMN = "00f110"
 RC_OID = "1.3.6.1.4.1.53148.1.1.2.3"
+P_I4 = {1, 2, 3, 4}  # E2SM-RC v03.00 §8.4.6.3, action 3: Target PSCell ID > CHOICE Target Cell > NR Cell > NR CGI
 # AC6a probe nodes' X2 request parts as they were on the wire (frames 6 and 17 of its capture)
 AC6A_EN_GNB_7F000001 = ("0024004100000100f4003a40000200fc00090000f110507f00000100fd002600000400010000f1107f00000110"
                         "001000f110410009a9f500004d002700071011353ea50000")
@@ -67,9 +89,6 @@ def global_id(body):
     return [kind, plain(gid.get("pLMN-Identity")), val, bits]
 
 
-# Frames are attributed to nodes by source IP (--node-ips, recorded after bring-up). That holds only while no agent
-# container restarts: docker may hand a restarted container another's former address, so a run with restarts (which
-# e2i_restart_counts_zero fails) can show swapped identities here as well.
 def x2_peers(nid, nodes):
     """The X2 neighbours an agent is configured with, as global_id values: the eNB has X2 to every en-gNB of the run,
     an en-gNB to the eNB."""
@@ -98,6 +117,7 @@ def decode_setup(hexpdu):
     out = {"message": d["message"], "globalId": [kind] + global_id(body)[1:],
            "ranFunctionIds": sorted(f["ranFunctionID"] for f in funcs), "components": len(comps),
            "x2": [decode_x2(c["e2nodeComponentConfiguration"]["e2nodeComponentRequestPart"].hex()) for c in x2],
+           "x2hex": [c["e2nodeComponentConfiguration"]["e2nodeComponentRequestPart"].hex() for c in x2],
            "x2peers": [global_id(c["e2nodeComponentID"][1]) for c in x2]}
     rc = [f["ranFunctionDefinition"] for f in funcs if f["ranFunctionID"] == 3]
     if rc:
@@ -106,6 +126,18 @@ def decode_setup(hexpdu):
         except Exception as ex:  # noqa: BLE001
             out["rcdef"] = {"error": "%s: %s" % (type(ex).__name__, ex)}
     return out
+
+
+def decode_control_ids(hexmsg):
+    """Inside the image: {ids: every RAN parameter ID of an E2SM-RC control message, at any depth} or {error}."""
+    from e2indep import e2sm_rc
+    try:
+        d = e2sm_rc.decode_control_message(bytes.fromhex(hexmsg))
+    except Exception as ex:  # noqa: BLE001 - every decode failure is a finding
+        return {"error": "%s: %s" % (type(ex).__name__, ex)}
+    if d["params"] is None:
+        return {"error": "control message %s, not Format 1" % d["format"]}
+    return {"ids": sorted(param_ids(d["params"], "id"))}
 
 
 def tshark_setup_pdus(pcap):
@@ -126,7 +158,7 @@ def tshark_setup_pdus(pcap):
     return out
 
 
-def judge_node(nid, reqs, decoded, subs, peers):
+def judge_node(nid, reqs, decoded, subs, peers, sent_ids=()):
     """Problems per check name for one node: reqs = its setup-request facts (tshark), decoded = frame id -> the
     independent decodes of that frame's PDUs, peers = its X2 neighbours (x2_peers). Identity and RAN functions must
     agree in both; there is one X2 component per neighbour, named by it, and no other component."""
@@ -162,7 +194,7 @@ def judge_node(nid, reqs, decoded, subs, peers):
         for x in d["x2"]:
             p["x2apRequestPartDecodes"] += ["%s: %s" % (f, b) for b in x2_problems(nid, x)]
         if not enb:
-            bad = rcdef_problems(d["rcdef"]) if d.get("rcdef") else ["no RAN function 3 definition"]
+            bad = rcdef_problems(d["rcdef"], sent_ids) if d.get("rcdef") else ["no RAN function 3 definition"]
             p["style5Action3Announced"] += ["%s: %s" % (f, b) for b in bad]
     if not (subs["requests"] >= 1 and subs["responses"] >= 1):
         p["kpimonSubscribedAll"].append("node %d: %d KPM subscription requests, %d responses" % (
@@ -205,45 +237,108 @@ def x2_problems(nid, d):
     return bad
 
 
-def rcdef_problems(d):
+def param_ids(o, key="ranParameter-ID"):
+    """Every RAN parameter ID in a decoded value, at any depth (a RANParameter-Definition's structure and list children,
+    or a control message's nested parameters)."""
+    out = set()
+    if isinstance(o, dict):
+        if isinstance(o.get(key), int):
+            out.add(o[key])
+        for v in o.values():
+            out |= param_ids(v, key)
+    elif isinstance(o, (list, tuple)):
+        for v in o:
+            out |= param_ids(v, key)
+    return out
+
+
+def rcdef_problems(d, sent_ids=()):
+    """The RC definition announces exactly {(5, 3)}, under the E2SM-RC OID, its parameters (recursively) covering
+    1 to 4, P_I4 and every parameter ID of the run's acknowledged Style 5 action 3 control messages (sent_ids)."""
     if "error" in d:
         return ["RAN function 3 definition does not decode: " + d["error"]]
     oid = d.get("ranFunction-Name", {}).get("ranFunction-E2SM-OID")
     styles = d.get("ranFunctionDefinition-Control", {}).get("ric-ControlStyle-List", [])
+    pairs = sorted((s.get("ric-ControlStyle-Type"), a.get("ric-ControlAction-ID"))
+                   for s in styles for a in s.get("ric-ControlAction-List", []))
     acts = [a for s in styles if s.get("ric-ControlStyle-Type") == 5 for a in s.get("ric-ControlAction-List", [])
             if a.get("ric-ControlAction-ID") == 3]
-    params = {q.get("ranParameter-ID") for a in acts for q in a.get("ran-ControlActionParameters-List", [])}
+    params = param_ids([a.get("ran-ControlActionParameters-List", []) for a in acts])
     bad = [] if oid == RC_OID else ["OID %s, want %s" % (oid, RC_OID)]
-    if len(acts) != 1 or not {1, 2, 3, 4} <= params:
-        bad.append("Style 5 action 3 entries %d, its RAN parameters %s (want one, with 1 to 4)" % (len(acts), sorted(params)))
+    if len(acts) != 1 or not {1, 2, 3, 4} | P_I4 | set(sent_ids) <= params:
+        bad.append("Style 5 action 3 entries %d, its RAN parameters %s (want one, covering %s)" % (
+            len(acts), sorted(params), sorted({1, 2, 3, 4} | P_I4 | set(sent_ids))))
+    if pairs != [(5, 3)]:
+        bad.append("announced control (style, action) %s, want exactly [(5, 3)]" % pairs)
     return bad
 
 
+def _wire_module(name, filename):
+    here = os.path.dirname(os.path.abspath(__file__))
+    spec = importlib.util.spec_from_file_location(name, os.path.join(here, "..", "..", "tools", "e2-evidence", filename))
+    assert spec and spec.loader
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+
+
+def assoc_attribution(facts, node_ips):
+    """(node_of(ip, port, t) -> (node, problem), {ip: {nodes}}) by the frame's SCTP association (module docstring)."""
+    km = _wire_module("kpm_ue_list_moves", "kpm-ue-list-moves.py")
+    multi = km.ip_nodes(node_ips)
+    return km.assoc_node_of(facts, multi), multi
+
+
 def setup(a):
-    facts = json.load(open(a.facts))
-    ip2node = {ip: int(n) for n, ips in json.load(open(a.node_ips)).items() for ip in ips}
-    pdus, items = tshark_setup_pdus(a.pcap), {}
-    by_node = {n: [] for n in sorted(set(ip2node.values()))}
+    facts, node_ips = json.load(open(a.facts)), json.load(open(a.node_ips))
+    node_of, _ = assoc_attribution(facts, node_ips)
+    pdus, items, problems = tshark_setup_pdus(a.pcap), {}, []
+    by_node = {int(n): [] for n in node_ips}
     for r in facts["setup_requests"]:
-        n = ip2node.get(r["src"])
-        if n is not None:
-            items["f%d" % r["frame"]] = pdus.get(r["frame"], [])
-            by_node[n].append(r)
+        n, why = node_of(r["src"], r["sport"], r["t"])
+        if why:
+            problems.append("setup request frame %d: %s" % (r["frame"], why))
+            continue
+        if n not in by_node:
+            problems.append("setup request frame %d: node %d is not in node-ips.json" % (r["frame"], n))
+            continue
+        items["f%d" % r["frame"]] = pdus.get(r["frame"], [])
+        by_node[n].append(r)
+    acked = [i for i in (json.loads(x) for x in open(a.injected) if x.strip()) if i["expect"] == "ack"] if a.injected else []
+    for i in acked:
+        items["ctl:%s" % i["tag"]] = [i["messageHex"]]
     res = subprocess.run(shlex.split(a.decode_cmd), input=json.dumps(items), capture_output=True, text=True)
     if res.returncode != 0:
         sys.exit("decoder failed: " + res.stderr.strip()[-400:])
     decoded = json.loads(res.stdout)
+    sent_ids = set()
+    for i in acked:
+        got = (decoded.get("ctl:%s" % i["tag"]) or [{}])[0]
+        if "error" in got or "ids" not in got:
+            problems.append("acknowledged control %s: message does not decode: %s" % (i["tag"], got))
+        else:
+            sent_ids |= set(got["ids"])
+    subs = {n: {"requests": 0, "responses": 0} for n in by_node}
+    for key, ip_k, port_k in (("requests", "dst", "dport"), ("responses", "src", "sport")):
+        for r in facts["sub_requests" if key == "requests" else "sub_responses"]:
+            if key == "requests" and r.get("ran_function_id") != 2:
+                continue
+            n, why = node_of(r[ip_k], r[port_k], r["t"])
+            if why or n not in subs:
+                problems.append("subscription %s frame %s: %s" % (key[:-1], r.get("frame"), why or "node %s not in node-ips.json" % n))
+                continue
+            subs[n][key] += 1
     checks, nodes = {}, {}
     for n, reqs in by_node.items():
-        ips = [ip for ip, m in ip2node.items() if m == n]
-        subs = {"requests": sum(1 for s in facts["sub_requests"] if s["dst"] in ips and s.get("ran_function_id") == 2),
-                "responses": sum(1 for s in facts["sub_responses"] if s["src"] in ips)}
-        nodes[n] = {"setupFrames": [r["frame"] for r in reqs], "subscriptions": subs,
+        nodes[n] = {"setupFrames": [r["frame"] for r in reqs], "subscriptions": subs[n],
                     "decoded": {"f%d" % r["frame"]: decoded.get("f%d" % r["frame"]) for r in reqs}}
-        for k, bad in judge_node(n, reqs, decoded, subs, x2_peers(n, by_node)).items():
+        for k, bad in judge_node(n, reqs, decoded, subs[n], x2_peers(n, by_node), sent_ids).items():
             checks.setdefault(k, []).extend(bad)
+    # an unattributed frame is a problem of every check it could have fed
+    for k in checks:
+        checks[k].extend(problems)
     out = {"checks": {k: {"pass": not v, "detail": v or ["every node as expected"]} for k, v in checks.items()},
-           "nodes": nodes}
+           "nodes": nodes, "acknowledgedControlParameterIds": sorted(sent_ids)}
     json.dump(out, open(a.out, "w"), indent=1, sort_keys=True)
     for k, v in sorted(out["checks"].items()):
         print("%-24s %s %s" % (k, "PASS" if v["pass"] else "FAIL", "; ".join(v["detail"])[:400]))
@@ -251,15 +346,22 @@ def setup(a):
 
 
 def controls(a):
-    here = os.path.dirname(os.path.abspath(__file__))
-    spec = importlib.util.spec_from_file_location("wc1", os.path.join(here, "../../tools/e2-evidence/wire-c1-extract.py"))
-    assert spec and spec.loader
-    wc1 = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(wc1)
-    ip2node = {ip: int(n) for n, ips in json.load(open(a.node_ips)).items() for ip in ips}
+    wc1 = _wire_module("wc1", "wire-c1-extract.py")
+    node_ips = json.load(open(a.node_ips))
+    node_of, _ = assoc_attribution(json.load(open(a.facts)), node_ips)
+    ip2node = wc1.ip_map(node_ips)
     reqs, p1 = wc1.rc_requests(a.pcap, ip2node, None, None)
     answers, p2 = wc1.rc_answers(a.pcap, ip2node, None, None)
-    problems, rows = p1 + p2, []
+    # the shared-IP notes of the IP map are superseded by the association rule below
+    problems, rows = [p for p in p1 + p2 if "which node-ips.json lists for nodes" not in p], []
+    for r in reqs:
+        r["viaNode"], why = node_of(r["dst"], r["dport"], r["t"])
+        if why:
+            problems.append("request %s: %s" % (r["id"], why))
+    for x in answers:
+        x["viaNode"], why = node_of(x["src"], x["sport"], x["t"])
+        if why:
+            problems.append("answer %s: %s" % (x["id"], why))
     for inj in (json.loads(x) for x in open(a.injected) if x.strip()):
         on = [r for r in reqs if r["hdr"] == inj["headerHex"].upper() and r["msg"] == inj["messageHex"].upper()]
         row = {"tag": inj["tag"], "requests": [(r["frame"], r["viaNode"]) for r in on]}
@@ -278,6 +380,66 @@ def controls(a):
     print(json.dumps(rows))
     print("problems:", problems or "none")
     return 1 if problems else 0
+
+
+def record_parts(rec):
+    """(node, [(peer Global ID, request part hex or None, problem)]) of one e2mgr nodeb record."""
+    nb = rec.get("globalNbId", {})
+    bits = nb.get("nbId", "")
+    node = int(bits, 2) if bits and set(bits) <= {"0", "1"} else None
+    body = rec.get("enb") if rec.get("nodeType") == "ENB" else rec.get("gnb")
+    out = []
+    for c in (body or {}).get("nodeConfigs", []):
+        if c.get("e2nodeComponentInterfaceType") != "x2":
+            continue
+        x = c.get("e2nodeComponentInterfaceTypeX2", {})
+        g, kind = (x.get("globalEngnbId"), "en-gNB") if x.get("globalEngnbId") else (x.get("globalEnbId"), "eNB")
+        g = g or {}
+        pid = g.get("gnbId") or g.get("eNBId") or g.get("enbId") or ""
+        peer = "%s/%s/%s/%d" % (kind, (g.get("plmnIdentity") or "").lower(),
+                                int(pid, 2) if pid and set(pid) <= {"0", "1"} else pid, len(pid))
+        try:
+            raw = base64.b64decode(c.get("e2nodeComponentRequestPart") or "", validate=True)
+        except (binascii.Error, ValueError) as ex:
+            out.append((peer, None, "request part is not base64: %s" % ex))
+            continue
+        text = raw.decode("ascii", "replace")
+        hx = text.lower() if raw and all(ch in "0123456789abcdefABCDEF" for ch in text) else raw.hex()
+        out.append((peer, hx, None if hx else "empty request part"))
+    return node, out
+
+
+def x2_parts(setup_out, records):
+    wire = {}
+    for n, d in json.load(open(setup_out))["nodes"].items():
+        frames = sorted(d.get("decoded", {}), key=lambda f: int(f[1:]))
+        setups = [x for f in frames[-1:] for x in (d["decoded"][f] or []) if x.get("message") == "E2setupRequest"]
+        if setups:
+            wire[int(n)] = {"%s/%s/%s/%s" % tuple(p): h for p, h in zip(setups[0]["x2peers"], setups[0].get("x2hex", []))}
+    problems, rows = [], 0
+    for path in records:
+        node, parts = record_parts(json.load(open(path)))
+        if not parts:
+            problems.append("%s: no X2 component" % path)
+        with open(path + ".x2-parts.hex", "w") as f:
+            for peer, hx, why in parts:
+                if why:
+                    problems.append("%s %s: %s" % (path, peer, why))
+                    continue
+                f.write("%s %s\n" % (peer, hx))
+        lines = [l.split() for l in open(path + ".x2-parts.hex") if l.strip()]
+        again = {peer: hx for peer, hx, why in record_parts(json.load(open(path)))[1] if not why}
+        if len(lines) != len(parts) or any(len(l) != 2 or again.get(l[0]) != l[1] for l in lines):
+            problems.append("%s: sidecar lines %d for %d X2 components, or a line differs from its record field" % (
+                path, len(lines), len(parts)))
+        for peer, hx in (l for l in lines if len(l) == 2):
+            w = wire.get(node, {}).get(peer)
+            rows += 1
+            if w is None or w.lower() != hx:
+                problems.append("%s node %s %s: stored request part != the node's E2 Setup Request on the wire (%s)" % (
+                    path, node, peer, "no such component on the wire" if w is None else "octets differ"))
+    print(json.dumps({"records": len(records), "x2Components": rows, "problems": problems, "pass": not problems}))
+    return 0 if not problems and rows else 1
 
 
 def verdict(path, name):
@@ -307,6 +469,23 @@ def self_test():
         return {"ranFunction-Name": {"ranFunction-E2SM-OID": oid}, "ranFunctionDefinition-Control": {
             "ric-ControlStyle-List": [{"ric-ControlStyle-Type": style, "ric-ControlAction-List": [
                 {"ric-ControlAction-ID": action, "ran-ControlActionParameters-List": [{"ranParameter-ID": i} for i in params]}]}]}}
+
+    def nested(leaf=4):
+        """Parameter 1 > 2 (a structure) > 3 (a list) > 4, as RANParameter-Definition children."""
+        item = lambda i, kids, alt: {"ranParameter-ID": i, "ranParameter-name": "p%d" % i, **({"ranParameter-Definition": {
+            "ranParameter-Definition-Choice": [alt, {("ranParameter-List" if alt == "choiceLIST" else "ranParameter-STRUCTURE"): kids}]}}
+            if kids else {})}
+        three = item(3, [item(leaf, [], None)] if leaf else [], "choiceLIST")
+        d = rcdef(params=())
+        d["ranFunctionDefinition-Control"]["ric-ControlStyle-List"][0]["ric-ControlAction-List"][0][
+            "ran-ControlActionParameters-List"] = [item(1, [item(2, [three], "choiceSTRUCTURE")], "choiceSTRUCTURE")]
+        return d
+
+    def two_styles():
+        d = rcdef()
+        d["ranFunctionDefinition-Control"]["ric-ControlStyle-List"].append(
+            {"ric-ControlStyle-Type": 3, "ric-ControlAction-List": [{"ric-ControlAction-ID": 1}]})
+        return d
 
     def run(nid, x2, rc=None, req=None, subs=(1, 1), dec=None):
         """req overrides the tshark facts, dec the independent decode of the setup PDU."""
@@ -340,6 +519,11 @@ def self_test():
         ("RC without Style 5 action 3", "style5Action3Announced" in run(2, gnb(2), rcdef(style=3, action=1))),
         ("RC Style 5 action 3 without parameter 4", "style5Action3Announced" in run(2, gnb(2), rcdef(params=(1, 2, 3)))),
         ("RC under another OID", "style5Action3Announced" in run(2, gnb(2), rcdef(oid="1.3.6.1.4.1.53148.1.1.2.2"))),
+        ("RC parameters 1 to 4 nested (structure and list children)", run(2, gnb(2), nested()) == {}),
+        ("RC definition still listing Style 3 action 1", "style5Action3Announced" in run(2, gnb(2), two_styles())),
+        ("RC definition lacking the nested NR CGI parameter", "style5Action3Announced" in run(2, gnb(2), nested(leaf=None))),
+        ("RC definition lacking a parameter the run's acknowledged control sent", bool(
+            rcdef_problems(rcdef(), sent_ids=(1, 2, 3, 4, 9)))),
         ("node never subscribed", "kpimonSubscribedAll" in run(1, enb, subs=(0, 0))),
         ("subscription never answered", "kpimonSubscribedAll" in run(2, gnb(2), rcdef(), subs=(1, 0))),
         ("tshark and the decode disagree on the gNB ID", "globalIds" in run(2, gnb(2), rcdef(),
@@ -386,10 +570,13 @@ def main():
         return decode_self_test()
     if sys.argv[1:] == ["decode"]:
         sys.path.insert(0, "/opt/asn1-indep")
-        print(json.dumps({k: [decode_setup(h) for h in v] for k, v in json.load(sys.stdin).items()}))
+        print(json.dumps({k: [decode_control_ids(h) if k.startswith("ctl:") else decode_setup(h) for h in v]
+                          for k, v in json.load(sys.stdin).items()}))
         return 0
     if len(sys.argv) == 4 and sys.argv[1] == "verdict":
         return verdict(sys.argv[2], sys.argv[3])
+    if len(sys.argv) >= 4 and sys.argv[1] == "x2-parts":
+        return x2_parts(sys.argv[2], sys.argv[3:])
     import argparse
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -399,7 +586,9 @@ def main():
     s.add_argument("--node-ips", required=True)
     s.add_argument("--decode-cmd", required=True)
     s.add_argument("--out", required=True)
+    s.add_argument("--injected")
     c = sub.add_parser("controls")
+    c.add_argument("--facts", required=True)
     c.add_argument("pcap")
     c.add_argument("--node-ips", required=True)
     c.add_argument("--injected", required=True)

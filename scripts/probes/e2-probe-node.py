@@ -8,9 +8,11 @@
            compare it with the request the node sends (exit 0 iff equal and an ENDCX2SetupRequest of the node's type)
   acks     --requestor R --func F --first N --last M --out DIR  write ack-<n>.hex: RICcontrolAcknowledge without the
            optional RICcontrolOutcome for instance ids N..M (for direct RMR delivery to an xApp)
-  control  --requestor R --instance I --func F --imsi N (--target-gnb G | --target-octets HEX) [--style S --action A]
+  control  --requestor R --instance I --func F (--imsi N | --en-gnb-ue-id X) (--target-gnb G | --target-octets HEX)
+           [--style S --action A]
            print a RICcontrolRequest (JSON: hex, headerHex, messageHex, targetHex) as rc sends one: Control Header
-           Format 1 with gNB-UEID (AMF UE NGAP ID = IMSI, GUAMI 00F110/1/0/0, one F1AP and one E1AP ID 1), Control
+           Format 1 with en-gNB-UEID (--en-gnb-ue-id: m-eNB-UE-X2AP-ID X, MeNB Global ENB ID 00F110 / macro eNB ID 1)
+           or gNB-UEID (--imsi: AMF UE NGAP ID = IMSI, GUAMI 00F110/1/0/0, one F1AP and one E1AP ID 1), Control
            Message Format 1 with RAN parameters 1 > 2 > 3 > 4, parameter 4 = the APER NR-CGI of gNB G (NCI = G || 1)
            or the given octets as they are (a malformed target), no RICcontrolAckRequest (rc sends none: its
            e2ap/wrapper.c sets only the request ID, RAN function ID, header and message); for the RIC control injector
@@ -212,7 +214,12 @@ def control(a):
     else:
         target = encode(E2SM_RC_v0200.E2SM_COMMON_IEs.NR_CGI,
                         {"pLMNIdentity": PLMN, "nRCellIdentity": ((a.target_gnb << 4) | 1, 36)})
-    ue = e2sm_rc.ue_id_gnb(a.imsi, PLMN, 1, 0, 0, cu_f1ap_ids=[1], cu_cp_e1ap_ids=[1])
+    if a.en_gnb_ue_id is not None:
+        if not 0 <= a.en_gnb_ue_id <= 4095:
+            raise SystemExit("m-eNB-UE-X2AP-ID %d not in 0..4095" % a.en_gnb_ue_id)
+        ue = e2sm_rc.ue_id_en_gnb(a.en_gnb_ue_id, PLMN, 1)
+    else:
+        ue = e2sm_rc.ue_id_gnb(a.imsi, PLMN, 1, 0, 0, cu_f1ap_ids=[1], cu_cp_e1ap_ids=[1])
     hdr = e2sm_rc.control_header(ue, a.style, a.action)
     param4 = {"id": 4, "value": ("valueOctS", target), "key": False}
     msg = e2sm_rc.control_message([{"id": 1, "structure": [{"id": 2, "structure": [{"id": 3, "structure": [param4]}]}]}])
@@ -246,7 +253,9 @@ def main():
     r.add_argument("--requestor", type=int, required=True)
     r.add_argument("--instance", type=int, required=True)
     r.add_argument("--func", type=int, required=True)
-    r.add_argument("--imsi", type=int, required=True)
+    u = r.add_mutually_exclusive_group(required=True)
+    u.add_argument("--imsi", type=int)
+    u.add_argument("--en-gnb-ue-id", type=int)
     t = r.add_mutually_exclusive_group(required=True)
     t.add_argument("--target-gnb", type=int)
     t.add_argument("--target-octets")

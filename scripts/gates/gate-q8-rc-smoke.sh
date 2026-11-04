@@ -7,9 +7,13 @@
 #
 #   gate-q8-rc-smoke.sh
 #
-# Schedule (trigger steps wait for the pacer's `steps` notice, so each control is stamped afterSeq = step):
+# Schedule (trigger steps wait for the pacer's `steps` notice, so each control is stamped afterSeq = step). Each
+# control is E2SM-RC Style 5 action 3 through the UE's source en-gNB, its UE named by the en-gNB-UEID that the step's
+# prepare (ue-id-prepare.py) resolved from the run's context files and confirmed in Influx:
 #   step 20: rc -> node 2, imsi 6 -> gNB 3 cell 3   (ledger: applied; wire: ACK with Outcome Format 1)
 #   step 40: rc -> node 3, imsi 6 -> gNB 3 cell 3   (already on the target: refused; wire: FAILURE)
+# After the run, one control whose UEID carries neither GnbUEID nor EnGnbUEID: rc refuses it with gRPC
+# InvalidArgument, sends no RIC message and does not restart.
 # Outage threshold -1000: the R0 null-control run (Q2) decides it for the gated runs; here the radio state
 # only has to let imsi 6 move.
 source "$(dirname "$0")/lib.sh"
@@ -64,10 +68,14 @@ check q8_pod_snapshot_before rc_pod_snapshot before
 check q8_route_dump_agents_subscribed rc_route_dump subscribed
 
 RC_EP=$(rc_endpoint)
+UEP="$HARNESS_DIR/scripts/gates/ue-id-prepare.py"
+SEND="$HARNESS_DIR/scripts/gates/rc-send.sh"
 cat >"$e/q8-schedule.json" <<JSON
 {"steps": {
-  "20": {"trigger": {"cmd": ["bash", "$HARNESS_DIR/scripts/gates/rc-send.sh", "$RC_EP", "2", "6", "0000000310"]}, "expect": 1},
-  "40": {"trigger": {"cmd": ["bash", "$HARNESS_DIR/scripts/gates/rc-send.sh", "$RC_EP", "3", "6", "0000000310"]}, "expect": 1}
+  "20": {"prepare": {"cmd": ["python3", "-I", "$UEP", "$RUN/trace", "20", "6=$RUN/ue-id/s20-i6"], "timeoutS": 30},
+         "trigger": {"cmd": ["bash", "$SEND", "$RC_EP", "2", "--ue-from", "$RUN/ue-id/s20-i6.txt", "0000000310"]}, "expect": 1},
+  "40": {"prepare": {"cmd": ["python3", "-I", "$UEP", "$RUN/trace", "40", "6=$RUN/ue-id/s40-i6"], "timeoutS": 30},
+         "trigger": {"cmd": ["bash", "$SEND", "$RC_EP", "3", "--ue-from", "$RUN/ue-id/s40-i6.txt", "0000000310"]}, "expect": 1}
  }, "late": []}
 JSON
 q8_run() {
@@ -84,6 +92,21 @@ q8_run() {
     [ "$rc" = 0 ] && [ "$PACER_RC" = 0 ]
 }
 check q8_lockstep_run_with_two_rc_controls q8_run
+# a control naming no UE (UEID {}): rc must answer InvalidArgument without a RIC message (q8_facts still sees two)
+nil_ue_id() {
+    local name out
+    name=$(meid_of 2)
+    out=$("${GRPCURL:-$HOME/grpcurl-1.9.1/grpcurl}" -plaintext -max-time 10 -d "{
+  \"e2NodeID\": \"$name\", \"plmnID\": \"00F110\", \"ranName\": \"$name\",
+  \"RICE2APHeaderData\": { \"RanFuncId\": 3, \"RICRequestorID\": 1 },
+  \"RICControlHeaderData\": { \"ControlStyle\": 5, \"ControlActionId\": 3, \"UEID\": {} },
+  \"RICControlMessageData\": { \"RICControlCellTypeVal\": 1, \"TargetCellID\": \"0000000310\" },
+  \"RICControlAckReqVal\": 2
+}" "$RC_EP" rc.MsgComm/SendRICControlReqServiceGrpc 2>&1)
+    echo "$out" | tee "$e/q8-nil-ue-id.txt"
+    grep -q 'Code: InvalidArgument' <<<"$out"
+}
+check q8_rc_refuses_a_control_without_ue_id_invalid_argument nil_ue_id
 check q8_pod_snapshot_after rc_pod_snapshot after
 check q8_route_dump_end rc_route_dump end
 fact routeOwner12041 "$(json_str "${ROUTE_OWNER_12041:-}")"
@@ -91,18 +114,18 @@ fact routeOwner12042 "$(json_str "${ROUTE_OWNER_12042:-}")"
 fact routeOwnerE2term12041 "$(json_str "${ROUTE_OWNER_E2TERM_12041:-}")"
 fact routeOwnerE2term12042 "$(json_str "${ROUTE_OWNER_E2TERM_12042:-}")"
 check q8_restart_counts_zero rc_restarts_zero after
-for c in $(dk ps -aq --filter label=ns3e2.agent=1); do
-    dk logs "$c" >"$e/agent-$(dk inspect --format '{{index .Config.Labels "ns3e2.nodeId"}}' "$c").log" 2>&1
-done
+check q8_agent_logs_with_stats_after_bye agent_logs_after_bye "$e"
+check q8_agent_ue_context_counters_zero_every_stats_line agent_ue_context_counters_zero "$e"
 check q8_agents_stopped agents_stop
 check q8_capture_stopped capture_stop q8
+check q8_pcap_facts pcap_facts "$e/q8.pcap" q8
 
 q8_extract() {
     local tag
     tag=$(bash "$HARNESS_DIR/tools/rc-decode/build.sh") || return 1
     python3 -I "$HARNESS_DIR/tools/e2-evidence/wire-c1-extract.py" "$e/q8.pcap" --node-ips "$e/node-ips.json" \
-        --ledger "$RUN/trace/e2-control-ledger.jsonl" --out-dir "$RUN/extra" --t0 "$CAP_T0" \
-        --decode-cmd "$(dk_cmd) run --rm -i $tag"
+        --ledger "$RUN/trace/e2-control-ledger.jsonl" --ue-context-dir "$RUN/trace" --facts "$e/q8-facts.json" \
+        --out-dir "$RUN/extra" --t0 "$CAP_T0" --decode-cmd "$(dk_cmd) run --rm -i $tag"
 }
 check q8_wire_extractor_joins_requests_answers_and_ledger q8_extract
 q8_facts() {

@@ -73,12 +73,20 @@ def pick(cand, lo, hi, imsis, want, swap_want=None):
     return None
 
 
-def trig(sc, t, i, c, kind):
+def trig(sc, t, i, c, kind, serving):
+    """A classified trigger; a handover is addressed via the IMSI's serving gNB at T (its source en-gNB), the node
+    the TS xApp sends the control to and stage B injects h1's control through."""
     node = {v: int(k) for k, v in sc["cells"].items()}.get(c[1])
     d = {"step": t, "imsi": i, "kind": kind, "decision": c[0], "expectedAnswer": c[3]}
     if c[0] == "handover":
-        d.update({"via": node, "key": c[1], "targetCell": node, "expect": "applied"})
+        d.update({"via": serving, "key": c[1], "targetCell": node, "expect": "applied"})
     return d
+
+
+def serving_of(wins, t, i):
+    """The gNB node that the certified window at T lists the IMSI on (None when absent)."""
+    m = (wins[t][1] or {}).get("membership", {}).get(str(i))
+    return int(m) if m is not None else None
 
 
 def stage_a(sc, wins, stage):
@@ -97,7 +105,8 @@ def stage_a(sc, wins, stage):
     summary = {"candidates": len(cand), "decisionEligibility": {"%s/%s" % k: v for k, v in counts.items()}}
     if not n1 or not h1:
         return dict(summary, **{"class": "T3", "problems": ["n1 not formable" if not n1 else "h1 not formable"]})
-    return dict(summary, **{"class": "formed", "n1": trig(sc, *n1, "negative"), "h1": trig(sc, *h1, "positive")})
+    return dict(summary, **{"class": "formed", "n1": trig(sc, *n1, "negative", serving_of(wins, n1[0], n1[1])),
+                            "h1": trig(sc, *h1, "positive", serving_of(wins, h1[0], h1[1]))})
 
 
 def stage_b(sc, a, wins, stage):
@@ -111,7 +120,7 @@ def stage_b(sc, a, wins, stage):
     for t in range(first, first + m["slot"] + 1):
         c = cand.get((t, h1["imsi"]))
         if c and c[0] == c[2]:
-            m1 = trig(sc, t, h1["imsi"], c, "positive" if c[0] == "handover" else "negative")
+            m1 = trig(sc, t, h1["imsi"], c, "positive" if c[0] == "handover" else "negative", serving_of(wins, t, h1["imsi"]))
             return {"class": "schedule", "m1": m1}, [n1, h1, m1]
     return {"class": "T3", "problems": ["m1: imsi %d has no eligible decision in [%d, %d]" % (h1["imsi"], first, first + m["slot"])]}, None
 

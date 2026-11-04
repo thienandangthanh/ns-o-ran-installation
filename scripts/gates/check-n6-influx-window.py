@@ -18,7 +18,9 @@ argv, a file or a log) until every condition holds, at most the scenario's n6.de
      column.
 Checked IMSIs: --imsi I (a trigger), or --all (dry-run observe: every scenario IMSI). eNB rows are never read
 for values (only for their ueId tag, id). Outputs integers only: OUT_WINDOW {"T", "imsi", "clipped", "cells",
-"membership", "pass"} (the predictor's sole input), OUT_VERDICT {"pass", "problems", "polls", "wallS"}.
+"membership", "pass"} (the predictor's sole input), OUT_VERDICT {"pass", "problems", "polls", "wallS", "ueIdAtT"}:
+ueIdAtT {"<imsi>": the ueId tag of the gNB UeMetrics row (n, T, imsi) that u2 and id certified} for each checked
+IMSI that passed them (the key the TS xApp is given for that UE).
 
   check-n6-influx-window.py SCENARIO T (--imsi I | --all) TRACE_DIR LEDGER OUT_WINDOW OUT_VERDICT [--clip]
         [--cell-csv F --ue-csv F]   (fixtures: read the Flux CSVs instead of querying Influx, one poll)
@@ -104,7 +106,9 @@ def ipc(trace_dir, t, gnbs):
     return out
 
 
-def certify(sc, t, imsis, clip, trace_dir, ledger, cell_text, ue_text):
+def certify(sc, t, imsis, clip, trace_dir, ledger, cell_text, ue_text, ue_ids=None):
+    """(window, problems); ue_ids (a dict, when given) receives {imsi: the ueId tag of its row (n, T, imsi)} for each
+    checked IMSI whose u1, u2, id and h conjuncts hold."""
     gnbs = [int(n) for n in sc["n6"]["expectedCells"]]
     field = sc["counter"]["field"]
     first = t - sc["window"]["length"] + 1
@@ -133,7 +137,7 @@ def certify(sc, t, imsis, clip, trace_dir, ledger, cell_text, ue_text):
                 problems.append("c1: cell (%d, %d): influx %r, ipc %r" % (n, s, got, want))
                 continue
             cells[str(n)][str(s)] = want
-    ue_rows = {}
+    ue_rows, tags_at_t = {}, {}
     cm = UECM.UeContextMap(trace_dir, max_seq=t)
     problems += ["id: UE context: " + p for p in cm.problems + cm.identities()[1]]
     for r, _ in parse(ue_text):
@@ -146,12 +150,17 @@ def certify(sc, t, imsis, clip, trace_dir, ledger, cell_text, ue_text):
             problems.append("c2: UeMetrics row (%d, %d, %d) past T" % (n, s, i))
             continue
         tag, kind = r.get("ueId"), cm.kinds.get(n)
+        id_ok = False
         if not UECM.tag_form_ok(kind, tag):
             problems.append("id: UeMetrics row (%d, %d, %d) ueId %r is not a %s node's form" % (n, s, i, tag, kind))
         elif cm.resolve(n, {s}, tag) != i:
             problems.append("id: UeMetrics row (%d, %d, %d) ueId %s resolves to %r" % (n, s, i, tag, cm.resolve(n, {s}, tag)))
+        else:
+            id_ok = True
         if s == t and n in gnbs:
             ue_rows.setdefault(i, []).append(n)
+            if id_ok:
+                tags_at_t.setdefault(i, []).append(tag)
     lines = [json.loads(l) for l in open(ledger) if l.strip()][1:] if os.path.exists(ledger) else []
     for i in imsis:
         ipc_nodes = [n for n in gnbs if any(u.get("imsi") == i for u in (samples[n].get(t) or {}).get("ues") or [])]
@@ -166,6 +175,8 @@ def certify(sc, t, imsis, clip, trace_dir, ledger, cell_text, ue_text):
             problems.append("h: imsi %d last applied line %r, serving %d at %d" % (i, ap[-1], ipc_nodes[0], t))
             continue
         member[str(i)] = ipc_nodes[0]
+        if ue_ids is not None and len(tags_at_t.get(i, [])) == 1:
+            ue_ids[i] = tags_at_t[i][0]
     return {"T": t, "imsi": imsis[0] if len(imsis) == 1 else None, "clipped": clip, "cells": cells,
             "membership": member, "pass": not problems}, problems
 
@@ -179,6 +190,7 @@ def main(av):
     clip = "--clip" in rest
     fixture = "--cell-csv" in rest
     t0, polls, deadline = time.time(), 0, time.time() + float(sc["n6"]["deadlineS"])
+    ue_ids = {}
     while True:
         polls += 1
         try:
@@ -188,7 +200,8 @@ def main(av):
             else:
                 cell = query(flux("cellMetrics", ["ns3.nodeId", "ns3.seq", sc["counter"]["field"]]))
                 ue = query(flux(sc["counter"]["ueMeasurement"], ["ns3.nodeId", "ns3.seq", "ns3.imsi"]))
-            win, problems = certify(sc, t, imsis, clip, trace_dir, ledger, cell, ue)
+            ue_ids = {}
+            win, problems = certify(sc, t, imsis, clip, trace_dir, ledger, cell, ue, ue_ids)
         except (RuntimeError, subprocess.TimeoutExpired) as ex:
             win, problems = None, ["query: %s" % ex]
         if not problems or fixture or time.time() + float(sc["n6"]["pollS"]) > deadline:
@@ -197,7 +210,8 @@ def main(av):
     if win is not None:
         json.dump(win, open(out_win, "w"), sort_keys=True)
     json.dump({"T": t, "pass": not problems, "problems": problems[:20], "nProblems": len(problems), "polls": polls,
-               "wallS": round(time.time() - t0, 3)}, open(out_ver, "w"), sort_keys=True)
+               "wallS": round(time.time() - t0, 3), "ueIdAtT": {str(i): v for i, v in sorted(ue_ids.items())}},
+              open(out_ver, "w"), sort_keys=True)
     print("N6 seq %d: %s after %d poll(s)%s" % (t, "PASS" if not problems else "FAIL", polls,
                                                "" if not problems else ": " + "; ".join(problems[:3])))
     return 0 if not problems else 1
@@ -221,9 +235,13 @@ def self_test():
     for name, want, kw in fx.CASES:
         with tempfile.TemporaryDirectory() as d:
             args = fx.build(pathlib.Path(d), _csv, **kw)
+            ids = {}
             win, problems = certify(sc, args["T"], args["imsis"], False, args["trace"], args["ledger"],
-                                    args["cell"], args["ue"])
+                                    args["cell"], args["ue"], ids)
         got = not problems
+        if got and set(ids) != set(args["imsis"]):
+            got = None  # a passing window must name each checked IMSI's key
+            problems = ["ueIdAtT %r for IMSIs %r" % (ids, args["imsis"])]
         bad += got != want
         print(("ok   " if got == want else "FAIL ") + name + ("" if got == want else ": %r" % problems[:2]))
     print("n6 self-test: %s" % ("ok" if not bad else "%d failure(s)" % bad))

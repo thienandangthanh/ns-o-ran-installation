@@ -180,6 +180,8 @@ log "draining 10s"; sleep 10
 ################################################################################
 agents_stats_all >"$e/final-agents.txt"
 for c in $(dk ps -aq --filter label=ns3e2.agent=1); do dk logs "$c" >"$e/agent-$(dk inspect --format '{{index .Config.Labels "ns3e2.nodeId"}}' "$c").log" 2>&1; done
+# docker logs span every incarnation of a container, so the maximum over every stats line sees counts a restart reset
+check m7_agent_ue_context_counters_zero_every_stats_line_across_restarts agent_ue_context_counters_zero "$e"
 dk inspect $(dk ps -aq --filter label=ns3e2.agent=1) >"$e/agents-inspect.json" 2>&1
 e2mgr_states >"$e/final-e2mgr-states.json"
 kpimon_logs_since "$CAP_T0" "$e/m7-kpimon.log"; m7_log_window="$(kpimon_log_window_summary "$e/m7-kpimon.log" 2>&1)"

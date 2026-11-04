@@ -8,7 +8,11 @@ goes out; (5) a "prepare" runs after `steps` and before the trigger, and its wal
 that exits non-zero aborts the run naming "prepare" and the trigger never runs; (7) a prepare past its timeoutS
 aborts; (8) with "mayFail" a failed prepare is recorded and the step goes on; (9) a prepare-only entry is
 followed by `go`; (10) --replay puts a line refused late after the last barrier at the stop handshake, and a
-line pending at the stop under δ > 0 (and a mid-run late one) at its rxSeq. A trigger command creates a marker file; the stub answers each new marker with one controlRx.
+line pending at the stop under δ > 0 (and a mid-run late one) at its rxSeq, each with the ueId of its
+e2-pacing-log.jsonl record and no imsi (an unknownUe line, imsi 0, too); a ledger line without a record, two
+records for one (viaNodeId, ctlId), a record whose targetCellId differs and a record without a ledger line each
+make load_schedule fail; (11) an inject with "ueIdFrom" is sent after the step's prepare with the file's ipcUeId,
+and a missing file aborts naming "ueIdFrom". A trigger command creates a marker file; the stub answers each new marker with one controlRx.
 """
 import json
 import os
@@ -184,20 +188,73 @@ def main():
     spec = importlib.util.spec_from_file_location("pacer_mod", PACER)
     pm = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(pm)
-    led = os.path.join(tempfile.mkdtemp(), "ledger.jsonl")
-    def ln(ctl, rx, after, rx_ns, ap_ns, cause):
-        return {"viaNodeId": 2, "ctlId": ctl, "imsi": 1, "targetCell": 2, "rxSeq": rx, "afterSeq": after,
+    rdir = tempfile.mkdtemp()
+    led, plog = os.path.join(rdir, "e2-control-ledger.jsonl"), os.path.join(rdir, "e2-pacing-log.jsonl")
+
+    def ln(ctl, rx, after, rx_ns, ap_ns, cause, imsi=1):
+        return {"viaNodeId": 2, "ctlId": ctl, "imsi": imsi, "targetCell": 2, "rxSeq": rx, "afterSeq": after,
                 "rxSimTimeNs": rx_ns, "applySimTimeNs": ap_ns, "outcome": "refused", "cause": cause}
-    with open(led, "w") as f:
-        f.write(json.dumps({"type": "ledgerHeader", "v": 1, "delta-model": "fixed 150"}) + "\n")
-        for x in (ln(1, 100, 100, 10_000_000_000, 10_000_000_000, "late"),     # after the last barrier
-                  ln(2, 99, 99, 9_900_000_000, 10_000_000_000, "late"),        # pending at the stop (δ = 150)
-                  ln(3, 30, 29, 3_000_000_000, 3_000_000_000, "late")):        # missed its barrier mid-run
-            f.write(json.dumps(x) + "\n")
+
+    def rec(ctl, after, x2, target=2, node=2):
+        return {"type": "control", "v": 1, "viaNodeId": node, "ctlId": ctl, "ueId": {"mEnbUeX2apId": x2, "mnCellId": 1},
+                "targetCellId": target, "afterSeq": after}
+
+    lines = [ln(1, 100, 100, 10_000_000_000, 10_000_000_000, "late"),     # after the last barrier
+             ln(2, 99, 99, 9_900_000_000, 10_000_000_000, "late"),        # pending at the stop (δ = 150)
+             ln(3, 30, 29, 3_000_000_000, 3_000_000_000, "late"),         # missed its barrier mid-run
+             ln(4, 40, 40, 4_000_000_000, 4_000_000_000, "unknownUe", 0)]  # an unresolved UE, replayed as sent
+    recs = [rec(1, 100, 3), rec(2, 99, 3), rec(3, 29, 3), rec(4, 40, 4095)]
+    barrier = {"type": "barrier", "seq": 30}
+
+    def write(ls, rs):
+        with open(led, "w") as f:
+            f.write(json.dumps({"type": "ledgerHeader", "v": 1, "delta-model": "fixed 150"}) + "\n")
+            for x in ls:
+                f.write(json.dumps(x) + "\n")
+        with open(plog, "w") as f:
+            for x in [barrier] + rs:
+                f.write(json.dumps(x) + "\n")
+
+    write(lines, recs)
     sc = pm.load_schedule(argparse.Namespace(replay=led, schedule=None))
     got = ([c["ctlId"] for c in sc["late"]], sorted((k, [c["ctlId"] for c in v["inject"]]) for k, v in sc["steps"].items()))
-    if got != ([1], [("30", [3]), ("99", [2])]):
+    if got != ([1], [("30", [3]), ("40", [4]), ("99", [2])]):
         problems.append("replay schedule: %r" % (got,))
+    sent = sc["late"] + [c for v in sc["steps"].values() for c in v["inject"]]
+    want_ue = {r["ctlId"]: r["ueId"] for r in recs}
+    if any("imsi" in c or c["ueId"] != want_ue[c["ctlId"]] for c in sent) or len(sent) != 4:
+        problems.append("replay controls carry the pacing records' ueId and no imsi: %r" % (sent,))
+    for name, ls, rs in (("a ledger line without a pacing record", lines, recs[:3]),
+                         ("two pacing records for one (viaNodeId, ctlId)", lines, recs + [rec(4, 40, 4095)]),
+                         ("a pacing record whose targetCellId differs", lines, recs[:3] + [rec(4, 40, 4095, target=3)]),
+                         ("a pacing record without a ledger line", lines, recs + [rec(1, 20, 5, node=3)])):
+        write(ls, rs)
+        try:
+            pm.load_schedule(argparse.Namespace(replay=led, schedule=None))
+            problems.append("replay: %s did not fail load_schedule" % name)
+        except pm.ReplayError:
+            pass
+    write(lines, recs[:3])
+    r = subprocess.run([sys.executable, PACER, "--port", "38598", "--out", os.path.join(rdir, "out"), "--replay", led],
+                       capture_output=True, text=True, timeout=30)
+    if r.returncode != 2 or "READY" in r.stdout:
+        problems.append("replay with an unpaired line: exit %s, stdout %r (want 2 before READY)" % (r.returncode, r.stdout))
+    # (11) a deferred inject: the prepare writes the UE ID file, the control follows it with that ueId
+    ue = {"mEnbUeX2apId": 3, "mnCellId": 1}
+    write_ue = [sys.executable, "-c", "import json; json.dump({'ipcUeId': %r}, open(%r, 'w'))" % (ue, "@TMP@/ue.json")]
+    ctl = {"nodeId": 3, "ctlId": 1, "ueIdFrom": "@TMP@/ue.json", "targetCellId": 2, "afterSeq": 2}
+    rc, s, _, _, tmp = run_case("ue-id-from", {"steps": {"2": {"prepare": {"cmd": write_ue}, "inject": [ctl]}}},
+                                [0, 1, 2, 3], {}, 38600)
+    log = [json.loads(l) for l in open(os.path.join(tmp, "out", "pacer-log.jsonl"))]
+    i_prep = next((i for i, x in enumerate(log) if x["msg"].get("type") == "prepare"), None)
+    sent = [(i, x["msg"]) for i, x in enumerate(log) if x["dir"] == "tx" and x["msg"].get("type") == "control"]
+    if rc != 0 or len(sent) != 1 or i_prep is None or sent[0][0] < i_prep or sent[0][1].get("ueId") != ue \
+            or "ueIdFrom" in sent[0][1]:
+        problems.append("ueIdFrom: rc %s sent %r" % (rc, sent))
+    rc, s, _, _, _ = run_case("ue-id-from-missing", {"steps": {"2": {"inject": [dict(ctl, ueIdFrom="@TMP@/none.json")]}}},
+                              [0, 1, 2, 3], {}, 38601)
+    if rc != 3 or "ueIdFrom" not in (s.get("pacerAbortReason") or ""):
+        problems.append("ueIdFrom missing file: rc %s %r" % (rc, s.get("pacerAbortReason")))
     for q in problems:
         print("FAIL " + q)
     print("pacer self-test: %s" % ("ok" if not problems else "%d failure(s)" % len(problems)))

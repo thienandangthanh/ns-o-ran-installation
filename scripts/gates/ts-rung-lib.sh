@@ -17,27 +17,7 @@ all_subscribed() {
     echo "$rows"; return 1
 }
 
-# agent logs after ns-3 said bye: the agent prints its stats every 5 s, so wait for a stats line with ipc.bye >= 1
-agent_logs_after_bye() {
-    local rd="$1" c n deadline=$(($(date +%s) + 15))
-    for c in $(dk ps -aq --filter label=ns3e2.agent=1); do
-        n=$(dk inspect --format '{{index .Config.Labels "ns3e2.nodeId"}}' "$c")
-        while :; do
-            dk logs "$c" >"$rd/agent-$n.log" 2>&1
-            python3 -I - "$rd/agent-$n.log" <<'PY' && break
-import json, sys
-last = None
-for l in open(sys.argv[1], errors="replace"):
-    if l.startswith('{"event":"stats"'):
-        last = json.loads(l)
-sys.exit(0 if last and last["ipc"]["bye"] >= 1 else 1)
-PY
-            [ "$(date +%s)" -lt "$deadline" ] || { echo "agent $n: no stats line after bye within 15 s"; return 1; }
-            sleep 1
-        done
-    done
-    echo "every agent logged its stats after bye"
-}
+# agent_logs_after_bye (agents-ns3-run.sh) saves the agent logs once each holds a stats line after bye
 
 route_owner_row() {
     printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$1" "$2" "${ROUTE_OWNER_12041:-}" "${ROUTE_OWNER_12042:-}" \
@@ -91,6 +71,7 @@ rung_live() {
     check "${RUNG}_${label}_stub_log_saved" stub_log_save "$rd/stub-log.json"
     check "${RUNG}_${label}_injector_stopped" injector_stop "$rd/injector"
     check "${RUNG}_${label}_agent_logs_with_stats_after_bye" agent_logs_after_bye "$rd"
+    check "${RUNG}_${label}_agent_ue_context_counters_zero_every_stats_line" agent_ue_context_counters_zero "$rd"
     if [ "$dump" = --dump ]; then
         dump_it() { influx_dump "$rd/influx-kpimon.csv"; }
         check "${RUNG}_${label}_influx_dump_written_without_the_token" dump_it
@@ -112,8 +93,9 @@ rung_live() {
     check "${RUNG}_${label}_kpimon_zero_rc_wmore" wmore0
     extract() {
         python3 -I "$HARNESS_DIR/tools/e2-evidence/wire-c1-extract.py" "$e/$label.pcap" --node-ips "$rd/node-ips.json" \
-            --ledger "$rd/trace/e2-control-ledger.jsonl" --out-dir "$rd/extra" --t0 "$cap_t0" \
-            --decode-cmd "$(dk_cmd) run --rm -i $RC_DEC_TAG" --expect-requests "$N_POS" --expect-agent-local 0
+            --ledger "$rd/trace/e2-control-ledger.jsonl" --ue-context-dir "$rd/trace" --facts "$e/$label-sub-facts.json" \
+            --out-dir "$rd/extra" --t0 "$cap_t0" --decode-cmd "$(dk_cmd) run --rm -i $RC_DEC_TAG" \
+            --expect-requests "$N_POS" --expect-agent-local 0
     }
     check "${RUNG}_${label}_wire_one_terminal_answer_per_request_joined_to_ledger" extract
     # KPM continuity after the second rtmgr restart: kpimon decoded every indication on the wire
@@ -131,7 +113,7 @@ rung_live() {
     kpm_moves() {
         python3 -I "$HARNESS_DIR/tools/e2-evidence/kpm-ue-list-moves.py" "$e/$label.pcap" --node-ips "$rd/node-ips.json" \
             --ledger "$rd/trace/e2-control-ledger.jsonl" --epoch-ms "$EPOCH_MS" --t0 "$cap_t0" --ue-context-dir "$rd/trace" \
-            --out "$rd/kpm-ue-moves.json"
+            --facts "$e/$label-sub-facts.json" --out "$rd/kpm-ue-moves.json"
     }
     check "${RUNG}_${label}_kpm_ue_lists_move_applied_and_keep_refused" kpm_moves
     one_connection() {

@@ -7,16 +7,19 @@
 # --mode single (the M9 chain): C8 and one live run with its per-run checks. --mode c1 (default): all of it.
 # --dev labels the run a rehearsal (verdict.json `dev: true`); it is not the gate.
 #
-# Cases (scripts/gates/r1-scenario.json; within a step the controls are sent one at a time, in list order):
-#   (a) step 20   a same-step pair for two IMSIs through different agents: both applied
-#   (b) step 30   one IMSI, the same agent, targets 3 (its own cell, sent first) and 2: target 2 applied,
-#                 target 3 refused inHandover (C4 order; arrival order would give alreadyOnTarget)
-#   (c) step 40   one IMSI, one non-serving target, through agents 3 (sent first) and 2: node 2 applied,
-#                 node 3 refused inHandover (the lower nodeId wins)
-#   (d) step 50   an unknown IMSI: refused unknownImsi
-#   f2  fault run (ii): one control at step 20, then a control sent after the final barrier through the eNB
-#       agent while the pacer holds endAck: exactly one RICcontrolFailure, no ledger line, and agent 1 counts
-#       it as failed on bye (rejIpcDown 0), outside the C1 digest set
+# Cases (scripts/gates/r1-scenario.json; within a step the controls are sent one at a time, in list order; every
+# control is E2SM-RC Style 5 action 3 naming the UE by its en-gNB-UEID):
+#   (a) step 20   a same-step pair for two IMSIs through their source en-gNBs 2 and 3: both applied
+#   (b) step 30   one IMSI through its source (agent 3), targets 3 (its own cell, sent first) and 2: target 2
+#                 applied, target 3 refused inHandover (C4 order; arrival order would give alreadyOnTarget; the
+#                 fixture fixtures/r1-c4-arrival-order must fail the same check)
+#   (c) step 40   one IMSI through the non-source agent 3 (sent first): refused unknownUe (ledger imsi 0), then
+#                 through its source agent 2: applied
+#   (d) step 50   an en-gNB-UEID that no UE holds: refused unknownUe
+#   (e) step 60   a control to the eNB: answered ran-function-id-invalid by its agent, nothing reaches ns-3
+#   f2  fault run (ii): one control at step 20, then a control sent after the final barrier through the UE's
+#       source en-gNB agent 2 while the pacer holds endAck: exactly one RICcontrolFailure, no ledger line, and
+#       agent 2 counts it as failed on bye (rejIpcDown 0), outside the C1 digest set
 #
 # Order: C8 (null-control lock-step == free-run at the gated threshold), live1..live3 (fresh RIC state each,
 # Influx dump after live1), f2, the RIC-free replay of live1, the --RngRun=2 replay, C1. The outage threshold
@@ -56,7 +59,8 @@ SINK="$HARNESS_DIR/tools/ipc-null-sink/ipc-null-sink.py"
 PACER="$HARNESS_DIR/scripts/gates/pacer.py"
 CLI=(--nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 "--outageThreshold=$THRESH")
 SINKX=(); PACERX=()
-N_CTL=$(python3 -I -c 'import json,sys; print(len(json.load(open(sys.argv[1]))["controls"]))' "$SCEN")
+# requests on the wire, ledger lines (controls that reach ns-3), static rejects (answered by an agent itself)
+read -r N_REQ N_LED N_STATIC < <(python3 -I -c 'import json,sys; c=json.load(open(sys.argv[1]))["controls"]; l=sum(1 for x in c if x["expect"].startswith("agent:")); print(len(c), len(c) - l, l)' "$SCEN")
 case "$MODE" in c1|single) ;; *) log "bad --mode $MODE"; exit 2 ;; esac
 fact mode "$(json_str "$MODE")"
 fact dev "$([ "$DEV" = 1 ] && echo true || echo false)"
@@ -84,6 +88,7 @@ check r1_ns3_binary_located_at_pins agents_ns3_locate
 check r1_pod_log_reader_self_test python3 -I "$HARNESS_DIR/scripts/gates/pod-log-window.py" --self-test
 check r1_pacer_self_test python3 -I "$HARNESS_DIR/scripts/gates/pacer-selftest.py"
 check r1_kpm_ue_list_judge_self_test python3 -I "$HARNESS_DIR/tools/e2-evidence/kpm-ue-list-moves.py" --self-test
+check r1_c4_check_fails_the_arrival_order_fixture python3 -I "$CHK" --self-test
 check r1_grpcurl_fetched_and_checksum_verified rc_grpcurl_fetch
 # start from rc, kpimon and hw-go pods this gate created: a kept pod's start-up line rotates out of its log
 check r1_pre_ric_reset_fresh_rc_kpimon_hw_go_and_bucket rc_ric_reset pre
@@ -106,7 +111,7 @@ fact c8NullEqualsFree "$(python3 -I -c 'import json,sys; print(json.dumps(json.l
 RC_EP=$(rc_endpoint)
 python3 -I "$CHK" schedule "$SCEN" "$RC_EP" --rc-send "$HARNESS_DIR/scripts/gates/rc-send.sh" >"$e/r1-schedule.json"
 python3 -I "$CHK" schedule "$SCEN" "$RC_EP" --rc-send "$HARNESS_DIR/scripts/gates/rc-send.sh" --fault-stop \
-    --confirm bash "$HARNESS_DIR/scripts/gates/agent-forward-wait.sh" 1 2 5 >"$e/f2-schedule.json"
+    --confirm bash "$HARNESS_DIR/scripts/gates/agent-forward-wait.sh" 2 2 5 >"$e/f2-schedule.json"
 
 all_subscribed() {
     local deadline=$(($(date +%s) + 180)) rows
@@ -118,33 +123,15 @@ all_subscribed() {
     echo "$rows"; return 1
 }
 
-# agent logs after ns-3 said bye: the agent prints its stats every 5 s, so wait for a stats line with ipc.bye >= 1
-agent_logs_after_bye() {
-    local rd="$1" c n deadline=$(($(date +%s) + 15))
-    for c in $(dk ps -aq --filter label=ns3e2.agent=1); do
-        n=$(dk inspect --format '{{index .Config.Labels "ns3e2.nodeId"}}' "$c")
-        while :; do
-            dk logs "$c" >"$rd/agent-$n.log" 2>&1
-            python3 -I - "$rd/agent-$n.log" <<'PY' && break
-import json, sys
-last = None
-for l in open(sys.argv[1], errors="replace"):
-    if l.startswith('{"event":"stats"'):
-        last = json.loads(l)
-sys.exit(0 if last and last["ipc"]["bye"] >= 1 else 1)
-PY
-            [ "$(date +%s)" -lt "$deadline" ] || { echo "agent $n: no stats line after bye within 15 s"; return 1; }
-            sleep 1
-        done
-    done
-    echo "every agent logged its stats after bye"
-}
+# agent_logs_after_bye (agents-ns3-run.sh) saves the agent logs once each holds a stats line after bye
 
-# r1_live <label> <schedule.json> <n-requests> <n-ledger-lines> <n-agent-local> [--dump]: one run from a fresh RIC
-# state; the per-run checks.
+# r1_live <label> <schedule template> <n-requests> <n-ledger-lines> <n-static-rejects> <n-failed-on-bye> [--dump]: one
+# run from a fresh RIC state; the per-run checks. The template's @RUN@ paths name this run.
 r1_live() {
-    local label="$1" sched="$2" nreq="$3" nled="$4" nlocal="$5" dump="${6:-}" rd="$RUNS/$1" pp rc cap_t0
+    local label="$1" tmpl="$2" nreq="$3" nled="$4" nstatic="$5" nbye="$6" dump="${7:-}" rd="$RUNS/$1" pp rc cap_t0 sched
     rm -rf "$rd"; mkdir -p "$rd/ns3run" "$rd/trace" "$rd/extra"
+    sched="$rd/schedule.json"
+    check "r1_${label}_run_schedule_rendered" bash -c "python3 -I '$CHK' render '$tmpl' '$rd' >'$sched'"
     check "r1_${label}_ric_reset_fresh_pods_and_bucket" rc_ric_reset "$label"
     check "r1_${label}_route_dump_start" rc_route_dump "$label-start"
     printf '%s\tstart\t%s\t%s\t%s\t%s\n' "$label" "${ROUTE_OWNER_12041:-}" "${ROUTE_OWNER_12042:-}" \
@@ -175,6 +162,7 @@ r1_live() {
         "${ROUTE_OWNER_E2TERM_12041:-}" "${ROUTE_OWNER_E2TERM_12042:-}" >>"$e/route-owners.tsv"
     check "r1_${label}_restart_counts_zero_rc_kpimon_hw_go_agents" rc_restarts_zero "$label-after"
     check "r1_${label}_agent_logs_with_stats_after_bye" agent_logs_after_bye "$rd"
+    check "r1_${label}_agent_ue_context_counters_zero_every_stats_line" agent_ue_context_counters_zero "$rd"
     if [ "$dump" = --dump ]; then
         dump_it() { influx_dump "$rd/influx-kpimon.csv"; }
         check "r1_${label}_influx_dump_written_without_the_token" dump_it
@@ -193,8 +181,9 @@ r1_live() {
     check "r1_${label}_kpimon_zero_rc_wmore" wmore0
     extract() {
         python3 -I "$HARNESS_DIR/tools/e2-evidence/wire-c1-extract.py" "$e/$label.pcap" --node-ips "$rd/node-ips.json" \
-            --ledger "$rd/trace/e2-control-ledger.jsonl" --out-dir "$rd/extra" --t0 "$cap_t0" \
-            --decode-cmd "$(dk_cmd) run --rm -i $RC_DEC_TAG" --expect-requests "$nreq" --expect-agent-local "$nlocal"
+            --ledger "$rd/trace/e2-control-ledger.jsonl" --ue-context-dir "$rd/trace" --facts "$e/$label-sub-facts.json" \
+            --out-dir "$rd/extra" --t0 "$cap_t0" --decode-cmd "$(dk_cmd) run --rm -i $RC_DEC_TAG" \
+            --expect-requests "$nreq" --expect-agent-local "$((nstatic + nbye))"
     }
     check "r1_${label}_wire_one_terminal_answer_per_request_joined_to_ledger" extract
     c2() { python3 -I "$HARNESS_DIR/scripts/gates/check-ledger.py" "$rd/trace/e2-control-ledger.jsonl" "$rd/pacer/pacer-log.jsonl" --expect "$nled"; }
@@ -203,7 +192,7 @@ r1_live() {
     kpm_moves() {
         python3 -I "$HARNESS_DIR/tools/e2-evidence/kpm-ue-list-moves.py" "$e/$label.pcap" --node-ips "$rd/node-ips.json" \
             --ledger "$rd/trace/e2-control-ledger.jsonl" --epoch-ms "$EPOCH_MS" --t0 "$cap_t0" --ue-context-dir "$rd/trace" \
-            --out "$rd/kpm-ue-moves.json"
+            --facts "$e/$label-sub-facts.json" --out "$rd/kpm-ue-moves.json"
     }
     check "r1_${label}_kpm_ue_lists_move_applied_and_keep_refused" kpm_moves
     # no emitter left and came back, no agent accepted a second ns-3 connection
@@ -225,11 +214,12 @@ sys.exit(0 if len(em) == 3 and not bad and len(acc) == 3 and all(v == 1 for v in
 PY
     }
     check "r1_${label}_one_connection_per_emitter_and_agent" one_connection
-    # C2 split from the agents' own counters: static rejects (answered without ns-3) and failures on bye
+    # C2 split from the agents' own counters: static rejects (answered without ns-3; all of them RAN function
+    # rejects at the eNB's agent, node 1) and failures on bye
     agent_c2() {
-        python3 -I - "$rd" "$nlocal" <<'PY' | tee "$rd/agent-c2.json"
+        python3 -I - "$rd" "$nstatic" "$nbye" <<'PY' | tee "$rd/agent-c2.json"
 import glob, json, sys
-rd, nlocal = sys.argv[1], int(sys.argv[2])
+rd, nstatic, nbye = sys.argv[1], int(sys.argv[2]), int(sys.argv[3])
 per = {}
 for f in sorted(glob.glob(rd + "/agent-*.log")):
     last = None
@@ -240,10 +230,12 @@ for f in sorted(glob.glob(rd + "/agent-*.log")):
     per[f.rsplit("-", 1)[1][:-4]] = {k: r[k] for k in ("rx", "forwarded", "rejFunc", "rejDecode", "rejAction", "rejIpcDown",
                                                        "failedOnBye", "ackTx", "failTx", "pending")}
 static = sum(v["rejFunc"] + v["rejDecode"] + v["rejAction"] + v["rejIpcDown"] for v in per.values())
+other_static = static - per.get("1", {}).get("rejFunc", 0)
 post_bye = sum(v["failedOnBye"] for v in per.values())
 pending = sum(v["pending"] for v in per.values())
-print(json.dumps({"staticRejects": static, "postBye": post_bye, "pending": pending, "perAgent": per}))
-sys.exit(0 if static == 0 and post_bye == nlocal and pending == 0 else 1)
+print(json.dumps({"staticRejects": static, "enbRejFunc": per.get("1", {}).get("rejFunc"), "postBye": post_bye,
+                  "pending": pending, "perAgent": per}))
+sys.exit(0 if "1" in per and per["1"]["rejFunc"] == nstatic and other_static == 0 and post_bye == nbye and pending == 0 else 1)
 PY
     }
     check "r1_${label}_agent_static_rejects_zero_post_bye_as_expected" agent_c2
@@ -251,50 +243,46 @@ PY
 
 NLIVE=3; [ "$MODE" = single ] && NLIVE=1
 for i in $(seq "$NLIVE"); do
-    if [ "$i" = 1 ]; then r1_live "live$i" "$e/r1-schedule.json" "$N_CTL" "$N_CTL" 0 --dump; else r1_live "live$i" "$e/r1-schedule.json" "$N_CTL" "$N_CTL" 0; fi
+    if [ "$i" = 1 ]; then r1_live "live$i" "$e/r1-schedule.json" "$N_REQ" "$N_LED" "$N_STATIC" 0 --dump
+    else r1_live "live$i" "$e/r1-schedule.json" "$N_REQ" "$N_LED" "$N_STATIC" 0; fi
     check "r1_live${i}_expected_outcomes_and_afterseq" python3 -I "$CHK" expect "$SCEN" "$RUNS/live$i/trace/e2-control-ledger.jsonl"
-    # the C4 sort was exercised: in (b) the refused line carries the lower ctlId of node 2 (it was sent first);
-    # in (c) ns-3 received node 3's control before node 2's
-    c4_used() {
-        python3 -I - "$RUNS/live$i" <<'PY'
-import json, sys
-rd = sys.argv[1]
-led = [json.loads(l) for l in open(rd + "/trace/e2-control-ledger.jsonl") if l.strip()][1:]
-b = {x["outcome"] + "/" + x["cause"]: x for x in led if x["rxSeq"] == 30 and x["imsi"] == 2}
-summ = json.load(open(rd + "/pacer/pacer-summary.json"))
-order40 = [v for v, _ in summ["steps"]["40"]["rxOrder"]]
-ok_b = b.get("refused/inHandover", {}).get("ctlId", 0) < b.get("applied/", {}).get("ctlId", 0) and \
-    b["refused/inHandover"]["viaNodeId"] == b["applied/"]["viaNodeId"] == 2
-ok_c = order40 == [3, 2]
-print("step 30:", {k: (v["viaNodeId"], v["ctlId"], v["targetCell"]) for k, v in b.items()}, "step 40 rx order:", order40)
-sys.exit(0 if ok_b and ok_c else 1)
-PY
-    }
+    # the C4 sort was exercised: in (b) the refused inHandover line carries the lower ctlId of node 3 (it was sent
+    # first); in (c) ns-3 received node 3's control (refused unknownUe) before node 2's (applied)
+    c4_used() { python3 -I "$CHK" c4 "$RUNS/live$i"; }
     check "r1_live${i}_c4_sort_exercised_not_arrival_order" c4_used
 done
-d7() { python3 -I "$CHK" d7 "$RUNS/live1/trace/e2-control-ledger.jsonl" | tee "$e/d7.json"; }
-check r1_d7_three_paths_two_imsis_both_gnbs d7
+d7() { python3 -I "$CHK" d7 "$SCEN" "$RUNS/live1/trace/e2-control-ledger.jsonl" "$RUNS/live1/extra/rc-multiset.json" | tee "$e/d7.json"; }
+check r1_d7_source_applied_both_gnbs_non_source_and_enb_refused d7
 fact d7 "$(cat "$e/d7.json" 2>/dev/null || echo null)"
 
 if [ "$MODE" = c1 ]; then
 # f2: fault run (ii), the control after the final barrier
-r1_live f2 "$e/f2-schedule.json" 2 1 1
+r1_live f2 "$e/f2-schedule.json" 2 1 0 1
 f2_check() {
     python3 -I "$CHK" expect "$SCEN" "$RUNS/f2/trace/e2-control-ledger.jsonl" --fault-stop &&
-        python3 -I - "$RUNS/f2" <<'PY'
-import json, sys
+        python3 -I - "$RUNS/f2" "$HARNESS_DIR/tools/e2-evidence/ue-context-map.py" <<'PY'
+import importlib.util, json, sys
 rd = sys.argv[1]
+spec = importlib.util.spec_from_file_location("ue_context_map", sys.argv[2])
+ucm = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(ucm)
+cm = ucm.UeContextMap(rd + "/trace")
 st = json.load(open(rd + "/pacer/pacer-summary.json")).get("stopTrigger") or {}
 reqs = json.load(open(rd + "/extra/rc-requests.json"))
 ms = json.load(open(rd + "/extra/rc-multiset.json"))
 led = [json.loads(l) for l in open(rd + "/trace/e2-control-ledger.jsonl") if l.strip()][1:]
-a1 = json.load(open(rd + "/agent-c2.json"))["perAgent"]["1"]
-stop = [m for m in ms if m["imsi"] == 4]
-ok = (st.get("ok") is True and len(reqs) == 2 and all(r["viaNode"] == 1 for r in reqs)
+per = json.load(open(rd + "/agent-c2.json"))["perAgent"]
+a2 = per["2"]
+others = {n: v for n, v in per.items() if n != "2"}
+imsi = lambda m: cm.imsi_of(*ucm.x2_of(m["ueId"])) if ucm.x2_of(m.get("ueId")) else None
+stop = [m for m in ms if imsi(m) == 4]
+ok = (st.get("ok") is True and len(reqs) == 2 and all(r["viaNode"] == 2 for r in reqs)
       and len(stop) == 1 and stop[0]["answer"] == "failure" and stop[0]["cause"] == "control-failed-to-execute"
       and stop[0]["step"] is None and len(led) == 1 and led[0]["imsi"] == 6
-      and a1["forwarded"] == 2 and a1["failedOnBye"] == 1 and a1["rejIpcDown"] == 0 and a1["pending"] == 0)
-print("stop trigger", st, "stop control on the wire", stop, "ledger", [(x["imsi"], x["outcome"]) for x in led], "agent 1", a1)
+      and a2["forwarded"] == 2 and a2["failedOnBye"] == 1 and a2["rejIpcDown"] == 0 and a2["pending"] == 0
+      and sorted(others) == ["1", "3"] and all(c == 0 for v in others.values() for c in v.values()))
+print("stop trigger", st, "stop control on the wire", stop, "ledger", [(x["imsi"], x["outcome"]) for x in led], "agent 2", a2,
+      "agents 1 and 3", others)
 sys.exit(0 if ok else 1)
 PY
 }

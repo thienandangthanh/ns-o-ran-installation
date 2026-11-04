@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # Gate R2 (VM side): the TS xApp decides from the stub QP's fixed predictions and controls ns-3 through rc's gRPC
 # (G3), lock-step pacing, agents enb:1, gnb:2, gnb:3, the R0 radio config. A trigger is one 30003 from the RMR
-# injector naming one UE (the decimal IMSI); the TS xApp asks the stub (30000), gets its prediction (30002) and
-# hands over when the best cell beats the serving cell by more than the A1 threshold.
+# injector naming one UE by its KPM UE ID key (en-gNB-UEID, resolved from the run's context files and confirmed in
+# Influx by the step's prepare); the TS xApp asks the stub (30000), gets its prediction (30002) and hands over when
+# the best cell beats the serving cell by more than the A1 threshold, through the UE's source en-gNB (E2SM-RC Style 5
+# action 3).
 #
 #   gate-r2-ts-stub-qp.sh [--mode c1|single|calibrate] [--dev] [--reference <committed reference dir>]
 #
@@ -16,7 +18,7 @@
 # subscribed, then the TS xApp and stub pods recreated (the TS xApp reads e2mgr's nodeb list only at start-up),
 # their appmgr registrations ensured (neither registers itself), rtmgr restarted again with a session to every
 # xApp and a1mediator, the A1 threshold set again (the TS xApp starts at 0), the
-# stub's table loaded and the injector started. Positives need one control within T_ctl, negatives none within W.
+# stub emptied (the first trigger's prepare loads its table) and the injector started. Positives need one control within T_ctl, negatives none within W.
 # shellcheck disable=SC2034  # SINKX and PACERX are read by paced-lib.sh
 source "$(dirname "$0")/lib.sh"
 gate_init r2
@@ -111,15 +113,27 @@ fi
 ################################################################################
 # live runs
 ################################################################################
-python3 -I "$CHK" schedule "$SCEN" "$SEND" "$INJ_CTL_PORT" "${CALX[@]}" >"$e/r2-schedule.json"
-python3 -I "$CHK" table "$SCEN" "${CALX[@]}" >"$e/r2-stub-table.json"
-
-rung_stub_setup() { RUN_SCHEDULE="$e/r2-schedule.json"; check "r2_${1}_stub_table_loaded" stub_table_load "$e/r2-stub-table.json"; }
+# Per run: the schedule names the run's UE ID files and the stub's URL; the stub starts with an empty table, and the
+# first trigger's prepare loads the table keyed by each UE's KPM UE ID key once the run's context files list every
+# scenario IMSI (r2-checks.py prepare)
+rung_stub_setup() {
+    local label="$1" rd="$2"
+    RUN_SCHEDULE="$rd/schedule.json"
+    stub_empty_and_schedule() {
+        local u
+        u=$(_stub_url) || return 1
+        mkdir -p "$rd/r2"
+        python3 -I "$CHK" schedule "$SCEN" "$SEND" "$INJ_CTL_PORT" "$rd" "$u" "${CALX[@]}" >"$RUN_SCHEDULE" || return 1
+        echo '{"predictions": {}}' >"$rd/r2/empty-table.json"
+        stub_table_load "$rd/r2/empty-table.json"
+    }
+    check "r2_${label}_stub_emptied_and_run_schedule_written" stub_empty_and_schedule
+}
 rung_judges() {
     local label="$1" rd="$2"
     check "r2_${label}_expected_outcomes_negatives_no_line_late_zero" bash -o pipefail -c "python3 -I '$CHK' expect '$SCEN' '$rd/trace/e2-control-ledger.jsonl' ${CALX[*]} | tee '$rd/r2-expect.json'"
-    check "r2_${label}_wire_requests_equal_positives_via_target_with_stub_key" bash -o pipefail -c "python3 -I '$CHK' wire '$SCEN' '$rd/extra/rc-multiset.json' ${CALX[*]} | tee '$rd/r2-wire.json'"
-    check "r2_${label}_injector_and_stub_one_request_and_answer_per_trigger" bash -o pipefail -c "python3 -I '$CHK' stub '$SCEN' '$rd/stub-log.json' '$rd/injector/tx.jsonl' ${CALX[*]} | tee '$rd/r2-stub.json'"
+    check "r2_${label}_wire_requests_equal_positives_via_source_with_stub_key" bash -o pipefail -c "python3 -I '$CHK' wire '$SCEN' '$rd/extra/rc-multiset.json' '$rd/trace' ${CALX[*]} | tee '$rd/r2-wire.json'"
+    check "r2_${label}_injector_and_stub_one_request_and_answer_per_trigger" bash -o pipefail -c "python3 -I '$CHK' stub '$SCEN' '$rd/stub-log.json' '$rd/injector/tx.jsonl' '$rd/trace' ${CALX[*]} | tee '$rd/r2-stub.json'"
 }
 
 if [ "$MODE" = calibrate ]; then
@@ -133,7 +147,7 @@ else
         if [ "$i" = 1 ]; then rung_live "live$i" --dump; else rung_live "live$i"; fi
     done
     d7() { python3 -I "$CHK" d7 "$RUNS/live1/trace/e2-control-ledger.jsonl" | tee "$e/d7.json"; }
-    check r2_d7_every_control_via_the_target_gnb_both_gnbs d7
+    check r2_d7_every_control_via_the_source_en_gnb_both_gnbs d7
     fact d7 "$(cat "$e/d7.json" 2>/dev/null || echo null)"
 fi
 

@@ -17,6 +17,8 @@
 #   kpm_ue_ids_check <pcap> <node-ips.json> <trace-dir> <out> <facts>   decoded KPM UE IDs resolved by the UE context
 #   ranfunc_decode <node.json> <sodir> <out.jsonl>   e2mgr's ranFunctionDefinition hex through kpimon's library
 #   agent_counters_assert <stats-line-file> <expected-samples> [<expected-unreported>]
+#   agent_ue_context_counters_zero <dir> [<node-ips.json>]   UE context counters over every stats line of every agent log
+#   agent_logs_after_bye <dir>    every agent container's log in <dir>/agent-<n>.log, once it holds a stats line after bye
 #   endurance_sample <dir> <n>        one 60 s sample (pods, agents, RSS, e2mgr, ns-3, load, kpimon)
 #   agents_hygiene                    no ns-3/agent process or container, no 3847x listener
 # Environment knobs: M4_WORKDIR (default $HOME/m4-build), NS3_TIMEOUT_S (default 900).
@@ -300,6 +302,75 @@ print("state=%s subs=%s samplesIn=%s forwarded=%s unreported=%s (trace %d, want 
 ok = (not nz and s["samplesIn"] == exp and s["samplesUnreported"] == unrep
       and s["samplesForwarded"] == exp - unrep and s["subs"] >= 1 and s["ipc"]["ueContext"] >= 1)
 sys.exit(0 if ok else 1)
+PY
+}
+
+# agent_logs_after_bye <dir>: the agent prints its stats every 5 s, so wait (15 s at most) until each agent container's
+# log holds a stats line with ipc.bye >= 1, saving it as <dir>/agent-<n>.log
+agent_logs_after_bye() {
+    local rd="$1" c n deadline=$(($(date +%s) + 15))
+    for c in $(dk ps -aq --filter label=ns3e2.agent=1); do
+        n=$(dk inspect --format '{{index .Config.Labels "ns3e2.nodeId"}}' "$c")
+        while :; do
+            dk logs "$c" >"$rd/agent-$n.log" 2>&1
+            python3 -I - "$rd/agent-$n.log" <<'PY' && break
+import json, sys
+last = None
+for l in open(sys.argv[1], errors="replace"):
+    if l.startswith('{"event":"stats"'):
+        last = json.loads(l)
+sys.exit(0 if last and last["ipc"]["bye"] >= 1 else 1)
+PY
+            [ "$(date +%s)" -lt "$deadline" ] || { echo "agent $n: no stats line after bye within 15 s"; return 1; }
+            sleep 1
+        done
+    done
+    echo "every agent logged its stats after bye"
+}
+
+# agent_ue_context_counters_zero <dir> [<node-ips.json>, default <dir>/node-ips.json]: for every node of node-ips.json,
+# <dir>/agent-<n>.log (docker logs: every restart of the container) has >= 1 stats line, and over EVERY stats line
+# the maximum of samplesNoUeContext is 0, the maximum of ipc.ueContextRejected is 0 and the maximum of ipc.ueContext
+# is >= 1. A restart resets the agent's counters, so a final-line reading would miss a count of an earlier
+# incarnation; the maximum over every line sees it.
+agent_ue_context_counters_zero() {
+    python3 -I - "$1" "${2:-$1/node-ips.json}" <<'PY'
+import json, os, sys
+d, ips = sys.argv[1], sys.argv[2]
+problems, out = [], {}
+try:
+    nodes = sorted(json.load(open(ips)), key=int)
+except (OSError, ValueError) as ex:
+    sys.exit("node-ips %s unreadable: %s" % (ips, ex))
+if not nodes:
+    problems.append("node-ips %s lists no node" % ips)
+for n in nodes:
+    f = os.path.join(d, "agent-%s.log" % n)
+    lines, mx = 0, {"samplesNoUeContext": None, "ueContextRejected": None, "ueContext": None}
+    try:
+        for l in open(f, errors="replace"):
+            if not l.startswith('{"event":"stats"'):
+                continue
+            try:
+                s = json.loads(l)
+                v = {"samplesNoUeContext": s["samplesNoUeContext"], "ueContextRejected": s["ipc"]["ueContextRejected"],
+                     "ueContext": s["ipc"]["ueContext"]}
+            except (ValueError, KeyError, TypeError):
+                problems.append("node %s: a stats line without the UE context counters" % n)
+                continue
+            lines += 1
+            mx = {k: v[k] if mx[k] is None else max(mx[k], v[k]) for k in mx}
+    except OSError:
+        problems.append("node %s: no agent log %s" % (n, f))
+        continue
+    out[n] = dict(mx, statsLines=lines)
+    if lines < 1:
+        problems.append("node %s: no stats line" % n)
+    elif mx["samplesNoUeContext"] != 0 or mx["ueContextRejected"] != 0 or mx["ueContext"] < 1:
+        problems.append("node %s: max samplesNoUeContext %s, max ueContextRejected %s, max ueContext %s" % (
+            n, mx["samplesNoUeContext"], mx["ueContextRejected"], mx["ueContext"]))
+print(json.dumps({"perNode": out, "problems": problems, "pass": not problems}, sort_keys=True))
+sys.exit(0 if not problems else 1)
 PY
 }
 

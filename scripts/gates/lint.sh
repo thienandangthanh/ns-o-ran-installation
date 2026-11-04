@@ -8,7 +8,9 @@
 #   4. no `<logs> | grep -q|-m` or `| head`: the reader exits early, the writer dies of SIGPIPE and pipefail
 #      turns that into a false failure (use a here-string, process substitution or a file);
 #   5. ts_threshold_logged on a real TS xApp log fixture;
-#   6. the self-tests of the judges (patch-set checks of the TS xApp, rc and kpimon, the TS cell-map replay, ...).
+#   6. the self-tests of the judges (patch-set checks of the TS xApp, rc and kpimon, the TS cell-map replay, the pacer,
+#      the UE ID prepare, the RC wire extractor, the R1 C4 arrival-order fixture, ...), the send-rmr.sh UE ID refusals
+#      and the UE context counter helper on a restarted agent's log.
 set -uo pipefail
 cd "$(dirname "$0")/../.." || exit 1
 rc=0
@@ -71,6 +73,36 @@ python3 -I tools/e2-evidence/e2-facts-query.py --self-test >/dev/null || { echo 
 python3 -I tools/e2-evidence/influx-ue-ueid-every-node.py --self-test >/dev/null || { echo "Influx UE-row ueId-to-IMSI every-node judge self-test failed"; rc=1; }
 python3 -I tools/ipc-null-sink/ipc-null-sink.py --self-test >/dev/null || { echo "ipc-null-sink self-test failed"; rc=1; }
 timeout 120 bash tools/e2-evidence/selftest.sh >/dev/null 2>&1 || { echo "e2-evidence self-test (incl. influx-vs-trace ueId) failed"; rc=1; }
+timeout 300 python3 -I scripts/gates/pacer-selftest.py >/dev/null 2>&1 || { echo "pacer self-test (replay pairing, ueIdFrom) failed"; rc=1; }
+python3 -I scripts/gates/ue-id-prepare.py --self-test >/dev/null || { echo "ue-id-prepare self-test failed"; rc=1; }
+python3 -I tools/e2-evidence/wire-c1-extract.py --self-test >/dev/null || { echo "wire-c1-extract self-test failed"; rc=1; }
+python3 -I scripts/gates/r0-checks.py --self-test >/dev/null || { echo "r0-checks self-test (the C4 arrival-order fixture must fail) failed"; rc=1; }
+# send-rmr.sh refuses (exit 2, nothing sent) any ue-id that is not an en-gNB-UEID key, a missing or empty file and a
+# file of two lines; a well-formed key reaches the socket step (exit 1 here: nothing listens on the port)
+tmp=$(mktemp -d); srmr() { bash scripts/gates/send-rmr.sh 1 "$@" >/dev/null 2>&1; echo $?; }
+printf 'enGnbUeId:3@00F110-00001\n' >"$tmp/ok.txt"; printf 'enGnbUeId:3@00F110-00001\nx\n' >"$tmp/two.txt"; : >"$tmp/empty.txt"
+printf '3\n' >"$tmp/imsi.txt"
+for want in "2 anomaly 3" "2 anomaly enGnbUeId:3@00f110-00001" "2 anomaly-from $tmp/missing.txt" "2 anomaly-from $tmp/empty.txt" \
+    "2 anomaly-from $tmp/two.txt" "2 anomaly-from $tmp/imsi.txt" "1 anomaly enGnbUeId:3@00F110-00001" "1 anomaly-from $tmp/ok.txt"; do
+    read -r w args <<<"$want"
+    # shellcheck disable=SC2086
+    [ "$(srmr $args)" = "$w" ] || { echo "send-rmr.sh $args: exit not $w"; rc=1; }
+done
+rm -rf "$tmp"
+# agent_ue_context_counters_zero: the maximum over every stats line of every incarnation, so a count that a restart
+# reset (an earlier incarnation's samplesNoUeContext 1) is red; a clean log is green
+source <(sed -n '/^agent_ue_context_counters_zero()/,/^}/p' scripts/gates/agents-ns3-run.sh)
+tmp=$(mktemp -d); echo '{"1": ["10.0.0.1"], "2": ["10.0.0.2"]}' >"$tmp/node-ips.json"
+st() { printf '{"event":"stats","samplesNoUeContext":%d,"ipc":{"ueContext":%d,"ueContextRejected":%d}}\n' "$@"; }
+{ st 0 1 0; st 0 3 0; } >"$tmp/agent-1.log"; { st 0 2 0; st 0 2 0; } >"$tmp/agent-2.log"
+agent_ue_context_counters_zero "$tmp" >/dev/null || { echo "agent_ue_context_counters_zero: clean logs were red"; rc=1; }
+{ st 1 2 0; echo "restart"; st 0 1 0; } >"$tmp/agent-2.log"
+agent_ue_context_counters_zero "$tmp" >/dev/null && { echo "agent_ue_context_counters_zero: an earlier incarnation's samplesNoUeContext 1 passed"; rc=1; }
+{ st 0 2 1; } >"$tmp/agent-2.log"
+agent_ue_context_counters_zero "$tmp" >/dev/null && { echo "agent_ue_context_counters_zero: ueContextRejected 1 passed"; rc=1; }
+rm -f "$tmp/agent-2.log"
+agent_ue_context_counters_zero "$tmp" >/dev/null && { echo "agent_ue_context_counters_zero: a missing agent log passed"; rc=1; }
+rm -rf "$tmp"
 # kpimon decode harness host tests: they need kpimon's own library (KP_SO/KP_INC, KP_E2SM/TS_ORIG; see
 # tools/kpimon-decode-harness/extract-from-image.sh). Without it each prints SKIP (exit 77), shown, never a pass.
 tmp_kdh=$(mktemp)

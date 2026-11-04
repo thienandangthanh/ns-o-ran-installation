@@ -14,7 +14,7 @@
              "ul": 0,
              "order": "the serving gNB cell first (the gNB whose UeMetrics row at seq T lists the IMSI), then the others by ascending nodeId",
              "bounds": "0 <= dl <= 2147483647 (the TS xApp stores int), else fail closed",
-             "ueId": "decimal IMSI string"},
+             "ueId": "the KPM UE ID key of AC14b (en-gNB-UEID)"},
  "decisionMirror": {"source": "ric-app-ts@19e169b src/ts_xapp/ts_xapp.cpp:689-728 (with the Testbed patches: A1 payload parsing, default RMR handler)",
                     "handoverIff": "10 * max_other_dl > 11 * serving_dl"},
  "margin": {"handoverEligibleIff": "20 * max_other_dl >= 23 * serving_dl", "noneEligibleIff": "20 * max_other_dl <= 21 * serving_dl"},

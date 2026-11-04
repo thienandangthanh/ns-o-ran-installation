@@ -1,13 +1,26 @@
 #!/usr/bin/env bash
 # Probe (VM side, M10 P02 seam smoke): the δ actuation seam (ns3::E2ControlHub::ActuationDelay, scenario-zero
 # --actuationDelayMs) on the M4 build in ~/m4-build at the pinned forks (clean trees, emitter SHAs = pins.conf). No RIC: the null sink stands in for
-# the agents and the pacer injects S1's Fallback-1 controls (gate-s1-pacer-lockstep.sh V2), so the outcomes are fixed
-# by construction. Runs, all lock-step with the R0 configuration:
+# the agents and the pacer injects controls through each UE's source en-gNB, so the outcomes are fixed by construction.
+# Every control names its UE by {mEnbUeX2apId, mnCellId 1} (the migrated IPC control schema, no imsi), U(i) = IMSI i's
+# ID in the frozen checkpoint-1 identity map; after each run, dseam_<run>_injected_ue_ids_name_the_scheduled_imsis
+# checks through the run's own context files that each ID names the IMSI its case is about (the harness-side
+# annotation $e/<schedule>-ue-imsis.json, never sent to ns-3; null = an ID no UE holds). fb1 (d0, d150, d500):
+#   step 20  {2, 1, U(6), -> 3} applied; {2, 2, U(6), -> 3} the same UE, node and target, a higher ctlId: inHandover;
+#            {3, 1, U(1), -> 2}
+#   step 30  {3, 2, U(6), -> 3} through IMSI 6's source after step 20: alreadyOnTarget; {2, 3, U(6), -> 2} through
+#            the non-source en-gNB: unknownUe (ledger imsi 0); {2, 4, {4095, 1}, -> 2} an X2AP ID no UE holds:
+#            unknownUe
+#   step 40  {2, 5, U(3), -> 1} and {2, 6, U(3), -> 7}: unknownTarget twice
+#   late     {2, 9, U(4), -> 3} after the final barrier: late (written at the stop, so with imsi 0: ns-3 disposes
+#            its nodes before the emitters stop; no check here reads that line's imsi)
+# Runs, all lock-step with the R0 configuration:
 #   d0       δ = 0      check-ledger.py (the d = 0 checks), one controlAck per ledger line
 #   d150     δ = 150    check-ledger.py --delta-ms 150 (one apply event per batch, δ not a multiple of T)
 #   d500     δ = 500    check-ledger.py --delta-ms 500 (batches queued to barrier k + 5)
-#   d500stop δ = 500, one control injected at step 97 of 100: still pending at the stop, so it gets exactly one
-#            refused/late answer whose rxSimTimeNs is barrier 97's time
+#   d500stop δ = 500, one control {3, 1, U(2), -> 2} (IMSI 2's source, a target it is not on) injected at step 97 of
+#            100: still pending at the stop, so it gets exactly one refused/late answer whose rxSimTimeNs is barrier
+#            97's time
 #   d100tie  δ = 100 (= T, queued path), the tie rule at one barrier: a batch received at barrier 20 is due at 21;
 #            barrier 21 also receives a forced-late control (afterSeq 20) and a new batch (due at 22). In the ledger
 #            the due batch is answered at t21 before the late refusal, and the new batch at t22
@@ -46,31 +59,44 @@ provenance() {   # the pinned forks, clean, and the hub source carries the seam
 }
 check dseam_build_at_pins_clean_and_carries_the_seam provenance
 
+# U(i) of the frozen checkpoint-1 identity map: IMSI -> m-eNB-UE-X2AP-ID 1->3, 2->4, 3->1, 4->2, 5->5, 6->6 (MN cell 1)
 cat >"$e/fb1-schedule.json" <<'JSON'
 {"steps": {
-  "20": {"inject": [{"nodeId": 1, "ctlId": 1, "imsi": 6, "targetCellId": 3, "afterSeq": 20},
-                    {"nodeId": 2, "ctlId": 1, "imsi": 6, "targetCellId": 2, "afterSeq": 20},
-                    {"nodeId": 3, "ctlId": 1, "imsi": 1, "targetCellId": 2, "afterSeq": 20}]},
-  "30": {"inject": [{"nodeId": 2, "ctlId": 2, "imsi": 6, "targetCellId": 3, "afterSeq": 30},
-                    {"nodeId": 3, "ctlId": 2, "imsi": 99, "targetCellId": 2, "afterSeq": 30}]},
-  "40": {"inject": [{"nodeId": 2, "ctlId": 3, "imsi": 3, "targetCellId": 1, "afterSeq": 40},
-                    {"nodeId": 2, "ctlId": 4, "imsi": 3, "targetCellId": 7, "afterSeq": 40}]}
+  "20": {"inject": [{"nodeId": 2, "ctlId": 1, "ueId": {"mEnbUeX2apId": 6, "mnCellId": 1}, "targetCellId": 3, "afterSeq": 20},
+                    {"nodeId": 2, "ctlId": 2, "ueId": {"mEnbUeX2apId": 6, "mnCellId": 1}, "targetCellId": 3, "afterSeq": 20},
+                    {"nodeId": 3, "ctlId": 1, "ueId": {"mEnbUeX2apId": 3, "mnCellId": 1}, "targetCellId": 2, "afterSeq": 20}]},
+  "30": {"inject": [{"nodeId": 3, "ctlId": 2, "ueId": {"mEnbUeX2apId": 6, "mnCellId": 1}, "targetCellId": 3, "afterSeq": 30},
+                    {"nodeId": 2, "ctlId": 3, "ueId": {"mEnbUeX2apId": 6, "mnCellId": 1}, "targetCellId": 2, "afterSeq": 30},
+                    {"nodeId": 2, "ctlId": 4, "ueId": {"mEnbUeX2apId": 4095, "mnCellId": 1}, "targetCellId": 2, "afterSeq": 30}]},
+  "40": {"inject": [{"nodeId": 2, "ctlId": 5, "ueId": {"mEnbUeX2apId": 1, "mnCellId": 1}, "targetCellId": 1, "afterSeq": 40},
+                    {"nodeId": 2, "ctlId": 6, "ueId": {"mEnbUeX2apId": 1, "mnCellId": 1}, "targetCellId": 7, "afterSeq": 40}]}
  },
- "late": [{"nodeId": 2, "ctlId": 9, "imsi": 4, "targetCellId": 3}]}
+ "late": [{"nodeId": 2, "ctlId": 9, "ueId": {"mEnbUeX2apId": 2, "mnCellId": 1}, "targetCellId": 3}]}
 JSON
+echo '{"2/1": 6, "2/2": 6, "3/1": 1, "3/2": 6, "2/3": 6, "2/4": null, "2/5": 3, "2/6": 3, "2/9": 4}' >"$e/fb1-schedule-ue-imsis.json"
 cat >"$e/stop-schedule.json" <<'JSON'
-{"steps": {"97": {"inject": [{"nodeId": 2, "ctlId": 1, "imsi": 2, "targetCellId": 3, "afterSeq": 97}]}}}
+{"steps": {"97": {"inject": [{"nodeId": 3, "ctlId": 1, "ueId": {"mEnbUeX2apId": 4, "mnCellId": 1}, "targetCellId": 2, "afterSeq": 97}]}}}
 JSON
+echo '{"3/1": 2}' >"$e/stop-schedule-ue-imsis.json"
 cat >"$e/stop99-schedule.json" <<'JSON'
-{"steps": {"99": {"inject": [{"nodeId": 2, "ctlId": 1, "imsi": 2, "targetCellId": 3, "afterSeq": 99}]}}}
+{"steps": {"99": {"inject": [{"nodeId": 3, "ctlId": 1, "ueId": {"mEnbUeX2apId": 4, "mnCellId": 1}, "targetCellId": 2, "afterSeq": 99}]}}}
 JSON
+echo '{"3/1": 2}' >"$e/stop99-schedule-ue-imsis.json"
 cat >"$e/tie-schedule.json" <<'JSON'
 {"steps": {
-  "20": {"inject": [{"nodeId": 2, "ctlId": 1, "imsi": 6, "targetCellId": 2, "afterSeq": 20}]},
-  "21": {"inject": [{"nodeId": 2, "ctlId": 2, "imsi": 4, "targetCellId": 3, "afterSeq": 20},
-                    {"nodeId": 3, "ctlId": 1, "imsi": 1, "targetCellId": 2, "afterSeq": 21}]}
+  "20": {"inject": [{"nodeId": 2, "ctlId": 1, "ueId": {"mEnbUeX2apId": 6, "mnCellId": 1}, "targetCellId": 2, "afterSeq": 20}]},
+  "21": {"inject": [{"nodeId": 2, "ctlId": 2, "ueId": {"mEnbUeX2apId": 2, "mnCellId": 1}, "targetCellId": 3, "afterSeq": 20},
+                    {"nodeId": 3, "ctlId": 1, "ueId": {"mEnbUeX2apId": 3, "mnCellId": 1}, "targetCellId": 2, "afterSeq": 21}]}
  }}
 JSON
+echo '{"2/1": 6, "2/2": 4, "3/1": 1}' >"$e/tie-schedule-ue-imsis.json"
+# injected_ids <run> <schedule base>: the run's context files pass ue-context-map.py check and every injected ueId names
+# its annotated IMSI (I(ueId) in this run), or no IMSI for a null annotation
+injected_ids() {
+    python3 -I "$HARNESS_DIR/tools/e2-evidence/ue-context-map.py" injected --trace-dir "$RUNS/$1/trace" \
+        --pdcp "$RUNS/$1/ns3run/DlE2PdcpStatsLte.txt" --schedule "$e/$2.json" --annotations "$e/$2-ue-imsis.json" \
+        --out "$e/$1-injected-ue-ids.json"
+}
 
 acks_match() {   # every ledger line has exactly one controlAck at the pacer with the same outcome and cause
     python3 -I - "$RUNS/$1" <<'PY'
@@ -88,8 +114,9 @@ PY
 for d in 0 150 500; do
     PACERX=(--schedule "$e/fb1-schedule.json")
     check "dseam_run_d$d" paced_null_run "d$d" lockstep 0 "--simStartEpochMs=$EPOCH_MS" "--actuationDelayMs=$d"
+    check "dseam_d${d}_injected_ue_ids_name_the_scheduled_imsis" injected_ids "d$d" fb1-schedule
     check "dseam_d${d}_ledger_checks" bash -o pipefail -c "python3 -I '$LEDGER_CHECK' '$RUNS/d$d/trace/e2-control-ledger.jsonl' \
-        '$RUNS/d$d/pacer/pacer-log.jsonl' --expect 8 --delta-ms $d | tee '$e/d$d-ledger-check.json'"
+        '$RUNS/d$d/pacer/pacer-log.jsonl' --expect 9 --delta-ms $d | tee '$e/d$d-ledger-check.json'"
     check "dseam_d${d}_one_ack_per_ledger_line" acks_match "d$d"
 done
 same_outcomes() {
@@ -107,6 +134,7 @@ PY
 record dseam_outcomes_per_delta_informational true "$(same_outcomes 2>&1 | tail -n 1)"
 PACERX=(--schedule "$e/stop-schedule.json")
 check dseam_run_d500stop paced_null_run d500stop lockstep 0 "--simStartEpochMs=$EPOCH_MS" --actuationDelayMs=500
+check dseam_d500stop_injected_ue_ids_name_the_scheduled_imsis injected_ids d500stop stop-schedule
 check dseam_d500stop_ledger_checks bash -o pipefail -c "python3 -I '$LEDGER_CHECK' '$RUNS/d500stop/trace/e2-control-ledger.jsonl' \
     '$RUNS/d500stop/pacer/pacer-log.jsonl' --expect 1 --delta-ms 500 | tee '$e/d500stop-ledger-check.json'"
 check dseam_d0_emitters_at_pins ns3_emitters_at_pins "$RUNS/d0/trace"
@@ -129,6 +157,7 @@ check dseam_d500stop_one_ack acks_match d500stop
 
 PACERX=(--schedule "$e/stop99-schedule.json")
 check dseam_run_d150stop paced_null_run d150stop lockstep 0 "--simStartEpochMs=$EPOCH_MS" --actuationDelayMs=150
+check dseam_d150stop_injected_ue_ids_name_the_scheduled_imsis injected_ids d150stop stop99-schedule
 check dseam_d150stop_ledger_checks bash -o pipefail -c "python3 -I '$LEDGER_CHECK' '$RUNS/d150stop/trace/e2-control-ledger.jsonl' \
     '$RUNS/d150stop/pacer/pacer-log.jsonl' --expect 1 --delta-ms 150 | tee '$e/d150stop-ledger-check.json'"
 check dseam_d150stop_scheduled_event_cancelled_one_late_failure pending_at_stop d150stop 99 150
@@ -136,6 +165,7 @@ check dseam_d150stop_one_ack acks_match d150stop
 
 PACERX=(--schedule "$e/tie-schedule.json")
 check dseam_run_d100tie paced_null_run d100tie lockstep 0 "--simStartEpochMs=$EPOCH_MS" --actuationDelayMs=100
+check dseam_d100tie_injected_ue_ids_name_the_scheduled_imsis injected_ids d100tie tie-schedule
 check dseam_d100tie_ledger_checks bash -o pipefail -c "python3 -I '$LEDGER_CHECK' '$RUNS/d100tie/trace/e2-control-ledger.jsonl' \
     '$RUNS/d100tie/pacer/pacer-log.jsonl' --expect 3 --delta-ms 100 | tee '$e/d100tie-ledger-check.json'"
 tie_order() {   # ledger order and times at barrier 21: the due batch, then the late refusal; the new batch at 22

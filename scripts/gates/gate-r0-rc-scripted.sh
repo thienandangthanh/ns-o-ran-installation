@@ -63,7 +63,9 @@ SINK="$HARNESS_DIR/tools/ipc-null-sink/ipc-null-sink.py"
 PACER="$HARNESS_DIR/scripts/gates/pacer.py"
 CLI=(--nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10)
 SINKX=(); PACERX=()
-N_CTL=$(python3 -I -c 'import json,sys; print(len(json.load(open(sys.argv[1]))["controls"]))' "$SCEN")
+# requests on the wire, ledger lines (controls that reach ns-3), agent-local answers (path "enb": the eNB's agent
+# answers ran-function-id-invalid itself)
+read -r N_REQ N_LED N_LOCAL < <(python3 -I -c 'import json,sys; c=json.load(open(sys.argv[1]))["controls"]; l=sum(1 for x in c if x["expect"].startswith("agent:")); print(len(c), len(c) - l, l)' "$SCEN")
 case "$MODE" in c1|single|calibrate) ;; *) log "bad --mode $MODE"; exit 2 ;; esac
 fact mode "$(json_str "$MODE")"
 fact dev "$([ "$DEV" = 1 ] && echo true || echo false)"
@@ -154,10 +156,13 @@ g4() {   # G4: every en-gNB's e2mgr nodeb JSON decodes to its key %08X10 (NCI + 
         --no-key enB_macro_001_001_000001 --no-wrong-node
 }
 
-# r0_live <label> <schedule.json> <n-controls> [--first]: one run from a fresh RIC state; the per-run checks.
+# r0_live <label> <schedule template> <n-requests> <n-ledger-lines> <n-agent-local> [--first]: one run from a fresh
+# RIC state; the per-run checks. The template's @RUN@ paths (the prepare's trace dir and UE ID files) name this run.
 r0_live() {
-    local label="$1" sched="$2" nctl="$3" first="${4:-}" rd="$RUNS/$1" pp rc cap_t0
+    local label="$1" tmpl="$2" nreq="$3" nled="$4" nlocal="$5" first="${6:-}" rd="$RUNS/$1" pp rc cap_t0 sched
     rm -rf "$rd"; mkdir -p "$rd/ns3run" "$rd/trace" "$rd/extra"
+    sched="$rd/schedule.json"
+    check "r0_${label}_run_schedule_rendered" bash -c "python3 -I '$CHK' render '$tmpl' '$rd' >'$sched'"
     check "r0_${label}_ric_reset_fresh_pods_and_bucket" rc_ric_reset "$label"
     check "r0_${label}_route_dump_start" rc_route_dump "$label-start"
     printf '%s\tstart\t%s\t%s\t%s\t%s\n' "$label" "${ROUTE_OWNER_12041:-}" "${ROUTE_OWNER_12042:-}" \
@@ -192,10 +197,8 @@ r0_live() {
     printf '%s\tend\t%s\t%s\t%s\t%s\n' "$label" "${ROUTE_OWNER_12041:-}" "${ROUTE_OWNER_12042:-}" \
         "${ROUTE_OWNER_E2TERM_12041:-}" "${ROUTE_OWNER_E2TERM_12042:-}" >>"$e/route-owners.tsv"
     check "r0_${label}_restart_counts_zero_rc_kpimon_hw_go_agents" rc_restarts_zero "$label-after"
-    local c
-    for c in $(dk ps -aq --filter label=ns3e2.agent=1); do
-        dk logs "$c" >"$rd/agent-$(dk inspect --format '{{index .Config.Labels "ns3e2.nodeId"}}' "$c").log" 2>&1
-    done
+    check "r0_${label}_agent_logs_with_stats_after_bye" agent_logs_after_bye "$rd"
+    check "r0_${label}_agent_ue_context_counters_zero_every_stats_line" agent_ue_context_counters_zero "$rd"
     check "r0_${label}_agents_stopped" agents_stop
     check "r0_${label}_capture_stopped" capture_stop "$label"
     check "r0_${label}_kpimon_subscription_reporting_period_decoded" kpm_sub_period_check "$e/$label.pcap" "$label-sub" "$cap_t0"
@@ -210,24 +213,25 @@ r0_live() {
     check "r0_${label}_kpimon_zero_rc_wmore" wmore0
     extract() {
         python3 -I "$HARNESS_DIR/tools/e2-evidence/wire-c1-extract.py" "$e/$label.pcap" --node-ips "$rd/node-ips.json" \
-            --ledger "$rd/trace/e2-control-ledger.jsonl" --out-dir "$rd/extra" --t0 "$cap_t0" \
-            --decode-cmd "$(dk_cmd) run --rm -i $RC_DEC_TAG" --expect-requests "$nctl"
+            --ledger "$rd/trace/e2-control-ledger.jsonl" --ue-context-dir "$rd/trace" --facts "$e/$label-sub-facts.json" \
+            --out-dir "$rd/extra" --t0 "$cap_t0" --decode-cmd "$(dk_cmd) run --rm -i $RC_DEC_TAG" \
+            --expect-requests "$nreq" --expect-agent-local "$nlocal"
     }
     check "r0_${label}_wire_one_terminal_answer_per_request_joined_to_ledger" extract
-    c2() { python3 -I "$HARNESS_DIR/scripts/gates/check-ledger.py" "$rd/trace/e2-control-ledger.jsonl" "$rd/pacer/pacer-log.jsonl" --expect "$nctl"; }
+    c2() { python3 -I "$HARNESS_DIR/scripts/gates/check-ledger.py" "$rd/trace/e2-control-ledger.jsonl" "$rd/pacer/pacer-log.jsonl" --expect "$nled"; }
     check "r0_${label}_c2_ledger" c2
     check "r0_${label}_c9_handover_rows_match_applied_lines" python3 -I "$HARNESS_DIR/scripts/gates/check-c9-handover-trace.py" "$rd"
     kpm_moves() {
         python3 -I "$HARNESS_DIR/tools/e2-evidence/kpm-ue-list-moves.py" "$e/$label.pcap" --node-ips "$rd/node-ips.json" \
             --ledger "$rd/trace/e2-control-ledger.jsonl" --epoch-ms "$EPOCH_MS" --t0 "$cap_t0" --ue-context-dir "$rd/trace" \
-            --out "$rd/kpm-ue-moves.json"
+            --facts "$e/$label-sub-facts.json" --out "$rd/kpm-ue-moves.json"
     }
     check "r0_${label}_kpm_ue_lists_move_applied_and_keep_refused" kpm_moves
 }
 
 if [ "$MODE" = calibrate ]; then
     python3 -I "$CHK" schedule "$SCEN" "$RC_EP" --rc-send "$HARNESS_DIR/scripts/gates/rc-send.sh" --calibrate >"$e/calibrate-schedule.json"
-    r0_live calib "$e/calibrate-schedule.json" 10
+    r0_live calib "$e/calibrate-schedule.json" 10 10 0
     calib_tctl() { python3 -I "$CHK" tctl "$RUNS/calib/pacer/pacer-summary.json" | tee "$e/calibration.json"; }
     check r0_calibration_ten_complete_trigger_steps_and_t_ctl calib_tctl
     fact calibration "$(cat "$e/calibration.json" 2>/dev/null || echo null)"
@@ -240,11 +244,12 @@ if [ "$MODE" = calibrate ]; then
 fi
 NLIVE=3; [ "$MODE" = single ] && NLIVE=1
 for i in $(seq "$NLIVE"); do
-    if [ "$i" = 1 ]; then r0_live "live$i" "$e/r0-schedule.json" "$N_CTL" --first; else r0_live "live$i" "$e/r0-schedule.json" "$N_CTL"; fi
+    if [ "$i" = 1 ]; then r0_live "live$i" "$e/r0-schedule.json" "$N_REQ" "$N_LED" "$N_LOCAL" --first
+    else r0_live "live$i" "$e/r0-schedule.json" "$N_REQ" "$N_LED" "$N_LOCAL"; fi
     check "r0_live${i}_expected_outcomes_and_afterseq" python3 -I "$CHK" expect "$SCEN" "$RUNS/live$i/trace/e2-control-ledger.jsonl"
 done
-d7() { python3 -I "$CHK" d7 "$RUNS/live1/trace/e2-control-ledger.jsonl" | tee "$e/d7.json"; }
-check r0_d7_three_paths_two_imsis_both_gnbs d7
+d7() { python3 -I "$CHK" d7 "$SCEN" "$RUNS/live1/trace/e2-control-ledger.jsonl" "$RUNS/live1/extra/rc-multiset.json" | tee "$e/d7.json"; }
+check r0_d7_source_applied_both_gnbs_non_source_and_enb_refused d7
 fact d7 "$(cat "$e/d7.json" 2>/dev/null || echo null)"
 refusal() {
     python3 -I - "$RUNS/live1" <<'PY'
@@ -252,17 +257,20 @@ import json, sys
 rd = sys.argv[1]
 led = [json.loads(l) for l in open(rd + "/trace/e2-control-ledger.jsonl") if l.strip()][1:]
 ref = [x for x in led if x["cause"] == "alreadyOnTarget"]
+refused = [x for x in led if x["outcome"] == "refused"]
 ms = json.load(open(rd + "/extra/rc-multiset.json"))
 wire = [m for m in ms if m["cause"] == "control-failed-to-execute"]
-print("refused alreadyOnTarget:", ref, "wire failures:", len(wire))
-sys.exit(0 if len(ref) == 1 and len(wire) == 1 and ref[0]["viaNodeId"] == wire[0]["viaNode"] else 1)
+print("refused alreadyOnTarget:", ref, "ledger refusals:", len(refused), "wire failures:", [(m["step"], m["viaNode"]) for m in wire])
+# the alreadyOnTarget refusal and its wire failure at the same step and node; one wire failure per ledger refusal
+sys.exit(0 if len(ref) == 1 and len(wire) == len(refused)
+         and any((m["step"], m["viaNode"]) == (ref[0]["rxSeq"], ref[0]["viaNodeId"]) for m in wire) else 1)
 PY
 }
 check r0_v4_already_on_target_refusal_ledger_and_wire_failure refusal
 
 if [ "$MODE" = c1 ]; then
 # k9: the forced-late control
-r0_live k9 "$e/k9-schedule.json" 1
+r0_live k9 "$e/k9-schedule.json" 1 1 0
 k9_check() {
     python3 -I "$CHK" expect "$SCEN" "$RUNS/k9/trace/e2-control-ledger.jsonl" --forced-late &&
         python3 -I - "$RUNS/k9" <<'PY'

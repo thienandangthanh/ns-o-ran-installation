@@ -1,19 +1,20 @@
 {
- "_comment": "R1 scripted rc controls, R0 config (RngRun 1, outageThreshold -1000): IMSIs 1,2 start on cell 3 (gNB 3), IMSIs 3-6 on cell 2 (gNB 2). via = the E2 node whose agent receives the control (1 = the eNB (MN), 2 and 3 = gNB agents); key = N5 cell key %08X%02X. Within a step the list order is the send order; the pacer sends the next control only after ns-3 reported controlRx for the previous one, so each agent's ctlIds are fixed. ns-3 applies a step's controls in C4 order (imsi, viaNodeId, targetCellId, ctlId). Case (b): target 3 (the UE's own cell) is sent FIRST: by arrival order it would be refused alreadyOnTarget and target 2 applied; by C4 order target 2 is applied first and target 3 then sees the UE in handover (inHandover), so the cause proves the sort. Case (c): node 3 is sent first for the same reason (C4: the lower nodeId, 2, wins). Each IMSI is used in one step only.",
+ "_comment": "R1 scripted rc controls, R0 config (RngRun 1, outageThreshold -1000): IMSIs 1,2 start on cell 3 (gNB 3), IMSIs 3-6 on cell 2 (gNB 2). via = the E2 node whose agent receives the control: the UE's serving gNB (its source en-gNB) for every positive; node 1 (the eNB) and a non-serving gNB appear only as negatives. key = the TS key of the target NR CGI, %08X10 (gNB ID, cell part 1, APER pad). Each control is E2SM-RC Style 5 action 3 naming the UE by its en-gNB-UEID, resolved from the IMSI at the control's step. Within a step the list order is the send order; the pacer sends the next control only after ns-3 reported controlRx for the previous one, so each agent's ctlIds are fixed. ns-3 applies a step's controls in C4 order (imsi, viaNodeId, targetCellId, ctlId). Case (a): two IMSIs through their own source en-gNBs 2 and 3, both applied. Case (b): one IMSI through its source (node 3), target 3 (the UE's own cell) sent FIRST: by arrival order it would be refused alreadyOnTarget and target 2 applied; by C4 order target 2 is applied first and target 3 then sees the UE in handover (inHandover), so the cause proves the sort. Case (c): the same UE's control is sent first through a non-source en-gNB (node 3), refused unknownUe, then through its source (node 2), applied. Case (d): an en-gNB-UEID that no UE holds (X2AP ID 4095 on MN cell 1), refused unknownUe. Case (e): a control to the eNB, answered ran-function-id-invalid by its agent. Each IMSI is used in one step only.",
  "controls": [
-  {"step": 20, "case": "a", "via": 1, "imsi": 6, "key": "0000000310", "targetCell": 3, "expect": "applied"},
+  {"step": 20, "case": "a", "via": 2, "imsi": 6, "key": "0000000310", "targetCell": 3, "expect": "applied"},
   {"step": 20, "case": "a", "via": 3, "imsi": 1, "key": "0000000210", "targetCell": 2, "expect": "applied"},
-  {"step": 30, "case": "b", "via": 2, "imsi": 2, "key": "0000000310", "targetCell": 3, "expect": "inHandover"},
-  {"step": 30, "case": "b", "via": 2, "imsi": 2, "key": "0000000210", "targetCell": 2, "expect": "applied"},
-  {"step": 40, "case": "c", "via": 3, "imsi": 3, "key": "0000000310", "targetCell": 3, "expect": "inHandover"},
+  {"step": 30, "case": "b", "via": 3, "imsi": 2, "key": "0000000310", "targetCell": 3, "expect": "inHandover"},
+  {"step": 30, "case": "b", "via": 3, "imsi": 2, "key": "0000000210", "targetCell": 2, "expect": "applied"},
+  {"step": 40, "case": "c", "via": 3, "imsi": 3, "key": "0000000310", "targetCell": 3, "path": "nonSourceGnb", "expect": "unknownUe"},
   {"step": 40, "case": "c", "via": 2, "imsi": 3, "key": "0000000310", "targetCell": 3, "expect": "applied"},
-  {"step": 50, "case": "d", "via": 2, "imsi": 99, "key": "0000000210", "targetCell": 2, "expect": "unknownImsi"}
+  {"step": 50, "case": "d", "via": 2, "ueId": {"mEnbUeX2apId": 4095, "mnCellId": 1}, "key": "0000000210", "targetCell": 2, "expect": "unknownUe"},
+  {"step": 60, "case": "e", "via": 1, "imsi": 5, "key": "0000000310", "targetCell": 3, "path": "enb", "expect": "agent:ran-function-id-invalid"}
  ],
  "faultStop": {
-  "_comment": "Fault run (ii): one ordinary control at step 20 (so 'no ledger line for the stop control' is not judged on an empty ledger), then a control sent after the final barrier through the eNB agent (node 1). ns-3 stops its emitters in the order 1, 2, 3 and, after `stopping`, reads only the pacer; the pacer holds endAck until agent 1 has forwarded the control, so ns-3 never reads it and agent 1 fails it on bye: exactly one RICcontrolFailure, no ledger line.",
+  "_comment": "Fault run (ii): one ordinary control at step 20 (so 'no ledger line for the stop control' is not judged on an empty ledger), then a control sent after the final barrier through the source en-gNB agent of its UE (node 2: IMSI 4 is on cell 2). ns-3 stops its emitters in the order 1, 2, 3 and, once the hub is stopping, an emitter's Stop() delivers no further inbound control; after `stopping` ns-3 reads only the pacer, and the pacer holds endAck until agent 2 has forwarded the control, so ns-3 never reads it and agent 2 fails it on bye: exactly one RICcontrolFailure, no ledger line.",
   "controls": [
-   {"step": 20, "via": 1, "imsi": 6, "key": "0000000310", "targetCell": 3, "expect": "applied"}
+   {"step": 20, "via": 2, "imsi": 6, "key": "0000000310", "targetCell": 3, "expect": "applied"}
   ],
-  "stopTrigger": {"via": 1, "imsi": 4, "key": "0000000310", "targetCell": 3, "timeoutS": 6}
+  "stopTrigger": {"via": 2, "imsi": 4, "key": "0000000310", "targetCell": 3, "timeoutS": 6}
  }
 }

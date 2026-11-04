@@ -5,16 +5,19 @@
   expect SCHED LEDGER         a handover trigger: exactly one ledger line (via, imsi, targetCell) with afterSeq =
                               its step, applied; a none trigger: no ledger line of its IMSI with afterSeq = its step
                               (step-scoped: m1 reuses h1's IMSI); lines = handovers; late = 0
-  wire SCHED RC_MULTISET      RICcontrolRequests = handover triggers, each by (imsi, step), via the target's agent,
-                              key = the predictor's target, uppercase, one terminal answer; none for a none trigger
+  wire SCHED RC_MULTISET TRACE_DIR   RICcontrolRequests = handover triggers, each by (I(ueId), step) over the run's
+                              context files, via the source en-gNB, key = the predictor's target, uppercase, one
+                              terminal answer; none for a none trigger
   stub SCHED RD INJECTOR_TX   the injector sent one 30003 per trigger in order; the stub (log parts joined in step
                               order) got one 30000 naming exactly that UE and sent in state 0 exactly the predictor's
-                              answer (same cells, serving first, uppercase keys, decimal IMSI)
+                              answer (same cells, serving first, uppercase keys), the UE named by its KPM UE ID key
+                              (en-gNB-UEID, R-4): U(t) = the gNB tag of t.imsi's entry in ctx(n, t.step) of RD/trace,
+                              n = the certified window's membership[t.imsi]
   predictor SCEN SCHED RD     per trigger: N6 passed on an unclipped window; one record; its answer = the formula on
                               the certified window; its decision = the scheduled one
   influx-ipc SCEN RD [--cell-csv F]   full Influx = IPC for the read counter: for every gNB cell exactly one long
                               row per IPC seq, equal values, no extra seq; no eNB row carries the counter
-  d7 LEDGER                   every applied line came through its target gNB's agent (recorded deviation P1)
+  d7 LEDGER                   every applied line came through the UE's source en-gNB (viaNodeId = sourceCell)
   observation SCEN SCHED RD   the pre-registered observation change (DL of the two gNB cells swapped) gives the
                               pre-registered decisions on n1's and h1's certified windows (RIC-free replay)
   membership SCHED RD         m1's certified window lists h1's IMSI on h1's target cell
@@ -45,6 +48,7 @@ def _mod(name, file):
 
 
 P = _mod("r3p_predictor", "r3p-predictor.py")
+UECM = _mod("ue_context_map", os.path.join("..", "..", "tools", "e2-evidence", "ue-context-map.py"))
 N6 = _mod("n6", "check-n6-influx-window.py")
 
 
@@ -86,7 +90,14 @@ def c_expect(a):
 
 def c_wire(a):
     ts, ms = load(a[0])["triggers"], load(a[1])
-    probs, ho = [], [t for t in ts if t["decision"] == "handover"]
+    cm = UECM.UeContextMap(a[2])
+    probs, ho = ["UE context: " + q for q in cm.problems], [t for t in ts if t["decision"] == "handover"]
+
+    def imsi(m):
+        x = UECM.x2_of(m.get("ueId"))
+        return cm.imsi_of(*x) if x else None
+    for m in ms:
+        m["imsi"] = imsi(m)
     for t in ho:
         hit = [m for m in ms if m["imsi"] == t["imsi"] and m["step"] == t["step"]]
         if len(hit) != 1 or hit[0]["viaNode"] != t["via"] or hit[0]["targetKey"] != t["key"] or hit[0]["answer"] not in ("ack", "failure"):
@@ -112,26 +123,41 @@ def stub_log(rd):
     return log
 
 
+def ue_key(rd, cm, t):
+    """U(t): the gNB tag of t.imsi's entry in ctx(n, t.step), n = the certified window's membership[t.imsi]; None when
+    the window, the membership or the entry is missing."""
+    try:
+        n = int(load(os.path.join(rd, "r3p", "window-%d.json" % t["step"]))["membership"][str(t["imsi"])])
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+    u = cm.ctx(n, t["step"]).get(t["imsi"])
+    return UECM.gnb_tag(u["lteRnti"], u["mnCellId"]) if u else None
+
+
 def c_stub(a):
     ts, rd = load(a[0])["triggers"], a[1]
     tx = [json.loads(l) for l in open(a[2]) if l.strip()]
-    probs, recs = [], {r["T"]: r for r in records(rd)}
+    cm = UECM.UeContextMap(os.path.join(rd, "trace"))
+    probs, recs = ["UE context: " + q for q in cm.problems], {r["T"]: r for r in records(rd)}
+    keys = [ue_key(rd, cm, t) for t in ts]
+    if None in keys:
+        probs.append("triggers without a UE key in the run's context: %r" % [t["step"] for t, k in zip(ts, keys) if k is None])
     an = [r for r in tx if r["mtype"] == 30003]
     sent = [json.loads(bytes.fromhex(r["payloadHex"]))[0]["ue-id"] for r in an]
-    if sent != [str(t["imsi"]) for t in ts] or any(r["state"] != 0 for r in an):
-        probs.append("injector sent %r (states %r), want %r" % (sent, sorted({r["state"] for r in an}), [str(t["imsi"]) for t in ts]))
+    if sent != keys or any(r["state"] != 0 for r in an):
+        probs.append("injector sent %r (states %r), want %r" % (sent, sorted({r["state"] for r in an}), keys))
     reqs = [r for r in stub_log(rd) if r["rx"]["mtype"] == 30000]
     if len(reqs) != len(ts):
         probs.append("%d stub requests for %d triggers" % (len(reqs), len(ts)))
-    for t, r in zip(ts, reqs):
+    for t, r, u in zip(ts, reqs, keys):
         rec = recs.get(t["step"])
         try:
             asked = json.loads(r["rx"]["payload"])["UEPredictionSet"]
             sent30002 = list(json.loads((r.get("tx") or {}).get("payload", "null")).items())
         except (ValueError, KeyError, AttributeError):
             asked, sent30002 = None, None
-        want = [(str(t["imsi"]), {k: v for k, v in rec["answer"]})] if rec else None
-        if asked != [str(t["imsi"])] or (r.get("tx") or {}).get("state") != 0 or not sent30002 or want is None \
+        want = [(u, {k: v for k, v in rec["answer"]})] if rec and u else None
+        if asked != [u] or (r.get("tx") or {}).get("state") != 0 or not sent30002 or want is None \
                 or sent30002[0][0] != want[0][0] or list(sent30002[0][1].items()) != [(k, v) for k, v in rec["answer"]]:
             probs.append("step %d: asked %r, sent %r, predictor %r" % (t["step"], asked, sent30002, rec and rec["answer"]))
     return out(probs, triggers=len(ts), stubRequests=len(reqs))
@@ -204,9 +230,9 @@ def c_influx_ipc(a):
 
 def c_d7(a):
     ap = [x for x in ledger(a[0]) if x["outcome"] == "applied"]
-    via = sum(1 for x in ap if x["viaNodeId"] == x["targetCell"])
-    return out([] if ap and via == len(ap) else ["%d of %d applied lines via the target gNB" % (via, len(ap))],
-               applied=len(ap), viaTargetGnb=via, form="R3′: target-addressed (recorded deviation P1)")
+    via = sum(1 for x in ap if x["viaNodeId"] == x["sourceCell"])
+    return out([] if ap and via == len(ap) else ["%d of %d applied lines via the source en-gNB" % (via, len(ap))],
+               applied=len(ap), viaSourceGnb=via, form="via the source en-gNB (SN-initiated, E2SM-RC Style 5 action 3)")
 
 
 def c_observation(a):
@@ -277,7 +303,7 @@ def c_dry_ledger(a):
     return out(probs, stage="b", lines=len(lines))
 
 
-CMDS = {"expect": (c_expect, 2), "wire": (c_wire, 2), "stub": (c_stub, 3), "predictor": (c_predictor, 3),
+CMDS = {"expect": (c_expect, 2), "wire": (c_wire, 3), "stub": (c_stub, 3), "predictor": (c_predictor, 3),
         "influx-ipc": (c_influx_ipc, 2), "d7": (c_d7, 1), "observation": (c_observation, 3), "membership": (c_membership, 2),
         "driven": (c_driven, 3), "secrets": (c_secrets, 2), "dry-ledger": (c_dry_ledger, 1)}
 

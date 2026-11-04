@@ -8,14 +8,19 @@ gNB listing the IMSI at T) comes first, then the others by ascending nodeId; key
 "%08X10" (NR Cell Identity = gNB ID and cell part 1, then the APER pad digit 0), uppercase.
 The decision mirrors the TS xApp (hand over iff 100 x best other > (100 + threshold) x serving).
 
-  r3p-predictor.py answer SCENARIO WINDOW OUT [--records FILE] [--expect handover|none]
-        the 30002 answer {"predictions": {"<imsi>": [answer]}} for the stub; a record (no wall time) appended to
-        --records; with --expect the mirrored decision must equal it (exit 1: "observations differ")
+  r3p-predictor.py answer SCENARIO WINDOW OUT --ue-id U --trace-dir TRACE_DIR [--records FILE] [--expect handover|none]
+        the 30002 answer {"predictions": {U: [answer]}} for the stub, keyed by the trigger's UE ID key U (the
+        UE's KPM UE ID key, en-gNB-UEID), which must name the window's IMSI through the run's context files
+        (ue-context-map.py over TRACE_DIR's lines with seq <= T: I(U) = imsi), else exit 1 and no answer; a
+        record (no wall time, unchanged: it names the IMSI) appended to --records; with --expect the mirrored
+        decision must equal it (exit 1: "observations differ")
   r3p-predictor.py replay SCENARIO WINDOW [--swap]   decision on a window, --swap exchanges the two gNB cells' DL
   r3p-predictor.py lint SCENARIO                     the pre-registration is self-consistent (non-empty domain)
   r3p-predictor.py --self-test
 """
+import importlib.util
 import json
+import os
 import sys
 
 INT_MAX = 2147483647
@@ -111,17 +116,40 @@ def lint(sc):
     return problems
 
 
+def ue_id_names(ue_id, trace_dir, imsi, t):
+    """None when the UE ID key U names IMSI imsi in the run's context files (lines with seq <= t), else the reason."""
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "tools", "e2-evidence", "ue-context-map.py")
+    spec = importlib.util.spec_from_file_location("ue_context_map", path)
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    x = m.x2_of(ue_id)
+    if x is None:
+        return "ue-id %r is not an en-gNB-UEID key" % ue_id
+    cm = m.UeContextMap(trace_dir, max_seq=t)
+    if cm.problems:
+        return "UE context: %s" % "; ".join(cm.problems[:3])
+    got = cm.imsi_of(*x)
+    return None if got == imsi else "ue-id %s names IMSI %r in the run's context files, not the window's IMSI %d" % (ue_id, got, imsi)
+
+
 def cmd_answer(a):
     sc, win, out = load(a[0]), load(a[1]), a[2]
     if not win.get("pass"):
         print("the window is not certified by N6")
         return 1
+    if "--ue-id" not in a or "--trace-dir" not in a:
+        print("answer needs --ue-id and --trace-dir")
+        return 2
     imsi = win["imsi"]
+    why = ue_id_names(a[a.index("--ue-id") + 1], a[a.index("--trace-dir") + 1], imsi, win["T"])
+    if why:
+        print(why)
+        return 1
     ans = answer(sc, win, imsi)
     dec, key = decide(sc, ans)
     rec = {"T": win["T"], "imsi": imsi, "answer": ans, "decision": dec, "target": key, "eligibility": eligibility(ans),
            "formula": sc["formula"]["id"]}
-    json.dump({"predictions": {str(imsi): [ans]}}, open(out, "w"))
+    json.dump({"predictions": {a[a.index("--ue-id") + 1]: [ans]}}, open(out, "w"))
     if "--records" in a:
         with open(a[a.index("--records") + 1], "a") as f:
             f.write(json.dumps(rec, sort_keys=True) + "\n")

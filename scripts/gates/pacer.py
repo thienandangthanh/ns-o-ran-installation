@@ -7,12 +7,15 @@ ns-3 -> pacer: ready{seq, simTimeNs, buffered}, steps{seq} (every agent has sent
 step seq, so has read sample seq), controlRx{seq, viaNodeId, ctlId, buffered},
 applied{seq, controls, late}, controlAck{...} (for pacer-injected controls),
 stopping{seq}, end{seq}, abort{seq}.
-pacer -> ns-3: go{seq}, abort{reason}, control{nodeId, ctlId, imsi,
-targetCellId, afterSeq}, endAck.
+pacer -> ns-3: go{seq}, abort{reason}, control{nodeId, ctlId, ueId: {mEnbUeX2apId,
+mnCellId}, targetCellId, afterSeq}, endAck.
 
 Per `ready` k the pacer looks k up in the schedule:
   - no entry: `go` k at once (every step that cannot produce a control);
-  - "inject": send those control lines (scripted lock-step, Fallback-1), then go;
+  - "inject": send those control lines (scripted lock-step, Fallback-1), then go; a control with
+    "ueIdFrom": FILE instead of "ueId" is sent after the step's prepare (if any) with the "ipcUeId" member of
+    the JSON FILE as its ueId (the UE resolved from the run's own context files at this step); a missing or
+    malformed FILE aborts the run naming "ueIdFrom";
   - "trigger" (with "goBeforeTrigger": true the pacer sends `go` k first, so the control misses
     barrier k and is refused late at k + 1): wait for `steps` k (before it an agent may not have read sample
     k and would stamp a control afterSeq k-1), run the command (an rc gRPC
@@ -38,12 +41,18 @@ have forwarded the control), all within timeoutS (keep it under ns-3's gate
 timeout); the result goes to pacer-summary.json "stopTrigger".
 
 --replay LEDGER builds the schedule from a control ledger: every line is
-injected at its rxSeq with its viaNodeId, ctlId, imsi, targetCell and
-afterSeq, so a replay reproduces the run without the RIC (a line refused late
-mid-run, afterSeq < rxSeq, is injected at its rxSeq and refused again; one
-refused late at the stop because it arrived after the last barrier (answered at its
-rx time) is sent at the stop handshake; one pending at the stop under δ > 0 (answered after its barrier) is
-injected at its rxSeq, and the replay must run with the same δ).
+injected at its rxSeq with its viaNodeId, ctlId, targetCell and afterSeq, so a
+replay reproduces the run without the RIC (a line refused late mid-run,
+afterSeq < rxSeq, is injected at its rxSeq and refused again; one refused late
+at the stop because it arrived after the last barrier (answered at its rx time)
+is sent at the stop handshake; one pending at the stop under δ > 0 (answered
+after its barrier) is injected at its rxSeq, and the replay must run with the
+same δ). The UE identity is not the ledger's imsi (0 for an unresolved UE): it is
+the ueId of the hub's inbound control record with the same (viaNodeId, ctlId)
+in e2-pacing-log.jsonl beside the ledger, so the replay sends the identical IPC
+control the live agent forwarded (an unknownUe line is refused again). Each
+ledger line must pair with exactly one record whose targetCellId and afterSeq
+equal the line's, and every record with a line; otherwise exit 2 and no run.
 
 Outputs in --out: pacer-log.jsonl (every message with wall time) and
 pacer-summary.json (per trigger step: L of each control = trigger start ->
@@ -62,24 +71,73 @@ import sys
 import time
 
 
+class ReplayError(Exception):
+    """The ledger and the pacing log do not pair one to one: the replay cannot send the live run's controls."""
+
+
+def pacing_controls(path):
+    """{(viaNodeId, ctlId): [inbound control record, ...]} of an e2-pacing-log.jsonl (barrier and step records are
+    skipped)."""
+    out = {}
+    with open(path) as f:
+        for i, line in enumerate(f, 1):
+            if not line.strip():
+                continue
+            m = json.loads(line)
+            if m.get("type") != "control":
+                continue
+            try:
+                out.setdefault((m["viaNodeId"], m["ctlId"]), []).append(m)
+            except KeyError as ex:
+                raise ReplayError("%s line %d: control record without %s" % (path, i, ex)) from None
+    return out
+
+
+def replay_schedule(ledger, pacing_log):
+    """The replay schedule of a ledger, each control's ueId from its pacing-log record (ReplayError if they do not
+    pair one to one with equal targetCellId and afterSeq)."""
+    recs = pacing_controls(pacing_log)
+    steps, late, used, problems = {}, [], set(), []
+    with open(ledger) as f:
+        for line in f:
+            if not line.strip():
+                continue
+            m = json.loads(line)
+            if m.get("type") == "ledgerHeader":
+                continue
+            key = (m["viaNodeId"], m["ctlId"])
+            got = recs.get(key, [])
+            used.add(key)
+            if len(got) != 1:
+                problems.append("ledger line %s has %d pacing-log control records, want 1" % (key, len(got)))
+                continue
+            r = got[0]
+            if (r.get("targetCellId"), r.get("afterSeq")) != (m["targetCell"], m["afterSeq"]):
+                problems.append("ledger line %s (targetCell %s, afterSeq %s), its pacing record (%s, %s)" % (
+                    key, m["targetCell"], m["afterSeq"], r.get("targetCellId"), r.get("afterSeq")))
+                continue
+            if not isinstance(r.get("ueId"), dict):
+                problems.append("pacing record %s has no ueId" % (key,))
+                continue
+            c = {"nodeId": m["viaNodeId"], "ctlId": m["ctlId"], "ueId": r["ueId"],
+                 "targetCellId": m["targetCell"], "afterSeq": m["afterSeq"]}
+            if m["cause"] == "late" and m["afterSeq"] >= m["rxSeq"] and m["applySimTimeNs"] == m["rxSimTimeNs"]:
+                late.append(c)  # arrived after the last barrier: replayed at the stop handshake
+            else:
+                # every other line is injected at its rxSeq, including one refused late at the stop while its
+                # apply was pending (δ > 0: answered later than its barrier); replayed with the same δ it is
+                # deferred and pending at the stop again
+                steps.setdefault(str(m["rxSeq"]), {"inject": []})["inject"].append(c)
+    problems += ["pacing record %s has no ledger line" % (k,) for k in sorted(set(recs) - used)]
+    if problems:
+        raise ReplayError("; ".join(problems))
+    return {"steps": steps, "late": late}
+
+
 def load_schedule(args):
     if args.replay:
-        steps, late = {}, []
-        with open(args.replay) as f:
-            for line in f:
-                m = json.loads(line)
-                if m.get("type") == "ledgerHeader":
-                    continue
-                c = {"nodeId": m["viaNodeId"], "ctlId": m["ctlId"], "imsi": m["imsi"],
-                     "targetCellId": m["targetCell"], "afterSeq": m["afterSeq"]}
-                if m["cause"] == "late" and m["afterSeq"] >= m["rxSeq"] and m["applySimTimeNs"] == m["rxSimTimeNs"]:
-                    late.append(c)  # arrived after the last barrier: replayed at the stop handshake
-                else:
-                    # every other line is injected at its rxSeq, including one refused late at the stop while its
-                    # apply was pending (δ > 0: answered later than its barrier); replayed with the same δ it is
-                    # deferred and pending at the stop again
-                    steps.setdefault(str(m["rxSeq"]), {"inject": []})["inject"].append(c)
-        return {"steps": steps, "late": late}
+        return replay_schedule(args.replay, os.path.join(os.path.dirname(os.path.abspath(args.replay)),
+                                                         "e2-pacing-log.jsonl"))
     if args.schedule:
         with open(args.schedule) as f:
             s = json.load(f)
@@ -277,8 +335,10 @@ class Pacer:
             self.send({"type": "go", "seq": seq})
             return False
         rec = {"seq": seq}
+        later = [c for c in entry.get("inject", []) if "ueIdFrom" in c]
         for c in entry.get("inject", []):
-            self.send(dict({"type": "control"}, **c))
+            if "ueIdFrom" not in c:
+                self.send(dict({"type": "control"}, **c))
         rec["injected"] = len(entry.get("inject", []))
         if entry.get("prepare"):
             over, ok = self.run_prepare(seq, rec, entry["prepare"])
@@ -286,6 +346,17 @@ class Pacer:
                 return True
             if not ok:
                 return False
+        for c in later:
+            try:
+                with open(c["ueIdFrom"]) as f:
+                    ue = json.load(f)["ipcUeId"]
+                if not isinstance(ue, dict) or set(ue) != {"mEnbUeX2apId", "mnCellId"}:
+                    raise ValueError("ipcUeId %r" % (ue,))
+            except (OSError, ValueError, KeyError, TypeError) as ex:
+                self.summary["steps"][str(seq)] = rec
+                self.abort("step %d: ueIdFrom %s: %s" % (seq, c["ueIdFrom"], ex))
+                return False
+            self.send(dict({"type": "control", "ueId": ue}, **{k: v for k, v in c.items() if k != "ueIdFrom"}))
         if entry.get("triggers"):
             return self.step_triggers(seq, rec, entry["triggers"])
         trig = entry.get("trigger")
@@ -380,7 +451,11 @@ def main():
     if args.schedule and args.replay:
         ap.error("--schedule and --replay are exclusive")
     os.makedirs(args.out, exist_ok=True)
-    schedule = load_schedule(args)
+    try:
+        schedule = load_schedule(args)
+    except (ReplayError, OSError, ValueError, KeyError) as ex:
+        print("pacer: no replay: %s" % ex, file=sys.stderr)
+        return 2
     srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     srv.bind(("127.0.0.1", args.port))
