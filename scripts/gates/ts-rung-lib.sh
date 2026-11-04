@@ -69,6 +69,7 @@ rung_live() {
     route_owner_row "$label" end
     check "${RUNG}_${label}_restart_counts_zero_rc_ts_stub_kpimon_hw_go_agents" rc_restarts_zero "$label-after"
     check "${RUNG}_${label}_stub_log_saved" stub_log_save "$rd/stub-log.json"
+    ts_rc_logs_save "$rd"
     check "${RUNG}_${label}_injector_stopped" injector_stop "$rd/injector"
     check "${RUNG}_${label}_agent_logs_with_stats_after_bye" agent_logs_after_bye "$rd"
     check "${RUNG}_${label}_agent_ue_context_counters_zero_every_stats_line" agent_ue_context_counters_zero "$rd"

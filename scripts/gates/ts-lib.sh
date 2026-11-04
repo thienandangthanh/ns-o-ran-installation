@@ -486,6 +486,21 @@ _a1_delivered_attempt() {
     echo null
 }
 
+# ts_rc_logs_save <run-dir>: the TS xApp's and rc's whole pod logs after a run, as <run-dir>/ts-xapp.log and
+# <run-dir>/rc.log. Recorded for diagnosis and never judged (the TS xApp says there why it sent no control); the
+# evidence scrub redacts every known secret before the evidence leaves the VM.
+ts_rc_logs_save() {
+    local pre name pod
+    for pre in ricxapp-trafficxapp-:ts-xapp ricxapp-rc-:rc; do
+        name=${pre#*:}
+        if read -r pod _ < <(pod_info ricxapp "${pre%%:*}"); then
+            kc -n ricxapp logs "$pod" >"$1/$name.log" 2>&1 || echo "kubectl logs $pod failed" >>"$1/$name.log"
+        else
+            echo "no live ${pre%%:*} pod" >"$1/$name.log"
+        fi
+    done
+}
+
 # ts_policy_set <threshold> <instance-id>: a fresh instance id each time (the TS xApp never answers A1, so a
 # delete would never complete); then the TS xApp's own log line, at most 3 instances, each logged. The log
 # is read into $e/<id>-ts-log.txt and judged there (the last read stays as evidence).
