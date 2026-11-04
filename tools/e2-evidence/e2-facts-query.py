@@ -4,7 +4,10 @@
 Gate assertions over the fact sheet from e2ap-pcap-facts.py. Each query prints
 its evidence and exits 0 (pass) or 1 (fail).
 
-  setup-request   --func-id N --oid OID --short-name S --gnb-id N --plmn HEX [--not-gnb-id-hex HEX]
+  setup-request   --func-id N --oid OID --short-name S --node-type T --node-id N --node-id-bits B --plmn HEX
+                  [--not-node-id-hex HEX]   every E2SetupRequest's Global E2 Node ID (read inside its
+                                                    id-GlobalE2node-ID IE) has that CHOICE (en-gNB, eNB, ...),
+                                                    PLMN, ID and bit length; the ID is not the reference node's
   setup-response  --func-id N
   subscription    --func-id N [--after EPOCH]      request (RIC->agent) answered by a response
   sub-period      --period-ms P [--granul-ms G] [--after EPOCH]   every request has KPM reportingPeriod P (and every
@@ -27,9 +30,10 @@ its evidence and exits 0 (pass) or 1 (fail).
                                                     counts as many frames as E2AP forced on the port
 
 Attribution is by ASSOCIATION, never by container IP (Docker reassigns IPs when agents restart). An association
-is (agent ip, agent source port) <-> Service, born at the INIT_ACK that answers an INIT; its node is the global
-gNB-ID of the E2SetupRequest sent on it (decimal gNB-ID == nodeId; any other gNB-ID, such as the reference
-kpm_sim's, is "not an expected node" and ignored). INITs that never got an INIT_ACK belong to no association and
+is (agent ip, agent source port) <-> Service, born at the INIT_ACK that answers an INIT; its node is the node ID
+of the Global E2 Node ID in the E2SetupRequest sent on it (an en-gNB's 32-bit gNB ID = the ns-3 cellId = nodeId, the
+eNB's 20-bit macro eNB ID = nodeId 1; any other ID, such as the reference kpm_sim's, is "not an expected node" and
+ignored). INITs that never got an INIT_ACK belong to no association and
 are only reported per agent IP. The expected node set is --nodes (comma list) or the keys of --node-ips.
 --node-ips F (JSON {"<nodeId>": ["<container ip>", ...]}) is a cross-check only: mismatches are printed as
 informational lines and never decide a verdict.
@@ -54,23 +58,27 @@ def q_setup_request(f, a):
     if not reqs:
         bad.append("no E2SetupRequest decoded")
     for r in reqs:
-        print("frame %d from %s: funcs=%s oids=%s short=%s gnbId=%s plmn=%s descr=%s" % (
-            r["frame"], r["src"], r["ran_function_ids"], sorted(set(r["oids"])), r["short_names"], r["gnb_id"],
-            r["plmn"], r["descriptions"]))
+        print("frame %d from %s: funcs=%s oids=%s short=%s node=%s/%s/%s bits plmn=%s descr=%s" % (
+            r["frame"], r["src"], r["ran_function_ids"], sorted(set(r["oids"])), r["short_names"], r["e2node_type"],
+            r["node_id"], r["node_id_bits"], r["plmn"], r["descriptions"]))
         if a.func_id not in r["ran_function_ids"]:
             bad.append("RANfunctionID %d missing" % a.func_id)
         if a.oid not in r["oids"]:
             bad.append("ranFunctionOID %s missing" % a.oid)
         if a.short_name not in r["short_names"]:
             bad.append("short name %s missing" % a.short_name)
-        if r["gnb_id"] != a.gnb_id:
-            bad.append("global gNB-ID %s != %d" % (r["gnb_id"], a.gnb_id))
+        if r["e2node_type"] != a.node_type:
+            bad.append("Global E2 Node ID type %s != %s" % (r["e2node_type"], a.node_type))
+        if r["node_id"] != a.node_id:
+            bad.append("node ID %s != %d" % (r["node_id"], a.node_id))
+        if r["node_id_bits"] != a.node_id_bits:
+            bad.append("node ID bit length %s != %d" % (r["node_id_bits"], a.node_id_bits))
         if (r["plmn"] or "") != a.plmn.lower():
             bad.append("plmn %s != %s" % (r["plmn"], a.plmn))
-        if a.not_gnb_id_hex:
-            v = int(a.not_gnb_id_hex, 16)
-            if r["gnb_id"] in (v, v >> 3):
-                bad.append("gNB-ID equals the reference node's %s" % a.not_gnb_id_hex)
+        if a.not_node_id_hex:
+            v = int(a.not_node_id_hex, 16)
+            if r["node_id"] in (v, v >> 3):
+                bad.append("node ID equals the reference node's %s" % a.not_node_id_hex)
     return bad
 
 
@@ -164,7 +172,7 @@ def build_assocs(f):
         if lst and lst[-1]["t_cookie_ack"] is None:
             continue
         lst.append({"ip": k[0], "sport": k[1], "service": ack["src"], "service_port": ack["sport"],
-                    "t_init_ack": ack["t"], "t_init": None, "t_cookie_ack": None, "node": None, "gnb_id": None,
+                    "t_init_ack": ack["t"], "t_init": None, "t_cookie_ack": None, "node": None, "node_id": None,
                     "setup_request": None, "setup_response": None, "sub_requests": [], "sub_responses": [],
                     "indications": [], "frame": ack["frame"]})
         # COOKIE_ACK of this handshake: first one at/after this INIT_ACK
@@ -191,7 +199,7 @@ def build_assocs(f):
     for r in sorted(f["setup_requests"], key=lambda x: x["t"]):
         x = assoc_of(r["src"], r["sport"], r["t"])
         if x and x["setup_request"] is None:
-            x["setup_request"], x["gnb_id"], x["node"] = r, r["gnb_id"], r["gnb_id"]
+            x["setup_request"], x["node_id"], x["node"] = r, r["node_id"], r["node_id"]
     for r in f["setup_responses"]:
         x = assoc_of(r["dst"], r["dport"], r["t"])
         if x and x["setup_response"] is None and r["t"] >= x["t_init_ack"]:
@@ -216,8 +224,8 @@ def assoc_established(x):
 
 
 def fmt_assoc(x):
-    return "%s:%d node=%s gNB-ID=%s init_ack=%.2f cookie_ack=%s setup_resp=%s subReq=%d subResp=%d ind=%d" % (
-        x["ip"], x["sport"], x["node"], x["gnb_id"], x["t_init_ack"], x["t_cookie_ack"] is not None,
+    return "%s:%d node=%s nodeId=%s init_ack=%.2f cookie_ack=%s setup_resp=%s subReq=%d subResp=%d ind=%d" % (
+        x["ip"], x["sport"], x["node"], x["node_id"], x["t_init_ack"], x["t_cookie_ack"] is not None,
         x["setup_response"] is not None, len(x["sub_requests"]), len(x["sub_responses"]), len(x["indications"]))
 
 
@@ -421,9 +429,11 @@ def main():
     ap.add_argument("--func-id", type=int, default=2)
     ap.add_argument("--oid")
     ap.add_argument("--short-name")
-    ap.add_argument("--gnb-id", type=int)
+    ap.add_argument("--node-type")
+    ap.add_argument("--node-id", type=int)
+    ap.add_argument("--node-id-bits", type=int)
     ap.add_argument("--plmn")
-    ap.add_argument("--not-gnb-id-hex")
+    ap.add_argument("--not-node-id-hex")
     ap.add_argument("--after", type=float)
     ap.add_argument("--period-ms", type=int)
     ap.add_argument("--granul-ms", type=int)

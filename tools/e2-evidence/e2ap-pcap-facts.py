@@ -20,7 +20,7 @@ frame can bundle several PDUs; exact indication counts come from
 pcap-to-lines.py (TSN-deduped), not from here.
 Pass 2 (-V text, only procedureCode 1 and 8 frames): E2Setup request/response
 and RICsubscription request/response details (RAN function ID, OID, short
-name, global gNB-ID, PLMN, accepted RAN functions, requestor/instance IDs; for subscriptions also the
+name, the Global E2 Node ID (type, PLMN, node ID and its bit length), accepted RAN functions, requestor/instance IDs; for subscriptions also the
 KPM reportingPeriod, the granulPeriods, not-admitted actions and the failure cause; a RIC SUBSCRIPTION
 FAILURE goes to sub_failures, never to sub_responses).
 
@@ -110,10 +110,33 @@ def parse_setup_request(lines):
                      (r"ranFunctionRevision: (\d+)", "revisions")):
         vals = [v.strip() for v in re.findall(pat, txt)]
         out[key] = [int(v) if v.isdigit() and key in ("ran_function_ids", "revisions") else v for v in vals]
-    m = re.search(r"plmn-id: ([0-9a-fA-F]+)", txt)
-    out["plmn"] = m.group(1).lower() if m else None
-    m = re.search(r"gnb-ID: .*decimal value (\d+)", txt)
-    out["gnb_id"] = int(m.group(1)) if m else None
+    out.update(global_e2node_id(lines))
+    return out
+
+
+NODE_ID_RE = re.compile(r"(?:gNB-ID|macro-eNB-ID): [0-9a-f]+ \[bit length (\d+),.*decimal value (\d+)\]")
+
+
+def global_e2node_id(lines):
+    """The node identity of an E2 Setup Request, read only inside its id-GlobalE2node-ID IE (from the
+    "id: id-GlobalE2node-ID (3)" line to the next "Item <n>: id-" line), so the X2 component's neighbour IDs never
+    count: e2node_type = the GlobalE2node-ID CHOICE name (gNB, en-gNB, ng-eNB, eNB), plmn = its first
+    pLMN-Identity, node_id / node_id_bits = the gNB-ID or macro-eNB-ID value and bit length. None when absent."""
+    block, on = [], False
+    for ln in lines:
+        if re.search(r"\bid: id-GlobalE2node-ID \(3\)", ln):
+            on = True
+        elif on and re.search(r"\bItem \d+: id-", ln):
+            break
+        elif on:
+            block.append(ln)
+    txt = "\n".join(block)
+    m = re.search(r"GlobalE2node-ID: (\S+) \(\d+\)", txt)
+    out = {"e2node_type": m.group(1) if m else None}
+    m = re.search(r"pLMN-Identity: ([0-9a-f]{6})", txt)
+    out["plmn"] = m.group(1) if m else None
+    m = NODE_ID_RE.search(txt)
+    out["node_id"], out["node_id_bits"] = (int(m.group(2)), int(m.group(1))) if m else (None, None)
     return out
 
 

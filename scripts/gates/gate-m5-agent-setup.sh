@@ -22,7 +22,7 @@ source "$(dirname "$0")/agents.sh"
 DISCONNECT_WAIT_S="${DISCONNECT_WAIT_S:-120}"
 STATS_WAIT_S="${STATS_WAIT_S:-60}"
 NODES="gnb:2"
-NODE_NAME=gnb_001_001_00000002
+NODE_NAME=$(meid_of 2)
 SODIR="$HOME/m5-work/so"
 e="$EVIDENCE_DIR"
 mkdir -p "$SODIR"
@@ -49,7 +49,7 @@ check m5_bringup_agents_kpm_sim_stopped_connected_set_exact gate_bringup agents 
 ################################################################################
 # 4. e2mgr, agent stats, RAN function definition
 ################################################################################
-check m5_e2mgr_node_connected_name_plmn_gnbid e2mgr_node_check "$NODE_NAME" 00F110 2
+check m5_e2mgr_node_connected_en_gnb_name_plmn_gnbid32_ranfunctions_2_3 e2mgr_node_check "$NODE_NAME" 00F110 2
 record m5_agent_image_informational true "$(tr '\n' ' ' <"$e/agent-image.env" 2>/dev/null)"
 
 agent_ready() {
@@ -97,17 +97,18 @@ check m5_e2ap_ppid70_every_node python3 -I "$E2EV/e2-facts-query.py" "$e/m5-fact
 
 setup_req() {
     python3 -I "$E2EV/e2-facts-query.py" "$e/m5-facts.json" setup-request --func-id 2 --oid "$E2AP_OID_KPM" \
-        --short-name "$E2AP_SHORT_NAME" --gnb-id 2 --plmn 00f110 --not-gnb-id-hex B5C67788
+        --short-name "$E2AP_SHORT_NAME" --node-type en-gNB --node-id 2 --node-id-bits 32 --plmn 00f110 \
+        --not-node-id-hex B5C67788
 }
-check m5_tshark_setup_request_func2_oid_shortname_gnbid2_not_kpm_sim setup_req
+check m5_tshark_setup_request_func2_oid_shortname_en_gnb2_32bit_not_kpm_sim setup_req
 check m5_tshark_setup_response_accepts_func2 python3 -I "$E2EV/e2-facts-query.py" "$e/m5-facts.json" setup-response --func-id 2
 distinct_from_ref() {
     python3 -I - "$e/m5-facts.json" <<'PY'
 import json, sys
 f = json.load(open(sys.argv[1]))
-ids = [r["gnb_id"] for r in f["setup_requests"]]
+ids = [r["node_id"] for r in f["setup_requests"]]
 ref = 0xB5C67788
-print("gNB-IDs on the wire: %s (reference node: %d / %d)" % (ids, ref, ref >> 3))
+print("node IDs on the wire: %s (reference node: %d / %d)" % (ids, ref, ref >> 3))
 sys.exit(0 if ids and all(i not in (ref, ref >> 3) for i in ids) else 1)
 PY
 }

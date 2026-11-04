@@ -5,7 +5,9 @@
 #   agents_tree_at_testbed_sha        ~/nist at $TESTBED_SHA including ns3_e2_agent/ (also on the dirty-tree path)
 #   agents_sctp_module                sctp kernel module loaded now and at every boot
 #   agents_ensure_build_tools         gcc/make (for the harness build) + tshark + tcpdump present
-#   agents_bringup <node-list>        bring-up profile `agents` (see bringup.sh); e.g. gnb:2 or enb:1,gnb:2,gnb:3,gnb:4,gnb:5
+#   agents_bringup <node-list>        bring-up profile `agents` (see bringup.sh); e.g. gnb:2 or enb:1,gnb:2,gnb:3,gnb:4,gnb:5;
+#                                     every agent's expectedRanName must equal meid_of its nodeId (lib.sh), then the
+#                                     e2mgr CONNECTED set must equal those names exactly
 #   agents_stop                       stop_ns3_e2_agents.sh; no labelled container may remain
 #   agents_expected_names             sorted expectedRanName values from run/agents.json
 #   agents_record_ips <file>          {"<nodeId>": ["<container ip>", ...]}, union with what <file> already holds
@@ -13,7 +15,8 @@
 #   agents_stats_all                  "<nodeId> <restartCount> <running> <state> <subs> <indTx>" per agent
 #   e2mgr_connected_names             sorted CONNECTED inventory names (rc 1 when e2mgr is unreachable)
 #   e2mgr_node_status <name>          connectionStatus or ABSENT
-#   e2mgr_node_check <name> <plmn> <gnbId>   node JSON: CONNECTED, plmnId, nbId decimal, ranFunction 2 listed
+#   e2mgr_node_check <name> <plmn> <gnbId>   en-gNB node JSON: CONNECTED, plmnId, nodeType GNB, gnbType EN_GNB, nbId
+#                                     32 binary digits equal to gnbId, RAN functions 2 and 3 listed
 #   pod_info <ns> <substr>            "<name> <ready> <created-epoch> <restarts>" of the newest live matching pod
 #
 # Environment knobs: AGENTS_CONNECT_TIMEOUT_S (default 300), AGENTS_STOP_E2SIM_TIMEOUT_S (180).
@@ -136,18 +139,34 @@ import json, sys
 path, name, plmn, gid = sys.argv[1:]
 d = json.load(open(path))
 nb = d.get("globalNbId", {})
-funcs = [f.get("ranFunctionId") for f in d.get("gnb", {}).get("ranFunctions", [])]
+# e2mgr stores an en-gNB as nodeType GNB with gnbType EN_GNB under the "gnb" body
+gnb = d.get("gnb", {})
+funcs = [f.get("ranFunctionId") for f in gnb.get("ranFunctions", [])]
 nbid = int(nb.get("nbId", "x"), 2) if set(nb.get("nbId", "x")) <= {"0", "1"} else None
-print("ranName=%s status=%s plmnId=%s nbId=%s (decimal %s) nodeType=%s ranFunctions=%s" % (
-    d.get("ranName"), d.get("connectionStatus"), nb.get("plmnId"), nb.get("nbId"), nbid, d.get("nodeType"), funcs))
+print("ranName=%s status=%s plmnId=%s nbId=%s (%d digits, decimal %s) nodeType=%s gnbType=%s ranFunctions=%s" % (
+    d.get("ranName"), d.get("connectionStatus"), nb.get("plmnId"), nb.get("nbId"), len(nb.get("nbId", "")), nbid,
+    d.get("nodeType"), gnb.get("gnbType"), funcs))
 ok = (d.get("ranName") == name and d.get("connectionStatus") == "CONNECTED" and nb.get("plmnId") == plmn
-      and nbid == int(gid) and 2 in funcs)
+      and nbid == int(gid) and 2 in funcs and d.get("nodeType") == "GNB" and gnb.get("gnbType") == "EN_GNB"
+      and len(nb.get("nbId", "")) == 32 and {2, 3} <= set(funcs))
 sys.exit(0 if ok else 1)
 PY
 }
 
+# _agents_expected_names_are_meids: every agents.json agent's expectedRanName (written by the Testbed's runner) is the
+# harness's meid_of its nodeId, so the two cannot drift apart
+_agents_expected_names_are_meids() {
+    local id name bad=0
+    while read -r id name; do
+        [ "$name" = "$(meid_of "$id")" ] || { log "agent $id: expectedRanName $name != meid_of $id = $(meid_of "$id")"; bad=1; }
+    done < <(python3 -I -c 'import json,sys; [print(a["nodeId"], a["expectedRanName"]) for a in json.load(open(sys.argv[1]))["agents"]]' \
+        "$AGENT_DIR/run/agents.json")
+    [ "$bad" = 0 ] && log "bringup agents: every expectedRanName equals meid_of its nodeId"
+}
+
 _agents_wait_connected_exact() {
     local deadline=$(($(date +%s) + AGENTS_CONNECT_TIMEOUT_S)) want got
+    _agents_expected_names_are_meids || return 1
     want=$(agents_expected_names)
     while :; do
         got=$(e2mgr_connected_names)

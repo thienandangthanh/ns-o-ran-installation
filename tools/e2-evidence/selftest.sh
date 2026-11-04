@@ -4,8 +4,9 @@
 # 1. synthetic fact sheets / sample dirs / poll logs: every query must pass on good input and fail on a
 #    deliberately broken one;
 # 2. optional replay (needs tshark): with a smoke directory holding agent.pcap, trace.ndjson, influx-cell.csv,
-#    influx-ue.csv (plans/.../evidence/dev-p5/smoke/<ts>), the pcap facts and the Influx-vs-trace comparison must
-#    reproduce "setup func 2 / gNB-ID 2 / 99 indications / all fields equal".
+#    influx-ue.csv (a dev smoke run of one agent, node 2), the pcap facts and the Influx-vs-trace comparison must
+#    reproduce "setup func 2 / en-gNB 2 (32-bit gNB ID) / indications / all fields equal". A smoke recorded before the
+#    agents registered as en-gNBs (a Global gNB ID) fails the setup identity, as it should.
 # Needs python3 only for part 1. Exit 0 = all passed.
 set -uo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -29,7 +30,8 @@ good = {"inits": [ev(1, 100, "172.17.0.2", svc, 40001, 36422), ev(2, 100.1, "172
                   ev(3, 210, "172.17.0.2", svc, 40011, 36422), ev(4, 211, "172.17.0.3", svc, 40012, 36422)],
         "aborts": [ev(9, 205, svc, "172.17.0.2", 36422, 40001)], "shutdowns": [], "pdus": [],
         "setup_requests": [ev(6, 210.1, "172.17.0.2", svc, 40011, 36422, ran_function_ids=[2], oids=["1.3.6.1.4.1.53148.1.3.2.2"],
-                              short_names=["ORAN-E2SM-KPM"], gnb_id=1, plmn="00f110", descriptions=[]),
+                              short_names=["ORAN-E2SM-KPM"], e2node_type="eNB", node_id=1, node_id_bits=20, plmn="00f110",
+                              descriptions=[]),
                            ev(7, 211.1, "172.17.0.3", svc, 40012, 36422, ran_function_ids=[2])],
         "setup_responses": [ev(8, 212, svc, "172.17.0.2", 36422, 40011, accepted=[2]), ev(10, 213, svc, "172.17.0.3", 36422, 40012, accepted=[2])],
         "sub_requests": [ev(11, 214, svc, "172.17.0.2", 36422, 40011, requestor=123, instance=9, ran_function_id=2),
@@ -44,12 +46,14 @@ good["init_acks"], good["cookie_acks"] = [], []
 for f, ts, ip, sp in ((101, 100, "172.17.0.2", 40001), (102, 100.1, "172.17.0.3", 40002),
                       (103, 210, "172.17.0.2", 40011), (104, 211, "172.17.0.3", 40012)):
     handshake(good, f, ts, ip, sp)
-# setup requests of the first associations name gNB-ID 1 / 2 (the later ones above already do or are filled below)
-good["setup_requests"] = [ev(5, 100.2, "172.17.0.2", svc, 40001, 36422, gnb_id=1, ran_function_ids=[2]),
+# setup requests of the first associations name node 1 (the eNB) / 2 (an en-gNB) (the later ones above already do or
+# are filled below)
+good["setup_requests"] = [ev(5, 100.2, "172.17.0.2", svc, 40001, 36422, node_id=1, ran_function_ids=[2]),
                           ev(6, 210.1, "172.17.0.2", svc, 40011, 36422, ran_function_ids=[2], oids=["1.3.6.1.4.1.53148.1.3.2.2"],
-                             short_names=["ORAN-E2SM-KPM"], gnb_id=1, plmn="00f110", descriptions=[]),
-                          ev(7, 211.1, "172.17.0.3", svc, 40012, 36422, ran_function_ids=[2], gnb_id=2),
-                          ev(8, 100.3, "172.17.0.3", svc, 40002, 36422, gnb_id=2, ran_function_ids=[2])]
+                             short_names=["ORAN-E2SM-KPM"], e2node_type="eNB", node_id=1, node_id_bits=20, plmn="00f110",
+                             descriptions=[]),
+                          ev(7, 211.1, "172.17.0.3", svc, 40012, 36422, ran_function_ids=[2], node_id=2),
+                          ev(8, 100.3, "172.17.0.3", svc, 40002, 36422, node_id=2, ran_function_ids=[2])]
 good["ind_events"] = [ev(20 + i, ts, ip, svc, sp, 36422) for i, (ts, ip, sp) in enumerate(
     ((150, "172.17.0.2", 40001), (214.5, "172.17.0.2", 40011), (220, "172.17.0.2", 40011),
      (150, "172.17.0.3", 40002), (216, "172.17.0.3", 40012), (221, "172.17.0.3", 40012)))]
@@ -81,8 +85,8 @@ swap["init_acks"] = [a for a in swap["init_acks"] if a["t"] < 200]
 swap["cookie_acks"] = [a for a in swap["cookie_acks"] if a["t"] < 200]
 handshake(swap, 105, 212, "172.17.0.3", 40021); handshake(swap, 107, 212.1, "172.17.0.2", 40022)
 swap["setup_requests"] = [r for r in swap["setup_requests"] if r["t"] < 200] + [
-    ev(40, 212.3, "172.17.0.3", svc, 40021, 36422, gnb_id=1, ran_function_ids=[2]),
-    ev(41, 212.4, "172.17.0.2", svc, 40022, 36422, gnb_id=2, ran_function_ids=[2])]
+    ev(40, 212.3, "172.17.0.3", svc, 40021, 36422, node_id=1, ran_function_ids=[2]),
+    ev(41, 212.4, "172.17.0.2", svc, 40022, 36422, node_id=2, ran_function_ids=[2])]
 swap["setup_responses"] = [ev(42, 213, svc, "172.17.0.3", 36422, 40021, accepted=[2]), ev(43, 213.1, svc, "172.17.0.2", 36422, 40022, accepted=[2])]
 swap["sub_requests"] = [ev(44, 214, svc, "172.17.0.3", 36422, 40021, requestor=1, instance=1, ran_function_id=2),
                         ev(45, 214, svc, "172.17.0.2", 36422, 40022, requestor=1, instance=2, ran_function_id=2)]
@@ -106,7 +110,7 @@ for n in range(3):
     open(d + "/pods.txt", "w").write("a-1 0\nb-2 1\n")
     open(d + "/agents.txt", "w").write("1 0 true READY 1 5\n2 0 true READY 1 5\n")
     open(d + "/rss.txt", "w").write("ns3-e2-agent-1 %d.5MiB / 15GiB\n" % (20 + n))
-    open(d + "/e2mgr.txt", "w").write("gnb_001_001_00000001\ngnb_001_001_00000002\n")
+    open(d + "/e2mgr.txt", "w").write("enB_macro_001_001_000001\nen_gnb_001_001_00000002\n")
     open(d + "/ns3.alive", "w").write("1\n")
     open(d + "/load.txt", "w").write("1.50 1.20 0.9 1/300 123\n")
     open(d + "/kpimon.txt", "w").write("kpimon-x true 1 0\n")
@@ -121,11 +125,13 @@ def trace(path, hellos, built, sent, dd, gap=False):
 trace(t + "/trace-ok.jsonl", 2, 10, 8, 2)
 trace(t + "/trace-gap.jsonl", 2, 10, 8, 2, gap=True)
 trace(t + "/trace-sum.jsonl", 2, 10, 9, 2)
-open(t + "/names.txt", "w").write("gnb_001_001_00000001\ngnb_001_001_00000002\n")
+open(t + "/names.txt", "w").write("enB_macro_001_001_000001\nen_gnb_001_001_00000002\n")
+# the meid form before the en-gNB identity: recovery-eval must refuse it
+open(t + "/names-old-form.txt", "w").write("enB_macro_001_001_000001\ngnb_001_001_00000002\n")
 open(t + "/polls.tsv", "w").write(
     "1010.5\t\t1:1:true:HOLDOFF:0:0 2:1:true:HOLDOFF:0:0\n"
-    "1030.5\tgnb_001_001_00000001,gnb_001_001_00000002\t1:1:true:READY:1:7 2:1:true:READY:1:0\n"
-    "1035.5\tgnb_001_001_00000001,gnb_001_001_00000002\t1:1:true:READY:1:17 2:1:true:READY:1:3\n")
+    "1030.5\tenB_macro_001_001_000001,en_gnb_001_001_00000002\t1:1:true:READY:1:7 2:1:true:READY:1:0\n"
+    "1035.5\tenB_macro_001_001_000001,en_gnb_001_001_00000002\t1:1:true:READY:1:17 2:1:true:READY:1:3\n")
 open(t + "/nodes.csv", "w").write("#datatype,string,long,dateTime:RFC3339,long\n,result,table,_time,_value\n"
                                   ",,0,2026-10-21T16:46:56.2Z,2\n,,0,2026-10-21T16:47:56Z,2\n,,1,2026-10-21T16:47:57Z,3\n")
 PY
@@ -189,6 +195,34 @@ echo "a-1 2" >"$t/end/sample-02/pods.txt"; echo "1 1 true READY 1 0" >"$t/end/sa
 for c in pods agents ns3; do expect 1 "endurance: $c broken" py "$e" "$t/end" --check "$c"; done
 expect 0 "recovery: restart, reconnect, indications resume" py "$here/recovery-eval.py" "$t/polls.tsv" --after 1005 --expected-names "$t/names.txt"
 expect 1 "recovery: delete after the last poll" py "$here/recovery-eval.py" "$t/polls.tsv" --after 1100 --expected-names "$t/names.txt"
+expect 1 "recovery: an expected name in the old gnb_ form is refused" py "$here/recovery-eval.py" "$t/polls.tsv" --after 1005 \
+    --expected-names "$t/names-old-form.txt"
+
+# setup identity (e2ap-pcap-facts.py parse of tshark -V text): fixtures/setup-identity/ac6a-setup-requests.txt holds the
+# E2 Setup Requests of a scripted en-gNB (frame 6, gNB ID 0x7F000001) and macro eNB (frame 17, ID 0xFFFFE) as tshark
+# 4.4.19 prints them; each also names the other node in its X2 component, which must not count.
+python3 -I - "$t" "$here" <<'PY'
+import importlib.util, json, sys
+t, here = sys.argv[1:]
+spec = importlib.util.spec_from_file_location("facts", here + "/e2ap-pcap-facts.py")
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+text = open(here + "/fixtures/setup-identity/ac6a-setup-requests.txt").read()
+for num, lines in m.blocks(text):
+    r = dict(frame=num, t=0, src="172.17.0.2", dst="10.96.0.5", sport=40001, dport=36422, **m.parse_setup_request(lines))
+    json.dump({"setup_requests": [r]}, open("%s/setup-frame-%d.json" % (t, num), "w"))
+PY
+sr() { py "$q" "$t/setup-frame-$1.json" setup-request --func-id 2 --oid 1.3.6.1.4.1.53148.1.3.2.2 --short-name ORAN-E2SM-KPM \
+    --plmn 00f110 "${@:2}"; }
+expect 0 "setup identity: en-gNB, 32-bit gNB ID 0x7F000001, PLMN 00f110" sr 6 --node-type en-gNB --node-id 2130706433 --node-id-bits 32 \
+    --not-node-id-hex B5C67788
+expect 0 "setup identity: eNB, 20-bit macro eNB ID 0xFFFFE (its X2 component's en-gNB ID ignored)" sr 17 --node-type eNB \
+    --node-id 1048574 --node-id-bits 20
+expect 1 "setup identity: wrong CHOICE" sr 6 --node-type gNB --node-id 2130706433 --node-id-bits 32
+expect 1 "setup identity: wrong bit length" sr 6 --node-type en-gNB --node-id 2130706433 --node-id-bits 22
+expect 1 "setup identity: the eNB is not the X2 neighbour's en-gNB" sr 17 --node-type en-gNB --node-id 2130706433 --node-id-bits 32
+expect 1 "setup identity: the reference node's ID (and >> 3) is refused" sr 6 --node-type en-gNB --node-id 2130706433 \
+    --node-id-bits 32 --not-node-id-hex 7F000001
 expect 0 "influx-node-rows: both nodes have rows after the delete" py "$here/influx-node-rows.py" "$t/nodes.csv" --after 1792601200 --nodes 2,3
 expect 1 "influx-node-rows: node 4 has none" py "$here/influx-node-rows.py" "$t/nodes.csv" --after 1792601200 --nodes 2,4
 
@@ -205,7 +239,7 @@ for n, (ip, port) in {2: ("172.17.0.3", 40002), 3: ("172.17.0.4", 40003)}.items(
     f["inits"].append(ev(n, 100, ip, svc, port, 36422))
     f["init_acks"].append(ev(10 + n, 100.1, svc, ip, 36422, port))
     f["cookie_acks"].append(ev(20 + n, 100.2, svc, ip, 36422, port))
-    f["setup_requests"].append(ev(30 + n, 100.3, ip, svc, port, 36422, gnb_id=n))
+    f["setup_requests"].append(ev(30 + n, 100.3, ip, svc, port, 36422, node_id=n))
     f["ppid"]["to_port_by_assoc"]["%s:%d" % (ip, port)] = {"src": ip, "sport": port, "counts": {"70": 20},
                                                            "t_first": 100.3, "t_last": 110}
 json.dump(f, open(t + "/ppid-good.json", "w"))
@@ -227,8 +261,9 @@ smoke="${1:-}"
 if [ -n "$smoke" ] && [ -f "$smoke/agent.pcap" ] && command -v tshark >/dev/null; then
     py "$here/e2ap-pcap-facts.py" "$smoke/agent.pcap" -o "$t/real.json" >"$t/facts.out" 2>&1 || cat "$t/facts.out"
     echo '{"2":["172.17.0.2"]}' >"$t/ips-real.json"
-    expect 0 "real pcap: setup request func 2, OID, short name, gNB-ID 2, plmn 00f110, not B5C67788" py "$q" "$t/real.json" setup-request \
-        --func-id 2 --oid 1.3.6.1.4.1.53148.1.3.2.2 --short-name ORAN-E2SM-KPM --gnb-id 2 --plmn 00f110 --not-gnb-id-hex B5C67788
+    expect 0 "real pcap: setup request func 2, OID, short name, en-gNB 2 (32 bits), plmn 00f110, not B5C67788" py "$q" \
+        "$t/real.json" setup-request --func-id 2 --oid 1.3.6.1.4.1.53148.1.3.2.2 --short-name ORAN-E2SM-KPM \
+        --node-type en-gNB --node-id 2 --node-id-bits 32 --plmn 00f110 --not-node-id-hex B5C67788
     expect 0 "real pcap: setup response accepts 2" py "$q" "$t/real.json" setup-response --func-id 2
     expect 0 "real pcap: subscription request/response" py "$q" "$t/real.json" subscription --func-id 2
     expect 0 "real pcap: one association, indications on the wire" py "$q" "$t/real.json" assoc-start --node-ips "$t/ips-real.json" --service-ip 10.106.169.160 --before 9999999999

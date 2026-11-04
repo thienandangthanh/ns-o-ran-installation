@@ -3,7 +3,9 @@
 
 Reads the post-delete poll log of gate M7. One line per poll, tab separated:
   <epoch> <comma list of e2mgr CONNECTED names> <node:restart:running:state:subs:indTx> ...
-Per node (id = the gNB-ID in the e2mgr name, gnb_001_001_0000000N), at poll resolution:
+Per node (id = the node ID in the e2mgr name: en_gnb_<mcc>_<mnc>_<32-bit gNB ID, 8 hex> for an en-gNB,
+enB_macro_<mcc>_<mnc>_<20-bit macro eNB ID, 6 hex> for the eNB; a name of any other form is a problem), at poll
+resolution:
   restarted_s       first poll with RestartCount >= 1
   connected_s       first poll after that with the node in the e2mgr CONNECTED set and agent state READY
   first_ind_s       first poll after that with indTx > 0 (counters restart with the process)
@@ -13,7 +15,19 @@ e2-facts-query.py post-delete; this log bounds the wait and gives the restart ev
 """
 import argparse
 import json
+import re
 import sys
+
+MEID_RE = (re.compile(r"^en_gnb_\d{3}_\d{3}_([0-9a-f]{8})$"), re.compile(r"^enB_macro_\d{3}_\d{3}_([0-9a-f]{6})$"))
+
+
+def node_of(name):
+    """The node ID of an e2mgr name (en-gNB gNB ID or macro eNB ID), or None for any other form."""
+    for r in MEID_RE:
+        m = r.match(name)
+        if m:
+            return int(m.group(1), 16)
+    return None
 
 
 def main():
@@ -23,7 +37,17 @@ def main():
     ap.add_argument("--expected-names", required=True)
     ap.add_argument("--out")
     a = ap.parse_args()
-    names = {int(n[-8:], 16): n for n in open(a.expected_names).read().split() if n}
+    names, bad_names = {}, []
+    for n in open(a.expected_names).read().split():
+        nid = node_of(n)
+        if nid is None:
+            bad_names.append(n)
+        else:
+            names[nid] = n
+    if bad_names:
+        print("PROBLEM: expected names of no known meid form (en_gnb_<mcc>_<mnc>_<8 hex>, enB_macro_<mcc>_<mnc>_<6 hex>): %s"
+              % bad_names)
+        sys.exit(1)
     res = {str(i): {"name": n, "restarted_s": None, "connected_s": None, "first_ind_s": None, "max_restart": 0}
            for i, n in names.items()}
     polls = 0

@@ -33,6 +33,17 @@ gate_init() {
 
 log() { echo "[$(date -u +%H:%M:%S)] $*"; }
 
+# meid_of <nodeId>: the E2 node's meid (e2mgr ranName) as e2term renders its Global E2 Node ID (ric-plt-e2
+# BuildRunName.h), PLMN 001/01. Node 1 is scenario-zero's LTE eNB (macro eNB ID 1, 20 bits, 6 hex digits); every
+# other node is an en-gNB whose 32-bit gNB ID is the ns-3 cellId (8 hex digits).
+meid_of() {
+    case "$1" in
+        ''|*[!0-9]*|0) echo "meid_of: bad node id '$1'" >&2; return 1 ;;
+        1) echo enB_macro_001_001_000001 ;;
+        *) printf 'en_gnb_001_001_%08x\n' "$1" ;;
+    esac
+}
+
 # JSON-escape a string (stdin or $1) without jq, which fresh-install lacks.
 json_str() {
     python3 -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$1"
