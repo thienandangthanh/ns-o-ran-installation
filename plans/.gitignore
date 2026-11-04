@@ -26,6 +26,8 @@
 !/*/evidence/*/*/**/reference-compare*.json
 # The pinned protoc toolchain proof (tools/protoc-pinned/protoc-pinned-proof.sh): a small verdict with tool versions.
 !/*/evidence/*/*/**/proof.json
+# Its generate mode's record for a changed proto: tool versions and the sha256 of each generated file.
+!/*/evidence/*/*/**/generate.json
 # Host /home free and active-overlay size at each gate boundary (vm-exec.sh): the per-step disk measurement.
 !/*/evidence/*/*/**/host-disk.tsv
 # The M9 run directory is the run-level record: keep its top-level files.
