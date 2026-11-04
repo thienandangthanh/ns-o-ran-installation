@@ -1,0 +1,8 @@
+# C++ generator for the TS xApp's rc.proto: protoc 3.6.1 and grpc_cpp_plugin as Ubuntu 20.04 packages them, the
+# release the TS xApp image is built on (its final stage is ubuntu:20.04 with libprotobuf-dev and libgrpc++-dev).
+# The committed rc.pb.h requires protoc 3006001. protoc-pinned-proof.sh proves the toolchain by regenerating the
+# unchanged rc.proto and requiring byte equality.
+FROM docker.io/library/ubuntu:20.04
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends protobuf-compiler protobuf-compiler-grpc \
+ && rm -rf /var/lib/apt/lists/*

@@ -1,0 +1,58 @@
+{
+ "equal": true,
+ "files": [
+  {
+   "side": "go",
+   "file": "/home/andang/Documents/UCLAB/projects/O-RAN-DW/OSC-repos/ric-app-rc/protocol/grpc/ricmsgcommrpc/rc/rc.pb.go",
+   "committedSha256": "bca18c8ec41dc627d9dba7de5ebc960f55e8f5cdf1ca4f52e3cb69732d00ecb8",
+   "regeneratedSha256": "bca18c8ec41dc627d9dba7de5ebc960f55e8f5cdf1ca4f52e3cb69732d00ecb8",
+   "equal": true
+  },
+  {
+   "side": "cpp",
+   "file": "/home/andang/Documents/UCLAB/projects/O-RAN-DW/OSC-repos/ric-app-ts/ext/protobuf/rc.pb.cc",
+   "committedSha256": "52955c39c97dc47beb408d75190bfac3fe36262ffffdf8efee309d8b6812435a",
+   "regeneratedSha256": "52955c39c97dc47beb408d75190bfac3fe36262ffffdf8efee309d8b6812435a",
+   "equal": true
+  },
+  {
+   "side": "cpp",
+   "file": "/home/andang/Documents/UCLAB/projects/O-RAN-DW/OSC-repos/ric-app-ts/ext/protobuf/rc.pb.h",
+   "committedSha256": "ab7236d9f5af0934c75a5fd15355290f6d4bae313a5a0208d9dd28f9e4bc2279",
+   "regeneratedSha256": "ab7236d9f5af0934c75a5fd15355290f6d4bae313a5a0208d9dd28f9e4bc2279",
+   "equal": true
+  },
+  {
+   "side": "cpp",
+   "file": "/home/andang/Documents/UCLAB/projects/O-RAN-DW/OSC-repos/ric-app-ts/ext/protobuf/rc.grpc.pb.cc",
+   "committedSha256": "ea98e61f04a428f9f9bf2e6bcdcffc1880b4ed09e6420c865de1f084f1831e3b",
+   "regeneratedSha256": "ea98e61f04a428f9f9bf2e6bcdcffc1880b4ed09e6420c865de1f084f1831e3b",
+   "equal": true
+  },
+  {
+   "side": "cpp",
+   "file": "/home/andang/Documents/UCLAB/projects/O-RAN-DW/OSC-repos/ric-app-ts/ext/protobuf/rc.grpc.pb.h",
+   "committedSha256": "cb91c12cbbb5e3fff5e28af33ef6c7d5902c8d60f78c8d5c6670e8d9b9836a88",
+   "regeneratedSha256": "cb91c12cbbb5e3fff5e28af33ef6c7d5902c8d60f78c8d5c6670e8d9b9836a88",
+   "equal": true
+  }
+ ],
+ "unexpectedOutputs": [],
+ "tools": {
+  "go": {
+   "image": "04e23c8a835c58a0a0e67a6675d70378da25bb1e9979e5d6c8ad2ecded54bf6d",
+   "protoc": "libprotoc 3.6.1",
+   "packages": {
+    "protobuf-compiler": "3.6.1.3-2ubuntu5.2"
+   }
+  },
+  "cpp": {
+   "image": "d7dcc9c9c68816d70567702d20ec3220aa2117d0db34874df9de60f6fa0493a4",
+   "protoc": "libprotoc 3.6.1",
+   "packages": {
+    "protobuf-compiler": "3.6.1.3-2ubuntu5.2",
+    "protobuf-compiler-grpc": "1.16.1-1ubuntu5"
+   }
+  }
+ }
+}

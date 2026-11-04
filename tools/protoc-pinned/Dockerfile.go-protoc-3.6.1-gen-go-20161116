@@ -1,0 +1,26 @@
+# Go generator for rc.proto, as identified from rc's committed rc.pb.go:
+#   - protoc 3.6.1 (Ubuntu 20.04 protobuf-compiler): its FileDescriptorProto for rc.proto equals the one gzipped in
+#     rc.pb.go byte for byte (protoc 3.0.0 lower-cases json_name and does not);
+#   - protoc-gen-go from golang/protobuf's 2016-11-16 snapshot (Debian 9 golang-goprotobuf-dev 0.0~git20161116,
+#     which ships the source): the three-line "DO NOT EDIT!" header (replaced in 2017), fileDescriptor0,
+#     grpc.Invoke, golang.org/x/net/context, grpc.SupportPackageIsVersion4, no XXX_ fields;
+#   - compiled with Go >= 1.8, whose compress/gzip writes MTIME 0 for a zero ModTime as rc.pb.go's gzip header has
+#     (Debian 9's own Go 1.7 binary writes the bytes of time.Time{} there and differs in that one field).
+# protoc-pinned-proof.sh decides by regenerating the unchanged rc.proto and requiring byte equality.
+FROM docker.io/library/debian:stretch AS src
+RUN printf 'deb http://archive.debian.org/debian stretch main\n' >/etc/apt/sources.list \
+ && apt-get -o Acquire::Check-Valid-Until=false update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends golang-goprotobuf-dev \
+ && dpkg-query -W -f '${Package}=${Version}\n' golang-goprotobuf-dev >/protoc-gen-go.source
+
+FROM docker.io/library/golang:1.10 AS gen
+COPY --from=src /usr/share/gocode/src/github.com/golang/protobuf /go/src/github.com/golang/protobuf
+RUN go install github.com/golang/protobuf/protoc-gen-go && go version >/protoc-gen-go.go
+
+FROM docker.io/library/ubuntu:20.04
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends protobuf-compiler \
+ && rm -rf /var/lib/apt/lists/*
+COPY --from=gen /go/bin/protoc-gen-go /usr/bin/protoc-gen-go
+COPY --from=src /protoc-gen-go.source /protoc-gen-go.source
+COPY --from=gen /protoc-gen-go.go /protoc-gen-go.go
