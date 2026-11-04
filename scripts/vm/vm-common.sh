@@ -78,6 +78,15 @@ is_protected() {
     return 1
 }
 
+# wd_finish <watchdog dir> <watchdog pid>: ends the host disk watchdog of a finished gate. It asks the watchdog for
+# one last check (DIR/stop-request) and waits for it, never killing it: a trip under way completes, stops the gate
+# units, shuts the VM down and TERMs the runner. Returns 0 only when the watchdog stopped without a trip.
+wd_finish() {
+    : >"$1/stop-request"
+    wait "$2"; local rc=$?
+    [ "$rc" -eq 0 ] && [ ! -e "$1/watchdog-tripping" ]
+}
+
 host_free_gb() { df -BG --output=avail /home | tail -1 | tr -dc '0-9'; }
 
 # host_disk_line <label>: "<label> <utc> <free /home GiB> <active vda overlay> <its allocated GiB>" (allocated

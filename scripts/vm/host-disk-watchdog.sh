@@ -11,6 +11,8 @@
 # and exits 1. --once checks a single time: exit 0 above the threshold. Every
 # poll writes DIR/heartbeat (epoch seconds) for the runner's heartbeat monitor and appends "epoch free-GB" to
 # DIR/free-series.tsv, so a run records its real peak growth rate.
+# A runner that has finished creates DIR/stop-request: the watchdog then makes one last check and exits 0 (or
+# trips). The runner waits for it and never kills it, so a trip already under way always completes.
 # DIR defaults to $EVIDENCE_HOST_ROOT/watchdog.
 
 source "$(dirname "$0")/vm-common.sh"
@@ -32,6 +34,7 @@ min_file="$out/min-host-free-gb.txt"
 
 trip() {
     local free="$1" before after
+    : >"$out/watchdog-tripping"
     hlog "watchdog: host /home free ${free}G < ${min_gb}G: stopping the chain"
     before=$(vm_gate_units)
     vm_stop_gates || hlog "watchdog: stopping the VM gate units failed or exceeded ${CANCEL_TIMEOUT_S} s; shutting down anyway"
@@ -65,5 +68,6 @@ while :; do
     if [ ! -s "$min_file" ] || [ "$free" -lt "$(cat "$min_file")" ]; then echo "$free" >"$min_file"; fi
     [ "$free" -ge "$min_gb" ] || trip "$free"
     [ "$once" = 1 ] && exit 0
-    sleep "$interval"
+    [ -e "$out/stop-request" ] && exit 0
+    for ((s = 0; s < interval; s++)); do [ -e "$out/stop-request" ] && break; sleep 1; done
 done

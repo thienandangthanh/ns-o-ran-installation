@@ -68,7 +68,8 @@ mkdir -p "$wd_dir"
 bash "$(dirname "$0")/host-disk-watchdog.sh" --min-gb "$WATCHDOG_MIN_GB" --interval 20 --out "$wd_dir" \
     --runner-pid $$ >>"$wd_dir/watchdog.log" 2>&1 &
 wd_pid=$!
-trap 'kill "$wd_pid" 2>/dev/null' EXIT
+# an early exit stops the watchdog, unless it has tripped: a trip under way must finish its VM shutdown
+trap '[ -e "$wd_dir/watchdog-tripping" ] || kill "$wd_pid" 2>/dev/null' EXIT
 trap 'hlog "host /home under ${WATCHDOG_MIN_GB} GiB: the watchdog stopped $unit and shut the VM down; evidence stays on the VM disk"; wd_record 1; exit 125' TERM
 
 # Bootstrap: git, then the harness clone at the exact SHA (no credentials).
@@ -124,8 +125,13 @@ mkdir -p "$dest"
 # fresh-install has no rsync; tar over ssh needs nothing extra.
 vm_ssh "tar -C $ev -cf - ." | tar -C "$dest" -xf - || die "evidence copy failed"
 printf 'boundary\tutc\thome_free_gib\toverlay\toverlay_alloc_gib\n%s\n%s\n' "$disk_start" "$disk_end" >"$dest/host-disk.tsv"
-kill "$wd_pid" 2>/dev/null; wait "$wd_pid" 2>/dev/null
-wd_record 0
+if wd_finish "$wd_dir" "$wd_pid"; then
+    wd_record 0
+else
+    hlog "the host disk watchdog tripped while $gate finished (gate exit $code): failing the gate"
+    wd_record 1
+    exit 125
+fi
 hlog "evidence -> $dest"
 [ -f "$dest/verdict.json" ] && python3 -c 'import json,sys; v=json.load(open(sys.argv[1])); print("verdict", v["gate"], "PASS" if v["pass"] else "FAIL", v["failed"])' "$dest/verdict.json"
 echo "$dest" >"$EVIDENCE_HOST_ROOT/.last-$gate"

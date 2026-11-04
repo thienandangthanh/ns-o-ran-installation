@@ -4,7 +4,10 @@
 # real VM is never reached.
 #   (1) --once with a threshold above the current free space trips: watchdog-tripped.json is written, the gate units
 #       are stopped and the VM shut down (through the fakes), the runner gets TERM, and the watchdog exits 1;
-#   (2) --once with a threshold of 1 GiB does not trip: exit 0, no trip record, the minimum free space is recorded.
+#   (2) --once with a threshold of 1 GiB does not trip: exit 0, no trip record, the minimum free space is recorded;
+#   (3) a runner that finishes (vm-common.sh wd_finish) while a trip is under way (slow fake ssh) fails with 125, and
+#       the trip completes: its record is written and the watchdog is gone;
+#   (4) a runner that finishes without a trip: wd_finish returns 0 within a few seconds and the watchdog is gone.
 set -uo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 tmp=$(mktemp -d); trap 'rm -rf "${tmp:?}"' EXIT
@@ -12,6 +15,7 @@ mkdir -p "$tmp/bin"
 cat >"$tmp/bin/ssh" <<EOF
 #!/bin/sh
 echo "ssh \$*" >>"$tmp/calls"
+[ -z "\${SELFTEST_SSH_DELAY:-}" ] || sleep "\$SELFTEST_SSH_DELAY"
 exit 0
 EOF
 cat >"$tmp/bin/virsh" <<EOF
@@ -49,6 +53,33 @@ rc=$?
 [ "$rc" -eq 0 ] || bad "no trip exited $rc, want 0"
 [ -e "$tmp/wd2/watchdog-tripped.json" ] && bad "a trip record without a trip"
 [ -s "$tmp/wd2/min-host-free-gb.txt" ] || bad "no minimum free space recorded"
+
+# finish <threshold GiB> <dir>: a runner like vm-exec.sh: watchdog in the background, wd_finish 1.5 s later
+finish() {
+    bash -c '
+        source "$1/vm-common.sh"
+        trap "exit 125" TERM
+        bash "$1/host-disk-watchdog.sh" --min-gb "$2" --interval 1 --out "$3" --runner-pid $$ >/dev/null 2>&1 &
+        wd=$!
+        echo "$wd" >"$3.pid"
+        sleep 1.5
+        if wd_finish "$3" "$wd"; then exit 0; else exit 125; fi' _ "$here" "$1" "$2"
+}
+# (3) a trip under way when the runner finishes
+rm -f "$tmp/down"
+SELFTEST_SSH_DELAY=2 finish $((free + 1)) "$tmp/wd3"
+rc=$?
+[ "$rc" -eq 125 ] || bad "a runner finishing during a trip exited $rc, want 125"
+[ -s "$tmp/wd3/watchdog-tripped.json" ] || bad "the trip under way did not complete (no watchdog-tripped.json)"
+kill -0 "$(cat "$tmp/wd3.pid")" 2>/dev/null && bad "the tripped watchdog is still running"
+# (4) a clean finish
+start=$(date +%s)
+finish 1 "$tmp/wd4"
+rc=$?
+[ "$rc" -eq 0 ] || bad "a clean finish exited $rc, want 0"
+[ $(($(date +%s) - start)) -lt 10 ] || bad "a clean finish took $(($(date +%s) - start)) s"
+[ -e "$tmp/wd4/watchdog-tripping" ] && bad "a clean finish left a trip latch"
+kill -0 "$(cat "$tmp/wd4.pid")" 2>/dev/null && bad "the watchdog outlived a clean finish"
 
 [ "$fail" -eq 0 ] && echo "host-disk-watchdog self-test: ok"
 exit "$fail"
