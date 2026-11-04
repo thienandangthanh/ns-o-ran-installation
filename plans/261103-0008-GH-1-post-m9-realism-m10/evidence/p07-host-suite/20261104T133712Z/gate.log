@@ -1,0 +1,49 @@
+CMake Warning at build-support/3rd-party/colored-messages.cmake:84 (_message):
+  [33m$<TARGET_PROPERTY:libcore,INTERFACE_INCLUDE_DIRECTORIES>
+  $<TARGET_PROPERTY:liboran-interface,INTERFACE_INCLUDE_DIRECTORIES>[0m
+Call Stack (most recent call first):
+  utils/CMakeLists.txt:10 (message)
+
+
+[1/1] [32mPASS[0m: TestSuite e2-control-order
+1 of 1 tests passed (1 passed, 0 skipped, 0 failed, 0 crashed, 0 valgrind errors)
+
+***  Note: ns-3 examples are currently disabled. Enable them by adding
+***  "--enable-examples" to ./ns3 configure or modifying your .ns3rc file.
+
+[1/31] [32mPASS[0m: TestSuite global-value
+[2/31] [32mPASS[0m: TestSuite command-line
+[3/31] [32mPASS[0m: TestSuite environment-variables
+[4/31] [32mPASS[0m: TestSuite object
+[5/31] [32mPASS[0m: TestSuite e2-control-order
+[6/31] [32mPASS[0m: TestSuite build-profile
+[7/31] [32mPASS[0m: TestSuite pair-value-test-suite
+[8/31] [32mPASS[0m: TestSuite time
+[9/31] [32mPASS[0m: TestSuite int64x64
+[10/31] [32mPASS[0m: TestSuite tuple-value-test-suite
+[11/31] [32mPASS[0m: TestSuite traced-callback
+[12/31] [32mPASS[0m: TestSuite attribute-container-test-suite
+[13/31] [32mPASS[0m: TestSuite timer
+[14/31] [32mPASS[0m: TestSuite sample
+[15/31] [32mPASS[0m: TestSuite type-traits
+[16/31] [32mPASS[0m: TestSuite object-name-service
+[17/31] [32mPASS[0m: TestSuite hash
+[18/31] [32mPASS[0m: TestSuite event-garbage-collector
+[19/31] [32mPASS[0m: TestSuite ptr
+[20/31] [32mPASS[0m: TestSuite config
+[21/31] [32mPASS[0m: TestSuite type-id
+[22/31] [32mPASS[0m: TestSuite callback
+[23/31] [32mPASS[0m: TestSuite watchdog
+[24/31] [32mPASS[0m: TestSuite split-string
+[25/31] [32mPASS[0m: TestSuite length
+[26/31] [32mPASS[0m: TestSuite matrix-array-test
+[27/31] [32mPASS[0m: TestSuite val-array-test
+[28/31] [32mPASS[0m: TestSuite simulator
+[29/31] [32mPASS[0m: TestSuite attributes
+[30/31] [32mPASS[0m: TestSuite trickle-timer
+[31/31] [32mPASS[0m: TestSuite threaded-simulator
+31 of 31 tests passed (31 passed, 0 skipped, 0 failed, 0 crashed, 0 valgrind errors)
+
+***  Note: ns-3 examples are currently disabled. Enable them by adding
+***  "--enable-examples" to ./ns3 configure or modifying your .ns3rc file.
+
