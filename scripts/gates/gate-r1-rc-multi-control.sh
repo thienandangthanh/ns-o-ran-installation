@@ -84,6 +84,7 @@ ric_watchdog_bg
 check r1_nist_tree_at_testbed_sha_with_agent_dir agents_tree_at_testbed_sha
 check r1_build_tools_present agents_ensure_build_tools
 check r1_sctp_module_loaded agents_sctp_module
+check r1_e2_ports_reserved agents_reserve_ports
 check r1_ns3_binary_located_at_pins agents_ns3_locate
 check r1_pod_log_reader_self_test python3 -I "$HARNESS_DIR/scripts/gates/pod-log-window.py" --self-test
 check r1_pacer_self_test python3 -I "$HARNESS_DIR/scripts/gates/pacer-selftest.py"

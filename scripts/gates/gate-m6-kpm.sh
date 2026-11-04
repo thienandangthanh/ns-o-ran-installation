@@ -38,6 +38,7 @@ ric_watchdog_bg
 check m6_nist_tree_at_testbed_sha_with_agent_dir agents_tree_at_testbed_sha
 check m6_build_tools_present agents_ensure_build_tools
 check m6_sctp_module_loaded_and_persisted agents_sctp_module
+check m6_e2_ports_reserved agents_reserve_ports
 check m6_kpimon_so_extracted_from_image kpimon_extract_so "$SODIR"
 so_size8() { echo "TimeStamp SIZE in the extracted .so: $(harness_so_size "$SODIR")"; [ "$(harness_so_size "$SODIR")" = 8 ]; }
 check m6_kpimon_so_is_the_size8_patched_build so_size8

@@ -109,6 +109,7 @@ if [ "$PART" = dump ]; then
     check n4_dump_calibration_run_present cal_ok
     check n4_dump_nist_tree_at_testbed_sha agents_tree_at_testbed_sha
     check n4_dump_sctp_module_loaded agents_sctp_module
+    check n4_dump_e2_ports_reserved agents_reserve_ports
     check n4_dump_ric_reset_fresh_pods_and_bucket rc_ric_reset dump
     check n4_dump_rc_at_pin_and_ready rc_at_pin
     check n4_dump_agents_connected_set_exact gate_bringup agents "$NODES"

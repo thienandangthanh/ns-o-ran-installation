@@ -50,6 +50,7 @@ SINKX=()
 LEDGER_CHECK="$HARNESS_DIR/scripts/gates/check-ledger.py"
 
 check dseam_ns3_binary_located agents_ns3_locate
+check dseam_e2_ports_reserved agents_reserve_ports
 provenance() {   # the pinned forks, clean, and the hub source carries the seam
     local src="$M4_WORKDIR/ns-3" oi="$M4_WORKDIR/ns-3/contrib/oran-interface"
     { echo "ns-3 $(git -C "$src" rev-parse HEAD) (pin $NS3_SHA)"; echo "oran-interface $(git -C "$oi" rev-parse HEAD) (pin $ORAN_INTERFACE_SHA)"

@@ -41,6 +41,7 @@ _pacer_finish() { for _ in $(seq 150); do kill -0 "$1" 2>/dev/null || break; sle
 check q8_nist_tree_at_testbed_sha_with_agent_dir agents_tree_at_testbed_sha
 check q8_build_tools_present agents_ensure_build_tools
 check q8_sctp_module_loaded agents_sctp_module
+check q8_e2_ports_reserved agents_reserve_ports
 check q8_ns3_binary_located_at_pins agents_ns3_locate
 check q8_pod_log_reader_self_test python3 -I "$HARNESS_DIR/scripts/gates/pod-log-window.py" --self-test
 check q8_grpcurl_fetched_and_checksum_verified rc_grpcurl_fetch

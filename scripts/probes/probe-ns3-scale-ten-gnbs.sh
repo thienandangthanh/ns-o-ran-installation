@@ -52,6 +52,7 @@ vm_used() { df -B1 --output=used / | tail -1 | tr -dc '0-9'; }
 USED0=$(vm_used)
 
 check scale10_ns3_binary_located agents_ns3_locate
+check scale10_e2_ports_reserved agents_reserve_ports
 check scale10_capture_started_before_agents capture_start scale10 docker0 'ip proto 132'
 check scale10_agents_connected_set_exact gate_bringup agents "$NODES"
 distinct() {

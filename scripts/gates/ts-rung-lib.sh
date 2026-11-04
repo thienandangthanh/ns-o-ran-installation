@@ -333,6 +333,7 @@ rung_preconditions() {
     check ${RUNG}_ts_source_is_pin_plus_exactly_the_testbed_patches ts_patches_check
     check ${RUNG}_build_tools_present agents_ensure_build_tools
     check ${RUNG}_sctp_module_loaded agents_sctp_module
+    check ${RUNG}_e2_ports_reserved agents_reserve_ports
     check ${RUNG}_ns3_binary_located_at_pins agents_ns3_locate
     check ${RUNG}_pod_log_reader_self_test python3 -I "$HARNESS_DIR/scripts/gates/pod-log-window.py" --self-test
     check ${RUNG}_pacer_self_test python3 -I "$HARNESS_DIR/scripts/gates/pacer-selftest.py"

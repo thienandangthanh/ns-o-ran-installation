@@ -32,6 +32,7 @@ mkdir -p "$RUN"
 check pause_nist_tree_at_testbed_sha_with_agent_dir agents_tree_at_testbed_sha
 check pause_build_tools_present agents_ensure_build_tools
 check pause_sctp_module_loaded agents_sctp_module
+check pause_e2_ports_reserved agents_reserve_ports
 check pause_ns3_binary_located agents_ns3_locate
 check pause_capture_started_before_agents capture_start pause docker0 'ip proto 132'
 CAP_T0=$(date +%s)

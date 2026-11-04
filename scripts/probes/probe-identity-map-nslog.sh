@@ -34,6 +34,7 @@ SINKX=(); PACERX=()
 
 check idmap_map_present test -s "$MAP"
 check idmap_ns3_binary_located agents_ns3_locate
+check idmap_e2_ports_reserved agents_reserve_ports
 check idmap_build_at_pins ns3_build_at_pins
 export NS_LOG="LteEnbRrc=level_info|prefix_node|prefix_time"
 check idmap_run_nslog paced_null_run nslog lockstep 0

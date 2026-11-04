@@ -85,6 +85,7 @@ ric_watchdog_bg
 check r0_nist_tree_at_testbed_sha_with_agent_dir agents_tree_at_testbed_sha
 check r0_build_tools_present agents_ensure_build_tools
 check r0_sctp_module_loaded agents_sctp_module
+check r0_e2_ports_reserved agents_reserve_ports
 check r0_ns3_binary_located_at_pins agents_ns3_locate
 check r0_pod_log_reader_self_test python3 -I "$HARNESS_DIR/scripts/gates/pod-log-window.py" --self-test
 check r0_grpcurl_fetched_and_checksum_verified rc_grpcurl_fetch

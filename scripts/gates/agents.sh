@@ -4,6 +4,8 @@
 #
 #   agents_tree_at_testbed_sha        ~/nist at $TESTBED_SHA including ns3_e2_agent/ (also on the dirty-tree path)
 #   agents_sctp_module                sctp kernel module loaded now and at every boot
+#   agents_reserve_ports              the agent IPC and pacer ports (38470-38499) reserved from the ephemeral range,
+#                                     now and at every boot
 #   agents_ensure_build_tools         gcc/make (for the harness build) + tshark + tcpdump present
 #   agents_bringup <node-list>        bring-up profile `agents` (see bringup.sh); e.g. gnb:2 or enb:1,gnb:2,gnb:3,gnb:4,gnb:5;
 #                                     every agent's expectedRanName must equal meid_of its nodeId (lib.sh), then the
@@ -56,6 +58,24 @@ agents_sctp_module() {
     lsmod | grep '^sctp ' | head -n 1
     grep -qx sctp /etc/modules-load.d/sctp.conf 2>/dev/null || echo sctp | sudo -n tee /etc/modules-load.d/sctp.conf >/dev/null
     cat /etc/modules-load.d/sctp.conf
+}
+
+# The agents' IPC host ports (38470 + nodeId, published by `docker run -p 127.0.0.1:<port>`) and the pacer port 38499
+# lie inside the kernel's ephemeral range (32768-60999). Any outgoing connection can then hold one of them as its
+# local port, and docker refuses to publish it ("address already in use"); a TIME_WAIT socket does not block it.
+# Reserving the block keeps the kernel from handing these ports out, now and at every boot.
+AGENT_RESERVED_PORTS=38470-38499
+AGENT_RESERVED_PORTS_CONF=/etc/sysctl.d/60-ns3-e2-agent-ports.conf
+agents_reserve_ports() {
+    local key=net.ipv4.ip_local_reserved_ports line now
+    line="$key = $AGENT_RESERVED_PORTS"
+    grep -qxF "$line" "$AGENT_RESERVED_PORTS_CONF" 2>/dev/null ||
+        echo "$line" | sudo -n tee "$AGENT_RESERVED_PORTS_CONF" >/dev/null || return 1
+    now=$(cat /proc/sys/net/ipv4/ip_local_reserved_ports)
+    [ "$now" = "$AGENT_RESERVED_PORTS" ] || sudo -n sysctl -q -w "$key=$AGENT_RESERVED_PORTS" || return 1
+    now=$(cat /proc/sys/net/ipv4/ip_local_reserved_ports)
+    [ "$now" = "$AGENT_RESERVED_PORTS" ] || { echo "$key reads '$now', want $AGENT_RESERVED_PORTS"; return 1; }
+    echo "$key = $now; $AGENT_RESERVED_PORTS_CONF: $(cat "$AGENT_RESERVED_PORTS_CONF")"
 }
 
 agents_ensure_build_tools() {

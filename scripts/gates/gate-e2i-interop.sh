@@ -75,6 +75,7 @@ check e2i_wire_judge_self_test python3 -I "$WIRE" --self-test
 check e2i_nist_tree_at_testbed_sha_with_agent_dir agents_tree_at_testbed_sha
 check e2i_build_tools_present agents_ensure_build_tools
 check e2i_sctp_module_loaded agents_sctp_module
+check e2i_e2_ports_reserved agents_reserve_ports
 check e2i_ns3_binary_located_at_pins agents_ns3_locate
 check e2i_ts_tree_and_image_are_pin_plus_patch_set ts_patches_check
 check e2i_rc_installed_at_pin_and_ready rc_at_pin

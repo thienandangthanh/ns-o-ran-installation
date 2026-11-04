@@ -43,6 +43,7 @@ ric_watchdog_bg
 check p12_nist_tree_at_testbed_sha_with_agent_dir agents_tree_at_testbed_sha
 check p12_build_tools_present agents_ensure_build_tools
 check p12_sctp_module_loaded_and_persisted agents_sctp_module
+check p12_e2_ports_reserved agents_reserve_ports
 check p12_ns3_binary_located agents_ns3_locate
 check p12_kubectl_exec_it_works_without_tty kubectl_exec_it_probe
 fact granularityPeriodMs "$G_MS"
