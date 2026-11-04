@@ -107,8 +107,8 @@ retry() {
 # pipeline member, so `sleep infinity | cmd` would never return.
 #
 # While the command runs, the guest root's use is read every NIST_RUN_POLL_S seconds (default 2). Above
-# NIST_RUN_MAX_ROOT_PCT (default 85) the command is stopped (TERM to timeout, which forwards it, then KILL after
-# 60 s) and nist_run returns 1, so a build that writes without end cannot fill the guest disk before the time bound.
+# NIST_RUN_MAX_ROOT_PCT (default 85) the command is stopped (TERM to timeout, which forwards it and sends KILL
+# itself 60 s later; no helper process outlives nist_run) and nist_run returns 1, so a build that writes without end cannot fill the guest disk before the time bound.
 nist_run() {
     local t="$1"; shift
     local max="${NIST_RUN_MAX_ROOT_PCT:-85}" poll="${NIST_RUN_POLL_S:-2}" pid used rc
@@ -118,8 +118,7 @@ nist_run() {
         used=$(df --output=pcent / | tail -1 | tr -dc '0-9')
         if [ "${used:-0}" -gt "$max" ]; then
             echo "nist_run: guest root ${used} % > ${max} %: stopping $1" >&2
-            kill -TERM "$pid" 2>/dev/null
-            (sleep 60; kill -KILL "$pid" 2>/dev/null) &
+            kill -TERM "$pid" 2>/dev/null   # timeout forwards it and, after --kill-after, sends KILL itself
             wait "$pid" 2>/dev/null
             return 1
         fi

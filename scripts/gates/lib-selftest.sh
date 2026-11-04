@@ -41,6 +41,7 @@ rc=$?
 [ $(($(date +%s) - start)) -lt 30 ] || bad "nist_run did not stop the command promptly"
 grep -q 'guest root .* > .*: stopping sleep' "$tmp/guard.err" || bad "nist_run logged no stop line"
 pgrep -f '^sleep 100$' >/dev/null && bad "the stopped command is still running"
+[ -z "$(jobs -rp)" ] || bad "a helper process of nist_run outlived it: $(jobs -rp | tr '\n' ' ')"
 
 NIST_RUN_MAX_ROOT_PCT=100 nist_run 30 sh -c 'exit 7'
 rc=$?
