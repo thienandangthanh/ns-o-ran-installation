@@ -15,7 +15,7 @@
 #                                 A1 payload patch (the Go a1mediator sends the policy body as a JSON string; the
 #                                 pinned TS xApp reads an object), the default RMR handler (a stray 12041/12042
 #                                 otherwise makes xapp-frame-cpp 2.3.6 free its buffer twice) and the NR cell map
-#                                 (keys only from en_gnb_/gnb_ meids, from the hex of the binary X2 request part)
+#                                 (keys only from en_gnb_/gnb_ meids, from the hex text of the X2 request part that e2mgr keeps)
 #   ts_ready                      TS pod Ready, its log says it listens, and no control-API error
 #   rmr_peer_build                the rmr-peer image (stub QP + injector) from tools/rmr-peer, self-tested, imported
 #                                 into containerd; RMR_PEER_IMAGE names it (tag = git tree id of tools/rmr-peer)

@@ -9,8 +9,9 @@ install_patch_files/xApps/ts/src/ts_xapp/ts_xapp.cpp.nr_cell_map.patch):
   meid      = the last "ranName" string before the request part, e.g. en_gnb_001_001_00000002
   only an NR node has keys: meid ^(en_gnb|gnb)_<3 digits>_<3 digits>_<[0-9a-f]+>$; the last field (the gNB ID hex),
             upper-cased, is the suffix; any other meid (enB_macro_...) contributes no key
-  message   = the uppercase hex of base64-decode(e2nodeComponentRequestPart) (the node's binary APER X2 setup
-              message), decoded as the xApp does (stops at the first non-alphabet character)
+  message   = the text of base64-decode(e2nodeComponentRequestPart), decoded as the xApp does (stops at the first
+              non-alphabet character): e2mgr keeps the request part as the uppercase hex text of its octets (its XER
+              rendering of the OCTET STRING), so the text is the hex of the node's APER X2 setup message
   for every offset where the suffix occurs in `message`: cell_map[message[i:i+10]] = node
 so gNB 2's EN-DC X2 SETUP REQUEST gives 0000000210 (its served NR CGI's NCI and 4 unused bits) and 0000000200 (its
 Global en-gNB ID followed by the next IE id). Prints the map as JSON ({key: [ranName...]}); a key claimed by two
@@ -69,7 +70,7 @@ def keys_of(doc):
             suffix = suffix_of(meid)
             if suffix is None:
                 continue
-            message = base64_decode(value).hex().upper()
+            message = base64_decode(value).decode("latin-1")
             for i in range(0, len(message) - len(suffix) + 1):
                 if message[i:i + len(suffix)] == suffix:
                     out.append(message[i:i + 10])
@@ -101,7 +102,8 @@ def judge(docs, expect=(), no_key=(), no_wrong_node=False):
     return {"cellMap": cell_map, "keysByNode": owners}, problems
 
 
-# self-test fixtures: the agents' X2 request parts (hex) per meid, as e2mgr stores them (base64)
+# self-test fixtures: the agents' X2 request parts (hex) per meid; nodeb() stores each as e2mgr does (base64 of the
+# uppercase hex text)
 FIXTURE_HEX = {
     "en_gnb_001_001_00000002": "0024004100000100f4003a40000200fc00090000f110500000000200fd002600000400020000f110000000"
                                "0210001000f110410009a9f500004d004100071011353ea50000",
@@ -112,8 +114,14 @@ FIXTURE_HEX = {
 }
 
 
+# e2mgr's stored request part of the scripted en-gNB 0x7F000001, verbatim from its nodeb record
+# (e2mgr-nodeb-en_gnb_001_001_7f000001.json in the identity probe's evidence, scripts/probes/probe-e2-identity-setup.sh)
+E2MGR_RECORD_7F000001 = ("MDAyNDAwNDEwMDAwMDEwMEY0MDAzQTQwMDAwMjAwRkMwMDA5MDAwMEYxMTA1MDdGMDAwMDAxMDBGRDAwMjYwMDAwMDQw"
+                         "MDAxMDAwMEYxMTA3RjAwMDAwMTEwMDAxMDAwRjExMDQxMDAwOUE5RjUwMDAwNEQwMDI3MDAwNzEwMTEzNTNFQTUwMDAw")
+
+
 def nodeb(meid, hexpart, key="gnb"):
-    part = base64.b64encode(bytes.fromhex(hexpart)).decode()
+    part = base64.b64encode(hexpart.upper().encode()).decode()
     return {"ranName": meid, "connectionStatus": "CONNECTED",
             key: {"nodeConfigs": [{"e2nodeComponentInterfaceType": "x2", "e2nodeComponentRequestPart": part}]}}
 
@@ -128,8 +136,17 @@ def self_test():
     # the old gnb_ form is still an NR meid; an ASCII-hex request part (the old agent) yields no key from binary hex
     out, _ = judge([nodeb("gnb_001_001_00000002", FIXTURE_HEX[g2])])
     cases.append(("gnb_ meid parsed", out["keysByNode"]["gnb_001_001_00000002"] == ["0000000200", "0000000210"]))
-    out, _ = judge([nodeb("gnb_001_001_00000002", "0000000202".encode().hex())])
-    cases.append(("ASCII request part gives no key", out["keysByNode"]["gnb_001_001_00000002"] == []))
+    # the stored form decides: base64 of the binary octets (not what e2mgr keeps) yields no key
+    raw = {"ranName": g2, "gnb": {"nodeConfigs": [{"e2nodeComponentRequestPart":
+                                                   base64.b64encode(bytes.fromhex(FIXTURE_HEX[g2])).decode()}]}}
+    out, _ = judge([raw])
+    cases.append(("a request part stored as binary octets gives no key", out["keysByNode"][g2] == []))
+    # e2mgr's real record of a scripted en-gNB
+    real = {"ranName": "en_gnb_001_001_7f000001",
+            "gnb": {"nodeConfigs": [{"e2nodeComponentRequestPart": E2MGR_RECORD_7F000001}]}}
+    out, problems = judge([real], ["7F00000110=en_gnb_001_001_7f000001"], no_wrong_node=True)
+    cases.append(("e2mgr's stored record gives its NR CGI key and its Global en-gNB ID key", not problems
+                  and out["keysByNode"]["en_gnb_001_001_7f000001"] == ["7F00000100", "7F00000110"]))
     # an eNB meid never contributes, even when its request part holds the text
     out, problems = judge([nodeb("enB_macro_001_001_00000002", FIXTURE_HEX[g2])], no_key=["enB_macro_001_001_00000002"])
     cases.append(("enB_macro meid gives no key", not problems))
