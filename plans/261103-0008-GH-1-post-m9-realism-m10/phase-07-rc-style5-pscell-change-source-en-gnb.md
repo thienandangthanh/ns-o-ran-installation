@@ -192,3 +192,12 @@ Do these first, in this order, before the first P07 code commit or VM step:
   - **C++ side:** Ubuntu 20.04's protoc 3.6.1 and grpc_cpp_plugin 1.16.1.
   - Everything comes from distro packages and Debian source; no binary is downloaded. The commit was first made before the rows, undone locally before any push, and made again after them.
 - **Interfaces (1270008):** the binding forms between rc, the agent, ns-3 and the harness are in the section "Integration interfaces".
+- **Step 3, ns-3 and oran-interface (local fork commits, not yet pinned):** oran-interface efd5802 (the emitter stop change) and 8a3cb21 (dispatch per node, read-only UE resolution, the named comparator, the pacing-log record, hello minor 4, the test suite); ns-3 ea6e46f6 (resolution getters, `ApplyE2SnChange`, no RC handler on the eNB).
+  - Host proof, in the `localhost/ns3-e2-agent:dev-x2` image (Ubuntu 22.04, g++ 11):
+    - `./test.py -s e2-control-order` passes 6 of 6 cases.
+    - `./test.py -c unit` passes 31 of 31.
+    - With the comparator swapped for arrival order, the hub-order case fails and the suite exits 1.
+    - A no-control run with the R3′ radio configuration is byte-equal to the baseline binary: traces, samples and context files.
+    - The M7 configuration is byte-equal except one row of `DlE2RlcStatsLte.txt`, which also differs between two runs of the same binary. That is ns-3 nondeterminism from before this change.
+  - The VM's M4 build uses `--disable-tests`, so the suite's proof is this host run. It is repeated at the pinned SHAs at the phase exit, and its output goes into the evidence.
+  - The stop-time `late` lines are ruled in the ledger note on row 124 (990981a).
