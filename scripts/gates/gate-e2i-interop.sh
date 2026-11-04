@@ -165,8 +165,16 @@ e2i_run() {
 check e2i_lockstep_run_with_two_injected_controls e2i_run
 check e2i_ts_xapp_absent_after_the_run ts_absent
 check e2i_pod_snapshot_after rc_pod_snapshot after
-fact tsXappDownDuringInjector "$(passed e2i_ts_xapp_scaled_to_zero && passed e2i_ts_xapp_absent_before_the_run &&
-    passed e2i_ts_xapp_absent_after_the_run && echo true || echo false)"
+# the TS xApp was scaled to zero and deregistered before the injector part, and absent before and after the run
+ts_down_during_injector() {
+    local c rc=0
+    for c in e2i_ts_xapp_scaled_to_zero_and_deregistered e2i_ts_xapp_absent_before_the_run e2i_ts_xapp_absent_after_the_run; do
+        if passed "$c"; then echo "$c passed"; else echo "$c did not pass"; rc=1; fi
+    done
+    return $rc
+}
+check e2i_ts_xapp_down_during_injector ts_down_during_injector
+fact tsXappDownDuringInjector "$(passed e2i_ts_xapp_down_during_injector && echo true || echo false)"
 ledger_and_handover() {
     python3 -I - "$RUN/trace/e2-control-ledger.jsonl" "$RUN/ns3run/EnbHandoverStartStats.txt" <<'PY'
 import json, sys
