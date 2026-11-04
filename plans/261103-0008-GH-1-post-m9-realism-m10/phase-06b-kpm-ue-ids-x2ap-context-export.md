@@ -116,3 +116,9 @@ Re-pin the P06 SHAs.
   - Live1 against the M9/cp1 reference (`plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/reference/r3p`): ledger, ipc (100 samples per node) and traces are byte-equal. `extra` differs only in `rc-multiset` targetKey `0000000202` → `0000000210`, which is P06's registered key transform (row 22). kpm-headers and collet-start-time are equal. `ipcTraceUeContextLines` = 0. The scenario, schedule and predictor-records files differ by the same T, which P08 judges.
   - `r3p_live1_ue_context_equals_identity_map_cp1` PASS, the R-8 live cross-check. The UE context tie to ns-3's PDCP trace, the Format-3-only subscription and the KPM UE-list moves all PASS.
   - The gate's verdict is FAIL on `r3p_live1_expected_outcomes_step_scoped_late_zero` and `r3p_live1_wire_requests_equal_handovers_via_target_with_predictor_key`. Both expect h1 via the source en-gNB 3 (row 22's T on the schedule), while the TS xApp still sends via the target gNB 2, as in P05's green run, whose ledger line is identical. Rows 14, 15 and 25 change that in P07. This is the P06b + P07 integration boundary of step 5: R3′ is judged at P07's exit.
+- Codex pre-ship audit (read-only, adversarial-review `--base 1d980c4`, 2026-11-04 17:36 KST, disclosed). Verdict needs-attention, four findings, each backed by an in-memory probe; all four accepted:
+  - P12 judged UE IDs only from the first measCondUEid item and ignored `ueIdTags` (row 102).
+  - A `ueContext` record in an IPC trace passed the live gates (row 103).
+  - M7 never joined Influx `ueId` to `ns3.imsi`, the only eNB Influx path (row 104). Phase step 4 names M7, so the gap is real.
+  - The sub-actions check silently dropped unattributed subscription requests (row 105).
+  Rows were committed before code (1feb90a). The gates that carry these checks rerun after the fix.
