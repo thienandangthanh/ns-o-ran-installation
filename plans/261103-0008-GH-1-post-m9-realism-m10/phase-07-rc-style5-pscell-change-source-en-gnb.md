@@ -125,3 +125,28 @@ Re-pin the P06b SHAs; `m10-cp1` reproduces checkpoint 1.
 - Re-encode the e2i N5-form negative (`0000F1100000000303`) as a Style 5/3 control. Left as Style 3/1 it is refused for its style, not its target, and AC12's negative stops testing the target.
 - Before this phase's e2i re-run, write hex sidecars beside the e2mgr record files (the scrubber replaces their request parts with `REDACTED-TOKEN`), so the records stay judgeable after the scrub.
 
+
+## Hand-offs from the P06b exit review (kongming-261104-1958)
+Do these first, in this order, before the first P07 code commit or VM step:
+1. **Disk projection and the VM-root rule.**
+   - P06b took /home from 46 to 30 GiB free; M3's kpimon rebuild alone took about 11 GiB. The dev floor is 20 GiB.
+   - P07 rebuilds rc, the TS xApp and the agent, and runs R2 C1, R3′ C1 and e2i. Project its /home use, from the per-step `host-disk.tsv`, before the first VM step. If the projection crosses 20 GiB, plan a revert point or PAUSE for the user. Never delete snapshots or overlays autonomously.
+   - The VM root is at 68 % against P12's 75 % guard. Register as an ops rule that a VM `docker image prune -f` removes only dangling images, that is, superseded builds of this plan. P06b's prune goes to Stop A′ as an interpretation of the contract's §5.
+2. **Ledger rows that do not exist yet** (old → new, why not weaker), all written before code:
+   - `r3p-prepare.py` `stub_load` (`:48`) and the calibration branch (`:74-79`);
+   - `r3p-schedules.py:31-32` `trigger_entry`;
+   - the pacer replay's UE-identity tuple (only P02's row 57 covers the pacer today);
+   - row 13's promised `(imsi, step)` wire-attribution row;
+   - the G1 seam-smoke #9 row (step 0);
+   - the counter conjuncts in item 3;
+   - e2i association-based frame-to-node mapping, reusing `kpm-ue-list-moves.py` `assoc_node_of`, before P07's e2i run. This is harness work; the P06 hand-off in phase 12 that made it a user question becomes a disclosure.
+3. **Agent counters where contexts change.** Today `samplesNoUeContext` and `ipc.ueContextRejected` are asserted only in M6 and P12. Add `samplesNoUeContext == 0` and `ueContextRejected == 0`, taken as the maximum over every stats line across agent restarts, to M7 and to every rung's agent check. Replay them offline on the archived M7, R0, R1 and r3p runs; the review read 0 on all of them.
+4. **The agent's per-seq UE context** (P06b disclosure, finding 3). The agent keeps the `ueContext` lines keyed by seq until the period is reported and encodes each sample with the context valid at its seq. Add a host unit test with a mid-period context change: all K records are encoded, and the departed UE appears only in its own samples.
+5. **One harness pin for the r3p migration.** At HEAD the r3p gate cannot pass: D7 (row 10) still requires "via target" while rows 14 and 15 require "via source". Land rows 10, 14, 15 and 25 with the TS xApp patch and rows 88–95 at one harness pin, and run no r3p on a partial migration.
+6. **The TS xApp reads the UE ID from Influx.**
+   - The `ueId` tag is MN-scoped, so a UE has the same tag on every en-gNB. Define the serving row as the latest seq from the node that currently reports the UE. Around an SN change, rows from both gNBs carry the tag.
+   - The read uses in-cluster credentials (T7). T_ctl is re-measured, because the read sits inside the lock-step window.
+   - Add a wire negative so that "reads it from Influx" is not vacuous (the anomaly string already carries every UE ID member): a well-formed `ueId` with no Influx row must give zero RIC CONTROL requests on the wire.
+   - The TS xApp never uses an `ns3.*` field for the UE identity.
+7. **The rungs' UE-list judge.** Pass `--facts` (the rung's `$label-sub-facts.json`) to every `kpm_moves` call, so a rung with an agent restart attributes frames by association instead of failing closed on a shared IP.
+8. D-06b-1 (the MeNB UE X2AP ID before DC) is scheduled in P10 with P15; see phase 10. Take it into P07 only if P07 rebuilds kpimon anyway.

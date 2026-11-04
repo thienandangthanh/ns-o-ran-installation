@@ -1,6 +1,7 @@
 # P06b (MC, T-A P4 KPM half): X2AP UE context export, en-gNB-UEID / eNB-UEID in KPM, kpimon → Influx
 
 **Start state:** P06 pins; `f7-rerun-green`. **Snapshot at exit:** none. **Precondition:** P06 green. **Integration boundary:** this phase's pins are never used for a rung run; R2/R3′ are judged after P07.
+_Note (2026-11-04, exit review kongming-261104-1958 finding 10):_ R0 and R1 did run C1 at this phase's pins (`r0/20261104T100125Z`, `r1/20261104T102205Z`), and r3p ran single (`r3p/20261104T082155Z`). These are regression evidence and step 5's cross-check, never R2/R3′ acceptance.
 
 ## Context
 - The agents' KPM Format 2 UE IDs are gNB-UEID carrying the IMSI in AMF-UE-NGAP-ID (`ns3_e2_agent/src/sample-forwarder.cpp:101`; run report P4 row). The IPC `sample` lines carry only `imsi` per UE (kongming F5, M9 live1).
@@ -33,6 +34,7 @@
 - **kpimon fork:** decode the UE ID CHOICE (its headers include `UEID-EN-GNB.h` and `UEID-ENB.h` [kongming F5]) and write the tag `ueId` per R-4 on UeMetrics points, replacing the IMSI key. The Influx = IPC checks map tag → IMSI through `e2-ue-context-*.jsonl` (harness side).
 - **AD stand-in and predictor (harness):**
   - `send-rmr.sh anomaly <ueId>` names the UE by its Influx `ueId` tag, which the injector reads from Influx right before the trigger, like the OSC AD path.
+    _Note (2026-11-04, kongming-261104-1958 Q4 item 4):_ P07 takes the route in `phase-07-…md` (R3′ preparation): it resolves IMSI → `ueId` through the run's `e2-ue-context-*.jsonl` and then confirms the key exists in Influx. That route survives a later removal of `ns3.imsi`. The AD stand-in is harness-side; AC14's "never from an ns-3 side channel" applies to the TS xApp.
   - The R3′ predictor and the stub key their answers by that string; `r3p-predictor.py` maps it to the IMSI through the run's `e2-ue-context-*.jsonl`, so the predictor records keep `imsi` (R-2).
 - **Secrets (T7):** every Influx read inside the cluster uses the in-cluster NIST config or a K8s Secret reference. No token in any file in git or in evidence (the scrubber fixtures gain a `ueId` query case).
 
@@ -71,9 +73,18 @@
 | Global eNB ID macro eNB ID BIT STRING (20) | E2SM v07.00 §6.2.3.9 (from 3GPP TS 36.413 §9.2.1.37), p. 21 | `QW6VJ83M` | ✓ 2026-11-04 |
 | KPM Format 2 "List of matched UE IDs" items are UE ID 8.3.24 | KPM v03.00 §8.2.1.4.2, p. 26 | `F82PYZVK` | ✓ 2026-11-04 |
 | UE ID is the E2SM common IE | KPM v03.00 §8.3.24 ("defined in [12] clause 6.2.2.6"), p. 34 | `F82PYZVK` | ✓ 2026-11-04 |
+| GUMMEI values {00F110, 0001, 01} | chosen constants (ns-3 models no GUMMEI); the structure is per E2SM v07.00 §6.2.3.18 above | — | disclosed (added 2026-11-04) |
 | MME UE S1AP ID = IMSI; eNB UE X2AP ID = LTE RNTI | ns-3 model construction (EpcMmeApplication assigns the IMSI as MME UE S1AP ID; ns-3's X2 uses the RNTI as UE X2AP ID), not a spec | — | disclosed |
 
 Deviation found while reading (P3, disclosed; Stop A′): the eNB agent always includes the MeNB UE X2AP ID, but §6.2.2.6 makes it conditional on DC being set up (ifDCSetup: "shall be present ... if DC is established"). The clause does not forbid it otherwise, and in the scenarios every reported UE that the en-gNBs report has DC set up. An eNB UE whose secondary RLC is not set up yet still carries it. Fix to spec at P07 if Stop A′ rules it a P1–P2: include the X2AP ID only for UEs with DC established, which needs a DC flag in `ueContext`.
+
+_Note (2026-11-04, kongming-261104-1958 finding 2):_ This deviation is now labelled **D-06b-1** (minor), so it no longer collides with the contract's item P3 (δ). It is live on M7's wire: the eNB lists IMSIs 2 and 3 from seq 1, while IMSI 2 enters an en-gNB context only at seq 6 and IMSI 3 at seq 3 (`m7/20261104T093642Z/ns3run/e2-ue-context-*.jsonl`, archived). Row 81 currently requires the ID on every eNB-UEID, so the judge encodes the deviation. "Fix at P07 if Stop A′ rules" cannot happen in that order, because Stop A′ follows P08. Under the standing fix-to-spec rule, the fix is scheduled now:
+- **Phase:** P10, bundled with P15, which rebuilds the agent and kpimon anyway. P07 does not rebuild kpimon (phase-07 Files), and P06b's kpimon rebuild alone took about 11 GiB of /home.
+- **Row first:** row 81's eNB conjunct changes to "the MeNB UE X2AP ID is present iff the UE is in some en-gNB's ctx(g, s)", derived from the en-gNB context files rather than the eNB's own flag, with one negative each way.
+- **Code:** ns-3 adds a DC flag to the eNB `ueContext`; the agent omits the member when DC is not set up; kpimon's tag formatter handles the absent member; the n6 and Influx form checks follow.
+- **Stop A′:** P4-KPM is reported as fixed with this one scheduled residual. The user may instead require it before cp2 (in P07).
+
+GUMMEI {00F110, MME group 0001, MME code 01} and the Global eNB ID used in en-gNB-UEID are chosen constants: ns-3 models no GUMMEI. They are the testbed's PLMN and the eNB's macro ID 1 (P06's R-3 identity), not values read from a 3GPP TS.
 
 ## Risks
 - Emitting `ueContext` changes event order or emission (High/Low). It reads state only; the step 2 byte-compare is a hard gate.
@@ -84,7 +95,7 @@ Deviation found while reading (P3, disclosed; Stop A′): the eNB agent always i
 ## Rollback
 Re-pin the P06 SHAs.
 
-## Work record (in progress, 2026-11-04)
+## Work record (2026-11-04)
 - Step 1: ledger rows 79–100 and the controller's rulings on the inventory's open questions are committed (56a7092), before any code commit. Inventory: `plans/reports/planner-261104-1430-GH-1-p06b-ac18-inventory.md`. Rows 88–95 (stand-in anomaly sender, stub, predictor) belong to P07's R2/R3′ integration and are implemented there.
 - Step 2 (fork commits on `dev/l-release-nist180`, pinned in 0fdc1a3):
   - oran-interface e5ad09d: `ueContext` line `{imsi, lteRnti, mnCellId, mmeUeS1apId}` sent before a seq's sample. It is sent on the first sample, on any change, after every new connection and after a send refused by backpressure. It goes to `e2-ue-context-<node>.jsonl`, never to `e2-ipc-trace-<node>.jsonl`. Hello announces minor 3, under the schema's own minor rule.
@@ -101,8 +112,11 @@ Re-pin the P06 SHAs.
   - The harness also needs `check-n6-influx-window.py`, `n6-fixtures.py`, `ipc-null-sink.py`, `agents-ns3-run.sh` and a new `tools/e2-evidence/ue-context-map.py` (rows 79–100).
 - Disclosures for Stop A′:
   - The `ns3.imsi` vendor measurement stays in the KPM report. The contract forbids only an IMSI carried as a gNB-UEID; R-4's and the schema's "never encoded" wording is narrowed to "never encoded as the UE ID".
+    _Note (2026-11-04, kongming-261104-1958 finding 9):_ This is an interpretation of R-4, not a contract issue. R-4's text is "The IMSI stays inside the IPC; the agent uses it only to map sample UEs to their IDs" (plan.md:198), in the context-channel bullet; "never encoded" is not R-4's wording. Rows 85, 86 and 90, committed before code (56a7092), pre-registered that `ns3.imsi` stays, and AC14b forbids only an IMSI carried as a gNB-UEID. Stop A′ follows cp2, so its options are "keep through M10" or "remove by amendment". P07 keeps the TS xApp off every `ns3.*` field for the UE identity, and P10's AC16 lint classifies the `ns3.*` vendor measNames.
   - The MME UE S1AP ID equals the IMSI by ns-3's construction.
   - A UE that leaves a gNB in the middle of a multi-sample reporting period has no context at encode time, so that sample is not encoded. P07–P10 must use one sample per period wherever handovers happen, or the agent must keep departed UEs until the period is reported.
+    _Note (2026-11-04, kongming-261104-1958 finding 3):_ This is a latent agent defect, not a test constraint. The "one sample per period wherever handovers happen" rule is withdrawn, because a gate-configuration rule that hides a defect is a narrowing. The fix is in P07, where the agent is rebuilt anyway: the agent keeps the `ueContext` lines keyed by seq until the period is reported and encodes each sample with the context valid at its seq, with a host unit test of a mid-period context change (all K records encoded; the departed UE appears only in its own samples).
+  - Added at the exit review (2026-11-04): the VM `docker image prune -f` of dangling images (below) is an interpretation of the contract's §5 "Nothing is deleted autonomously", by analogy with the plan's image rule; it goes to Stop A′. The step 2 and step 5 sequencing deviations are recorded under the exit record.
 - Harness (9a64fd3): rows 79–87 and 96–100. Lint and every self-test pass. On the gNB-UEID-era e2i capture (`evidence/e2i/20261104T025747Z`), the new UE ID check fails as it must (44550 gNB-UEIDs), and the sub-actions check passes (3 requests, one action, ID 1, Format 3).
 - VM gates. Evidence is under `evidence/`.
   - M4 PASS `m4/20261104T061448Z` (18/18).
@@ -113,7 +127,7 @@ Re-pin the P06 SHAs.
   - Fix: row 101 (ae937f7), then d8e7692, which attributes each frame by its SCTP association's E2 Setup node, still requires the IP to be listed for that node, and fails closed on a shared IP without facts. Replayed on attempt 1's capture: PASS with facts (all five nodes, 0 gNB-UEID), FAIL without.
   - At d8e7692: M6 PASS `m6/20261104T075343Z`, M7 PASS `m7/20261104T075520Z`.
 - Step 2 and step 5 (R3′ single, `r3p/20261104T082155Z`, d8e7692):
-  - Live1 against the M9/cp1 reference (`plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/reference/r3p`): ledger, ipc (100 samples per node) and traces are byte-equal. `extra` differs only in `rc-multiset` targetKey `0000000202` → `0000000210`, which is P06's registered key transform (row 22). kpm-headers and collet-start-time are equal. `ipcTraceUeContextLines` = 0. The scenario, schedule and predictor-records files differ by the same T, which P08 judges.
+  - Live1 against the M9/cp1 reference (`plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/reference/r3p`): ledger, ipc (100 samples per node) and traces are byte-equal. `extra` differs only in `rc-multiset` targetKey `0000000202` → `0000000210`, which is R-2's rc-multiset transform (`targetKey` → the NCI key, plan.md:159). kpm-headers and collet-start-time are equal. `ipcTraceUeContextLines` = 0. The scenario, schedule and predictor-records files differ by the same T, which P08 judges.
   - `r3p_live1_ue_context_equals_identity_map_cp1` PASS, the R-8 live cross-check. The UE context tie to ns-3's PDCP trace, the Format-3-only subscription and the KPM UE-list moves all PASS.
   - The gate's verdict is FAIL on `r3p_live1_expected_outcomes_step_scoped_late_zero` and `r3p_live1_wire_requests_equal_handovers_via_target_with_predictor_key`. Both expect h1 via the source en-gNB 3 (row 22's T on the schedule), while the TS xApp still sends via the target gNB 2, as in P05's green run, whose ledger line is identical. Rows 14, 15 and 25 change that in P07. This is the P06b + P07 integration boundary of step 5: R3′ is judged at P07's exit.
 - Codex pre-ship audit (read-only, adversarial-review `--base 1d980c4`, 2026-11-04 17:36 KST, disclosed). Verdict needs-attention, four findings, each backed by an in-memory probe; all four accepted:
@@ -136,3 +150,23 @@ Re-pin the P06 SHAs.
   - R0 PASS `r0/20261104T100125Z` (130 checks). R1 PASS `r1/20261104T102205Z` (144 checks). Every run's UE context files agree with ns-3's PDCP trace.
   - P12 PASS `p12/20261104T104145Z` (56 checks): one indication per 10 samples, 10 records each, with the UE IDs and `ueIdTags` judged in every condition item.
 - Evidence: the verdict layers of the 17 P06b run dirs (1,288 files) are in git. Their 4,233 raw files are archived as `/mnt/data/andang-data/ns-o-ran-installation-evidence/plans-evidence-raw-m10-p06b-20261104.tar.zst` (160 MB) with its `.list0`; both are in that folder's `SHA256SUMS`, which verifies. Host free space at exit is 30 GiB on /home and 12 GiB on /mnt/data.
+
+## Exit record (2026-11-04)
+- **Status: DONE.** AC14b's codec, context and Influx parts are met. The TS xApp half of AC14b and the R2/R3′ integration are judged at P07's exit, as pre-registered.
+- **Exit review:** GO-WITH-CHANGES (`plans/reports/kongming-261104-1958-GH-1-p06b-exit-review.md`, Opus xhigh). It found no AC18 weakening: every code commit came after its ledger rows (56a7092 → 9a64fd3, ae937f7 → d8e7692, 1feb90a → 28d4508), and no check was removed or narrowed. It found no material scope mismatch, so there is no PAUSE T3. Its changes are applied as follows:
+  - **Finding 1 (must), the checkpoint-1 byte-compare is now committed.** `r3p/20261104T082155Z/reference-compare-cp1.json` (`reference-compare.py compare` with the predictor records, schedule and scenario) and `reference-compare-cp1-components.json` (the per-component breakdown, computed offline after the run, at ba2c8df) show ledger, ipc (100 samples per node) and traces equal to the M9/cp1 reference, and `ipcTraceUeContextLines` 0. `extra` differs only in rc-multiset, and the three files differ by T. The citation for the rc-multiset `targetKey` is corrected to R-2 (plan.md:159).
+  - **Two step deviations are recorded.**
+    - Step 2's "local proof before any VM run" ran after M4–M7, on the VM's r3p single run. That is harmless because the result is equal, and stronger, because it covers P05, P06 and P06b together.
+    - Step 5 used the full r3p single gate rather than an agents-only run.
+  - **Findings 2, 3, 9 and 10:** dated notes in this file (header, AD stand-in, D-06b-1 with its fix scheduled in P10, the `ns3.imsi` interpretation, the mid-period defect with its fix in P07, the integration-boundary runs). The GUMMEI constants are now in the standards ledger.
+  - **Finding 7:** dated notes on ledger rows 100 and 101; the row texts are unchanged.
+  - **Finding 8:** a committed host test of the decode harness's records path, `tools/kpimon-decode-harness/selftest-records.sh` with `selftest-records-mutate.c` and four real M7 Format 2 messages in `fixtures/format2-multi-item-ue-ids.lines`.
+    - On kpimon's tag-exporting library it passes: the unchanged messages are uniform with a tag per UE. Each mutation of the last condition item's last UE ID turns `ueIdsUniform` false: X2AP ID on 4 messages, macro eNB ID on 2, an added optional F1AP ID on 2, and MME UE S1AP ID on 2.
+    - `selftest.sh` no longer defaults to another session's scratchpad; it also passes when given its inputs.
+    - Both tests print SKIP with exit 77 without their inputs, and `lint.sh` shows that SKIP line rather than counting it as a pass.
+  - **Findings 4, 5, 6, 11 and Q4:** written as the first hand-offs of phase 07. The e2i association mapping moved from a Stop A′ question to P07 harness work (phase 12 note).
+  - **Review question 3 is answered:** the Testbed fork's `ns3_e2_agent/tests/compare-codec-probe.py` at 89d45af reads `ueIds` and `ueIdsUniform`, and 2d256d2 is 89d45af's parent.
+- **Stop A′ items from this phase:**
+  - the user questions on `ns3.imsi` (keep through M10, or remove by amendment) and on D-06b-1 (P10 with P15, or before cp2);
+  - the disclosures: MME UE S1AP ID = IMSI, the GUMMEI constants, the VM image prune, the two step deviations and the e2i association mapping;
+  - the open Zotero question for 3GPP TS 38.101-1, 36.101 and 36.104.

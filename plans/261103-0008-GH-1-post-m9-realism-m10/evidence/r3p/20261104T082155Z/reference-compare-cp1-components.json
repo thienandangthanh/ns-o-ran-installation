@@ -1,0 +1,22 @@
+{
+ "computedOffline": "2026-11-04 after the run, on the host, by scripts/gates/reference-compare.py compare and scripts/gates/digest-run.py",
+ "harnessSha": "ba2c8df (the gate ran at d8e7692)",
+ "run": "runs/live1",
+ "reference": "plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/reference/r3p",
+ "componentsEqual": {
+  "ledger": true,
+  "ipc": true,
+  "traces": true
+ },
+ "ipcSamples": {
+  "1": 100,
+  "2": 100,
+  "3": 100
+ },
+ "ipcTraceUeContextLines": 0,
+ "extraDiffering": [
+  "rc-multiset"
+ ],
+ "extraDifferenceExplained": "rc-multiset targetKey 0000000202 -> 0000000210: the rc-multiset transform of the identity phase's NR CGI key (plan R-2); kpm-headers and collet-start-time are equal",
+ "filesDifferExplained": "predictor-records, schedule and scenario carry the registered transform T (judged in the transform compare)"
+}

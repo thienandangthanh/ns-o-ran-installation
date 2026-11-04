@@ -64,4 +64,5 @@ Revert the runner commits; `run-to-m9.sh` at `39b3ba2` remains the M9 record.
 
 ## Hand-offs from the P06 exit review (kongming-261104-1340)
 - The e2i step runs after r3p in the unattended end run, and its IP-based frame-to-node map turns red on any agent restart. Decide (user question at Stop A′) whether to move e2i to association-based node mapping before the runner freeze.
+  _Note (2026-11-04, P06b exit review kongming-261104-1958):_ This is no longer a user question. It is harness robustness work and goes to P07 (its hand-off item 2): e2i reuses `kpm-ue-list-moves.py` `assoc_node_of` (ledger row 101's rule), with a ledger row first, before P07's e2i run. Stop A′ receives it as a disclosure.
 

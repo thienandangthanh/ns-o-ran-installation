@@ -71,3 +71,16 @@
 
 ## Rollback
 Re-pin the `m10-cp2` SHAs.
+
+## Hand-offs from the P06b exit review (kongming-261104-1958)
+- **D-06b-1, the MeNB UE X2AP ID before DC.** It is scheduled here, bundled with P15, which rebuilds the agent and kpimon anyway.
+  - Today the eNB agent always includes the MeNB UE X2AP ID in eNB-UEID. E2SM v07.00 §6.2.2.6 makes it conditional on DC being established.
+  - M7 shows the window: IMSIs 2 and 3 are on the eNB from seq 1, but enter an en-gNB context only at seq 6 and seq 3.
+  - **Row first.** Row 81's eNB conjunct becomes "the MeNB UE X2AP ID is present iff the UE is in some en-gNB's ctx(g, s)". It is derived from the en-gNB context files, not from the eNB's own flag, with one negative each way.
+  - **Code.**
+    - ns-3 adds a DC flag to the eNB `ueContext`.
+    - The agent omits the member when DC is not set up.
+    - kpimon's tag formatter handles the absent member: `enbUeId:<s1ap>` without `@<x2ap>`.
+    - The n6 and Influx form checks follow.
+  - Stop A′ reports P4-KPM as fixed with this one scheduled residual. The user may move the fix before cp2, into P07.
+- **AC16 lint.** Classify the `ns3.*` vendor measNames, for example `ns3.imsi`, which is kept under the interpretation of R-4 recorded in phase 06b.
