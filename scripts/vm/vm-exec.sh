@@ -42,6 +42,35 @@ hlog "gate $gate ($script) harness ${harness_sha:0:10} -> unit $unit"
 disk_start=$(host_disk_line start)
 hlog "host disk: $disk_start"
 
+# Host /home floor: a watchdog runs for the whole gate (until the evidence is copied). Below WATCHDOG_MIN_GB (the
+# 20 GiB floor plus a 2 GiB margin, because the VM's qcow2 overlay keeps growing briefly after a stop) it stops the
+# gate unit, shuts the VM down and sends TERM here; the gate is then red with exit 125.
+WATCHDOG_MIN_GB="${WATCHDOG_MIN_GB:-22}"
+dest="$EVIDENCE_HOST_ROOT/$gate/$ts"
+wd_dir="$EVIDENCE_HOST_ROOT/watchdog/$gate-$ts"
+wd_record() {
+    mkdir -p "$dest"
+    python3 -I - "$dest/host-disk-watchdog.json" "$WATCHDOG_MIN_GB" "$wd_dir" "$1" <<'PY'
+import json, os, sys
+path, thr, wd, tripped = sys.argv[1:]
+def read(name):
+    try:
+        return open(os.path.join(wd, name)).read().strip()
+    except OSError:
+        return None
+m = read("min-host-free-gb.txt")
+t = read("watchdog-tripped.json")
+json.dump({"thresholdGb": int(thr), "minHostFreeGb": int(m) if m else None, "tripped": tripped == "1",
+           "trip": json.loads(t) if t else None, "watchdogDir": wd}, open(path, "w"), indent=1)
+PY
+}
+mkdir -p "$wd_dir"
+bash "$(dirname "$0")/host-disk-watchdog.sh" --min-gb "$WATCHDOG_MIN_GB" --interval 20 --out "$wd_dir" \
+    --runner-pid $$ >>"$wd_dir/watchdog.log" 2>&1 &
+wd_pid=$!
+trap 'kill "$wd_pid" 2>/dev/null' EXIT
+trap 'hlog "host /home under ${WATCHDOG_MIN_GB} GiB: the watchdog stopped $unit and shut the VM down; evidence stays on the VM disk"; wd_record 1; exit 125' TERM
+
 # Bootstrap: git, then the harness clone at the exact SHA (no credentials).
 vm_ssh bash -s -- "$HARNESS_URL" "$harness_sha" <<'BOOT' || die "VM bootstrap failed"
 set -euo pipefail
@@ -91,11 +120,12 @@ vm_ssh "bash /home/uc/harness/scripts/gates/scrub-evidence.sh $ev" ||
     die "evidence scrub failed for $gate (gate exit $code); evidence NOT copied, it stays on the VM at $ev"
 vm_ssh "cd $ev && find . -name '*.pcap*' -type f -exec sha256sum {} + >pcap-sha256.txt 2>/dev/null; \
     find . -path '*ns3run*' -name '*.txt' -type f -exec sha256sum {} + >ns3run-sha256.txt 2>/dev/null; true"
-dest="$EVIDENCE_HOST_ROOT/$gate/$ts"
 mkdir -p "$dest"
 # fresh-install has no rsync; tar over ssh needs nothing extra.
 vm_ssh "tar -C $ev -cf - ." | tar -C "$dest" -xf - || die "evidence copy failed"
 printf 'boundary\tutc\thome_free_gib\toverlay\toverlay_alloc_gib\n%s\n%s\n' "$disk_start" "$disk_end" >"$dest/host-disk.tsv"
+kill "$wd_pid" 2>/dev/null; wait "$wd_pid" 2>/dev/null
+wd_record 0
 hlog "evidence -> $dest"
 [ -f "$dest/verdict.json" ] && python3 -c 'import json,sys; v=json.load(open(sys.argv[1])); print("verdict", v["gate"], "PASS" if v["pass"] else "FAIL", v["failed"])' "$dest/verdict.json"
 echo "$dest" >"$EVIDENCE_HOST_ROOT/.last-$gate"
