@@ -122,3 +122,12 @@ Re-pin the P06 SHAs.
   - M7 never joined Influx `ueId` to `ns3.imsi`, the only eNB Influx path (row 104). Phase step 4 names M7, so the gap is real.
   - The sub-actions check silently dropped unattributed subscription requests (row 105).
   Rows were committed before code (1feb90a). The gates that carry these checks rerun after the fix.
+  The fix is 28d4508.
+  - Lint and every self-test pass.
+  - The new checks pass on the green M6, M7 and r3p evidence and fail on the negatives, for example a later item's X2AP ID changed in re-encoded real M7 messages.
+  - The new M7 Influx check could not be replayed offline on a real five-node export, because M7's committed export held only `_time` and `_value`. Its first live run is the rerun below.
+- R0 and R1 at d8e7692 (rows up to 101): R0 PASS `r0/20261104T083548Z`, R1 PASS `r1/20261104T085644Z`.
+- P12 at d8e7692: FAIL `p12/20261104T091609Z` on `disk_guard` only. The VM root was 77 % used against the 75 % guard, and no check ran.
+  - On the VM, `docker image prune -f` removed only dangling, untagged images (superseded agent and ns-3 builds) and reclaimed 7.7 GB, bringing the root to 68 %.
+  - Every tagged image, including the current agent `ns3-e2-agent:89d45afb8cf9` and kpimon, is kept.
+- Final rerun at 28d4508: M6, M7, R0, R1, P12.
