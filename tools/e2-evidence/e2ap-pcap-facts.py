@@ -22,7 +22,9 @@ Pass 2 (-V text, only procedureCode 1 and 8 frames): E2Setup request/response
 and RICsubscription request/response details (RAN function ID, OID, short
 name, the Global E2 Node ID (type, PLMN, node ID and its bit length), accepted RAN functions, requestor/instance IDs; for subscriptions also the
 KPM reportingPeriod, the granulPeriods, not-admitted actions and the failure cause; a RIC SUBSCRIPTION
-FAILURE goes to sub_failures, never to sub_responses).
+FAILURE goes to sub_failures, never to sub_responses; per request its RICaction-ToBeSetup items with ricActionID,
+ricActionType and the E2SM-KPM action definition format label tshark's dissector gives, plus the item count the list
+header announces).
 
 Facts: {"inits","init_acks","cookie_acks","aborts","shutdowns","pdus","setup_requests",
 "setup_responses","sub_requests","sub_responses","sub_failures","ind_times_by_src","ind_events"}; every event carries
@@ -179,6 +181,37 @@ def parse_subscription(lines):
     return out
 
 
+ACTION_ITEM_RE = re.compile(r"\bItem \d+: id-RICaction-ToBeSetup-Item\b")
+
+
+def parse_sub_actions(lines):
+    """A RIC SUBSCRIPTION REQUEST's RICaction-ToBeSetup items: {"action_list_count": the count of the
+    "ricAction-ToBeSetup-List: N item(s)" header (None when absent), "actions": [{"action_id", "action_type"
+    (label), "action_type_index", "definition_format" (tshark's E2SM-KPM label, e.g. actionDefinition-Format3, None
+    when the definition did not decode), "definition_format_index"}]}. Each item runs from its "Item <n>:
+    id-RICaction-ToBeSetup-Item" line to the next one; only the first of each field in an item counts."""
+    header = next((re.search(r"ricAction-ToBeSetup-List: (\d+) items?", ln) for ln in lines
+                   if re.search(r"ricAction-ToBeSetup-List: (\d+) items?", ln)), None)
+    items, cur = [], None
+    for ln in lines:
+        if ACTION_ITEM_RE.search(ln):
+            cur = []
+            items.append(cur)
+        elif cur is not None:
+            cur.append(ln)
+    actions = []
+    for it in items:
+        txt = "\n".join(it)
+        aid = re.search(r"ricActionID: (\d+)", txt)
+        aty = re.search(r"ricActionType: (\S+) \((\d+)\)", txt)
+        fmt = re.search(r"actionDefinition-formats: (\S+) \((\d+)\)", txt)
+        actions.append({"action_id": int(aid.group(1)) if aid else None,
+                        "action_type": aty.group(1) if aty else None, "action_type_index": int(aty.group(2)) if aty else None,
+                        "definition_format": fmt.group(1) if fmt else None,
+                        "definition_format_index": int(fmt.group(2)) if fmt else None})
+    return {"action_list_count": int(header.group(1)) if header else None, "actions": actions}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("pcap")
@@ -232,7 +265,7 @@ def main():
                 facts["setup_responses"].append(dict(ev, **parse_setup_response(lines)))
         elif proc == 8:
             kind = "sub_requests" if init else ("sub_failures" if pdu.group(1).startswith("unsuccessful") else "sub_responses")
-            facts[kind].append(dict(ev, **parse_subscription(lines)))
+            facts[kind].append(dict(ev, **parse_subscription(lines), **(parse_sub_actions(lines) if init else {})))
     if a.ppid:
         facts["ppid"] = ppid_facts(a.pcap, rows, a.sctp_port)
         for k, v in sorted(facts["ppid"]["to_port_by_assoc"].items()):

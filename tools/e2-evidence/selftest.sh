@@ -4,7 +4,8 @@
 # 1. synthetic fact sheets / sample dirs / poll logs: every query must pass on good input and fail on a
 #    deliberately broken one;
 # 2. optional replay (needs tshark): with a smoke directory holding agent.pcap, trace.ndjson, influx-cell.csv,
-#    influx-ue.csv (a dev smoke run of one agent, node 2), the pcap facts and the Influx-vs-trace comparison must
+#    influx-ue.csv, e2-ipc-trace-2.jsonl and e2-ue-context-2.jsonl (a dev smoke run of one agent, node 2; the last two
+#    are the UE context map the Influx ueId tags resolve through), the pcap facts and the Influx-vs-trace comparison must
 #    reproduce "setup func 2 / en-gNB 2 (32-bit gNB ID) / indications / all fields equal". A smoke recorded before the
 #    agents registered as en-gNBs (a Global gNB ID) fails the setup identity, as it should.
 # Needs python3 only for part 1. Exit 0 = all passed.
@@ -257,6 +258,53 @@ expect 1 "ppid: decode by PPID != forced on the port" py "$q" "$t/ppid-count.jso
 expect 1 "ppid: node 3 sent no PPID-70 chunk" py "$q" "$t/ppid-missing.json" ppid --nodes 2,3
 expect 1 "ppid: absent source IP" py "$q" "$t/ppid-good.json" ppid --source-ip 172.17.0.9
 
+# influx-vs-trace.py: the UE identity conjunct (every UeMetrics row's ueId resolves to its ns3.imsi) in both modes
+python3 -I - "$t" <<'PY'
+import json, os, sys
+t = sys.argv[1] + "/ivt"
+os.makedirs(t)
+rows = [{"kind": "gnb", "list": lst, "order": o, "kpm": k, "type": "INTEGER", "scope": sc, "src": src, "xform": "none"}
+        for lst, o, k, sc, src in (("cell", 1, "ns3.nodeId", "sample", "/nodeId"), ("cell", 2, "ns3.seq", "sample", "/seq"),
+                                   ("ue", 1, "ns3.nodeId", "sample", "/nodeId"), ("ue", 2, "ns3.seq", "sample", "/seq"),
+                                   ("ue", 3, "ns3.imsi", "ue", "/imsi"))]
+json.dump({"rows": rows}, open(t + "/map.json", "w"))
+with open(t + "/e2-ipc-trace-2.jsonl", "w") as f:
+    f.write(json.dumps({"type": "hello", "nodeId": 2, "kind": "gnb"}) + "\n")
+    for s in range(3):
+        f.write(json.dumps({"type": "sample", "nodeId": 2, "seq": s, "ues": [{"imsi": 1}, {"imsi": 2}]}) + "\n")
+with open(t + "/e2-ue-context-2.jsonl", "w") as f:
+    f.write(json.dumps({"type": "ueContext", "v": 1, "nodeId": 2, "seq": 0, "ues": [
+        {"imsi": i, "lteRnti": 2 + i, "mnCellId": 1, "mmeUeS1apId": i} for i in (1, 2)]}) + "\n")
+def csv(path, cols, data):
+    with open(path, "w") as f:
+        f.write(",result,table," + ",".join(["_measurement"] + cols) + "\n")
+        for r in data:
+            f.write(",,0," + ",".join(["m"] + ["" if v is None else str(v) for v in r]) + "\n")
+csv(t + "/cell.csv", ["ns3.nodeId", "ns3.seq"], [(2, s) for s in range(3)])
+tag = lambda i: "enGnbUeId:%d@00F110-00001" % (2 + i)
+ue = [(2, s, i, tag(i)) for s in range(3) for i in (1, 2)]
+csv(t + "/ue-good.csv", ["ns3.nodeId", "ns3.seq", "ns3.imsi", "ueId"], ue)
+csv(t + "/ue-nocol.csv", ["ns3.nodeId", "ns3.seq", "ns3.imsi"], [r[:3] for r in ue])
+csv(t + "/ue-other.csv", ["ns3.nodeId", "ns3.seq", "ns3.imsi", "ueId"], ue[:-1] + [(2, 2, 2, tag(1))])
+csv(t + "/ue-missing.csv", ["ns3.nodeId", "ns3.seq", "ns3.imsi", "ueId"], ue[:-1] + [(2, 2, 2, None)])
+csv(t + "/ue-noimsi.csv", ["ns3.nodeId", "ns3.seq", "ns3.imsi", "ueId"], ue + [(2, 2, None, tag(1))])
+csv(t + "/ue-lower.csv", ["ns3.nodeId", "ns3.seq", "ns3.imsi", "ueId"], ue[:-1] + [(2, 2, 2, tag(2).lower())])
+PY
+iv="$t/ivt"
+ivt() { py "$here/influx-vs-trace.py" --map "$iv/map.json" --trace "$iv/e2-ipc-trace-2.jsonl" --influx-cell "$iv/cell.csv" \
+    --influx-ue "$iv/$1.csv" --ue-context-dir "$iv" --out "$iv/$1.json" "${@:2}"; }
+expect 0 "influx-vs-trace: every ueId resolves to its row's IMSI" ivt ue-good
+expect 0 "influx-vs-trace --every-seq: every ueId resolves to its row's IMSI" ivt ue-good --every-seq
+expect 1 "influx-vs-trace: a UE CSV without a ueId column" ivt ue-nocol
+expect 1 "influx-vs-trace: a ueId that names another IMSI" ivt ue-other
+expect 1 "influx-vs-trace --every-seq: a ueId that names another IMSI" ivt ue-other --every-seq
+expect 1 "influx-vs-trace: a UE row without ueId" ivt ue-missing
+expect 1 "influx-vs-trace: a UE row the old key skipped (no ns3.imsi)" ivt ue-noimsi
+expect 1 "influx-vs-trace: a malformed (lowercase) ueId" ivt ue-lower
+mv "$iv/e2-ue-context-2.jsonl" "$iv/ctx.bak"
+expect 1 "influx-vs-trace: no UE context file" ivt ue-good
+mv "$iv/ctx.bak" "$iv/e2-ue-context-2.jsonl"
+
 smoke="${1:-}"
 if [ -n "$smoke" ] && [ -f "$smoke/agent.pcap" ] && command -v tshark >/dev/null; then
     py "$here/e2ap-pcap-facts.py" "$smoke/agent.pcap" -o "$t/real.json" >"$t/facts.out" 2>&1 || cat "$t/facts.out"
@@ -269,7 +317,7 @@ if [ -n "$smoke" ] && [ -f "$smoke/agent.pcap" ] && command -v tshark >/dev/null
     expect 0 "real pcap: one association, indications on the wire" py "$q" "$t/real.json" assoc-start --node-ips "$t/ips-real.json" --service-ip 10.106.169.160 --before 9999999999
     expect 0 "real trace: bye sent == built, no drops" py "$here/trace-facts.py" "$smoke/trace.ndjson" --require-clean --expect-nodes 2
     expect 0 "real Influx rows == trace: 3 picks bit-exact" py "$here/influx-vs-trace.py" --map "$map" --trace "$smoke/trace.ndjson" \
-        --influx-cell "$smoke/influx-cell.csv" --influx-ue "$smoke/influx-ue.csv" --out "$t/vs.json"
+        --influx-cell "$smoke/influx-cell.csv" --influx-ue "$smoke/influx-ue.csv" --ue-context-dir "$smoke" --out "$t/vs.json"
     expect 0 "real Influx rows == trace: all fields equal" py -c '
 import json, sys
 a = json.load(open(sys.argv[1]))["all"]

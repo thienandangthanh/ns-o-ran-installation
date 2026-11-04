@@ -9,16 +9,23 @@ argv, a file or a log) until every condition holds, at most the scenario's n6.de
   c2 no cellMetrics or UeMetrics row of any node has seq > T;
   u1 each checked IMSI is listed by exactly one gNB node in the IPC samples at T;
   u2 the gNB UeMetrics rows (n, T, imsi) of each checked IMSI are exactly that node, once;
-  h  the IMSI's last applied ledger line (if any) targets that node and has rxSeq <= T-1.
+  h  the IMSI's last applied ledger line (if any) targets that node and has rxSeq <= T-1;
+  id every UeMetrics row (n, s, imsi) with s <= T, of every node, carries the `ueId` tag kpimon writes, in the form of
+     node n's kind (hello in TRACE_DIR: gNB enGnbUeId:<x2apId>@00F110-<macroEnbId %05X>, eNB
+     enbUeId:<mmeUeS1apId>@<x2apId>), and R(n, {s}, ueId) = imsi through TRACE_DIR's e2-ue-context-<n>.jsonl lines
+     with seq <= T (tools/e2-evidence/ue-context-map.py), whose shape and per-IMSI identities hold too (ns-3 flushes
+     each line; their tie to ns-3's MN PDCP trace is judged after the run). The query's pivot keeps the ueId tag
+     column.
 Checked IMSIs: --imsi I (a trigger), or --all (dry-run observe: every scenario IMSI). eNB rows are never read
-for values. Outputs integers only: OUT_WINDOW {"T", "imsi", "clipped", "cells", "membership", "pass"} (the
-predictor's sole input), OUT_VERDICT {"pass", "problems", "polls", "wallS"}.
+for values (only for their ueId tag, id). Outputs integers only: OUT_WINDOW {"T", "imsi", "clipped", "cells",
+"membership", "pass"} (the predictor's sole input), OUT_VERDICT {"pass", "problems", "polls", "wallS"}.
 
   check-n6-influx-window.py SCENARIO T (--imsi I | --all) TRACE_DIR LEDGER OUT_WINDOW OUT_VERDICT [--clip]
         [--cell-csv F --ue-csv F]   (fixtures: read the Flux CSVs instead of querying Influx, one poll)
   check-n6-influx-window.py --self-test
 """
 import csv
+import importlib.util
 import io
 import json
 import os
@@ -29,6 +36,18 @@ import tempfile
 import time
 
 INFLUX_POD = "r4-influxdb-influxdb2-0"
+
+
+def _ue_context_map():
+    path = pathlib.Path(__file__).resolve().parent.parent.parent / "tools" / "e2-evidence" / "ue-context-map.py"
+    spec = importlib.util.spec_from_file_location("ue_context_map", path)
+    assert spec is not None and spec.loader is not None, path
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+
+
+UECM = _ue_context_map()
 IN_POD = 'export INFLUX_TOKEN="${INFLUX_TOKEN:-$DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}"; exec influx query --org influxdata --raw "$1"'
 
 
@@ -115,6 +134,8 @@ def certify(sc, t, imsis, clip, trace_dir, ledger, cell_text, ue_text):
                 continue
             cells[str(n)][str(s)] = want
     ue_rows = {}
+    cm = UECM.UeContextMap(trace_dir, max_seq=t)
+    problems += ["id: UE context: " + p for p in cm.problems + cm.identities()[1]]
     for r, _ in parse(ue_text):
         try:
             n, s, i = int(r["ns3.nodeId"]), int(r["ns3.seq"]), int(r["ns3.imsi"])
@@ -123,7 +144,13 @@ def certify(sc, t, imsis, clip, trace_dir, ledger, cell_text, ue_text):
             continue
         if s > t:
             problems.append("c2: UeMetrics row (%d, %d, %d) past T" % (n, s, i))
-        elif s == t and n in gnbs:
+            continue
+        tag, kind = r.get("ueId"), cm.kinds.get(n)
+        if not UECM.tag_form_ok(kind, tag):
+            problems.append("id: UeMetrics row (%d, %d, %d) ueId %r is not a %s node's form" % (n, s, i, tag, kind))
+        elif cm.resolve(n, {s}, tag) != i:
+            problems.append("id: UeMetrics row (%d, %d, %d) ueId %s resolves to %r" % (n, s, i, tag, cm.resolve(n, {s}, tag)))
+        if s == t and n in gnbs:
             ue_rows.setdefault(i, []).append(n)
     lines = [json.loads(l) for l in open(ledger) if l.strip()][1:] if os.path.exists(ledger) else []
     for i in imsis:

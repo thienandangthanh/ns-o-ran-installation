@@ -7,6 +7,10 @@ and ns3run/ (ns-3 trace text files). Components:
           missing ledger is an empty one);
   ipc     per node, the IPC `sample` lines without `hello` and with
           `ipcDropped` dropped (it must be 0 and is asserted separately);
+          ns-3 writes its `ueContext` lines to e2-ue-context-<node>.jsonl only,
+          so ipcTraceUeContextLines (the `ueContext` lines found in the run's
+          e2-ipc-trace-*.jsonl, which the sample digest would not see) must be
+          0: any other count makes every mode exit 3;
   traces  every ns3run/*.txt except the stdout/stderr logs, with
           DlE2RlcStatsLte.txt columns 5-6 removed (contract C1);
   extra   live-only components from the decoded wire, written by the rung gates
@@ -17,7 +21,11 @@ and ns3run/ (ns-3 trace text files). Components:
 
   digest-run.py RUN                         -> JSON digests of RUN
   digest-run.py --compare [--components ledger,ipc,traces[,extra]] A=RUN B=RUN ...
-                                            -> per-run equality with the first; exit 0 if all equal
+                                            -> per-run equality with the first; exit 0 if all equal,
+                                               1 if a component differs, 3 if a run's ipc trace holds a
+                                               ueContext line (never 1, so a "must differ" caller cannot pass)
+
+  digest-run.py --self-test                 -> the ueContext rule on two synthetic runs
 
   --n4-ul-off-drop LABEL=absent|present[,...] (default off): the UL-off regression of the two
   gNB CU-UP PDCP SDU volume keys. A `present` run must carry both keys as JSON ints in every
@@ -103,21 +111,34 @@ class N4Drop:
                 and (self.mode == "absent" or (r["dlPositiveByNode"] and all(r["dlPositiveByNode"].values()))))
 
 
+UE_CONTEXT_IN_IPC_TRACE_EXIT = 3
+
+
+def is_ue_context_line(line):
+    """A `ueContext` line (also one that does not parse but names the type)."""
+    try:
+        return json.loads(line).get("type") == "ueContext"
+    except (ValueError, AttributeError):
+        return '"ueContext"' in line
+
+
 def digests(run, n4=None):
     run = pathlib.Path(run)
     ledger = run / "trace" / "e2-control-ledger.jsonl"
     samples = IPC.load_samples(run / "trace", n4)
-    ipc_dropped = 0
+    ipc_dropped = ue_context_lines = 0
     for p in sorted((run / "trace").glob("e2-ipc-trace-*.jsonl")):
         for line in p.read_text().splitlines():
             if '"type":"sample"' in line:
                 ipc_dropped = max(ipc_dropped, json.loads(line).get("ipcDropped", 0))
+            ue_context_lines += is_ue_context_line(line)
     out = {
         "ledger": sha(ledger.read_text()) if ledger.exists() else sha(""),
         "ledgerLines": max(0, len(ledger.read_text().splitlines()) - 1) if ledger.exists() else 0,
         "ipc": {str(n): sha("\n".join(s[k] for k in sorted(s))) for n, s in sorted(samples.items())},
         "ipcSamples": {str(n): len(s) for n, s in sorted(samples.items())},
         "ipcDroppedMax": ipc_dropped,
+        "ipcTraceUeContextLines": ue_context_lines,
         "traces": FREE.trace_digests(run),
         # only the named live components: the extractor's diagnostics (rc-requests, rc-answers: RIC request IDs
         # and wall times) sit in the same directory and must never be digested
@@ -128,17 +149,52 @@ def digests(run, n4=None):
     return out
 
 
+def self_test():
+    """Two equal runs compare equal (exit 0); a ueContext line in one run's ipc trace makes --compare and the
+    single-run mode exit 3, also when the other components differ (a "must differ" caller sees 3, not 1)."""
+    import subprocess
+    import tempfile
+    bad = []
+    with tempfile.TemporaryDirectory() as t:
+        t = pathlib.Path(t)
+        for name in ("a", "b"):
+            (t / name / "trace").mkdir(parents=True)
+            (t / name / "ns3run").mkdir()
+            (t / name / "trace" / "e2-ipc-trace-2.jsonl").write_text(
+                '{"type":"hello","nodeId":2,"kind":"gnb"}\n{"type":"sample","nodeId":2,"seq":0,"ipcDropped":0,"ues":[]}\n')
+            (t / name / "ns3run" / "CellIdStats.txt").write_text("1 2 3\n")
+        run = lambda *av: subprocess.run([sys.executable, "-I", __file__, *av], capture_output=True, text=True).returncode
+        if run("--compare", "A=%s" % (t / "a"), "B=%s" % (t / "b")) != 0:
+            bad.append("two equal runs did not compare equal")
+        with open(t / "b" / "trace" / "e2-ipc-trace-2.jsonl", "a") as f:
+            f.write('{"type":"ueContext","v":1,"nodeId":2,"seq":1,"ues":[]}\n')
+        if run("--compare", "A=%s" % (t / "a"), "B=%s" % (t / "b")) != UE_CONTEXT_IN_IPC_TRACE_EXIT:
+            bad.append("a ueContext line in the ipc trace did not exit 3 under --compare")
+        if run(str(t / "b")) != UE_CONTEXT_IN_IPC_TRACE_EXIT:
+            bad.append("a ueContext line in the ipc trace did not exit 3 in the single-run mode")
+        (t / "b" / "ns3run" / "CellIdStats.txt").write_text("1 2 4\n")
+        if run("--compare", "A=%s" % (t / "a"), "B=%s" % (t / "b")) != UE_CONTEXT_IN_IPC_TRACE_EXIT:
+            bad.append("differing runs with a ueContext line did not exit 3")
+    for b in bad:
+        print("FAIL " + b)
+    print("digest-run self-test: " + ("ok" if not bad else "%d failure(s)" % len(bad)))
+    return 1 if bad else 0
+
+
 def main():
-    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    if sys.argv[1:] == ["--self-test"]:
+        return self_test()
+    ap = argparse.ArgumentParser(description=(__doc__ or "").split("\n")[0])
     ap.add_argument("--compare", action="store_true")
     ap.add_argument("--components", default="ledger,ipc,traces")
     ap.add_argument("--n4-ul-off-drop", default="", metavar="LABEL=absent|present[,...]")
     ap.add_argument("runs", nargs="+")
     a = ap.parse_args()
     if not a.compare:
-        json.dump(digests(a.runs[0]), sys.stdout, indent=2)
+        d = digests(a.runs[0])
+        json.dump(d, sys.stdout, indent=2)
         print()
-        return 0
+        return UE_CONTEXT_IN_IPC_TRACE_EXIT if d["ipcTraceUeContextLines"] else 0
     comps = a.components.split(",")
     labelled = [r.partition("=") for r in a.runs]
     n4 = {label: N4Drop(mode) for label, _, mode in
@@ -171,9 +227,13 @@ def main():
         ok &= not diff
     report["ipcDroppedMaxAll"] = max(v["ipcDroppedMax"] for v in d.values())
     report["overall"] = {label: d[label]["overall"] for label in d}
-    report["all_equal"] = ok
+    report["ipcTraceUeContextLines"] = {label: d[label]["ipcTraceUeContextLines"] for label in d}
+    leaked = any(report["ipcTraceUeContextLines"].values())
+    report["all_equal"] = ok and not leaked
     json.dump(report, sys.stdout, indent=2)
     print()
+    if leaked:
+        return UE_CONTEXT_IN_IPC_TRACE_EXIT
     return 0 if ok else 1
 
 

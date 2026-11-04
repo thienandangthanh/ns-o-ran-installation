@@ -1,13 +1,20 @@
 #!/usr/bin/env python3
 """influx-vs-trace.py --map metric-map.v1.json --trace e2-ipc-trace-N.jsonl
-        --influx-cell cell.csv --influx-ue ue.csv --out result.json [--node N]
+        --influx-cell cell.csv --influx-ue ue.csv --ue-context-dir TRACE_DIR --out result.json [--node N]
 
 Compares the InfluxDB rows kpimon wrote against the ns-3 IPC trace (ground
 truth, one JSON line per hello/sample/bye, written before every send).
 
-Join keys (kpimon writes no tags and stamps wall-clock time, so _time is never
-used): cellMetrics row = (ns3.nodeId, ns3.seq); UeMetrics row = (ns3.nodeId,
-ns3.seq, ns3.imsi). Expected value of every mapped field = the trace value
+Join keys (kpimon stamps wall-clock time, so _time is never used): cellMetrics
+row = (ns3.nodeId, ns3.seq); UeMetrics row = (ns3.nodeId, ns3.seq, ns3.imsi).
+UE identity: kpimon tags every UeMetrics point with the decoded KPM UE ID, `ueId`
+(gNB: enGnbUeId:<x2apId>@00F110-<macroEnbId %05X>, eNB: enbUeId:<mmeUeS1apId>@<x2apId>).
+Every UeMetrics row of the node must carry a `ueId` of its node kind's form that
+resolves, through TRACE_DIR's e2-ue-context-<n>.jsonl (ue-context-map.py:
+R(n, {ns3.seq}, ueId)), to that row's ns3.imsi value; a row whose ueId is missing,
+malformed, unresolved or names another IMSI (or that lacks ns3.seq/ns3.imsi)
+counts in ue_rows_ueid_mismatch, which must be 0 in both modes. The UE CSV must
+have a ueId column. Expected value of every mapped field = the trace value
 converted by the metric-map rules (the agent's own rules, re-implemented here):
   INTEGER  exact int in 0..2^31-1, else noValue (field absent in Influx)
   REAL     float64, compared bit-exact (struct pack of the parsed CSV value)
@@ -28,11 +35,22 @@ Influx row the trace lacks. The join is unchanged: each record carries its own n
 """
 import argparse
 import csv
+import importlib.util
 import io
 import json
 import math
+import pathlib
 import struct
 import sys
+
+
+def _ue_context_map():
+    path = pathlib.Path(__file__).resolve().parent / "ue-context-map.py"
+    spec = importlib.util.spec_from_file_location("ue_context_map", path)
+    assert spec is not None and spec.loader is not None, path
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
 
 
 def bits(x):
@@ -107,6 +125,30 @@ def index_rows(path, node, with_imsi):
     return idx, dup
 
 
+def ueid_mismatches(path, node, cm):
+    """(rows checked, mismatching rows, the UE CSV has a ueId column, first examples): every UeMetrics row of the node
+    must carry a ueId that R(node, {ns3.seq}, ueId) resolves to its ns3.imsi value."""
+    def num(v):
+        try:
+            return int(v) if v is not None else None
+        except ValueError:
+            return None
+    n = bad = 0
+    has_col, examples = False, []
+    for r in read_rows(path):
+        has_col = has_col or "ueId" in r
+        if num(r.get("ns3.nodeId")) != node:
+            continue
+        n += 1
+        seq, imsi = num(r.get("ns3.seq")), num(r.get("ns3.imsi"))
+        got = cm.resolve(node, {seq}, r.get("ueId")) if seq is not None else None
+        if imsi is None or got != imsi:
+            bad += 1
+            if len(examples) < 5:
+                examples.append({"seq": r.get("ns3.seq"), "imsi": r.get("ns3.imsi"), "ueId": r.get("ueId"), "resolvesTo": got})
+    return n, bad, has_col, examples
+
+
 def compare_row(rows, root, ue_obj, got):
     n = bad = 0
     diffs = []
@@ -131,6 +173,7 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--node", type=int)
     ap.add_argument("--every-seq", action="store_true", help="every trace sample must be complete and equal")
+    ap.add_argument("--ue-context-dir", required=True, help="the run's trace dir (e2-ue-context-*.jsonl, e2-ipc-trace-*.jsonl)")
     a = ap.parse_args()
 
     samples, hello = {}, None
@@ -149,6 +192,8 @@ def main():
     ue = sorted((r for r in rows if r["list"] == "ue"), key=lambda r: r["order"])
     cell_idx, cell_dup = index_rows(a.influx_cell, node, False)
     ue_idx, ue_dup = index_rows(a.influx_ue, node, True)
+    cm = _ue_context_map().UeContextMap(a.ue_context_dir)
+    ue_checked, ue_bad, ue_col, ue_bad_examples = ueid_mismatches(a.influx_ue, node, cm)
 
     def check_sample(seq):
         s = samples[seq]
@@ -194,7 +239,11 @@ def main():
         "influx_cell_rows": len(cell_idx), "influx_ue_rows": len(ue_idx), "duplicate_keys": cell_dup + ue_dup,
         "all_samples_complete": sum(r["complete"] for r in allres), "all_fields_compared": sum(r["fields"] for r in allres),
         "all_fields_differ": sum(r["differ"] for r in allres), "all_first_diffs": [d for r in allres for d in r["diffs"]][:5],
+        "ue_rows_ueid_checked": ue_checked, "ue_rows_ueid_mismatch": ue_bad, "ue_csv_has_ueid_column": ue_col,
+        "ue_rows_ueid_mismatch_examples": ue_bad_examples, "ue_context_problems": cm.problems[:5],
     }
+    # the UE identity conjunct holds in both modes
+    ok = ok and ue_col and ue_bad == 0 and not cm.problems
     if a.every_seq:
         # Row counts too: one cell row per trace sample and one UE row per (sample, UE), so Influx holds no row
         # (such as one for a noValue UE interval) that the trace lacks.

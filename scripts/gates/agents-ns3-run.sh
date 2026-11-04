@@ -11,6 +11,9 @@
 #   pcap_facts <pcap> <tag>           facts JSON + decoded setup/subscription text
 #   wire_sub_counts <pcap>            "<requests> <responses>" of RICsubscription seen so far (live pcap is fine)
 #   kpm_sub_period_check <pcap> <tag> <after>   decoded subscription reportingPeriod = rung-config kpm.reportingPeriodMs
+#   kpm_sub_actions_check <facts> <node-ips.json>   every subscription: one action, ID 1, report, KPM Format 3
+#   ue_context_check <trace-dir> <ns3run-dir> <out> [--expect-map F]   UE context files vs ns-3's MN PDCP trace
+#   kpm_ue_ids_check <pcap> <node-ips.json> <trace-dir> <out>   decoded KPM UE IDs resolved by the UE context
 #   ranfunc_decode <node.json> <sodir> <out.jsonl>   e2mgr's ranFunctionDefinition hex through kpimon's library
 #   agent_counters_assert <stats-line-file> <expected-samples> [<expected-unreported>]
 #   endurance_sample <dir> <n>        one 60 s sample (pods, agents, RSS, e2mgr, ns-3, load, kpimon)
@@ -207,6 +210,35 @@ kpm_sub_period_check() {
     python3 -I "$E2EV/e2-facts-query.py" "$EVIDENCE_DIR/$2-facts.json" sub-period --period-ms "$want" --after "$3"
 }
 
+# kpm_sub_actions_check <facts.json> <node-ips.json>: every RIC SUBSCRIPTION REQUEST in the fact sheet on an
+# association of an expected node carries exactly one RICaction-ToBeSetup item: ricActionID 1, ricActionType report,
+# an action definition tshark's E2SM-KPM dissector labels actionDefinition-Format3; every expected node got one.
+kpm_sub_actions_check() {
+    python3 -I "$E2EV/e2-facts-query.py" "$1" sub-actions --node-ips "$2"
+}
+
+# ue_context_check <trace dir> <ns3run dir> <out.json> [--expect-map <identity-map.json>]: the run's
+# e2-ue-context-<n>.jsonl files are well formed, cover every IPC sample UE and agree with ns-3's own MN PDCP trace
+# (tools/e2-evidence/ue-context-map.py check); --expect-map adds the frozen identity map cross-check.
+ue_context_check() {
+    python3 -I "$E2EV/ue-context-map.py" check --trace-dir "$1" --pdcp "$2/DlE2PdcpStatsLte.txt" --out "$3" "${@:4}"
+}
+
+# kpm_ue_ids_check <pcap> <node-ips.json> <trace dir> <out.json>: every E2SM-KPM Format 2 UE ID in the capture is
+# en-gNB-UEID (gNB nodes) or eNB-UEID (the eNB) in the run's form and resolves through the trace dir's UE context;
+# zero gNB-UEID; every node of node-ips.json sent >= 1 Format 2 indication. kpm-ue-list-moves.py with no ledger, so
+# only its UE ID problems decide; epoch and period come from the trace hellos.
+kpm_ue_ids_check() {
+    local ep
+    ep=$(python3 -I -c 'import glob, json, sys
+hs = [json.loads(open(p).readline()) for p in sorted(glob.glob(sys.argv[1] + "/e2-ipc-trace-*.jsonl"))]
+v = sorted({(h["simStartEpochMs"], h["periodNs"] // 1000000) for h in hs})
+sys.exit("trace hellos disagree on epoch/period: %s" % v) if len(v) != 1 else print(*v[0])' "$3") || return 1
+    python3 -I "$E2EV/kpm-ue-list-moves.py" "$1" --node-ips "$2" --ledger "$4.no-ledger" --epoch-ms "${ep% *}" \
+        --period-ms "${ep#* }" --ue-context-dir "$3" --out "$4" \
+        --expect-format2-nodes "$(python3 -I -c 'import json, sys; print(",".join(sorted(json.load(open(sys.argv[1])), key=int)))' "$2")"
+}
+
 # ns3_emitters_at_pins <trace dir>: every e2-ipc-trace-*.jsonl hello names the pinned ns-3 and oran-interface commits
 # (pins.conf NS3_SHA, ORAN_INTERFACE_SHA), so the run used a binary built at the pins, not a stale build.
 ns3_emitters_at_pins() {
@@ -239,7 +271,8 @@ print("ranfunc", next(f["ranFunctionDefinition"] for f in fs if f["ranFunctionId
 # agent_counters_assert <stats-line-file> <expected-samples> [<expected-unreported>]: every drop/overflow counter zero
 # (also the report-gap and report-failure counters), samples in == expected, and every sample went out in a report
 # except the <expected-unreported> (default 0) of a reporting period still open at bye: forwarded == in - unreported.
-# At P = T a period is one sample, so nothing is ever unreported.
+# At P = T a period is one sample, so nothing is ever unreported. The UE context counters: no sample skipped for a UE
+# without context (samplesNoUeContext), no ueContext line refused (ipc.ueContextRejected), >= 1 ueContext line accepted.
 agent_counters_assert() {
     python3 -I - "$1" "$2" "${3:-0}" <<'PY'
 import json, sys
@@ -250,13 +283,15 @@ zero.update({"uesDropped." + k: v for k, v in s["uesDropped"].items()})
 zero.update(int32Overflow=s["int32Overflow"], typeMismatch=s["typeMismatch"], realInexact=s["realInexact"],
             rxPduUndecodable=s["e2"]["rxPduUndecodable"], ctrlSendFailed=s["e2"]["ctrlSendFailed"],
             ipcBadJson=s["ipc"]["badJson"], ipcLineTooLong=s["ipc"]["lineTooLong"], helloRejected=s["ipc"]["helloRejected"],
-            samplesGapDiscarded=s["samplesGapDiscarded"], samplesReportFailed=s["samplesReportFailed"])
+            samplesGapDiscarded=s["samplesGapDiscarded"], samplesReportFailed=s["samplesReportFailed"],
+            samplesNoUeContext=s["samplesNoUeContext"], ueContextRejected=s["ipc"]["ueContextRejected"])
 nz = {k: v for k, v in zero.items() if v}
 print("state=%s subs=%s samplesIn=%s forwarded=%s unreported=%s (trace %d, want unreported %d) indTx=%s (cell %s ue %s) "
-      "chunkSplits=%s nonzero=%s" % (s["state"], s["subs"], s["samplesIn"], s["samplesForwarded"], s["samplesUnreported"],
-                                      exp, unrep, s["indTx"], s["indTxCell"], s["indTxUe"], s["chunkSplits"], nz))
+      "chunkSplits=%s ueContext=%s nonzero=%s" % (s["state"], s["subs"], s["samplesIn"], s["samplesForwarded"],
+                                                  s["samplesUnreported"], exp, unrep, s["indTx"], s["indTxCell"],
+                                                  s["indTxUe"], s["chunkSplits"], s["ipc"]["ueContext"], nz))
 ok = (not nz and s["samplesIn"] == exp and s["samplesUnreported"] == unrep
-      and s["samplesForwarded"] == exp - unrep and s["subs"] >= 1)
+      and s["samplesForwarded"] == exp - unrep and s["subs"] >= 1 and s["ipc"]["ueContext"] >= 1)
 sys.exit(0 if ok else 1)
 PY
 }

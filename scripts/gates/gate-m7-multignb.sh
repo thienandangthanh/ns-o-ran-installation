@@ -198,6 +198,10 @@ export F Q W SERVICE_IP   # read by the sourced m7-wire-trace-checks.sh
 # Wire and ns-3 trace checks live in a shared file so tools/e2-evidence/replay-m7-analysis.sh runs the very same ones offline.
 source "$E2EV/m7-wire-trace-checks.sh"
 m7_wire_trace_checks
+check m7_kpimon_subscription_one_action_id1_format3 kpm_sub_actions_check "$F" "$e/node-ips.json"
+check m7_ue_context_files_consistent_with_ns3_mn_pdcp_trace ue_context_check "$RUN" "$RUN" "$e/m7-ue-context.json"
+check m7_kpm_ue_ids_en_gnb_and_enb_ueid_resolved_by_ue_context kpm_ue_ids_check "$e/m7.pcap" "$e/node-ips.json" "$RUN" \
+    "$e/m7-kpm-ue-ids.json"
 
 check m7_harness_ran_on_pcap harness_analyze m7 "$e/m7.pcap" "$SODIR" 8
 if [ -s "$e/m7-decode.json" ]; then

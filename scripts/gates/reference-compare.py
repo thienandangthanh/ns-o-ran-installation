@@ -7,7 +7,8 @@
         REFDIR/recorded/NAME        a copy of each --recorded file (image IDs: reported, never judged)
         REFDIR/SHA256SUMS           sha256 of every file above, relative to REFDIR
   reference-compare.py compare RUN REFDIR [--file NAME=PATH ...] [--recorded NAME=PATH ...]
-        SHA256SUMS verifies; RUN's digests equal equal/digests.json on every component; each --file's sha256
+        SHA256SUMS verifies; RUN's ipc trace holds no ueContext line (make refuses such a RUN too); RUN's digests
+        equal equal/digests.json on every component; each --file's sha256
         equals equal/files.json (same names); --recorded files are diffed and reported only.
         Prints {"equalsReference": bool, ...}; exit 0 iff equal.
   --components C,C,...   (make and compare; default ledger,ipc,traces,extra) the digest components the reference
@@ -29,6 +30,7 @@ COMPONENTS = ("ledger", "ipc", "traces", "extra")
 
 def digest_run():
     spec = importlib.util.spec_from_file_location("digest_run", HERE / "digest-run.py")
+    assert spec is not None and spec.loader is not None
     m = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(m)
     return m
@@ -47,6 +49,8 @@ def make(run, ref, files, recorded, components=COMPONENTS):
     (ref / "equal").mkdir(parents=True, exist_ok=True)
     (ref / "recorded").mkdir(exist_ok=True)
     d = digest_run().digests(run)
+    if d["ipcTraceUeContextLines"]:
+        raise SystemExit("reference-compare make: %d ueContext line(s) in %s's ipc trace" % (d["ipcTraceUeContextLines"], run))
     json.dump({c: d[c] for c in components}, open(ref / "equal" / "digests.json", "w"), indent=1, sort_keys=True)
     json.dump({n: sha(p) for n, p in files.items()}, open(ref / "equal" / "files.json", "w"), indent=1, sort_keys=True)
     for n, p in recorded.items():
@@ -71,6 +75,8 @@ def compare(run, ref, files, recorded, components=COMPONENTS):
         probs += ["SHA256SUMS: %s is not listed" % p for p in sorted(extra)]
     if not probs:
         want, d = json.load(open(ref / "equal" / "digests.json")), digest_run().digests(run)
+        if d["ipcTraceUeContextLines"]:
+            probs.append("%d ueContext line(s) in the run's ipc trace" % d["ipcTraceUeContextLines"])
         if set(want) != set(components):
             probs.append("reference components %r, requested %r" % (sorted(want), sorted(components)))
         out["differingComponents"] = [c for c in components if d.get(c) != want.get(c)]
@@ -124,6 +130,15 @@ def self_test():
             bad.append("a run equal to its own sim-side reference")
         if compare(run, t / "sim", files, recd)["equalsReference"]:
             bad.append("a sim-side reference passes a full comparison")
+        ipc = run / "trace" / "e2-ipc-trace-2.jsonl"
+        ipc.write_text(ipc.read_text() + '{"type":"ueContext","v":1,"nodeId":2,"seq":1,"ues":[]}\n')
+        if compare(run, t / "ref", files, recd)["equalsReference"]:
+            bad.append("a run whose ipc trace holds a ueContext line equals the reference")
+        try:
+            make(run, t / "ref2", files, recd)
+            bad.append("make accepted a run whose ipc trace holds a ueContext line")
+        except SystemExit:
+            pass
     for b in bad:
         print("FAIL " + b)
     print("reference-compare self-test: %s" % ("ok" if not bad else "%d failure(s)" % len(bad)))

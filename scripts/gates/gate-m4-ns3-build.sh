@@ -87,6 +87,8 @@ for nid in want:
         continue
     if n["hello"] != 1 or n["bye"] != 1:
         bad.append("node %s hello=%d bye=%d (want 1/1)" % (nid, n["hello"], n["bye"]))
+    if n.get("ueContext", 0) < 1:
+        bad.append("node %s sent no ueContext line" % nid)
     if abs(n["sample"] - exp) > 2:
         bad.append("node %s samples %d not within 2 of %d" % (nid, n["sample"], exp))
     if n["seq_gaps"] or n["ipc_dropped_max"]:
@@ -117,7 +119,8 @@ PY
 
 # trace_vs_wire <name> <nodes csv>: runs/<name> trace files vs lines the sink received.
 # Compared on sample lines (byte-exact); the trace may carry extra lines only up to
-# the node's final ipcDropped.
+# the node's final ipcDropped. Each node's received ueContext lines byte-equal its
+# e2-ue-context-<n>.jsonl (the file is the wire, as the trace is).
 trace_vs_wire() {
     python3 -I - "$RUNS/$1" "$2" <<'PY'
 import json, os, sys
@@ -136,6 +139,14 @@ for nid in nodes:
         bad.append("node %s: missing %s" % (nid, tp if not os.path.exists(tp) else wp)); continue
     t, w = samples(tp), samples(wp)
     dropped = json.loads(w[-1]).get("ipcDropped", 0) if w else 0
+    cp = os.path.join(rd, "e2-ue-context-%s.jsonl" % nid)
+    cw = os.path.join(rd, "sink", "ue-context-lines-%s.jsonl" % nid)
+    if not os.path.exists(cp) or not os.path.exists(cw):
+        bad.append("node %s: missing %s" % (nid, cp if not os.path.exists(cp) else cw))
+    elif open(cp, "rb").read() != open(cw, "rb").read():
+        bad.append("node %s: e2-ue-context file != the ueContext lines the sink received" % nid)
+    else:
+        print("node %s: ueContext file identical to the wire (%d lines)" % (nid, open(cp, "rb").read().count(b"\n")))
     if t == w:
         print("node %s: %d sample lines identical" % (nid, len(t))); continue
     it = iter(t)

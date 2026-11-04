@@ -64,6 +64,34 @@ python3 -I scripts/disk-burst-h.py --self-test >/dev/null || { echo "disk-burst-
 python3 -I scripts/gates/check-actuation-delay.py --self-test >/dev/null || { echo "check-actuation-delay self-test failed"; rc=1; }
 python3 -I scripts/gates/identity-map-extract.py --self-test >/dev/null || { echo "identity-map-extract self-test failed"; rc=1; }
 python3 -I scripts/gates/p12-records-check.py --self-test >/dev/null || { echo "p12 multi-record indication judge self-test failed"; rc=1; }
+python3 -I scripts/gates/digest-run.py --self-test >/dev/null || { echo "digest-run ueContext-in-ipc-trace self-test failed"; rc=1; }
+python3 -I tools/e2-evidence/ue-context-map.py --self-test >/dev/null || { echo "UE context map self-test failed"; rc=1; }
+python3 -I tools/e2-evidence/kpm-ue-list-moves.py --self-test >/dev/null || { echo "KPM UE list / UE ID judge self-test failed"; rc=1; }
+python3 -I tools/e2-evidence/e2-facts-query.py --self-test >/dev/null || { echo "e2-facts-query sub-actions self-test failed"; rc=1; }
+python3 -I tools/ipc-null-sink/ipc-null-sink.py --self-test >/dev/null || { echo "ipc-null-sink self-test failed"; rc=1; }
+timeout 120 bash tools/e2-evidence/selftest.sh >/dev/null 2>&1 || { echo "e2-evidence self-test (incl. influx-vs-trace ueId) failed"; rc=1; }
+# agent_counters_assert: the UE-context counters join the zero set, and ipc.ueContext >= 1
+source <(sed -n '/^agent_counters_assert()/,/^}/p' scripts/gates/agents-ns3-run.sh)
+tmp=$(mktemp -d)
+# acs <name> <python dict-update expression on s>: an agent stats line, healthy unless the expression changes it
+acs() {
+    python3 -I - "$tmp/$1.json" "$2" <<'PY'
+import json, sys
+s = {"state": "READY", "subs": 1, "samplesIn": 10, "samplesForwarded": 10, "samplesUnreported": 0, "indTx": 10,
+     "indTxCell": 10, "indTxUe": 10, "chunkSplits": 0, "dropped": {"x": 0}, "uesDropped": {"y": 0}, "int32Overflow": 0,
+     "typeMismatch": 0, "realInexact": 0, "samplesGapDiscarded": 0, "samplesReportFailed": 0, "samplesNoUeContext": 0,
+     "e2": {"rxPduUndecodable": 0, "ctrlSendFailed": 0},
+     "ipc": {"badJson": 0, "lineTooLong": 0, "helloRejected": 0, "ueContext": 2, "ueContextRejected": 0}}
+exec(sys.argv[2])
+open(sys.argv[1], "w").write("stats " + json.dumps(s) + "\n" + json.dumps(s) + "\n")
+PY
+}
+acs good 'pass'; acs noctx 's["samplesNoUeContext"] = 1'; acs rej 's["ipc"]["ueContextRejected"] = 1'; acs none 's["ipc"]["ueContext"] = 0'
+agent_counters_assert "$tmp/good.json" 10 >/dev/null || { echo "agent_counters_assert: a clean stats line was red"; rc=1; }
+for c in noctx rej none; do
+    agent_counters_assert "$tmp/$c.json" 10 >/dev/null && { echo "agent_counters_assert: the $c UE-context stats line passed"; rc=1; }
+done
+rm -rf "$tmp"
 if grep -nE '(\blogs\b[^|#]*|"\$[a-z_]*logs?"\s*)\|\s*(grep\s+-[a-zA-Z]*[qm]|head\b)' scripts/gates/*.sh |
     grep -vE '^[^:]+:[0-9]+:\s*#'; then
     echo "an early-exit reader on a log pipe (see above): SIGPIPE under pipefail"; rc=1
@@ -113,6 +141,17 @@ printf '{"token": "%s"}' "$tok" >"$tmp/ric/influxdb_auth_token.json"; echo "x $t
 kc 'echo "ricplt r4-influxdb-influxdb2-0 1/1 Running 0 1d"' "printf %s $adm"
 scrub "$tmp/kc:$PATH" "$tmp/ev" && ! grep -q "$tok" "$tmp/ev/log.txt" && ! grep -q "$adm" "$tmp/ev/log.txt" ||
     { echo "scrub: the file token or the pod's admin token was not redacted"; rc=1; }
+# an in-cluster Influx ueId read: both tokens go, every ueId string stays byte-unchanged
+uid1='enGnbUeId:3@00F110-00001' uid2='enbUeId:1@3'
+{ printf 'from(bucket: "kpimon") |> filter(fn: (r) => r.ueId == "%s" or r.ueId == "%s")\n' "$uid1" "$uid2"
+  printf 'Authorization: Token %s\nAuthorization: Token %s\n' "$tok" "$adm"
+  printf ',result,table,_time,ueId,ns3.imsi\n,,0,2026-11-04T00:00:00Z,%s,1\n,,1,2026-11-04T00:00:00Z,%s,1\n' "$uid1" "$uid2"
+} >"$tmp/ev/influx-ueid-read.txt"
+grep -o 'enGnbUeId:[^",]*\|enbUeId:[^",]*' "$tmp/ev/influx-ueid-read.txt" >"$tmp/ueids.before"
+scrub "$tmp/kc:$PATH" "$tmp/ev" && ! grep -q "$tok" "$tmp/ev/influx-ueid-read.txt" && ! grep -q "$adm" "$tmp/ev/influx-ueid-read.txt" &&
+    grep -o 'enGnbUeId:[^",]*\|enbUeId:[^",]*' "$tmp/ev/influx-ueid-read.txt" | cmp -s - "$tmp/ueids.before" &&
+    [ "$(wc -l <"$tmp/ueids.before")" = 4 ] ||
+    { echo "scrub: an Influx ueId read kept a token or changed a ueId string"; rc=1; }
 kc 'echo "ricplt r4-influxdb-influxdb2-0 1/1 Running 0 1d"'
 scrub "$tmp/kc:$PATH" "$tmp/ev" && { echo "scrub: an unreadable admin token in a deployed InfluxDB pod passed"; rc=1; }
 kc 'echo "ricplt r4-influxdb-influxdb2-0 1/1 Running 0 1d"' "printf %s $adm"

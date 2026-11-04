@@ -15,6 +15,12 @@ its evidence and exits 0 (pass) or 1 (fail).
                                                     (granulPeriod only decodes where tshark's KPM v3 dissector gets
                                                     through the action definition; it stops on some Format 3 lists,
                                                     so gates evidence the granularity by records per indication)
+  sub-actions     (--nodes L | --node-ips F) [--after EPOCH]   every RIC SUBSCRIPTION REQUEST on an association of an
+                                                    expected node has exactly one RICaction-ToBeSetup item:
+                                                    ricActionID 1, ricActionType report, an action definition
+                                                    that tshark's E2SM-KPM dissector labels actionDefinition-Format3
+                                                    (the label precedes the Format 3 lists it may stop in); every
+                                                    expected node received >= 1 request
   sub-failure     --cause GROUP:INDEX [--after EPOCH]   a request answered by a RIC SUBSCRIPTION FAILURE with that
                                                     cause, and no request in the window answered by a response
   assoc-start     --service-ip IP --before EPOCH [--sctp-port 36422]   one ESTABLISHED association per node before EPOCH
@@ -23,6 +29,7 @@ its evidence and exits 0 (pass) or 1 (fail).
   indications                                       every node's associations carried RICindications
   service-ip      --service-ip IP                   every agent INIT in the capture went to the Service IP
   associations    [--after EPOCH]                   list associations (informational)
+  --self-test                                       the sub-actions query on synthetic fact sheets
   ppid            [--nodes L | --node-ips F] [--source-ip IP]   (facts from e2ap-pcap-facts.py --ppid) every DATA chunk
                                                     sent to the SCTP port carries PPID 70 (E2AP, O-RAN E2GAP v08.00
                                                     section 6.1); every expected node's associations, or the
@@ -39,6 +46,8 @@ are only reported per agent IP. The expected node set is --nodes (comma list) or
 informational lines and never decide a verdict.
 """
 import argparse
+import contextlib
+import io
 import json
 import sys
 
@@ -379,6 +388,83 @@ def q_indications(f, a):
     return bad
 
 
+def q_sub_actions(f, a):
+    nodes = expected_nodes(a)
+    assocs, _ = build_assocs(f)
+    after = a.after or 0
+    bad, per = [], {n: 0 for n in nodes}
+    for x in assocs:
+        for r in x["sub_requests"]:
+            if r["t"] < after:
+                continue
+            acts = r.get("actions")
+            print("frame %d to %s:%d (node %s): action list %s, actions %s" % (
+                r["frame"], x["ip"], x["sport"], x["node"], r.get("action_list_count"),
+                [(c["action_id"], c["action_type"], c["definition_format"]) for c in acts or []]))
+            if x["node"] not in nodes:
+                continue
+            per[x["node"]] += 1
+            if acts is None:
+                bad.append("frame %d: fact sheet has no action items (re-run e2ap-pcap-facts.py)" % r["frame"])
+                continue
+            if r.get("action_list_count") != 1 or len(acts) != 1:
+                bad.append("frame %d node %s: %s RICaction-ToBeSetup items announced, %d decoded (want exactly 1)" % (
+                    r["frame"], x["node"], r.get("action_list_count"), len(acts)))
+                continue
+            c = acts[0]
+            if c["action_id"] != 1:
+                bad.append("frame %d node %s: ricActionID %s, want 1" % (r["frame"], x["node"], c["action_id"]))
+            if c["action_type"] != "report" or c["action_type_index"] != 0:
+                bad.append("frame %d node %s: ricActionType %s (%s), want report (0)" % (
+                    r["frame"], x["node"], c["action_type"], c["action_type_index"]))
+            if c["definition_format"] != "actionDefinition-Format3":
+                bad.append("frame %d node %s: action definition %s, want E2SM-KPM actionDefinition-Format3" % (
+                    r["frame"], x["node"], c["definition_format"] or "not decoded by tshark's E2SM-KPM dissector"))
+    for n in nodes:
+        if not per[n]:
+            bad.append("node %s received no RIC SUBSCRIPTION REQUEST" % n)
+    return bad
+
+
+def self_test():
+    """sub-actions on synthetic fact sheets: one good sheet and one failing variant per conjunct."""
+    svc, ips = "10.96.0.5", {1: "172.17.0.2", 2: "172.17.0.3"}
+    ev = lambda f, t, s, d, sp, dp, **k: dict(frame=f, t=t, src=s, dst=d, sport=sp, dport=dp, **k)
+    def act(aid=1, aty="report", ati=0, fmt: "str | None" = "actionDefinition-Format3"):
+        return {"action_id": aid, "action_type": aty, "action_type_index": ati, "definition_format": fmt,
+                "definition_format_index": None if fmt is None else int(fmt[-1]) - 1}
+
+    def sheet(acts_by_node, count=None, skip=()):
+        f = {"inits": [], "init_acks": [], "cookie_acks": [], "setup_requests": [], "setup_responses": [],
+             "sub_requests": [], "sub_responses": []}
+        for n, ip in ips.items():
+            port = 40000 + n
+            f["inits"].append(ev(10 * n, 100 + n, ip, svc, port, 36422))
+            f["init_acks"].append(ev(10 * n + 1, 100.1 + n, svc, ip, 36422, port))
+            f["cookie_acks"].append(ev(10 * n + 2, 100.2 + n, svc, ip, 36422, port))
+            f["setup_requests"].append(ev(10 * n + 3, 100.3 + n, ip, svc, port, 36422, node_id=n))
+            if n not in skip:
+                acts = acts_by_node.get(n, [act()])
+                f["sub_requests"].append(ev(10 * n + 4, 100.4 + n, svc, ip, 36422, port, actions=acts,
+                                            action_list_count=len(acts) if count is None else count))
+        return f
+    A = argparse.Namespace(nodes="1,2", node_ips=None, after=None)
+    cases = [("good", sheet({}), True), ("two actions", sheet({2: [act(), act(2)]}), False),
+             ("action ID 2", sheet({2: [act(2)]}), False), ("Format 1", sheet({1: [act(fmt="actionDefinition-Format1")]}), False),
+             ("an undecodable definition", sheet({1: [act(fmt=None)]}), False),
+             ("a list announcing two items with one decoded", sheet({}, count=2), False),
+             ("an insert action", sheet({2: [act(aty="insert", ati=1)]}), False),
+             ("a node without a request", sheet({}, skip=(2,)), False)]
+    fails = []
+    for name, f, want in cases:
+        with contextlib.redirect_stdout(io.StringIO()):
+            got = not q_sub_actions(f, A)
+        if got != want:
+            fails.append(name)
+    print("e2-facts-query self-test: " + ("ok" if not fails else "FAIL " + ", ".join(fails)))
+    return 1 if fails else 0
+
+
 E2AP_PPID = 70
 
 
@@ -416,13 +502,15 @@ def q_ppid(f, a):
 
 
 QUERIES = {"setup-request": q_setup_request, "setup-response": q_setup_response, "subscription": q_subscription,
-           "sub-period": q_sub_period, "sub-failure": q_sub_failure,
+           "sub-period": q_sub_period, "sub-failure": q_sub_failure, "sub-actions": q_sub_actions,
            "assoc-start": q_assoc_start, "no-abort": q_no_abort, "post-delete": q_post_delete,
            "indications": q_indications, "service-ip": q_service_ip, "associations": q_associations,
            "ppid": q_ppid}
 
 
 def main():
+    if sys.argv[1:] == ["--self-test"]:
+        sys.exit(self_test())
     ap = argparse.ArgumentParser()
     ap.add_argument("facts")
     ap.add_argument("query", choices=sorted(QUERIES))

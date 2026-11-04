@@ -227,5 +227,6 @@ done
 check e2i_injected_controls_on_the_wire_and_answered python3 -I "$WIRE" controls "$e/e2i.pcap" \
     --node-ips "$e/node-ips.json" --injected "$e/injected.jsonl" --out "$e/e2i-controls.json"
 check e2i_ppid_per_node_70 python3 -I "$E2EV/e2-facts-query.py" "$e/e2i-facts.json" ppid --node-ips "$e/node-ips.json"
+check e2i_kpimon_subscription_one_action_id1_format3 kpm_sub_actions_check "$e/e2i-facts.json" "$e/node-ips.json"
 fact vmLoadEnd "$(json_str "$(uptime)")"
 gate_finish

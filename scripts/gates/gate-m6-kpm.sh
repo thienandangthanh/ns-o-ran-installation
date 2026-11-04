@@ -10,7 +10,8 @@
 # "Clean RC_OK" (implementation-notes): asn1c code RC_OK AND consumed == length AND, for headers, an 8-octet TimeStamp.
 # Wire indication count = harness lines (pcap-to-lines.py: TSN-deduped, assoc+TSN key).
 # Influx vs trace: join on (ns3.nodeId, ns3.seq[, ns3.imsi]), never on _time; INTEGER exact, REAL bit-exact, noValue ->
-# field absent (tools/e2-evidence/influx-vs-trace.py).
+# field absent; every UeMetrics row's ueId tag resolves to its ns3.imsi through the run's e2-ue-context-*.jsonl
+# (tools/e2-evidence/influx-vs-trace.py).
 #
 # Knobs: NS3_TIMEOUT_S (900), SUB_WAIT_S (180), DRAIN_S (8), M4_WORKDIR.
 source "$(dirname "$0")/lib.sh"
@@ -95,6 +96,10 @@ check m6_capture_stopped capture_stop m6
 # analysis
 ################################################################################
 check m6_pcap_facts_extracted pcap_facts "$e/m6.pcap" m6
+check m6_kpimon_subscription_one_action_id1_format3 kpm_sub_actions_check "$e/m6-facts.json" "$e/node-ips.json"
+check m6_ue_context_files_consistent_with_ns3_mn_pdcp_trace ue_context_check "$RUN" "$RUN" "$e/m6-ue-context.json"
+check m6_kpm_ue_ids_en_gnb_ueid_resolved_by_ue_context kpm_ue_ids_check "$e/m6.pcap" "$e/node-ips.json" "$RUN" \
+    "$e/m6-kpm-ue-ids.json"
 check m6_e2ap_ppid70_every_node python3 -I "$E2EV/e2-facts-query.py" "$e/m6-facts.json" ppid --node-ips "$e/node-ips.json"
 ind_decoded() {
     e2ap_sample_decode "$e/m6.pcap" 5 3 "$e/m6-indication-sample-decode.txt"
@@ -144,7 +149,7 @@ check m6_agent_counters_clean_samples_in_equal_forwarded_equal_trace agent_count
 
 check m6_influx_three_samples_equal_trace_bit_exact python3 -I "$E2EV/influx-vs-trace.py" \
     --map "$AGENT_DIR/schema/metric-map.v1.json" --trace "$TRACE" --influx-cell "$e/m6-influx-cell.csv" \
-    --influx-ue "$e/m6-influx-ue.csv" --out "$e/m6-influx-vs-trace.json"
+    --influx-ue "$e/m6-influx-ue.csv" --ue-context-dir "$RUN" --out "$e/m6-influx-vs-trace.json"
 all_info() { python3 -I -c 'import json,sys; a=json.load(open(sys.argv[1]))["all"]; print(json.dumps(a, sort_keys=True))' "$e/m6-influx-vs-trace.json"; }
 record m6_influx_all_samples_comparison_informational true "$(all_info 2>&1)"
 

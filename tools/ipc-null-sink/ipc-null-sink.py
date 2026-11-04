@@ -24,8 +24,12 @@ hello says pacing "lockstep" the sink answers `step` -1 at once (ready) and
 step K, on every node or, with --withhold-node N, on node N only.
 
 --ports accepts "38471-38475", "38472", "38471,38473", or a mix.
---save-lines writes every valid received line, verbatim, to DIR/lines-<nodeId>.jsonl
-so it can be byte-compared with the emitter's local trace.
+--save-lines writes every valid received sample line, verbatim, to DIR/lines-<nodeId>.jsonl
+so it can be byte-compared with the emitter's local trace, and every valid ueContext
+line (ns3-e2-ipc v1 minor 3) to DIR/ue-context-lines-<nodeId>.jsonl, the counterpart of
+the emitter's e2-ue-context-<nodeId>.jsonl. ueContext lines are counted per node
+("ueContext"); a malformed one is an invalid line.
+--self-test checks the line validation and the ueContext bookkeeping offline.
 Prints "READY" on stdout once every listener is bound.
 """
 import argparse
@@ -105,6 +109,22 @@ def structural_errors(msg):
                     errs.append("ues not sorted by imsi")
                     break
                 prev = u["imsi"]
+    elif t == "ueContext":
+        need("v", lambda v: v == 1 and _is_int(v), "1")
+        need("nodeId", node_ok, "int 1..65535")
+        need("seq", nonneg, "int>=0")
+        need("ues", lambda v: isinstance(v, list), "array")
+        if isinstance(msg.get("ues"), list):
+            rng = (("imsi", 999999999999999), ("lteRnti", 4095), ("mnCellId", 1048575), ("mmeUeS1apId", 4294967295))
+            prev = None
+            for u in msg["ues"]:
+                if not isinstance(u, dict) or any(not _is_int(u.get(k)) or not 0 <= u[k] <= hi for k, hi in rng):
+                    errs.append("ue context entry without integer imsi, lteRnti 0..4095, mnCellId, mmeUeS1apId")
+                    break
+                if prev is not None and u["imsi"] <= prev:
+                    errs.append("ue contexts not sorted by imsi (or an imsi twice)")
+                    break
+                prev = u["imsi"]
     elif t == "controlAck":
         need("nodeId", node_ok, "int 1..65535")
         need("ctlId", nonneg, "int>=0")
@@ -126,7 +146,7 @@ class Sink:
         self.out_dir = out_dir
         self.save_lines = save_lines
         self.port_stats = {p: {"connections": 0, "hello": 0, "sample": 0, "bye": 0,
-                               "controlAck": 0, "invalid": 0, "bytes": 0} for p in ports}
+                               "controlAck": 0, "ueContext": 0, "invalid": 0, "bytes": 0} for p in ports}
         self.controls = {}  # (nodeId, afterSeq) -> [control spec, ...]
         for c in controls or []:
             self.controls.setdefault((c["nodeId"], c["afterSeq"]), []).append(c)
@@ -141,6 +161,7 @@ class Sink:
         self.imsis = set()
         self.invalid_examples = []
         self.line_files = {}
+        self.ue_context_files = {}
         self.validator = None
         self.validation = "structural"
         self.writers = set()
@@ -163,7 +184,7 @@ class Sink:
                 "port": port, "kind": None, "hello": 0, "sample": 0, "bye": 0,
                 "last_seq": None, "seq_gaps": 0, "ue_counts": {}, "ipc_dropped_last": 0,
                 "ipc_dropped_max": 0, "period_ns": None, "run_ids": [], "bye_msg": None,
-                "controlAck": 0, "controls_sent": 0}
+                "controlAck": 0, "controls_sent": 0, "ueContext": 0}
         return n
 
     def invalid(self, port, reason, raw):
@@ -236,22 +257,24 @@ class Sink:
             for u in msg["ues"]:
                 self.imsis.add(u["imsi"])
             if self.save_lines:
-                self._save(nid, raw)
+                self._save(nid, raw, self.line_files, "lines-%d.jsonl")
             if writer is not None:
                 self._inject(nid, seq, writer)
                 if nid in self.paced:
                     self._step(nid, seq, writer)
+        elif t == "ueContext":
+            if self.save_lines:
+                self._save(nid, raw, self.ue_context_files, "ue-context-lines-%d.jsonl")
         elif t == "controlAck":
             self._append("ack_file", "control-acks.jsonl", raw.decode())
         elif t == "bye":
             n["bye_msg"] = {k: msg[k] for k in ("lastSeq", "built", "sent",
                                                 "droppedDisconnected", "droppedBackpressure")}
 
-    def _save(self, nid, raw):
-        f = self.line_files.get(nid)
+    def _save(self, nid, raw, files, pattern):
+        f = files.get(nid)
         if f is None:
-            f = self.line_files[nid] = open(
-                os.path.join(self.out_dir, "lines-%d.jsonl" % nid), "wb")
+            f = files[nid] = open(os.path.join(self.out_dir, pattern % nid), "wb")
         f.write(raw + b"\n")
         f.flush()
 
@@ -280,8 +303,8 @@ class Sink:
             writer.close()
 
     def summary(self):
-        tot = {k: sum(s[k] for s in self.port_stats.values())
-               for k in ("hello", "sample", "bye", "controlAck", "invalid", "connections")}
+        tot: dict[str, object] = {k: sum(s[k] for s in self.port_stats.values())
+               for k in ("hello", "sample", "bye", "controlAck", "ueContext", "invalid", "connections")}
         tot["controls_sent"] = sum(n["controls_sent"] for n in self.nodes.values())
         tot["controls_never_sent"] = sum(len(v) for v in self.controls.values())
         tot["distinct_imsis"] = sorted(self.imsis)
@@ -316,7 +339,7 @@ async def main_async(args):
     for w in list(sink.writers):
         w.close()
     await asyncio.sleep(0.05)
-    for f in list(sink.line_files.values()) + [sink.sent_file, sink.ack_file]:
+    for f in list(sink.line_files.values()) + list(sink.ue_context_files.values()) + [sink.sent_file, sink.ack_file]:
         if f is not None:
             f.close()
     tmp = os.path.join(args.out, "summary.json.tmp")
@@ -325,8 +348,55 @@ async def main_async(args):
     os.replace(tmp, os.path.join(args.out, "summary.json"))
 
 
+def self_test():
+    """The validation of every line type and the ueContext bookkeeping, offline (no socket)."""
+    import tempfile
+    fails = []
+    ue = lambda i, r=3: {"imsi": i, "lteRnti": r, "mnCellId": 1, "mmeUeS1apId": i}
+    ctx = lambda ues, **kw: dict({"type": "ueContext", "v": 1, "nodeId": 2, "seq": 0, "ues": ues}, **kw)
+    cases = [("a ueContext line", ctx([ue(1), ue(2, 4)]), True), ("an empty ueContext line", ctx([]), True),
+             ("ueContext v 2", ctx([], v=2), False), ("ueContext without seq", {"type": "ueContext", "v": 1, "nodeId": 2, "ues": []}, False),
+             ("ueContext nodeId 0", ctx([], nodeId=0), False), ("ueContext lteRnti 4096", ctx([ue(1, 4096)]), False),
+             ("ueContext not sorted by imsi", ctx([ue(2), ue(1, 4)]), False), ("ueContext imsi twice", ctx([ue(1), ue(1, 4)]), False),
+             ("ueContext entry without mmeUeS1apId", ctx([{"imsi": 1, "lteRnti": 3, "mnCellId": 1}]), False),
+             ("ueContext imsi a string", ctx([dict(ue(1), imsi="1")]), False),
+             ("a sample line", {"type": "sample", "v": 1, "nodeId": 2, "seq": 0, "simTimeNs": 0, "ipcDropped": 0, "cell": {}, "ues": []}, True),
+             ("an unknown type", {"type": "other", "nodeId": 2}, False)]
+    for name, msg, want in cases:
+        if (not structural_errors(msg)) != want:
+            fails.append(name)
+    with tempfile.TemporaryDirectory() as d:
+        sink = Sink([1], d, True, os.path.join(d, "no-schema.json"))
+        lines = [json.dumps(ctx([ue(1)]), separators=(",", ":")), json.dumps(ctx([ue(1), ue(2, 4)], seq=3), separators=(",", ":")),
+                 json.dumps(ctx([ue(2), ue(1, 4)], seq=4), separators=(",", ":"))]
+        for raw in lines:
+            sink.accept(1, raw.encode())
+        for f in sink.ue_context_files.values():
+            f.close()
+        s = sink.summary()
+        saved = open(os.path.join(d, "ue-context-lines-2.jsonl"), "rb").read()
+        if s["nodes"]["2"]["ueContext"] != 2 or s["totals"]["ueContext"] != 2 or s["totals"]["invalid"] != 1:
+            fails.append("ueContext counted per node, the malformed one invalid: %r" % s["totals"])
+        if saved != ("\n".join(lines[:2]) + "\n").encode():
+            fails.append("--save-lines writes the valid ueContext lines verbatim")
+        # with the schema (when jsonschema imports and the schema is found) the valid lines still pass
+        sch = Sink([2], d, False, DEFAULT_SCHEMA)
+        if sch.validator is not None:
+            for raw in lines[:2]:
+                sch.accept(2, raw.encode())
+            if sch.summary()["totals"]["invalid"]:
+                fails.append("the schema rejects a valid ueContext line: %r" % sch.invalid_examples[:1])
+        print("ipc-null-sink self-test validation: " + sch.validation)
+    for f in fails:
+        print("FAIL " + f)
+    print("ipc-null-sink self-test: " + ("ok" if not fails else "%d failure(s)" % len(fails)))
+    return 1 if fails else 0
+
+
 def main():
-    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    if sys.argv[1:] == ["--self-test"]:
+        return self_test()
+    ap = argparse.ArgumentParser(description=(__doc__ or "").split("\n")[0])
     ap.add_argument("--ports", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--save-lines", action="store_true")

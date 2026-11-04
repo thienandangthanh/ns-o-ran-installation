@@ -199,8 +199,11 @@ r0_live() {
     check "r0_${label}_agents_stopped" agents_stop
     check "r0_${label}_capture_stopped" capture_stop "$label"
     check "r0_${label}_kpimon_subscription_reporting_period_decoded" kpm_sub_period_check "$e/$label.pcap" "$label-sub" "$cap_t0"
+    check "r0_${label}_kpimon_subscription_one_action_id1_format3" kpm_sub_actions_check "$e/$label-sub-facts.json" "$rd/node-ips.json"
     check "r0_${label}_e2ap_ppid70_every_node" python3 -I "$E2EV/e2-facts-query.py" "$e/$label-sub-facts.json" ppid --node-ips "$rd/node-ips.json"
     check "r0_${label}_ns3_emitters_at_pins" ns3_emitters_at_pins "$rd/trace"
+    check "r0_${label}_ue_context_files_consistent_with_ns3_mn_pdcp_trace" ue_context_check "$rd/trace" "$rd/ns3run" \
+        "$rd/ue-context.json"
     kpimon_window() { kpimon_logs_since "$cap_t0" "$rd/kpimon.log" && kpimon_log_window_summary "$rd/kpimon.log"; }
     check "r0_${label}_kpimon_log_window_complete" kpimon_window
     wmore0() { local c; c=$(kpimon_log_counts "$rd/kpimon.log"); echo "$c" | tr '\n' ' '; echo "$c" | awk -F= '($1=="hdr_wmore"||$1=="msg_wmore") && $2!=0 {bad=1} END{exit bad}'; }
@@ -216,7 +219,8 @@ r0_live() {
     check "r0_${label}_c9_handover_rows_match_applied_lines" python3 -I "$HARNESS_DIR/scripts/gates/check-c9-handover-trace.py" "$rd"
     kpm_moves() {
         python3 -I "$HARNESS_DIR/tools/e2-evidence/kpm-ue-list-moves.py" "$e/$label.pcap" --node-ips "$rd/node-ips.json" \
-            --ledger "$rd/trace/e2-control-ledger.jsonl" --epoch-ms "$EPOCH_MS" --t0 "$cap_t0" --out "$rd/kpm-ue-moves.json"
+            --ledger "$rd/trace/e2-control-ledger.jsonl" --epoch-ms "$EPOCH_MS" --t0 "$cap_t0" --ue-context-dir "$rd/trace" \
+            --out "$rd/kpm-ue-moves.json"
     }
     check "r0_${label}_kpm_ue_lists_move_applied_and_keep_refused" kpm_moves
 }

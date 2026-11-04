@@ -4,6 +4,9 @@
 # ts-lib.sh, paced-lib.sh and influx-dump.sh; the gate sets RUNG (the check-name prefix), e, RUNS, NODES, PACER,
 # PACER_PORT, T_CTL_S, W_S, CLI, EPOCH_MS, T_GATE_S, RC_DEC_TAG, N_POS and defines the hooks named at rung_live.
 # shellcheck disable=SC2154,SC2034  # e, RUNS, RUNG and the rest are set by the sourcing gate; PACERX is read by paced-lib.sh
+# The frozen checkpoint-1 UE identity map (per IMSI the MN LTE RNTI) that the RC UE ID transform reads; the r3p live
+# runs' UE contexts must equal it.
+IDENTITY_MAP_CP1="${IDENTITY_MAP_CP1:-$HARNESS_DIR/plans/261103-0008-GH-1-post-m9-realism-m10/reference/identity-map-cp1.json}"
 all_subscribed() {
     local deadline=$(($(date +%s) + 180)) rows
     while [ "$(date +%s)" -lt "$deadline" ]; do
@@ -95,8 +98,14 @@ rung_live() {
     check "${RUNG}_${label}_agents_stopped" agents_stop
     check "${RUNG}_${label}_capture_stopped" capture_stop "$label"
     check "${RUNG}_${label}_kpimon_subscription_reporting_period_decoded" kpm_sub_period_check "$e/$label.pcap" "$label-sub" "$cap_t0"
+    check "${RUNG}_${label}_kpimon_subscription_one_action_id1_format3" kpm_sub_actions_check "$e/$label-sub-facts.json" "$rd/node-ips.json"
     check "${RUNG}_${label}_e2ap_ppid70_every_node" python3 -I "$E2EV/e2-facts-query.py" "$e/$label-sub-facts.json" ppid --node-ips "$rd/node-ips.json"
     check "${RUNG}_${label}_ns3_emitters_at_pins" ns3_emitters_at_pins "$rd/trace"
+    check "${RUNG}_${label}_ue_context_files_consistent_with_ns3_mn_pdcp_trace" ue_context_check "$rd/trace" "$rd/ns3run" \
+        "$rd/ue-context.json"
+    # the live identities equal the frozen checkpoint-1 identity map the RC UE ID transform uses
+    [ "$RUNG" != r3p ] || check "r3p_${label}_ue_context_equals_identity_map_cp1" ue_context_check "$rd/trace" "$rd/ns3run" \
+        "$rd/ue-context-cp1.json" --expect-map "$IDENTITY_MAP_CP1"
     kpimon_window() { kpimon_logs_since "$cap_t0" "$rd/kpimon.log" && kpimon_log_window_summary "$rd/kpimon.log"; }
     check "${RUNG}_${label}_kpimon_log_window_complete" kpimon_window
     wmore0() { local c; c=$(kpimon_log_counts "$rd/kpimon.log"); echo "$c" | tr '\n' ' '; echo "$c" | awk -F= '($1=="hdr_wmore"||$1=="msg_wmore") && $2!=0 {bad=1} END{exit bad}'; }
@@ -121,7 +130,8 @@ rung_live() {
     check "${RUNG}_${label}_c9_handover_rows_match_applied_lines" python3 -I "$HARNESS_DIR/scripts/gates/check-c9-handover-trace.py" "$rd"
     kpm_moves() {
         python3 -I "$HARNESS_DIR/tools/e2-evidence/kpm-ue-list-moves.py" "$e/$label.pcap" --node-ips "$rd/node-ips.json" \
-            --ledger "$rd/trace/e2-control-ledger.jsonl" --epoch-ms "$EPOCH_MS" --t0 "$cap_t0" --out "$rd/kpm-ue-moves.json"
+            --ledger "$rd/trace/e2-control-ledger.jsonl" --epoch-ms "$EPOCH_MS" --t0 "$cap_t0" --ue-context-dir "$rd/trace" \
+            --out "$rd/kpm-ue-moves.json"
     }
     check "${RUNG}_${label}_kpm_ue_lists_move_applied_and_keep_refused" kpm_moves
     one_connection() {

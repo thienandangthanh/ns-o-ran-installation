@@ -2,14 +2,18 @@
 """p12-records-check.py: multi-record KPM indications against the ns-3 IPC trace (AC10, KPM reporting period P = K x T).
 
   p12-records-check.py RECORDS_JSONL --map metric-map.v1.json --trace e2-ipc-trace-N.jsonl [--trace ...]
-                       --per-indication K --granularity-ms G --out FILE
+                       --ue-context-dir TRACE_DIR --per-indication K --granularity-ms G --out FILE
   p12-records-check.py --self-test
 
 RECORDS_JSONL is `kpimon-decode-harness --records` over the capture's indication lines: per indication the decode
 codes, msg_format, measDataItems (one per granularity interval, E2SM-KPM v03.00 8.2.1.4.1/8.2.1.4.2), the flat
 record list (Format 1: every item's records in order; Format 2: item 0's records metric-major over the UEs), for
-Format 2 every item's records (itemRecords) and the UE IDs (amfUeNgapIds, the IMSIs in the agent's encoding), the
-granulPeriod and the header's colletStartTime. The trace gives each node's samples: seq, simTimeNs (simTimeMs is
+Format 2 every item's records (itemRecords) and the decoded UE IDs of item 0 (ueIds), the granulPeriod and the
+header's colletStartTime. A Format 2 UE ID names its IMSI through the run's UE context map (TRACE_DIR's
+e2-ue-context-<n>.jsonl, tools/e2-evidence/ue-context-map.py): every ueIds entry of a gNB node must be en-gNB-UEID
+with globalENB-ID {00F110, 00001} and no optional member (of the eNB node an eNB-UEID with gUMMEI
+{00F110, 0001, 01}), and entry j's IMSI is R(node, {seq0 .. seq0 + K - 1}, id_j); an entry that does not resolve, or
+two entries on one IMSI, is a problem. The trace gives each node's samples: seq, simTimeNs (simTimeMs is
 simTimeNs // 10^6, the agent's own truncation, ns3_e2_agent src/sample-forwarder.cpp) and the IMSIs of its UE list.
 
 Checks (exit 0 when all hold):
@@ -22,16 +26,29 @@ Checks (exit 0 when all hold):
   4. every Format 2 indication's first seq starts a period that a Format 1 indication of the same node reports.
      Per item and listed UE: all noValue exactly when that IMSI is absent from the trace sample of the item's seq
      (E2SM-KPM v03.00 7.4.4.4: NULL for the granularity periods where a listed UE does not appear), otherwise its
-     nodeId, seq and imsi records are the node's, the item's (first seq + item index) and the listed IMSI. The node
-     and first seq come from the first UE block that has values;
+     nodeId, seq and imsi records are the node's, the item's (first seq + item index) and the IMSI its UE ID resolves
+     to. The node and first seq come from the first UE block that has values;
   5. per node, every period that a Format 1 indication reports has Format 2 UE lists whose union is the period's
      trace UEs (the union over its K samples), no IMSI listed twice for the same period.
 The record positions come from the metric map (gnb/enb cell and ue lists, by order).
 """
 import argparse
+import importlib.util
 import json
+import pathlib
 import sys
 import tempfile
+
+HERE = pathlib.Path(__file__).resolve().parent
+
+
+def _ue_context_map():
+    path = HERE.parent.parent / "tools" / "e2-evidence" / "ue-context-map.py"
+    spec = importlib.util.spec_from_file_location("ue_context_map", path)
+    assert spec is not None and spec.loader is not None, path
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
 
 NTP_UNIX_OFFSET_S = 2208988800
 
@@ -74,11 +91,12 @@ def value(rec):
     return rec.get("v") if rec.get("t") == "int" else None
 
 
-def format2_judge(tag, x, n, lay, nodes, problems):
-    """(node, first seq, IMSIs) of a Format 2 indication, judged UE block by UE block against the trace, or None."""
-    items, u, imsis = x.get("itemRecords"), x.get("ueIdsPerItem") or 0, x.get("amfUeNgapIds") or []
-    if u <= 0 or not x.get("ueIdsUniform", False) or len(imsis) != u or len(set(imsis)) != u or None in imsis:
-        problems.append("%s: Format 2 UE ids %r per item %r uniform %r" % (tag, imsis, u, x.get("ueIdsUniform")))
+def format2_judge(tag, x, n, k, lay, nodes, cm, problems):
+    """(node, first seq, IMSIs) of a Format 2 indication, judged UE block by UE block against the trace, or None.
+    The listed IMSIs are the UE IDs resolved through the UE context map cm over the period's seqs."""
+    items, u, ids = x.get("itemRecords"), x.get("ueIdsPerItem") or 0, x.get("ueIds") or []
+    if u <= 0 or not x.get("ueIdsUniform", False) or len(ids) != u:
+        problems.append("%s: Format 2 UE IDs %r per item %r uniform %r" % (tag, ids, u, x.get("ueIdsUniform")))
         return None
     if not isinstance(items, list) or len(items) != n:
         problems.append("%s: Format 2 itemRecords %s for %s items" % (tag, None if items is None else len(items), n))
@@ -105,6 +123,18 @@ def format2_judge(tag, x, n, lay, nodes, problems):
     ni, si, ii = names.index("ns3.nodeId"), names.index("ns3.seq"), names.index("ns3.imsi")
     i0, j0 = present[0]
     seq0 = (value(block(i0, j0)[si]) or 0) - i0
+    imsis = []
+    for j, uid in enumerate(ids):
+        imsi, p = cm.resolve_wire(node, range(seq0, seq0 + k), uid)
+        problems += ["%s: Format 2 UE ID %d: %s" % (tag, j, q) for q in p]
+        if not p and imsi is None:
+            problems.append("%s: Format 2 UE ID %d %s unresolved over seqs %d..%d of node %d" % (
+                tag, j, json.dumps(uid, sort_keys=True), seq0, seq0 + k - 1, node))
+        imsis.append(imsi)
+    if None in imsis or len(set(imsis)) != u:
+        if None not in imsis:
+            problems.append("%s: Format 2 UE IDs resolve to IMSIs %r (one IMSI twice)" % (tag, imsis))
+        return None
     trace = nodes[node]["samples"]
     for i in range(n):
         s = trace.get(seq0 + i)
@@ -124,8 +154,8 @@ def format2_judge(tag, x, n, lay, nodes, problems):
     return node, seq0, imsis
 
 
-def check(records_path, lay, nodes, k, g):
-    problems, f1_by_node, f2 = [], {}, []
+def check(records_path, lay, nodes, k, g, cm):
+    problems, f1_by_node, f2 = ["UE context: " + p for p in cm.problems], {}, []
     items_hist = {}
     lines = [json.loads(l) for l in open(records_path) if l.strip()]
     for x in lines:
@@ -153,7 +183,7 @@ def check(records_path, lay, nodes, k, g):
             seqs = [value(recs[i * w + names.index("ns3.seq")]) for i in range(n)]
             f1_by_node.setdefault(node, []).append((tag, seqs, x.get("header", {}).get("ts_hex")))
         elif x.get("msg_format") == 2:
-            r = format2_judge(tag, x, n, lay, nodes, problems)
+            r = format2_judge(tag, x, n, k, lay, nodes, cm, problems)
             if r is not None:
                 f2.append((tag, r[0], r[1], r[2], x.get("header", {}).get("ts_hex")))
         else:
@@ -220,7 +250,11 @@ def self_test():
     epoch, T, k = 1767225600000, 100, 10
     # UE IMSI 1 from seq 1, IMSI 2 from seq 4 (appears in the middle of the first period).
     in_trace = lambda seq: [i for i, first in ((1, 1), (2, 4)) if seq >= first]
-    with open(d + "/trace.jsonl", "w") as f:
+    ue_ctx = lambda imsis: [{"imsi": i, "lteRnti": 10 + i, "mnCellId": 1, "mmeUeS1apId": i} for i in imsis]
+    with open(d + "/e2-ue-context-2.jsonl", "w") as f:
+        for seq, imsis in ((1, [1]), (4, [1, 2])):
+            f.write(json.dumps({"type": "ueContext", "v": 1, "nodeId": 2, "seq": seq, "ues": ue_ctx(imsis)}) + "\n")
+    with open(d + "/e2-ipc-trace-2.jsonl", "w") as f:
         f.write(json.dumps({"type": "hello", "nodeId": 2, "kind": "gnb", "periodNs": T * 1_000_000, "simStartEpochMs": epoch}) + "\n")
         for s in range(1, 26):  # 25 samples: 2 whole periods, 5 unreported at bye; the emitter's 0.8 ms offset
             f.write(json.dumps({"type": "sample", "seq": s, "simTimeNs": 800000 + s * T * 1_000_000,
@@ -236,8 +270,12 @@ def self_test():
         return {"id": tag, "hdr_code": "RC_OK", "msg_code": "RC_OK", "msg_format": 1, "measDataItems": items or len(seqs),
                 "records": recs, "granulPeriod": g, "header": {"ts_hex": ts(seqs[0])}}
 
-    def f2(tag, seq0, imsis=(1, 2), blank=(), fill=(), seq_of=None, g=T):
-        """The agent's encoding (values where the UE is in the trace, noValue elsewhere), with blank/fill overrides."""
+    def en_gnb(rnti, macro="00001"):
+        return {"type": "en-gNB-UEID", "mEnbUeX2apId": rnti, "globalEnbId": {"plmn": "00F110", "macroEnbId": macro}}
+
+    def f2(tag, seq0, imsis=(1, 2), blank=(), fill=(), seq_of=None, g=T, ids=None):
+        """The agent's encoding (values where the UE is in the trace, noValue elsewhere), with blank/fill overrides;
+        the UE IDs are the IMSIs' en-gNB-UEIDs from the fixture context (RNTI 10 + IMSI) unless ids is given."""
         u, none = len(imsis), {"t": "none"}
 
         def item(i):
@@ -250,11 +288,13 @@ def self_test():
         items = [item(i) for i in range(k)]
         return {"id": tag, "hdr_code": "RC_OK", "msg_code": "RC_OK", "msg_format": 2, "measDataItems": k,
                 "records": items[0], "itemRecords": items, "ueIdsPerItem": u, "ueIdsUniform": True,
-                "amfUeNgapIds": list(imsis), "granulPeriod": g, "header": {"ts_hex": ts(seq0)}}
+                "ueIds": ids if ids is not None else [en_gnb(10 + i) for i in imsis], "granulPeriod": g,
+                "header": {"ts_hex": ts(seq0)}}
 
     def run(lines):
         open(d + "/r.jsonl", "w").write("".join(json.dumps(x) + "\n" for x in lines))
-        return check(d + "/r.jsonl", layout(d + "/map.json"), load_traces([d + "/trace.jsonl"]), k, T)
+        return check(d + "/r.jsonl", layout(d + "/map.json"), load_traces([d + "/e2-ipc-trace-2.jsonl"]), k, T,
+                     _ue_context_map().UeContextMap(d))
 
     f1s = [f1("a", list(range(1, 11))), f1("b", list(range(11, 21)))]
     good = f1s + [f2("c", 1), f2("d", 11)]
@@ -278,6 +318,13 @@ def self_test():
     assert not run(f1s + [f2("c", 1), f2("d", 11, imsis=(1,))])["pass"], "a trace UE missing from the period's lists must fail"
     assert not run([f1("a", list(range(1, 11)), g=1000)] + good[1:])["pass"], "a Format 1 granulPeriod other than G must fail"
     assert not run(f1s + [f2("c", 1, g=1000), f2("d", 11)])["pass"], "a Format 2 granulPeriod other than G must fail"
+    assert not run(f1s + [f2("c", 1, ids=[en_gnb(11), {"type": "gNB-UEID", "amfUeNgapId": 2}]), f2("d", 11)])["pass"], "a gNB-UEID entry must fail"
+    assert not run(f1s + [f2("c", 1, ids=[en_gnb(11), en_gnb(19)]), f2("d", 11)])["pass"], "an unresolved X2AP ID must fail"
+    assert not run(f1s + [f2("c", 1, ids=[en_gnb(11), en_gnb(12, "00002")]), f2("d", 11)])["pass"], "a wrong macro eNB ID must fail"
+    assert not run(f1s + [f2("c", 1, ids=[en_gnb(11), dict(en_gnb(12), optional=True)]), f2("d", 11)])["pass"], "an optional member must fail"
+    assert not run(f1s + [f2("c", 1, ids=[en_gnb(11), en_gnb(11)]), f2("d", 11)])["pass"], "two IDs of one UE must fail"
+    assert not run(f1s + [f2("c", 1, ids=[en_gnb(12), en_gnb(11)]), f2("d", 11)])["pass"], \
+        "a UE ID whose IMSI differs from its block's ns3.imsi record must fail"
     one_rec = [f1("x%d" % s, [s]) for s in range(1, 26)]
     assert not run(one_rec)["pass"], "one record per indication at K = 10 must fail"
     print("p12-records-check self-test: ok")
@@ -287,15 +334,17 @@ def self_test():
 def main():
     if sys.argv[1:] == ["--self-test"]:
         return self_test()
-    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap = argparse.ArgumentParser(description=(__doc__ or "").split("\n")[0])
     ap.add_argument("records")
     ap.add_argument("--map", required=True)
     ap.add_argument("--trace", action="append", required=True)
     ap.add_argument("--per-indication", type=int, required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--granularity-ms", type=int, required=True)
+    ap.add_argument("--ue-context-dir", required=True, help="the run's trace dir (e2-ue-context-*.jsonl)")
     a = ap.parse_args()
-    r = check(a.records, layout(a.map), load_traces(a.trace), a.per_indication, a.granularity_ms)
+    r = check(a.records, layout(a.map), load_traces(a.trace), a.per_indication, a.granularity_ms,
+              _ue_context_map().UeContextMap(a.ue_context_dir))
     json.dump(r, open(a.out, "w"), indent=1, sort_keys=True)
     print(json.dumps({k: v for k, v in r.items() if k != "problems"}, sort_keys=True))
     for p in r["problems"]:

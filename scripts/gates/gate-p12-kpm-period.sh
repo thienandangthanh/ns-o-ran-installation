@@ -134,13 +134,15 @@ check p12_a_capture_stopped capture_stop p12-a
 sub_a() { pcap_facts "$e/p12-a.pcap" p12-a-sub && python3 -I "$E2EV/e2-facts-query.py" "$e/p12-a-sub-facts.json" sub-period --period-ms "$P_MULTI_MS" --after "$CAP_T0"; }
 check p12_a_decoded_subscription_period_1000_answered sub_a
 check p12_a_e2ap_ppid70_every_node python3 -I "$E2EV/e2-facts-query.py" "$e/p12-a-sub-facts.json" ppid --nodes 2
+check p12_a_kpimon_subscription_one_action_id1_format3 kpm_sub_actions_check "$e/p12-a-sub-facts.json" "$e/p12-a-node-ips.json"
+check p12_a_ue_context_files_consistent_with_ns3_mn_pdcp_trace ue_context_check "$RUN" "$RUN" "$e/p12-a-ue-context.json"
 records_a() {
     local pl="$HARNESS_TOOLS/pcap-to-lines.py" h="$SODIR/kpimon-decode-harness"
     python3 -I "$pl" "$e/p12-a.pcap" >"$e/p12-a-lines.txt" || return 1
     LD_LIBRARY_PATH="$SODIR" "$h" --records <"$e/p12-a-lines.txt" >"$e/p12-a-records.jsonl" 2>"$e/p12-a-records.stderr" || return 1
     python3 -I "$HARNESS_DIR/scripts/gates/p12-records-check.py" "$e/p12-a-records.jsonl" --map "$AGENT_DIR/schema/metric-map.v1.json" \
         --trace "$RUN/e2-ipc-trace-2.jsonl" --per-indication $((P_MULTI_MS / T_MS)) --granularity-ms "$G_MS" \
-        --out "$e/p12-a-records-check.json"
+        --ue-context-dir "$RUN" --out "$e/p12-a-records-check.json"
 }
 check p12_a_one_indication_per_10_seqs_with_10_records records_a
 kpimon_decoded_all() {
@@ -153,7 +155,7 @@ kpimon_decoded_all() {
 check p12_a_kpimon_logged_every_wire_indication_zero_wmore kpimon_decoded_all
 check p12_a_influx_equals_ipc_trace_every_seq python3 -I "$E2EV/influx-vs-trace.py" --every-seq \
     --map "$AGENT_DIR/schema/metric-map.v1.json" --trace "$RUN/e2-ipc-trace-2.jsonl" --influx-cell "$e/p12-a-influx-cell.csv" \
-    --influx-ue "$e/p12-a-influx-ue.csv" --out "$e/p12-a-influx-vs-trace.json"
+    --influx-ue "$e/p12-a-influx-ue.csv" --ue-context-dir "$RUN" --out "$e/p12-a-influx-vs-trace.json"
 check p12_a_emitter_bye_sent_equals_built_zero_drops python3 -I "$E2EV/trace-facts.py" "$RUN/e2-ipc-trace-2.jsonl" --require-clean \
     --expect-nodes 2 --out "$e/p12-a-trace-facts.json"
 NSAMPLES=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))[0]["samples"])' "$e/p12-a-trace-facts.json" 2>/dev/null || echo 0)
@@ -206,6 +208,7 @@ check p12_c_wire_subscription_request_and_response wait_wire "$e/p12-c.pcap" suc
 check p12_c_agents_stopped agents_stop
 check p12_c_capture_stopped capture_stop p12-c
 check p12_c_restored_subscription_period_decoded kpm_sub_period_check "$e/p12-c.pcap" p12-c-sub "$CAP_T0"
+check p12_c_kpimon_subscription_one_action_id1_format3 kpm_sub_actions_check "$e/p12-c-sub-facts.json" "$e/p12-c-node-ips.json"
 fact restoredPeriodMs "$(python3 -I -c 'import json,sys; r=json.load(open(sys.argv[1]))["sub_requests"]; print(json.dumps(sorted({x["reporting_period_ms"] for x in r}, key=str)[-1] if r else None))' "$e/p12-c-sub-facts.json" 2>/dev/null || echo null)"
 
 ################################################################################
