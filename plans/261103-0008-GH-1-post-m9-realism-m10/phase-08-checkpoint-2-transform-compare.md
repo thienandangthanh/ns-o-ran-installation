@@ -112,6 +112,39 @@ After these fixes, T still reproduces the committed harness files from both the 
 Run 3 was a narrow check of the run-2 fixes (`--base 2df76db`, about 3 min). It ran in parallel with a chain started at 749fbd0. Its verdict was needs-attention, with one finding, verified and accepted:
 - High: on its abort paths (the bound, an unwritable stop request), `wd_finish` killed only the watchdog shell, so its ssh, virsh and timeout children were orphaned. The verdict was never at risk, since those paths already fail with 125, but it is a process leak. GNU `timeout` makes its own process group, so a group kill would miss those children. The fix (668d1ef, after the row 130 amendment 66d1d29): the watchdog starts as a session leader (`wd_start`), and every stop path ends its whole session with TERM, then KILL after 5 s. The guest shutdown call gets `--kill-after`. The self-test checks that the session is empty after cases 3–7. With the old single-PID kill put back, cases 6 and 7 fail, naming the processes left behind.
 - The chain started at 749fbd0 was stopped about three minutes into M2: the VM unit first, then the driver and `vm-exec.sh` (KILL, so its TERM trap could not write a false trip record), then its watchdog. No evidence was exported. The VM was reverted to f7-rerun-green again (`--pending` checked first, no orphan overlays), and the asn1-indep tarball was copied again (`sha256sum -c` OK).
-- No fourth Codex run before the chain. The fix is small, and the self-test fails without it; the kongming exit review covers it. Codex ran three times in this phase, all read-only and all disclosed here.
+- No fourth Codex run before the chain at first. The user then ruled (2026-11-05 10:38 KST) "don't skip a fourth Codex review", so every fix made for a Codex finding now gets its own follow-up Codex review (runs 4–7 below).
 
 **The cp2 chain** runs at harness 668d1ef with pins Testbed 554d6d6, ns-3 ea6e46f6, oran-interface 53253fe and e2sim e2705816, from f7-rerun-green, in the order of the driver: M2, M3, M4, M5, M6, M7, I0, Q8, R0 single, R1 single, I2, R2 C1, R3′ calibrate, R3′ dryrun stage b, R3′ C1 at δ 0, 150 and 500 with `--reference-transform`, e2i, the δ seam smoke, and R1 C1. It covers P07's whole pass set and the three transform-compare runs.
+
+**The cp2 chain at 668d1ef: superseded, with P08 red #1 at step 15.**
+- **Steps 0–14** (M2 through R3′ C1 at δ 0) passed. The δ 0 run is `r3p/20261105T005919Z`, which has `transformEqualsM9: true`.
+- **Step 15** (R3′ C1 at δ 150, `r3p/20261105T012217Z`) went red at the runner, not at the gate:
+  - **The edit:** while that step's runner was polling, I rewrote `scripts/vm/vm-exec.sh` in this worktree for the Codex run 4 fix. Bash resumed the edited file at a stale byte offset, which gave "ns-3: command not found" (a fragment of a comment) and then "disk_end: unbound variable", and the runner exited 1.
+  - **The VM side:** the gate exited 0 and its verdict passes, and the compare has `transformEqualsM9: true`, 17 fields, `meid` without occurrence and no problems. The copy matches the VM (852 files).
+  - **What is missing:** `host-disk.tsv` and `host-disk-watchdog.json`. The disk floor held (minimum 54 GiB, no trip file).
+  - **Classification:** following kongming-261105-1050, this counts as P08 red #1, so the next red is PAUSE T6. The classification is disclosed for the user at Stop A′.
+- **Evidence:** the run dir is kept as incident evidence and is not counted. No missing record was created after the fact.
+  - The 16 run dirs at 668d1ef (15 superseded greens and the step 15 incident) have their verdict layer and an `evidence-sha256.txt` committed.
+  - Their 3,969 raw files and their watchdog dirs are archived as `plans-evidence-raw-m10-p08a-20261105.tar.zst` (103 MB) with its `.list0`, both in that folder's `SHA256SUMS` and verified.
+  - The driver as run, its step log and the step logs are in `evidence/cp2-chain/668d1ef/`.
+- **The red's guided fix** (ledger chain procedure note, 813e9c9). This is a procedure change only, with no harness change:
+  - The driver now runs every step's host side from a frozen, locked, detached worktree of the chain SHA on /home, with read-only `scripts/`. It checks HEAD and clean tracked files before every step.
+  - After every exit 0 it cross-checks the run dir (fresh `.last-<gate>`, `exit_code` 0, `host-disk.tsv`, `host-disk-watchdog.json` with `tripped: false`, a passing `verdict.json`).
+  - Its body is parsed whole before it runs.
+  - The cross-check was validated offline: it passes the 15 green dirs and fails step 15 with "no host-disk.tsv".
+  - The driver is `evidence/cp2-chain/p08-gate-chain.sh`.
+
+**Codex runs 4–7** were read-only follow-up reviews, one per fix. Each finding was verified and accepted, and each amendment of ledger row 130 was committed before its code.
+- **Run 4** (`--base 749fbd0`, the 668d1ef fix) found two high findings:
+  - an outside or trip TERM skipped the finaliser: it recorded a trip that never happened, wrote the record before the trip record was complete, and left the watchdog session running;
+  - the traps were installed only after the start's 0.2 s wait.
+  - The fix is 33b4992: `wd_arm` installs the traps first, every exit goes through `wd_on_exit`, and `wd_start` polls for the session. Self-test cases 8–10 were added, and their mutations fail.
+- **Run 5** (`--base 1bd18bd`, 33b4992) found three findings:
+  - a TERM between the launch and `WD_PID=$!`;
+  - `wd_end` marked the run finalised before writing its record;
+  - a session id was signalled after the reap.
+  - The fix is 293957f: TERM is held across the launch and the end record, and the session is swept once when the watchdog is seen gone and is then forgotten. Cases 11–14 were added, and their mutations fail. One mutation run leaked a watchdog on purpose, and I stopped it. My stop pattern also matched my own tool shell, which ended that shell and nothing else.
+- **Run 6** (`--base b4109d2`, 293957f) found one high finding: `wd_end` restored the TERM action before `exit 125`. The fix is 0d32a88: a trip exits with TERM still held. Case 15 was added and fails against 293957f.
+- **Run 7** (`--base 20c653d`, 0d32a88) returned approve, with no findings.
+- Kongming-261105-1050 also reviewed 293957f and found no verdict-affecting defect. It named the same `wd_end` window that run 6 found.
+

@@ -1,0 +1,65 @@
+{
+  "gate": "i0",
+  "ts": "20261104T235041Z",
+  "harness_sha": "668d1efdc093e0fd524ee15e8af5e48c10357f9a",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "554d6d61a0d35e4c0fe80891d61f4834549221f6",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "ea6e46f6f210319e7e96923ac6a472b019638371",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "53253fe256ed305b207b607150a5e8a1dec25e42",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "e27058163dc0bb05ce279ad3fa1bd15a22fc24ab"
+  },
+  "duration_s": 259,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "i0_nist_tree_at_testbed_sha_with_agent_dir",
+      "pass": true,
+      "detail": "nist HEAD 554d6d61a0d35e4c0fe80891d61f4834549221f6, want 554d6d61a0d35e4c0fe80891d61f4834549221f6\nalready at 554d6d61a0d35e4c0fe80891d61f4834549221f6\nns3_e2_agent install_patch_files/xApps/rc install_patch_files/xApps/kpimon-go/control/enb-kpm-measurements.json match 554d6d61a0d35e4c0fe80891d61f4834549221f6; metric-map sha256 9cfcbbcdd71514e4e2627cfbb4aa950760b42f85d5045de2c1b71d6215f16923"
+    },
+    {
+      "name": "i0_build_tools_present",
+      "pass": true,
+      "detail": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\ntshark 4.4.19 (>= 4.4)"
+    },
+    {
+      "name": "i0_rc_decoder_builds_and_round_trips",
+      "pass": true,
+      "detail": "nrcgi fixture: 4 lines decoded strictly with the NR-CGI target; M8 fixture: 30 headers decoded, 30 messages refused\n{\"ok\":true,\"hex\":\"0000\",\"xer\":\"<E2SM-RC-ControlOutcome>\\n    <ric-controlOutcome-formats>\\n        <controlOutcome-Format1>\\n            <ranP-List>\\n            </ranP-List>\\n        </controlOutcome-Format1>\\n    </ric-controlOutcome-formats>\\n</E2SM-RC-ControlOutcome>\\n\"}\ntest-rc-decode: ok"
+    },
+    {
+      "name": "i0_grpcurl_fetched_and_checksum_verified",
+      "pass": true,
+      "detail": "grpcurl_1.9.1_linux_x86_64.tar.gz: OK\ngrpcurl v1.9.1"
+    },
+    {
+      "name": "i0_rc_installed_at_pin_and_ready",
+      "pass": true,
+      "detail": "rc ricxapp-rc-6db9dcd964-lt65n ready, gRPC endpoint 10.99.36.0:7777\ngRPC describe ok, 12040 route to rc present\nrmrClient: RMR is ready after 21 seconds waiting..."
+    },
+    {
+      "name": "i0_rc_ready_describe_and_12040_route",
+      "pass": true,
+      "detail": "rc ricxapp-rc-6db9dcd964-lt65n ready, gRPC endpoint 10.99.36.0:7777\ngRPC describe ok, 12040 route to rc present\nrmrClient: RMR is ready after 21 seconds waiting..."
+    },
+    {
+      "name": "i0_route_dump",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-rc-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-hw-go-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-rc-rmr.ricxapp:4560 / service-ricxapp-hw-go-rmr.ricxapp:4560"
+    },
+    {
+      "name": "i0_pod_snapshot",
+      "pass": true,
+      "detail": "pod\tricxapp-hw-go-c84579888-hfszg\t40c5ad2d-2034-4933-ac4e-3697533c1368\t7\t2026-10-21T21:44:17Z\t2026-11-04T22:00:45Z\npod\tricxapp-kpimon-go-85dc5fdf8b-sjbs4\tcd453d72-2870-4628-a06c-8b8607cb4ce7\t0\t2026-11-04T22:45:47Z\t2026-11-04T22:45:47Z\npod\tricxapp-rc-6db9dcd964-lt65n\tc7ac842e-09b5-4cbd-bf56-5a6923268438\t0\t2026-11-04T23:54:11Z\t2026-11-04T23:54:12Z"
+    }
+  ],
+  "routeOwner12041": "service-ricxapp-rc-rmr.ricxapp:4560",
+  "routeOwner12042": "service-ricxapp-rc-rmr.ricxapp:4560",
+  "routeOwnerE2term12041": "service-ricxapp-hw-go-rmr.ricxapp:4560",
+  "routeOwnerE2term12042": "service-ricxapp-hw-go-rmr.ricxapp:4560"
+}

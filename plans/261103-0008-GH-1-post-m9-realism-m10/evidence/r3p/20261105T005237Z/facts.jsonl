@@ -1,0 +1,31 @@
+{"key":"mode","value":"dryrun"}
+{"key":"deltaMs","value":0}
+{"key":"stage","value":"b"}
+{"key":"dev","value":false}
+{"key":"tCtlSeconds","value":30}
+{"key":"tCtlProvenance","value":"evidence/r0/20261023T065002Z calibration: L_max 12.919 ms over 10 complete trigger steps, T_ctl = max(30 s, ceil(20 x L_max)) = 30 s; host load 1.03 (20 CPUs), VM load 1.29; CPU hold released by the user 15:44 KST"}
+{"key":"wSeconds","value":1.0}
+{"key":"wProvenance","value":"evidence/r3p/20261028T042540Z calibration (gate-r3p --mode calibrate, harness f614311): R2's fixed-prediction block through the R3\u2032 prepare path, 25 complete one-control trigger steps, L_max 5.395 ms (= p99.9 by nearest rank at n = 25), W = max(1 s, 3 x L_max) = 1.0 s; 20 x L_max <= T_ctl"}
+{"key":"a1Threshold","value":10}
+{"key":"a1ThresholdProvenance","value":"scripts/gates/r2-scenario.json threshold 10 (n2 is a neighbour 5 % above serving, under it), set and reached in the R2 calibration evidence/r2/20261026T140350Z"}
+{"key":"substitution2Applied","value":true}
+{"key":"substitution3Applied","value":true}
+{"key":"outageThresholdDb","value":-1000}
+{"key":"outageThresholdProvenance","value":"substitution 1: the R0-config null-control run at the default -5 dB counted 5 LTE outage switches (evidence/r0/20261023T073520Z q2OutageSwitches 5; also 065002Z, 065551Z); gated runs use --outageThreshold=-1000"}
+{"key":"scenarioSha256","value":"392feefc6ad4c5235d5a09698340bf6e001e385c933e7958f35db9267e236cb0"}
+{"key":"handoverTriggers","value":0}
+{"key":"vmLoadStart","value":" 00:52:39 up  2:52,  0 user,  load average: 0.99, 0.94, 0.94"}
+{"key":"a1PolicyTypeCreated","value":false}
+{"key":"xappImageIds","value":{"trafficxapp": "sha256:5378d7de2595a0e1d8642737c627f72192523fb1e72876d1226f2b78d70f4c4f", "stubqp": "sha256:936686634cd36f880638e55c53f405e4345bcb6f0c7b8f34b49df07dd40200fe", "stubqpImage": "127.0.0.1:80/stubqp:caa841a11941"}}
+{"key":"dryRunClass","value":{"class": "schedule", "m1": {"decision": "none", "expectedAnswer": [["0000000210", [167424, 0]], ["0000000310", [33488, 0]]], "imsi": 1, "kind": "negative", "step": 50}, "scenarioSha256": "392feefc6ad4c5235d5a09698340bf6e001e385c933e7958f35db9267e236cb0", "stageADir": "/home/uc/evidence/r3p/20261028T041150Z/runs/drya", "stageBDir": "/home/uc/evidence/r3p/20261105T005237Z/runs/dryb"}}
+{"key":"n6Timing","value":{"n": 44, "maxS": 0.146}}
+{"key":"minSlack","value":{"T_start": null, "T_gate": null, "T_ctl": null, "W": null}}
+{"key":"lControlLatencyS","value":[]}
+{"key":"ipcDropped","value":0}
+{"key":"droppedNoSub","value":0}
+{"key":"restartCountsAllZero","value":true}
+{"key":"restartCounts","value":{"dryb/hw-go": 0, "dryb/kpimon": 0, "dryb/rc": 0, "dryb/qp-stub": 0, "dryb/ts-xapp": 0, "dryb/agent-3": 0, "dryb/agent-2": 0, "dryb/agent-1": 0}}
+{"key":"routeOwner12041","value":null}
+{"key":"routeOwner12042","value":null}
+{"key":"tsOrStubHeldAckRoute","value":null}
+{"key":"vmLoadEnd","value":" 00:58:55 up  2:58,  0 user,  load average: 0.87, 0.86, 0.90"}

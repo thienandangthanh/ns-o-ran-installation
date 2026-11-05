@@ -1,0 +1,16 @@
+2026-11-04T22:20:59Z	0	gate-m2-refnode.sh 	0
+2026-11-04T22:57:08Z	1	gate-m3-xapps.sh 	0
+2026-11-04T23:18:37Z	2	gate-m4-ns3-build.sh 	0
+2026-11-04T23:22:45Z	3	gate-m5-agent-setup.sh 	0
+2026-11-04T23:24:54Z	4	gate-m6-kpm.sh 	0
+2026-11-04T23:50:38Z	5	gate-m7-multignb.sh 	0
+2026-11-04T23:55:04Z	6	gate-i0-rc-install.sh 	0
+2026-11-04T23:59:44Z	7	gate-q8-rc-smoke.sh 	0
+2026-11-05T00:09:01Z	8	gate-r0-rc-scripted.sh --mode single	0
+2026-11-05T00:16:44Z	9	gate-r1-rc-multi-control.sh --mode single	0
+2026-11-05T00:21:23Z	10	gate-i2-ts-xapp-install.sh 	0
+2026-11-05T00:44:22Z	11	gate-r2-ts-stub-qp.sh --mode c1	0
+2026-11-05T00:52:35Z	12	gate-r3p-ts-predictor.sh --mode calibrate	0
+2026-11-05T00:59:17Z	13	gate-r3p-ts-predictor.sh --mode dryrun --stage b --stage-a-class scripts/gates/r3p-stage-a.json	0
+2026-11-05T01:22:15Z	14	gate-r3p-ts-predictor.sh --mode c1 --reference-transform plans/261103-0008-GH-1-post-m9-realism-m10/reference/m9-r3p-raw plans/261023-0009-GH-1-m8-m9-paced-rungs-and-m9/reference/r3p/equal	0
+2026-11-05T01:45:43Z	15	gate-r3p-ts-predictor.sh --mode c1 --delta-ms 150 --reference-transform plans/261103-0008-GH-1-post-m9-realism-m10/reference/r3p-d150/raw plans/261103-0008-GH-1-post-m9-realism-m10/reference/r3p-d150/equal	1
