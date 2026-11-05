@@ -108,7 +108,9 @@ while :; do
         # failed stop is retried, bounded), so no gate_finish can race the outer-timeout verdict.
         stopped=0
         for _ in 1 2 3 4 5; do
-            if vm_ssh "sudo systemctl stop $unit; ! systemctl is-active --quiet $unit" 2>/dev/null; then stopped=1; break; fi
+            # the stop must succeed and the state query must answer a terminal state: a query error is a retry
+            if vm_ssh "sudo systemctl stop $unit && st=\$(systemctl show -p ActiveState --value $unit) && \
+                    { [ \"\$st\" = inactive ] || [ \"\$st\" = failed ]; }" 2>/dev/null; then stopped=1; break; fi
             sleep 20
         done
         if [ "$stopped" = 1 ]; then
