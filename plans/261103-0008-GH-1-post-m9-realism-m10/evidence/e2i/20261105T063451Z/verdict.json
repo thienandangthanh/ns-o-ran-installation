@@ -1,0 +1,330 @@
+{
+  "gate": "e2i",
+  "ts": "20261105T063451Z",
+  "harness_sha": "dd27868d2f92d500b5605afa44f7ad3c537ccb46",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "554d6d61a0d35e4c0fe80891d61f4834549221f6",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "ea6e46f6f210319e7e96923ac6a472b019638371",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "53253fe256ed305b207b607150a5e8a1dec25e42",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "e27058163dc0bb05ce279ad3fa1bd15a22fc24ab"
+  },
+  "duration_s": 325,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "e2i_args",
+      "pass": true,
+      "detail": "nodes enb:1,gnb:2,gnb:3; asn1-indep localhost/asn1-indep:09aeabb8b0f99b0c; cli --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --outageThreshold=-1000; rc pin a2282eedc9e32f60298bf530456ad367bef0824b; TS pin 19e169b2e81a0dbaf3d9dc526de0415cc995ee8b"
+    },
+    {
+      "name": "e2i_asn1_indep_image_checksum_verified_and_loaded",
+      "pass": true,
+      "detail": "asn1-indep-09aeabb8b0f99b0c.tar: OK\nLoaded image: localhost/asn1-indep:09aeabb8b0f99b0c\nsha256:d6bd058786ec1d0d1eea7aa5df846c88ba2b08f858d3b93af624ca678d1908b4"
+    },
+    {
+      "name": "e2i_independent_decoder_self_test",
+      "pass": true,
+      "detail": "e2i decode self-test: ok"
+    },
+    {
+      "name": "e2i_wire_judge_self_test",
+      "pass": true,
+      "detail": "ok   no independently decoded setup request in the frame\nok   node without a setup request fails every check\ne2i wire checks self-test: ok"
+    },
+    {
+      "name": "e2i_nist_tree_at_testbed_sha_with_agent_dir",
+      "pass": true,
+      "detail": "nist HEAD 554d6d61a0d35e4c0fe80891d61f4834549221f6, want 554d6d61a0d35e4c0fe80891d61f4834549221f6\nalready at 554d6d61a0d35e4c0fe80891d61f4834549221f6\nns3_e2_agent install_patch_files/xApps/rc install_patch_files/xApps/kpimon-go/control/enb-kpm-measurements.json match 554d6d61a0d35e4c0fe80891d61f4834549221f6; metric-map sha256 9cfcbbcdd71514e4e2627cfbb4aa950760b42f85d5045de2c1b71d6215f16923"
+    },
+    {
+      "name": "e2i_build_tools_present",
+      "pass": true,
+      "detail": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\ntshark 4.4.19 (>= 4.4)"
+    },
+    {
+      "name": "e2i_sctp_module_loaded",
+      "pass": true,
+      "detail": "sctp                  495616  51 sctp_diag\nsctp"
+    },
+    {
+      "name": "e2i_e2_ports_reserved",
+      "pass": true,
+      "detail": "net.ipv4.ip_local_reserved_ports = 38470-38499; /etc/sysctl.d/60-ns3-e2-agent-ports.conf: net.ipv4.ip_local_reserved_ports = 38470-38499\nno socket other than TIME_WAIT holds a port in 38470-38499"
+    },
+    {
+      "name": "e2i_ns3_binary_located_at_pins",
+      "pass": true,
+      "detail": "/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"
+    },
+    {
+      "name": "e2i_ts_tree_and_image_are_pin_plus_patch_set",
+      "pass": true,
+      "detail": "ext/protobuf/rc.pb.cc ext/protobuf/rc.pb.h ext/protobuf/rc.proto src/ts_xapp/CMakeLists.txt src/ts_xapp/en_gnb_ue_id.hpp src/ts_xapp/en_gnb_ue_id_test.cpp src/ts_xapp/influx_csv.hpp src/ts_xapp/ts_xapp.cpp = pin + 11 patches in manifest order (902 added lines); 127.0.0.1:80/trafficxapp:latest patchset.sha256=ac6ede35b9d5e71b3c64839ff4d1efd531e8380976f80ec394ad77b745a11bb6"
+    },
+    {
+      "name": "e2i_rc_installed_at_pin_and_ready",
+      "pass": true,
+      "detail": "rc ricxapp-rc-6db9dcd964-glz29 ready, gRPC endpoint 10.107.142.53:7777\ngRPC describe ok, 12040 route to rc present\nrmrClient: RMR is ready after 30 seconds waiting..."
+    },
+    {
+      "name": "e2i_kpimon_image_carries_its_patch_set_label",
+      "pass": true,
+      "detail": "127.0.0.1:80/kpimon-go:latest labels: 97abf9aa7a86f32d7606eeea1c0cdd524bac7a433cb8f3d227bc28791c784932 true; want 97abf9aa7a86f32d7606eeea1c0cdd524bac7a433cb8f3d227bc28791c784932 true (18 files at 554d6d61a0d35e4c0fe80891d61f4834549221f6)"
+    },
+    {
+      "name": "e2i_ric_reset_fresh_rc_kpimon_hw_go_and_bucket",
+      "pass": true,
+      "detail": "rc ricxapp-rc-6db9dcd964-fl52l ready, gRPC endpoint 10.107.142.53:7777\ngRPC describe ok, 12040 route to rc present\nrmrClient: RMR is ready after 30 seconds waiting..."
+    },
+    {
+      "name": "e2i_ts_xapp_scaled_to_zero_and_deregistered",
+      "pass": true,
+      "detail": "TS xApp: replicas 0, pods 0\nderegister trafficxapp: HTTP 204\ntrafficxapp not registered"
+    },
+    {
+      "name": "e2i_rmr_peer_image_built_and_self_tested",
+      "pass": true,
+      "detail": "ok   stub still up after a second idle wait and logged exactly 1 request (1)\n{\"pass\": true, \"problems\": []}\nbuilt and imported 127.0.0.1:80/stubqp:caa841a11941"
+    },
+    {
+      "name": "e2i_injector_installed",
+      "pass": true,
+      "detail": "ricxapp-ric-control-injector- -> ricxapp-ric-control-injector-75d59bbbc-w2zwk\ninjector ricxapp-ric-control-injector-75d59bbbc-w2zwk up 8 s after Ready on 127.0.0.1:80/stubqp:caa841a11941, restart count 0, command [\"python3\",\"-I\",\"/app/rmr-injector.py\",\"--rmr-port\",\"4560\",\"--ctl-host\",\"0.0.0.0\",\"--ctl-port\",\"8080\",\"--ready-timeout\",\"0\",\"--out\",\"/tmp/injector\"]"
+    },
+    {
+      "name": "e2i_injector_registered",
+      "pass": true,
+      "detail": "register ric-control-injector: HTTP 201\nappmgr lists ric-control-injector"
+    },
+    {
+      "name": "e2i_rtmgr_restarted_after_registration",
+      "pass": true,
+      "detail": "rtmgr deployment-ricplt-rtmgr-74fb47b69d-hrrnl -> deployment-ricplt-rtmgr-74fb47b69d-sx28s"
+    },
+    {
+      "name": "e2i_injector_has_a_route_table",
+      "pass": true,
+      "detail": "READY rmr port 4560 ctl port 8080"
+    },
+    {
+      "name": "e2i_capture_started_before_agents",
+      "pass": true,
+      "detail": "[06:37:07] capture e2i started on docker0 (pid 987008, filter 'ip proto 132')"
+    },
+    {
+      "name": "e2i_bringup_agents_connected_set_equals_meids",
+      "pass": true,
+      "detail": "[06:37:48] bringup agents: every expectedRanName equals meid_of its nodeId\n[06:38:00] bringup agents: e2mgr CONNECTED set equals the expected agents: enB_macro_001_001_000001 en_gnb_001_001_00000002 en_gnb_001_001_00000003 \n[06:38:04] bringup agents: every agent READY with an E2 setup: 1 0 true READY 1 0;2 0 true READY 1 0;3 0 true READY 1 0;"
+    },
+    {
+      "name": "e2i_agent_container_ips_recorded",
+      "pass": true,
+      "detail": "{\"1\": [\"172.17.0.3\"], \"2\": [\"172.17.0.4\"], \"3\": [\"172.17.0.5\"]}"
+    },
+    {
+      "name": "e2i_every_agent_ready_and_subscribed_by_kpimon",
+      "pass": true,
+      "detail": "1 0 true READY 1 0\n2 0 true READY 1 0\n3 0 true READY 1 0"
+    },
+    {
+      "name": "e2i_e2mgr_en_gnb_2_record",
+      "pass": true,
+      "detail": "ranName=en_gnb_001_001_00000002 status=CONNECTED plmnId=00F110 nbId=00000000000000000000000000000010 (32 digits, decimal 2) nodeType=GNB gnbType=EN_GNB ranFunctions=[2, 3]"
+    },
+    {
+      "name": "e2i_e2mgr_en_gnb_3_record",
+      "pass": true,
+      "detail": "ranName=en_gnb_001_001_00000003 status=CONNECTED plmnId=00F110 nbId=00000000000000000000000000000011 (32 digits, decimal 3) nodeType=GNB gnbType=EN_GNB ranFunctions=[2, 3]"
+    },
+    {
+      "name": "e2i_e2mgr_enb_1_record_x2_to_en_gnbs_2_3",
+      "pass": true,
+      "detail": "ranName=enB_macro_001_001_000001 status=CONNECTED plmnId=00F110 nbId=00000000000000000001 (20 digits, decimal 1) nodeType=ENB enbType=MACRO_ENB x2 components=2 peers (plmn, bits, gNB ID) [('00F110', 32, 2), ('00F110', 32, 3)], want [('00F110', 32, 2), ('00F110', 32, 3)]"
+    },
+    {
+      "name": "e2i_route_dump_agents_subscribed",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-stubqp-rmr.ricxapp:4560 (rtmgr) / unknown (e2term stash); 12042|-1 = service-ricxapp-stubqp-rmr.ricxapp:4560 / unknown"
+    },
+    {
+      "name": "e2i_injector_routes_to_e2term_for_both_en_gnbs_and_the_enb",
+      "pass": true,
+      "detail": "meid en_gnb_001_001_00000002 -> e2term 10.101.123.229:38000\nmeid en_gnb_001_001_00000003 -> e2term 10.101.123.229:38000\nmeid enB_macro_001_001_000001 -> e2term 10.101.123.229:38000"
+    },
+    {
+      "name": "e2i_agent_rc_control_unit_test_cause_paths",
+      "pass": true,
+      "detail": "PASS late-refusal-control-failed-to-execute\nPASS exactly-one-answer\nrc-control-test: ok"
+    },
+    {
+      "name": "e2i_controls_encoded_by_the_independent_codec",
+      "pass": true,
+      "detail": "{\"tag\": \"style3-action1\", \"node\": 3, \"step\": 50, \"pacerExpect\": 0, \"hex\": \"00040052000004001d00050003e900030005000200030016001716006000060000f1100100000001000000010103000000001700212000000100004400000001440000000244000000032a00090000f1100000000310\", \"headerHex\": \"006000060000f1100100000001000000010103000000\", \"messageHex\": \"00000100004400000001440000000244000000032a00090000f1100000000310\", \"targetHex\": \"0000f1100000000310\", \"expect\": \"failure:action-not-supported\"}\n{\"tag\": \"non-source\", \"node\": 3, \"step\": 60, \"pacerExpect\": 1, \"hex\": \"0004004d000004001d00050003e900040005000200030016001211050000010000f110000000100105000002001700212000000100004400000001440000000244000000032a00090000f1100000000310\", \"headerHex\": \"050000010000f110000000100105000002\", \"messageHex\": \"00000100004400000001440000000244000000032a00090000f1100000000310\", \"targetHex\": \"0000f1100000000310\", \"expect\": \"failure:control-failed-to-execute\"}\n{\"tag\": \"enb\", \"node\": 1, \"step\": 70, \"pacerExpect\": 0, \"hex\": \"0004004d000004001d00050003e900050005000200030016001211050000020000f110000000100105000002001700212000000100004400000001440000000244000000032a00090000f1100000000310\", \"headerHex\": \"050000020000f110000000100105000002\", \"messageHex\": \"00000100004400000001440000000244000000032a00090000f1100000000310\", \"targetHex\": \"0000f1100000000310\", \"expect\": \"failure:ran-function-id-invalid\"}"
+    },
+    {
+      "name": "e2i_schedule_written",
+      "pass": true,
+      "detail": "  },\n  \"late\": []\n}"
+    },
+    {
+      "name": "e2i_ts_xapp_absent_before_the_run",
+      "pass": true,
+      "detail": "TS xApp: replicas 0, pods 0"
+    },
+    {
+      "name": "e2i_pod_snapshot_before",
+      "pass": true,
+      "detail": "agent\t3\teb75a93bb418\t0\t2026-11-05T06:37:46.733517428Z\t2026-11-05T06:37:46.821890668Z\nagent\t2\te73061366295\t0\t2026-11-05T06:37:46.529854633Z\t2026-11-05T06:37:46.604024494Z\nagent\t1\t067354e89c8d\t0\t2026-11-05T06:37:46.318930184Z\t2026-11-05T06:37:46.400551953Z"
+    },
+    {
+      "name": "e2i_lockstep_run_with_five_injected_controls",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 993050 at 1793860690.064617798: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --outageThreshold=-1000 --simStartEpochMs=1767225600000 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/e2i/20261105T063451Z/run/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\ne2i run: ns-3 exit 0, pacer exit 0 (want 0 and 0)"
+    },
+    {
+      "name": "e2i_ts_xapp_absent_after_the_run",
+      "pass": true,
+      "detail": "TS xApp: replicas 0, pods 0"
+    },
+    {
+      "name": "e2i_pod_snapshot_after",
+      "pass": true,
+      "detail": "agent\t3\teb75a93bb418\t0\t2026-11-05T06:37:46.733517428Z\t2026-11-05T06:37:46.821890668Z\nagent\t2\te73061366295\t0\t2026-11-05T06:37:46.529854633Z\t2026-11-05T06:37:46.604024494Z\nagent\t1\t067354e89c8d\t0\t2026-11-05T06:37:46.318930184Z\t2026-11-05T06:37:46.400551953Z"
+    },
+    {
+      "name": "e2i_ts_xapp_down_during_injector",
+      "pass": true,
+      "detail": "e2i_ts_xapp_scaled_to_zero_and_deregistered passed\ne2i_ts_xapp_absent_before_the_run passed\ne2i_ts_xapp_absent_after_the_run passed"
+    },
+    {
+      "name": "e2i_independent_target_applied_ledger_and_handover_start",
+      "pass": true,
+      "detail": "ledger: [(20, 2, 6, 2, 3, 'applied', ''), (60, 3, 0, 0, 3, 'refused', 'unknownUe')]\nhandover starts (imsi, target): [(6, 3)]\nnon-source line names IMSI 3"
+    },
+    {
+      "name": "e2i_ue_context_equals_identity_map_cp1",
+      "pass": true,
+      "detail": "{\"identities\": 6, \"nodes\": {\"1\": {\"kind\": \"enb\", \"lines\": 2}, \"2\": {\"kind\": \"gnb\", \"lines\": 3}, \"3\": {\"kind\": \"gnb\", \"lines\": 3}}, \"pass\": true}"
+    },
+    {
+      "name": "e2i_injector_logs_saved",
+      "pass": true,
+      "detail": "injector logs: 5 sent, 0 received"
+    },
+    {
+      "name": "e2i_injector_uninstalled",
+      "pass": true,
+      "detail": "deregister ric-control-injector: HTTP 204\ninjector uninstalled"
+    },
+    {
+      "name": "e2i_ts_xapp_recreated_ready_and_registered",
+      "pass": true,
+      "detail": "TS ricxapp-trafficxapp-7c46768578-9bpw6 ready and listening\nregister trafficxapp: HTTP 201\nappmgr lists trafficxapp"
+    },
+    {
+      "name": "e2i_rtmgr_restarted_after_ts_registration",
+      "pass": true,
+      "detail": "rtmgr deployment-ricplt-rtmgr-74fb47b69d-sx28s -> deployment-ricplt-rtmgr-74fb47b69d-wj8kx"
+    },
+    {
+      "name": "e2i_ts_xapp_nodeb_list_names_every_connected_node",
+      "pass": true,
+      "detail": "[INFO] nodeb list is [{\"inventoryName\":\"en_gnb_001_001_00000003\",\"globalNbId\":{\"plmnId\":\"00F110\",\"nbId\":\"00000000000000000000000000000011\"},\"connectionStatus\":\"CONNECTED\"},{\"inventoryName\":\"en_gnb_001_001_00000004\",\"globalNbId\":{\"plmnId\":\"00F110\",\"nbId\":\"00000000000000000000000000000100\"},\"connectionStatus\":\"DISCONNECTED\"},{\"inventoryName\":\"en_gnb_001_001_00000005\",\"globalNbId\":{\"plmnId\":\"00F110\",\"nbId\":\"00000000000000000000000000000101\"},\"connectionStatus\":\"DISCONNECTED\"},{\"inventoryName\":\"gnb_734_373_16b8cef1\",\"globalNbId\":{\"plmnId\":\"373437\",\"nbId\":\"10110101110001100111011110001\"},\"connectionStatus\":\"DISCONNECTED\"},{\"inventoryName\":\"en_gnb_001_001_00000002\",\"globalNbId\":{\"plmnId\":\"00F110\",\"nbId\":\"00000000000000000000000000000010\"},\"connectionStatus\":\"CONNECTED\"},{\"inventoryName\":\"enB_macro_001_001_000001\",\"globalNbId\":{\"plmnId\":\"00F110\",\"nbId\":\"00000000000000000001\"},\"connectionStatus\":\"CONNECTED\"}]\nall 3 CONNECTED nodes are in the TS xApp's nodeb list"
+    },
+    {
+      "name": "e2i_ts_cell_map_en_gnb_keys_no_enb_key_no_wrong_node",
+      "pass": true,
+      "detail": "  ]\n }\n}"
+    },
+    {
+      "name": "e2i_restart_counts_zero",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "e2i_agent_logs_with_stats_after_bye",
+      "pass": true,
+      "detail": "every agent logged its stats after bye"
+    },
+    {
+      "name": "e2i_agent_ue_context_counters_zero_every_stats_line",
+      "pass": true,
+      "detail": "{\"pass\": true, \"perNode\": {\"1\": {\"samplesNoUeContext\": 0, \"statsLines\": 28, \"ueContext\": 2, \"ueContextRejected\": 0}, \"2\": {\"samplesNoUeContext\": 0, \"statsLines\": 28, \"ueContext\": 3, \"ueContextRejected\": 0}, \"3\": {\"samplesNoUeContext\": 0, \"statsLines\": 28, \"ueContext\": 3, \"ueContextRejected\": 0}}, \"problems\": []}"
+    },
+    {
+      "name": "e2i_agents_stopped",
+      "pass": true,
+      "detail": "ns3-e2-agent-2 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1793860806703,\"nodeId\":2,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":99,\"samplesIn\":100,\"samplesForwarded\":100,\"samplesUnreported\":0,\"samplesGapDiscarded\":0,\"samplesReportFailed\":0,\"samplesNoUeContext\":0,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0,\"reportGaps\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0,\"duplicateImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":199,\"indTxCell\":100,\"indTxUe\":99,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":1,\"unknownType\":0,\"ueContext\":3,\"ueContextRejected\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":3,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"subsRefused\":0,\"actionsNotAdmitted\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":1,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":1,\"applied\":1,\"refused\":0,\"failedOnBye\":0,\"ackTx\":1,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":101}\nns3-e2-agent-1 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1793860806502,\"nodeId\":1,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":99,\"samplesIn\":100,\"samplesForwarded\":100,\"samplesUnreported\":0,\"samplesGapDiscarded\":0,\"samplesReportFailed\":0,\"samplesNoUeContext\":0,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0,\"reportGaps\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0,\"duplicateImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":298,\"indTxCell\":100,\"indTxUe\":198,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":1,\"unknownType\":0,\"ueContext\":2,\"ueContextRejected\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":3,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"subsRefused\":0,\"actionsNotAdmitted\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":1,\"rejFunc\":1,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":0,\"applied\":0,\"refused\":0,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":1,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":101}\nRemoved 3 ns3-e2-agent container(s)."
+    },
+    {
+      "name": "e2i_capture_stopped",
+      "pass": true,
+      "detail": "[06:40:12] capture e2i stopped: 1610 packets captured 1610 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "e2i_pcap_facts",
+      "pass": true,
+      "detail": "ppid 172.17.0.5:38644 -> :36422 {\"70\": 384}\ne2ap frames by PPID 718, forced on the port 718\nframes=1610 inits=3 aborts=0 shutdowns=9 setup_req=3 setup_resp=3 sub_req=3 sub_resp=3 sub_fail=0 ind_srcs={'172.17.0.3': 298, '172.17.0.5': 199, '172.17.0.4': 199}"
+    },
+    {
+      "name": "e2i_setup_requests_decoded_and_judged",
+      "pass": true,
+      "detail": "ranFunctions             PASS every node as expected\nstyle5Action3Announced   PASS every node as expected\nx2apRequestPartDecodes   PASS every node as expected"
+    },
+    {
+      "name": "e2i_globalIds",
+      "pass": true,
+      "detail": "{\"detail\": [\"every node as expected\"], \"pass\": true}"
+    },
+    {
+      "name": "e2i_ranFunctions",
+      "pass": true,
+      "detail": "{\"detail\": [\"every node as expected\"], \"pass\": true}"
+    },
+    {
+      "name": "e2i_x2apRequestPartDecodes",
+      "pass": true,
+      "detail": "{\"detail\": [\"every node as expected\"], \"pass\": true}"
+    },
+    {
+      "name": "e2i_style5Action3Announced",
+      "pass": true,
+      "detail": "{\"detail\": [\"every node as expected\"], \"pass\": true}"
+    },
+    {
+      "name": "e2i_kpimonSubscribedAll",
+      "pass": true,
+      "detail": "{\"detail\": [\"every node as expected\"], \"pass\": true}"
+    },
+    {
+      "name": "e2i_injected_controls_on_the_wire_and_answered",
+      "pass": true,
+      "detail": "[{\"tag\": \"independent-target\", \"requests\": [[337, 2]], \"answers\": [\"ack\"]}, {\"tag\": \"n5-form\", \"requests\": [[645, 3]], \"answers\": [\"failure:control-message-invalid\"]}, {\"tag\": \"style3-action1\", \"requests\": [[802, 3]], \"answers\": [\"failure:action-not-supported\"]}, {\"tag\": \"non-source\", \"requests\": [[965, 3]], \"answers\": [\"failure:control-failed-to-execute\"]}, {\"tag\": \"enb\", \"requests\": [[1118, 1]], \"answers\": [\"failure:ran-function-id-invalid\"]}]\nproblems: none"
+    },
+    {
+      "name": "e2i_e2mgr_records_x2_request_parts_hex_sidecars_equal_record_and_wire",
+      "pass": true,
+      "detail": "{\"records\": 6, \"x2Components\": 8, \"problems\": [], \"pass\": true}"
+    },
+    {
+      "name": "e2i_ppid_per_node_70",
+      "pass": true,
+      "detail": "node 2: 402 PPID-70 chunk(s) over ['172.17.0.4:39829']\nnode 3: 384 PPID-70 chunk(s) over ['172.17.0.5:38644']\nE2AP frames decoded by PPID 718, forced on the port 718"
+    },
+    {
+      "name": "e2i_kpimon_subscription_one_action_id1_format3",
+      "pass": true,
+      "detail": "frame 31 to 172.17.0.3:55497 (node 1): action list 1, actions [(1, 'report', 'actionDefinition-Format3')]\nframe 33 to 172.17.0.5:38644 (node 3): action list 1, actions [(1, 'report', 'actionDefinition-Format3')]\nframe 35 to 172.17.0.4:39829 (node 2): action list 1, actions [(1, 'report', 'actionDefinition-Format3')]"
+    }
+  ],
+  "imageTag": "09aeabb8b0f99b0c",
+  "vmLoadStart": " 06:34:52 up  4:13,  0 user,  load average: 0.59, 0.78, 0.80",
+  "tsXappDownDuringInjector": true,
+  "vmLoadEnd": " 06:40:17 up  4:19,  0 user,  load average: 1.08, 0.89, 0.82"
+}

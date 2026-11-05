@@ -1,0 +1,45 @@
+[05:18:44] gate r3p start; evidence /home/uc/evidence/r3p/20261105T051843Z; harness dd27868d2f92d500b5605afa44f7ad3c537ccb46
+[05:18:44] PASS r3p_args
+[05:18:44] PASS r3p_config_values_from_their_evidence
+[05:18:45] PASS r3p_predictor_n6_classifier_checks_reference_self_tests
+[05:18:45] ric watchdog started (pid 639075, threshold 600s)
+[05:18:45] PASS r3p_nist_tree_at_testbed_sha_with_agent_dir
+[05:18:45] PASS r3p_ts_source_is_pin_plus_exactly_the_testbed_patches
+[05:18:45] PASS r3p_build_tools_present
+[05:18:45] PASS r3p_sctp_module_loaded
+[05:18:45] PASS r3p_e2_ports_reserved
+[05:18:45] PASS r3p_ns3_binary_located_at_pins
+[05:18:45] PASS r3p_pod_log_reader_self_test
+[05:18:50] PASS r3p_pacer_self_test
+[05:18:50] PASS r3p_kpm_ue_list_judge_self_test
+[05:18:50] PASS r3p_grpcurl_fetched_and_checksum_verified
+[05:19:33] PASS r3p_pre_ric_reset_fresh_rc_kpimon_hw_go_and_bucket
+[05:19:34] PASS r3p_rc_installed_at_pin_and_ready
+[05:19:34] PASS r3p_a1_policy_type_20008_present
+[05:20:34] PASS r3p_pre_ts_and_stub_pods_fresh_rtmgr_sessions
+[05:20:34] PASS r3p_ts_xapp_at_pin_ready_in_grpc_mode
+[05:20:51] PASS r3p_rmr_peer_image_built_self_tested
+[05:20:51] PASS r3p_stub_qp_deployed
+[05:20:51] PASS r3p_xapp_image_ids
+[05:22:02] PASS r3p_rc_decoder_built
+[05:22:45] PASS r3p_dryb_ric_reset_fresh_pods_and_bucket
+[05:23:42] PASS r3p_dryb_agents_connected_set_exact
+[05:23:42] PASS r3p_dryb_every_agent_ready_and_subscribed
+[05:23:42] PASS r3p_dryb_observe_schedule_written
+[05:23:43] PASS r3p_dryb_pods_snapshot_before
+[05:25:05] PASS r3p_dryb_lockstep_null_control_run_exits_clean
+[05:25:05] PASS r3p_dryb_pods_snapshot_after
+[05:25:05] PASS r3p_dryb_restart_counts_zero_rc_ts_stub_kpimon_hw_go_agents
+[05:25:06] PASS r3p_dryb_influx_equals_ipc_full
+[05:25:10] PASS r3p_dryb_agents_stopped
+[05:25:10] PASS r3p_dryb_handover_rows_match_ledger
+[05:25:10] PASS r3p_dryb_ledger_exactly_h1_applied
+[05:25:10] PASS r3p_dryb_injected_ue_id_names_the_h1_imsi
+[05:25:10] PASS r3p_dryb_no_token_in_the_predictor_dir
+[05:25:10] PASS r3p_dryb_classified_valid
+[05:25:10] PASS r3p_ipc_dropped_zero_no_sub_dropped_zero_and_slack_recorded
+[05:25:10] PASS r3p_restart_counts_all_zero
+[05:25:11] PASS r3p_no_stray_process
+verdict r3p: PASS failed=[]
+Terminated
+[05:25:14] ric watchdog stopped (pid 639075)

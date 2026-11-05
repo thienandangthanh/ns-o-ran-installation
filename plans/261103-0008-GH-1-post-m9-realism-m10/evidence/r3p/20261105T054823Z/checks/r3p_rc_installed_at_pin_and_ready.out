@@ -1,0 +1,9 @@
+warning: e2sm/wrapper.c has type 100644, expected 100755
+warning: e2sm/wrapper.c has type 100644, expected 100755
+warning: e2sm/wrapper.h has type 100644, expected 100755
+expected: rc a2282eedc9e32f60298bf530456ad367bef0824b + 3 patches (control/rcControl.go control/rcE2SmRc.go control/rcService.go control/rcService_test.go control/rcTypes.go e2sm/e2sm-rc-2.0.asn e2sm/headers/RANParameter-ID.h e2sm/lib/RANParameter-ID.c e2sm/wrapper.c e2sm/wrapper.h protocol/grpc/ricmsgcommrpc/proto/rc.proto protocol/grpc/ricmsgcommrpc/rc/rc.pb.go), patch set 5fff4efc506bc705c3ec1f240d3c916050b2ee24f95d0812968e9e903850b436 (from 554d6d61a0d35e4c0fe80891d61f4834549221f6)
+pod ricxapp-rc-6db9dcd964-8p5q7: image 127.0.0.1:80/rc:latest, imageID sha256:7070706ab55ce333d9c40ca24cad49e9cfb668c4980138f258d023ee0835e3d4
+docker 127.0.0.1:80/rc:latest: ID sha256:7070706ab55ce333d9c40ca24cad49e9cfb668c4980138f258d023ee0835e3d4, rc.source.sha a2282eedc9e32f60298bf530456ad367bef0824b, patchset.sha256 5fff4efc506bc705c3ec1f240d3c916050b2ee24f95d0812968e9e903850b436
+rc ricxapp-rc-6db9dcd964-8p5q7 ready, gRPC endpoint 10.107.142.53:7777
+gRPC describe ok, 12040 route to rc present
+rmrClient: RMR is ready after 31 seconds waiting...

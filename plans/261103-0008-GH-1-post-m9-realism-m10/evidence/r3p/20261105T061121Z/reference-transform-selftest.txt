@@ -1,0 +1,15 @@
+a-ledger-target-cell.json: fail (want fail): {'file': 'ledger (e2-control-ledger.jsonl)', 'field': '1/targetCell', 'why': 'differs from T(M9)'}
+b-rc-multiset-step.json: fail (want fail): {'file': 'rc-multiset (rc-multiset.json)', 'field': '0/step', 'why': 'differs from T(M9)'}
+c-trace-byte.json: fail (want fail): {'file': 'ns3run/CellIdStats.txt', 'field': 'file', 'why': 'the trace digest differs from the reference'}
+d-identity.json: pass (want pass)
+e-predictor-answer-number.json: fail (want fail): {'file': 'predictor-records (predictor-records.jsonl)', 'field': '0/answer/0/1/0', 'why': 'differs from T(M9)'}
+f-schedule-step.json: fail (want fail): {'file': 'schedule (r3p-schedule.json)', 'field': 'triggers/0/step', 'why': 'differs from T(M9)'}
+g-scenario-key-n5.json: fail (want fail): {'file': 'scenario (r3p-scenario.json)', 'field': 'cells/2', 'why': 'differs from T(M9)'}
+h-rc-ue-x2ap-id.json: fail (want fail): {'file': 'rc-multiset (rc-multiset.json)', 'field': '0/ueId/mEnbUeX2apId', 'why': 'differs from T(M9)'}
+i-rc-global-enb-id.json: fail (want fail): {'file': 'rc-multiset (rc-multiset.json)', 'field': '0/ueId/globalEnbId/plmn', 'why': 'differs from T(M9)'}
+j-m9-target-key-malformed-n5.json: fail (want fail): {'file': 'rc-multiset', 'field': 'T', 'why': "T refused the M9 file: M9 rc-multiset targetKey '00000002FF' is not a scenario cell key"}
+k-m9-schedule-partially-converted.json: fail (want fail): {'file': 'schedule', 'field': 'T', 'why': "T refused the M9 file: cell keys other than the scenario's N5 keys in the M9 input: ['0000000210']"}
+l-m9-stage-a-partially-converted.json: fail (want fail): {'file': 'stage-a', 'field': 'T', 'why': "T refused the M9 file: cell keys other than the scenario's N5 keys in the M9 input: ['0000000210']"}
+identity map off its SHA256SUMS: refused
+T rewriting a field outside R-2's list: caught
+reference-transform-compare self-test: ok

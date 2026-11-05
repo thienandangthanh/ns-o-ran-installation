@@ -1,0 +1,66 @@
+[06:34:52] gate e2i start; evidence /home/uc/evidence/e2i/20261105T063451Z; harness dd27868d2f92d500b5605afa44f7ad3c537ccb46
+[06:34:52] PASS e2i_args
+[06:34:52] ric watchdog started (pid 977219, threshold 600s)
+[06:34:53] PASS e2i_asn1_indep_image_checksum_verified_and_loaded
+[06:34:55] PASS e2i_independent_decoder_self_test
+[06:34:55] PASS e2i_wire_judge_self_test
+[06:34:55] PASS e2i_nist_tree_at_testbed_sha_with_agent_dir
+[06:34:55] PASS e2i_build_tools_present
+[06:34:55] PASS e2i_sctp_module_loaded
+[06:34:55] PASS e2i_e2_ports_reserved
+[06:34:55] PASS e2i_ns3_binary_located_at_pins
+[06:34:55] PASS e2i_ts_tree_and_image_are_pin_plus_patch_set
+[06:34:56] PASS e2i_rc_installed_at_pin_and_ready
+[06:34:56] PASS e2i_kpimon_image_carries_its_patch_set_label
+[06:35:39] PASS e2i_ric_reset_fresh_rc_kpimon_hw_go_and_bucket
+[06:36:10] PASS e2i_ts_xapp_scaled_to_zero_and_deregistered
+[06:36:30] PASS e2i_rmr_peer_image_built_and_self_tested
+[06:36:42] PASS e2i_injector_installed
+[06:36:42] PASS e2i_injector_registered
+[06:37:06] PASS e2i_rtmgr_restarted_after_registration
+[06:37:06] PASS e2i_injector_has_a_route_table
+[06:37:07] PASS e2i_capture_started_before_agents
+[06:38:04] PASS e2i_bringup_agents_connected_set_equals_meids
+[06:38:04] PASS e2i_agent_container_ips_recorded
+[06:38:04] PASS e2i_every_agent_ready_and_subscribed_by_kpimon
+[06:38:04] PASS e2i_e2mgr_en_gnb_2_record
+[06:38:04] PASS e2i_e2mgr_en_gnb_3_record
+[06:38:04] PASS e2i_e2mgr_enb_1_record_x2_to_en_gnbs_2_3
+[06:38:05] PASS e2i_route_dump_agents_subscribed
+[06:38:05] PASS e2i_injector_routes_to_e2term_for_both_en_gnbs_and_the_enb
+[06:38:05] PASS e2i_agent_rc_control_unit_test_cause_paths
+[06:38:08] PASS e2i_controls_encoded_by_the_independent_codec
+[06:38:09] PASS e2i_schedule_written
+[06:38:09] PASS e2i_ts_xapp_absent_before_the_run
+[06:38:09] PASS e2i_pod_snapshot_before
+[06:39:37] PASS e2i_lockstep_run_with_five_injected_controls
+[06:39:37] PASS e2i_ts_xapp_absent_after_the_run
+[06:39:38] PASS e2i_pod_snapshot_after
+[06:39:38] PASS e2i_ts_xapp_down_during_injector
+[06:39:38] PASS e2i_independent_target_applied_ledger_and_handover_start
+[06:39:38] PASS e2i_ue_context_equals_identity_map_cp1
+[06:39:38] PASS e2i_injector_logs_saved
+[06:39:39] PASS e2i_injector_uninstalled
+[06:39:42] PASS e2i_ts_xapp_recreated_ready_and_registered
+[06:40:06] PASS e2i_rtmgr_restarted_after_ts_registration
+[06:40:07] PASS e2i_ts_xapp_nodeb_list_names_every_connected_node
+[06:40:07] PASS e2i_ts_cell_map_en_gnb_keys_no_enb_key_no_wrong_node
+[06:40:07] PASS e2i_restart_counts_zero
+[06:40:07] PASS e2i_agent_logs_with_stats_after_bye
+[06:40:07] PASS e2i_agent_ue_context_counters_zero_every_stats_line
+[06:40:11] PASS e2i_agents_stopped
+[06:40:12] PASS e2i_capture_stopped
+[06:40:14] PASS e2i_pcap_facts
+[06:40:15] PASS e2i_setup_requests_decoded_and_judged
+[06:40:15] PASS e2i_globalIds
+[06:40:15] PASS e2i_ranFunctions
+[06:40:16] PASS e2i_x2apRequestPartDecodes
+[06:40:16] PASS e2i_style5Action3Announced
+[06:40:16] PASS e2i_kpimonSubscribedAll
+[06:40:17] PASS e2i_injected_controls_on_the_wire_and_answered
+[06:40:17] PASS e2i_e2mgr_records_x2_request_parts_hex_sidecars_equal_record_and_wire
+[06:40:17] PASS e2i_ppid_per_node_70
+[06:40:17] PASS e2i_kpimon_subscription_one_action_id1_format3
+verdict e2i: PASS failed=[]
+Terminated
+[06:40:19] ric watchdog stopped (pid 977219)

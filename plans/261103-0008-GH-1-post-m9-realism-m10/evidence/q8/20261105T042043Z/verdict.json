@@ -1,0 +1,178 @@
+{
+  "gate": "q8",
+  "ts": "20261105T042043Z",
+  "harness_sha": "dd27868d2f92d500b5605afa44f7ad3c537ccb46",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "554d6d61a0d35e4c0fe80891d61f4834549221f6",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "ea6e46f6f210319e7e96923ac6a472b019638371",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "53253fe256ed305b207b607150a5e8a1dec25e42",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "e27058163dc0bb05ce279ad3fa1bd15a22fc24ab"
+  },
+  "duration_s": 258,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "q8_args",
+      "pass": true,
+      "detail": "nodes enb:1,gnb:2,gnb:3; epoch 1767225600000; cli --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --outageThreshold=-1000; rc pin a2282eedc9e32f60298bf530456ad367bef0824b"
+    },
+    {
+      "name": "q8_nist_tree_at_testbed_sha_with_agent_dir",
+      "pass": true,
+      "detail": "nist HEAD 554d6d61a0d35e4c0fe80891d61f4834549221f6, want 554d6d61a0d35e4c0fe80891d61f4834549221f6\nalready at 554d6d61a0d35e4c0fe80891d61f4834549221f6\nns3_e2_agent install_patch_files/xApps/rc install_patch_files/xApps/kpimon-go/control/enb-kpm-measurements.json match 554d6d61a0d35e4c0fe80891d61f4834549221f6; metric-map sha256 9cfcbbcdd71514e4e2627cfbb4aa950760b42f85d5045de2c1b71d6215f16923"
+    },
+    {
+      "name": "q8_build_tools_present",
+      "pass": true,
+      "detail": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\ntshark 4.4.19 (>= 4.4)"
+    },
+    {
+      "name": "q8_sctp_module_loaded",
+      "pass": true,
+      "detail": "sctp                  495616  46\nsctp"
+    },
+    {
+      "name": "q8_e2_ports_reserved",
+      "pass": true,
+      "detail": "net.ipv4.ip_local_reserved_ports = 38470-38499; /etc/sysctl.d/60-ns3-e2-agent-ports.conf: net.ipv4.ip_local_reserved_ports = 38470-38499\nno socket other than TIME_WAIT holds a port in 38470-38499"
+    },
+    {
+      "name": "q8_ns3_binary_located_at_pins",
+      "pass": true,
+      "detail": "/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"
+    },
+    {
+      "name": "q8_pod_log_reader_self_test",
+      "pass": true,
+      "detail": "self-test rotation: rc 0, indications 5 (want 5), WMORE 1 (want 1), rotations 1 (want 1)\nself-test uncovered start: rc 3 (want 3)\npod-log-window self-test: ok"
+    },
+    {
+      "name": "q8_grpcurl_fetched_and_checksum_verified",
+      "pass": true,
+      "detail": "grpcurl v1.9.1"
+    },
+    {
+      "name": "q8_rc_at_pin_and_ready",
+      "pass": true,
+      "detail": "rc ricxapp-rc-6db9dcd964-xt57j ready, gRPC endpoint 10.107.142.53:7777\ngRPC describe ok, 12040 route to rc present\nrmrClient: RMR is ready after 21 seconds waiting..."
+    },
+    {
+      "name": "q8_ric_reset_fresh_bucket_and_pods",
+      "pass": true,
+      "detail": "rc ricxapp-rc-6db9dcd964-hr8t5 ready, gRPC endpoint 10.107.142.53:7777\ngRPC describe ok, 12040 route to rc present\nrmrClient: RMR is ready after 17 seconds waiting..."
+    },
+    {
+      "name": "q8_route_dump_start",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-rc-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-rc-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-rc-rmr.ricxapp:4560 / service-ricxapp-rc-rmr.ricxapp:4560"
+    },
+    {
+      "name": "q8_capture_started_before_agents",
+      "pass": true,
+      "detail": "[04:21:32] capture q8 started on docker0 (pid 355370, filter 'ip proto 132')"
+    },
+    {
+      "name": "q8_bringup_agents_connected_set_exact",
+      "pass": true,
+      "detail": "[04:22:13] bringup agents: every expectedRanName equals meid_of its nodeId\n[04:22:25] bringup agents: e2mgr CONNECTED set equals the expected agents: enB_macro_001_001_000001 en_gnb_001_001_00000002 en_gnb_001_001_00000003 \n[04:22:29] bringup agents: every agent READY with an E2 setup: 1 0 true READY 1 0;2 0 true READY 0 0;3 0 true READY 0 0;"
+    },
+    {
+      "name": "q8_agent_container_ips_recorded",
+      "pass": true,
+      "detail": "{\"1\": [\"172.17.0.3\"], \"2\": [\"172.17.0.4\"], \"3\": [\"172.17.0.5\"]}"
+    },
+    {
+      "name": "q8_every_agent_ready_and_subscribed",
+      "pass": true,
+      "detail": "1 0 true READY 1 0\n2 0 true READY 1 0\n3 0 true READY 1 0"
+    },
+    {
+      "name": "q8_pod_snapshot_before",
+      "pass": true,
+      "detail": "agent\t3\t5e26e3bbae4c\t0\t2026-11-05T04:22:12.033274654Z\t2026-11-05T04:22:12.108102362Z\nagent\t2\tbb2c155116ca\t0\t2026-11-05T04:22:11.816605035Z\t2026-11-05T04:22:11.891654028Z\nagent\t1\t70586e08cffa\t0\t2026-11-05T04:22:11.606783381Z\t2026-11-05T04:22:11.695464372Z"
+    },
+    {
+      "name": "q8_route_dump_agents_subscribed",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-rc-rmr.ricxapp:4560 (rtmgr) / unknown (e2term stash); 12042|-1 = service-ricxapp-rc-rmr.ricxapp:4560 / unknown"
+    },
+    {
+      "name": "q8_lockstep_run_with_two_rc_controls",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 360724 at 1793852554.259096480: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --RngRun=1 --outageThreshold=-1000 --simStartEpochMs=1767225600000 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/q8/20261105T042043Z/run/trace --e2Pacing=lockstep --e2PacerPort=38499 --e2GateTimeout=10\nns-3 exit code 0\nq8 run: ns-3 exit 0, pacer exit 0 (want 0 and 0)"
+    },
+    {
+      "name": "q8_rc_refuses_a_control_without_ue_id_invalid_argument",
+      "pass": true,
+      "detail": "ERROR:\n  Code: InvalidArgument\n  Message: UEID.EnGnbUEID is required"
+    },
+    {
+      "name": "q8_pod_snapshot_after",
+      "pass": true,
+      "detail": "agent\t3\t5e26e3bbae4c\t0\t2026-11-05T04:22:12.033274654Z\t2026-11-05T04:22:12.108102362Z\nagent\t2\tbb2c155116ca\t0\t2026-11-05T04:22:11.816605035Z\t2026-11-05T04:22:11.891654028Z\nagent\t1\t70586e08cffa\t0\t2026-11-05T04:22:11.606783381Z\t2026-11-05T04:22:11.695464372Z"
+    },
+    {
+      "name": "q8_route_dump_end",
+      "pass": true,
+      "detail": "route owner 12041|-1 = service-ricxapp-hw-go-rmr.ricxapp:4560 (rtmgr) / service-ricxapp-rc-rmr.ricxapp:4560 (e2term stash); 12042|-1 = service-ricxapp-hw-go-rmr.ricxapp:4560 / service-ricxapp-rc-rmr.ricxapp:4560"
+    },
+    {
+      "name": "q8_restart_counts_zero",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "q8_agent_logs_with_stats_after_bye",
+      "pass": true,
+      "detail": "every agent logged its stats after bye"
+    },
+    {
+      "name": "q8_agent_ue_context_counters_zero_every_stats_line",
+      "pass": true,
+      "detail": "{\"pass\": true, \"perNode\": {\"1\": {\"samplesNoUeContext\": 0, \"statsLines\": 19, \"ueContext\": 2, \"ueContextRejected\": 0}, \"2\": {\"samplesNoUeContext\": 0, \"statsLines\": 19, \"ueContext\": 3, \"ueContextRejected\": 0}, \"3\": {\"samplesNoUeContext\": 0, \"statsLines\": 19, \"ueContext\": 3, \"ueContextRejected\": 0}}, \"problems\": []}"
+    },
+    {
+      "name": "q8_agents_stopped",
+      "pass": true,
+      "detail": "ns3-e2-agent-2 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1793852627009,\"nodeId\":2,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":99,\"samplesIn\":100,\"samplesForwarded\":100,\"samplesUnreported\":0,\"samplesGapDiscarded\":0,\"samplesReportFailed\":0,\"samplesNoUeContext\":0,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0,\"reportGaps\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0,\"duplicateImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":199,\"indTxCell\":100,\"indTxUe\":99,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":1,\"unknownType\":0,\"ueContext\":3,\"ueContextRejected\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":3,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"subsRefused\":0,\"actionsNotAdmitted\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":1,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":1,\"applied\":1,\"refused\":0,\"failedOnBye\":0,\"ackTx\":1,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":101}\nns3-e2-agent-1 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1793852626803,\"nodeId\":1,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":99,\"samplesIn\":100,\"samplesForwarded\":100,\"samplesUnreported\":0,\"samplesGapDiscarded\":0,\"samplesReportFailed\":0,\"samplesNoUeContext\":0,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0,\"reportGaps\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0,\"duplicateImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":298,\"indTxCell\":100,\"indTxUe\":198,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":1,\"unknownType\":0,\"ueContext\":2,\"ueContextRejected\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":2,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"subsRefused\":0,\"actionsNotAdmitted\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":0,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":0,\"applied\":0,\"refused\":0,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":101}\nRemoved 3 ns3-e2-agent container(s)."
+    },
+    {
+      "name": "q8_capture_stopped",
+      "pass": true,
+      "detail": "[04:23:52] capture q8 stopped: 1547 packets captured 1547 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "q8_pcap_facts",
+      "pass": true,
+      "detail": "ppid 172.17.0.5:56340 -> :36422 {\"70\": 382}\ne2ap frames by PPID 712, forced on the port 712\nframes=1547 inits=3 aborts=0 shutdowns=9 setup_req=3 setup_resp=3 sub_req=3 sub_resp=3 sub_fail=0 ind_srcs={'172.17.0.3': 298, '172.17.0.5': 199, '172.17.0.4': 199}"
+    },
+    {
+      "name": "q8_wire_extractor_joins_requests_answers_and_ledger",
+      "pass": true,
+      "detail": "{\"rcRequests\": 2, \"rcAnswers\": 2, \"acks\": 1, \"failures\": 1, \"kpmHeadersByNode\": {\"1\": 298, \"2\": 199, \"3\": 199}, \"c2\": {\"answers\": 2, \"ledgerLines\": 2, \"agentLocal\": 0, \"holds\": true}, \"c5\": {\"pairsByReqId\": true, \"answerViaNodeId\": true}, \"viaMeidEqualsNode\": true, \"pass\": true}"
+    },
+    {
+      "name": "q8_two_controls_one_ack_format1_one_failure_matching_ledger",
+      "pass": true,
+      "detail": "multiset: [{'action': 3, 'answer': 'ack', 'cause': '', 'outcome': '0000', 'step': 20, 'style': 5, 'targetKey': '0000000310', 'ueId': {'globalEnbId': {'macroEnbId': '00001', 'plmn': '00F110'}, 'mEnbUeX2apId': 6, 'type': 'en-gNB-UEID'}, 'viaNode': 2}, {'action': 3, 'answer': 'failure', 'cause': 'control-failed-to-execute', 'outcome': '', 'step': 40, 'style': 5, 'targetKey': '0000000310', 'ueId': {'globalEnbId': {'macroEnbId': '00001', 'plmn': '00F110'}, 'mEnbUeX2apId': 6, 'type': 'en-gNB-UEID'}, 'viaNode': 3}]\nledger: [(2, 6, 2, 3, 'applied', ''), (3, 6, 3, 3, 'refused', 'alreadyOnTarget')]"
+    },
+    {
+      "name": "q8_kpimon_wrote_to_the_fresh_bucket",
+      "pass": true,
+      "detail": "total=39405\nm_UeMetrics=31605\nm_cellMetrics=7800"
+    }
+  ],
+  "vmLoadStart": " 04:20:44 up  1:59,  0 user,  load average: 1.05, 1.31, 1.24",
+  "routeOwner12041Start": "service-ricxapp-rc-rmr.ricxapp:4560",
+  "routeOwner12041": "service-ricxapp-hw-go-rmr.ricxapp:4560",
+  "routeOwner12042": "service-ricxapp-hw-go-rmr.ricxapp:4560",
+  "routeOwnerE2term12041": "service-ricxapp-rc-rmr.ricxapp:4560",
+  "routeOwnerE2term12042": "service-ricxapp-rc-rmr.ricxapp:4560",
+  "vmLoadEnd": " 04:25:01 up  2:03,  0 user,  load average: 1.25, 1.09, 1.14"
+}

@@ -1,0 +1,34 @@
+image before: none; tree patched before: 0
+19e169b2e81a0dbaf3d9dc526de0415cc995ee8b
+ M assets/bootstrap.rt
+ M ext/protobuf/rc.pb.cc
+ M ext/protobuf/rc.pb.h
+ M ext/protobuf/rc.proto
+ M routes.txt
+ M src/ts_xapp/CMakeLists.txt
+ M src/ts_xapp/ts_xapp.cpp
+?? assets/bootstrap.previous.rt
+?? routes.previous.txt
+?? src/ts_xapp/en_gnb_ue_id.hpp
+?? src/ts_xapp/en_gnb_ue_id_test.cpp
+?? src/ts_xapp/influx_csv.hpp
+?? trafficxapp.tar
+?? xapp-descriptor/config-file_updated.json
+ assets/bootstrap.rt        |   2 +-
+ ext/protobuf/rc.pb.cc      | 505 +++++++++++++++++++++++++++++++++++++++++----
+ ext/protobuf/rc.pb.h       | 342 +++++++++++++++++++++++++++++-
+ ext/protobuf/rc.proto      |   8 +
+ routes.txt                 |   2 +-
+ src/ts_xapp/CMakeLists.txt |   5 +
+ src/ts_xapp/ts_xapp.cpp    | 223 +++++++++++++++-----
+ 7 files changed, 988 insertions(+), 99 deletions(-)
+ext/protobuf/rc.pb.cc ext/protobuf/rc.pb.h ext/protobuf/rc.proto src/ts_xapp/CMakeLists.txt src/ts_xapp/en_gnb_ue_id.hpp src/ts_xapp/en_gnb_ue_id_test.cpp src/ts_xapp/influx_csv.hpp src/ts_xapp/ts_xapp.cpp = pin + 11 patches in manifest order (902 added lines); 127.0.0.1:80/trafficxapp:latest patchset.sha256=ac6ede35b9d5e71b3c64839ff4d1efd531e8380976f80ec394ad77b745a11bb6
+image after: sha256:c58ce480e078bf5ed9b72e5d4148d148725926f4330a48181e8d61011a64ad03
+ricxapp-trafficxapp- -> ricxapp-trafficxapp-7c46768578-dq8j5
+{
+  "ts_control_api": "grpc",
+  "ts_control_ep": "service-ricxapp-rc-grpc-server.ricxapp:7777",
+  "influx_url": "http://r4-influxdb-influxdb2.ricplt:80",
+  "influx_org": "influxdata",
+  "influx_bucket": "kpimon"
+}

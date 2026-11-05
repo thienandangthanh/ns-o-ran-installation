@@ -148,3 +148,14 @@ Run 3 was a narrow check of the run-2 fixes (`--base 2df76db`, about 3 min). It 
 - **Run 7** (`--base 20c653d`, 0d32a88) returned approve, with no findings.
 - Kongming-261105-1050 also reviewed 293957f and found no verdict-affecting defect. It named the same `wd_end` window that run 6 found.
 
+**The cp2 chain at dd27868: green, 20/20 (2026-11-05 02:21–07:06 UTC).**
+- **Setup:** the VM was reverted to f7-rerun-green. The harness is dd27868, whose `scripts/` are identical to 0d32a88, and the pins are unchanged. Every step ran from the frozen worktree with the hardened driver. The route was `systemd-run --user --wait` (unit `p08-cp2-dd27868`, KillMode=mixed). /home had 79 GiB free at launch, against kongming's 80 GiB rule of thumb. The old overlay had been confirmed unlinked. The minimum /home was 55 GiB, and no watchdog tripped.
+- **Result:** every step exited 0 and passed the run-dir cross-check. The steps were M2, M3, M4, M5, M6, M7, I0, Q8, R0 single, R1 single, I2, R2 C1, R3′ calibrate, R3′ dryrun stage b, R3′ C1 at δ 0 (`r3p/20261105T052524Z`), δ 150 (`r3p/20261105T054823Z`) and δ 500 (`r3p/20261105T061121Z`), e2i, the δ seam smoke and R1 C1. The step log is `evidence/cp2-chain/dd27868/p08-gate-chain.tsv`.
+- **Validation:**
+  - `reference-transform-compare.py --selftest` is ok: fixtures a–c and e–l fail, and d passes.
+  - All three R3′ C1 verdicts pass at harness dd27868. Each has `liveRunsEqual`, `replayEqual`, `rngRun2Differs` and `transformEqualsM9` true.
+  - Each verdict's `transformedFields` holds the same 17 fields, with `fieldsWithoutOccurrence: ["meid"]`. The compare itself requires these two lists together to equal R-2's list. `literalComponents` is ipc, traces, kpm-headers and collet-start-time.
+  - G2 holds: δ 150 and δ 500 were read against the cp1 δ references.
+- **Tag:** `m10-cp2` is annotated at harness dd27868 (`git rev-parse m10-cp2^{commit}` = the verdicts' harness SHA). The four forks carry `m10-cp2` at their pins: Testbed 554d6d6, ns-3 ea6e46f, oran-interface 53253fe and e2sim e270581. All five were pushed.
+- **Evidence:** all 20 run dirs have their verdict layer and an `evidence-sha256.txt` committed (7,293 files hashed). The raw files (5,682, including the watchdog dirs) are archived as `plans-evidence-raw-m10-p08b-20261105.tar.zst` (138 MB) with its `.list0`, and `SHA256SUMS` was verified.
+
