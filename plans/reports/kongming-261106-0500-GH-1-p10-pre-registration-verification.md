@@ -222,3 +222,99 @@ Also register before code, without a user question:
 3. Does the user read contract open point 2's "the corrected counter" as allowing DRB.PdcpSduVolumeX2DL (Option A), or as naming DRB.PdcpSduVolumeDL (which would need an amendment)?
 4. Which route does the controller register for running V3 (row 151) at the P9 pins?
 5. What is the measured disk cost of an agent image rebuild? It decides whether cycle 1 can still reach P15.
+
+## Cross-check of Codex (2026-11-06)
+
+Input: Codex's read-only answer to the five P10 user questions (controller scratchpad `codex-p10-questions.txt`, 75 lines). Every new Codex code claim was re-read at the same pins. Kongming ran on Opus 5.5 at xhigh. No code, plan, ledger, evidence, VM or Codex was touched.
+
+### C.1 Codex's new claims, verified
+
+| # | Codex claim | Verdict | Evidence |
+|---|---|---|---|
+| 1 | UB: with exactly 8 map entries `nNeighbours` stays 8 although 7 are neighbours, and CSV padding uses that count | **True** [V], narrow impact | `mmwave-enb-net-device.cc:993-997`, padding `:1025-1028`. The serving cell is always in the map, because `:958` inserts it through `operator[]`. The padding feeds only the offline CSV (`m_forceE2FileLogging`, `:1050`); `enableE2FileLogging` defaults false (`scenario-zero.cc:274-275`, `:483-486`) and no gate sets it [V grep]. The E2 list length is the emitted count. Maps of 8 or more entries are live in s10 (`--nMmWaveEnbNodes=10`), where the `--begin()` UB in a larger tree may drop more than one neighbour [I] |
+| 2 | r2 live1 tally: node 2 one neighbour in 416 records, node 3 zero in 82 of 178 | Not re-tallied [B] | Consistent with the P09 review's mechanism (dropped when the serving cell has the higher cellId and the strongest SINR) |
+| 3 | The MAC value includes HARQ retransmissions | **True** [V] | `mmwave-phy-trace.cc:262` adds `m_tbSize` for every TB, any RV (Codex cites `:250`, the function head); emitted at `mmwave-indication-message-helper.cc:132` (cell) and `:88` (UE) |
+| 4 | `/cuUp` credits MN-hosted PDCP volume to the SN, so a source-section rule cannot certify ownership | **True** [V] | `mmwave-enb-net-device.cc:672-693`; the comment at `:672-674` says so. My §2 rule names "object", but I did not apply it to rows `:56-57` at P6 |
+| 5 | Both legs fire the same MN PDCP trace | **True** [V] | `mc-enb-pdcp.cc:221` (LTE leg) and `:238` (X2 leg), same `(rnti, lcid, size)`. The calculator cannot split legs, so P9 needs a leg-specific count keyed by `m_ueDataParams.targetCellId` |
+| 6 | V3 pools overlapping cells and judges their sum | **True** [V] | `check-pdcp-volume-totals.py:160-192` unions samples sharing a UE at one read and allows `500 * len(g)`; the truth goes to `owners[0]` (`:152-153`), an arbitrary cell. Volume moved between overlapping cells passes |
+| 7 | Forwarding can strip a PDU and re-enter MN PDCP | **True** [V] | `lte-enb-rrc.cc:1227-1239` (LTE→NR switch: header removed, `TransmitPdcpSdu`, new SN, a second `m_txPdu` for the same SDU). My §4 covered only S-SN→T-SN (`:1219`) |
+| 8 | The draft's packet-tag discriminator is stripped | **True** [V] | `lte-enb-rrc.cc:1190` `RemoveAllPacketTags()` runs before `ForwardRlcPdu` (`:1219`), which carries the header-bearing PDU. At the T-SN, a later SN change re-reads it at `:1184` and `lte-rlc-am.cc:1806` [I], so the draft's "tag, else `NS_FATAL_ERROR`" (draft line 86) would abort on a repeated SN change (r1, r2) |
+| 9 | 12 bits minimises SN and status changes | **True** [V] | SN fields are `uint16_t` (`mc-enb-pdcp.h:226-227`, `:235`; `mc-ue-pdcp.h:195-196`, `:201`). The shared `LtePdcp::Status` is `uint16_t` (`lte-pdcp.h:103-104`). The X2 SN Status Transfer writes 16-bit SNs with a 4,096-bit bitmap (`epc-x2-header.cc:1810-1823`, `epc-x2-sap.h:104`). 18 bits must widen these or fail closed. The transfer walks only PDCP-hosting DRBs (`lte-enb-rrc.cc:919-932`), so it is latent with one eNB, but it cannot be left truncating |
+| 10 | DL every 500 µs | **True** [V] | `scenario-zero.cc:691`: 2,000 PDU/s per UE, so a 12-bit SN wraps every ~2.05 s |
+| 11 | The eNB's DRB.PdcpSduVolumeDl comes from PDU bytes | **True** [V] | `lte-enb-net-device.cc:1110-1111` has no header subtraction, unlike the gNB at `:677` |
+
+Codex's citation drift is minor: `:250` should be `:262`, `:1108` should be `:1110-1111`, and `:1231` should be `:1227-1239`.
+
+### C.2 Where my report was wrong
+1. **Q3 fallback.** It was too permissive and broke my own §2 rule ("no readable clause → rename"). Row `:128` disproves it: KPM §7.9.1 lists the name as kbit INTEGER, yet the value is PDU bytes (claim 11).
+2. **P6 registry.** It had no owning-node or counting-event field. At P6, rows `:56-57` would therefore be either certified falsely or renamed, and then renamed back at P9.
+3. **P7 discriminator.** I did not test the draft's tag mechanism, and it fails (claim 8).
+4. **Q4.** I under-weighted the 18-bit widening surface (claim 9). I also over-weighted cp3 visibility, which by my own claim 8 proves only "changed", not "NR". Reason 3 was backwards: at 18 bits the rollover fix is dead code in live runs; at 12 bits it is exercised every ~2 s.
+5. **P9 counting point.** I missed the switch re-entry path (claim 7).
+6. **UB regression.** My "2-cell map → exactly 1 neighbour" check is too narrow.
+
+### C.3 Where Codex is wrong or incomplete
+1. **UB.** The 8-entry miscount touches only the ungated CSV. The live E2 harm at 8 or more entries is the same `--begin()` UB. Fix both anyway.
+2. **Q4.** At 12 bits the header switch is byte-neutral, so a separate rollover commit is worth it mainly because it enables a **byte-identity check** (C.4, Q4). Bisection alone is not the reason. Codex also does not say that, at 12 bits, AC16's trace clause passes at cp2 too, or how "verified MC consumer paths" is checked when a missed consumer is silent.
+3. **Q2 "first send".** It has a natural definition (C.4, Q2) and need not stay open.
+4. **The P6/P9 dependency.** "Resolve before code" needs a mechanism. A pending marker suffices; no reorder is needed.
+
+### C.4 Final recommendation per question
+
+**UB: fix it, as its own ns-3 commit before P6 (Amendment 4).**
+- Iterate with a `reverse_iterator`. Count the eligible entries as those whose cellId is not the serving cell, cap them at 8, and pad from the emitted count.
+- Regression:
+  - a unit case over map sizes 1, 2, 8, 9 and 10, with equal-SINR ties;
+  - in r2 and r3p, every UE tick reports exactly min(8, eligible) neighbours, and a 0-neighbour fixture fails;
+  - one s10 run with no drops.
+
+**Q1: rename.**
+- The MAC value gets an honest name, such as `ns3.du.macTbVolumeDl` (TB bits, HARQ retransmissions included).
+- The registry adds `owningNode` and `countingEvent`.
+- Rows `:56-57` (en-gNB DRB.PdcpSduVolumeDL/UL) carry a `pendingFix: P9` marker. P6's lint reports them as named expected failures, neither passes nor renames. P9's row and P11 require the marker list to be empty.
+
+**Q2: Option A, with the T3 change of `r3p-scenario.json`.**
+- **Counting definition.** X2DL(c) counts 8 × (PDU bytes − header) for every PDCP PDU that the MN submits on the X2 leg to cell c (`DoTransmitPdcpSduMmWave`, `targetCellId`). SDUs re-entered after an LTE→NR switch count, because each crosses X2 once. S-SN→T-SN RLC forwarding is SN↔SN, so it is excluded and disclosed.
+- **Audit.** It emits the same event with the target cell.
+- **V3.** It judges per cell, with no overlap pooling, plus a swapped-attribution negative fixture that keeps the sum. It also requires DRB.PdcpSduVolumeDL = 0 at every en-gNB, and keeps the period-sum check.
+
+**Q3: the 32.425 reading, and ask the user to add 3GPP TS 32.425 to Zotero.**
+- Fallback: every eNB 3GPP-style name without a readable clause is renamed to `ns3.*`, unless the user grants a named exception. KPM §7.9.1 type and unit alone never suffice.
+
+**Q4: 12 bits.** This reverses my 18-bit recommendation. The SN-rollover fix becomes its own commit right before P7 (my Q6 alternative). P7's rows at 12 bits:
+- **(a) Type level.**
+  - MC entities and every listed consumer take the header class from bearer context, never from a packet tag.
+  - A source lint fails if an MC path names `LtePdcpHeader`.
+  - The audit header line prints the class and size from the entity's header object.
+- **(b) Byte identity.** P7's deterministic N4 runs (uloff and ulon) equal the rollover commit's byte for byte. This proves that P7 changed no wire byte and broke no consumer, including the forwarding paths.
+- **(c) Rollover.**
+  - It is red at cp2 (a 12-bit analogue) and green at the rollover commit.
+  - Live runs exercise it, because the SN wraps every ~2 s.
+  - The window is 2,048, about 1 s at 2,000 PDU/s, far above the 1 ms X2 delay plus RLC recovery.
+- **Recorded openly.** AC16's trace clause also passes at cp2, because the 12-bit E-UTRA and NR headers are byte-identical. It is therefore a conformance check, not a discriminator; (a) and (c) discriminate.
+- **Rows 148–150.** Row 150's `hdr == 3` change is void: HDR stays 2, cited to 38.323 §6.2.2.2, and `rung-config.json:80-81` gets the same citation.
+- **Strongest counter-argument.** At 12 bits P7 leaves the wire unchanged. A reader of cp3 cannot see it, so its NR-ness rests on code-level evidence, the kind this project otherwise distrusts. 18 bits would put P7 on the wire, make an unconverted consumer fail loudly, and match the common eMBB configuration [B].
+- **Rebuttal.** 18 bits still cannot prove NR (claim 8). Its loud failures guard against a hazard that 18 bits itself creates. Its realism gain is nil at this load. It widens shared LTE structures with latent truncation (claim 9).
+- **What would flip it:**
+  - the user reads AC16 as requiring a cp2-versus-cp3 wire difference;
+  - the scenario moves to rates or durations where 2,048 PDUs in flight is tight;
+  - the user values wire visibility over the smaller change.
+
+### C.5 Effect on order, budget and the rule-now set
+- **Order.** Insert "SN rollover" between P6 and P7 in the commit lists (`plan.md:100`, `:133`). If the UB is ruled fixed, the order becomes D-R3-1, UB, P6, rollover, P7, P9, P15, D-06b-1, kpimon node tag, TS serving cell, UseIdealRrc. Nothing else moves. The pending marker bridges P6 to P9.
+- **Budget.**
+  - The rollover commit adds about 1 h and 3–4 GiB (an ns-3 build, M4, M5–M7).
+  - At 12 bits P7 avoids the widening and the trace-wide resize, and it no longer breaks N4's uloff equality. The UB fix and P9 still break it, so the V3 route row stays.
+  - Cycle 1 becomes about 45–55 GiB and ends at about 24–34 GiB free, near the 22 GiB watchdog at the high end. Register a conditional fourth revert point before P9: revert if free /home after P7's gates is below 33 GiB.
+  - Wall time is about 15–18 h.
+- **Rule now.** The set does not change: the UB and Q1–Q4 as one batch, before the next commit after D-R3-1. Q4's recommendation changed, so show the user both sides.
+- **Controller registrations.** These need no user question; register them before P6:
+  - the pending marker;
+  - the per-cell V3 judge and the counting definition;
+  - the consumer lint and the bearer-context discriminator;
+  - the conditional revert point.
+
+### C.6 Unresolved
+1. The user's batch ruling, especially Q4, which has now changed.
+2. The disk cost of an agent image rebuild is still unmeasured. It decides whether the conditional fourth revert point fires.
+3. Whether N4's uloff and ulon runs are byte-deterministic across two builds of the same source. The byte-identity check for (b) assumes so; verify it once at the rollover commit before relying on it.
