@@ -80,6 +80,9 @@ timeout 300 python3 -I scripts/gates/pacer-selftest.py >/dev/null 2>&1 || { echo
 python3 -I scripts/gates/ue-id-prepare.py --self-test >/dev/null || { echo "ue-id-prepare self-test failed"; rc=1; }
 python3 -I tools/e2-evidence/wire-c1-extract.py --self-test >/dev/null || { echo "wire-c1-extract self-test failed"; rc=1; }
 python3 -I scripts/gates/r0-checks.py --self-test >/dev/null || { echo "r0-checks self-test (the C4 arrival-order fixture must fail) failed"; rc=1; }
+timeout 120 python3 -I scripts/gates/s10-checks.py --self-test >/dev/null || { echo "s10 checks self-test (trigger rule, ledger/wire/stub/window/cell-map judges) failed"; rc=1; }
+python3 -I scripts/gates/s10-checks.py scenario scripts/gates/s10-scenario.json >/dev/null || { echo "s10-scenario.json pre-registration is not self-consistent"; rc=1; }
+python3 -I scripts/gates/check-s10-neighbours.py --self-test >/dev/null || { echo "s10 neighbour non-vacuity judge self-test failed"; rc=1; }
 # send-rmr.sh refuses (exit 2, nothing sent) any ue-id that is not an en-gNB-UEID key, a missing or empty file and a
 # file of two lines; a well-formed key reaches the socket step (exit 1 here: nothing listens on the port)
 tmp=$(mktemp -d); srmr() { bash scripts/gates/send-rmr.sh 1 "$@" >/dev/null 2>&1; echo $?; }

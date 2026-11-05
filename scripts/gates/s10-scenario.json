@@ -1,0 +1,27 @@
+{
+ "_comment": "s10 (AC15): the scale gate, pre-registered before its first run. scenario-zero with 10 en-gNBs (eNB cell 1, en-gNB cells 2-11; 3 UEs per en-gNB, scenario-zero.cc:552, so 30 UEs), NoAuto, lock-step, 11 agents on ports 38470 + cellId, simTime 8 s = 80 steps at T = 100 ms (AC6b: 171 wall s per sim s, step ~2,090 s of the 2,700 s budget). kpimon at the rung defaults (rung-config.json kpm.*, 100/100 ms). The TS xApp is restarted after all 11 agents are CONNECTED (the r2 pattern), then the stub QP and the A1 threshold (rung-config.json a1_threshold). Two TS triggers, pacer-gated, one per step. Each trigger's prepare picks the UE by rule: over the run's context files with seq <= step, the lowest IMSI held by exactly one en-gNB at that step (ctx(g, step) of one gNB node g only), g not the target and not in excludeServing, and not used by an earlier trigger; S = g. A trigger whose rule finds no UE fails the run (no fallback). The stub answer is [[key(S), [answer.servingDl, answer.ul]], [key(target), [answer.targetDl, answer.ul]]], serving first (the TS xApp's cp2 form takes the serving cell from the first entry), key(c) = %08X10 (plan R-3). Expected per trigger: one RICcontrolRequest to S's en-gNB (E2SM-RC Style 5 action 3, target NR-CGI of the target cell), one ledger line applied with viaNodeId = S and targetCell = target, one eNB HandoverStart of that IMSI from S to the target after the apply (check-c9-handover-trace.py).",
+ "simTimeS": 8,
+ "simTimeProvenance": "plans/reports/probe-261103-0315-GH-1-m10-prelude-probes.md AC6b: 171 wall s per sim s (evidence/ns3-scale-ten-gnbs/20261102T182547Z); 600 s pre + 8 x 171 s + 120 s post = 2,090 s",
+ "nMmWaveEnbNodes": 10,
+ "handoverMode": "NoAuto",
+ "indicationPeriodicityS": 0.1,
+ "outageThresholdFrom": "rung-config.json scenario.outageThreshold_dB (substitution 1: gated runs use -1000)",
+ "agentPortBase": 38470,
+ "prepareTimeoutS": 30,
+ "subscribeWaitS": 240,
+ "triggers": [
+  {"step": 30, "target": 10},
+  {"step": 50, "target": 11}
+ ],
+ "excludeServing": [10, 11],
+ "answer": {"servingDl": 100, "targetDl": 300, "ul": 0},
+ "neighbours": {
+  "maxNeigh": 8,
+  "sinrTrace": "MmWaveSinrTime.txt",
+  "guardMs": 1,
+  "_comment": "check-s10-neighbours.py: measured(g, s, i) = the distinct cellIds other than g in ns-3's MmWaveSinrTime.txt rows of IMSI i with time in [t_s - T + guard, t_s - guard], counted only when i is in node g's IPC sample at s - 1 and at s"
+ },
+ "expectCellIdsGe10": [10, 11],
+ "influxWindowS": 60,
+ "stepWallMaxS": 2700
+}

@@ -3,15 +3,17 @@
 # with the harness predictor). Source after lib.sh, bringup.sh, capture.sh, kpimon.sh, agents.sh, rc-lib.sh,
 # ts-lib.sh, paced-lib.sh and influx-dump.sh; the gate sets RUNG (the check-name prefix), e, RUNS, NODES, PACER,
 # PACER_PORT, T_CTL_S, W_S, CLI, EPOCH_MS, T_GATE_S, RC_DEC_TAG, N_POS and defines the hooks named at rung_live.
+# Optional: RUNG_NNODES (default 3), the E2 node count every agent-count check of rung_live expects, and
+# RUNG_SUBSCRIBE_WAIT_S (default 180), how long all_subscribed waits for every agent READY and subscribed.
 # shellcheck disable=SC2154,SC2034  # e, RUNS, RUNG and the rest are set by the sourcing gate; PACERX is read by paced-lib.sh
 # The frozen checkpoint-1 UE identity map (per IMSI the MN LTE RNTI) that the RC UE ID transform reads; the r3p live
 # runs' UE contexts must equal it.
 IDENTITY_MAP_CP1="${IDENTITY_MAP_CP1:-$HARNESS_DIR/plans/261103-0008-GH-1-post-m9-realism-m10/reference/identity-map-cp1.json}"
 all_subscribed() {
-    local deadline=$(($(date +%s) + 180)) rows
+    local deadline=$(($(date +%s) + ${RUNG_SUBSCRIBE_WAIT_S:-180})) rows
     while [ "$(date +%s)" -lt "$deadline" ]; do
         rows=$(agents_stats_all)
-        echo "$rows" | awk '$4 == "READY" && $5 >= 1 { ok++ } END { exit !(ok == 3) }' && { echo "$rows"; return 0; }
+        echo "$rows" | awk -v n="${RUNG_NNODES:-3}" '$4 == "READY" && $5 >= 1 { ok++ } END { exit !(ok == n) }' && { echo "$rows"; return 0; }
         sleep 3
     done
     echo "$rows"; return 1
@@ -118,9 +120,9 @@ rung_live() {
     }
     check "${RUNG}_${label}_kpm_ue_lists_move_applied_and_keep_refused" kpm_moves
     one_connection() {
-        python3 -I - "$rd" <<'PY'
+        python3 -I - "$rd" "${RUNG_NNODES:-3}" <<'PY'
 import glob, json, re, sys
-rd = sys.argv[1]
+rd, n = sys.argv[1], int(sys.argv[2])
 em = re.findall(r"E2IPC node (\d+) \(\w+\) .*droppedDisconnected=(\d+) .*connects=(\d+)", open(rd + "/ns3run/stderr.txt").read())
 bad = [m for m in em if m[1] != "0" or m[2] != "1"]
 acc = {}
@@ -131,7 +133,7 @@ for f in sorted(glob.glob(rd + "/agent-*.log")):
             last = json.loads(l)
     acc[f.rsplit("-", 1)[1][:-4]] = last["ipc"]["accepted"] if last else None
 print("emitters", em, "agents ipc.accepted", acc)
-sys.exit(0 if len(em) == 3 and not bad and len(acc) == 3 and all(v == 1 for v in acc.values()) else 1)
+sys.exit(0 if len(em) == n and not bad and len(acc) == n and all(v == 1 for v in acc.values()) else 1)
 PY
     }
     check "${RUNG}_${label}_one_connection_per_emitter_and_agent" one_connection
