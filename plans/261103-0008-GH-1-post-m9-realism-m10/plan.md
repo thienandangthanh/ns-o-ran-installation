@@ -191,9 +191,9 @@ The mechanism is the same as M8–M9: a journal in `docs/journals/`, a kongming 
 - The agent's internal sample `kind` stays `gnb`/`enb`, because `metric-map.cpp:76` and the hello check at `sample-forwarder.cpp:41` key on it. The wire identity is derived from the kind: `gnb` → Global en-gNB ID (scenario-zero is EN-DC only); `enb` → Global ENB ID, macro eNB ID (20 bits) = LTE cellId 1.
 - AC6a probe IDs: gNB IDs 0x7F000001 and up, macro eNB 0xFFFFE. They cannot collide with ns-3 cellIds (≤ 86), and the VM is reverted after the probe.
 - **X2AP constants (served cell info, I-5):**
-  - NR PCI = cellId; TAC `000001`; broadcast PLMN `00F110`;
-  - `nrModeInfo` TDD, NR-ARFCN 633333 (3.5 GHz), band n78, transmission bandwidth for 20 MHz at 30 kHz SCS;
-  - `measurementTimingConfiguration` (mandatory [V `oran-e2sim/e2sim/previous/ASN1c/ServedNRCell-Information.h`]) is a valid 3GPP TS 38.331 `MeasurementTimingConfiguration` (SSB at the same ARFCN, 20 ms periodicity);
+  - NR PCI = cellId; Configured TAC `0001` (2 octets, no 5GS-TAC; refined in P06); broadcast PLMN `00F110`;
+  - `nrModeInfo` TDD, band n78, transmission bandwidth {`scs60`, `nrb24`} (20 MHz at 60 kHz, the ns-3 numerology; refined in P06). The NR-ARFCN is 633333 at cp1 and cp2. **D-R3-1 (Stop A′ follow-up ruling, 2026-11-06):** that value is X2 Point A (3GPP TS 36.423 §9.2.106), and it is off n78's 30 kHz raster. From P10's first commit pair on, X2 `NRARFCN` (Point A) = 632758. The implied carrier reference is 633334 = 3500.010 MHz (on the raster; offsetToCarrier 0; 3GPP TS 38.104 Table 5.4.2.2-1, §5.4.2.3);
+  - `measurementTimingConfiguration` (mandatory [V `oran-e2sim/e2sim/previous/ASN1c/ServedNRCell-Information.h`]) is a valid 3GPP TS 38.331 `MeasurementTimingConfiguration`, SSB SCS kHz30, SMTC sf20 offset 0 duration sf1. At cp1 and cp2 its SSB `carrierFreq` equals the NR-ARFCN. From P10 (D-R3-1) it is 633312 = GSCN 7846, 3499.68 MHz, inside the carrier (offsetToPointA 26, k_SSB 2; 3GPP TS 38.211 §4.4.4.2, §7.4.3.1);
   - eNB served E-UTRA cell: PCI = 1, TAC `000001`, EARFCN per the ns-3 LTE config [I].
   - All values are [I] until cited in P06's ledger. P06 also confirms, from E2AP v03.00 §9.2.27, whether the request part is the whole X2AP-PDU or only the message.
 

@@ -19,7 +19,7 @@ All of this happens **before** the cp3 tag, so that a fix forced by a rehearsal 
 - **AC15 at final pins:** s10 passes again at the cp3 pins.
 
 ## Design
-- **Attribution by bisection** over the T-C commits (P6, P7, P9 and, if the probe passed, `UseIdealRrc=false`). Run R3′ C1 at δ = 0 at each successive commit from `m10-cp2` and digest each component; the first commit at which a component changes is its cause. A change at a commit that cannot plausibly touch it is a red Verify.
+- **Attribution by bisection** over the T-C commits (P6, P7, P9 and, if the probe passed, `UseIdealRrc=false`). **Stop A′ amendments (2026-11-05 and 2026-11-06):** the list is phase-10's commit order: D-R3-1 first, then P6, P7, P9, P15, D-06b-1, the kpimon node tag, the TS serving cell and UseIdealRrc. D-R3-1's predicted effect is null on every component, because no reference component carries X2 bytes. It still gets its own R3′ C1, which is one extra run. Run R3′ C1 at δ = 0 at each successive commit from `m10-cp2` and digest each component; the first commit at which a component changes is its cause. A change at a commit that cannot plausibly touch it is a red Verify.
 - **`scripts/gates/reference-diff-report.py A B`** prints the per-component digest diff (ledger, ipc per node, traces per file, extra, files) as JSON and Markdown.
 - **Rehearsals at the final pins (before the tag),** each from its start snapshot with the watchdog's free-series recorded:
   - `e2i`, `d150`, `d100`, `d200`, `d500`, `s10`, and `p12` last;

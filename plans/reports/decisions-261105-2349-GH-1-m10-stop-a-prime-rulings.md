@@ -40,3 +40,11 @@ These are the forms that rows 137–142 bind. They are the controller's reading 
 
 ## Unresolved questions
 - None from these rulings. The T′ base is still ruled at Stop B (S5).
+
+## Follow-up rulings (2026-11-06 ~00:27 KST), from ruling 6's Zotero check
+The Zotero check of the R-3 rows (`researcher-261105-2349-GH-1-r3-bandwidth-zotero-verification.md`) found one deviation, D-R3-1: the agent sends NR-ARFCN 633333 as the X2 `NRARFCN`, which is Point A, and also as the SSB frequency. As a carrier reference it is off n78's 30 kHz raster. On the user's request, counsel came from kongming (`kongming-261106-0008-GH-1-nr-arfcn-deviation-d-r3-1.md`) and from Codex (read-only), which agree. The user then added 3GPP TS 38.104, 38.211 and 38.213 to Zotero, and the controller re-checked the key clauses there.
+
+| # | Question | Ruling | Where it lands |
+|---|---|---|---|
+| 6a | D-R3-1 fix | **Fix (b), as P10's first commit pair.** X2 `NRARFCN` (Point A) = 632758, carrier reference 633334 (3500.010 MHz, implied), MTC SSB 633312 (GSCN 7846); band, scs60, nrb24 and SMTC unchanged. The AC6a probe is fixed in the same harness commit. | ledger rows 143–144; plan R-3; phase-10 step 0 and commit order; phase-11 bisection list; phase-06 standards ledger |
+| 6b | ns-3 28 RBs against the wire's 24 | **Disclose only.** It is an ns-3 model simplification; the wire keeps nrb24. | phase-06 standards ledger; P13 records |

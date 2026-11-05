@@ -64,6 +64,17 @@
    - (d) M6/M7.
 3. P9 commit; the counter totals check (`check-pdcp-volume-totals.py`) is updated with an AC18 row; R3′ single run.
 3b. P15 commit(s) (agent per-action routing, kpimon per-cell Format 1 action) on the fork branches; p12 judge change with its ledger row in the same commit; M6, p12, R3′ single run.
+0. D-R3-1 (Stop A′ follow-up ruling, 2026-11-06; `plans/reports/kongming-261106-0008-GH-1-nr-arfcn-deviation-d-r3-1.md`; ledger rows 143–144), before P6:
+   - **Testbed commit.**
+     - In `ns3_e2_agent/src/e2-node-identity.hpp`, constexpr `kNrFref = 633334`, `kNrPointA = 632758` and `kNrSsbArfcn = 633312`, with `static_assert`s: the reference is on the raster (even offset from 620000, ≤ 653332); the SSB lies inside the carrier (SSB − 240 ≥ Point A, SSB + 238 ≤ Point A + 287·4); 7711 ≤ GSCN ≤ 8051. The wrong `:30` comment is rewritten.
+     - In `e2-node-identity.cpp`, `:59` uses Point A and `:98` uses the SSB ARFCN.
+     - The `codec-probe-e2ap.cpp:59-68` fixtures and the `SOURCES.txt:25` prose are regenerated in the asn1-indep image.
+   - **Harness commit (the pin bump moves with it).**
+     - The e2i predicate and self-test (row 143).
+     - The AC6a probe sends the agent's cell, with scs60/nrb24, 632758 and 633312.
+     - The `replay-ts-cell-map.py` `FIXTURE_HEX` (row 144).
+   - **Gates at the commit:** the agent image build (codec byte equality), `lint.sh` with `e2i-wire-checks.py --self-test`, and a live `gate-e2i-interop.sh`. M5–M7, r0 and s10 are covered by P11's cp3 chain and its rehearsals.
+   - **Then** mark the phase-06 D-R3-1 row as fixed at both SHAs.
 3c. D-06b-1 (Stop A′ ruling 5): first row 81's amendment, then its own commit. It is not squashed into P15.
 3d. R-4 serving cell (Stop A′ ruling 1), in two commits:
    - (i) the kpimon `e2NodeId` patch (Testbed), separate from the D-06b-1 commit, then a kpimon rebuild with M6, M7 and p12 (row 137);
@@ -86,7 +97,7 @@
   - Any VM image prune follows plan "Constraints" ruling 3: dangling only, above 75 % guest root, logged before and after, never during a gate.
 - **Codex triage:** kongming-261105-1050's rule (ruling 7). No harness commit lands while a chain runs.
 - **`ns3.imsi`** stays a vendor measurement (ruling 4). The AC16 lint classifies it under `ns3.*`.
-- **Commit order for P11's bisection:** P6, P7, P9, P15, D-06b-1, the kpimon node tag, the TS serving cell, then UseIdealRrc. One fix per commit; no two of them share a commit.
+- **Commit order for P11's bisection:** D-R3-1 first (one Testbed commit and one harness commit, which move together; rows 143–144; follow-up ruling 2026-11-06), then P6, P7, P9, P15, D-06b-1, the kpimon node tag, the TS serving cell, then UseIdealRrc. One fix per commit; no two of them share a commit.
 - **Budget:** the TS xApp and kpimon rebuilds with their M6, M7, p12, R2 and R3′ regressions add about 1.5–2 h [I] to the 6.5–8 h above.
 
 ## Standards ledger (stub)
@@ -119,7 +130,7 @@ Re-pin the `m10-cp2` SHAs.
 - **AC16 lint.** Classify the `ns3.*` vendor measNames, for example `ns3.imsi`, which is kept under the interpretation of R-4 recorded in phase 06b.
 
 ## Hand-offs from the P08 exit review (kongming-261105-1606)
-- **One fix per commit:** P6, P7, P9, P15, D-06b-1 and UseIdealRrc. P11's bisection depends on it. D-06b-1 gets row 81's amendment first and its own commit; it is not squashed into P15.
+- **One fix per commit:** D-R3-1 (first; added at the Stop A′ follow-up, 2026-11-06), P6, P7, P9, P15, D-06b-1, the kpimon node tag, the TS serving cell and UseIdealRrc. P11's bisection depends on it. D-06b-1 gets row 81's amendment first and its own commit; it is not squashed into P15.
 - **Expected movements:**
   - P9 is the fix most likely to move R3′'s predictor answers, and possibly its decision. A run without a predictor-driven handover is red, and a scenario change is PAUSE T3.
   - P15's per-cell Format 1 actions will probably change kpm-headers and collet-start-time. Expect both in the cp3 diff.
