@@ -51,9 +51,11 @@ After T-A, only ipc (the digested sample lines) and traces stay literal. Everyth
   - `liveRunsEqual`, `replayEqual` and `rngRun2Differs` are true;
   - `transformEqualsM9: true`;
   - `transformedFields` equals the R-2 list exactly;
+    _Note (2026-11-05, exit review kongming-261105-1606):_ under row 136's amendment (07b82bd), this bullet is met by `transformedFields` (17 fields) together with `fieldsWithoutOccurrence: ["meid"]`, which the compare requires to equal R-2's list exactly.
   - `literalComponents ⊇ {ipc, traces}`.
 - G2: the d150 and d500 transform-compare verdicts are green with the same predicates as δ = 0 (`transformEqualsM9` read against the cp1 δ reference).
 - `git rev-parse m10-cp2` equals the verdict's harness SHA.
+  _Note (2026-11-05, exit review kongming-261105-1606):_ the tag is annotated. `git rev-parse m10-cp2^{commit}` gives dd27868, the verdicts' harness SHA. The plain command prints the tag object (d873afd).
 
 ## Standards ledger (stub)
 | Decision | Document, section | Zotero | Read |
@@ -158,4 +160,21 @@ Run 3 was a narrow check of the run-2 fixes (`--base 2df76db`, about 3 min). It 
   - G2 holds: δ 150 and δ 500 were read against the cp1 δ references.
 - **Tag:** `m10-cp2` is annotated at harness dd27868 (`git rev-parse m10-cp2^{commit}` = the verdicts' harness SHA). The four forks carry `m10-cp2` at their pins: Testbed 554d6d6, ns-3 ea6e46f, oran-interface 53253fe and e2sim e270581. All five were pushed.
 - **Evidence:** all 20 run dirs have their verdict layer and an `evidence-sha256.txt` committed (7,293 files hashed). The raw files (5,682, including the watchdog dirs) are archived as `plans-evidence-raw-m10-p08b-20261105.tar.zst` (138 MB) with its `.list0`, and `SHA256SUMS` was verified.
+- **Records added at the exit:**
+  - The M6 runner-smoke log from before the chain is now `evidence/cp2-chain/dd27868/runner-smoke-m6.log`; it had been only in the scratchpad.
+  - The driver's sha256 was not logged in the tsv. The committed driver `evidence/cp2-chain/p08-gate-chain.sh` hashes to `9642fbdc5f349183…` and is the file the unit ran.
+  - kongming-261105-1050's launch condition was "/home ≥ 80 GiB after the revert". The chain launched at 79 GiB. I accepted that 1 GiB deviation, because the old overlay was confirmed unlinked and the watchdog trips at 22 GiB. The minimum during the chain was 55 GiB.
+
+**Exit (2026-11-05, GO-WITH-CHANGES, `plans/reports/kongming-261105-1606-GH-1-p08-exit-review-and-stop-a-prime-note.md`).**
+- **Requirements met:** AC8b at δ 0, G2 at δ 150 and 500, and every Validation bullet. The two that hold only under a reading carry dated notes above.
+- **Record changes required by the review, all made:**
+  - this file's two notes, and `phase-11`'s tag check now reads `^{commit}`;
+  - the row 136 notes (meid fail-closed path, commit-second ordering);
+  - a dated note on P07's I-1 standards row (steps 2/3 are SN↔SN in ns-3);
+  - the smoke log, the driver hash and the 79 GiB deviation, above;
+  - `plan.md`'s status block and phase table;
+  - the Stop A′ journal, with the corrected I-1 table, the honest budget and the reclassified questions.
+- **Scope guard:** no check was weakened or removed, and every ledger row came before its code. No T-C code exists before `m10-cp2`, since `scripts/` is unchanged from 0d32a88 to HEAD and the fork heads equal their pins. The tags were never moved, and no secrets are in the tree.
+- **Disk at exit:** /home 56.9 GiB, which returns to about 80 GiB at the next revert. /mnt/data is 6.24 GiB against its 5 GiB floor. The projection against T′ is in `docs/journals/2026-11-05-m10-stop-a-prime.md`.
+- **Hand-offs:** they are written into `phase-09` and `phase-10` under "Hand-offs from the P08 exit review". The first is p12 at the cp2 pins before any s10 run.
 

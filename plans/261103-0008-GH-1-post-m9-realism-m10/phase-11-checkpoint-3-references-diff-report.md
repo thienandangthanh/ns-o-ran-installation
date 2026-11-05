@@ -49,7 +49,7 @@ All of this happens **before** the cp3 tag, so that a fix forced by a rehearsal 
 - `gate-d-delta-identity.sh` carries a per-node PPID 70 check on its live capture (`--node-ips`), as every rung does since P05 (AC11 in P13).
 - Every rehearsal verdict is green; s10 is green at the cp3 pins; `disk-burst-h.py` gives `worstGiB ≤ 12`.
 - `codex-pre-ship.md` ends `Status: complete`, or the journal records `Codex skipped: <reason>`.
-- `git rev-parse m10-cp3` equals the harness SHA of the final references and rehearsals.
+- `git rev-parse m10-cp3^{commit}` equals the harness SHA of the final references and rehearsals. (2026-11-05 note: the checkpoint tags are annotated, so the plain `git rev-parse m10-cp3` would print the tag object.)
 
 ## Standards ledger (stub)
 | Decision | Document, section | Zotero | Read |

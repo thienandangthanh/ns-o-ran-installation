@@ -84,3 +84,12 @@ Re-pin the `m10-cp2` SHAs.
     - The n6 and Influx form checks follow.
   - Stop A′ reports P4-KPM as fixed with this one scheduled residual. The user may move the fix before cp2, into P07.
 - **AC16 lint.** Classify the `ns3.*` vendor measNames, for example `ns3.imsi`, which is kept under the interpretation of R-4 recorded in phase 06b.
+
+## Hand-offs from the P08 exit review (kongming-261105-1606)
+- **One fix per commit:** P6, P7, P9, P15, D-06b-1 and UseIdealRrc. P11's bisection depends on it. D-06b-1 gets row 81's amendment first and its own commit; it is not squashed into P15.
+- **Expected movements:**
+  - P9 is the fix most likely to move R3′'s predictor answers, and possibly its decision. A run without a predictor-driven handover is red, and a scenario change is PAUSE T3.
+  - P15's per-cell Format 1 actions will probably change kpm-headers and collet-start-time. Expect both in the cp3 diff.
+  - The UseIdealRrc=false probe may fail. S-R is pre-approved for that case.
+- **Before P10 starts:** the Stop A′ rulings on the VM prune rule and on /mnt/data headroom. P10 rebuilds ns-3, the agent and kpimon, and row 131's 85 % guest-root guard could stop a build mid-phase.
+- **Budget (unit costs from the cp2 chain):** about 6.5–8 h of wall time and about 46 GiB of /home from one revert. That is the prefix (8,602 s, 22 GiB), an M4 rebuild per fix (1,281 s, 3 GiB) with the M6 and M7 regression, and for P15 with D-06b-1 an M5, M3 (2,181 s, 12 GiB), M6, M7, p12 and R3′ single.

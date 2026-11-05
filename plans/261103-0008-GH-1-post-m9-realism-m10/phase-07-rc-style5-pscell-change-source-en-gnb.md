@@ -142,6 +142,14 @@ The ledger rows 106–128 and the rulings after them use these forms. A change t
 | UE ID = en-gNB-UEID {MeNB UE X2AP ID, Global eNB ID} | E2SM v07.00 §6.2.2.6, p. 14 (cited in phase 06b) | `QW6VJ83M` | ✓ 2026-11-04 (P06b) |
 | eNB UE X2AP ID INTEGER (0..4095) | E2SM v07.00 §6.2.3.23, from 3GPP TS 36.423 §9.2.24, p. 24 (cited in phase 06b) | `QW6VJ83M`; `3ML7Y29A` | ✓ 2026-11-04 (P06b) |
 
+_Note on the I-1 row (2026-11-05, from the P08 exit review kongming-261105-1606; the ns-3 code was re-read at ea6e46f6, and 3GPP TS 37.340 v18.7.0 §10.5.1 steps 6–17 were re-read from the PDF, pp. 62–63):_
+- The row's "the MN's admission and X2 `McHandoverRequest` to the source SN ≈ steps 2/3 and 6" names the wrong endpoints for steps 2/3.
+- **What ns-3 does:**
+  - The MN only runs local checks (`lte-enb-rrc.cc:4570-4619`), then sends `McHandoverRequest` to the source SN (`epc-x2.cc:1345`).
+  - The source SN answers with an X2 HandoverRequest to the target SN (`lte-enb-rrc.cc:5150-5157`, `:774`). So the target's admission, which §10.5.1 steps 2/3 perform as MN ↔ T-SN SgNB Addition, happens between the two SNs in ns-3.
+  - `McHandoverRequest` matches step 6 (SgNB Change Confirm) in direction, MN → S-SN, but comes earlier in the order.
+- Plan I-1 (`plan.md:253`) already maps it to step 6 only. The corrected table is in the Stop A′ journal. The row stays as written, and this note supersedes its steps 2/3 wording.
+
 ## Risks
 - Protobuf regeneration mismatch (Medium/Medium). The byte-equality proof comes first.
 - The zero-latency admission changes event order (High/Low). The step 3 byte-compare is a hard gate.

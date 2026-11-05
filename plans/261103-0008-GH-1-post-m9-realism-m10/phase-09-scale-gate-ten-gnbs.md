@@ -51,3 +51,14 @@ The gate is additive; delete the commits.
 ## Hand-offs from the P06 exit review (kongming-261104-1340)
 - Before the s10 run, replay the TS xApp key parser (`replay-ts-cell-map.py`) on synthetic e2mgr records for gNB IDs 2–12 and require no cross-node key.
 
+## Hand-offs from the P08 exit review (kongming-261105-1606)
+Do these in order, after the Stop A′ rulings.
+1. **p12 at the cp2 pins first.** Run it right after the prefix (M2–I2) and before any s10 run.
+   - p12 last passed at the P06b pins (`p12/20261104T104145Z`, harness 28d4508).
+   - P07 then changed the per-seq UE context that p12's 10-record indications use.
+   - This re-proves AC10 before any T-C code, and gives P11 the cp2 baseline it needs to attribute P15's change.
+2. **The P08 safeguards:** start from a revert (about 80 GiB on /home), reuse the frozen-checkout chain driver and its run-dir cross-check, and keep the 22 GiB watchdog.
+3. **Cells 10 and 11 bring the first live hex letters** (`en_gnb_001_001_0000000a`, key `0000000A10`). The replay models the TS xApp's upper-casing of the meid suffix (`replay-ts-cell-map.py:11,61`), but no live run has exercised it. The dry run in the P06 hand-off above covers this; it must include IDs 10 and 11.
+4. **Record that the 60 s Influx window holds** at s10's report rate (kongming-261105-0536).
+5. **The s10 scenario must steer at least one UE to a cell ≥ 10,** so AC15's applied PSCell change reaches a hex-letter cell.
+
