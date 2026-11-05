@@ -16,6 +16,12 @@
 #   (8) an outside TERM while the watchdog monitors: exit 143, nothing recorded as a trip, the watchdog is gone;
 #   (9) an outside TERM during a trip: exit 125 and 1 recorded only after the trip record is complete;
 #  (10) a trip whose TERM arrives before wd_start returns (a slow session check): exit 125 with 1 recorded.
+#  (11) a TERM between the watchdog's launch and WD_PID=$! (injected by a DEBUG trap) is held: exit 143 and the
+#       watchdog's session is empty;
+#  (12) a TERM during the normal end's record (a slow record function): the record (0) is complete, then exit 143;
+#  (13) the same during the record of a trip the end found (hung virsh, the finish bound fires): exit 125, 1 recorded;
+#  (14) after the normal end, no pkill -s is issued (the one sweep happens when the watchdog is seen gone) and
+#       WD_PID is cleared.
 # Every runner arms its traps with vm-common.sh wd_arm before wd_start, as vm-exec.sh does. In (3)-(10) the watchdog
 # runs as a session leader (wd_start), and no process of its session survives the runner.
 set -uo pipefail
@@ -179,6 +185,73 @@ rc=$?
 rec_is 10 1
 [ -s "$tmp/wd10/watchdog-tripped.json" ] || bad "the trip before wd_start returned did not complete"
 gone 10
+
+# (11) a TERM held across the launch
+bash -c '
+    source "$1/vm-common.sh"
+    out="$3"; rec() { echo "$1" >"$out.rec"; }
+    wd_arm "$3" rec
+    set -T
+    trap '\''[[ $BASH_COMMAND == "WD_PID=\$!" ]] && { echo $! >"$out.pid"; kill -TERM $$; }'\'' DEBUG
+    wd_start "$3" "$2" 1 $$ /dev/null || exit 3
+    trap - DEBUG
+    : >"$out.started"
+    exit 0' _ "$here" 1 "$tmp/wd11" 2>/dev/null
+rc=$?
+[ "$rc" -eq 143 ] || bad "a TERM held across the launch exited $rc, want 143"
+[ -e "$tmp/wd11.started" ] && bad "a TERM held across the launch was never acted on"
+[ -e "$tmp/wd11.rec" ] && bad "a TERM held across the launch was recorded ($(cat "$tmp/wd11.rec"))"
+[ -s "$tmp/wd11.pid" ] || bad "case 11's DEBUG injection did not fire"
+gone 11
+# slow_end <case> [env...]: a runner whose record function marks DIR.recording, sleeps 2 s, then writes DIR.rec; the
+# test TERMs it while it records
+slow_end() {
+    local c="$1" thr="$2"; shift 2
+    env "$@" bash -c '
+        source "$1/vm-common.sh"
+        out="$3"; rec() { : >"$out.recording"; sleep 2; echo "$1" >"$out.rec"; }
+        wd_arm "$3" rec
+        wd_start "$3" "$2" 1 $$ /dev/null || exit 3
+        echo "$WD_PID" >"$3.pid"
+        sleep 1.5
+        wd_end "$3" rec
+        exit 0' _ "$here" "$thr" "$tmp/wd$c" 2>/dev/null & runner=$!
+    for ((i = 0; i < 300; i++)); do [ -e "$tmp/wd$c.recording" ] && break; sleep 0.1; done
+    kill -TERM "$runner"
+    wait "$runner"
+}
+# (12) a TERM during a clean end's record
+slow_end 12 1
+rc=$?
+[ "$rc" -eq 143 ] || bad "a TERM during the end record exited $rc, want 143"
+rec_is 12 0
+gone 12
+# (13) a TERM during the record of a trip the end found
+rm -f "$tmp/down"
+slow_end 13 $((free + 1)) SELFTEST_VIRSH_HANG=1 WD_FINISH_TIMEOUT_S=3
+rc=$?
+[ "$rc" -eq 125 ] || bad "a TERM during a trip's end record exited $rc, want 125"
+rec_is 13 1
+gone 13
+# (14) no session signal after the normal end has forgotten the pid
+bash -c '
+    source "$1/vm-common.sh"
+    out="$3"; rec() { echo "$1" >"$out.rec"; }
+    pkill() { echo "pkill $*" >>"$out.signals"; command pkill "$@"; }
+    wd_arm "$3" rec
+    wd_start "$3" "$2" 1 $$ /dev/null || exit 3
+    echo "$WD_PID" >"$3.pid"
+    sleep 1.5
+    wd_end "$3" rec
+    echo "end WD_PID=${WD_PID:-}" >>"$out.signals"
+    exit 0' _ "$here" 1 "$tmp/wd14" 2>/dev/null
+rc=$?
+[ "$rc" -eq 0 ] || bad "case 14 exited $rc, want 0"
+[ "$(tail -1 "$tmp/wd14.signals" 2>/dev/null)" = "end WD_PID=" ] ||
+    bad "a session signal after the normal end, or WD_PID kept: $(tr '\n' ';' <"$tmp/wd14.signals" 2>/dev/null)"
+[ "$(grep -c '^pkill .*-s' "$tmp/wd14.signals" 2>/dev/null)" = 1 ] || bad "case 14 swept the session $(grep -c '^pkill .*-s' "$tmp/wd14.signals" 2>/dev/null) times, want 1"
+rec_is 14 0
+gone 14
 
 [ "$fail" -eq 0 ] && echo "host-disk-watchdog self-test: ok"
 exit "$fail"
