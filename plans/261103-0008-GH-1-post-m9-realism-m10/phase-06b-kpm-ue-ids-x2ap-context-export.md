@@ -169,4 +169,4 @@ Re-pin the P06 SHAs.
 - **Stop A′ items from this phase:**
   - the user questions on `ns3.imsi` (keep through M10, or remove by amendment) and on D-06b-1 (P10 with P15, or before cp2);
   - the disclosures: MME UE S1AP ID = IMSI, the GUMMEI constants, the VM image prune, the two step deviations and the e2i association mapping;
-  - the open Zotero question for 3GPP TS 38.101-1, 36.101 and 36.104.
+  - the open Zotero question for 3GPP TS 38.101-1, 36.101 and 36.104. Closed at Stop A′ (ruling 6, 2026-11-05): the user added the three specs. The rows are verified with clauses in the phase-06 standards ledger, and the one disagreement is listed there as D-R3-1.
