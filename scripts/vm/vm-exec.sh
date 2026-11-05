@@ -104,12 +104,23 @@ while :; do
     [ "$misses" -lt 40 ] || die "VM unreachable for ~20 min during $unit"
     if [ "$(date +%s)" -ge "$deadline" ]; then
         hlog "timeout ${timeout_s}s: stopping $unit"
-        vm_ssh "sudo systemctl stop $unit; echo 124 >$ev/exit_code" || true
-        # The unit died before gate_finish: write a failing verdict from the checks recorded so far, so a stopped
-        # run still carries one (scripts/gates/write-verdict.py --outer-timeout).
-        vm_ssh "sudo -u uc python3 -I /home/uc/harness/scripts/gates/write-verdict.py --outer-timeout $timeout_s \
-            $ev/checks.jsonl $ev/verdict.json $gate $ts $harness_sha $launched /home/uc/harness/scripts/pins.conf" ||
-            hlog "could not write the outer-timeout verdict for $unit"
+        # Finalize only once the unit is confirmed inactive (systemctl stop waits for its processes; a lost ssh or a
+        # failed stop is retried, bounded), so no gate_finish can race the outer-timeout verdict.
+        stopped=0
+        for _ in 1 2 3 4 5; do
+            if vm_ssh "sudo systemctl stop $unit; ! systemctl is-active --quiet $unit" 2>/dev/null; then stopped=1; break; fi
+            sleep 20
+        done
+        if [ "$stopped" = 1 ]; then
+            vm_ssh "echo 124 >$ev/exit_code" || true
+            # The unit died before gate_finish: write a failing verdict from the checks recorded so far, so a
+            # stopped run still carries one (scripts/gates/write-verdict.py --outer-timeout).
+            vm_ssh "sudo -u uc python3 -I /home/uc/harness/scripts/gates/write-verdict.py --outer-timeout $timeout_s \
+                $ev/checks.jsonl $ev/verdict.json $gate $ts $harness_sha $launched /home/uc/harness/scripts/pins.conf" ||
+                hlog "could not write the outer-timeout verdict for $unit"
+        else
+            die "timeout ${timeout_s}s: could not confirm $unit stopped; evidence NOT copied, it stays on the VM at $ev"
+        fi
         code=124; break
     fi
     sleep 30
