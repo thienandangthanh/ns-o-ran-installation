@@ -76,3 +76,17 @@ Do these in order, after the Stop A′ rulings.
 - **Codex triage (ruling 7):** kongming-261105-1050's rule. No harness commit lands while a chain runs.
 - **/mnt/data (ruling 8):** 18 GiB free. Archive this phase's raw evidence to the existing location.
 
+
+## s10 build review (controller, 2026-11-06 ~00:55 KST)
+Built offline by a subagent (`plans/reports/fullstack-developer-261106-0008-GH-1-p09-s10-gate-build.md`). It is reviewed here before its first run; the scripts are committed only after the P09 prefix chain ends (Stop A′ ruling 7).
+- **Neighbour source fixed (resolves the `[I]` above):** `MmWaveSinrTime.txt`. The same trace source fills the KPM neighbour map (`ns-3-mmwave-oran/src/mmwave/model/mmwave-enb-net-device.cc:302-303, 349-372`). measured(g, s, i) counts the distinct cells other than g in [t_s − T + 1 ms, t_s − 1 ms], only while i is in node g's IPC sample at s − 1 and s. The decoded side is the 8 slots `ns3.l3.nbr1..8.cellId`. Pass: at least one tick with more than 8 measured, and each such tick decodes exactly 8; no decoded list repeats a cell or names its serving cell.
+- **Interpretations accepted:**
+  1. The outage threshold follows rung-config substitution 1 (−1000), like every gated rung.
+  2. The trigger UE must be held by exactly one en-gNB at the trigger step, so the source node is unambiguous.
+  3. A decoded list may not repeat a cell or name its serving cell. AC6b's 10-gNB data passes it: 1140 ticks with 9 measured and 8 decoded.
+  4. The Influx window is [first controlRx − 60 s, trigger].
+  5. `s10_e2ap_ppid70_every_node` is emitted under its pre-registered name.
+  6. `--indicationPeriodicity=0.1` is passed explicitly.
+- **Shared-file changes:** `ts-rung-lib.sh` gains `RUNG_NNODES` and `RUNG_SUBSCRIBE_WAIT_S`, with defaults that keep the old behaviour (ledger row 145). `lint.sh` gains three registrations. `no_stray` and `agents_hygiene` miss ports 38480–38481, so s10 adds its own check, `s10_no_socket_on_agent_or_pacer_ports`, rather than change a shared predicate.
+- **Lint:** red only on the host disk watchdog self-test, which hits lint's 60 s bound on a host loaded by the running chain and passes alone. lint.sh is re-run green after the chain, before the harness commit.
+- **Finding for the user (not fixed; outside the contract's T-C list):** ns-3's neighbour loop at `mmwave-enb-net-device.cc:1001-1003` stops at `--sortFlipMap.begin()`, which is undefined behaviour. When a UE's SINR map has 2 entries and the serving cell is the strongest, it drops the only neighbour. On r2 this predicts all 594 KPM blocks that decode 0 neighbours where 1 was measured. It cannot bite with 10 gNBs (s10 needs only 8 of 9 neighbours), but it shapes the KPM neighbour lists of every 2-gNB rung (r0, r2, r3p) and their references. Listed for the user at Stop B as a disclosure candidate.
