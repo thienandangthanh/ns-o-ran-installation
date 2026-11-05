@@ -110,3 +110,14 @@ Built offline by a subagent (`plans/reports/fullstack-developer-261106-0008-GH-1
   - the 5,460 s ns-3 rebuild bound (`agents-ns3-run.sh:54-55`).
 - **Triage (Stop A′ ruling 7): non-blocking.** The source is `scripts/vm/vm-exec.sh:104-107` and what follows it. On the outer timeout, vm-exec stops the unit, writes `exit_code` 124, then scrubs and copies the whole run dir: `launch.log`, every check recorded so far and the partial artifacts. The step is red (124, and the driver's cross-check is rc 97) and cannot become green. Only the summary `verdict.json` is missing, not the red run's evidence. The helpers are shared by every rung and have not stalled in any of the more than 30 chain steps since P05.
 - **Fix after the s10 run, in P09, with its own follow-up Codex review:** a central change in vm-exec. When it has to stop a unit, it writes a failing `verdict.json` from the checks recorded so far, with an `outer_timeout` failure. Every gate is covered without a deadline per helper. The stalled-helper paths are listed above for that review.
+
+## s10 dev run (step 2) at harness 19f6ec9, 2026-11-05 17:54–18:26 UTC: PASS
+- **Run:** `evidence/s10/20261105T175442Z` (`--dev`, so `dev: true`). It ran through the frozen driver as step 12, with a 5,400 s outer timeout, from the VM state the prefix chain and p12 left behind. The scenario is unchanged since pre-registration: sha256 `c45300cf…`.
+- **AC15 facts:**
+  - `agentsConnected` 11 and `influxEqualsIpc` true.
+  - Neighbours: `ueTicksWithMoreThan8Measured` 2,338 of 2,338 judged ticks, every one with `decodedNeighbours` 8.
+  - Cells ≥ 10: `cellIdsGe10InKpm` [10, 11], `tsCellMapKeysGe10` [`0000000A10`, `0000000B10`], and `appliedPscellChangesToGe10` 2. The triggers were IMSI 1 at step 30 to cell 10 and IMSI 3 at step 50 to cell 11, both served by en-gNB 2 at their step.
+  - Wire: `s10_e2ap_ppid70_every_node` passes.
+  - Wall: `stepWallS` 1,873, against a budget of 2,700.
+- **Budget (step 2):** 177.4 wall s per sim s (179.6 steady), close to AC6b's 171. The VM root grew by 0.21 GiB, and /home free stayed at 44 GiB for the whole run (watchdog minimum 44, not tripped). Evidence is 189 MB, of which 111 MB is ns3run. Restart counts are all 0, and IPC drops are 0.
+- **60 s Influx window (hand-off item 4):** `influxWindowHolds` true. Each trigger UE's latest row lies inside the TS xApp's 60 s window at 10 gNBs and 30 UEs (`s10_trigger_ue_rows_inside_the_ts_xapp_influx_window`).

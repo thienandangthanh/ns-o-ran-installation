@@ -1,0 +1,10 @@
+ok   en-gNB 2/3 keys, no eNB key, no wrong node
+ok   gnb_ meid parsed
+ok   a request part stored as binary octets gives no key
+ok   e2mgr's stored record gives its NR CGI key and its Global en-gNB ID key
+ok   enB_macro meid gives no key
+ok   a key with two owners fails --no-wrong-node
+ok   a key not led by its owner's gNB ID fails --no-wrong-node
+ok   a missing expected key fails --expect
+ok   a node with keys fails --no-key
+ok   decoder stops at padding
