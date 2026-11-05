@@ -65,12 +65,10 @@ json.dump({"thresholdGb": int(thr), "minHostFreeGb": int(m) if m else None, "tri
 PY
 }
 mkdir -p "$wd_dir"
+# armed before the watchdog starts: every exit from here (a trip's TERM, an outside TERM, a die, the normal end)
+# passes wd_on_exit, which lets a trip complete, stops the watchdog's session and makes a trip 125
+wd_arm "$wd_dir" wd_record
 wd_start "$wd_dir" "$WATCHDOG_MIN_GB" 20 $$ "$wd_dir/watchdog.log" || die "the host disk watchdog did not start"
-wd_pid=$WD_PID
-# every exit from here passes wd_on_exit: a tripped watchdog makes it 125 (also on a die path), otherwise the
-# watchdog is stopped
-trap 'wd_on_exit "$wd_dir" "$wd_pid" wd_record' EXIT
-trap 'WD_DONE=1; hlog "host /home under ${WATCHDOG_MIN_GB} GiB: the watchdog stopped $unit and shut the VM down; evidence stays on the VM disk"; wd_record 1; exit 125' TERM
 
 # Bootstrap: git, then the harness clone at the exact SHA (no credentials).
 vm_ssh bash -s -- "$HARNESS_URL" "$harness_sha" <<'BOOT' || die "VM bootstrap failed"
@@ -125,15 +123,8 @@ mkdir -p "$dest"
 # fresh-install has no rsync; tar over ssh needs nothing extra.
 vm_ssh "tar -C $ev -cf - ." | tar -C "$dest" -xf - || die "evidence copy failed"
 printf 'boundary\tutc\thome_free_gib\toverlay\toverlay_alloc_gib\n%s\n%s\n' "$disk_start" "$disk_end" >"$dest/host-disk.tsv"
-# shellcheck disable=SC2034  # WD_DONE is read by wd_on_exit (vm-common.sh), the EXIT trap
-if wd_finish "$wd_dir" "$wd_pid"; then
-    WD_DONE=1; wd_record 0
-else
-    WD_DONE=1
-    hlog "the host disk watchdog tripped or did not finish while $gate ended (gate exit $code): failing the gate"
-    wd_record "$([ -e "$wd_dir/watchdog-tripping" ] && echo 1 || echo 0)"
-    exit 125
-fi
+hlog "gate $gate ended (gate exit $code): finishing the host disk watchdog"
+wd_end "$wd_dir" wd_record
 hlog "evidence -> $dest"
 [ -f "$dest/verdict.json" ] && python3 -c 'import json,sys; v=json.load(open(sys.argv[1])); print("verdict", v["gate"], "PASS" if v["pass"] else "FAIL", v["failed"])' "$dest/verdict.json"
 echo "$dest" >"$EVIDENCE_HOST_ROOT/.last-$gate"

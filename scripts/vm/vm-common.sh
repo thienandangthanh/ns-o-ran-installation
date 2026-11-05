@@ -82,18 +82,54 @@ is_protected() {
 # wd_start <dir> <min GiB> <interval s> <runner pid> <log>: starts host-disk-watchdog.sh as the leader of its own
 # session (setsid) and sets WD_PID. Every ssh, virsh and timeout it runs stays in that session (timeout makes its
 # own process group, never its own session), so wd_stop_session reaches all of them.
+# A background job of a non-interactive shell is never a process group leader, so setsid(1) does not fork and $! is
+# the session leader itself; the start waits (bounded) until setsid() has run and fails if it never does. The
+# runner arms its traps (wd_arm) before calling this, so a trip during the wait is handled like any other.
 wd_start() {
+    local i
     setsid bash "$(dirname "${BASH_SOURCE[0]}")/host-disk-watchdog.sh" --min-gb "$2" --interval "$3" --out "$1" \
         --runner-pid "$4" >>"$5" 2>&1 &
     WD_PID=$!
-    sleep 0.2
-    [ "$(ps -o sid= -p "$WD_PID" 2>/dev/null | tr -d ' ')" = "$WD_PID" ] || { hlog "watchdog: not a session leader"; return 1; }
+    for ((i = 0; i < 100; i++)); do
+        [ "$(ps -o sid= -p "$WD_PID" 2>/dev/null | tr -d ' ')" = "$WD_PID" ] && return 0
+        kill -0 "$WD_PID" 2>/dev/null || break
+        sleep 0.1
+    done
+    # still this shell's unreaped child, so its pid cannot have been reused
+    kill -TERM "$WD_PID" 2>/dev/null
+    hlog "watchdog: not a session leader"
+    return 1
+}
+
+# wd_arm <watchdog dir> <record function>: the runner's traps, installed before wd_start. TERM (a trip's closing
+# signal or one from outside) only exits; EXIT runs wd_on_exit, the single finaliser of every path.
+wd_arm() {
+    WD_PID=""
+    WD_DONE=""
+    # shellcheck disable=SC2064  # the dir and function name are fixed at arm time
+    trap "wd_on_exit $(printf '%q %q' "$1" "$2")" EXIT
+    trap 'hlog "runner: TERM"; exit 143' TERM
+}
+
+# wd_end <watchdog dir> <record function>: the normal end of a gate. A clean finish records 0 and returns; a trip,
+# or a finish that failed, records the latch and exits 125.
+wd_end() {
+    if wd_finish "$1" "$WD_PID"; then
+        WD_DONE=1
+        "$2" 0
+        return 0
+    fi
+    WD_DONE=1
+    hlog "the host disk watchdog tripped or did not finish while the gate ended: failing the gate"
+    "$2" "$([ -e "$1/watchdog-tripping" ] && echo 1 || echo 0)"
+    exit 125
 }
 
 # wd_stop_session <watchdog pid>: TERM to every process of the watchdog's session, KILL to what is left after 5 s,
 # then reap the watchdog.
 wd_stop_session() {
     local i
+    [ -n "$1" ] || return 0
     pkill -TERM -s "$1" 2>/dev/null
     for ((i = 0; i < 5; i++)); do pgrep -s "$1" >/dev/null || break; sleep 1; done
     pkill -KILL -s "$1" 2>/dev/null
@@ -126,23 +162,28 @@ wd_finish() {
     [ "$rc" -eq 0 ] && [ ! -e "$dir/watchdog-tripping" ]
 }
 
-# wd_on_exit <watchdog dir> <watchdog pid> <record function>: the runner's EXIT trap once the watchdog runs. A
-# runner that ended normally sets WD_DONE first. Otherwise, with the trip latch present (a trip under way, also when
-# a die path brought the runner here), it waits for the trip (wd_finish), calls the record function with 1 and exits
-# 125; without the latch it stops the watchdog and keeps the runner's status.
+# wd_on_exit <watchdog dir> <record function>: the EXIT trap wd_arm installs, the one finaliser of every exit (a
+# trip's TERM, an outside TERM, a die, a normal end). A runner that ended normally (wd_end) set WD_DONE and already
+# recorded; only the session is stopped. Otherwise it asks the watchdog to stop and lets a trip under way complete
+# (wd_finish, bounded), then stops and reaps the whole session, and only then decides: with the trip latch it
+# records 1 and exits 125; without it the runner's status stands and nothing is recorded as a trip.
 wd_on_exit() {
-    [ -z "${WD_DONE:-}" ] || return 0
-    WD_DONE=1
-    if [ -e "$1/watchdog-tripping" ]; then
-        hlog "the host disk watchdog tripped: failing the gate with 125"
-        # inside an EXIT trap the watchdog's closing TERM would kill this shell (143) before the record: the trip is
-        # already being handled here, so TERM is ignored while it completes
-        trap '' TERM
-        wd_finish "$1" "$2" || true
-        "$3" 1
-        exit 125
+    # inside an EXIT trap a TERM (the watchdog's closing one) takes the default action and would kill this shell
+    # before the record: every path is already finishing here, so TERM is ignored
+    trap '' TERM
+    [ -n "${WD_PID:-}" ] || return 0
+    if [ -z "${WD_DONE:-}" ]; then
+        WD_DONE=1
+        wd_finish "$1" "$WD_PID" || true
+        wd_stop_session "$WD_PID"
+        if [ -e "$1/watchdog-tripping" ]; then
+            hlog "host /home under the watchdog floor: it stopped the gate units and shut the VM down; evidence stays on the VM disk; failing the gate with 125"
+            "$2" 1
+            exit 125
+        fi
+        return 0
     fi
-    wd_stop_session "$2"
+    wd_stop_session "$WD_PID"
 }
 
 host_free_gb() { df -BG --output=avail /home | tail -1 | tr -dc '0-9'; }
