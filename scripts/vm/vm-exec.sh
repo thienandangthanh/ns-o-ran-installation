@@ -93,6 +93,7 @@ vm_ssh "mkdir -p $ev && sudo systemd-run --quiet --unit=$unit --uid=uc --gid=uc 
     bash -c 'bash /home/uc/harness/$sdir/$script $qargs >$ev/launch.log 2>&1 </dev/null; echo \$? >$ev/exit_code'" ||
     die "could not start unit $unit"
 
+launched=$(date +%s)
 # Poll; tolerate ssh drops.
 deadline=$(($(date +%s) + timeout_s)); misses=0
 while :; do
@@ -104,6 +105,11 @@ while :; do
     if [ "$(date +%s)" -ge "$deadline" ]; then
         hlog "timeout ${timeout_s}s: stopping $unit"
         vm_ssh "sudo systemctl stop $unit; echo 124 >$ev/exit_code" || true
+        # The unit died before gate_finish: write a failing verdict from the checks recorded so far, so a stopped
+        # run still carries one (scripts/gates/write-verdict.py --outer-timeout).
+        vm_ssh "sudo -u uc python3 -I /home/uc/harness/scripts/gates/write-verdict.py --outer-timeout $timeout_s \
+            $ev/checks.jsonl $ev/verdict.json $gate $ts $harness_sha $launched /home/uc/harness/scripts/pins.conf" ||
+            hlog "could not write the outer-timeout verdict for $unit"
         code=124; break
     fi
     sleep 30

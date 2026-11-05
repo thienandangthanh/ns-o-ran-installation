@@ -166,34 +166,9 @@ clone_pinned() {
 # gate_finish: verdict.json = all checks passed (and at least one check ran).
 gate_finish() {
     [ -n "${GATE_SKIP_DISK_GUARD:-}" ] || disk_guard || record disk_guard false "VM / above 75 % used: $(tail -1 "$EVIDENCE_DIR/disk.txt")"
-    python3 - "$CHECKS_FILE" "$EVIDENCE_DIR/verdict.json" "$GATE" "$GATE_TS" \
-        "${HARNESS_SHA:-unknown}" "$GATE_START_EPOCH" "$HARNESS_DIR/scripts/pins.conf" <<'PY'
-import json, os, sys, time
-checks_file, out, gate, ts, harness, start, pins = sys.argv[1:]
-checks = [json.loads(l) for l in open(checks_file) if l.strip()]
-pin_map = {}
-for line in open(pins):
-    line = line.strip()
-    if line and not line.startswith('#') and '=' in line:
-        k, v = line.split('=', 1)
-        pin_map[k] = v
-verdict = {
-    "gate": gate, "ts": ts, "harness_sha": harness, "pins": pin_map,
-    "duration_s": int(time.time()) - int(start),
-    "pass": bool(checks) and all(c["pass"] for c in checks),
-    "failed": [c["name"] for c in checks if not c["pass"]],
-    "checks": checks,
-}
-facts = os.path.join(os.path.dirname(out), "facts.jsonl")
-if os.path.exists(facts):
-    for line in open(facts):
-        if line.strip():
-            f = json.loads(line)
-            if f["key"] not in ("gate", "ts", "harness_sha", "pins", "duration_s", "pass", "failed", "checks"):
-                verdict[f["key"]] = f["value"]
-json.dump(verdict, open(out, "w"), indent=2)
-print(f"verdict {gate}: {'PASS' if verdict['pass'] else 'FAIL'} failed={verdict['failed']}")
-PY
+    # write-verdict.py is also what vm-exec.sh runs when its outer timeout stops a unit before this point
+    python3 -I "$HARNESS_DIR/scripts/gates/write-verdict.py" "$CHECKS_FILE" "$EVIDENCE_DIR/verdict.json" "$GATE" \
+        "$GATE_TS" "${HARNESS_SHA:-unknown}" "$GATE_START_EPOCH" "$HARNESS_DIR/scripts/pins.conf"
     local rc=$?
     [ $rc -eq 0 ] || return 2
     python3 -c 'import json,sys; sys.exit(0 if json.load(open(sys.argv[1]))["pass"] else 1)' \
