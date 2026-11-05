@@ -102,20 +102,23 @@ def judge(docs, expect=(), no_key=(), no_wrong_node=False):
     return {"cellMap": cell_map, "keysByNode": owners}, problems
 
 
-# self-test fixtures: the agents' X2 request parts (hex) per meid; nodeb() stores each as e2mgr does (base64 of the
-# uppercase hex text)
+# self-test fixtures: the agents' X2 request parts (hex) per meid, encoded by the independent codec (asn1-indep image:
+# served_nr_cell(arfcn=632758, scs="scs60", nrb="nrb24"), measurement_timing_configuration(633312)); nodeb() stores
+# each as e2mgr does (base64 of the uppercase hex text)
 FIXTURE_HEX = {
     "en_gnb_001_001_00000002": "0024004100000100f4003a40000200fc00090000f110500000000200fd002600000400020000f110000000"
-                               "0210001000f110410009a9f500004d004100071011353ea50000",
+                               "0210001000f110410009a7b600004d004100071011353c050000",
     "en_gnb_001_001_00000003": "0024004100000100f4003a40000200fc00090000f110500000000300fd002600000400020000f110000000"
-                               "0310001000f110410009a9f500004d004100071011353ea50000",
+                               "0310001000f110410009a7b600004d004100071011353c050000",
     "enB_macro_001_001_000001": "0024003100000100f4002a000002001500080000f1100000001000fa0017000000010000f11000001010"
                                 "001000f1100046b4006455",
 }
 
 
 # e2mgr's stored request part of the scripted en-gNB 0x7F000001, verbatim from its nodeb record
-# (e2mgr-nodeb-en_gnb_001_001_7f000001.json in the identity probe's evidence, scripts/probes/probe-e2-identity-setup.sh)
+# (e2mgr-nodeb-en_gnb_001_001_7f000001.json in the identity probe's evidence, scripts/probes/probe-e2-identity-setup.sh).
+# Historic: recorded before the served NR cell's frequency fix, so it carries NRARFCN and MTC 633333 with nR-TxBW
+# scs30/nrb106; its keys do not depend on them.
 E2MGR_RECORD_7F000001 = ("MDAyNDAwNDEwMDAwMDEwMEY0MDAzQTQwMDAwMjAwRkMwMDA5MDAwMEYxMTA1MDdGMDAwMDAxMDBGRDAwMjYwMDAwMDQw"
                          "MDAxMDAwMEYxMTA3RjAwMDAwMTEwMDAxMDAwRjExMDQxMDAwOUE5RjUwMDAwNEQwMDI3MDAwNzEwMTEzNTNFQTUwMDAw")
 

@@ -34,11 +34,12 @@ node of node-ips.json must still have its setup request.
 Expected identity (plan R-3): node 1 is the LTE eNB (Global ENB ID, macro eNB ID 1 in 20 bits; X2 init-eNB with one
 served E-UTRA cell, ECI = 1 << 8 | 1, PCI 1, TAC 0001, EARFCN 100/18100) announcing KPM only; node n >= 2 is an
 en-gNB (Global en-gNB ID, gNB ID n in 32 bits; X2 init-en-gNB with one served NR cell, NCI = n << 4 | 1, PCI n,
-TAC 0001, NR-ARFCN 633333, band n78, a decodable MTC) announcing KPM (2) and RC (3), whose definition under the
-E2SM-RC OID announces exactly one control (style, action), Style 5 action 3 (PSCell change), with RAN parameters
-(collected through every nested RANParameter-Definition) covering 1 to 4 and P_I4, the action 3 parameters of
-E2SM-RC v03.00 §8.4.6.3: 1 Target PSCell ID > 2 CHOICE Target Cell > 3 NR Cell > 4 NR CGI. PLMN 001/01 (00F110)
-everywhere.
+TAC 0001, NRARFCN 632758 (Point A, 3GPP TS 36.423 §9.2.106), band n78, nR-TxBW scs60/nrb24, and an MTC that decodes
+to exactly one MeasTiming, the SSB at NR-ARFCN 633312 (GSCN 7846) with SCS kHz30) announcing KPM (2) and RC (3),
+whose definition under the E2SM-RC OID announces exactly one control (style, action), Style 5 action 3 (PSCell
+change), with RAN parameters (collected through every nested RANParameter-Definition) covering 1 to 4 and P_I4, the
+action 3 parameters of E2SM-RC v03.00 §8.4.6.3: 1 Target PSCell ID > 2 CHOICE Target Cell > 3 NR Cell > 4 NR CGI.
+PLMN 001/01 (00F110) everywhere.
 """
 import base64
 import binascii
@@ -52,7 +53,13 @@ import sys
 PLMN = "00f110"
 RC_OID = "1.3.6.1.4.1.53148.1.1.2.3"
 P_I4 = {1, 2, 3, 4}  # E2SM-RC v03.00 §8.4.6.3, action 3: Target PSCell ID > CHOICE Target Cell > NR Cell > NR CGI
-# AC6a probe nodes' X2 request parts as they were on the wire (frames 6 and 17 of its capture)
+# The en-gNB's served NR cell (the agent's e2-node-identity.hpp): X2 NRARFCN = Point A (3GPP TS 36.423 §9.2.106) of a
+# 20 MHz, 60 kHz carrier whose reference 633334 is on n78's 30 kHz raster (38.104 Table 5.4.2.2-1, §5.4.2.3); the MTC
+# SSB on GSCN 7846, inside that carrier (38.104 Table 5.4.3.1-1, 38.101-1 Table 5.4.3.3-1)
+NR_POINT_A, NR_TXBW, NR_SSB_ARFCN, NR_SSB_SCS = 632758, {"nRSCS": "scs60", "nRNRB": "nrb24"}, 633312, "kHz30"
+# AC6a probe nodes' X2 request parts as they were on the wire (frames 6 and 17 of its capture). Historic: recorded
+# before the served NR cell's frequency fix, so the en-gNB part carries NRARFCN and MTC carrierFreq 633333 with
+# nR-TxBW scs30/nrb106; --decode-self-test judges only that both decode
 AC6A_EN_GNB_7F000001 = ("0024004100000100f4003a40000200fc00090000f110507f00000100fd002600000400010000f1107f00000110"
                         "001000f110410009a9f500004d002700071011353ea50000")
 AC6A_ENB_FFFFE = "0024003100000100f4002a000002001500080000f11000ffffe000fa0017000000010000f110ffffe010001000f1100046b4006455"
@@ -68,14 +75,26 @@ def plain(o):
     return o
 
 
+def meas_timing(mtc):
+    """The MeasTiming list of a decoded MeasurementTimingConfiguration (criticalExtensions c1 measTimingConf), or
+    None for any other shape."""
+    ext = (mtc or {}).get("criticalExtensions")
+    if not ext or ext[0] != "c1" or ext[1][0] != "measTimingConf":
+        return None
+    return ext[1][1].get("measTiming")
+
+
 def decode_x2(hexpart):
-    """{node, ies} of an X2 request part (each served NR cell gains mtcDecodes) or {error}, inside the image."""
+    """{node, ies} of an X2 request part (each served NR cell gains mtcDecodes and mtcMeasTiming, the decoded MTC's
+    MeasTiming list) or {error}, inside the image."""
     from e2indep import x2ap
     try:
         d = x2ap.decode_endc_x2_setup_request(bytes.fromhex(hexpart))
         for c in d["ies"].get("id-ServedNRcellsENDCX2ManagementList", []):
             mtc = c["servedNRCellInfo"].get("measurementTimingConfiguration")
-            c["servedNRCellInfo"]["mtcDecodes"] = bool(mtc) and bool(x2ap.decode_measurement_timing_configuration(mtc))
+            dec = x2ap.decode_measurement_timing_configuration(mtc) if mtc else None
+            c["servedNRCellInfo"]["mtcDecodes"] = bool(mtc) and bool(dec)
+            c["servedNRCellInfo"]["mtcMeasTiming"] = meas_timing(dec)
         return plain(d)
     except Exception as ex:  # noqa: BLE001 - every decode failure is a finding
         return {"error": "%s: %s" % (type(ex).__name__, ex)}
@@ -229,11 +248,21 @@ def x2_problems(nid, d):
             "configured-TAC": "0001"}
     if len(cells) != 1 or any(cells[0].get(k) != v for k, v in want.items()):
         return bad + ["served NR cells %s, want one with %s" % (cells, want)]
-    freq = (cells[0].get("nrModeInfo") or [None, {}])[1].get("nRFreqInfo", {})
-    if freq.get("nRARFCN") != 633333 or [b.get("freqBandIndicatorNr") for b in freq.get("freqBandListNr", [])] != [78]:
-        bad.append("served NR cell frequency %s, want NR-ARFCN 633333 band n78" % freq)
+    mode = (cells[0].get("nrModeInfo") or [None, {}])[1]
+    freq = mode.get("nRFreqInfo", {})
+    if freq.get("nRARFCN") != NR_POINT_A or [b.get("freqBandIndicatorNr") for b in freq.get("freqBandListNr", [])] != [78]:
+        bad.append("served NR cell frequency %s, want NRARFCN %d (Point A) band n78" % (freq, NR_POINT_A))
+    txbw = mode.get("nR-TxBW") or {}
+    if {k: txbw.get(k) for k in NR_TXBW} != NR_TXBW:
+        bad.append("served NR cell nR-TxBW %s, want %s" % (txbw, NR_TXBW))
     if cells[0].get("mtcDecodes") is not True:
         bad.append("served NR cell MeasurementTimingConfiguration does not decode")
+    else:
+        timing = cells[0].get("mtcMeasTiming") or []
+        ft = [t.get("frequencyAndTiming") or {} for t in timing]
+        if len(ft) != 1 or ft[0].get("carrierFreq") != NR_SSB_ARFCN or ft[0].get("ssbSubcarrierSpacing") != NR_SSB_SCS:
+            bad.append("served NR cell MTC MeasTiming %s, want exactly one with carrierFreq %d and SSB SCS %s" % (
+                timing, NR_SSB_ARFCN, NR_SSB_SCS))
     return bad
 
 
@@ -453,10 +482,16 @@ NODES = [1, 2, 3]
 
 def self_test():
     """The judge on decodes shaped as the image returns them (pycrate values made plain)."""
-    def gnb(n, nci=None, bits=32, pci=None):
+    def gnb(n, nci=None, bits=32, pci=None, arfcn=NR_POINT_A, scs="scs60", nrb="nrb24", ssb=NR_SSB_ARFCN,
+            ssb_scs="kHz30", timings=1):
+        timing = {"frequencyAndTiming": {"carrierFreq": ssb, "ssbSubcarrierSpacing": ssb_scs,
+                                         "ssb-MeasurementTimingConfiguration": {"periodicityAndOffset": ["sf20", 0],
+                                                                                "duration": "sf1"}}}
         cell = {"nrpCI": n if pci is None else pci, "configured-TAC": "0001", "mtcDecodes": True,
+                "mtcMeasTiming": [timing] * timings,
                 "nrCellID": {"pLMN-Identity": PLMN, "nRcellIdentifier": [(n << 4) | 1 if nci is None else nci, 36]},
-                "nrModeInfo": ["tdd", {"nRFreqInfo": {"nRARFCN": 633333, "freqBandListNr": [{"freqBandIndicatorNr": 78}]}}]}
+                "nrModeInfo": ["tdd", {"nRFreqInfo": {"nRARFCN": arfcn, "freqBandListNr": [{"freqBandIndicatorNr": 78}]},
+                                       "nR-TxBW": {"nRSCS": scs, "nRNRB": nrb}}]}
         return {"node": "init-en-gNB", "ies": {"id-Globalen-gNB-ID": {"pLMN-Identity": PLMN, "gNB-ID": ["gNB-ID", [n, bits]]},
                                                "id-ServedNRcellsENDCX2ManagementList": [{"servedNRCellInfo": cell}]}}
     enb = {"node": "init-eNB", "ies": {"id-GlobalENB-ID": {"pLMN-Identity": PLMN, "eNB-ID": ["macro-eNB-ID", [1, 20]]},
@@ -514,6 +549,12 @@ def self_test():
         ("served NR cell in the N5 form", "x2apRequestPartDecodes" in run(2, gnb(2, nci=0x203), rcdef())),
         ("X2 Global en-gNB ID of 22 bits", "x2apRequestPartDecodes" in run(2, gnb(2, bits=22), rcdef())),
         ("NR PCI not the cellId", "x2apRequestPartDecodes" in run(2, gnb(2, pci=1), rcdef())),
+        ("NRARFCN 633333, off n78's 30 kHz raster as Point A", "x2apRequestPartDecodes" in run(
+            2, gnb(2, arfcn=633333), rcdef())),
+        ("MTC carrierFreq equal to the NRARFCN", "x2apRequestPartDecodes" in run(2, gnb(2, ssb=NR_POINT_A), rcdef())),
+        ("nR-TxBW scs30/nrb106", "x2apRequestPartDecodes" in run(2, gnb(2, scs="scs30", nrb="nrb106"), rcdef())),
+        ("MTC SSB SCS kHz15", "x2apRequestPartDecodes" in run(2, gnb(2, ssb_scs="kHz15"), rcdef())),
+        ("MTC with two MeasTimings", "x2apRequestPartDecodes" in run(2, gnb(2, timings=2), rcdef())),
         ("X2 part that does not decode", "x2apRequestPartDecodes" in run(2, {"error": "x"}, rcdef())),
         ("eNB with an init-en-gNB part", "x2apRequestPartDecodes" in run(1, gnb(1))),
         ("RC without Style 5 action 3", "style5Action3Announced" in run(2, gnb(2), rcdef(style=3, action=1))),

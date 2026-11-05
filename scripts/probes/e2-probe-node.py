@@ -143,10 +143,12 @@ class Node:
 
 def x2_component(kind, nid):
     """(Global E2 Node ID, X2 component ID (the peer), X2 request part) of a probe node; the request part is the
-    node's EN-DC X2 SETUP REQUEST, deterministic for a given kind and id."""
-    mtc = x2ap.measurement_timing_configuration(633333)
+    node's EN-DC X2 SETUP REQUEST, deterministic for a given kind and id. The en-gNB serves the agent's NR cell
+    (ns3_e2_agent e2-node-identity.hpp): NRARFCN 632758 (Point A), n78, scs60/nrb24, MTC SSB at NR-ARFCN 633312."""
+    mtc = x2ap.measurement_timing_configuration(633312)
     if kind == "en-gnb":
-        cell = x2ap.served_nr_cell(1, PLMN, x2ap.nr_cell_identity(nid, 1), 633333, 78, mtc, configured_tac=b"\x00\x01")
+        cell = x2ap.served_nr_cell(1, PLMN, x2ap.nr_cell_identity(nid, 1), 632758, 78, mtc, scs="scs60", nrb="nrb24",
+                                   configured_tac=b"\x00\x01")
         return (e2ap.e2node_en_gnb(PLMN, nid), e2ap.x2_component_id(global_enb=e2ap.global_enb_id(PLMN, 0xFFFFE)),
                 x2ap.endc_x2_setup_request_en_gnb(PLMN, nid, [cell]))
     cell = x2ap.served_eutra_cell(1, PLMN, (nid << 8) | 1, b"\x00\x01", 100, 18100)

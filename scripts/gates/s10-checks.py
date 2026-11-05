@@ -476,8 +476,9 @@ def c_rate(a):
 ################################################################################
 # self-test
 ################################################################################
-X2_TEMPLATE = ("0024004100000100F4003A40000200FC00090000F11050{g}00FD002600000400{p}0000F110{g}10001000F110410009A9F500004D"
-               "002700071011353EA50000")  # the independent encoder's EN-DC X2 SETUP REQUEST (evidence/p09-replay-dry)
+X2_TEMPLATE = ("0024004100000100F4003A40000200FC00090000F11050{g}00FD0026000004{p}0000F110{g}10001000F110410009A7B600004D"
+               "004100071011353C050000")  # the independent encoder's EN-DC X2 SETUP REQUEST of the agent's cell after the NR-ARFCN
+# fix: Point A 632758, MTC SSB 633312, scs60/nrb24 (evidence/p10-d-r3-1-replay-dry)
 
 
 def _nodeb(name, n):
