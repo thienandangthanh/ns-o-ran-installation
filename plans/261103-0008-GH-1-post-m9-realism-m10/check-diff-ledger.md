@@ -174,7 +174,7 @@ Row 130, amended a fifth time before code (2026-11-05, Codex run 5 of this phase
   - a TERM held across the launch gives 143 and an empty session;
   - a TERM during the normal end's record gives a complete record and then 143;
   - a trip that is recorded during the end still exits 125;
-  - no `pkill -s` is issued after the watchdog has been reaped.
+  - after the normal end has forgotten the pid, no `pkill -s` is issued (the one sweep happens when the watchdog is seen to exit), and the pid is cleared.
 
 Row 129 notes (2026-11-05, P07 exit review kongming-261105-0536): (1) the row landed in the same commit as its check (8963fa4), so history cannot show it came first; the check is purely additive and weakens nothing. (2) The class "P4" in its last column is a mislabel: it is an ops check (host port reservation), not a P4 identity predicate. (3) Its second condition, that no socket already holds a port in 38470–38499 when the check runs, is a P08 hand-off and gets its own row before code.
 
