@@ -1,0 +1,307 @@
+version: 1
+meta:
+  title: Stop A′ questions explained
+  description: The eight rulings the M10 run waits for at Stop A′, in plain words, with the default for each, what the alternative costs, and answers to the follow-up questions.
+theme:
+  preset: editorial
+blocks:
+  - type: hero
+    eyebrow: M10 · Stop A′ · paused
+    title: What the Stop A′ questions are asking you
+    description: "Checkpoint 2 is green and tagged (m10-cp2 at dd27868), and the run is paused until you answer eight questions. Each has a default, and kongming's recommendation matches every one. If you reply \"accept all defaults\", P09 can start."
+
+  - type: section
+    title: The gist
+    blocks:
+      - type: rich-text
+        text: |
+          The project rules say the agent may not quietly settle anything that reinterprets the contract, changes what a check counts as a pass, deletes files, or depends on something only you know (such as which disk space is safe to free). At each Stop it collects those items, chooses a default so work could go on, and waits for you.
+
+          Questions 1–6 are the items that were already queued, in their final wording. Questions 7 and 8 are new and came out of P08. The meid item from the first draft is no longer a question; it is now a disclosure. Your follow-up questions are answered inside sections 1, 2, 4 and 7 below, and the background section after question 1 explains how our kpimon differs from stock kpimon.
+      - type: callout
+        tone: info
+        title: How to answer
+        text: "One line is enough, for example \"accept all defaults\" or \"accept all except 8: archive to /path instead\". Question 8 needs an action or a path from you either way."
+      - type: key-value
+        title: Where things stand
+        items:
+          - { key: Checkpoint 2, value: "m10-cp2 is tagged at harness dd27868 in all five repos. One 20-step chain passed 20/20, at one SHA and one set of pins." }
+          - { key: AC8b compare, value: "The live runs equal T(M9) at δ 0, 150 and 500, with 17 fields transformed in each." }
+          - { key: Full record, value: "docs/journals/2026-11-05-m10-stop-a-prime.md has the I-1 table, the budget and every disclosure." }
+
+  - type: section
+    title: All eight questions at a glance
+    blocks:
+      - type: table
+        columns: [ "#", Topic, What it asks, "Default (kongming agrees)", Alternative ]
+        rows:
+          - [ "1", R-4 serving cell, Should the TS xApp take the serving cell from the QP answer and only check that the UE's tag is in Influx?, Accept, "R-4 as written: rewrite kpimon and the TS xApp in P10" ]
+          - [ "2", "Ledger rows 106, 120, 121", Do you confirm three rewritten tests?, Confirm, "Reject one: amend the row, change the code, rerun the gates" ]
+          - [ "3", VM image prune, "May the agent run docker image prune -f on the VM?", "Yes, narrowly: untagged images only, only above 75 % guest disk, never during a gate, logged", "No: every deletion waits for you, and a P10 build may stop at the 85 % guard" ]
+          - [ "4", ns3.imsi, Should this vendor measurement stay in the KPM report?, Keep it through M10, "Remove it by amendment (cp3 must then account for it)" ]
+          - [ "5", D-06b-1, When is the X2AP ID deviation fixed?, "In P10, as its own commit", Before P09 ]
+          - [ "6", Zotero, "What do we do about TS 38.101-1, 36.101 and 36.104?", "Accept them as \"unverified\" now; add them before P13", Add them now ]
+          - [ "7", Codex triage (new), Which Codex findings block the next chain?, "Only findings that can change a pass/fail result or lose failure evidence", "Every finding blocks, as in P08" ]
+          - [ "8", /mnt/data space (new), Where do the raw evidence archives go once the disk is full?, "You free at least 5 GiB before P10", Name another archive location ]
+
+  - type: section
+    title: "1. R-4 serving cell (default: accept)"
+    blocks:
+      - type: rich-text
+        text: |
+          To send a handover command, the TS xApp has to know which cell the UE is on now (the serving cell). The serving cell picks the en-gNB that receives the control, because a control must go to the UE's source en-gNB. The plan (R-4) said the TS xApp would read the serving cell from the UE's latest row in InfluxDB. That turned out to be impossible without breaking ledger row 128 (explained below). So in P07 the session kept the TS xApp's original source instead: the first cell in the QP's answer.
+      - type: steps
+        title: How one handover decision flows today
+        items:
+          - { title: A trigger names a UE, text: "An anomaly message (RMR 30003) reaches the TS xApp. It names the UE by its KPM UE ID key, for example enGnbUeId:1@00F110-00001." }
+          - { title: The TS xApp asks QP, text: "It sends a prediction request (30000). QP answers (30002) with predicted throughput per cell, serving cell first: {ue: [[cell A, [dl, ul]], [cell B, [dl, ul]], …]}." }
+          - { title: The TS xApp reads the order, text: "It takes the first cell of that answer as the serving cell (handler.serving_cell_id in the TS patch ts_xapp.cpp.style5_en_gnb_ueid.patch). It hands over if another cell's prediction beats the serving cell's by the threshold." }
+          - { title: The TS xApp checks Influx, text: "It confirms that a UeMetrics row carries exactly this ueId tag in the last 60 s. If none does, it sends no control (row 125's negative n3 proves this on the wire). It parses EnGnbUEID from the tag." }
+          - { title: The control goes out, text: "It sends RIC CONTROL Style 5 action 3 to cell_map[serving cell], the source en-gNB." }
+      - type: accordion
+        title: Your follow-up questions
+        items:
+          - title: Where does QP get the serving cell? What is its origin?
+            text: |
+              It depends on which QP is in the loop. There are three.
+
+              The real OSC QP (ric-app-qp/src/main.py:79-90) reads the UE's latest row from its own Influx measurement (UEReports). It takes the column matching nrCell as the serving cell and the nbCell columns as neighbours (qp_config.ini), and it puts the serving cell first in its answer. So in a real deployment the origin is the RAN's measurement reports, stored in Influx under standard-looking column names.
+
+              None of the M10 gates runs the real QP. Our kpimon writes UeMetrics rows, which have no nrCell or nbCell columns. Each gate uses a stand-in instead.
+
+              R2 (gate-r2-ts-stub-qp.sh) uses a stub QP. The predictions are written by hand in scripts/gates/r2-scenario.json, and the scenario author lists the UE's known starting cell first. For example, IMSIs 1 and 2 start on cell 3, so their entries begin with "0000000310". The serving cell is therefore scripted from the radio configuration.
+
+              R3′ (gate-r3p-ts-predictor.sh) uses the harness predictor scripts/gates/r3p-predictor.py. Its docstring says the serving cell is "the gNB listing the IMSI at T". That membership comes from check-n6-influx-window.py, which reads the UeMetrics rows in Influx and groups them by ns3.nodeId and ns3.imsi (lines 145 and 177).
+
+              So in R3′ the serving cell really does come from Influx through ns3.* fields. The harness reads them on QP's behalf, not the TS xApp. Row 128 restricts only the TS xApp's code, so this is allowed. Still, it means the ns3.* dependency moved from the TS xApp to the QP stand-in; it did not disappear. That conclusion is my reading of the code; the journal does not state it.
+          - title: Does Influx have the serving cell, just not in ns3.* fields?
+            text: |
+              No. A UeMetrics row has exactly one tag, ueId, plus measurement fields. You can see it in the archived fixture scripts/gates/fixtures/ts-influx-mixed/ue-metrics.lp:
+              UeMetrics,ueId=enGnbUeId:1@00F110-00001 DRB.UEThpDl=14805.4…
+
+              The ueId tag names the UE as the eNB (master node) knows it: X2AP ID 1 at eNB 00001. It does not say which en-gNB serves the UE. The standard fields (DRB.UEThpDl, CARR.PDSCHMCSDist.Bin1, …) carry no cell. The only cell or node values in the row are ns3.nodeId and ns3.seq.
+
+              The information does exist on the wire. Each KPM report arrives from one E2 node, the serving en-gNB, because there is one cell per gNB. kpimon simply does not write that reporting node into Influx. That is the alternative "R-4 as written": kpimon tags each row with the reporting node, and the TS xApp reads the serving cell from that standard-derived tag instead of from QP. That costs a kpimon and TS xApp rewrite in P10.
+          - title: What is row 128, and where is it?
+            text: |
+              Row 128 is in plans/261103-0008-GH-1-post-m9-realism-m10/check-diff-ledger.md. It was added in P07, from inventory question 11 and the P06b exit review (finding 9). It is a new static check, ts_patch_ue_id_never_from_ns3_fields, in scripts/gates/ts-patches-selftest.sh, and it runs on every lint.sh.
+
+              Its predicate has three parts. The TS xApp patch set (every file in install_patch_files/xApps/ts/patches.manifest) contains no ns3. measurement or field name. The patch that fills EnGnbUEID reads it only from the Influx ueId tag. A test patch that reads ns3.imsi for the UE identity must fail the check.
+
+              The check scans text: any line naming an ns3. field in the TS patches fails it (ts-patches-selftest.sh:119). So reading ns3.nodeId to find the serving cell would turn lint red, even though the field is not about identity.
+          - title: Why does row 128 forbid that?
+            text: |
+              It enforces a contract rule. AC14 says the TS xApp takes the UE identity "from the KPM UE IDs of AC14b, never from an ns-3 side channel".
+
+              The ns3.* fields are simulator-only data that no real E2 node sends. If the TS xApp used them, the closed loop would work only inside ns-3, and M10's realism claim (a standard xApp acting on standard data) would be false.
+
+              Row 128 turns that rule into a check that cannot drift: a future patch that sneaks in an ns3.* read fails lint at once. The ban is wider than identity on purpose, so that no ns3.* data at all leaks into the TS xApp.
+      - type: comparison
+        left:
+          label: "Accept (default)"
+          items:
+            - The TS xApp keeps its original serving-cell source, the first cell of QP's answer
+            - Influx is used only to confirm that the UE exists and to parse its ID
+            - "In R3′ the QP stand-in still learns the serving cell from ns3.* fields (harness side)"
+            - No code change
+        right:
+          label: R-4 as written
+          items:
+            - kpimon writes the reporting en-gNB into each Influx row
+            - The TS xApp reads the serving cell and IDs from the latest row
+            - "The serving cell comes from E2 data, with no ns3.* field anywhere in the decision"
+            - "Rewrite kpimon and the TS xApp in P10, plus the kpimon node tag bundled with D-06b-1"
+
+  - type: section
+    title: "Background: our kpimon and how it differs from stock"
+    blocks:
+      - type: rich-text
+        text: |
+          Question 1 asks whether to change kpimon, so it helps to know what our kpimon already is. It is not a separate fork. It is the stock O-RAN SC kpimon-go, cloned from gerrit at install time, with two layers of patches applied by install_xapp_kpi_monitor.sh in the order of install_patch_files/xApps/kpimon-go/patches.manifest. NIST's layer comes first and ours goes on top. Each of our patches is a separate file in the Testbed fork; the kpimon source is never edited by hand. The image is labelled with patchset.sha256 and rebuilt whenever the patch set changes.
+      - type: table
+        title: The three layers
+        columns: [ Layer, Who, What it does ]
+        rows:
+          - [ "0. Stock", "O-RAN SC ric-app/kpimon-go", "Subscribes to E2 nodes, decodes E2SM-KPM v2.0, and writes cellMetrics and UeMetrics points to InfluxDB." ]
+          - [ "1. NIST", "NIST Testbed v1.8.0 (control.go.patch, wrapper.c.patch, kpm2_0.asn.patch, the LogicalOR and MatchingCondItem patches)", "Points kpimon at the testbed's InfluxDB v2. Replaces a one-time subscription at startup with a 5 s loop that subscribes new nodes and resubscribes after a reconnect. Fixes several asn1c files." ]
+          - [ "2. Ours", "Five Testbed commits, 2026-10-21 to 2026-11-04", "The four changes in the next table." ]
+      - type: table
+        title: Our four changes
+        columns: [ Change, Commit and phase, Stock behaviour, Our change ]
+        rows:
+          - [ "8-byte KPM TimeStamp", "47920a4, M3 (KPIMON_TIMESTAMP_SIZE8=true)", "The decoder is generated from KPM v2.0, where TimeStamp is SIZE(4). KPM v3 nodes, including NIST's reference node and our ns-3 agent, send 8 bytes, so stock kpimon decoded no header cleanly (RC_WMORE).", "Schema SIZE(8) and a regenerated TimeStamp.c. tools/kpimon-asn1-regen/regen-check.sh proves it is a regeneration that changes exactly one file." ]
+          - [ "Configurable reporting period, subscribe by ID", "4b4a61a and 809fb2d, M10 P03", "NIST's kpimon used a fixed 10,000 ms reporting period, while ns-3 reports every 100 ms.", "The period and granularity come from KPIMON_REPORTING_PERIOD_MS and KPIMON_GRANULARITY_PERIOD_MS (default 100/100) through the descriptor's controls section, with a matching onboarding schema. kpimon subscribes by measurement ID, because SubMgr's 1,024-octet action buffer cut the 1,474-octet by-name definition. The Format 2 handler stores every measData item. Gate p12 checks it." ]
+          - [ "Subscribe to eNB nodes", "75e80ba, M10 P06", "e2mgr 6.0.6 stores no RAN functions for an eNB, so kpimon read an empty measurement list and could not subscribe to the LTE eNB.", "For an eNB, kpimon takes its lists from control/enb-kpm-measurements.json, which lint-metric-map.py --kpimon-enb checks against the agent's metric map at install." ]
+          - [ "ueId tag on UE rows", "89d45af, M10 P06b", "UeMetrics points carry no tags, only fields (control.go.previous:959). kpimon dropped the UE ID in the KPM message, so only the simulator field ns3.imsi tied a row to a UE.", "kpimon decodes the Format 2 UE ID and writes the ueId tag: enGnbUeId:<X2AP ID>@<PLMN>-<macro eNB ID> or enbUeId:<S1AP ID>@<X2AP ID>. Any other CHOICE is logged as an error and the row has no tag. This is what lets the TS xApp meet AC14 and row 128." ]
+      - type: callout
+        tone: info
+        title: What kpimon still does not do
+        text: "It does not record which E2 node sent a report; \"R-4 as written\" would add that as a fifth patch in our layer. It discards the KPM header time and stamps time.Now(), which is why the gates join rows on (nodeId, seq[, imsi]) and never on time. It logged about 2 % fewer indications than the wire carried during fast bursts in M3."
+      - type: callout
+        tone: warning
+        title: A stale line in the architecture doc
+        text: "docs/system-architecture-l-release.md says kpimon is \"patched only for an 8-byte TimeStamp\" (line 7) and \"Nothing else in kpimon changes\" (§6). That was true after M3 and stopped being true when changes 2 to 4 landed in M10. The installer header (install_xapp_kpi_monitor.sh:38-59) and patches.manifest are current."
+
+  - type: section
+    title: "2. Ledger rows 106, 120, 121 (default: confirm)"
+    blocks:
+      - type: rich-text
+        text: |
+          The rows are in plans/261103-0008-GH-1-post-m9-realism-m10/check-diff-ledger.md, the "check-diff ledger".
+
+          The harness is the set of scripts that runs tests ("gates") on the VM and decides pass or fail. When M10 changes a test, contract rule AC18 requires a ledger row first, before the code. The row records the old meaning of "pass", the new meaning, and why the new test is not weaker. The ledger has about 140 rows, and most need nothing from you.
+
+          A row needs your confirmation only if it rewrites a test that encodes one of the deviations being fixed (contract rule #9). Two matter here. P1: M9 sent handover controls to the target gNB, but the standard sends them to the UE's source en-gNB. P4: M9 named the UE by its IMSI, placed in a 5G-core ID field; the EN-DC standard form is en-gNB-UEID (MeNB X2AP ID + Global eNB ID). Once both were fixed, every test that sent controls the old way had to be rewritten.
+      - type: table
+        columns: [ Row, Test, Old pass meaning, New pass meaning ]
+        rows:
+          - [ "106", "δ seam smoke (probe-delta-seam-smoke.sh): delayed controls apply exactly δ ms later, cancel at stop, order ties correctly", "Controls named the UE by IMSI and were sometimes sent via the eNB or a non-source gNB; 8 ledger lines", "Every control names the UE by en-gNB UE ID and goes via its source en-gNB; one non-source case added, so 9 lines. All assertions keep their code. Passed 32/32" ]
+          - [ "120", "e2i interop (gate-e2i-interop.sh): an independent ASN.1 encoder builds controls, proving the agent understands standard messages", "2 controls in the old Style 3/1 form with the IMSI as UE ID", "5 controls in Style 5/3 form: 1 valid (acked), plus refusals for a wrong target format, the old Style 3/1, a wrong gNB and the eNB" ]
+          - [ "121", "The same e2i gate, ns-3's record of what it executed", "Exactly 1 line: IMSI 6 → cell 3, applied", "That line plus 1 \"refused unknownUe\" line for the wrong-gNB control, which proves it reached ns-3 and was refused for the right reason" ]
+      - type: callout
+        tone: info
+        title: What confirming means
+        text: "You agree that the rewritten tests are the right tests and are not weaker than the old ones. All three were recorded before their code and passed in the checkpoint 2 chain."
+
+  - type: section
+    title: "3. VM image prune (default: yes, narrowly)"
+    blocks:
+      - type: rich-text
+        text: |
+          The contract's §5 says "nothing is deleted autonomously". P06b pruned the VM's untagged Docker images (old builds replaced by newer ones) to free disk. That was an interpretation, and no prune has run since.
+
+          The default rule allows only docker image prune -f on untagged images: never -a, never a tagged image, never during a gate, and only when the guest disk is over 75 % full. docker system df and the removed image IDs are logged before and after. P10 rebuilds ns-3, the agent and kpimon. Without this rule, the guest's 85 % disk guard could stop a build halfway, and every such stop would wait for you.
+
+  - type: section
+    title: "4. ns3.imsi (default: keep through M10)"
+    blocks:
+      - type: key-value
+        items:
+          - { key: What it is, value: "Item 4 of the per-UE values each ns-3 node reports in KPM. The ns3. prefix marks it as simulator-specific (vendor), not 3GPP. It is defined in the Testbed's ns3_e2_agent/schema/metric-map.v1.json:61 (gNB) and :127 (eNB)." }
+          - { key: When it was added, value: "2026-10-22, in Testbed commit d487283 \"add metric map v1 and its lint\", during M8–M9 (the NIST 1.8.0 port), before M10. It was added together with ns3.nodeId, ns3.simTimeMs and ns3.seq." }
+          - { key: Why it was added, value: "As a join key. The metric map says UE rows are matched \"on (ns3.nodeId, ns3.seq, ns3.imsi). Never on _time.\" The harness uses it to prove that Influx equals what ns-3 emitted, bit for bit, per UE and per step (ledger rows 85, 86 and 90)." }
+          - { key: Why the contract only forbids the IMSI as the UE ID, value: "The contract line (contract-261103-0001…:103, \"no IMSI is carried as a gNB-UEID\") was written to fix deviation P4: the IMSI stuffed into the standard UE ID field. It says nothing about vendor measurements either way. The session read that silence as permission (phase-06b:114-115)." }
+          - { key: Why you might still remove it, value: "My inference: in a real network the eNB and gNB normally never learn a UE's IMSI. It is a permanent subscriber identity held by the core network, so no real E2 node could report it. Keeping it is honest only because it is labelled ns3.* and the TS xApp never uses it (row 128)." }
+      - type: comparison
+        left:
+          label: "Keep (default)"
+          items:
+            - Nothing changes
+            - "P10's lint labels it as a vendor measurement"
+        right:
+          label: Remove by amendment
+          items:
+            - The KPM content changes, so the contract needs an amendment
+            - "Rows 85, 86 and 90 must join on the ueId tag instead"
+            - "R3′'s QP stand-in loses its serving-cell source too (see section 1)"
+            - cp3 must account for the difference from M9
+
+  - type: section
+    title: "5. D-06b-1 (default: fix in P10, as its own commit)"
+    blocks:
+      - type: rich-text
+        text: |
+          This is a minor spec deviation. The eNB always sends the MeNB UE X2AP ID, but E2SM §6.2.2.6 requires it only once dual connectivity (DC) is set up. The default fixes it in its own commit in P10, with row 81 amended first and the fix kept separate from P15. That lets P11's bisection tell which change caused any difference. "Fix before cp2" no longer applies because cp2 is tagged; the alternative is now "fix before P09".
+
+  - type: section
+    title: "6. Zotero (default: accept unverified now, add before P13)"
+    blocks:
+      - type: rich-text
+        text: |
+          Some bandwidth values cite 3GPP specs that are not in your Zotero library. The NR cell's nR-TxBW {scs60, nrb24} cites TS 38.101-1 Table 5.3.2-1, and the eNB's bw100 cites TS 36.101 and 36.104. Under AC20 they are marked "unverified against Zotero" for now, and you add the three PDFs before the P13 records are written. The alternative is to add them now.
+
+  - type: section
+    title: "7. Codex triage rule (new)"
+    blocks:
+      - type: key-value
+        title: Background
+        items:
+          - { key: Codex, value: "OpenAI's coding tool, used as a read-only second reviewer of the harness code. Your 10:38 ruling: every fix made for a Codex finding gets its own follow-up Codex review." }
+          - { key: One chain, value: "One unattended run of a fixed list of gates on the VM. It starts from a VM snapshot revert, and every step uses the same frozen harness commit (one SHA) and the same pinned versions of the other repos. The cp2 chain had 20 steps (M2 … R1 C1), took about 4 h 45 min and used about 22–24 GiB of disk." }
+          - { key: Why one SHA, value: "A checkpoint claims \"this exact code passed all of these gates\". Any harness commit, even a one-line fix, means restarting the whole chain from a revert. The disk fits only two chains per revert." }
+      - type: rich-text
+        text: |
+          Why it is asked now: P08 went through a loop of finding, fix, follow-up review that found something new, and another fix. Codex ran seven times. Along the way the chain at 749fbd0 was stopped 3 minutes in to take a fix. Then a fix edited vm-exec.sh while the running chain was using it, which crashed it (red #1) and threw away about 15 finished steps. Almost every finding was in the disk-watchdog and process-cleanup code, and kongming found that none of them could change a pass/fail result.
+
+          The rule asks one question about each finding: on a realistic path, can this change a pass/fail result or destroy evidence?
+      - type: table
+        columns: [ The finding can…, Blocks the next chain?, Example from P07–P08 ]
+        rows:
+          - [ "Turn a clean run red (a false failure)", "Yes", "—" ]
+          - [ "Turn a red run green (a false pass, the worst case)", "Yes", "Codex run 1: a watchdog trip at a gate's end could still end green" ]
+          - [ "Lose a red run's evidence", "Yes", "P07: an empty file erased verdict.json on failed runs" ]
+          - [ "None of these", "No: ledger note now, fix after the chain", "Codex run 3: on paths that already fail, child processes were left running (a process leak)" ]
+      - type: callout
+        tone: success
+        title: Will a deferred defect be fixed after the chain?
+        text: "Yes. The default says the fix lands after that chain finishes and within the same phase, so before the phase can exit. It gets its follow-up Codex review, and the next chain runs on the fixed code. The chain that ran with the defect still counts, because only a defect that cannot change a result or evidence may be deferred."
+      - type: callout
+        tone: info
+        title: What stays the same, and today's state
+        text: "Every fix still gets its follow-up review, and no harness commit lands while a chain is running. Right now no defect is deferred: all of P08's findings were fixed before the green chain, and Codex run 7 approved. The rule is for the chains in P09–P13."
+      - type: callout
+        tone: warning
+        title: The trade-off
+        text: "Codex and kongming judge which bucket a finding belongs in. A misjudged finding could let a bug that does change results ride through one chain. Rejecting the rule keeps P08's behaviour: every finding stops the next chain until it is fixed and re-reviewed, which can cost a full chain (about 5 h and 22 GiB) each time."
+
+  - type: section
+    title: "8. /mnt/data space (new)"
+    blocks:
+      - type: stats
+        items:
+          - { label: Free on /mnt/data, value: "6.24 GiB" }
+          - { label: Floor, value: "5 GiB" }
+          - { label: Archives still to come, value: "≈ 1.0 GiB" }
+          - { label: Left after them, value: "≈ 5.2 GiB" }
+      - type: rich-text
+        text: |
+          Raw evidence is compressed and archived to /mnt/data/andang-data/ns-o-ran-installation-evidence/. The cp2 archive was 138 MB (1.8 GB raw). P09, P10, P11 and the end run add about 1 GiB more, which leaves about 0.2 GiB above the floor before any podman growth on the same disk. A PAUSE T2 (disk floor) is likely during P11 or the end run. Podman on that disk reports 86 GB of images and 211 GB of volumes as reclaimable. They are not this plan's, so the agent will not touch them.
+      - type: comparison
+        left:
+          label: "Default: you free space"
+          items:
+            - Free at least 5 GiB on /mnt/data before P10
+            - "For example, prune podman images or volumes you know are unused"
+        right:
+          label: "Alternative: another location"
+          items:
+            - Name a different disk or folder for the raw archives
+            - The archive path changes and the run continues
+
+  - type: section
+    title: Caveats
+    blocks:
+      - type: callout
+        tone: warning
+        title: Rejecting a default costs work
+        text: "Rejecting 1, 2 or 4 changes what a pass means. The order is then a ledger amendment, then code, then rerunning the affected gates. Rejecting 1 puts a kpimon and TS xApp rewrite into P10. Rejecting 5 (fix before P09) adds a rebuild cycle (M5, M3 at about 12 GiB, M6, M7) before scale testing."
+      - type: callout
+        tone: info
+        title: For your information only (no ruling)
+        text: "The meid rewrite has nothing to apply to in the compared files, so meid is listed in fieldsWithoutOccurrence. P08 had one red (vm-exec.sh was edited mid-run), fixed with a frozen-checkout procedure. P07's I-1 row mapped the wrong §10.5.1 step and has been corrected. The chain launched at 79 GiB, 1 GiB under its 80 GiB condition. Expect to free 10–25 GiB on /home at Stop B. The remaining VM time before Stop B is about 22–27 h."
+
+  - type: section
+    title: Glossary
+    blocks:
+      - type: key-value
+        items:
+          - { key: Stop A′, value: "The checkpoint where you make the rulings, after P08 / cp2." }
+          - { key: Chain, value: "The 20-step gate sequence (M2 … R1 C1), run unattended on the VM at one frozen harness SHA." }
+          - { key: Ledger row, value: "An entry in check-diff-ledger.md that defines a test's pass meaning. It is written before the code." }
+          - { key: Serving cell, value: "The cell (here, the en-gNB) the UE is attached to now. The control must go to it." }
+          - { key: QP, value: "The QoE Predictor xApp. It forecasts per-cell throughput for a UE. In the gates it is replaced by a stub (R2) or the harness predictor (R3′)." }
+          - { key: UeMetrics, value: "kpimon's Influx measurement of per-UE KPM values. Its only tag is ueId." }
+          - { key: Red / green, value: "A failing or passing gate step. Each red gets one kongming-guided fix, and a second red is PAUSE T6." }
+          - { key: Dangling image, value: "An untagged Docker image left behind when a newer build took its tag." }
+
+  - type: references
+    items:
+      - { id: journal, title: "docs/journals/2026-11-05-m10-stop-a-prime.md: Decisions required (:186-242), budget (:63-115)" }
+      - { id: ledger, title: "check-diff-ledger.md: rows 106, 120, 121, 125, 128", source: plans/261103-0008-GH-1-post-m9-realism-m10 }
+      - { id: p07, title: "phase-07: Integration interfaces item 5 and its controller note (:90-95)", source: plans/261103-0008-GH-1-post-m9-realism-m10 }
+      - { id: qp, title: "ric-app-qp/src/main.py:79-90 and src/qp_config.ini (real QP's serving cell)" }
+      - { id: pred, title: "scripts/gates/r3p-predictor.py docstring; check-n6-influx-window.py membership; r2-scenario.json" }
+      - { id: rule128, title: "scripts/gates/ts-patches-selftest.sh (check ts_patch_ue_id_never_from_ns3_fields)" }
+      - { id: metricmap, title: "Testbed ns3_e2_agent/schema/metric-map.v1.json:18-19, :61, :127 (commit d487283)" }
+      - { id: contract, title: "contract-261103-0001: AC14 (:98), AC14b (:101-105), #9 (:121)", source: plans/reports }
+      - { id: km1050, title: "kongming-261105-1050: Codex triage rule (:130-131)", source: plans/reports }
