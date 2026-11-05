@@ -33,8 +33,12 @@
 !/*/evidence/*/*/**/generate.json
 # Host /home free and active-overlay size at each gate boundary (vm-exec.sh): the per-step disk measurement.
 !/*/evidence/*/*/**/host-disk.tsv
+# The host disk watchdog's per-run record (vm-exec.sh): threshold, minimum free GiB seen, tripped.
+!/*/evidence/*/*/**/host-disk-watchdog.json
 # The M9 run directory is the run-level record: keep its top-level files.
 !/*/evidence/m9/*/*
+# A gate chain's procedure record: the driver copy, its step log and its per-step runner logs (small text).
+!/*/evidence/cp2-chain/**
 # Host live state, rewritten by every run (steps.tsv and m9/<ts>/ keep the values).
 /*/evidence/.last-*
 /*/evidence/watchdog/

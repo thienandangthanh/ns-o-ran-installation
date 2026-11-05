@@ -178,6 +178,18 @@ Row 130, amended a fifth time before code (2026-11-05, Codex run 5 of this phase
 
 Row 130, amended a sixth time before code (2026-11-05, Codex run 6 of this phase, the follow-up review of the fifth amendment's fix; it adds a condition and weakens none): when the normal end finds a trip, TERM stays held through `exit 125`, and the TERM action is restored only on the clean path. The self-test adds a case that sends TERM at every command of the end after its record is written. With a latched trip, that run still exits 125 with the record 1.
 
+Chain procedure note, before the driver change (2026-11-05, the guided fix of P08 red #1 under the Failure Protocol, kongming-261105-1050; ops, additive, no gate check changes):
+- **The red:** the checkpoint-2 chain at 668d1ef went red at step 15 (R3′ C1, δ 150). I had edited `scripts/vm/vm-exec.sh` in the live worktree while that step's runner was executing it, and bash resumed the edited file at a stale offset. The gate passed on the VM, but the runner exited 1 before writing `host-disk.tsv` and `host-disk-watchdog.json`, so the step does not count.
+- **Frozen checkout:** from now on the chain driver runs every step's host side from a frozen checkout of the chain SHA. That checkout is a detached, locked worktree on /home with read-only `scripts/`. Its HEAD is checked to equal the SHA, and its tracked files are checked clean, before every step.
+- **New red conditions** (additive): after every step that exits 0, the driver cross-checks the run dir that `.last-<gate>` names. The driver itself fails the step unless all of these hold:
+  - `.last-<gate>` was rewritten after the step started;
+  - `exit_code` is 0;
+  - `host-disk.tsv` exists;
+  - `host-disk-watchdog.json` says `tripped: false`;
+  - `verdict.json`, when present, passes.
+- **Offline validation:** before the chain, the cross-check must pass on the 15 green run dirs at 668d1ef and fail on the step 15 dir.
+- **Driver and records:** the driver's body is parsed whole before it runs, so a later edit of the driver file cannot reach a running chain. Its copy, its log and its per-step logs are committed with the chain evidence (`evidence/cp2-chain/`), and `host-disk-watchdog.json` joins the verdict-layer allowlist.
+
 Row 129 notes (2026-11-05, P07 exit review kongming-261105-0536): (1) the row landed in the same commit as its check (8963fa4), so history cannot show it came first; the check is purely additive and weakens nothing. (2) The class "P4" in its last column is a mislabel: it is an ops check (host port reservation), not a P4 identity predicate. (3) Its second condition, that no socket already holds a port in 38470–38499 when the check runs, is a P08 hand-off and gets its own row before code.
 
 Controller rulings on rows 79–100 (2026-11-04, from the inventory's open questions; interpretations, listed for Stop A′): the Influx tag format is R-4's as written (`enGnbUeId:<x2apId>@00F110-<macroEnbId %05X>`, eNB rows `enbUeId:<mmeUeS1apId>@<x2apId>`); row 80's cp1 equality applies only to runs in the R3′ configuration, and M7 is judged by row 79's per-run tie to ns-3's own PDCP trace (M7's five-node setup is not cp1's, so its RNTIs need not equal the frozen map); row 100 reads the action definition format from tshark's E2SM-KPM dissector, not the independent decoder, so no KPM gate depends on the asn1-indep image; the r2 stub table is built from the run's own context files (P07); the `ns3.imsi` vendor measurement stays in the KPM report for now (the contract forbids only an IMSI carried as a gNB-UEID), disclosed, and its removal is a Stop A′ question.
