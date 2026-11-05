@@ -121,3 +121,16 @@ Built offline by a subagent (`plans/reports/fullstack-developer-261106-0008-GH-1
   - Wall: `stepWallS` 1,873, against a budget of 2,700.
 - **Budget (step 2):** 177.4 wall s per sim s (179.6 steady), close to AC6b's 171. The VM root grew by 0.21 GiB, and /home free stayed at 44 GiB for the whole run (watchdog minimum 44, not tripped). Evidence is 189 MB, of which 111 MB is ns3run. Restart counts are all 0, and IPC drops are 0.
 - **60 s Influx window (hand-off item 4):** `influxWindowHolds` true. Each trigger UE's latest row lies inside the TS xApp's 60 s window at 10 gNBs and 30 UEs (`s10_trigger_ue_rows_inside_the_ts_xapp_influx_window`).
+
+## Verdict-on-timeout fix and its Codex reviews (runs 4–6 of P09, read-only)
+- **3cad432:** the verdict writer moves from `gate_finish` into `scripts/gates/write-verdict.py`. It is byte-equal on the p12, r0, m7, i2 and s10 run dirs, apart from the clock-dependent `duration_s`. vm-exec runs it with `--outer-timeout` after stopping a unit (ledger row 146).
+- **Run 4** found two issues:
+  1. A stop can cut a record or fact line short, and the strict parse then raises and leaves no verdict.
+  2. The stop's success was never confirmed, so the finalizer could race a still-running `gate_finish`.
+  Neither could turn a red run green: the host's exit code is 124, and the driver requires 0. Both still defeated the fix's purpose, so they were fixed in **7456d71**: a tolerant parse in timeout mode with an atomic write, and finalization only after a confirmed stop. Row 146 was amended first, in 3746e9a.
+- **Run 5** closed issue 1. It kept issue 2 open: `! systemctl is-active` also succeeds when the query itself fails. Fixed in **510ae30**: the stop must succeed and `systemctl show -p ActiveState` must answer `inactive` or `failed`, otherwise the stop is retried, up to 5 tries. A local fault-injection test passed only (stop 0, inactive or failed, query 0).
+- **Run 6: approve.** The finding is closed; Codex tested 54 fault combinations through a second shell. A garbage-collected transient unit reads as inactive (systemd v255 `systemctl-show.c`). No regression was found.
+- **Harness spread of the P09 pass set (disclosed for the exit review):**
+  - M2–I2 and p12 passed at 673fe7b, and the s10 dev run at 19f6ec9; the s10 gate of record runs at 510ae30.
+  - Between them only the following changed: the s10 gate files, `ts-rung-lib.sh` (row 145, default-preserving), `lint.sh`, `write-verdict.py`, `lib.sh` `gate_finish` (byte-equal verdicts) and `vm-exec.sh` (the timeout branch only).
+  - The fork pins (ns-3, oran-interface, e2sim, Testbed) are the cp2 pins throughout.
