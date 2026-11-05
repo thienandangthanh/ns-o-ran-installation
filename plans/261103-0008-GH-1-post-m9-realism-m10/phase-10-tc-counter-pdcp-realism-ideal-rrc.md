@@ -137,3 +137,21 @@ Re-pin the `m10-cp2` SHAs.
   - The UseIdealRrc=false probe may fail. S-R is pre-approved for that case.
 - **Before P10 starts:** the Stop A′ rulings on the VM prune rule and on /mnt/data headroom. P10 rebuilds ns-3, the agent and kpimon, and row 131's 85 % guest-root guard could stop a build mid-phase.
 - **Budget (unit costs from the cp2 chain):** about 6.5–8 h of wall time and about 46 GiB of /home from one revert. That is the prefix (8,602 s, 22 GiB), an M4 rebuild per fix (1,281 s, 3 GiB) with the M6 and M7 regression, and for P15 with D-06b-1 an M5, M3 (2,181 s, 12 GiB), M6, M7, p12 and R3′ single.
+
+## Hand-offs from the P09 exit review (kongming-261106-0414 §7)
+- **Disk:** two revert cycles to `f7-rerun-green`, the first before D-R3-1 and the second between P15 and D-06b-1. Never start a p12 run or an xApp or kpimon build below 34 GiB of free /home; revert first. Remove each frozen checkout once its step's evidence is committed. The wall estimate is about 11–13 h. /mnt/data has 18 GiB free, floor 5.
+- **Gates per commit:** report §7.2. At D-R3-1, also run M5–M7: the plan's invariant requires them after every agent change (`plan.md:71`), and it overrides step 0's "covered by cp3".
+- **Ordering hazards:**
+  - Each pin bump lands in the same harness commit as the predicate change it needs; rows 143 and 141 fail at the old pins.
+  - The kpimon patch stack: P15, D-06b-1 and the node tag all touch `control.go`. The node-tag patch comes last in `patches.manifest`, and later patches are regenerated whenever an earlier one changes.
+  - P15 replaces row 100's "one action, ID 1, Format 3" predicate at 8 sites: m6, m7, r0, r1, p12 a and c, e2i, and `ts-rung-lib.sh:85`, which covers r2, r3p and s10.
+  - UseIdealRrc=false may move I-2's c. Register how c is judged at cp3 before that commit, and measure the 10-gNB wall rate after it, so that any simTime T3 is ruled before P11.
+  - D-R3-1's new X2 bytes: run the cell-map replay for gNB IDs 2–11 at the new constants.
+- **Register before code:**
+  - the revert plan;
+  - the P15 rows, in a docs commit ahead of the code (not in the same commit as the p12 row);
+  - the P6, P7 and P9 rows, plus P7's SN width;
+  - how c is judged under UseIdealRrc;
+  - the M5–M7 run at D-R3-1;
+  - an additive amendment to row 139: a hex-letter node case built from s10's `e2mgr-node-10.json`, so the TS cell-map path is tested on a key ≥ 10.
+- **User question due before P6:** fix the ns-3 neighbour-loop UB (phase-09, finding) under contract Amendment 4, or disclose it only? The default is disclose-only.

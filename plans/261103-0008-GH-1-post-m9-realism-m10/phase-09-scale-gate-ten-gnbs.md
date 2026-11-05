@@ -13,7 +13,7 @@ M9 ran 2 gNBs, so cell IDs ≥ 10 and the 8-neighbour cap have never been exerci
   - simTime is set from AC6b's rate so that the step takes ≤ 45 min.
 
 ## Design
-- `scripts/gates/gate-s10-scale.sh` (M10 step `s10`) runs lock-step with 10 gNBs and 11 agents (ports 38470 + cellId), the TS xApp and the R3′ predictor (or a scripted Style 5 control through `rc-send.sh` to a cell ≥ 10 if the predictor schedule has no such target [I]; the choice is pre-registered here before the first run). The scenario JSON `scripts/gates/s10-scenario.json` fixes simTime, UEs per gNB, the trigger and the target cell ≥ 10.
+- `scripts/gates/gate-s10-scale.sh` (M10 step `s10`) runs lock-step with 10 gNBs and 11 agents (ports 38470 + cellId), the TS xApp and the R3′ predictor (or a scripted Style 5 control through `rc-send.sh` to a cell ≥ 10 if the predictor schedule has no such target [I]; the choice is pre-registered here before the first run). **As built and pre-registered (`s10-scenario.json`, P09 exit review):** neither of those. The TS xApp decides from the stub QP with authored answers, `[[key(S), …], [key(target), …]]`, two triggers chosen by rule, and the control goes through rc's gRPC. The scenario JSON `scripts/gates/s10-scenario.json` fixes simTime, UEs per gNB, the trigger and the target cell ≥ 10.
 - Neighbour non-vacuity: compare the ns-3 per-UE measurement count (ns-3 trace `LteDlRsrpSinrStats.txt` / `MmWaveSinrTime.txt` per UE per period [I: the source file is fixed in dev]) with the decoded Format 2 neighbour count.
 
 ## Files
@@ -37,8 +37,8 @@ M9 ran 2 gNBs, so cell IDs ≥ 10 and the 8-neighbour cap have never been exerci
 ## Standards ledger (stub)
 | Decision | Document, section | Zotero | Read |
 |---|---|---|---|
-| Neighbour cap of 8 in the KPM UE report (ns-3 model limit, disclosed) | KPM v03.00 §8.2.1.4.2 (Format 2) | `F82PYZVK` | to cite |
-| PSCell change to a cell ≥ 10 | E2SM-RC §8.4.6.3 (via P07) | `JRDTL7XS` | to cite |
+| Neighbour cap of 8 in the KPM UE report (ns-3 model limit, disclosed) | No KPM clause: the cap is ns-3's `E2SM_REPORT_MAX_NEIGH = 8` (`mmwave-enb-net-device.h:71`) on the vendor measurement names `ns3.l3.nbr1..8.*` that the Testbed kpimon decodes. KPM v03.00 §8.2.1.4.2 (Format 2) only carries the per-UE measurement list | `F82PYZVK` | disclosed as a model limit (P09 exit review) |
+| PSCell change to a cell ≥ 10 | E2SM-RC §8.4.6.3 (via P07) | `JRDTL7XS` | cited in P07; s10 only scales the target cell ID |
 
 ## Risks
 - The 10-gNB rate makes 45 min too short for a decision (Medium/Medium). Mitigation: AC6b sizes simTime first; the trigger is placed early.
@@ -88,8 +88,12 @@ Built offline by a subagent (`plans/reports/fullstack-developer-261106-0008-GH-1
   5. `s10_e2ap_ppid70_every_node` is emitted under its pre-registered name.
   6. `--indicationPeriodicity=0.1` is passed explicitly.
 - **Shared-file changes:** `ts-rung-lib.sh` gains `RUNG_NNODES` and `RUNG_SUBSCRIBE_WAIT_S`, with defaults that keep the old behaviour (ledger row 145). `lint.sh` gains three registrations. `no_stray` and `agents_hygiene` miss ports 38480–38481, so s10 adds its own check, `s10_no_socket_on_agent_or_pacer_ports`, rather than change a shared predicate.
-- **Lint:** red only on the host disk watchdog self-test, which hits lint's 60 s bound on a host loaded by the running chain and passes alone. lint.sh is re-run green after the chain, before the harness commit.
-- **Finding for the user (not fixed; outside the contract's T-C list):** ns-3's neighbour loop at `mmwave-enb-net-device.cc:1001-1003` stops at `--sortFlipMap.begin()`, which is undefined behaviour. When a UE's SINR map has 2 entries and the serving cell is the strongest, it drops the only neighbour. On r2 this predicts all 594 KPM blocks that decode 0 neighbours where 1 was measured. It cannot bite with 10 gNBs (s10 needs only 8 of 9 neighbours), but it shapes the KPM neighbour lists of every 2-gNB rung (r0, r2, r3p) and their references. Listed for the user at Stop B as a disclosure candidate.
+- **Lint:** red only on the host disk watchdog self-test. **Corrected at the P09 exit review:** the self-test takes about 62 s even on an idle host, against lint's 60 s bound. 389732b raised the bound to 180 s, and lint was green at 389732b, 19f6ec9, 3cad432, 7456d71 and 510ae30, each run before its commit.
+- **Finding for the user, corrected at the P09 exit review (kongming-261106-0414 §5):** ns-3's neighbour loop at `mmwave-enb-net-device.cc:1001-1003` stops at `--sortFlipMap.begin()`, which is undefined behaviour.
+  - **When it drops the neighbour:** in libstdc++ this decrement returns `begin()` only when the tree has at most 2 entries and its root is the leftmost node. `flip_map` inserts entries by ascending cellId, so the only neighbour is dropped when the UE's map has 2 entries and the serving cell is both **the higher cellId and the strongest**.
+  - **Measured on r2 live1:** node 2 reports its neighbour in all 416 UE ticks; node 3 drops it in 82 of its 178. The rule matches all 594 blocks, and 82 of them decode 0.
+  - **Scope:** s10 cannot hit it (10 entries). It shapes the IPC and KPM neighbour lists of every 2-gNB rung (r0, r2, r3p) and so the ipc component of every 2-gNB reference (M9, cp1, cp2, δ).
+  - **Decision:** fixing it needs contract Amendment 4. It is a **user question due before P10's first ns-3 commit (P6)**, and at the latest before P11 banks references; Stop B is too late. The default without an answer is disclose-only.
 
 ## Prefix chain and p12 at the cp2 pins (2026-11-05 15:20 – 17:40 UTC): 12 of 12 green
 - **What ran:** the frozen-checkout driver `evidence/p09-chain/p09-gate-chain.sh` at harness 673fe7b (cp2 pins, plus docs-only commits), under `systemd-run --user` unit `p09-prefix-673fe7b`, from `f7-rerun-green`. It ran M2, M3, M4, M5, M6, M7, I0, Q8, R0 `--mode single`, R1 `--mode single`, I2 and p12. Every step exited 0, and p12's verdict is PASS with an empty failure list. Wall time was 2 h 40 min.
@@ -146,3 +150,15 @@ Built offline by a subagent (`plans/reports/fullstack-developer-261106-0008-GH-1
   - `stepWallS` 1,869 ≤ 2,700.
 - **Budget:** 177.2 wall s per sim s. The VM root grew by 0.23 GiB, /home stayed at 42 GiB free (watchdog not tripped), and IPC drops and restart counts were all 0.
 - **Evidence:** the verdict layer and `evidence-sha256.txt` for both s10 runs are committed. Their raw files are archived as `/mnt/data/andang-data/ns-o-ran-installation-evidence/plans-evidence-raw-m10-p09b-20261106.tar.zst` with its `.list0`, both in `SHA256SUMS` and verified.
+
+## P09 exit review (kongming-261106-0414): GO-WITH-CHANGES, applied
+- AC15, p12 at the cp2 pins, PPID 70 on every node, the Influx window and the step-2 budget were all verified as non-vacuous from the judge outputs. Nothing needs a re-run at 510ae30: the harness spread is acceptable, because the code the steps ran differs only in the byte-equal verdict writer, the unfired timeout branch and identical defaults.
+- **TS cell-map conjunct is evidenced by replay only (disclosed).** The cp2 TS xApp looks up only the serving key in `cell_map` (`ts_xapp.cpp.style5_en_gnb_ueid.patch:129`) and passes the target key through. `excludeServing [10, 11]` keeps every live lookup below cell 10, so no live TS lookup of a hex-letter key has happened yet; `tsCellMapKeysGe10` comes from `replay-ts-cell-map.py` on the e2mgr records saved after the TS restart. This matches the pre-registration. Planned remedy: an additive row-139 test case with a hex-letter node built from s10's `e2mgr-node-10.json`.
+- **Codex run 6 covered exactly 510ae30.** It reviewed `7456d71..HEAD`, launched right after 510ae30 was committed; the next commit, b3bf4b1, came after it finished.
+- **Measured costs for the budget line:**
+  - prefix M2–I2: 24 GiB of /home, of which M3 took 15;
+  - p12: 8 GiB per run, with a maximum 370 s burst of 3 GiB;
+  - s10: 0.25 GiB;
+  - each frozen checkout: 2.2 GiB.
+- **P12 hand-off:** if vm-exec cannot confirm a stopped unit after 5 tries, it dies without copying the evidence, which stays on the VM. The M10 runner must not revert the VM after such a step.
+- **Phase status: DONE** (AC15 met). P10's hand-offs are in kongming-261106-0414 §7 and in phase-10.
