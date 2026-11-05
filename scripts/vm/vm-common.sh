@@ -141,8 +141,9 @@ wd_end() {
         rc=125
     fi
     WD_DONE=1
-    trap wd_term_exit TERM
+    # a trip exits with TERM still held: restored first, a TERM could turn the recorded trip's 125 into 143
     [ "$rc" -eq 0 ] || exit 125
+    trap wd_term_exit TERM
     [ -z "$WD_TERM_HELD" ] || wd_term_exit
     return 0
 }

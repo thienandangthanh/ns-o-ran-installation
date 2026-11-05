@@ -20,6 +20,8 @@
 #       watchdog's session is empty;
 #  (12) a TERM during the normal end's record (a slow record function): the record (0) is complete, then exit 143;
 #  (13) the same during the record of a trip the end found (hung virsh, the finish bound fires): exit 125, 1 recorded;
+#  (15) with a trip the end found, a TERM at every command of wd_end after its record (a DEBUG trap): exit 125,
+#       1 recorded;
 #  (14) after the normal end, no pkill -s is issued (the one sweep happens when the watchdog is seen gone) and
 #       WD_PID is cleared.
 # Every runner arms its traps with vm-common.sh wd_arm before wd_start, as vm-exec.sh does. In (3)-(10) the watchdog
@@ -252,6 +254,24 @@ rc=$?
 [ "$(grep -c '^pkill .*-s' "$tmp/wd14.signals" 2>/dev/null)" = 1 ] || bad "case 14 swept the session $(grep -c '^pkill .*-s' "$tmp/wd14.signals" 2>/dev/null) times, want 1"
 rec_is 14 0
 gone 14
+# (15) TERM at every command of a trip's end after the record
+rm -f "$tmp/down"
+SELFTEST_VIRSH_HANG=1 WD_FINISH_TIMEOUT_S=3 bash -c '
+    source "$1/vm-common.sh"
+    out="$3"; rec() { echo "$1" >"$out.rec"; }
+    wd_arm "$3" rec
+    wd_start "$3" "$2" 1 $$ /dev/null || exit 3
+    echo "$WD_PID" >"$3.pid"
+    set -T
+    trap '\''[ "${FUNCNAME[0]:-}" = wd_end ] && [ -s "$out.rec" ] && { echo x >>"$out.injected"; kill -TERM $$; }'\'' DEBUG
+    sleep 1.5
+    wd_end "$3" rec
+    exit 0' _ "$here" $((free + 1)) "$tmp/wd15" 2>/dev/null
+rc=$?
+[ -s "$tmp/wd15.injected" ] || bad "case 15's DEBUG injection did not fire"
+[ "$rc" -eq 125 ] || bad "a TERM after a trip's end record exited $rc, want 125"
+rec_is 15 1
+gone 15
 
 [ "$fail" -eq 0 ] && echo "host-disk-watchdog self-test: ok"
 exit "$fail"
