@@ -153,6 +153,19 @@ Rows 130, 131 and 136, amended again before code (2026-11-05, the verification C
 
 Row 130, amended a third time before code (2026-11-05, the narrow Codex run 3 of this phase; it adds a condition and weakens none): the watchdog runs in its own process group (`setsid`, through `wd_start` in `vm-common.sh`, used by `vm-exec.sh` and the self-test). Every path that stops it (the `wd_finish` bound, an unwritable stop request, an early exit without a trip) stops the whole group, TERM and then KILL after 5 s, so no ssh, virsh or timeout child of the watchdog outlives it. The guest shutdown call gets `--kill-after`. The self-test asserts that the watchdog's process group is empty after each of those paths.
 
+Row 130, amended a fourth time before code (2026-11-05, Codex run 4 of this phase, the follow-up review of the third amendment's fix; it adds conditions and weakens none):
+- The runner's EXIT and TERM traps are installed (`wd_arm`) before the watchdog starts. A trip at any moment, including one that sends TERM while `wd_start` is still checking the session, therefore ends in 125 with the record written.
+- A TERM no longer bypasses the finaliser. Every exit, whether a TERM from a trip, an outside TERM, a `die` or a normal end, runs one path:
+  1. It asks the watchdog to stop and lets a trip under way complete, within the existing bound.
+  2. It then stops and reaps the whole watchdog session.
+  3. Only then does it write the record. With the trip latch present the record says `tripped: true` and the exit is 125. An outside TERM with no latch exits 143 and is not recorded as a trip.
+- `wd_start` replaces its fixed 0.2 s sleep with a bounded poll until the watchdog is a session leader. A watchdog that never becomes one fails the start, and the finaliser still stops it.
+- The self-test adds three cases:
+  - an outside TERM while the watchdog is monitoring gives 143, no trip record and an empty session;
+  - an outside TERM during a trip gives 125, a complete `watchdog-tripped.json` and an empty session;
+  - a trip that sends TERM before `wd_start` returns gives 125 with the record and an empty session.
+- Cases 3–7 also assert the record value that the runner writes.
+
 Row 129 notes (2026-11-05, P07 exit review kongming-261105-0536): (1) the row landed in the same commit as its check (8963fa4), so history cannot show it came first; the check is purely additive and weakens nothing. (2) The class "P4" in its last column is a mislabel: it is an ops check (host port reservation), not a P4 identity predicate. (3) Its second condition, that no socket already holds a port in 38470–38499 when the check runs, is a P08 hand-off and gets its own row before code.
 
 Controller rulings on rows 79–100 (2026-11-04, from the inventory's open questions; interpretations, listed for Stop A′): the Influx tag format is R-4's as written (`enGnbUeId:<x2apId>@00F110-<macroEnbId %05X>`, eNB rows `enbUeId:<mmeUeS1apId>@<x2apId>`); row 80's cp1 equality applies only to runs in the R3′ configuration, and M7 is judged by row 79's per-run tie to ns-3's own PDCP trace (M7's five-node setup is not cp1's, so its RNTIs need not equal the frozen map); row 100 reads the action definition format from tshark's E2SM-KPM dissector, not the independent decoder, so no KPM gate depends on the asn1-indep image; the r2 stub table is built from the run's own context files (P07); the `ns3.imsi` vendor measurement stays in the KPM report for now (the contract forbids only an IMSI carried as a gNB-UEID), disclosed, and its removal is a Stop A′ question.
