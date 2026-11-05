@@ -36,8 +36,8 @@
   - **The TS xApp serving cell from Influx.** It is a change to `ts_xapp.cpp.style5_en_gnb_ueid.patch`, or a new patch after it in the TS `patches.manifest`, plus the unit test of row 139.
     - The order stays: prediction, then Influx, then the decision.
     - It sends one Flux query: the UE's UeMetrics points with exactly that `ueId` tag in the last 60 s, keeping `_time` and `e2NodeId` only.
-    - The serving cell is the latest point's node, mapped to its single NR cell key in `cell_map`.
-    - No control is sent, and the reason is logged, when: there is no point (row 125); the latest `_time` holds two or more nodes; the node has no NR cell key, or more than one; or the prediction lacks the serving cell.
+    - The serving cell is the latest point's node, mapped to the one key of that node in `cell_map` that the prediction also names (the node's `…00` Global-ID key is never named).
+    - No control is sent, and the reason is logged, when: there is no point (row 125); the latest `_time` holds two or more nodes; no key of that node in `cell_map` is named by the prediction, or more than one is.
     - The decision formula is unchanged, and the QP answer's order no longer matters.
     - It writes one log line per decision with the serving key and its `e2NodeId`, for diagnosis only. Row 142 judges on the wire.
     - No `ns3.*` field is part of the decision. Rows 128 and 138 judge this.

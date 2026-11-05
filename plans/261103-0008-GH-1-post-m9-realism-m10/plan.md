@@ -217,10 +217,10 @@ The mechanism is the same as M8–M9: a journal in `docs/journals/`, a kongming 
       - **kpimon** adds the tag `e2NodeId` to every UeMetrics point. Its value is the RAN name of the E2 node whose RIC INDICATION carried the point. It is a new patch file, `control/control.go.e2-node-tag.patch`, in `patches.manifest`, at its own commit.
       - **The TS xApp** keeps its order: prediction, then Influx, then the decision. It then:
         - sends one Flux query: the UE's UeMetrics points with exactly that `ueId` tag in the last 60 s, keeping `_time` and `e2NodeId` only, with no field and no `ns3.*` name;
-        - takes the serving cell from the `e2NodeId` of the latest point, mapped to that node's single NR cell key in `cell_map`;
+        - takes the serving cell from the `e2NodeId` of the latest point, mapped to the one key of that node in `cell_map` that the prediction also names (`cell_map` also holds the node's `…00` Global-ID key, which no prediction names);
         - takes the UE IDs from the `ueId` tag, as before;
         - no longer uses the first cell of the QP answer.
-      - **No control is sent, and the reason is logged, when:** there is no point; the latest `_time` holds more than one node; the node has no NR cell key in `cell_map`, or more than one; or the prediction lacks the serving cell.
+      - **No control is sent, and the reason is logged, when:** there is no point; the latest `_time` holds more than one node; no key of that node in `cell_map` is named by the prediction, or more than one is.
       - **No `ns3.*` field is part of the decision.** Row 128 still passes, and row 138 extends it.
       - **Ledger rows 137–142 are registered before any code.** The kpimon commit stays separate from D-06b-1's, so P11 can bisect them.
       - **Until that P10 commit,** the note below describes the cp2 form, which is what the cp2 evidence used.
