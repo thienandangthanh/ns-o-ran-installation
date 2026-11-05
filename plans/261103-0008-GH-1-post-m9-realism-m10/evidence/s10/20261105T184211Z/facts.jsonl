@@ -1,0 +1,43 @@
+{"key":"dev","value":false}
+{"key":"scenarioSha256","value":"c45300cf81cf29c6bb4c86a51d3e31c7c14ff4f62c52460f40aeb0479b318600"}
+{"key":"nodes","value":"enb:1,gnb:2,gnb:3,gnb:4,gnb:5,gnb:6,gnb:7,gnb:8,gnb:9,gnb:10,gnb:11"}
+{"key":"simTimeS","value":8}
+{"key":"ns3TimeoutS","value":3000}
+{"key":"cli","value":"--nMmWaveEnbNodes=10 --handoverMode=NoAuto --simTime=8 --indicationPeriodicity=0.1 --outageThreshold=-1000"}
+{"key":"tCtlSeconds","value":30}
+{"key":"a1Threshold","value":10}
+{"key":"a1ThresholdProvenance","value":"scripts/gates/r2-scenario.json threshold 10 (n2 is a neighbour 5 % above serving, under it), set and reached in the R2 calibration evidence/r2/20261026T140350Z"}
+{"key":"outageThresholdDb","value":-1000}
+{"key":"outageThresholdProvenance","value":"substitution 1: the R0-config null-control run at the default -5 dB counted 5 LTE outage switches (evidence/r0/20261023T073520Z q2OutageSwitches 5; also 065002Z, 065551Z); gated runs use --outageThreshold=-1000"}
+{"key":"positives","value":2}
+{"key":"vmLoadStart","value":" 18:42:14 up  3:42,  0 user,  load average: 0.25, 0.19, 0.59"}
+{"key":"a1PolicyTypeCreated","value":false}
+{"key":"xappImageIds","value":{"trafficxapp": "sha256:98319b65e41ad173c7d6dc5c65b6c23afb5c1e89f00ea36c34192e44c44236fd", "stubqp": "sha256:8bca1cf5f0e8a81be30731424be2402b45e4b46ca0b9dea17144fa72b52f20f0", "stubqpImage": "127.0.0.1:80/stubqp:caa841a11941"}}
+{"key":"a1ThresholdAttempt_live1","value":2}
+{"key":"a1DeliveredAttempt_live1","value":1}
+{"key":"a1mediatorRestart_live1","value":{"fresh": true, "problems": []}}
+{"key":"triggers","value":[{"step": 30, "imsi": 1, "ueId": "enGnbUeId:15@00F110-00001", "serving": 2, "servingKey": "0000000210", "target": 10, "targetKey": "0000000A10"}, {"step": 50, "imsi": 3, "ueId": "enGnbUeId:17@00F110-00001", "serving": 2, "servingKey": "0000000210", "target": 11, "targetKey": "0000000B10"}]}
+{"key":"agentsConnected","value":11}
+{"key":"pacerAbortReason","value":null}
+{"key":"influxEqualsIpc","value":true}
+{"key":"ueTicksWithMoreThan8Measured","value":2338}
+{"key":"decodedNeighbours","value":[8]}
+{"key":"maxDecodedNeighbours","value":8}
+{"key":"ueTicksJudged","value":2338}
+{"key":"cellIdsGe10InKpm","value":[10, 11]}
+{"key":"tsCellMapKeysGe10","value":["0000000A10", "0000000B10"]}
+{"key":"appliedPscellChangesToGe10","value":2}
+{"key":"influxWindowHolds","value":true}
+{"key":"wallRate","value":{"readyLines": 81, "wallPerSimS": 177.181, "wallPerSimSSteady": 179.409, "wallS": 1417.449}}
+{"key":"disk","value":{"vmRootUsedDeltaGiB": 0.225, "evidenceBytes": 188696786, "traceBytes": 5235244, "ns3runBytes": 110777093, "pcapBytes": 5402332}}
+{"key":"minSlack","value":{"T_start": 119.999671, "T_gate": 9.994958, "T_ctl": 29.977191, "W": null}}
+{"key":"lControlLatencyS","value":[0.012841, 0.022809]}
+{"key":"ipcDropped","value":0}
+{"key":"droppedNoSub","value":0}
+{"key":"restartCountsAllZero","value":true}
+{"key":"restartCounts","value":{"live1/hw-go": 0, "live1/kpimon": 0, "live1/rc": 0, "live1/qp-stub": 0, "live1/ts-xapp": 0, "live1/agent-11": 0, "live1/agent-10": 0, "live1/agent-9": 0, "live1/agent-8": 0, "live1/agent-7": 0, "live1/agent-6": 0, "live1/agent-5": 0, "live1/agent-4": 0, "live1/agent-3": 0, "live1/agent-2": 0, "live1/agent-1": 0}}
+{"key":"routeOwner12041","value":{"live1": {"start": {"rtmgr": "service-ricxapp-trafficxapp-rmr.ricxapp:4560", "e2term": "service-ricxapp-trafficxapp-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-trafficxapp-rmr.ricxapp:4560", "e2term": "service-ricxapp-trafficxapp-rmr.ricxapp:4560"}}}}
+{"key":"routeOwner12042","value":{"live1": {"start": {"rtmgr": "service-ricxapp-trafficxapp-rmr.ricxapp:4560", "e2term": "service-ricxapp-trafficxapp-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-trafficxapp-rmr.ricxapp:4560", "e2term": "service-ricxapp-trafficxapp-rmr.ricxapp:4560"}}}}
+{"key":"tsOrStubHeldAckRoute","value":{"live1": true}}
+{"key":"vmLoadEnd","value":" 19:13:23 up  4:13,  0 user,  load average: 1.69, 1.22, 1.07"}
+{"key":"stepWallS","value":1869}

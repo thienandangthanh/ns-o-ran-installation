@@ -134,3 +134,15 @@ Built offline by a subagent (`plans/reports/fullstack-developer-261106-0008-GH-1
   - M2–I2 and p12 passed at 673fe7b, and the s10 dev run at 19f6ec9; the s10 gate of record runs at 510ae30.
   - Between them only the following changed: the s10 gate files, `ts-rung-lib.sh` (row 145, default-preserving), `lint.sh`, `write-verdict.py`, `lib.sh` `gate_finish` (byte-equal verdicts) and `vm-exec.sh` (the timeout branch only).
   - The fork pins (ns-3, oran-interface, e2sim, Testbed) are the cp2 pins throughout.
+
+## s10 gate of record at harness 510ae30, 2026-11-05 18:42–19:14 UTC: PASS (AC15 met)
+- **Run:** `evidence/s10/20261105T184211Z`, `dev: false`. It ran as frozen-driver step 13 with a 5,400 s outer timeout, scenario sha256 `c45300cf…` (unchanged, so no T3).
+- **Validation, item by item:**
+  - `agentsConnected` 11 and `influxEqualsIpc` true.
+  - `ueTicksWithMoreThan8Measured` 2,338, with `decodedNeighbours` [8].
+  - `cellIdsGe10InKpm` [10, 11] and `tsCellMapKeysGe10` [`0000000A10`, `0000000B10`].
+  - `appliedPscellChangesToGe10` 2. The triggers were IMSI 1 at step 30, from en-gNB 2 to cell 10, and IMSI 3 at step 50, from en-gNB 2 to cell 11; both match the dev run, as the rule is deterministic.
+  - `s10_e2ap_ppid70_every_node` passes.
+  - `stepWallS` 1,869 ≤ 2,700.
+- **Budget:** 177.2 wall s per sim s. The VM root grew by 0.23 GiB, /home stayed at 42 GiB free (watchdog not tripped), and IPC drops and restart counts were all 0.
+- **Evidence:** the verdict layer and `evidence-sha256.txt` for both s10 runs are committed. Their raw files are archived as `/mnt/data/andang-data/ns-o-ran-installation-evidence/plans-evidence-raw-m10-p09b-20261106.tar.zst` with its `.list0`, both in `SHA256SUMS` and verified.
