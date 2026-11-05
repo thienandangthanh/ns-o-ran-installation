@@ -166,6 +166,16 @@ Row 130, amended a fourth time before code (2026-11-05, Codex run 4 of this phas
   - a trip that sends TERM before `wd_start` returns gives 125 with the record and an empty session.
 - Cases 3–7 also assert the record value that the runner writes.
 
+Row 130, amended a fifth time before code (2026-11-05, Codex run 5 of this phase, the follow-up review of the fourth amendment's fix; it adds conditions and weakens none):
+- A TERM that arrives between the watchdog's launch and the saving of its pid is held. It is acted on (exit 143 through the finaliser) only once the pid is saved, so the finaliser always knows the session it must stop.
+- The normal end (`wd_end`) holds TERM while it decides the status and writes the record. The run is marked finalised only after the record is written. A held outside TERM then exits 143 after a clean record, and a trip still exits 125.
+- Ownership of the watchdog's session ends when the runner sees the watchdog exit (`wd_finish`). The runner sweeps the session once at that point and forgets the pid, and no later path signals that session id again.
+- The self-test adds four checks:
+  - a TERM held across the launch gives 143 and an empty session;
+  - a TERM during the normal end's record gives a complete record and then 143;
+  - a trip that is recorded during the end still exits 125;
+  - no `pkill -s` is issued after the watchdog has been reaped.
+
 Row 129 notes (2026-11-05, P07 exit review kongming-261105-0536): (1) the row landed in the same commit as its check (8963fa4), so history cannot show it came first; the check is purely additive and weakens nothing. (2) The class "P4" in its last column is a mislabel: it is an ops check (host port reservation), not a P4 identity predicate. (3) Its second condition, that no socket already holds a port in 38470–38499 when the check runs, is a P08 hand-off and gets its own row before code.
 
 Controller rulings on rows 79–100 (2026-11-04, from the inventory's open questions; interpretations, listed for Stop A′): the Influx tag format is R-4's as written (`enGnbUeId:<x2apId>@00F110-<macroEnbId %05X>`, eNB rows `enbUeId:<mmeUeS1apId>@<x2apId>`); row 80's cp1 equality applies only to runs in the R3′ configuration, and M7 is judged by row 79's per-run tie to ns-3's own PDCP trace (M7's five-node setup is not cp1's, so its RNTIs need not equal the frozen map); row 100 reads the action definition format from tshark's E2SM-KPM dissector, not the independent decoder, so no KPM gate depends on the asn1-indep image; the r2 stub table is built from the run's own context files (P07); the `ns3.imsi` vendor measurement stays in the KPM report for now (the contract forbids only an IMSI carried as a gNB-UEID), disclosed, and its removal is a Stop A′ question.
