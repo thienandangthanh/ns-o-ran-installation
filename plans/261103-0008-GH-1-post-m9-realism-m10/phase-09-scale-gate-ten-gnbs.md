@@ -98,3 +98,15 @@ Built offline by a subagent (`plans/reports/fullstack-developer-261106-0008-GH-1
   - The driver tsv, step logs and as-run script are in `evidence/p09-chain/673fe7b/`.
   - The verdict layer and an `evidence-sha256.txt` for each of the 12 run dirs are committed with this record.
   - 1,627 raw files (115 MB) are archived as `/mnt/data/andang-data/ns-o-ran-installation-evidence/plans-evidence-raw-m10-p09a-20261106.tar.zst` (60 MB) with its `.list0`, both added to that folder's `SHA256SUMS` and verified.
+
+## Codex review of the s10 gate (runs 2 and 3 of P09, read-only, 2026-11-06 ~02:50 KST)
+- **Run 2** (`adversarial-review --base 6e157ff`, which covers 389732b and 19f6ec9) found one issue. s10's internal ns-3 bound (simTime × 300 + 600 = 3,000 s, plus 30 s kill-after) plus its setup and post-processing could exceed the driver's 3,600 s outer timeout. The unit would then be stopped before `gate_finish` writes `verdict.json`. **Fix:** the driver gives step 12 a 5,400 s outer timeout, the same as r0 and r1; the gate code is unchanged.
+- **Run 3** (the follow-up review of that fix, `--scope working-tree`) found that 5,400 s adds headroom but is no guarantee. Several shared helpers have no deadline:
+  - the decoder build in `rung_preconditions` (`ts-rung-lib.sh:388`);
+  - `kubectl exec` under `_influx` (`rc-lib.sh:233-234`);
+  - tshark (`pcap-to-lines.py:40`);
+  - the native kpimon decode (`gate-s10-scale.sh:217-218`);
+  - `docker builder prune` inside `gate_finish` (`lib.sh:149, 168`);
+  - the 5,460 s ns-3 rebuild bound (`agents-ns3-run.sh:54-55`).
+- **Triage (Stop A′ ruling 7): non-blocking.** The source is `scripts/vm/vm-exec.sh:104-107` and what follows it. On the outer timeout, vm-exec stops the unit, writes `exit_code` 124, then scrubs and copies the whole run dir: `launch.log`, every check recorded so far and the partial artifacts. The step is red (124, and the driver's cross-check is rc 97) and cannot become green. Only the summary `verdict.json` is missing, not the red run's evidence. The helpers are shared by every rung and have not stalled in any of the more than 30 chain steps since P05.
+- **Fix after the s10 run, in P09, with its own follow-up Codex review:** a central change in vm-exec. When it has to stop a unit, it writes a failing `verdict.json` from the checks recorded so far, with an `outer_timeout` failure. Every gate is covered without a deadline per helper. The stalled-helper paths are listed above for that review.

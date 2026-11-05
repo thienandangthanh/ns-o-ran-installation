@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# P09 VM gate chain driver (the P08 driver with the P09 step list: the cp2 prefix M2-I2, then p12 at the cp2 pins).
+# P09 VM gate chain driver (the P08 driver with the P09 step list: the cp2 prefix M2-I2, then p12 at the cp2 pins;
+# step 12 is the s10 scale gate, run with --dev for its rehearsals and without it for the gate; its 5400 s outer
+# timeout stays above the gate's own worst case, about 600 s of setup, ns-3 bounded at simTime x 300 + 600 + 30 s
+# and its post-processing, so a slow run still writes verdict.json before the unit is stopped).
 #   p09-gate-chain.sh HARNESS_SHA [FIRST_STEP_INDEX] [LAST_STEP_INDEX]   run the chain at one harness SHA, stop at the
 #                                                                       first red step
 #   p09-gate-chain.sh --check-dir RUN_DIR              the per-step run-dir cross-check alone (offline validation)
@@ -63,6 +66,7 @@ steps=(
   "r1|gate-r1-rc-multi-control.sh|5400|--mode single"
   "i2|gate-i2-ts-xapp-install.sh|3600|"
   "p12|gate-p12-kpm-period.sh|3600|"
+  "s10|gate-s10-scale.sh|5400|--dev"
 )
 cd "$frozen" || return 2
 for i in "${!steps[@]}"; do
