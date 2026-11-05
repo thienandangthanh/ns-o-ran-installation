@@ -4,7 +4,7 @@ This note explains how ns-3 scenario-zero reaches the Near-RT RIC after the L-re
 
 ## 1. Outcome and approach
 
-Every E2 node that scenario-zero simulates is served by its own out-of-process E2 agent. ns-3 does not link asn1c or e2sim and does not speak SCTP. Each agent runs in its own container and network namespace, connects to the e2term SCTP **Service** (never a pod IP), and presents itself to the RIC as a separate E2 node. The RIC side is NIST O-RAN-Testbed-Automation v1.8.0 on the L pins, with kpimon-go patched only for an 8-byte TimeStamp.
+Every E2 node that scenario-zero simulates is served by its own out-of-process E2 agent. ns-3 does not link asn1c or e2sim and does not speak SCTP. Each agent runs in its own container and network namespace, connects to the e2term SCTP **Service** (never a pod IP), and presents itself to the RIC as a separate E2 node. The RIC side is NIST O-RAN-Testbed-Automation v1.8.0 on the L pins, with kpimon-go carrying a layered patch set (§6): an 8-byte TimeStamp, configurable KPM periods, eNB measurement lists and a `ueId` tag on UE metrics.
 
 Why this shape:
 
@@ -117,11 +117,22 @@ Facts checked against kpimon's code (`control.go`, `wrapper.c`) and the golden c
 - **Version mismatch, handled by a rule.** The agent encodes with NIST's KPM v3 asn1c; kpimon decodes with its v2 schema. The structures used are identical in both. The rule is never to set a v3-only extension field. The agent's sender type is `ns-3-sim` because v3 limits it to eight characters.
 - **Known dissector noise.** tshark 4.4 still flags two non-indication frames as malformed: NIST's dummy component-config bytes inside the E2SetupRequest (carried unchanged), and kpimon's own subscription request (format 3 action definition encoded with kpimon's v2 schema). Neither comes from this project's code, and the gates require zero malformed indication frames instead.
 
-## 6. kpimon TimeStamp SIZE(8) patch
+## 6. kpimon patches
+
+kpimon-go is built from NIST's pinned commit with a layered patch set. The authority for which patches apply, and in what order, is `install_patch_files/xApps/kpimon-go/patches.manifest` in the Testbed fork. The installer, `additional_scripts/install_xapp_kpi_monitor.sh` (its header comment, lines 38–59), records why each layer exists and which environment variables drive it. The image carries a `patchset.sha256` label derived from the manifest and every listed file, so a stale image is rebuilt rather than reused. The layers are:
+
+| Change | Testbed commits | What it does |
+|---|---|---|
+| 8-byte TimeStamp | 47920a4 | With `KPIMON_TIMESTAMP_SIZE8=true`, decodes the 8-octet KPM v3 TimeStamp (detail below) |
+| KPM periods from config | 4b4a61a, 809fb2d | The reporting period and granularity period come from the xApp descriptor's controls (`KPIMON_REPORTING_PERIOD_MS` and `KPIMON_GRANULARITY_PERIOD_MS`, 100 ms each by default) instead of NIST's fixed 10 s. kpimon subscribes by measurement ID |
+| eNB measurement lists | 75e80ba | An E2 node that registers as an eNB gets its KPM measurement lists from `control/enb-kpm-measurements.json`, because e2mgr 6.0.6 stores no RAN functions for an eNB. This is a disclosed deviation from KPM v03.00 §7.4, which has the node expose its measurements in the RAN Function Definition |
+| `ueId` tag on UeMetrics | 89d45af | Every UeMetrics point carries a `ueId` tag decoded from the KPM Format 2 UE ID: `enGnbUeId:<x2apId>@<plmn>-<macroEnbId>` for an en-gNB-UEID, `enbUeId:<s1apId>@<x2apId>` for an eNB-UEID. The TS xApp reads this tag to build its RC control |
+
+### 6.1 TimeStamp SIZE(8)
 
 **Problem.** kpimon's decoder is pre-generated asn1c C for E2SM-KPM v2.0, with `TimeStamp ::= OCTET STRING (SIZE(4))`. KPM v3 nodes, including NIST's reference node, send an 8-byte TimeStamp. The stock decoder returns `RC_WMORE` for the header (and a SIZE(4) decoder that does return `RC_OK` consumes only part of the header and yields a wrong timestamp).
 
-**Change.** `KPIMON_TIMESTAMP_SIZE8=true` makes `install_xapp_kpi_monitor.sh` apply two patches from `install_patch_files/xApps/kpimon-go/e2sm/`: the schema (`asn1/kpm2_0.asn.timestamp-size8.patch`) and the generated constraint tables (`lib/TimeStamp.c.timestamp-size8.patch`). Nothing else in kpimon changes.
+**Change.** `KPIMON_TIMESTAMP_SIZE8=true` makes `install_xapp_kpi_monitor.sh` apply two patches from `install_patch_files/xApps/kpimon-go/e2sm/`: the schema (`asn1/kpm2_0.asn.timestamp-size8.patch`) and the generated constraint tables (`lib/TimeStamp.c.timestamp-size8.patch`). This layer changes only the TimeStamp type. The other layers are in the table above.
 
 **Proof that it is a regeneration, not a hand edit** (`tools/kpimon-asn1-regen/regen-check.sh`, run by gate M3):
 
