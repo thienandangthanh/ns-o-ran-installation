@@ -62,3 +62,17 @@ Do these in order, after the Stop A′ rulings.
 4. **Record that the 60 s Influx window holds** at s10's report rate (kongming-261105-0536).
 5. **The s10 scenario must steer at least one UE to a cell ≥ 10,** so AC15's applied PSCell change reaches a hex-letter cell.
 
+## Stop A′ rulings that bind this phase (2026-11-05 23:38 KST, `plans/reports/decisions-261105-2349-GH-1-m10-stop-a-prime-rulings.md`)
+- **The serving cell (ruling 1).** P09 runs at the cp2 pins, so the TS xApp still takes the serving cell from the QP answer's first entry, as the cp2 form (phase-07 controller note). The R-4 change lands in P10, and s10 is re-validated at cp3 in P11 with the new TS xApp.
+- **A docs commit (extra item).** Fix the kpimon description in `docs/system-architecture-l-release.md`, as its own docs commit in this phase:
+  - line 7 ("patched only for an 8-byte TimeStamp") and §6 ("Nothing else in kpimon changes") are out of date;
+  - describe all our layered changes:
+    - the 8-byte TimeStamp (47920a4);
+    - the configurable reporting and granularity periods, with subscription by measurement ID (4b4a61a, 809fb2d);
+    - the eNB measurement lists from `enb-kpm-measurements.json` (75e80ba);
+    - the `ueId` tag on UeMetrics (89d45af);
+  - point to `install_xapp_kpi_monitor.sh:38-59` and `patches.manifest` as the authority, without copying their detail.
+- **VM image prune (ruling 3):** dangling images only, and only above 75 % guest root. Log `docker system df` and the removed IDs before and after. Never during a gate.
+- **Codex triage (ruling 7):** kongming-261105-1050's rule. No harness commit lands while a chain runs.
+- **/mnt/data (ruling 8):** 18 GiB free. Archive this phase's raw evidence to the existing location.
+

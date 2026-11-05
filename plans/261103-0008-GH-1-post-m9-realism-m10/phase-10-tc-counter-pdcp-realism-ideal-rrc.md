@@ -28,6 +28,24 @@
 - **P9:** credit `DRB.PdcpSduVolume*` (NRCellCU) only with PDCP SDU volume that the en-gNB's own CU handles. In EN-DC with an MN-terminated split bearer, the honest value for the en-gNB cell is the SDU volume routed via the SN [I: exact definition per 28.552 §5.1.2.1.1.1, read at the phase]. The header size comes from the NR header (P7). The predictor keeps its formula and reads the corrected counter (approved open point 2). Any predictor predicate change gets an AC18 row.
 - **P15 (contract Amendment 3, Stop A ruling S3, `plans/reports/decisions-261104-0214-GH-1-m10-stop-a-rulings.md`):** the agent answers a KPM action with the format that action asked for. Today it sends cell Format 1 and UE Format 2 under the one admitted action, whatever the action definition says; kpimon asks Format 3 by ID, and E2SM-KPM v03.00 answers a Format 3 action with indication Format 2 only (Zotero `F82PYZVK`; cite the clause at the phase). The fix [I, sized by the P05 scoping read]: kpimon subscribes a Format 1 action per ns-3 cell next to the Format 3 action; the agent routes each report to its own action (Format 1 → Format 1, Format 3 → Format 2); p12's judge and its references are re-baselined, with an AC18 row. If the P05 read found the F7 limit, this item is record-only instead and this bullet is replaced by the record.
 - **UseIdealRrc probe:** one R3′-config run with `false` (scenario-zero global, default unchanged until the probe passes).
+- **R-4 serving cell (Stop A′ ruling 1, 2026-11-05; `plans/reports/decisions-261105-2349-GH-1-m10-stop-a-prime-rulings.md`; plan R-4; ledger rows 137–142, registered before code):**
+  - **kpimon node tag.** A new layered patch, `install_patch_files/xApps/kpimon-go/control/control.go.e2-node-tag.patch`, is listed after `control.go.ue-id-tag.patch` in `patches.manifest`.
+    - It adds the tag `e2NodeId` = `params.Meid.RanName` to every UeMetrics point, for the eNB too.
+    - The image's `patchset.sha256` label follows from the manifest.
+    - Row 137 judges it.
+  - **The TS xApp serving cell from Influx.** It is a change to `ts_xapp.cpp.style5_en_gnb_ueid.patch`, or a new patch after it in the TS `patches.manifest`, plus the unit test of row 139.
+    - The order stays: prediction, then Influx, then the decision.
+    - It sends one Flux query: the UE's UeMetrics points with exactly that `ueId` tag in the last 60 s, keeping `_time` and `e2NodeId` only.
+    - The serving cell is the latest point's node, mapped to its single NR cell key in `cell_map`.
+    - No control is sent, and the reason is logged, when: there is no point (row 125); the latest `_time` holds two or more nodes; the node has no NR cell key, or more than one; or the prediction lacks the serving cell.
+    - The decision formula is unchanged, and the QP answer's order no longer matters.
+    - It writes one log line per decision with the serving key and its `e2NodeId`, for diagnosis only. Row 142 judges on the wire.
+    - No `ns3.*` field is part of the decision. Rows 128 and 138 judge this.
+  - **Harness.**
+    - `influx-vs-trace.py` (row 137), `ts-patches-selftest.sh` (row 138), `ts-influx-query-selftest.sh` and its fixture (row 140).
+    - `r2-scenario.json` (row 141): steps 30 and 40 list the serving cell second.
+    - The new check `<rung>_<label>_wire_control_node_holds_the_ue_in_ns3_context` in `ts-rung-lib.sh` (row 142).
+  - **Docs.** Update the kpimon section of `docs/system-architecture-l-release.md` (fixed in P09) with the node tag, in the kpimon commit's docs follow-up.
 
 ## Files
 - ns-3: `ns-3-mmwave-oran/src/lte/model/mc-enb-pdcp.cc`, `mc-enb-pdcp.h`, `mc-ue-pdcp.cc`, `mc-ue-pdcp.h`, `lte-ue-rrc.cc`, `lte-enb-rrc.cc`, `lte-rlc-am.cc`, `lte-pdcp.cc` (assertion only), new `src/lte/model/nr-pdcp-header.cc/.h`, `ns-3-mmwave-oran/src/lte/CMakeLists.txt`, `src/mmwave/model/mmwave-enb-net-device.cc`, `scratch/scenario-zero.cc` (`:483`).
@@ -46,6 +64,11 @@
    - (d) M6/M7.
 3. P9 commit; the counter totals check (`check-pdcp-volume-totals.py`) is updated with an AC18 row; R3′ single run.
 3b. P15 commit(s) (agent per-action routing, kpimon per-cell Format 1 action) on the fork branches; p12 judge change with its ledger row in the same commit; M6, p12, R3′ single run.
+3c. D-06b-1 (Stop A′ ruling 5): first row 81's amendment, then its own commit. It is not squashed into P15.
+3d. R-4 serving cell (Stop A′ ruling 1), in two commits:
+   - (i) the kpimon `e2NodeId` patch (Testbed), separate from the D-06b-1 commit, then a kpimon rebuild with M6, M7 and p12 (row 137);
+   - (ii) the TS xApp change (Testbed): its unit test (row 139), lint (rows 138, 140), and the R2 single and R3′ single runs, with `r2-scenario.json`'s row 141 change and row 142's check landing in the same harness commit, before the Testbed pin moves.
+   - After (i), update the kpimon section of `docs/system-architecture-l-release.md`, as its own docs commit.
 4. UseIdealRrc probe: one run at `false`. Pass → commit `false` as the only setting. Fail → S-R, with evidence recorded.
 5. Phase exit (checkpoint 3 is P11).
 
@@ -55,6 +78,16 @@
 - P9: `check-pdcp-volume-totals.py` green under the registered predicate.
 - P15: every RIC INDICATION's format equals its action's requested format in the decoded capture (Format 1 action → Format 1, Format 3 action → Format 2); p12 green under the re-baselined judge; or the record-only entry with the P05 evidence.
 - Probe verdict: `useIdealRrc: false`, `appliedPscellChanges ≥ 1`, run completed, or the S-R record.
+- R-4 serving cell: rows 137–142 green. Every UeMetrics point carries its reporting node's `e2NodeId`. The TS unit test passes. R2 is green with steps 30 and 40 reordered. Every R2 and R3′ RICcontrolRequest goes to the en-gNB that holds its UE in the ns-3 context (row 142).
+
+## Stop A′ rulings that bind this phase (2026-11-05)
+- **Before P10 starts:**
+  - Re-read `df -BG /mnt/data` (ruling 8; 18 GiB at 23:52 KST on 2026-11-05).
+  - Any VM image prune follows plan "Constraints" ruling 3: dangling only, above 75 % guest root, logged before and after, never during a gate.
+- **Codex triage:** kongming-261105-1050's rule (ruling 7). No harness commit lands while a chain runs.
+- **`ns3.imsi`** stays a vendor measurement (ruling 4). The AC16 lint classifies it under `ns3.*`.
+- **Commit order for P11's bisection:** P6, P7, P9, P15, D-06b-1, the kpimon node tag, the TS serving cell, then UseIdealRrc. One fix per commit; no two of them share a commit.
+- **Budget:** the TS xApp and kpimon rebuilds with their M6, M7, p12, R2 and R3′ regressions add about 1.5–2 h [I] to the 6.5–8 h above.
 
 ## Standards ledger (stub)
 | Decision | Document, section | Zotero | Read |

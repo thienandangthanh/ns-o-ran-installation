@@ -34,8 +34,9 @@ After each checkpoint the compliant behaviour is the only behaviour (R1, R8). Ev
 
 ## Resume card (filled at execution; update before every VM operation > 10 min and at every phase exit)
 ```text
-last-updated: 2026-11-05 17:00 KST
-current phase: P08 DONE → Stop A′ (PAUSE A′; journal docs/journals/2026-11-05-m10-stop-a-prime.md, 8 questions with defaults). Next after the rulings: P09 (start with its "Hand-offs from the P08 exit review": p12 at the cp2 pins first). Disk 2026-11-05 16:40: /home 56.9 GiB (about 80 after the next revert), /mnt/data 6.24 GiB (floors 20 / 5).
+last-updated: 2026-11-05 23:55 KST
+current phase: Stop A′ RULED (2026-11-05 23:38 KST, plans/reports/decisions-261105-2349-GH-1-m10-stop-a-prime-rulings.md) → P09 (start with its "Hand-offs from the P08 exit review": p12 at the cp2 pins first; then the kpimon docs commit). Disk 2026-11-05 23:52: /home 57 GiB (about 80 after the next revert), /mnt/data 18 GiB (floors 20 / 5).
+Stop A′ rulings (2026-11-05 23:38): Q1 NOT default = R-4 as written (kpimon e2NodeId tag + TS xApp serving cell from the UE's latest Influx row, P10, rows 137–142, own commits, separate from D-06b-1); Q2 rows 106/120/121 confirmed; Q3 narrow prune rule (dangling only, > 75 % guest root, logged); Q4 keep ns3.imsi; Q5 D-06b-1 in P10 at its own commit, row 81 first; Q6 NOT default = verify the R-3 bandwidth rows against Zotero now; Q7 kongming-261105-1050 Codex triage rule; Q8 /mnt/data 18 GiB, recheck before P10 and P11. Extra: kpimon section of docs/system-architecture-l-release.md fixed in P09 (own docs commit), updated again in P10.
 P08: DONE (AC8b ✓ δ 0, G2 ✓ δ 150/500: transformEqualsM9 true, 17 fields + meid without occurrence; harness dd27868, one chain of 20/20 from f7-rerun-green, frozen-checkout driver, evidence/cp2-chain/dd27868). Red #1 at 668d1ef step 15 (runner edited mid-run; kongming-261105-1050; guided fix = frozen checkout + run-dir cross-check). Codex runs 1–7 (fixes 4111713 1a4e528 dc0cf0b ea8b681 791e405 749fbd0 668d1ef 33b4992 293957f 0d32a88; run 7 approve). Exit review GO-WITH-CHANGES (kongming-261105-1606): record notes made, I-1 steps 2/3 corrected (SN↔SN in ns-3), budget re-projected. Verdict layer 23cdb3e; raw archives …-m10-p08a/p08b-20261105.tar.zst.
 P07: DONE (AC14 ✓, AC14b RIC half ✓, G1 ✓, S1 ✓; harness 7ef324f, Testbed 36dbcc3, ns-3 ea6e46f6, oran-interface 53253fe). Chain M2 → seam smoke green after three reds fixed (M5 asn1c ASan hang faeeb34 + VM revert; R1 port bind 8963fa4 row 129; R2 Flux schema collision 36dbcc3); R1 C1 incl. f2 r1/20261104T201649Z. Exit review GO-WITH-CHANGES (kongming-261105-0536): Failure Protocol skip recorded, R-4 note (plan R-4, Stop A′ Q1), floor breach recorded, M9 dry compare committed (r3p/20261104T194024Z/reference-compare-m9-dry.json). Verdict layer bbe0e8c; raw archive …-m10-p07-20261105.tar.zst.
 P02: DONE (AC8 run 1 ✓ evidence/r3p/20261103T024628Z; M4–M7 ✓; verdicts in 73068f1). kongming GO-WITH-CHANGES: KPM move judge δ-aware 281d709 (ledger row 56); seam smoke extended 1cf145f (d100tie, d150stop, pins + emitter SHAs) — run it via `vm-exec.sh probes/probe-delta-seam-smoke.sh` (08f72bc) after the P03 chain, before any P04 δ run. Exit record in phase-02.
@@ -46,7 +47,7 @@ Stop A rulings (2026-11-04): S1 gap 5 = A (P07 emitter change); S2 gap 15 = A + 
 P05: DONE (AC11 dev form ✓: chain-2 GREEN 19:20–20:54Z at 9a95504, every node PPID 70 at every gate, r3p single equalsReference vs the M9/cp1 reference). Attempt 1 M5 red = stale HEAD-keyed agent image → fix 9a95504 (rows 64–65, kongming-261104-0410). Exit review GO-WITH-CHANGES (kongming-261104-0600): kpm_sim --source-ip (row 66, offline proof), S3 record corrected (eNB in P15; P10 decoder = P06 X2AP codec), P06 hand-offs written. Raw evidence archived (…-m10-p05-20261104.tar.zst).
 P06: DONE (AC12 ✓, AC13 ✓; harness b583d51, TESTBED_SHA 3163900): M2/M3/i2/M5/M6/M7 ✓ under the R-3 meids, kpimon-enb-probe ✓, e2i ✓ run 4 evidence/e2i/20261104T025747Z (runs 1–3 forced cdd66b1 TS deregistered while scaled down, d0c3edb one X2 component per named peer = row 77, b583d51 unit-test matcher), R0/R1/R2 single ✓ (m0–m7 plan evidence r0/030306Z, r1/031150Z, r2/032002Z). Exit review GO-WITH-CHANGES (kongming-261104-1340): tsXappDownDuringInjector fact → check (row 78, offline recompute true), rows 39/55 notes, disclosures, hand-offs into P06b/P07/P09/P12; standards rows cited (368b740 + five more).
 P06b: DONE (AC14b codec/context/Influx ✓; harness 28d4508, rows 79–105; pins Testbed 89d45af, ns-3 e5b02094, oran-interface e5ad09d): final M6/M7/R0/R1/P12 ✓ (evidence m6/093457Z, m7/093642Z with the Influx ueId→IMSI check on all five nodes, r0/100125Z, r1/102205Z, p12/104145Z); M3/M4/M5 ✓; r3p single r3p/082155Z cp1 byte-equal on ledger/ipc/traces (reference-compare-cp1*.json), its two via-source checks red by design until P07. M7 attempt 1 red = IP attribution after agent restarts → association attribution (row 101, d8e7692). Codex pre-ship audit: 4 findings accepted (rows 102–105, 28d4508). Exit review GO-WITH-CHANGES (kongming-261104-1958): cp1 compare committed, D-06b-1 (MeNB X2AP ID before DC) scheduled in P10 with P15, per-seq agent context → P07, decode-harness records self-test committed, P07 hand-offs. Raw evidence archived (…-m10-p06b-20261104.tar.zst).
-VM / snapshots / host free: VM running on the f7-rerun-green overlay ubuntu24.1793845269 (cp2 chain, 23 GiB allocated; no docker prune since P06b, pending Stop A′ Q3); snapshots fresh-install f7-rerun-green m0-probe-{d11021754,n,o,p,q} r0-green r2-green r3p-green; /home 56.9 GiB, /mnt/data 6.24 GiB (2026-11-05 16:40).
+VM / snapshots / host free: VM running on the f7-rerun-green overlay ubuntu24.1793845269 (cp2 chain, 23 GiB allocated; no docker prune since P06b; the Stop A′ Q3 rule now governs any prune); snapshots fresh-install f7-rerun-green m0-probe-{d11021754,n,o,p,q} r0-green r2-green r3p-green; /home 57 GiB, /mnt/data 18 GiB (2026-11-05 23:52).
 fork SHAs (pins.conf): Testbed 554d6d61, ns-3 ea6e46f6, oran-interface 53253fe2, e2sim e2705816 (= cp2 pins; cp1 pins: Testbed 809fb2d3, ns-3 48d41a50, oran-interface b2342c66, e2sim 2209995a)
 checkpoint tags: m10-cp1 = 83443e1 (pushed, all 5 repos), m10-cp2 = dd27868 (annotated; pushed, all 5 repos, forks at their pins), m10-cp3 (none)
 in-flight jobs: none
@@ -58,6 +59,15 @@ in-flight jobs: none
 - No T-A code lands before tag `m10-cp1`; no T-C code lands before `m10-cp2`.
 - Snapshots `fresh-install` and `f7-rerun-green` are never deleted; leaked overlays are deleted only under the 2026-10-28 ruling.
 - Disk: ≥ 20 GiB free on /home in dev; end-run watchdog trip 37 GiB (h = 12, R11); /mnt/data per the budget line.
+- **VM image prune (Stop A′ ruling 3):**
+  - Allowed: only `docker image prune -f`, which removes dangling (untagged) images. Never `-a`, never a tagged image, and never during a gate.
+  - Only when the guest root is above 75 %.
+  - Log `docker system df` and the removed image IDs before and after, in the phase's evidence.
+  - The rule also covers P06b's prune.
+- **Codex triage (Stop A′ ruling 7, kongming-261105-1050):**
+  - A finding blocks the next chain only if, on a realistic path, it can turn a clean run red, turn a red run green, or lose a red run's evidence.
+  - Other findings get a ledger note now, and a fix after the chain in the same phase, each with its own follow-up Codex review.
+  - No harness commit lands while a chain runs.
 - Free run stays the ns-3 default; M5–M7 re-pass after every agent or ns-3 change.
 - An xApp image is used only if it carries its pinned patch-set digest (stale-image guards for rc, kpimon and the TS xApp).
 - Write "TS xApp" (the xApp) vs "3GPP TS <n>" (the spec). No secrets in any tree; the Influx token never leaves the cluster (T7).
@@ -77,7 +87,7 @@ in-flight jobs: none
 | P06b | MC | [P4 KPM UE IDs: X2AP context export, en-gNB-UEID/eNB-UEID in KPM, kpimon → Influx](phase-06b-kpm-ue-ids-x2ap-context-export.md) | AC14b (codec, context, Influx gates; R2/R3′ integration exits in P07) | done 2026-11-04 (harness 28d4508; kongming-261104-1958 GO-WITH-CHANGES) |
 | P07 | MC | [P4/P1/P13: Style 5 action 3 to the source en-gNB](phase-07-rc-style5-pscell-change-source-en-gnb.md) | AC14; AC14b integration (R2/R3′ green with the migrated UE-ID consumers); gap 5 option A (S1); seam smoke migrated and re-run (G1) | done 2026-11-05 (harness 7ef324f; kongming-261105-0536 GO-WITH-CHANGES) |
 | P08 | MC | [Checkpoint 2: transform-compare, negative fixtures, tag](phase-08-checkpoint-2-transform-compare.md) | AC8b; d150 and d500 transform-compare against the cp1 δ references (G2) | done 2026-11-05 (m10-cp2 = dd27868; chain 20/20; kongming-261105-1606 GO-WITH-CHANGES) |
-| — | — | **Stop A′** | user | paused 2026-11-05 (journal 2026-11-05-m10-stop-a-prime) |
+| — | — | **Stop A′** | user | ruled 2026-11-05 23:38 KST (journal 2026-11-05-m10-stop-a-prime; `decisions-261105-2349-GH-1-m10-stop-a-prime-rulings.md`) |
 | P09 | MD | [Scale gate, ≥ 10 gNBs](phase-09-scale-gate-ten-gnbs.md) | AC15 (cp2 pins; re-validated at cp3 in P11) | pending |
 | P10 | ME | [T-C fixes P6/P7/P9 and the UseIdealRrc probe](phase-10-tc-counter-pdcp-realism-ideal-rrc.md) | AC16 (fixes), AC17; P15 fix (S3, Amendment 3) | pending |
 | P11 | ME | [Checkpoint 3: rehearsals, Codex audit, new references incl. all δ, diff report, tag](phase-11-checkpoint-3-references-diff-report.md) | AC16 (checkpoint 3), AC9 re-bank, AC4 rehearsals; seam smoke re-run (G1); per-step host growth (S5) | pending |
@@ -132,6 +142,7 @@ The mechanism is the same as M8–M9: a journal in `docs/journals/`, a kongming 
   - Every phase records `df -BG /mnt/data`.
   - Only images this plan built may be pruned.
   - If a new image or archive copy would leave < 5 GiB, that is PAUSE T2 (floor confirmed at Stop A, ruling S7).
+  - **Stop A′ ruling 8 (2026-11-05):** the user removed unused host podman images. /mnt/data now has 18 GiB free (controller df at 23:52 KST), so the floor is met. Raw evidence keeps going to `/mnt/data/andang-data/ns-o-ran-installation-evidence/`. Re-read `df -BG /mnt/data` before P10 and again before P11.
 - **Watchdog:** h = 12 GiB, trip 37 GiB (R11). `disk-burst-h.py` must confirm no measured 370 s burst exceeds 12, else Decision required.
 - **Wall:** W′ = ceil(1.5 × Σ longest green per step).
   - The M9 green run took 12,584 s, and the M9 budget sum is 13,466 s (`m9-budget.md:28`).
@@ -202,7 +213,18 @@ The mechanism is the same as M8–M9: a journal in `docs/journals/`, a kongming 
 - **Influx UE key:** kpimon stores the decoded UE ID as tag `ueId` = `enGnbUeId:<x2apId>@<plmn>-<macroEnbId hex>` (eNB rows: `enbUeId:<mmeUeS1apId>@<x2apId>`) [I, format pre-registered here].
   - The AD stand-in (`send-rmr.sh anomaly`) names the UE by that key, read from Influx.
   - The TS xApp reads the UE's latest row by key from Influx (serving cell and ID fields) to build the control.
-    - **Pre-registration change (2026-11-04, controller note during P07; Stop A′ question 1, default "accept"):** the UeMetrics rows carry the serving cell only as an `ns3.*` field, which row 128 forbids. So the TS xApp keeps the QP prediction answer's first cell as the serving cell, reads Influx only to confirm that a UeMetrics row with exactly the trigger's `ueId` tag exists in the last 60 s (no row, no control: row 125), and fills `EnGnbUEID` from the parsed tag. This changed the pre-registered form after the phase started, which is T3 by the letter. It is treated as non-material because AC14 and AC14b still hold and checkpoint 2's evidence does not depend on it (`phase-07-…md`, "Integration interfaces" item 5 controller note; exit review `kongming-261105-0536`).
+    - **Stop A′ ruling 1 (2026-11-05 23:38 KST, `plans/reports/decisions-261105-2349-GH-1-m10-stop-a-prime-rulings.md`): R-4 as written. It lands in P10.**
+      - **kpimon** adds the tag `e2NodeId` to every UeMetrics point. Its value is the RAN name of the E2 node whose RIC INDICATION carried the point. It is a new patch file, `control/control.go.e2-node-tag.patch`, in `patches.manifest`, at its own commit.
+      - **The TS xApp** keeps its order: prediction, then Influx, then the decision. It then:
+        - sends one Flux query: the UE's UeMetrics points with exactly that `ueId` tag in the last 60 s, keeping `_time` and `e2NodeId` only, with no field and no `ns3.*` name;
+        - takes the serving cell from the `e2NodeId` of the latest point, mapped to that node's single NR cell key in `cell_map`;
+        - takes the UE IDs from the `ueId` tag, as before;
+        - no longer uses the first cell of the QP answer.
+      - **No control is sent, and the reason is logged, when:** there is no point; the latest `_time` holds more than one node; the node has no NR cell key in `cell_map`, or more than one; or the prediction lacks the serving cell.
+      - **No `ns3.*` field is part of the decision.** Row 128 still passes, and row 138 extends it.
+      - **Ledger rows 137–142 are registered before any code.** The kpimon commit stays separate from D-06b-1's, so P11 can bisect them.
+      - **Until that P10 commit,** the note below describes the cp2 form, which is what the cp2 evidence used.
+    - **Pre-registration change (2026-11-04, controller note during P07; superseded by Stop A′ ruling 1 from P10's TS xApp commit on):** the UeMetrics rows carry the serving cell only as an `ns3.*` field, which row 128 forbids. So the TS xApp keeps the QP prediction answer's first cell as the serving cell, reads Influx only to confirm that a UeMetrics row with exactly the trigger's `ueId` tag exists in the last 60 s (no row, no control: row 125), and fills `EnGnbUEID` from the parsed tag. This changed the pre-registered form after the phase started, which is T3 by the letter. It is treated as non-material because AC14 and AC14b still hold and checkpoint 2's evidence does not depend on it (`phase-07-…md`, "Integration interfaces" item 5 controller note; exit review `kongming-261105-0536`).
   - The R3′ predictor and the stub map the key back to the IMSI through the run's `e2-ue-context-*.jsonl` (harness side), so the predictor records keep `imsi`.
 - **Resolution in ns-3:**
   - The source SN finds the UeManager whose stored `lteRnti` and MN cell match, and checks that it is the UE's **current** SN (not a stale `RlcBearerInfo`). Otherwise the line is refused `unknownUe`, with `imsi` 0 (ns-3 IMSIs start at 1).

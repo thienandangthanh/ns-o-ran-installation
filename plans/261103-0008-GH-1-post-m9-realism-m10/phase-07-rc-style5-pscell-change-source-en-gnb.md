@@ -88,7 +88,12 @@ The ledger rows 106–128 and the rulings after them use these forms. A change t
    - Gap 5 (S1): `E2IpcEmitter::Stop()` skips `DeliverInbound()` once the hub is stopping.
    - Samples, traces and the ledger of a run with no control stay byte-identical to checkpoint 1 (step 3 byte-compare).
 5. **Influx and the TS xApp:** the TS xApp builds the control after the QP prediction. It reads the latest UeMetrics row with the trigger's `ueId` tag from the node that currently reports the UE (latest seq), takes its serving cell, and addresses `cell_map[serving cell]`. It fills `EnGnbUEID` from the tag, never from an `ns3.*` field (row 128). Influx is read with in-cluster credentials (T7). A well-formed `ueId` with no Influx row produces no RIC CONTROL (row 125).
-   - **Controller note (2026-11-04, from the Testbed implementation, before any `ts_xapp.cpp` change; supersedes the serving-cell part of item 5 and of the Design's TS xApp bullet):**
+   - **Stop A′ ruling 1 (2026-11-05 23:38 KST; `plans/reports/decisions-261105-2349-GH-1-m10-stop-a-prime-rulings.md`): the user did not accept this controller note.** Item 5 stands as written.
+     - The note below stays as the record of the cp2 form. The TS xApp at `m10-cp2` behaves exactly as it says.
+     - P10 replaces it: kpimon tags each UeMetrics point with its reporting E2 node (`e2NodeId`). The TS xApp then takes the serving cell and the UE IDs from the UE's latest Influx row.
+     - The forms are in plan R-4 and the phase-10 scope. Ledger rows 137–142 are registered before code.
+     - The note's first bullet ("Reading the serving cell from Influx would therefore break row 128") no longer applies. The serving cell comes from a kpimon tag, not from an `ns3.*` field.
+   - **Controller note (2026-11-04, from the Testbed implementation, before any `ts_xapp.cpp` change; supersedes the serving-cell part of item 5 and of the Design's TS xApp bullet; itself superseded from P10's TS xApp commit on by Stop A′ ruling 1):**
      - The UeMetrics rows carry the reporting node, the seq and the serving cell only as `ns3.*` fields. kpimon tags only `ueId`. Reading the serving cell from Influx would therefore break row 128.
      - So the TS xApp keeps its existing source for the serving cell, the QP prediction answer. The first cell of the UE's entry is the serving cell (`ts_xapp.cpp:225-227`, `handler.serving_cell_id`), and the TS xApp addresses `cell_map[serving cell]`.
      - Influx is read only to confirm that at least one UeMetrics row carries exactly the trigger's `ueId` tag. Without such a row, the TS xApp sends no RIC CONTROL and logs it (row 125). The query names only the measurement, the `ueId` tag and the time, so row 128 stands unchanged.
