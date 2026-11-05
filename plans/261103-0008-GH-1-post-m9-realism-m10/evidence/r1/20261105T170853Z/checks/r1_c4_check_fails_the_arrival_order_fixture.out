@@ -1,0 +1,7 @@
+step 30: [(3, 2, 3, 'refused', 'alreadyOnTarget'), (3, 3, 2, 'applied', '')] step 40 rx order: [3, 2] step 40: [(3, 0, 'refused', 'unknownUe'), (2, 3, 'applied', '')]
+ok   c4 fails the arrival-order fixture
+step 30: [(3, 2, 3, 'refused', 'inHandover'), (3, 3, 2, 'applied', '')] step 40 rx order: [3, 2] step 40: [(3, 0, 'refused', 'unknownUe'), (2, 3, 'applied', '')]
+ok   c4 passes the sort-order counterpart
+step 30: [(3, 2, 3, 'refused', 'inHandover'), (3, 3, 2, 'applied', '')] step 40 rx order: [2, 3] step 40: [(3, 0, 'refused', 'unknownUe'), (2, 3, 'applied', '')]
+ok   c4 fails when node 2's control arrived first
+r0-checks self-test: ok

@@ -90,3 +90,11 @@ Built offline by a subagent (`plans/reports/fullstack-developer-261106-0008-GH-1
 - **Shared-file changes:** `ts-rung-lib.sh` gains `RUNG_NNODES` and `RUNG_SUBSCRIBE_WAIT_S`, with defaults that keep the old behaviour (ledger row 145). `lint.sh` gains three registrations. `no_stray` and `agents_hygiene` miss ports 38480–38481, so s10 adds its own check, `s10_no_socket_on_agent_or_pacer_ports`, rather than change a shared predicate.
 - **Lint:** red only on the host disk watchdog self-test, which hits lint's 60 s bound on a host loaded by the running chain and passes alone. lint.sh is re-run green after the chain, before the harness commit.
 - **Finding for the user (not fixed; outside the contract's T-C list):** ns-3's neighbour loop at `mmwave-enb-net-device.cc:1001-1003` stops at `--sortFlipMap.begin()`, which is undefined behaviour. When a UE's SINR map has 2 entries and the serving cell is the strongest, it drops the only neighbour. On r2 this predicts all 594 KPM blocks that decode 0 neighbours where 1 was measured. It cannot bite with 10 gNBs (s10 needs only 8 of 9 neighbours), but it shapes the KPM neighbour lists of every 2-gNB rung (r0, r2, r3p) and their references. Listed for the user at Stop B as a disclosure candidate.
+
+## Prefix chain and p12 at the cp2 pins (2026-11-05 15:20 – 17:40 UTC): 12 of 12 green
+- **What ran:** the frozen-checkout driver `evidence/p09-chain/p09-gate-chain.sh` at harness 673fe7b (cp2 pins, plus docs-only commits), under `systemd-run --user` unit `p09-prefix-673fe7b`, from `f7-rerun-green`. It ran M2, M3, M4, M5, M6, M7, I0, Q8, R0 `--mode single`, R1 `--mode single`, I2 and p12. Every step exited 0, and p12's verdict is PASS with an empty failure list. Wall time was 2 h 40 min.
+- **Disk:** /home fell from 74 to 46 GiB free across the chain, staying above the 22 GiB watchdog. /mnt/data had 18 GiB free (ruling 8 recheck).
+- **Evidence:**
+  - The driver tsv, step logs and as-run script are in `evidence/p09-chain/673fe7b/`.
+  - The verdict layer and an `evidence-sha256.txt` for each of the 12 run dirs are committed with this record.
+  - 1,627 raw files (115 MB) are archived as `/mnt/data/andang-data/ns-o-ran-installation-evidence/plans-evidence-raw-m10-p09a-20261106.tar.zst` (60 MB) with its `.list0`, both added to that folder's `SHA256SUMS` and verified.

@@ -1,0 +1,19 @@
+expected image 127.0.0.1:80/ric-plt-e2mgr:6.0.6-nist180-85dfecb925f9 (source 09036c6ff70f15aa3e8655612c6d9681346a1943, patch set 85dfecb925f9e0529cf8fa7ea408cae77196a0228d56f01d6174106e5c814e1c; from 554d6d61a0d35e4c0fe80891d61f4834549221f6)
+pod deployment-ricplt-e2mgr-9b6b8f99f-qms4v: image nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-e2mgr:6.0.6, imageID nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-e2mgr@sha256:7c66665b24262b9b7294941148bfce08befc27e5e473bd629cdfa5d6859d9ced, ready true
+docker image: ID none, e2mgr.source.sha none, patchset.sha256 none
+[15:03:31] e2mgr does not run the patched image 127.0.0.1:80/ric-plt-e2mgr:6.0.6-nist180-85dfecb925f9: deploying it (bound 5400s)
+Waiting for deployment "deployment-ricplt-e2mgr" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "deployment-ricplt-e2mgr" rollout to finish: 1 old replicas are pending termination...
+deployment "deployment-ricplt-e2mgr" successfully rolled out
+[15:05:02] ric refresh (e2mgr-image): replacing e2mgr submgr e2term, then rtmgr
+[15:05:33] ric refresh: e2mgr deployment-ricplt-e2mgr-cd56d8d5c-ctf6h -> deployment-ricplt-e2mgr-cd56d8d5c-cxfxt
+[15:05:52] ric refresh: submgr deployment-ricplt-submgr-858956fbdc-55dwq -> deployment-ricplt-submgr-858956fbdc-6kx48
+[15:08:22] ric refresh: e2term deployment-ricplt-e2term-alpha-88fd95787-kksq8 -> deployment-ricplt-e2term-alpha-88fd95787-cdtd4
+[15:08:22] bringup ric: e2term registered with e2mgr: [{"e2tAddress":"10.101.123.229:38000","ranNames":[]}]
+[15:08:42] ric refresh: e2mgr handled the new e2term's E2_TERM_INIT
+[15:09:01] ric refresh: rtmgr deployment-ricplt-rtmgr-74fb47b69d-2r847 -> deployment-ricplt-rtmgr-74fb47b69d-gzrfk
+rt reader e2mgr deployment-ricplt-e2mgr-cd56d8d5c-cxfxt: OK (5 samples, 1 sockets now, stuck [])
+rt reader submgr deployment-ricplt-submgr-858956fbdc-6kx48: OK (5 samples, 1 sockets now, stuck [])
+expected image 127.0.0.1:80/ric-plt-e2mgr:6.0.6-nist180-85dfecb925f9 (source 09036c6ff70f15aa3e8655612c6d9681346a1943, patch set 85dfecb925f9e0529cf8fa7ea408cae77196a0228d56f01d6174106e5c814e1c; from 554d6d61a0d35e4c0fe80891d61f4834549221f6)
+pod deployment-ricplt-e2mgr-cd56d8d5c-cxfxt: image 127.0.0.1:80/ric-plt-e2mgr:6.0.6-nist180-85dfecb925f9, imageID sha256:bd39dabd59b623810eab6499941f1f63cedf840161aaea1c5ea906401410723c, ready true
+docker image: ID sha256:bd39dabd59b623810eab6499941f1f63cedf840161aaea1c5ea906401410723c, e2mgr.source.sha 09036c6ff70f15aa3e8655612c6d9681346a1943, patchset.sha256 85dfecb925f9e0529cf8fa7ea408cae77196a0228d56f01d6174106e5c814e1c
