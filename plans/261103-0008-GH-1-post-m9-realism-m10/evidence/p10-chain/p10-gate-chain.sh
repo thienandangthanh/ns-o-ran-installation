@@ -3,6 +3,8 @@
 # with its codec byte-equality probe; M5-M7 after every agent change), then I0, I2 and the live e2i interop gate.
 #   p10-gate-chain.sh HARNESS_SHA [FIRST_STEP_INDEX] [LAST_STEP_INDEX]   run the chain at one harness SHA, stop at the
 #                                                                       first red step
+#   P10_SKIP_STEPS=8,... p10-gate-chain.sh ...           skip the listed step indices inside the range (e.g. the UB
+#                                                       fix's chain: 0-11 without e2i)
 #   p10-gate-chain.sh --check-dir RUN_DIR              the per-step run-dir cross-check alone (offline validation)
 #
 # Every step's host side (vm-exec.sh, the watchdog) runs from a frozen checkout of the SHA: a detached, locked
@@ -85,15 +87,20 @@ steps=(
   "i0|gate-i0-rc-install.sh|3600|"
   "i2|gate-i2-ts-xapp-install.sh|3600|"
   "e2i|gate-e2i-interop.sh|5400|--image-tag 09aeabb8b0f99b0c"
+  "r2|gate-r2-ts-stub-qp.sh|7200|--mode single"
+  "r3p|gate-r3p-ts-predictor.sh|7200|--mode single"
+  "s10|gate-s10-scale.sh|5400|"
 )
 cd "$frozen" || return 2
 # asn1-indep pre-flight. A step with --image-tag (e2i) needs ~/asn1-indep/asn1-indep-<tag>.tar and SHA256SUMS in the
 # VM (gate-e2i-interop.sh:3: copied by the host), and a VM revert loses them. Before the first step: check the host
 # tarball, copy it when the VM's copy is missing or does not check, and check it in the VM; exit 2 before any step
 # (and before any tsv line) when that fails. Uses vm-exec's SSH route (vm-common.sh).
+skip=",${P10_SKIP_STEPS:-},"
 tag=""
 for i in "${!steps[@]}"; do
     [ "$i" -lt "$first" ] || [ "$i" -gt "$last" ] && continue
+    [[ $skip == *",$i,"* ]] && continue
     IFS='|' read -r _ _ _ a <<<"${steps[$i]}"
     [[ $a =~ --image-tag[[:space:]]+([0-9a-f]+) ]] && tag=${BASH_REMATCH[1]}
 done
@@ -106,6 +113,7 @@ fi
 for i in "${!steps[@]}"; do
     [ "$i" -lt "$first" ] && continue
     [ "$i" -gt "$last" ] && break
+    [[ $skip == *",$i,"* ]] && { echo "step $i skipped (P10_SKIP_STEPS)"; continue; }
     IFS='|' read -r id g t a <<<"${steps[$i]}"
     head=$(git -C "$frozen" rev-parse HEAD)
     if [ "$head" != "$sha" ] || [ -n "$(git -C "$frozen" status --porcelain --untracked-files=no)" ]; then

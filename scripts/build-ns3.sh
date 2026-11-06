@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# build-ns3.sh <workdir> [--ns3-sha SHA] [--oi-sha SHA]
+# build-ns3.sh <workdir> [--ns3-sha SHA] [--oi-sha SHA] [--tests]
 #
 # Clean, scripted build of ns-O-RAN scenario-zero without asn1c or e2sim:
 #   1. installs missing apt build dependencies (non-interactive, nothing else
@@ -10,19 +10,24 @@
 #   3. configures with the fixed flags below, records them in
 #      <workdir>/ns3-configure-flags.txt, and builds the needed modules and scenario-zero.
 # Logs go to stderr. The last stdout line is the absolute path of the scenario-zero binary.
+# With --tests the tree is configured with --enable-tests instead, only the ns-3 test-runner is
+# built, and the last stdout line is the source dir (run its suites with ./test.py -n -s <suite>).
+# Use a separate <workdir> for --tests: the gates run the scenario-zero binary of the plain build.
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source-path=SCRIPTDIR source=pins.conf
 source "$HERE/pins.conf"
 
-usage() { echo "usage: $0 <workdir> [--ns3-sha SHA] [--oi-sha SHA]" >&2; exit 2; }
+usage() { echo "usage: $0 <workdir> [--ns3-sha SHA] [--oi-sha SHA] [--tests]" >&2; exit 2; }
 [ $# -ge 1 ] || usage
 WORKDIR="$1"; shift
+TESTS=0
 while [ $# -gt 0 ]; do
     case "$1" in
         --ns3-sha) NS3_SHA="${2:?}"; shift 2 ;;
         --oi-sha) ORAN_INTERFACE_SHA="${2:?}"; shift 2 ;;
+        --tests) TESTS=1; shift ;;
         *) usage ;;
     esac
 done
@@ -34,6 +39,11 @@ done
 CONFIGURE_FLAGS=(--build-profile=default --disable-examples --disable-tests --disable-python
                  --enable-modules=mmwave,oran-interface -G "Unix Makefiles"
                  -- -DNS3_CCACHE=OFF -DNS3_FAST_LINKERS=OFF)
+TARGET=scenario-zero
+if [ "$TESTS" = 1 ]; then
+    CONFIGURE_FLAGS=("${CONFIGURE_FLAGS[@]/--disable-tests/--enable-tests}")
+    TARGET=test-runner
+fi
 APT_DEPS=(build-essential g++ cmake make python3 git ca-certificates)
 JOBS="$(nproc)"
 
@@ -78,7 +88,7 @@ clone_at "$ORAN_INTERFACE_URL" "$ORAN_INTERFACE_SHA" "$SRC/contrib/oran-interfac
     printf './ns3 configure'; printf ' %q' "${CONFIGURE_FLAGS[@]}"; echo
     echo "ns3: $NS3_URL $NS3_SHA"
     echo "oran-interface: $ORAN_INTERFACE_URL $ORAN_INTERFACE_SHA"
-    echo "build: ./ns3 build -j$JOBS scenario-zero"
+    echo "build: ./ns3 build -j$JOBS $TARGET"
     echo "compiler: $(g++ --version | head -n 1)"
     echo "cmake: $(cmake --version | head -n 1)"
     echo "host: $(. /etc/os-release && echo "$PRETTY_NAME") $(uname -m)"
@@ -87,8 +97,14 @@ clone_at "$ORAN_INTERFACE_URL" "$ORAN_INTERFACE_SHA" "$SRC/contrib/oran-interfac
 cd "$SRC"
 log "configure: ./ns3 configure ${CONFIGURE_FLAGS[*]}"
 ./ns3 configure "${CONFIGURE_FLAGS[@]}" >&2
-log "build: scenario-zero with $JOBS jobs"
-./ns3 build -j"$JOBS" scenario-zero >&2
+log "build: $TARGET with $JOBS jobs"
+./ns3 build -j"$JOBS" "$TARGET" >&2
+
+if [ "$TESTS" = 1 ]; then
+    log "done"
+    echo "$SRC"
+    exit 0
+fi
 
 BIN="$(find "$SRC/build/scratch" -maxdepth 1 -type f -perm -u+x -name '*-scenario-zero-*' | head -n 1)"
 [ -n "$BIN" ] || { log "scenario-zero binary not found under $SRC/build/scratch"; exit 1; }

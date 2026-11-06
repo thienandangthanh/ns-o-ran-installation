@@ -343,6 +343,44 @@ PY
 check m4_timing_report_repeats_and_shas timing_report_ok
 
 ################################################################################
+# i. ns-3 unit suites, in a separate --enable-tests tree at the same pins (the plain tree's
+#    scenario-zero binary is what the later gates run, so it is never reconfigured)
+################################################################################
+M4_TESTS_WORKDIR="${M4_TESTS_WORKDIR:-$HOME/m4-tests-build}"
+TESTS_SRC=""
+build_ns3_tests() {
+    timeout --kill-after=60 "$BUILD_TIMEOUT_S" bash "$HARNESS_DIR/scripts/build-ns3.sh" "$M4_TESTS_WORKDIR" --tests \
+        >"$EVIDENCE_DIR/build-ns3-tests.stdout" 2>"$EVIDENCE_DIR/build-ns3-tests.stderr" </dev/null
+    local rc=$?
+    tail -n 5 "$EVIDENCE_DIR/build-ns3-tests.stderr"
+    [ $rc -eq 0 ] || { echo "build-ns3.sh --tests exit $rc"; return 1; }
+    TESTS_SRC="$(tail -n 1 "$EVIDENCE_DIR/build-ns3-tests.stdout")"
+    [ -x "$TESTS_SRC/test.py" ] || { echo "last stdout line is not an ns-3 source dir: $TESTS_SRC"; return 1; }
+    echo "test tree $TESTS_SRC at $(git -C "$TESTS_SRC" rev-parse HEAD)"
+}
+check m4_ns3_test_build_exit0 build_ns3_tests
+
+# ns3_suite_passes <suite>: ./test.py runs exactly that suite and reports it PASS (an unknown
+# suite name runs nothing, so the PASS line for the named suite is required, not just exit 0).
+ns3_suite_passes() {
+    local suite="$1" out="$EVIDENCE_DIR/ns3-suite-$1.txt"
+    [ -n "$TESTS_SRC" ] || { echo "no test tree"; return 1; }
+    (cd "$TESTS_SRC" && timeout 600 ./test.py -n -v -s "$suite") >"$out" 2>&1
+    local rc=$?
+    tail -n 20 "$out"
+    [ $rc -eq 0 ] || return 1
+    # test.py always colours the status word and prefixes "[done/total] ": strip the ANSI escapes first
+    sed 's/\x1b\[[0-9;?]*[A-Za-z]//g' "$out" >"$out.plain"
+    grep -Eq "^\[[0-9]+/[0-9]+\] PASS: TestSuite $suite\$" "$out.plain" || { echo "no PASS line for suite $suite"; return 1; }
+    grep -Eq "^\[[0-9]+/[0-9]+\] (FAIL|CRASH|VALGR|SKIP):" "$out.plain" && { echo "a suite did not pass"; return 1; }
+    return 0
+}
+check m4_ns3_neighbour_list_suite_passes ns3_suite_passes mmwave-neighbour-list
+
+# The test tree is a scratch build; drop it so it never counts against the VM disk budget.
+[ -n "$TESTS_SRC" ] && rm -rf "$M4_TESTS_WORKDIR"
+
+################################################################################
 # h. process hygiene
 ################################################################################
 hygiene() {

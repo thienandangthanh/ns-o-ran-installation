@@ -288,6 +288,10 @@ sys.exit(0 if dropped == 0 and no_sub == 0 else 1)
 PY
     }
     check ${RUNG}_ipc_dropped_zero_no_sub_dropped_zero_and_slack_recorded facts_final
+    # Ledger row 159 (contract Amendment 4): in the 2-gNB rungs every UE tick reports exactly
+    # min(8, eligible) L3 neighbours; s10's maps never had the 2-entry defect, so it is not judged here.
+    neighbour_lists() { python3 -I "$HARNESS_DIR/scripts/gates/check-ipc-neighbour-lists.py" "$e"; }
+    case "$RUNG" in r2 | r3p) check ${RUNG}_every_ue_tick_reports_min8_eligible_neighbours neighbour_lists ;; esac
     for k in minSlack lControlLatencyS ipcDropped droppedNoSub; do
         fact "$k" "$(python3 -I -c 'import json,sys; print(json.dumps(json.load(open(sys.argv[1]))[sys.argv[2]]))' "$e/${RUNG}-facts.json" "$k" 2>/dev/null || echo null)"
     done
