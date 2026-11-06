@@ -246,6 +246,13 @@ Sources: the user rulings in `plans/reports/decisions-261106-0525-GH-1-p10-pre-r
   - P7: 12-bit SN in both directions (38.323 §6.2.2.2), so `NrPdcpHeader` is 2 octets and no SN type is widened. The header class comes from the bearer context, never from a packet tag. The SN-wrap fix is its own commit right before P7.
   - P9: Option A. DRB.PdcpSduVolumeDL/UL report 0 at every en-gNB; new map rows DRB.PdcpSduVolumeX2DL/UL carry the volume the MN submits over X2 to that cell (row 151's counting definition). The predictor reads X2DL with its formula, window, thresholds and decision unchanged (row 152, T3 ruled).
   - UseIdealRrc: the probe runs on the candidate commit with `scenario-zero.cc:492` deleted (row 157); c is judged by row 156.
+  - P6 amended by the 2026-11-07 rulings (`decisions-261107-0045` item 4; row 147 amendment):
+    - R1 strict value checks (exactly once on every reached path, timing only; `gaps` cannot hold).
+    - R2: `DRB.UEThpDl`, the gNB `RRC.ConnMean` and `DRB.MeanActiveUeDl` are renamed; the 0525 log carries the amendment line.
+    - The eNB `RRC.ConnMean` stays `ns3.*` until a run proves its attach bound. This changes the P6 draft, which kept it under its 3GPP name.
+    - R3: the TB counter fix is a follow-up outside M10, next to the PRB fix.
+    - R4: unit-text corrections, extended to enb cell 5, enb cell 6 and enb ue 10.
+  - P9 amended by Q5 (row 151): S-SN→T-SN forwarding over X2 is counted at the receiving cell, revising Q2.
 - **Gates per commit (P09 review §7.2, kongming-261106-0500 §2 and §7):**
   - UB fix: M4 (row 159's suite), M5–M7, one r2 and one r3p single (row 159's tick check), one s10 run.
   - P6: agent rebuild, kpimon reinstall (the map and the registry are kpimon stale-path inputs), lint with row 147's self-test, M5–M7. No M4 (ns-3 unchanged).

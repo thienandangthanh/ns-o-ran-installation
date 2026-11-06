@@ -1,0 +1,310 @@
+version: 1
+meta:
+  title: P6 rulings explained
+  description: "The four questions the P6 draft waits for (R1–R4), plus one new question the debate found, in plain words, with the recommended answer for each after four kongming runs, one Codex run, a blind verifier and a Codex-vs-kongming debate."
+theme:
+  preset: editorial
+blocks:
+  - type: hero
+    eyebrow: "M10 · P10 · P6 draft (registry + strict lint) · 2026-11-07"
+    title: What the P6 questions are asking you
+    description: "The P6 draft checks every measurement name the en-gNB and eNB report against the 3GPP rulebook, and renames the ones whose numbers do not match. Four questions came out of that work, and the advisors found a fifth. P6 cannot be committed until you answer them."
+
+  - type: section
+    title: The gist
+    blocks:
+      - type: rich-text
+        text: |
+          P6 is a new, strict lint for the KPM metric map. A row may keep a 3GPP name such as `TB.TotNbrDl` only if a registry entry says which 3GPP clause defines it, and only if the number ns-3 reports really is what that clause counts. Any row that fails gets a vendor name such as `ns3.du.macPdu`. Its position and measId stay the same, so no byte on the wire changes; only the name changes.
+
+          The draft passes its own lint. Applying it raised four questions the plan did not settle (R1–R4). Five independent advisors (four kongming runs and one Codex run) answered them separately, and all five gave the same direction on all four. A debate between Codex and kongming then found a fifth question (Q5) and corrected three details.
+      - type: callout
+        tone: warning
+        title: "Bottom line: these are your decisions, and nothing is committed until you answer"
+        text: "Recommended: R1 strict · R2 accept the renames · R3 fix outside M10 · R4 accept, widened to three more rows · Q5 count the forwarded X2 data. R1–R4 block the P6 commit. Q5 blocks P9 code, but it is cheapest to answer it now together with R1. None of this blocks the D-R3-1 chain or the neighbour-loop fix, which are running now."
+      - type: key-value
+        title: How these answers were produced
+        items:
+          - { key: "Step 1 · five candidates", value: "4 × kongming (Opus 5.5) + 1 × Codex, each given the same evidence packet. All read-only; each re-read the ns-3 code at ea6e46f6 and the spec pages in Zotero." }
+          - { key: "Step 2 · blind verifier", value: "kongming scored the five anonymised answers on 5 criteria and checked 6 disputed claims against the source. Winner: a kongming answer, 90 against 89 (low margin)." }
+          - { key: "Step 3 · debate", value: "Codex attacked the verifier's final answers. kongming re-checked each challenge in the source and accepted 5 of the 6 (one in part)." }
+          - { key: Record, value: "plans/reports/brainstorm-261106-2359-GH-1-p6-rulings-ultra-debate.md (the full ranking and the winning answer, unchanged)" }
+
+  - type: section
+    title: "The analogy: the express depot's logbook"
+    blocks:
+      - type: rich-text
+        text: |
+          This is the same parcel service as on the P10 page. The main post office (the LTE eNB) stamps every parcel. The express depot (the NR en-gNB) delivers some of them by fast van. Each office keeps a logbook whose column names come from a national rulebook (3GPP TS 28.552 for 5G offices, 32.425 for LTE offices). Head office (kpimon and the TS xApp) reads the logbooks.
+
+          P6 is an inspector. For each column, the inspector asks two things: does the rulebook have this column, and does the clerk count what the rulebook says to count? If either answer is no, the column gets the depot's own private name. Nothing is crossed out; the same numbers sit under an honest heading.
+
+          R1 asks how strict the inspector should be. The depot's clerk counts the parcels a van delivered to each house. But when a house moves to another depot, its page is torn out before the clerk adds it up, so those parcels are never logged. Is a count that misses parcels at every move still "the rulebook's count"?
+      - type: table
+        title: How the analogy maps to the system
+        columns: [ In the analogy, In the system ]
+        rows:
+          - [ "A logbook column", "A row of the KPM metric map (metric-map.v1.json): name, measId, unit" ]
+          - [ "The rulebook's column definition", "A 3GPP clause, now recorded in the new registry kpm-measurement-clauses.v1.json" ]
+          - [ "The inspector", "The strict lint, lint-metric-map.py, run by install and lint.sh" ]
+          - [ "The depot's private heading", "A vendor name, ns3.<section>.<name>, e.g. ns3.du.macPdu" ]
+          - [ "A house moving to another depot", "An SN change: the UE's PSCell moves to another en-gNB (each RC Style 5 handover)" ]
+          - [ "Tearing out the page before adding it up", "RemoveUe at X2 UE CONTEXT RELEASE erases the UE before the next KPM report reads its count" ]
+      - type: callout
+        tone: info
+        title: Where the analogy stops
+        text: "A real clerk could find the torn page. In ns-3 the count is lost for good, because RNTIs (the UE's number at the cell) are never reused. Also, the logbook goes to head office every 100 ms, not once a day."
+
+  - type: section
+    title: Where TB counts are made, and where they are lost
+    blocks:
+      - type: diagram-panel
+        title: The TB.TotNbrDl counting path in ns-3
+        caption: "3GPP counts a TB when the gNB transmits it. ns-3 counts it when the UE finishes receiving it, keeps the count per UE, and adds up only the UEs still on the cell's list at report time. Gap 1: a UE that leaves loses its count. Gap 2: a TB the UE PHY drops by its cell check is never counted."
+        spec:
+          schema_version: 1
+          diagram_type: architecture
+          meta:
+            title: TB counting path
+            description: "gNB MAC schedules, gNB PHY transmits, UE PHY receives, the trace keeps per-UE counts, the DU report sums the UE map, kpimon reads it. An SN change removes the UE before the report."
+            visual_preset: editorial
+            theme: light
+          components:
+            - { id: mac, label: "gNB MAC: schedules the TB 2 slots ahead (mmwave-enb-mac.cc:943)", role: backend, layer: 0 }
+            - { id: phy, label: "gNB PHY: transmits it, where 3GPP counts (mmwave-enb-phy.cc:948)", role: backend, layer: 1 }
+            - { id: uephy, label: "UE PHY: cell check can drop the TB, gap 2 (mmwave-spectrum-phy.cc:431)", role: worker, layer: 2 }
+            - { id: trace, label: "Trace: per-(UE, cell) count, where ns-3 counts today", role: database, layer: 3 }
+            - { id: report, label: "DU report: sums UEs still in the map (net-device.cc:1152)", role: worker, layer: 4 }
+            - { id: kpimon, label: "kpimon in the RIC", role: external, layer: 5 }
+            - { id: snchange, label: "SN change: RemoveUe erases the UE first, gap 1 (lte-enb-rrc.cc:5900)", role: external, layer: 4 }
+          connections:
+            - { from: mac, to: phy, label: "2 slots later", kind: stream }
+            - { from: phy, to: uephy, label: "over the air", kind: stream }
+            - { from: uephy, to: trace, label: "on reception", kind: stream }
+            - { from: trace, to: report, label: "every 100 ms", kind: async }
+            - { from: report, to: kpimon, label: "KPM over E2", kind: async }
+            - { from: snchange, to: report, label: "UE gone before the sum", kind: async }
+
+  - type: section
+    title: All five questions at a glance
+    blocks:
+      - type: table
+        columns: [ "#", What it asks, Recommended, Alternative, Deadline ]
+        rows:
+          - [ R1, "May a measurement whose count misses some events keep its 3GPP name?", "Strict: no. Only a timing shift of ≤1 slot or ≤1 sampling step is allowed", "Lenient: a disclosed gap is allowed", "Before the P6 commit" ]
+          - [ R2, "Accept three renames that replace the 21:37 line \"DRB.UEThpDl keeps its name\"?", "Accept all three, as an amendment that names the line it replaces", "Keep DRB.UEThpDl", "Before the P6 commit" ]
+          - [ R3, "When should the TB counters be fixed in ns-3?", "As a follow-up outside M10, next to the PRB fix", "Inside M10, or never", "Before the P6 commit (the registry text records it)" ]
+          - [ R4, "Accept the corrected unit text (ms → 0.1 ms, bytes → kbit)?", "Accept, and fix three more eNB rows the draft missed", "Leave the text as it was", "Before the P6 commit" ]
+          - [ Q5 (new), "Should data one en-gNB forwards to another during an SN change count in the X2 volume?", "Count it at the receiving cell (this revises Q2)", "Keep it excluded, as your own exception or as a known gap", "Before P9 code; best asked now" ]
+
+  - type: section
+    title: "R1: may a count that misses events keep its 3GPP name? (recommended: strict)"
+    blocks:
+      - type: rich-text
+        text: |
+          The question. Ledger row 147 says a 3GPP-named row must pass its value check ("the value check holds"), but it does not say what to do with known gaps. Should a gap that is written down still pass?
+
+          What is wrong with the TB counts. 3GPP TS 28.552 §5.1.1.7.1 and §5.1.1.7.3 (pp.111–112) count a TB "on transmission by the gNB of TB to UE". ns-3 counts each TB when the UE finishes receiving it and keeps the count per UE. Two paths lose TBs:
+          - Gap 1. At an SN change, `RemoveUe` erases the UE (`lte-enb-rrc.cc:5582-5612, 5892-5900`) before the next report adds it up (`mmwave-enb-net-device.cc:1152-1165`). Up to one report period of that UE's TBs is never reported, and this happens at every handover the TS xApp triggers.
+          - Gap 2. The UE PHY drops a TB whose cell ID does not match before it is traced (`mmwave-spectrum-phy.cc:431-437`).
+
+          Under strict, gNB cell `TB.TotNbrDl(.1)` and `TB.TotNbrDlInitial` become `ns3.du.macPdu` and `ns3.du.macPduInitial`. Their numbers stay exactly the same.
+      - type: stats
+        title: "Gap 1, measured in a real run (M7 20261103T201804Z; method checked, numbers not re-verified)"
+        items:
+          - { label: "DL TBs traced", value: "842,007" }
+          - { label: "DL TBs reported", value: "835,769" }
+          - { label: "Lost", value: "6,238 (0.74%)" }
+          - { label: "Lost per released UE context", value: "≈16" }
+      - type: comparison
+        left:
+          label: "Strict (recommended)"
+          items:
+            - "A row keeps its 3GPP name only if every event the clause counts is counted exactly once, on every path the runs reach"
+            - "Only timing may differ: ≤1 slot for counts, ≤1 of the clause's own sampling steps for sampled values. The 100 ms E2 report period never counts as a sampling step"
+            - "This allowance is our project's tolerance, not a 3GPP number, and the amendment says so"
+            - "A verdict is tied to the ns-3 pin and scenario config, and is re-judged when either changes"
+            - "Matches your 20:46 precedent: RRU.PrbTotDl/Ul and TB.ErrTotalNbrDl were renamed because their values failed"
+        right:
+          label: "Lenient (a disclosed gap passes)"
+          items:
+            - "Keeps two 3GPP names on the en-gNB, which stock xApps such as ad-cell expect"
+            - "But any defect could then pass by being disclosed, so the value check could never fail"
+            - "Reading \"holds\" as \"holds except for gaps\" after the check was registered narrows it, which the scope guard forbids (goal-packet.md, AC18)"
+            - "The loss is a bias, not noise: it grows with the handover rate, which is exactly what the closed loop changes"
+      - type: callout
+        tone: danger
+        title: "Consequence of strict that the draft did not show: the eNB RRC.ConnMean is renamed too"
+        text: "The draft passes the eNB RRC.ConnMean by assuming that a UE context counted before it connects adds at most about one 10 ms sample. The source cannot prove that. LTE control-channel errors are on by default (lte-spectrum-phy.cc:222-225), so a random-access attempt that fails and times out after 15 ms (lte-enb-rrc.cc:3177-3184) is a live path, and scenario-zero traces no RRC state, so no run can show the bound. Under strict, the row becomes ns3.* until an instrumented run proves it. Net effect: until P9, no row in the map passes under a 3GPP name."
+      - type: accordion
+        title: Background
+        items:
+          - title: 'Why not a numeric tolerance, such as "under 1 % lost"?'
+            text: "The static lint cannot measure it, the loss grows with handover rate × report period, and the threshold would be a spec choice nobody can source. The scope guard says to ask you rather than invent one."
+          - title: Why the timing allowance is worded so carefully
+            text: "If \"one sampling interval\" could mean the 100 ms E2 report period, then gap 1, which loses at most one report period per SN change, could be argued into an allowed timing shift. The wording blocks that. It also adds a boundary rule: each event really happens and is counted once, in the period that holds the code's counting instant."
+          - title: What would change the recommendation
+            text: "Run evidence that no judged run reaches an SN change on a cell whose TB rows are judged, or a 3GPP text that allows TB counts to omit events. Neither was found."
+
+  - type: section
+    title: "R2: accept three renames that replace an earlier ruling line? (recommended: accept)"
+    blocks:
+      - type: rich-text
+        text: |
+          The question. At 21:37 your L4 ruling said "DRB.UEThpDl keeps its name (throughput is listed)". Checking the value later showed it is not 3GPP throughput. Two other gNB rows also fail. Accept all three renames?
+
+          The debate corrected one point here. The 2246 note called the L4 line a "forecast". It sits under "User rulings", so it is a ruling, and this amendment explicitly replaces that one line. The rest of L4 still stands: a per-UE row keeps a 3GPP name only if KPM §7.9 lists it.
+      - type: table
+        title: The three renames
+        columns: [ Row, Old → new name, What 3GPP counts, What ns-3 reports ]
+        rows:
+          - [ "gnb ue 27", "DRB.UEThpDl → ns3.du.rlcPduSizeOverDelayDl", "ThpVolDl ÷ ThpTimeDl per data burst, excluding the slot that empties the buffer (28.552 §5.1.1.3.1, pp.56–57)", "Mean RLC PDU size ÷ mean RLC delay (mmwave-enb-net-device.cc:795-805)" ]
+          - [ "gnb cell 33", "RRC.ConnMean → ns3.cuCp.meanRrcUes", "For EN-DC, RRC connection measurements are handled by E-UTRAN under 32.425, not by the gNB (28.552 §1, p.28)", "A gNB-side count; the eNB row covers the 3GPP measurement" ]
+          - [ "gnb cell 26", "DRB.MeanActiveUeDl → ns3.du.numActiveUes", "Mean number of UEs with DL data buffered, per 38.314 (§5.1.1.23.1, pp.142–143)", "The UE-map size at the report instant (net-device.cc:1402)" ]
+      - type: comparison
+        left:
+          label: "Accept (recommended)"
+          items:
+            - "Each value fails the value check in row 147 (3), which binds every 3GPP name"
+            - "Append one amendment line to the 0525 decisions log naming the line it replaces; leave the 21:37 text unedited"
+            - "Nothing in M10 reads these names: the TS xApp reads only the ueId tag and time; r3p reads DRB.PdcpSduVolumeDL, which is kept"
+            - "Optional, not required: holds:false registry entries for the two rows, so the lint states the real reason"
+        right:
+          label: Keep DRB.UEThpDl
+          items:
+            - "Honours the 21:37 text as written"
+            - "But it needs the value check waived, a weaker predicate under AC18, for a number that is not throughput"
+            - "Computing real ThpVolDl/ThpTimeDl in ns-3 is new work and belongs on the follow-up list"
+
+  - type: section
+    title: "R3: when should the TB counters be fixed? (recommended: follow-up outside M10)"
+    blocks:
+      - type: rich-text
+        text: |
+          The question. ns-3 could count TBs per cell at the gNB, which would remove both gaps and let the 3GPP names come back. Do it inside M10, later, or never?
+
+          Recommended: record a follow-up outside M10 next to the PRB-source fix (your 20:46 ruling), and list every fixable value-check failure in it: the PRB family, the TB pair and its modulation split, DRB.UEThpDl and DRB.MeanActiveUeDl. The follow-up chooses where to count, and its site must meet R1's timing rule.
+      - type: table
+        title: The two candidate counting sites (for the follow-up, not decided now)
+        columns: [ Site, Counts when, Has, Lacks ]
+        rows:
+          - [ "gNB PHY, mmwave-enb-phy.cc:948 (DATA trace)", "At transmission, the clause's counting point", "rnti, rv (initial vs retransmission)", "cellId, TB size, MCS; also fires for empty PDUs" ]
+          - [ "gNB MAC, mmwave-enb-mac.cc:943", "At scheduling, 2 slots before transmission (mmwave-phy-mac-common.cc:97)", "rnti, cellId, TB size, rv", "MCS; its 2-slot lead fails a ≤1-slot allowance" ]
+      - type: accordion
+        items:
+          - title: Why not inside M10?
+            text: "AC16's list of simulator fixes names only P6, P7 and P9 (contract :36, :115). Adding this means a contract amendment, another ns-3 commit, an M4 rebuild, M5–M7 runs and new checkpoint-3 references, on a chain the D-R3-1 M7 red still blocks. The values stay available under ns3.du.macPdu* in the meantime."
+          - title: Why not never?
+            text: "The defect and its fix site are known, and recording the follow-up costs one line. Leaving known-wrong counters undocumented goes against fixing to spec."
+          - title: Two details the follow-up must settle
+            text: "(1) 28.552 item e) on p.112 lists only TB.TotNbrDl.X, so whether the bare name may stand for the total needs a ruling then. (2) The modulation rows count every TB, not only initial ones (mmwave-phy-trace.cc:264-278), so they need an rv filter and the MCS."
+
+  - type: section
+    title: "R4: accept the corrected unit text? (recommended: accept, widened)"
+    blocks:
+      - type: rich-text
+        text: |
+          The question. Some renamed rows had wrong unit labels: delays marked ms that are really 0.1 ms (ns ÷ 1e5, `lte-enb-net-device.cc:1164`), and volumes marked bytes that are really kbit (`:1110-1111`; gNB `mmwave-enb-net-device.cc:725`). On `ns3.*` rows the unit is only a label: the lint compares units only on 3GPP rows (`lint-metric-map.py:174`), and nothing else reads it. Accept the corrections?
+
+          Recommended: accept, and fix three eNB rows the draft did not touch, because they have the same error.
+      - type: table
+        title: Three more rows with wrong unit text
+        columns: [ Row, Says, Really carries, Source ]
+        rows:
+          - [ "enb cell 5 · ns3.cuUp.pDCPBytesUL", bytes, "kbit, and always 0 (UL not modelled)", "lte-enb-net-device.cc:1233-1234" ]
+          - [ "enb cell 6 · ns3.cuUp.pDCPBytesDL", bytes, kbit, "lte-enb-net-device.cc:1096, 1112, 1234" ]
+          - [ "enb ue 10 · ns3.cuUp.txPdcpPduBytesLteRlc", bytes/period, kbit/period, "lte-enb-net-device.cc:1134" ]
+      - type: callout
+        tone: info
+        title: "Not part of R4"
+        text: "Two unit edits on rows that keep 3GPP names (gnb cell 34/35 → Kbit, enb cell 8 → count) are compared by the lint, so they belong under row 147 (3) in the ledger amendment, not under this informational ruling."
+
+  - type: section
+    title: "Q5 (new): does data forwarded between en-gNBs count over X2? (recommended: count it)"
+    blocks:
+      - type: rich-text
+        text: |
+          Why it is new. Your 19:52 ruling Q2 (ledger row 151) defines new X2 counters for P9 and excludes, with disclosure, the data the source en-gNB forwards to the target en-gNB during an SN change. Strict R1 turns that exclusion into a gap: P9's X2 rows could then never pass, and the empty pending list that row 147 (8) requires at P9 and P11 could never be reached.
+
+          In the analogy. When a house moves to a new depot, the old depot drives its undelivered parcels over the courier road to the new one. The rulebook column is "bits sent over the courier road". Do those parcels count?
+
+          What the text says. 28.552 §5.1.2.1.1.2 a) and c) (pp.183–184) count "bits transferred in the downlink through X2 interface", with no limit on which endpoints. ns-3 sends the forwarded data over X2 (`lte-enb-rrc.cc:1213-1219`, `ForwardRlcPdu`). The winning candidate had proposed calling the exclusion an "interpretation" based on Annex A.25 (p.403). Codex showed that Annex A is informative (p.397), and A.25 says only that MN–SN volume "should be counted". It exempts nothing, so that label would be a lenient pass under a new name. kongming accepted this challenge.
+      - type: table
+        columns: [ Option, What it means, Effect ]
+        rows:
+          - [ "(a) Count it at the receiving cell (recommended)", "Forwarded SDU bits are credited to the target cell's X2 volume", "Matches the clause text. Revises Q2 explicitly." ]
+          - [ "(b) Keep it excluded as your own exception", "A named, user-owned exception to R1, recorded in the ledger", "Keeps Q2 as ruled. The only exception to strict R1." ]
+          - [ "(c) Keep it excluded as a known gap", "The exclusion is a gap under R1", "P9's X2 rows can never pass, and P9/P11 cannot close" ]
+      - type: callout
+        tone: warning
+        title: "What could flip the recommendation (confidence: medium)"
+        text: "If the P9 run shows that the forwarded burst changes the R3′ predictor's decisions, (b) becomes the fallback. kongming also believes, without having read 37.340 this session, that real EN-DC does not forward between SNs for MN-terminated bearers. If so, ns-3's forwarding is a modelling shortcut, which favours (a)."
+
+  - type: section
+    title: What the debate changed
+    blocks:
+      - type: table
+        columns: [ Codex challenge, kongming ruling, Effect on the answers ]
+        rows:
+          - [ "C1: \"≤1 slot\" is an invented tolerance", "Partly accepted", "The cap stays, labelled as the project's tolerance, with a count-once boundary rule added" ]
+          - [ "C2: the 21:37 L4 line is a ruling, not a forecast", Accepted, "R2 now explicitly replaces that line; holds:false entries are optional" ]
+          - [ "C3: the PHY site is engineering advice", "Accepted (its control emission filters out by tag)", "R3 leaves the choice of site to the follow-up" ]
+          - [ "C4: \"interpretation via A.25\" is lenient R1 under a new name", Accepted, "Became question Q5, put to you" ]
+          - [ "C5: the draft already ships bare-name grammar for TB.TotNbrDl", Accepted, "Remove that permission now (cleanup, no question)" ]
+          - [ "C6: the eNB RRC.ConnMean pass is unproven today", Accepted, "Under R1, that row is renamed until a run proves the bound" ]
+
+  - type: section
+    title: "Cleanup before the P6 commit (no ruling needed)"
+    blocks:
+      - type: checklist
+        items:
+          - { text: "Registry :55 → total:false (no bare TB.TotNbrDl); move the \"TB drops at SN change\" fixture to TB.TotNbrDlInitial", done: false }
+          - { text: "Reword the TB reason to \"count per cell on transmission; the follow-up chooses the site\"", done: false }
+          - { text: "eNB RRC.ConnMean → holds:false (attach bound unproven), renamed in place (follows from R1)", done: false }
+          - { text: "Registry doc line 10: label the timing allowance as the project's tolerance and add the boundary rule", done: false }
+          - { text: "Correct the false \"No 32.425 entry\" reasons (32.425 has them at §4.4.1.1 p.48, §4.4.3.1 p.52, §4.4.7.1 p.58; the renames stand on type, unit and label)", done: false }
+          - { text: "Fix the 2246 note: pendingFix \"P9\" is a contract deviation id, not a plan-phase id; the 21:37 line is a ruling", done: false }
+          - { text: "Replace \"ledger row 147 (n)\" and \"user ruling Q2\" labels in code and registry text with the rule they state", done: false }
+          - { text: "gnb ue 29 layer → RLC (it is counted in the same RLC loop as ue 28)", done: false }
+          - { text: "Disclose in the P6 amendment: ad-cell loses RRC.ConnMean, PRB and throughput fields; the vendor-name rule is stricter than row 147 (6)", done: false }
+          - { text: "P9 registry entries: record rounding to Kbit as an interpretation", done: false }
+          - { text: "Re-cite ns-3 line numbers at the UB-fix pin (certain: the UB fix lands before P6)", done: false }
+
+  - type: section
+    title: How the candidates scored
+    blocks:
+      - type: table
+        title: "Blind verifier scores, 1–20 per criterion (labels were anonymised while scoring)"
+        columns: [ Candidate, Faithful, Grounded, Sharp, Honest, Missed issues, Total ]
+        rows:
+          - [ "A · kongming (winner)", "18", "18", "17", "18", "19", "90" ]
+          - [ "C · kongming", "18", "17", "18", "18", "18", "89" ]
+          - [ "E · kongming", "15", "16", "17", "16", "13", "77" ]
+          - [ "D · kongming", "14", "14", "16", "15", "17", "76" ]
+          - [ "B · Codex", "17", "15", "10", "17", "10", "69" ]
+      - type: callout
+        tone: info
+        title: "Receipt: ultra picked=1/5 margin=low unanimous=no rejected_all=no"
+        text: "The margin is low: A and C were effectively tied, and all five agreed on R1–R4. The extra value came from issues found by only some candidates: the Q5 conflict (3 of 5), the three eNB unit rows (3 of 5), the false 32.425 reasons (3 of 5), the measured 0.74 % loss (1 of 5), and the unproven RRC.ConnMean bound (1 of 5, later confirmed in the debate)."
+
+  - type: section
+    title: Still unresolved
+    blocks:
+      - type: list
+        items:
+          - { text: "R1–R4 and Q5: your decisions.", badge: you }
+          - { text: "Whether counting the forwarded data disturbs the R3′ predictor. Only a P9 run can show it.", badge: run }
+          - { text: "The eNB attach-timing bound needs a run with an RRC-state trace before RRC.ConnMean can get its name back.", badge: run }
+          - { text: "Whether real EN-DC forwards between SNs for MN-terminated bearers (37.340 not read).", badge: spec }
+          - { text: "Pages not read this run: 28.552 p.68, KPM §8.3.x, the V17.17.0 pages.", badge: spec }
+
+  - type: references
+    items:
+      - { id: q, title: "decisions-261106-2246-GH-1-p6-draft-rulings-pending.md (the questions)", source: plans/reports }
+      - { id: draft, title: "fullstack-developer-261106-2215-GH-1-p6-registry-and-strict-lint.md (the P6 draft record)", source: plans/reports }
+      - { id: rec, title: "brainstorm-261106-2359-GH-1-p6-rulings-ultra-debate.md (this run's record and the winning answer)", source: plans/reports }
+      - { id: row147, title: "check-diff-ledger.md row 147 (strict lint) and row 151 (X2 counters)", source: "plans/261103-0008-GH-1-post-m9-realism-m10" }
+      - { id: rulings, title: "decisions-261106-0525-GH-1-p10-pre-registration-questions.md (19:52, 20:46 and 21:37 rulings)", source: plans/reports }
+      - { id: s28552, title: "3GPP TS 28.552 V20.2.0 (Zotero 5SZUBP6M): §1 p.28; §5.1.1.3.1 pp.56–57; §5.1.1.7 pp.111–112; §5.1.1.23.1 pp.142–143; §5.1.2.1.1.2 pp.183–184; Annex A p.397, A.25 p.403", source: 3GPP }
+      - { id: s32425, title: "3GPP TS 32.425 V19.0.0 (Zotero 9XR9PVRW): §4.1.3.1 p.19; §4.4.1.1 p.48; §4.4.3.1 p.52; §4.4.7.1 p.58", source: 3GPP }
+      - { id: kpm, title: "O-RAN E2SM-KPM v03.00: §7.9 pp.13–14", source: O-RAN }

@@ -47,3 +47,10 @@ Controller-decided (recorded and shown at the next Stop): P7 check (b) baseline 
 - **L4, per-UE check: yes.** A UE-list row keeps a 3GPP name only if KPM v03.00 §7.9 (pp.13–14) lists its measurement type for per-UE conversion. gNB UE `TB.TotNbrDl(.1)` and `TB.TotNbrDlInitial` therefore become `ns3.*`; `DRB.UEThpDl` keeps its name (throughput is listed).
 - **L5, data type: 3GPP type.** A row with a 3GPP name must use its clause's data type (item d), or KPM §7.9.1's replacement where one exists. A spec-integer value that could exceed kpimon's int32 range fails the lint instead of switching to REAL. `ns3.*` rows keep the map's overflow rule. Verified against V20.2.0: every row that keeps a 3GPP name already matches, so no P6 row changes type.
 - **All P10 pre-registration rulings are now made.** Next, on the user's go: register rows 147–158 (amended for these rulings), the c judgement, the row-139 amendment and Amendment 4 in one docs commit before code. That happens after the resume housekeeping (frozen checkouts) and the M7 diagnosis of the D-R3-1 chain.
+
+## Amendment, 2026-11-07 00:45 KST (user rulings at PAUSE T6, `decisions-261107-0045-GH-1-p10-pause-t6-rulings.md` item 4)
+- **R2 replaces one line of the 21:37 L4 ruling.** The line "`DRB.UEThpDl` keeps its name (throughput is listed)" no longer holds. The P6 draft's value check found that ns-3 reports mean RLC PDU size divided by mean RLC delay, which is not 28.552's UE throughput, so the row becomes `ns3.du.rlcPduSizeOverDelayDl`. The L4 per-UE rule itself stands.
+- **Also renamed under R1/R2:** the gNB `RRC.ConnMean` (28.552 §1 p.28: EN-DC RRC connection measurements belong to E-UTRAN), `DRB.MeanActiveUeDl`, and the gNB TB cell pair. The eNB `RRC.ConnMean` stays `ns3.*` until a run proves its attach bound.
+- **Effect:** until P9, no row in the map passes under a 3GPP name.
+- **Record:** the 21:37 text above is left unedited.
+
