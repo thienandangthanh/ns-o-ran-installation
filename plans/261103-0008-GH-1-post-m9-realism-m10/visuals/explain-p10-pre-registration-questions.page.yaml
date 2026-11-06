@@ -6,7 +6,7 @@ theme:
   preset: editorial
 blocks:
   - type: hero
-    eyebrow: M10 · P10 · waiting for five rulings
+    eyebrow: M10 · P10 · three ruled, two open (Q2, Q4)
     title: What the P10 questions are asking you
     description: "P10 fixes how the simulator counts and labels data, so the numbers the RIC sees mean what the 3GPP rulebook says they mean. Reading the rulebook closely turned up five places where the plan's own wording cannot be followed as written. Each needs your choice before the code that depends on it."
 
@@ -18,6 +18,10 @@ blocks:
           The plan said "fix P6, P7 and P9 to match the spec". A researcher then read 3GPP TS 28.552, 38.323 and 37.340 line by line, and kongming checked that reading against the PDFs in Zotero. Both found that for two items (P6 and P9) the spec gives an answer the plan did not expect, and for one (P7) the spec allows two choices. The other two questions are about an ns-3 bug (UB) and a missing spec (Q3).
 
           Nothing here is urgent in hours, but each question blocks a specific commit. The table below says which. Kongming and Codex were each asked separately, then kongming checked Codex's answer against the code. After that cross-check they agree on all five; kongming changed its advice on Q3 and Q4.
+      - type: callout
+        tone: success
+        title: "Your rulings so far (2026-11-06 18:59 KST)"
+        text: "UB: fix it (contract Amendment 4, its own ns-3 commit before P6). Q1: rename the failing names to ns3.* vendor names. Q3: done, you added 3GPP TS 32.425 V19.0.0 to Zotero. Still open: Q2 (P9 counter) and Q4 (SN width); your follow-up questions on Q1, Q2 and Q4 are answered in their sections, marked 'Your follow-up'."
       - type: callout
         tone: warning
         title: Separate problem, not one of the five questions
@@ -35,7 +39,7 @@ blocks:
     blocks:
       - type: rich-text
         text: |
-          Picture a parcel service delivering to one house. There is a **main post office** and a smaller **express depot**. Every parcel goes to the main office first. A clerk there stamps it with a serial number and a label, then sends it to the house either by the main office's own truck or, through a courier road, by the express depot's fast van. Each office keeps a logbook with columns whose names come from a national rulebook. Head office reads those logbooks to decide which office should serve which house.
+          Picture a parcel service delivering to one house. There is a main post office and a smaller express depot. Every parcel goes to the main office first. A clerk there stamps it with a serial number and a label, then sends it to the house either by the main office's own truck or, through a courier road, by the express depot's fast van. Each office keeps a logbook with columns whose names come from a national rulebook. Head office reads those logbooks to decide which office should serve which house.
 
           The rulebook is strict about what each column means. Questions P6 and P9 are about our express depot writing numbers into columns that, by the rulebook, belong to somebody else.
       - type: table
@@ -84,10 +88,10 @@ blocks:
       - type: table
         columns: [ "#", Topic, What it asks, Recommended, Alternative, Blocks ]
         rows:
-          - [ UB, ns-3 neighbour bug, "Fix a simulator bug that hides a UE's only neighbour cell, or only disclose it?", "Fix it (needs contract Amendment 4)", "Disclose only (the default if you say nothing)", "P6, the next commit" ]
-          - [ Q1, "P6: a mislabelled column", "The en-gNB writes its MAC volume under a name 28.552 reserves for split gNBs. Rename it?", "Rename it, and every other failing name, to ns3.* vendor names", "Keep the 3GPP name and record a deviation", P6 code ]
+          - [ UB, ns-3 neighbour bug, "Fix a simulator bug that hides a UE's only neighbour cell, or only disclose it?", "RULED: fix it (contract Amendment 4)", "Disclose only", "P6, the next commit" ]
+          - [ Q1, "P6: a mislabelled column", "The en-gNB writes its MAC volume under a name 28.552 reserves for split gNBs. Rename it?", "RULED: rename it, and every other failing name, to ns3.* vendor names", "Keep the 3GPP name and record a deviation", P6 code ]
           - [ Q2, "P9: the wrong office's count", "The en-gNB's PDCP volume should be 0 by the rulebook. Which counter carries what it actually sends?", "Option A: the X2 counters", "A′ (leaner rename) or B (keep the name)", "P9 code; decide now because it fixes the budget" ]
-          - [ Q3, Missing LTE rulebook, "Read AC16's '28.552 clause' as 32.425 for LTE rows, and add 32.425 to Zotero?", "Yes, and please add 32.425; without it, rename every unverifiable LTE name to ns3.*", "Keep LTE names whose type and unit KPM lists, marked 'unverified' (both advisors now reject this)", P6 code ]
+          - [ Q3, Missing LTE rulebook, "Read AC16's '28.552 clause' as 32.425 for LTE rows, and add 32.425 to Zotero?", "RULED: done, you added 32.425 V19.0.0; any LTE name it cannot verify is renamed to ns3.*", "Keep LTE names whose type and unit KPM lists, marked 'unverified' (both advisors now reject this)", P6 code ]
           - [ Q4, "P7: label serial-number size", "Should the new NR packet header use a 12-bit or an 18-bit sequence number?", "12 bits, with the wrap-bug fix as its own commit just before P7", "18 bits (kongming's first advice, now reversed)", P7 code ]
 
   - type: section
@@ -95,11 +99,11 @@ blocks:
     blocks:
       - type: rich-text
         text: |
-          **The question.** ns-3 has a bug that sometimes drops a phone's only neighbour cell from the measurement report. Should M10 fix it, or only disclose it?
+          The question. ns-3 has a bug that sometimes drops a phone's only neighbour cell from the measurement report. Should M10 fix it, or only disclose it?
 
-          **In the analogy.** Each depot's logbook has a line "other offices this house can also hear, strongest first". The clerk reads the list backwards and stops one step too early. When the list has exactly two offices, and the house's own office is the stronger one with the higher number, the clerk skips the only other office. The report then says "no other office in range", which is false.
+          In the analogy. Each depot's logbook has a line "other offices this house can also hear, strongest first". The clerk reads the list backwards and stops one step too early. When the list has exactly two offices, and the house's own office is the stronger one with the higher number, the clerk skips the only other office. The report then says "no other office in range", which is false.
 
-          **In the system.** The loop is at `mmwave-enb-net-device.cc:1001-1003`. It counts down past `sortFlipMap.begin()`, which is undefined behaviour (UB): C++ does not say what happens. With the GNU library we use, it drops the only neighbour whenever a UE's map has 2 cells and the serving cell has the higher cell ID and is the strongest.
+          In the system. The loop is at `mmwave-enb-net-device.cc:1001-1003`. It counts down past `sortFlipMap.begin()`, which is undefined behaviour (UB): C++ does not say what happens. With the GNU library we use, it drops the only neighbour whenever a UE's map has 2 cells and the serving cell has the higher cell ID and is the strongest.
       - type: stats
         items:
           - { label: "r2 reports checked", value: "594" }
@@ -140,11 +144,34 @@ blocks:
     blocks:
       - type: rich-text
         text: |
-          **The question.** The en-gNB reports its MAC-layer data volume under the name `QosFlow.PdcpPduVolumeDL`. Should that name, and every other name that fails a strict rulebook check, be renamed to a vendor name like `ns3.du.macVolumeDl`?
+          The question. The en-gNB reports its MAC-layer data volume under the name `QosFlow.PdcpPduVolumeDL`. Should that name, and every other name that fails a strict rulebook check, be renamed to a vendor name like `ns3.du.macVolumeDl`?
 
-          **In the analogy.** The express depot writes "parcels loaded into the van, counting reloads" into a column the rulebook calls "parcels the stamping desk passed to the loading bay at a depot that has its own stamping desk, not counting two-office deliveries". Our depot has no stamping desk, and every delivery is a two-office delivery. There is no right column for its number in the rulebook at all.
+          In the analogy. The express depot writes "parcels loaded into the van, counting reloads" into a column the rulebook calls "parcels the stamping desk passed to the loading bay at a depot that has its own stamping desk, not counting two-office deliveries". Our depot has no stamping desk, and every delivery is a two-office delivery. There is no right column for its number in the rulebook at all.
 
-          **In the system.** 3GPP TS 28.552 §5.1.3.6.1.1 (PDF pp.196–197) defines QosFlow.PdcpPduVolumeDL only for a split gNB (one with separate CU and DU parts). It explicitly excludes dual-connectivity volume. Our en-gNB is not split, and every bearer is EN-DC (dual connectivity). 28.552 has no MAC-layer volume measurement anywhere. The value is computed from MAC transport blocks, retransmissions included (`mmwave-phy-trace.cc:262`), and sent at `metric-map.v1.json:33`.
+          In the system. 3GPP TS 28.552 §5.1.3.6.1.1 (PDF pp.196–197) defines QosFlow.PdcpPduVolumeDL only for a split gNB (one with separate CU and DU parts). It explicitly excludes dual-connectivity volume. Our en-gNB is not split, and every bearer is EN-DC (dual connectivity). 28.552 has no MAC-layer volume measurement anywhere. The value is computed from MAC transport blocks, retransmissions included (`mmwave-phy-trace.cc:262`), and sent at `metric-map.v1.json:33`.
+      - type: rich-text
+        text: |
+          Your follow-up: why were these names used in the first place, and can they come from specs other than 28.552?
+
+          Short answer. This project did not invent most of them. 32 of the 38 non-ns3 names came with ns-O-RAN, written in 2022 by its authors (Michele Polese, Andrea Lacava, Tommaso Zugno). They appear in ns-3-mmwave-oran commit `fccf3903` (2022-04-15) as CSV column headers (`mmwave-enb-net-device.cc:432-458`, `lte-enb-net-device.cc:632-642`), and in the oran-interface module that sends them over E2 (its public history starts at `8585bec`, 2022-09-25, with the names already there). Our metric map inherited them. Most were copied from real specs of that time: 3GPP TS 28.552 Release 16/17 for the gNB, and 3GPP TS 32.425 for the LTE eNB. So yes, several come from other specs or older versions, and a few come from no spec at all. The project itself added only 6 names, all correct (`RRU.PrbAvailDl/Ul`, `RRU.PrbTotDl/Ul` in Testbed `d487283`, 2026-10-22; `DRB.PdcpSduVolumeUL/DL` in oran-interface `96efc40`, 2026-10-27).
+      - type: table
+        title: "Where the failing names come from (researcher, checked against 28.552 V16.6, V17.6, V17.17, V20.2, 32.425 V19.0 and KPM v03)"
+        columns: [ Kind, Names, What happened ]
+        rows:
+          - [ "Real, but from an older 28.552", "RRU.PrbTotDl, RRU.PrbTotUl", "The 28.552 name in V16.6.0 (p.25), V17.6.0 (p.33) and V17.17.0 (p.34). V20.2.0 renames it RRU.PrbDl/Ul (pp.44-45). 32.425 §4.5.3 still uses RRU.PrbTotDl for LTE." ]
+          - [ "Real, spelling fixed since", TB.ErrTotalNbrDl.1, "Rel-16/17 printed a typo, TB.ErrToltalNbrDl.X; ns-O-RAN corrected it its own way. V20.2.0 spells it TB.ErrTotNbrDl.X (§5.1.1.7.4, p.113)." ]
+          - [ "Real, from 32.425 with other capitals", DRB.PdcpSduBitRateDl, "32.425 has DRB.PdcpSduBitrateDl.QCI (§4.4.1.1, p.48)." ]
+          - [ "Real, wrong form", "CARR.PDSCHMCSDist.Bin1–6", "28.552 §5.1.1.12.1 (p.121) needs three bins in the name (rank, table, MCS: BinX.BinY.BinZ) and counts resource blocks; ns-3 counts transport blocks." ]
+          - [ "Real, used on the wrong node or with the wrong value", "QosFlow.PdcpPduVolumeDL, DRB.EstabSucc.5QI, DRB.RelActNbr.5QI, DRB.PdcpSduVolumeDl, DRB.PdcpSduDelayDl", "Split-gNB name fed MAC/RLC values; 5G names on the LTE eNB (one fed a constant 0); an SDU name fed PDU bytes; a 32.425 name with its .QCI dropped." ]
+          - [ "In no spec at all", "L1M.RS-SINR.Bin* (7), DRB.BufferSize.Qos, DRB.PdcpPduNbrDl.Qos, Tot.PdcpSduNbrDl", "ns-O-RAN inventions styled like 3GPP names. Nearest real ones: 32.425 §6.6 MR.RSSINR.BinX, 28.552 §5.1.1.32.1 MR.NRScSSSINR.BinX, KPM §7.10.8 L1M.DL-SS-SINR.SSB." ]
+      - type: callout
+        tone: info
+        title: "Why ns-O-RAN could get away with it"
+        text: "In 2021-22 ns-O-RAN sent its values in its own ASN.1 module (E2SM-KPM-RC, in oran-e2sim, by Lacava and Zugno), built on E2SM-KPM v1, which carried fixed container fields rather than named measurements. The 3GPP-style strings were mainly labels for the CSV logs and the dashboards, so nobody checked them against a spec. Our port sends them as real KPM measurement names, which is why AC16 now holds them to the spec. (The authors' intent is an inference; the commits are verified.)"
+      - type: callout
+        tone: warning
+        title: "Two new small questions this answer raises"
+        text: "1) Which 28.552 version should the strict lint judge against? Under V17, RRU.PrbTotDl/Ul and the TB error name are real NR names. Renaming them to ns3.* would throw away a real 3GPP name. Proposed default: judge against the newest version in Zotero (V20.2.0), and where an old name has a current successor with the same meaning (unit, object, counting point), rename to that 3GPP name (RRU.PrbDl/Ul, TB.ErrTotNbrDl) instead of ns3.*; otherwise ns3.*. 2) KPM v03.00 §8.3.9 (p.30) says sub-counters belong in Measurement Labels, not in the name, so '.5QI', '.Qos' and '.1' inside a name are themselves questionable. Proposed default: the lint flags them, and the rename rule moves them out of the name."
       - type: accordion
         title: Background
         items:
@@ -178,11 +205,52 @@ blocks:
     blocks:
       - type: rich-text
         text: |
-          **The question.** The en-gNB reports `DRB.PdcpSduVolumeDL`, "data entering this node's PDCP". By the rulebook that is 0, because the en-gNB has no PDCP for these bearers. Which counter should carry the data it actually forwards, and what does the R3′ predictor read?
+          The question in one line. The en-gNB currently reports a number under a name that, by the rulebook, means something it never does. Which name should that number go under instead, and what should the old name say?
 
-          **In the analogy.** The depot's logbook has a column "parcels stamped at this office". The depot stamps nothing, so honestly that column is 0. Today it writes the number of parcels it received over the courier road there. The rulebook has a separate column for exactly that: "parcels passed between offices over the courier road".
+          In the analogy. The depot's logbook has a column "parcels stamped at this office". The depot stamps nothing, so honestly that column is 0. Today the depot copies the main office's whole stamp count into it, including the parcels the main office delivered with its own truck. The rulebook has a different column for what the depot really handles: "parcels passed between offices over the courier road".
 
-          **In the system.** 28.552 counts DRB.PdcpSduVolumeDL as bits entering the node's own PDCP (p.183). The ns-3 en-gNB hosts none (`McEnbPdcp` is at the MN, `mc-enb-pdcp.cc:243-293`). Annex A.25 (p.403) says the X2 counters (`DRB.PdcpSduVolumeX2DL/UL`) exist to measure MN-to-SN transfer for split bearers. The R3′ predictor (the harness stand-in for QP) reads this counter to predict throughput.
+          In the system. The name `DRB.PdcpSduVolumeDL` counts bits entering this node's own PDCP (3GPP TS 28.552 §5.1.2.1.1.1). The ns-3 en-gNB has no PDCP for these bearers; the eNB's `McEnbPdcp` numbers every packet. So by the rulebook the en-gNB's value is 0. What the en-gNB really carries is what reaches it over X2, and 28.552 has a name for exactly that: `DRB.PdcpSduVolumeX2DL` (§5.1.2.1.1.2). The R3′ predictor (the harness stand-in for QP) reads this counter to predict each cell's throughput.
+      - type: accordion
+        title: "Your follow-up questions (asked 2026-11-06 18:59)"
+        items:
+          - title: "\"Which counter carries what it actually sends?\" What does this mean?"
+            text: |
+              "Counter" here means a measurement name in the KPM report, that is, a column in the logbook. The question was: once `DRB.PdcpSduVolumeDL` honestly says 0 at the en-gNB, under which name should the en-gNB report the data that really flows through it?
+
+              The data that really flows through the en-gNB is the share of the UE's packets that the eNB chose to send over X2 to the en-gNB, which the en-gNB then transmits on the NR radio. 28.552 defines a measurement for exactly that: `DRB.PdcpSduVolumeX2DL`, "the Data Volume (amount of PDCP SDU bits) in the downlink delivered on X2 interface in DC-scenarios" (§5.1.2.1.1.2, PDF p.183–184). Option A puts the number there. A better wording of the question would have been: "Which measurement name should hold the volume the en-gNB really carries?"
+          - title: Where is DRB.PdcpSduVolumeDL defined?
+            text: |
+              In 3GPP TS 28.552 V20.2.0 (Zotero 5SZUBP6M), §5.1.2.1.1.1 "DL Cell PDCP SDU Data Volume", PDF p.183. It sits in §5.1.2, "Performance measurements valid only for non-split gNB deployment scenario", and its object is NRCellCU. The definition says (c): "This measurement is obtained by counting the number of bits entering the NG-RAN PDCP layers. The measurement is performed at the PDCP SDU level." The unit is Mbit; O-RAN E2SM-KPM v03.00 §7.9.1 changes it to kbit INTEGER for the KPM report.
+
+              The LTE twin is `DRB.PdcpSduVolumeDl` (lower-case "l") in 3GPP TS 32.425 V19.0.0 (the copy you added, Zotero 9XR9PVRW), §4.4.7.1 "DL cell PDCP SDU Data Volume": "obtained by counting the number of bits entering the eNodeB/RN", at PDCP SDU level, object EUtranCellFDD/TDD.
+
+              The next clause, §5.1.2.1.1.2, defines `DRB.PdcpSduVolumeX2DL`. Annex A.25 (PDF p.403) explains why it exists: "in scenarios of dual connectivity, for split bearers, PDCP data is transferred between the MN and the SN … the data volume transferred between MN and SN should be counted."
+          - title: Why is it 0 at the en-gNB? (step by step)
+            text: |
+              Follow one downlink packet for a UE on the EN-DC split bearer.
+
+              1. The packet arrives from the core network at the LTE eNB (the master node).
+              2. The eNB's PDCP (`McEnbPdcp`) takes it as an SDU, numbers it, adds the PDCP header, and makes it a PDU. This is the only PDCP the packet ever enters. The bits "entering the PDCP layer" are counted here, at the eNB. That is 32.425's `DRB.PdcpSduVolumeDl` on the eNB.
+              3. The eNB then picks a leg for this packet, about half to each (`perPckToLTE` 0.5). LTE leg: the eNB's own LTE RLC sends it (`mc-enb-pdcp.cc:221`). NR leg: the eNB sends the finished PDU over X2 to the en-gNB (`mc-enb-pdcp.cc:238`).
+              4. On the NR leg the en-gNB puts the PDU straight into its RLC and MAC and sends it on the NR radio. It never passes the packet through a PDCP of its own, because the en-gNB has none for this bearer.
+
+              28.552's `DRB.PdcpSduVolumeDL` at the en-gNB counts "bits entering the NG-RAN PDCP layers" of that node. In step 4 no bits enter a PDCP at the en-gNB, so the honest value is 0.
+          - title: So what does the en-gNB report today?
+            text: |
+              Today's code (`mmwave-enb-net-device.cc:672-708`) adds up, for every UE the en-gNB knows, the eNB PDCP's transmit counter for that UE. That counter ticks for both legs: the same trace `m_txPdu` fires at `mc-enb-pdcp.cc:221` (LTE leg) and `:238` (X2 leg). So the en-gNB credits itself with the UE's whole PDCP volume, including the half the eNB delivered over its own LTE radio, which never touched the en-gNB. A code comment there already says so: "this is the MN-hosted volume credited to this cell".
+
+              Two side effects: a UE listed by two en-gNBs during a cell change is credited to both, and the eNB's own LTE volume is counted a second time at the en-gNB.
+      - type: table
+        title: "One illustrative second for one UE (2,000 packets, about half on each leg)"
+        columns: [ Where, Measurement, Defined in, Today, Option A ]
+        rows:
+          - [ LTE eNB, DRB.PdcpSduVolumeDl, "32.425 §4.4.7.1", "2,000 packets' bits", "2,000 packets' bits (unchanged; P9 does not touch the eNB)" ]
+          - [ en-gNB, DRB.PdcpSduVolumeDL, "28.552 §5.1.2.1.1.1", "2,000 packets' bits (wrong: includes the LTE half)", "0 (no PDCP here)" ]
+          - [ en-gNB, DRB.PdcpSduVolumeX2DL, "28.552 §5.1.2.1.1.2", not reported, "about 1,000 packets' bits (what the en-gNB really carries)" ]
+      - type: callout
+        tone: info
+        title: About these numbers
+        text: "The 50/50 split is random per packet, so the real split varies by a percent or two. The eNB row (32.425) is already where the full volume belongs; P9 changes only the en-gNB's two rows. The packet rate (one 1,308-byte packet every 500 µs per UE) is from scenario-zero.cc:691-693."
       - type: accordion
         title: Background
         items:
@@ -212,11 +280,11 @@ blocks:
     blocks:
       - type: rich-text
         text: |
-          **The question.** AC16 says each name is checked against "its 28.552 clause". 28.552 covers 5G (NR) nodes only. LTE eNB measurements are defined in 3GPP TS 32.425. May we read AC16 as "the node's own rulebook: 28.552 for NR, 32.425 for LTE"? And can you add 32.425 to Zotero?
+          The question. AC16 says each name is checked against "its 28.552 clause". 28.552 covers 5G (NR) nodes only. LTE eNB measurements are defined in 3GPP TS 32.425. May we read AC16 as "the node's own rulebook: 28.552 for NR, 32.425 for LTE"? And can you add 32.425 to Zotero?
 
-          **In the analogy.** The main post office follows a different national rulebook from the express depot. We only have the depot's rulebook on the shelf.
+          In the analogy. The main post office follows a different national rulebook from the express depot. We only have the depot's rulebook on the shelf.
 
-          **Why it matters.** Without 32.425 we cannot check the eNB's names. Kongming first proposed a soft fallback: keep eNB names whose type and unit KPM §7.9.1 lists, marked "unverified against Zotero" (AC20). Codex showed that is too loose, and kongming agreed: a matching name and unit do not prove the value means the right thing. Row `:128` is the proof: its name and unit match, but it counts PDCP PDU bytes where the name means SDU bytes (`lte-enb-net-device.cc:1110-1111`). So without 32.425, every eNB name that cannot be checked is renamed to ns3.*, unless you grant a named exception.
+          Why it matters. Without 32.425 we cannot check the eNB's names. Kongming first proposed a soft fallback: keep eNB names whose type and unit KPM §7.9.1 lists, marked "unverified against Zotero" (AC20). Codex showed that is too loose, and kongming agreed: a matching name and unit do not prove the value means the right thing. Row `:128` is the proof: its name and unit match, but it counts PDCP PDU bytes where the name means SDU bytes (`lte-enb-net-device.cc:1110-1111`). So without 32.425, every eNB name that cannot be checked is renamed to ns3.*, unless you grant a named exception.
       - type: comparison
         left:
           label: "Read as 32.425 + add it (recommended)"
@@ -235,11 +303,11 @@ blocks:
     blocks:
       - type: rich-text
         text: |
-          **The question.** P7 gives the EN-DC bearer a real NR PDCP header (37.340 §4.2.2 says NR PDCP is mandatory for it). The NR header carries a sequence number (SN), a counter that orders packets. 38.323 allows 12 or 18 bits. Which?
+          The question. P7 gives the EN-DC bearer a real NR PDCP header (37.340 §4.2.2 says NR PDCP is mandatory for it). The NR header carries a sequence number (SN), a counter that orders packets. 38.323 allows 12 or 18 bits. Which?
 
-          **In the analogy.** The stamp has room for either a 4-digit or a 6-digit serial number. A short serial number wraps around to 0 sooner; a long one makes each stamp slightly bigger.
+          In the analogy. The stamp has room for either a 4-digit or a 6-digit serial number. A short serial number wraps around to 0 sooner; a long one makes each stamp slightly bigger.
 
-          **In the system.** At 12 bits the SN wraps every 4,096 packets (about every 2 s here) and the header is 2 bytes. At 18 bits it wraps every 262,144 packets (never in our 131 s runs) and the header is 3 bytes. Both are legal for a data bearer (38.323 Table 6.3.2-1, 38.331 PDCP-Config).
+          In the system. At 12 bits the SN wraps every 4,096 packets (about every 2 s here) and the header is 2 bytes. At 18 bits it wraps every 262,144 packets (about every 131 s, which our live runs never reach) and the header is 3 bytes. Both are legal for a data bearer (38.323 Table 6.3.2-1, 38.331 PDCP-Config).
       - type: callout
         tone: info
         title: A correction kongming made
@@ -269,6 +337,28 @@ blocks:
           - title: What is the SN-wrap bug?
             text: |
               ns-3 keeps some packet buffers in a map keyed by the raw SN (`lte-rlc-am.h:208`, filled at `lte-rlc-am.cc:1808`), so after a wrap it sorts 0, 1 before 4094, 4095. Two handover checks compare `SN >= SN_1 - 2` (`lte-enb-rrc.cc:1105`, `lte-ue-rrc.cc:1774`), which goes wrong when SN_1 is 0 or 1. Packets just before the wrap are silently left out. It does not crash. Both advisors recommend fixing it in its own commit right before P7: at 12 bits it fires live, and a separate commit lets P11 tell its effect apart from P7's.
+          - title: "Your follow-up: the proposed wrap fix, step by step"
+            text: |
+              Where it matters. Both bugs sit in the code that runs when a UE changes cell. At that moment the old cell hands its unsent and unacknowledged packets to the new cell ("forwarding"), so no data is lost. The SN wrap matters only if the packets being handed over straddle the wrap, for example SNs 4094, 4095, 0, 1. Today's header is already 12-bit, so this can happen in today's runs too, about once every 2 s of traffic per UE.
+
+              Part 1: keep the forwarded packets in sending order. `CreateRlcSduBuffer()` (`lte-rlc-am.cc:1798-1810`) copies the packets into a `std::map` keyed by the raw SN, and the forwarding code walks that map from smallest key to largest (`lte-enb-rrc.cc:1058-1069`). For 4094, 4095, 0, 1 the map gives 0, 1, 4094, 4095, so the new cell receives the newest packets first. The fix orders by distance from the oldest packet instead: key = (SN − oldest SN) mod 4,096. Then 4094 → 0, 4095 → 1, 0 → 2, 1 → 3, and the order is right. Keeping the list in the order the RLC already holds it is an equivalent fix.
+
+              Part 2: find the right "previous" packets. The code also adds the up to 2 packets just before the first forwarded one (SN_1). It tests `SN >= SN_1 - 2 && SN <= SN_1` (`lte-enb-rrc.cc:1105`; the UE side has the same test at `lte-ue-rrc.cc:1774`). SN_1 − 2 is computed as a signed number, so when SN_1 is 1 the lower bound is −1, and 4095 (the packet just before 0) is never selected. When SN_1 is 0, the bound is −2, and 4094 and 4095 are both missed. The fix uses modular distance: select SN if (SN_1 − SN) mod 4,096 is 0, 1 or 2. For SN_1 = 1 this picks 4095, 0 and 1, as intended.
+
+              How it is proved. A new ns-3 unit test (check c) builds exactly these cases: a buffer straddling the wrap, and SN_1 equal to 0 and 1. It must fail on today's code (proving the test can see the bug) and pass after the fix. Live runs also exercise the fixed code, because at 12 bits the SN wraps every ~2 s. The fix gets its own commit and ledger row, between P6 and P7.
+          - title: "Your follow-up: why 12 bits rather than 18, in more detail"
+            text: |
+              1. The spec does not decide it. 38.323 Table 6.3.2-1 and 38.331 PDCP-Config allow 12 or 18 bits for a data bearer; the operator chooses. So the choice is about what works best here.
+
+              2. 12 bits is enough here. The reordering window is half the SN space: 2,048 packets at 12 bits. At one packet every 500 µs that is about 1 s of traffic, while the X2 delay is 1 ms and RLC retransmission recovery is far shorter than 1 s. Nothing in these runs comes close to needing 1 s of packets in flight.
+
+              3. 18 bits would ripple through shared LTE code. Today the SN is stored as a 16-bit number everywhere: in the master and UE PDCP (`mc-enb-pdcp.h:226-235`, `mc-ue-pdcp.h:195-201`), in the PDCP status shared with plain LTE (`lte-pdcp.h:103-104`), and in the X2 "SN Status Transfer" message used at handover, which carries 16-bit SNs and a 4,096-bit receive bitmap (`epc-x2-header.cc:1810-1823`). An 18-bit SN does not fit in 16 bits, so every one of these must widen; a missed one silently cuts the SN. At 12 bits none of them changes, and P7 becomes a header-class swap.
+
+              4. The bytes cannot prove "NR" at either width. The NR 12-bit header has the same bytes as the LTE 12-bit header, and the NR 18-bit header has the same bytes as the LTE 18-bit header (36.323 §6.2.11). So 18 bits would show that something changed, not that it is NR. The NR proof must come from code-level checks either way.
+
+              5. 12 bits keeps the wrap fix honest. At 18 bits the SN wraps only once per ~131 s of traffic, which kongming found our live runs never reach, so the fixed code would never run live. At 12 bits it runs every ~2 s.
+
+              The case for 18 bits. It is the usual setting for EN-DC data bearers in real networks (kongming's belief, not checked against a source). Every packet grows by one byte, so P7 is visible in the checkpoint-3 diff, and any code path that still writes the old header would fail loudly instead of silently. Choose it if you want P7 to show on the wire.
           - title: "A trap Codex found: the packet tag that disappears"
             text: |
               The draft planned to mark each packet with a tag saying "NR header" and to stop with a fatal error if the tag was missing. But during a handover the eNB strips all tags (`RemoveAllPacketTags()`, `lte-enb-rrc.cc:1190`) before it forwards the packet (`:1219`). The draft's design would therefore crash on a repeated SN change. The fix: take the header type from the bearer itself, not from a tag.
@@ -278,7 +368,7 @@ blocks:
     blocks:
       - type: rich-text
         text: |
-          Two advisors answered separately. **Kongming** (Opus 5.5, xhigh effort) read the spec PDFs in Zotero and the code. **Codex** (read-only, high effort) read only the code and took the spec citations as given. Kongming then checked every new code claim in Codex's answer: all 11 held, with small line-number drift.
+          Two advisors answered separately. Kongming (Opus 5.5, xhigh effort) read the spec PDFs in Zotero and the code. Codex (read-only, high effort) read only the code and took the spec citations as given. Kongming then checked every new code claim in Codex's answer: all 11 held, with small line-number drift.
       - type: table
         title: Final positions
         columns: [ "#", Kongming first, Codex, Kongming after cross-check, Who moved ]
@@ -350,6 +440,8 @@ blocks:
       - { id: verify, title: "kongming-261106-0500-GH-1-p10-pre-registration-verification.md (with its Cross-check of Codex section)", source: plans/reports }
       - { id: codex, title: "codex-261106-0732-GH-1-p10-questions-independent-opinion.md", source: plans/reports }
       - { id: questions, title: "decisions-261106-0525-GH-1-p10-pre-registration-questions.md", source: plans/reports }
+      - { id: provenance, title: "researcher-261106-1859-GH-1-kpm-metric-name-provenance.md (where the Q1 names came from)", source: plans/reports }
+      - { id: s32425, title: "3GPP TS 32.425 V19.0.0 (Zotero 9XR9PVRW): §4.4.7.1 DRB.PdcpSduVolumeDl, §4.4.1.1, §4.5.3, §6.6" }
       - { id: p09, title: "phase-09: UB finding (:92-96)", source: plans/261103-0008-GH-1-post-m9-realism-m10 }
       - { id: contract, title: "contract-261103-0001: AC16 (:113-117), open point 2 (:190)", source: plans/reports }
       - { id: specs, title: "3GPP TS 28.552 §5.1.3.6.1.1, §5.1.2.1, Annex A.25; 38.323 §6.2.2, Table 6.3.2-1; 36.323 §6.2.11; 37.340 §4.2.2; O-RAN E2SM-KPM v03.00 §7.9.1" }

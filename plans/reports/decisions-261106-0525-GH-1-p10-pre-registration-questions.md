@@ -19,3 +19,10 @@ Request: please add 3GPP TS 32.425 (E-UTRAN performance measurements) to Zotero 
 Controller-decided (recorded and shown at the next Stop): P7 check (b) baseline rule, the SN-wrap fix inside P7's commit, the c-judging rule, and the row 158 additive amendment. Kongming projects three revert cycles and about 14–17 h of wall time for P10.
 
 **Revised 2026-11-06 07:44 KST** after Codex's independent opinion (`codex-261106-0732-…`) and kongming's cross-check of it (the verification report's new section). Q3 on the eNB rows now uses a strict fallback: without 32.425, every unverifiable eNB name is renamed to `ns3.*` unless the user grants a named exception. Plain-language page: `plans/261103-0008-GH-1-post-m9-realism-m10/visuals/explain-p10-pre-registration-questions.html`.
+
+## User rulings, 2026-11-06 18:59 KST (via /ak-explain checklist)
+
+- **UB: fix it.** Approved as contract Amendment 4: its own ns-3 commit right after D-R3-1 and before P6, with a ledger row and the widened tests (map sizes 1, 2, 8, 9, 10, ties; r2/r3p exactly min(8, eligible) neighbours; one s10 run). The amendment text is written into the contract in the docs commit before the UB code.
+- **Q1 (P6): rename.** The MAC value and every name failing the AC16 lint are renamed in place to `ns3.*` (same order and measId), under the pre-registered rename rule with the `owningNode`/`countingEvent` registry fields and the "pending P9" marker on rows `:56-57`. The user asked where the names came from; the explainer answers it (researcher-261106-1859).
+- **Q3: done by the user.** 3GPP TS 32.425 V19.0.0 is in Zotero (`9XR9PVRW`); 28.552 V20.2.0 stays `5SZUBP6M`. AC16's clause for eNB rows is read as 32.425, with the strict fallback for any name it cannot verify.
+- **Q2 (P9) and Q4 (P7): still open.** The user asked follow-up questions; the explainer answers them. Q2 is due before P9 code (it shapes the revert plan); Q4 before the SN-rollover and P7 code.
