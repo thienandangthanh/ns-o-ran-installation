@@ -32,9 +32,11 @@ HARNESS_TOOLS="$HARNESS_DIR/tools/kpimon-decode-harness"
 KPIMON_POD=""  # set by kpimon_wait_ready
 KPIMON_PATCH_REL=install_patch_files/xApps/kpimon-go
 # the Testbed paths (relative to $RIC_DIR) the kpimon install reads: the installer, its patch set, and the agent's
-# metric map and lint (the installer checks the eNB measurement config against the map's eNB rows)
+# metric map and lint with the lint's clause registry and registry module (the installer lints the map and checks
+# the eNB measurement config against the map's eNB rows)
 KPIMON_TESTBED_PATHS=(additional_scripts/install_xapp_kpi_monitor.sh "$KPIMON_PATCH_REL"
-    ns3_e2_agent/schema/metric-map.v1.json ns3_e2_agent/tests/lint-metric-map.py)
+    ns3_e2_agent/schema/metric-map.v1.json ns3_e2_agent/schema/kpm-measurement-clauses.v1.json
+    ns3_e2_agent/tests/lint-metric-map.py ns3_e2_agent/tests/kpm-clause-registry.py)
 
 
 

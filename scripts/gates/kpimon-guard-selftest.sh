@@ -2,7 +2,8 @@
 # kpimon-guard-selftest.sh: host-side check of the kpimon install guard (kpimon.sh: testbed_paths_at_pin on
 # KPIMON_TESTBED_PATHS, then kpimon_image_labelled) on a temporary Testbed repo, no VM or k8s. The scratch Testbed holds
 # an installer stand-in, a kpimon patch set (manifest, two patches, the eNB measurement config, an unlisted backup
-# file) and the agent's metric map and lint; `dk image inspect` is stubbed to print LABELS.
+# file) and the agent's metric map, clause registry, lint and registry module; `dk image inspect` is stubbed to print
+# LABELS.
 # The pinned tree with an image labelled (digest, size8) must pass; each fixture must fail:
 #   stale-patchset-label   the image carries the digest of another patch set (a warm install that skipped the build)
 #   wrong-size8-label      the image was built with the other KPIMON_TIMESTAMP_SIZE8
@@ -11,6 +12,8 @@
 #   listed-config-edit     the eNB measurement config is edited (uncommitted)
 #   untracked-patch-file   an untracked, non-ignored file in the patch dir
 #   metric-map-edit        the agent's metric map differs from TESTBED_SHA's
+#   clause-registry-edit   the lint's clause registry differs from TESTBED_SHA's
+#   registry-module-edit   the lint's registry module differs from TESTBED_SHA's
 # Exit 0 when the pinned tree passes and every fixture fails.
 set -uo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
@@ -29,7 +32,9 @@ printf 'package control\n' >"$pd/control/control.go.previous"
 printf '# scratch kpimon patch set\ne2sm/wrapper.c.patch\ncontrol/control.go.patch\n\ncontrol/enb-kpm-measurements.json\n' \
     >"$pd/patches.manifest"
 printf '{"rows": []}\n' >"$RIC_DIR/ns3_e2_agent/schema/metric-map.v1.json"
+printf '{"entries": []}\n' >"$RIC_DIR/ns3_e2_agent/schema/kpm-measurement-clauses.v1.json"
 printf '#!/usr/bin/env python3\n' >"$RIC_DIR/ns3_e2_agent/tests/lint-metric-map.py"
+printf '"""registry module stand-in"""\n' >"$RIC_DIR/ns3_e2_agent/tests/kpm-clause-registry.py"
 printf '/xApps/\n' >"$RIC_DIR/.gitignore"
 g -C "$RIC_DIR" init -q && g -C "$RIC_DIR" add -A && g -C "$RIC_DIR" commit -qm testbed || exit 1
 
@@ -74,6 +79,8 @@ pinned && echo '// edit' >>"$pd/control/control.go.previous" && expect fail unli
 pinned && sed -i 's/1001/1002/' "$pd/control/enb-kpm-measurements.json" && expect fail listed-config-edit
 pinned && echo x >"$pd/control/extra.patch" && expect fail untracked-patch-file
 pinned && echo ' ' >>"$RIC_DIR/ns3_e2_agent/schema/metric-map.v1.json" && expect fail metric-map-edit
+pinned && echo ' ' >>"$RIC_DIR/ns3_e2_agent/schema/kpm-measurement-clauses.v1.json" && expect fail clause-registry-edit
+pinned && echo '# edit' >>"$RIC_DIR/ns3_e2_agent/tests/kpm-clause-registry.py" && expect fail registry-module-edit
 pinned && expect pass pinned-tree-again
 echo "kpimon-guard self-test: $([ "$rc" = 0 ] && echo ok || echo failed)"
 exit "$rc"
