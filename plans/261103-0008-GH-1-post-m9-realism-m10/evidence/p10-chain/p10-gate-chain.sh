@@ -5,6 +5,7 @@
 #                                                                       first red step
 #   P10_SKIP_STEPS=8,... p10-gate-chain.sh ...           skip the listed step indices inside the range (e.g. the UB
 #                                                       fix's chain: 0-11 without e2i)
+#   step 12 (n4, --part determinism) is the N4 two-build determinism check, run alone after a green chain
 #   p10-gate-chain.sh --check-dir RUN_DIR              the per-step run-dir cross-check alone (offline validation)
 #
 # Every step's host side (vm-exec.sh, the watchdog) runs from a frozen checkout of the SHA: a detached, locked
@@ -90,6 +91,7 @@ steps=(
   "r2|gate-r2-ts-stub-qp.sh|7200|--mode single"
   "r3p|gate-r3p-ts-predictor.sh|7200|--mode single"
   "s10|gate-s10-scale.sh|5400|"
+  "n4|gate-n4-ul-metric.sh|3600|--part determinism"
 )
 cd "$frozen" || return 2
 # asn1-indep pre-flight. A step with --image-tag (e2i) needs ~/asn1-indep/asn1-indep-<tag>.tar and SHA256SUMS in the
