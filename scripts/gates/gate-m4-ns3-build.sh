@@ -376,6 +376,8 @@ ns3_suite_passes() {
     return 0
 }
 check m4_ns3_neighbour_list_suite_passes ns3_suite_passes mmwave-neighbour-list
+# The lossless-handover forwarding buffer across the 12-bit PDCP and 10-bit RLC AM SN wraps (src/lte/test).
+check m4_ns3_pdcp_sn_wrap_suite_passes ns3_suite_passes pdcp-sn-wrap
 
 # The test tree is a scratch build; drop it so it never counts against the VM disk budget.
 [ -n "$TESTS_SRC" ] && rm -rf "$M4_TESTS_WORKDIR"
