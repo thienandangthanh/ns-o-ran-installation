@@ -28,5 +28,13 @@ Date: 2026-11-03 02:47 KST. Scope: AC5 of the M10 contract, a findings note only
 - `rt_reader_ok` (receiver-side evidence) plus a bounded `ric_refresh_routes`, at most once per level per gate run.
 - FU3 (this goal) extends receiver-side readiness to rc: `rc_rmr_ready_after_rtmgr` now needs rc's own :4561 reader drained. rtmgr's push log is supporting evidence only (`scripts/gates/rc-lib.sh`, `scripts/gates/rt-reader-selftest.sh`).
 
+## Addendum, 2026-11-06: no route-table session to a replaced endpoint
+Source: P10 D-R3-1 chain attempt 1, M7 (`plans/261103-0008-GH-1-post-m9-realism-m10/evidence/m7/20261105T211444Z/m7-diagnosis/`), and `plans/reports/kongming-261106-2200-GH-1-p10-d-r3-1-chain-m7-red-counsel.md`.
+- **Variant.** After M7 deleted the e2term pod, the replacement pod had no session on :4561 at all (IPVS: 0 active connections), not a session with unread data. rtmgr kept its push session to the old pod's address behind the Service, every push failed with EPIPE (`tp=32`), and it never reopened the session. The pod ran on its seed `router.txt` for more than 15 h.
+- **Receiver-side test.** RMR writes `router.txt.stash` on every table it receives (e2mgr's stash is rewritten at each rtmgr push). A pod with only the empty `router.txt.stash.inc` from start-up has never received a table.
+- **Two push-log signatures.** "failed" with an empty status means no ack; delivery may still have happened (e2mgr's stash proves it did). "failed" with the table echoed back and `tp=32` means a send on a dead session. "successful" lines are not proof either way.
+- **Rate.** 1 of 20 M7 runs on record. In green runs the replacement e2term also starts on the seed table and gets its first table 20–100 s after the first setup; why rtmgr reopens then is not known and is out of scope.
+
 ## Unresolved questions
 - Whether the TS xApp's missing rtmgr session after a cold boot matters for any M10 step. Today every TS rung restarts rtmgr first; P12 re-checks this when it builds the M10 step set.
+- Why rtmgr reopens its push session to a replaced e2term in most M7 runs but not in the 2026-11-05 one.

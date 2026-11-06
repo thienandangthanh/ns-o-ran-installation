@@ -16,7 +16,9 @@
 main() {
 set -u
 repo=/home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0
-here=/tmp/claude-1000/-home-andang-orca-workspaces-ns-o-ran-installation-migrate-l-release-NIST-1-8-0/fdfe16a0-64f3-4277-9ef6-e00f0ee9ba0c/scratchpad
+# The tsv and the step logs go to a fresh directory per attempt (P10_CHAIN_LOG_DIR): the tsv is appended and the
+# step logs are overwritten, so a reused directory would mix attempts.
+here=${P10_CHAIN_LOG_DIR:-}
 log=$here/p10-gate-chain.tsv
 export EVIDENCE_HOST_ROOT=$repo/plans/261103-0008-GH-1-post-m9-realism-m10/evidence
 ref=plans/261103-0008-GH-1-post-m9-realism-m10/reference
@@ -48,6 +50,9 @@ if [ "${1:-}" = --check-dir ]; then
     return
 fi
 
+[ -n "$here" ] || { echo "set P10_CHAIN_LOG_DIR to a fresh directory"; return 2; }
+mkdir -p "$here" || return 2
+[ -e "$log" ] && { echo "$log exists: use a fresh P10_CHAIN_LOG_DIR per attempt"; return 2; }
 sha=$1; first=${2:-0}; last=${3:-999}
 frozen=$HOME/.cache/ns-o-ran-frozen-harness/$sha
 [ -d "$frozen/scripts/vm" ] || { echo "no frozen checkout at $frozen"; return 2; }
