@@ -155,3 +155,10 @@ Re-pin the `m10-cp2` SHAs.
   - the M5–M7 run at D-R3-1;
   - an additive amendment to row 139: a hex-letter node case built from s10's `e2mgr-node-10.json`, so the TS cell-map path is tested on a key ≥ 10.
 - **User question due before P6:** fix the ns-3 neighbour-loop UB (phase-09, finding) under contract Amendment 4, or disclose it only? The default is disclose-only.
+
+## On resuming the goal: first housekeeping step (user, 2026-11-06 20:05 KST)
+- Two locked frozen-checkout worktrees are left from the chains, 2.2 GiB each in /home:
+  - `~/.cache/ns-o-ran-frozen-harness/510ae30811f842a7fec1a32cf7d8b09c531331a0` (P09 s10 gate of record);
+  - `~/.cache/ns-o-ran-frozen-harness/a7943bfb66b54bc58beb12f24d4f189de59c87a2` (the D-R3-1 chain, red at M7).
+- At resume, check whether each is still needed. A checkout is needed only while its chain's evidence is not yet committed and archived (tsv, step logs, as-run driver, `evidence-sha256.txt`, raw archive on /mnt/data), or while a diagnosis must re-run something at exactly that SHA. The M7 diagnosis may need a7943bf; the same SHA can be re-created with `git worktree add --detach --lock` from git, so the checkout itself is never the only copy.
+- If one is not needed, remove it with `git worktree unlock <path>` then `git worktree remove <path>` (the frozen tree is `chmod -R a-w`, so restore write permission on that one path first), never `rm -rf`. Log the freed space in this phase.
