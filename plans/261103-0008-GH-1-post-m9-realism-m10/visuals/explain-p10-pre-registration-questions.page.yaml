@@ -6,7 +6,7 @@ theme:
   preset: editorial
 blocks:
   - type: hero
-    eyebrow: M10 · P10 · five questions ruled; three small lint rulings left
+    eyebrow: M10 · P10 · every pre-registration question ruled
     title: What the P10 questions are asking you
     description: "P10 fixes how the simulator counts and labels data, so the numbers the RIC sees mean what the 3GPP rulebook says they mean. Reading the rulebook closely turned up five places where the plan's own wording cannot be followed as written. Each needs your choice before the code that depends on it."
 
@@ -20,8 +20,8 @@ blocks:
           Nothing here is urgent in hours, but each question blocks a specific commit. The table below says which. Kongming and Codex were each asked separately, then kongming checked Codex's answer against the code. After that cross-check they agree on all five; kongming changed its advice on Q3 and Q4.
       - type: callout
         tone: success
-        title: "Your rulings (2026-11-06 18:59, 19:52 and 20:46 KST)"
-        text: "UB: fix it (contract Amendment 4, its own ns-3 commit before P6). Q1: rename the failing names to ns3.* vendor names. Q2: Option A, the X2 counters (this includes the T3 change of r3p-scenario.json). Q3: done, you added 3GPP TS 32.425 V19.0.0 (and later 28.552 V17.17.0) to Zotero. Q4: 12-bit SN, with the wrap fix in its own commit before P7. Lint version: 28.552 V20.2.0 only, with the successor rule. PRB source fix: a follow-up outside M10. Still open: three small lint rulings (L2 sub-counters, L4 per-UE check, L5 data types), explained in the section 'Three lint rulings still open'."
+        title: "Your rulings (2026-11-06 18:59, 19:52, 20:46 and 21:37 KST)"
+        text: "UB: fix it (contract Amendment 4, its own ns-3 commit before P6). Q1: rename the failing names to ns3.* vendor names. Q2: Option A, the X2 counters (this includes the T3 change of r3p-scenario.json). Q3: done, you added 3GPP TS 32.425 V19.0.0 (and later 28.552 V17.17.0) to Zotero. Q4: 12-bit SN, with the wrap fix in its own commit before P7. Lint version: 28.552 V20.2.0 only, with the successor rule. PRB source fix: a follow-up outside M10. L2: the lint flags sub-counter suffixes, no label support in M10. L4: per-UE rows are checked against KPM §7.9. L5: kept 3GPP names use the 3GPP data type. Nothing is open now; the next step is registering the ledger rows before code, after the M7 diagnosis."
       - type: callout
         tone: warning
         title: Separate problem, not one of the five questions
@@ -415,7 +415,7 @@ blocks:
         text: "1) Rule Q1 (V20.2.0 only, successor rule) and Q2 (lint flags label-expressible suffixes; no label support in P6). 2) Should the PRB source fix (real RB count, denominator, UL usage) go inside M10, which would let that family return to 3GPP names, or be recorded as a follow-up outside M10? Kongming recommends a follow-up. 3) Does the P6 rule include the per-UE check against KPM §7.9? If yes, the gNB UE-list TB rows also become ns3.*, because §7.9 lists no TB type. 4) The lint needs a stated type rule, because some kept names are sent as REAL where 3GPP specifies an integer. (The values of RRC.ConnMean, DRB.MeanActiveUeDl and DRB.UEThpDl are still unchecked; the registry must check them.)"
 
   - type: section
-    title: "Three lint rulings still open: L2 sub-counters, L4 per-UE check, L5 data types"
+    title: "Three lint rulings (all ruled 21:37: L2 flag, L4 yes, L5 3GPP type)"
     blocks:
       - type: rich-text
         text: |
