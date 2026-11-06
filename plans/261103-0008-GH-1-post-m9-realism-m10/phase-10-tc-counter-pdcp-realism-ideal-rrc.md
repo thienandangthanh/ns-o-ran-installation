@@ -270,6 +270,27 @@ Counsel: `plans/reports/kongming-261106-2200-GH-1-p10-d-r3-1-chain-m7-red-counse
   - `plans/.gitignore` now keeps `evidence/p10-chain/**`, like `cp2-chain`, except the probe's raw build stderr.
 - **UB fix DONE.** Next in the commit order is P6.
 
+## P6: KPM names checked against their 3GPP clauses, chain green (2026-11-07)
+- **Commits.**
+  - Testbed 254027ca on the fork `dev/l-release-nist180`, pushed. It holds the clause registry `kpm-measurement-clauses.v1.json` and its module, the strict lint with a self-test of 136 fixtures plus CLI cases, the metric map with every row failing row 147 renamed in place to `ns3.*` (48 rows; order and measId unchanged; R4 unit texts), and the kpimon eNB config regenerated from the map.
+  - Harness 66cb0896: the pin, the registry and module added to `KPIMON_TESTBED_PATHS` (two new guard fixtures), and `lint.sh` running the lint's self-test.
+- **Reviews.** Codex had 10 rounds. Rounds 1–4 were fixed by the subagent and rounds 5–9 by the controller; round 10 approved with no findings (`fullstack-developer-261107-0300-…`). The debate had already confirmed that no consumer needs an en-gNB 3GPP name (`brainstorm-261106-2359` §113).
+- **Host checks at the commit:**
+  - the shipped lint has 0 findings;
+  - the two expected failures are gnb cell 34 and 35, which have pendingFix P9;
+  - `--require-no-pending` exits 1 on those two only;
+  - `lint.sh` and the kpimon guard self-test pass.
+- **Gates:** `p10-gate-chain.sh 66cb0896… 3 5` from a frozen checkout, 20:29–21:02Z, on the same overlay. Chain green.
+
+  | Gate | Run dir | Duration | Notes |
+  |---|---|---|---|
+  | M5 | `m5/20261106T202921Z` | 242 s | the agent image rebuilt as `ns3-e2-agent:254027ca7875` (new pin tag); tree at 254027ca |
+  | M6 | `m6/20261106T203330Z` | 99 s | kpimon reinstalled; 42 checks pass |
+  | M7 | `m7/20261106T203538Z` | 1580 s | route record: matches false (stash present, 2 sessions on :4561) |
+
+- **Records.** Each run dir has `evidence-sha256.txt`. The raw archive is `…-m10-p10e-20261107.tar.zst` (485 files; SHA256SUMS verified). The chain record is `evidence/p10-chain/66cb0896-p6/`.
+- **P6 DONE.** Next in the commit order is the SN-wrap fix (row 160).
+
 ## Pre-registration (2026-11-06; one docs commit before any P10 code after D-R3-1)
 Sources: the user rulings in `plans/reports/decisions-261106-0525-GH-1-p10-pre-registration-questions.md`; kongming `kongming-261106-0500-…` (§7, §9, C.4, C.5) and `kongming-261106-1952-…`; ledger rows 147–161 (`check-diff-ledger.md`); contract Amendment 4.
 - **Commit order (one fix per commit, for P11's bisection):** D-R3-1 (Testbed + harness pair), the neighbour-loop UB fix (Amendment 4, row 159), P6 (row 147), the SN-wrap fix (row 160), P7 (rows 148–150), P9 (rows 151, 152, 161), P15 (rows 153–155), D-06b-1 (row 81 amendment first), the kpimon node tag (row 137), the TS serving cell (rows 138–142, 158), UseIdealRrc (rows 156–157).
