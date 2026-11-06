@@ -47,6 +47,7 @@ python3 -I scripts/gates/pod-log-window.py --self-test || rc=1
 python3 -I scripts/gates/check-c9-handover-trace.py --self-test >/dev/null || { echo "c9 handover matcher self-test failed"; rc=1; }
 python3 -I scripts/gates/n4-drop-selftest.py >/dev/null || { echo "n4 UL-off drop self-test failed"; rc=1; }
 python3 -I scripts/gates/check-pdcp-volume-totals.py --self-test >/dev/null || { echo "n4 PDCP volume audit judge self-test failed"; rc=1; }
+python3 -I scripts/gates/n4-run-byte-identity.py --self-test >/dev/null || { echo "n4 run byte-identity judge self-test failed"; rc=1; }
 python3 -I O-RAN-Testbed-Automation/RAN_Intelligent_Controllers/Near-Real-Time-RIC/ns3_e2_agent/tests/lint-metric-map.py --self-test >/dev/null || { echo "metric-map strict lint self-test failed"; rc=1; }
 python3 -I scripts/gates/check-ipc-neighbour-lists.py --self-test >/dev/null || { echo "ipc neighbour-list check self-test failed"; rc=1; }
 python3 -I scripts/gates/m7-e2term-route-record.py --self-test >/dev/null || { echo "m7 e2term route record self-test failed"; rc=1; }
