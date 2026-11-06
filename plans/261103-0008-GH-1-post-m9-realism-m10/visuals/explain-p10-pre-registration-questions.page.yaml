@@ -6,7 +6,7 @@ theme:
   preset: editorial
 blocks:
   - type: hero
-    eyebrow: M10 · P10 · all five ruled; two lint follow-ups with the advisors
+    eyebrow: M10 · P10 · five questions ruled; three small lint rulings left
     title: What the P10 questions are asking you
     description: "P10 fixes how the simulator counts and labels data, so the numbers the RIC sees mean what the 3GPP rulebook says they mean. Reading the rulebook closely turned up five places where the plan's own wording cannot be followed as written. Each needs your choice before the code that depends on it."
 
@@ -20,8 +20,8 @@ blocks:
           Nothing here is urgent in hours, but each question blocks a specific commit. The table below says which. Kongming and Codex were each asked separately, then kongming checked Codex's answer against the code. After that cross-check they agree on all five; kongming changed its advice on Q3 and Q4.
       - type: callout
         tone: success
-        title: "Your rulings (2026-11-06 18:59 and 19:52 KST)"
-        text: "UB: fix it (contract Amendment 4, its own ns-3 commit before P6). Q1: rename the failing names to ns3.* vendor names. Q2: Option A, the X2 counters (this includes the T3 change of r3p-scenario.json). Q3: done, you added 3GPP TS 32.425 V19.0.0 (and later 28.552 V17.17.0) to Zotero. Q4: 12-bit SN, with the wrap fix in its own commit before P7. Still open: which 28.552 version the lint judges against, and sub-counters in names; kongming and Codex are answering both."
+        title: "Your rulings (2026-11-06 18:59, 19:52 and 20:46 KST)"
+        text: "UB: fix it (contract Amendment 4, its own ns-3 commit before P6). Q1: rename the failing names to ns3.* vendor names. Q2: Option A, the X2 counters (this includes the T3 change of r3p-scenario.json). Q3: done, you added 3GPP TS 32.425 V19.0.0 (and later 28.552 V17.17.0) to Zotero. Q4: 12-bit SN, with the wrap fix in its own commit before P7. Lint version: 28.552 V20.2.0 only, with the successor rule. PRB source fix: a follow-up outside M10. Still open: three small lint rulings (L2 sub-counters, L4 per-UE check, L5 data types), explained in the section 'Three lint rulings still open'."
       - type: callout
         tone: warning
         title: Separate problem, not one of the five questions
@@ -411,8 +411,101 @@ blocks:
           - { key: Registry time, value: "About 2–3 h instead of 1–2 h, because each row needs a value check against its clause." }
       - type: callout
         tone: info
-        title: "New questions for you"
+        title: "Questions as first put to you (L1 and L3 now ruled; L2, L4, L5 explained in the next section)"
         text: "1) Rule Q1 (V20.2.0 only, successor rule) and Q2 (lint flags label-expressible suffixes; no label support in P6). 2) Should the PRB source fix (real RB count, denominator, UL usage) go inside M10, which would let that family return to 3GPP names, or be recorded as a follow-up outside M10? Kongming recommends a follow-up. 3) Does the P6 rule include the per-UE check against KPM §7.9? If yes, the gNB UE-list TB rows also become ns3.*, because §7.9 lists no TB type. 4) The lint needs a stated type rule, because some kept names are sent as REAL where 3GPP specifies an integer. (The values of RRC.ConnMean, DRB.MeanActiveUeDl and DRB.UEThpDl are still unchecked; the registry must check them.)"
+
+  - type: section
+    title: "Three lint rulings still open: L2 sub-counters, L4 per-UE check, L5 data types"
+    blocks:
+      - type: rich-text
+        text: |
+          What these three are about. P6 builds a registry: one entry per metric-map row saying which spec clause the name comes from, what the value really counts, and whether the two match. The strict lint then reads that registry. You already fixed the main rule (a failing 3GPP name becomes ns3.*) and the version (28.552 V20.2.0). These three rulings fill in the last details of what "matches the clause" means. None of them changes P6's commit order or VM budget; all renames land in the same single map change.
+
+          In the analogy. The logbook column names come from the rulebook. L2 is about columns whose name carries an extra tag such as "for QoS class 9". L4 is about whether a column the rulebook defines for a whole office may also be kept per house. L5 is about whether a column must be written as whole numbers or may use decimals.
+      - type: accordion
+        title: "L2: sub-counters written into the name (recommended: the lint flags them; no label support in P6)"
+        items:
+          - title: What is a sub-counter, and what is a Measurement Label?
+            text: |
+              Many 3GPP measurements can be split into parts. 28.552 writes the part into the name: `DRB.UEThpDl.QOS` means "UE throughput, one counter per QoS class", and `TB.TotNbrDl.X` means "TB count, one counter per MIMO layer X". Each part is a sub-counter.
+
+              KPM sends names over E2 differently. Its Measurement Name must be the plain 3GPP name, and the part goes in a separate field next to it, the Measurement Label (KPM v03.00 §8.3.9, p.30: "The subcounters are represented by the Measurement Labels defined in 8.3.11"). §8.3.11 (pp.30–32) lists the labels KPM has: PLMN, slice, 5QI, QFI, QCI, MU-MIMO layer, distribution bins X/Y/Z, a few _Filter bounds, and "noLabel", meaning "without any subcounter". There is no label for modulation (QPSK, 16QAM, 64QAM).
+
+              So `TB.TotNbrDl.1` in our map is a KPM mistake in form: KPM wants name `TB.TotNbrDl` with label "MU-MIMO layer = 1", or name `TB.TotNbrDl` with noLabel if the value is the total over all layers.
+          - title: Which names in our map have this problem?
+            text: |
+              `TB.TotNbrDl.1` and `TB.ErrTotalNbrDl.1` (".1" = layer 1), `DRB.EstabSucc.5QI` and `DRB.RelActNbr.5QI` (the literal text ".5QI", not even a real 5QI number), `DRB.BufferSize.Qos` and `DRB.PdcpPduNbrDl.Qos`, the bins `CARR.PDSCHMCSDist.Bin1–6` and `L1M.RS-SINR.Bin*`, and the modulation names `TB.TotNbrDlInitial.Qpsk/16Qam/64Qam`.
+          - title: Why not just add real label support?
+            text: |
+              Neither side can carry labels today. The agent sends noLabel for every row (`kpm-indication-message.cpp:48-53, :144-150, :196-198`) and ignores labels a subscription asks for (`kpm-subscription-admission.cpp:115-132`). kpimon subscribes with noLabel and stores values by name in Influx, so two rows with the same name and different labels would overwrite each other. Real labels would need a map-schema change, about 50 lines in the agent encoder, a kpimon Go/C patch, a second Influx rename and a new golden file: its own commit with one more rebuild, kpimon reinstall and M5–M7 (about 1 h and 3–5 GiB). And after the value checks, no row that keeps a 3GPP name needs a label.
+          - title: What the recommended rule does, row by row
+            text: |
+              The lint parses each 3GPP name and fails a suffix whenever KPM has a label for that kind of sub-counter. The row may then drop the suffix and use the bare name with noLabel only if (a) the clause defines a total, and (b) the value really is that total. Otherwise the row becomes ns3.*. Modulation suffixes stay in the name, because KPM has no label for them and 28.552 lists those exact names. Vendor ns3.* names may not reuse a 3GPP name (so today's `ns3.du.QosFlow.PdcpPduVolumeDL` is renamed too).
+
+              Result: one row becomes a cleaner 3GPP name. gNB cell `TB.TotNbrDl.1` becomes `TB.TotNbrDl`: the value counts every TB (`mmwave-phy-trace.cc:248`) and the scenario has one antenna (`scenario-zero.cc:525-527`), so the total over layers equals layer 1. Every other suffixed row fails for a deeper reason anyway (no total form exists in 28.552, a constant 0, an invented base name, bins with the wrong form, or modulation counts that include retransmissions) and becomes ns3.*.
+      - type: comparison
+        left:
+          label: "L2 recommended: flag in the lint, no labels in P6"
+          items:
+            - "Lint gets a small suffix-grammar table"
+            - "One row renamed to TB.TotNbrDl; the rest are ns3.* for other reasons"
+            - "Indication bytes and the KPM golden stay identical"
+            - "Limit: a future 3GPP name with no total form stays ns3.* until labels exist"
+        right:
+          label: "Alternative: real label support now"
+          items:
+            - "Closest to KPM §8.3.9"
+            - "Own agent + kpimon commit, ~1 h and 3–5 GiB, second Influx rename"
+            - "No surviving row needs it"
+            - "Could be a follow-up outside M10, like the PRB fix"
+      - type: accordion
+        title: "L4: may a cell measurement also be sent per UE? (recommended: yes, register the KPM §7.9 check)"
+        items:
+          - title: What is the question?
+            text: |
+              Our agent sends two lists: a cell list (one value per cell) and a UE list (one value per UE). 3GPP defines almost every measurement per cell. KPM v03.00 §7.9 (pp.13–14) says how a 3GPP cell measurement may be turned into a per-UE one: "the formulas specified in 3GPP are used with restriction to the individual UE". But it does this only for the types in its table: throughput, delay, data volume, in-session activity time, PDCP drop rate, IP latency, radio resource utilization, RRC connections / PDU sessions / DRBs / QoS flows, mobility management, CQI and MCS, and released calls. Transport-block (TB) counts are not in the table.
+          - title: Which rows does it affect?
+            text: |
+              Only the UE-list rows that would otherwise keep a 3GPP name: gNB UE `TB.TotNbrDl.1` (would become `TB.TotNbrDl`) and gNB UE `TB.TotNbrDlInitial`. With the §7.9 check registered, both become ns3.* names (for example `ns3.du.tbTotNbrDl`), because KPM gives no rule for a per-UE TB count. `DRB.UEThpDl` on the UE list is fine: throughput is the first row of the table. The other UE rows are already ns3.* for other reasons.
+          - title: Why recommend the check?
+            text: |
+              It is the same principle as the rest of P6: keep a 3GPP name only where a spec says exactly what it means. Without the check, the per-UE TB count would carry a 3GPP name that no spec defines per UE. It costs nothing extra: the two renames ride in the same map change. Kongming's confidence is medium, because §7.9 is a table of types rather than an explicit "nothing else is allowed" rule. The alternative reading is that "restrict the 3GPP formula to one UE" works for any count, so per-UE TB counts could keep `TB.TotNbrDl` and `TB.TotNbrDlInitial`.
+      - type: comparison
+        left:
+          label: "L4 recommended: register the §7.9 check"
+          items:
+            - "Per-UE rows keep a 3GPP name only if §7.9 lists their type"
+            - "2 rows renamed: gNB UE TB.TotNbrDl(.1) and TB.TotNbrDlInitial"
+            - "No extra cost"
+        right:
+          label: "Alternative: no per-UE check"
+          items:
+            - "Per-UE TB rows keep 3GPP names by analogy"
+            - "Relies on a reading §7.9 does not state"
+      - type: accordion
+        title: "L5: data type of a kept 3GPP name (recommended: must match the 3GPP type, with KPM §7.9.1's overrides)"
+        items:
+          - title: What is the question?
+            text: |
+              Every 3GPP measurement says in item (d) whether its value is an integer or a real number. KPM sends either an integer or a REAL value, and §7.9.1 (p.14) changes a few (the PDCP volumes become INTEGER in kbit instead of Mbit). Our map has its own rule (`metric-map.v1.json` doc): "INTEGER only for values guaranteed in 0..2^31-1 (kpimon casts to int32); everything else REAL". That rule protects kpimon from overflow but ignores the spec. The lint therefore needs a stated rule for kept 3GPP names.
+          - title: Is anything wrong today?
+            text: |
+              I checked every row that will keep a 3GPP name against 28.552 V20.2.0. All already match: `TB.TotNbrDl` and `TB.TotNbrDlInitial` are integers (§5.1.1.7.3 d, §5.1.1.7.1 d) and INTEGER in the map; `RRC.ConnMean` and `DRB.MeanActiveUeDl` are "a single integer value" and INTEGER; `DRB.UEThpDl` is "a real value … in kbit per second" (§5.1.1.3.1 d) and REAL; the PDCP volume and X2 rows are INTEGER kbit per KPM §7.9.1. One correction: kongming gave `DRB.UEThpDl` as an example of a mismatch, but 28.552 defines it as real, so it matches. So L5 changes nothing in P6; it is a rule that keeps future rows honest.
+          - title: What the recommended rule says
+            text: |
+              A row with a 3GPP name must use that clause's data type, or KPM §7.9.1's replacement where one exists. If a spec-integer value could exceed kpimon's int32 range, the row fails rather than silently switching to REAL. Per-period counts in 100 ms are far below that range, so no current row is affected. ns3.* rows keep the map's existing overflow rule.
+      - type: comparison
+        left:
+          label: "L5 recommended: 3GPP type (KPM overrides)"
+          items:
+            - "Kept names carry the type their clause defines"
+            - "No current row changes"
+            - "Overflow risk makes the row fail, not change type"
+        right:
+          label: "Alternative: keep the map's overflow rule for all rows"
+          items:
+            - "Simpler"
+            - "A future 3GPP row could carry a REAL where 3GPP says integer, and the lint would not notice"
 
   - type: section
     title: What kongming and Codex recommend
