@@ -1,0 +1,8 @@
+[host 21:14:44] gate m7 (gate-m7-multignb.sh) harness a7943bfb66 -> unit gate-m7-20261105T211444Z
+[host 21:14:44] host disk: start	20261105T211444Z	53	/home/andang/VMs/ubuntu24.1793907376	22
+[host 21:39:38] gate m7 exit 1
+[host 21:39:38] host disk: end	20261105T213938Z	52	/home/andang/VMs/ubuntu24.1793907376	22
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 21:40:15] gate m7 ended (gate exit 1): finishing the host disk watchdog
+[host 21:40:16] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261103-0008-GH-1-post-m9-realism-m10/evidence/m7/20261105T211444Z
+verdict m7 FAIL ['m7_recovery_every_node_restarted_reconnected_and_indicating', 'm7_wire_new_e2setup_request_and_response_per_node', 'm7_wire_new_ricsubscription_request_and_response_per_node', 'm7_wire_first_indication_after_delete_per_node']
