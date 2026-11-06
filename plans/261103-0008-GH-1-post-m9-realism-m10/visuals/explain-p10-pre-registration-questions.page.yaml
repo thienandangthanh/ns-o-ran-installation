@@ -6,7 +6,7 @@ theme:
   preset: editorial
 blocks:
   - type: hero
-    eyebrow: M10 · P10 · three ruled, two open (Q2, Q4)
+    eyebrow: M10 · P10 · all five ruled; two lint follow-ups with the advisors
     title: What the P10 questions are asking you
     description: "P10 fixes how the simulator counts and labels data, so the numbers the RIC sees mean what the 3GPP rulebook says they mean. Reading the rulebook closely turned up five places where the plan's own wording cannot be followed as written. Each needs your choice before the code that depends on it."
 
@@ -20,8 +20,8 @@ blocks:
           Nothing here is urgent in hours, but each question blocks a specific commit. The table below says which. Kongming and Codex were each asked separately, then kongming checked Codex's answer against the code. After that cross-check they agree on all five; kongming changed its advice on Q3 and Q4.
       - type: callout
         tone: success
-        title: "Your rulings so far (2026-11-06 18:59 KST)"
-        text: "UB: fix it (contract Amendment 4, its own ns-3 commit before P6). Q1: rename the failing names to ns3.* vendor names. Q3: done, you added 3GPP TS 32.425 V19.0.0 to Zotero. Still open: Q2 (P9 counter) and Q4 (SN width); your follow-up questions on Q1, Q2 and Q4 are answered in their sections, marked 'Your follow-up'."
+        title: "Your rulings (2026-11-06 18:59 and 19:52 KST)"
+        text: "UB: fix it (contract Amendment 4, its own ns-3 commit before P6). Q1: rename the failing names to ns3.* vendor names. Q2: Option A, the X2 counters (this includes the T3 change of r3p-scenario.json). Q3: done, you added 3GPP TS 32.425 V19.0.0 (and later 28.552 V17.17.0) to Zotero. Q4: 12-bit SN, with the wrap fix in its own commit before P7. Still open: which 28.552 version the lint judges against, and sub-counters in names; kongming and Codex are answering both."
       - type: callout
         tone: warning
         title: Separate problem, not one of the five questions
@@ -90,9 +90,9 @@ blocks:
         rows:
           - [ UB, ns-3 neighbour bug, "Fix a simulator bug that hides a UE's only neighbour cell, or only disclose it?", "RULED: fix it (contract Amendment 4)", "Disclose only", "P6, the next commit" ]
           - [ Q1, "P6: a mislabelled column", "The en-gNB writes its MAC volume under a name 28.552 reserves for split gNBs. Rename it?", "RULED: rename it, and every other failing name, to ns3.* vendor names", "Keep the 3GPP name and record a deviation", P6 code ]
-          - [ Q2, "P9: the wrong office's count", "The en-gNB's PDCP volume should be 0 by the rulebook. Which counter carries what it actually sends?", "Option A: the X2 counters", "A′ (leaner rename) or B (keep the name)", "P9 code; decide now because it fixes the budget" ]
+          - [ Q2, "P9: the wrong office's count", "The en-gNB's PDCP volume should be 0 by the rulebook. Which counter carries what it actually sends?", "RULED: Option A, the X2 counters", "A′ (leaner rename) or B (keep the name)", "P9 code; decide now because it fixes the budget" ]
           - [ Q3, Missing LTE rulebook, "Read AC16's '28.552 clause' as 32.425 for LTE rows, and add 32.425 to Zotero?", "RULED: done, you added 32.425 V19.0.0; any LTE name it cannot verify is renamed to ns3.*", "Keep LTE names whose type and unit KPM lists, marked 'unverified' (both advisors now reject this)", P6 code ]
-          - [ Q4, "P7: label serial-number size", "Should the new NR packet header use a 12-bit or an 18-bit sequence number?", "12 bits, with the wrap-bug fix as its own commit just before P7", "18 bits (kongming's first advice, now reversed)", P7 code ]
+          - [ Q4, "P7: label serial-number size", "Should the new NR packet header use a 12-bit or an 18-bit sequence number?", "RULED: 12 bits, with the wrap-bug fix as its own commit just before P7", "18 bits (kongming's first advice, now reversed)", P7 code ]
 
   - type: section
     title: "UB: the ns-3 neighbour-list bug (recommended: fix under Amendment 4)"
@@ -373,6 +373,48 @@ blocks:
               The draft planned to mark each packet with a tag saying "NR header" and to stop with a fatal error if the tag was missing. But during a handover the eNB strips all tags (`RemoveAllPacketTags()`, `lte-enb-rrc.cc:1190`) before it forwards the packet (`:1219`). The draft's design would therefore crash on a repeated SN change. The fix: take the header type from the bearer itself, not from a tag.
 
   - type: section
+    title: "Two lint follow-ups from Q1: which 28.552 version, and sub-counters in names (advisors answered 19:59 and 20:09)"
+    blocks:
+      - type: rich-text
+        text: |
+          The questions. 1) Which 28.552 version should the strict lint judge against? Under V17.17.0, RRU.PrbTotDl/Ul and the TB error name are real NR names; V20.2.0 calls them RRU.PrbDl/Ul and TB.ErrTotNbrDl. 2) KPM v03.00 §8.3.9 (p.30) says sub-counters belong in Measurement Labels, not in the name, so '.5QI', '.Qos' and '.1' inside a name are questionable.
+
+          Short answer. Both advisors agree: judge against V20.2.0 only, adopt your successor rule, and let the lint flag sub-counter suffixes without adding label support in P6. Both also found that the values behind the old names are wrong, so in practice the successor rule renames nothing in P6, and about 30 of the 38 names end up as ns3.*.
+      - type: table
+        title: Question 1, the 28.552 version
+        columns: [ Point, What the advisors found ]
+        rows:
+          - [ "Which version", "V20.2.0 only, pinned by exact version (not 'whatever is newest in Zotero'). KPM v03.00 §2.1 (p.4) cites 28.552 without a version and says the latest version applies, so KPM does not pin Release 17. Accepting both V17 and V20 names would be a compatibility mode, which the 'fix to spec, no legacy modes' rule forbids. Each registry row also records whether V17.17.0's text is identical." ]
+          - [ "Is RRU.PrbDl really the old RRU.PrbTotDl?", "Yes. Same clause (§5.1.1.2.1), same formula, integer 0–100 %, object NRCellDU (V17.17.0 pp.33–34; V20.2.0 pp.44–45). V20.2.0 only adds optional breakdowns. The rename came in CR 0466 (V18.5.0); the TB typo was fixed in CR 0396 (V18.2.0)." ]
+          - [ "Why the successor rule renames nothing in P6", "A successor name needs a value that matches it. RRU.PrbTotUl is a constant 0 marked TODO (mmwave-enb-net-device.cc:1376). RRU.PrbTotDl divides by all 14 symbols, control symbols included, so a full cell reads at most ~86 %. TB.ErrTotalNbrDl.1 counts every retransmission, not failed receptions (mmwave-phy-trace.cc:250). All three become ns3.*." ]
+          - [ "Who reads these names", "kpimon stores any name by position. The TS xApp reads only the ueId tag. Only the NIST AD-cell xApp reads RRU.PrbTot*, and no gate deploys it." ]
+          - [ "Alternative", "Judge against V17.17.0. Keeps RRU.PrbTot* valid for AD-cell, but contradicts KPM §2.1, and P9's bare DRB.PdcpSduVolumeX2DL exists only in V20.2.0 (V17.17.0 has only the _Filter form)." ]
+      - type: table
+        title: Question 2, sub-counters in names
+        columns: [ Point, What the advisors found ]
+        rows:
+          - [ "What KPM says", "§8.3.9 (p.30) puts sub-counters in Measurement Labels (§8.3.11, pp.30–32: 5QI, QCI, MIMO layer, bins). There is no modulation label, so .Qpsk/.16Qam/.64Qam may stay in the name. KPM's 'Sum' label means cumulative since start, not a total." ]
+          - [ "_Filter", "Legitimate in KPM (§7.9.1 lists _Filter names; §8.3.11 ties some labels to them), but the name type PrintableString has no underscore. Record today's reading as an interpretation: a bare name with noLabel means the unfiltered total." ]
+          - [ "Label support today", "None end to end. The agent sends noLabel (kpm-indication-message.cpp:141, :192) and ignores requested labels; kpimon subscribes with noLabel and stores by name, so two rows with the same name and different labels would collide." ]
+          - [ "Proposed rule", "The lint fails a suffix in a 3GPP name whenever KPM has a label for it. The row may use the bare name only if the clause defines a total and the value is that total; otherwise ns3.*. ns3.* names must not reuse 3GPP names (so ns3.du.QosFlow.PdcpPduVolumeDL fails). P6 encodes no labels, so indication bytes stay identical." ]
+          - [ "Effect", "One name changes this way: gNB cell TB.TotNbrDl.1 becomes TB.TotNbrDl (single antenna, so the total is the only layer). For the others, dropping the suffix would be dishonest (no total form, a constant 0, invented names, bins that are the measurement itself), and they are renamed for those reasons anyway." ]
+          - [ "Alternative", "Real label support: a separate agent + kpimon feature commit, one more rebuild/reinstall/M5–M7 cycle (~1 h, 3–5 GiB) and a second Influx rename. No surviving row needs it." ]
+      - type: callout
+        tone: warning
+        title: More value defects the strict lint will catch
+        text: "The PRB count is hard-coded at 139 (mmwave-enb-net-device.cc:1371-1372) while the cell has 28 RBs and X2 advertises 24, so RRU.PrbAvailDl/Ul and RRU.PrbUsedDl are wrong. The eNB DRB.PdcpSduDelayDl is in 0.1 ms, not ms (lte-enb-net-device.cc:1162). The eNB DRB.PdcpSduBitRateDl is PDU bytes per second although its comment says kbps (:1167). Codex adds: the current lint checks only structure; it passes all 118 rows with zero findings, so it is not yet AC16 validation, and the ad-cell xApp's patch reads the old PRB names."
+      - type: key-value
+        title: Effect on P6
+        items:
+          - { key: Order, value: "Unchanged." }
+          - { key: VM budget, value: "Unchanged: all renames are one map change, so one agent rebuild, one kpimon reinstall and M5–M7." }
+          - { key: Registry time, value: "About 2–3 h instead of 1–2 h, because each row needs a value check against its clause." }
+      - type: callout
+        tone: info
+        title: "New questions for you"
+        text: "1) Rule Q1 (V20.2.0 only, successor rule) and Q2 (lint flags label-expressible suffixes; no label support in P6). 2) Should the PRB source fix (real RB count, denominator, UL usage) go inside M10, which would let that family return to 3GPP names, or be recorded as a follow-up outside M10? Kongming recommends a follow-up. 3) Does the P6 rule include the per-UE check against KPM §7.9? If yes, the gNB UE-list TB rows also become ns3.*, because §7.9 lists no TB type. 4) The lint needs a stated type rule, because some kept names are sent as REAL where 3GPP specifies an integer. (The values of RRC.ConnMean, DRB.MeanActiveUeDl and DRB.UEThpDl are still unchecked; the registry must check them.)"
+
+  - type: section
     title: What kongming and Codex recommend
     blocks:
       - type: rich-text
@@ -449,6 +491,8 @@ blocks:
       - { id: verify, title: "kongming-261106-0500-GH-1-p10-pre-registration-verification.md (with its Cross-check of Codex section)", source: plans/reports }
       - { id: codex, title: "codex-261106-0732-GH-1-p10-questions-independent-opinion.md", source: plans/reports }
       - { id: questions, title: "decisions-261106-0525-GH-1-p10-pre-registration-questions.md", source: plans/reports }
+      - { id: lintk, title: "kongming-261106-1952-GH-1-p6-lint-version-and-subcounters.md", source: plans/reports }
+      - { id: lintc, title: "codex-261106-1959-GH-1-p6-lint-version-and-subcounters.md", source: plans/reports }
       - { id: provenance, title: "researcher-261106-1859-GH-1-kpm-metric-name-provenance.md (where the Q1 names came from)", source: plans/reports }
       - { id: s32425, title: "3GPP TS 32.425 V19.0.0 (Zotero 9XR9PVRW): §4.4.7.1 DRB.PdcpSduVolumeDl, §4.4.1.1, §4.5.3, §6.6" }
       - { id: p09, title: "phase-09: UB finding (:92-96)", source: plans/261103-0008-GH-1-post-m9-realism-m10 }
