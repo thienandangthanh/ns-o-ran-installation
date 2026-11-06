@@ -208,6 +208,27 @@ Counsel: `plans/reports/kongming-261106-2200-GH-1-p10-d-r3-1-chain-m7-red-counse
   - **Any red:** a kongming note and PAUSE again.
 - **Prevention, after (a) and before the next e2i or AC6a chain.** A driver pre-flight copies and checks `asn1-indep-$TAG.tar` (host and VM `sha256sum -c`) before the first step whenever the range holds an `--image-tag` step, and fails with exit 2 before M2. It adds no check and changes no verdict, so it needs no ledger row. Shellcheck it, test two offline failure cases and dry-run the pre-flight alone. P12's M10 runner needs the same step (`phase-13:24`).
 
+## D-R3-1 verified: user-authorized e2i resume (2026-11-07)
+- **Ruling.** At PAUSE T6 the user chose option (a): `plans/reports/decisions-261107-0045-GH-1-p10-pause-t6-rulings.md`. The same file records three more rulings: M7 policy (ii), the Failure Protocol reading for known L-release hazards, and the P6 recommended set.
+- **Pre-checks (read-only, 17:1xZ), all passing:**
+  - the VM is on overlay `ubuntu24.1793970545`;
+  - no gate unit, agent container or ns-3 process is running;
+  - no injector pod is running, and TS and the other xApps are Running;
+  - every RIC platform pod is Running, and the E2T list is not empty.
+- **Copy.** `sha256sum -c` passed on the host, then the tarball was copied by scp, then `sha256sum -c` passed in the VM (`evidence/p10-chain/a7943bf/e2i-resume/preflight-asn1-indep.txt`).
+- **Run.** `p10-gate-chain.sh a7943bf… 8 8` used the as-run driver of attempt 2 (sha256 `dc1712c8…`, identical) with a fresh log dir, 17:19–17:25Z.
+- **Result:** e2i `evidence/e2i/20261106T171917Z`, verdict PASS with no failed check.
+  - The image Id is `sha256:d6bd0587…`, equal to P08's.
+  - Row 143's `x2apRequestPartDecodes` passes on every node, and so do `globalIds` and `ranFunctions`.
+  - `e2i-setup.json` decodes 632758 and 633312, and 633333 is absent.
+  - Raw archive `…-m10-p10c-20261107.tar.zst`.
+- **D-R3-1 is FIXED** at Testbed 163ef252 / harness a7943bf (phase-06 row updated). Step 0's "Then" is done.
+- **Next:**
+  1. the driver pre-flight for the asn1-indep copy (no ledger row);
+  2. the M7 signature record under ruling (ii), with its own additive ledger row, before the UB fix so the UB fix's M7 run carries it;
+  3. the docs commit for the P6 rulings (row 147 amendment, the 0525 amendment line, row 151 revised for Q5);
+  4. then the code commits in order, UB fix first.
+
 ## Pre-registration (2026-11-06; one docs commit before any P10 code after D-R3-1)
 Sources: the user rulings in `plans/reports/decisions-261106-0525-GH-1-p10-pre-registration-questions.md`; kongming `kongming-261106-0500-…` (§7, §9, C.4, C.5) and `kongming-261106-1952-…`; ledger rows 147–161 (`check-diff-ledger.md`); contract Amendment 4.
 - **Commit order (one fix per commit, for P11's bisection):** D-R3-1 (Testbed + harness pair), the neighbour-loop UB fix (Amendment 4, row 159), P6 (row 147), the SN-wrap fix (row 160), P7 (rows 148–150), P9 (rows 151, 152, 161), P15 (rows 153–155), D-06b-1 (row 81 amendment first), the kpimon node tag (row 137), the TS serving cell (rows 138–142, 158), UseIdealRrc (rows 156–157).
