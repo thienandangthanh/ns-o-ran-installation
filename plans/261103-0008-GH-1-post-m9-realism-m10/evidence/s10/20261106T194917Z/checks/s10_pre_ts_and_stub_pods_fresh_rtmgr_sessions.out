@@ -1,0 +1,17 @@
+ricxapp-trafficxapp- -> ricxapp-trafficxapp-7c46768578-vjrp2
+ricxapp-stubqp- -> ricxapp-stubqp-f468d596d-n67rc
+trafficxapp already registered
+stubqp already registered
+policy type 20008 before the restart: HTTP 200
+a1mediator deployment-ricplt-a1mediator-78f79cbb6b-zsdck -> deployment-ricplt-a1mediator-78f79cbb6b-fg46b
+{"fresh": true, "problems": []}
+policy type 20008 after the restart: HTTP 200
+rtmgr deployment-ricplt-rtmgr-74fb47b69d-rhlq8 -> deployment-ricplt-rtmgr-74fb47b69d-4r4tt
+{"fresh": true, "problems": []}
+Defaulted container "container-ricplt-rtmgr" out of: container-ricplt-rtmgr, wait-for-e2mgr (init)
+Defaulted container "container-ricplt-rtmgr" out of: container-ricplt-rtmgr, wait-for-e2mgr (init)
+rtmgr deployment-ricplt-rtmgr-74fb47b69d-4r4tt -> ricxapp/service-ricxapp-trafficxapp-rmr 10.111.8.149:4561 ESTABLISHED
+rtmgr deployment-ricplt-rtmgr-74fb47b69d-4r4tt -> ricxapp/service-ricxapp-stubqp-rmr 10.107.243.127:4561 ESTABLISHED
+rtmgr deployment-ricplt-rtmgr-74fb47b69d-4r4tt -> ricxapp/service-ricxapp-rc-rmr 10.97.5.160:4561 ESTABLISHED
+rtmgr deployment-ricplt-rtmgr-74fb47b69d-4r4tt -> ricxapp/service-ricxapp-kpimon-go-rmr 10.96.108.129:4561 ESTABLISHED
+rtmgr deployment-ricplt-rtmgr-74fb47b69d-4r4tt -> ricplt/service-ricplt-a1mediator-rmr 10.106.37.221:4561 ESTABLISHED

@@ -1,0 +1,15 @@
+$ sha256sum -c SHA256SUMS
+asn1-indep-09aeabb8b0f99b0c.tar: OK
+exit 0
+$ ssh oran-kvm-2404 mkdir -p ~/asn1-indep
+exit 0
+$ scp -q tools/asn1-indep/dist/SHA256SUMS tools/asn1-indep/dist/asn1-indep-09aeabb8b0f99b0c.tar oran-kvm-2404:asn1-indep/
+exit 0
+$ ssh oran-kvm-2404 cd ~/asn1-indep && sha256sum -c SHA256SUMS && ls -la
+asn1-indep-09aeabb8b0f99b0c.tar: OK
+total 163296
+drwxrwxr-x  2 uc uc      4096 Nov  6 17:19 .
+drwxr-x--- 16 uc uc      4096 Nov  6 17:19 ..
+-rw-r--r--  1 uc uc        98 Nov  6 17:19 SHA256SUMS
+-rw-r--r--  1 uc uc 167200256 Nov  6 17:19 asn1-indep-09aeabb8b0f99b0c.tar
+exit 0

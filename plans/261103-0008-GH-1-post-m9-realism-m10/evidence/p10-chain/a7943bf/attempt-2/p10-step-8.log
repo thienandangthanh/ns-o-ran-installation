@@ -1,0 +1,8 @@
+[host 15:09:33] gate e2i (gate-e2i-interop.sh) harness a7943bfb66 -> unit gate-e2i-20261106T150933Z
+[host 15:09:33] host disk: start	20261106T150933Z	51	/home/andang/VMs/ubuntu24.1793970545	25
+[host 15:15:09] gate e2i exit 1
+[host 15:15:09] host disk: end	20261106T151509Z	51	/home/andang/VMs/ubuntu24.1793970545	25
+scrub: 6 file(s) redacted, 45 known secret(s)
+[host 15:15:10] gate e2i ended (gate exit 1): finishing the host disk watchdog
+[host 15:15:11] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261103-0008-GH-1-post-m9-realism-m10/evidence/e2i/20261106T150933Z
+verdict e2i FAIL ['e2i_asn1_indep_image_checksum_verified_and_loaded', 'e2i_independent_decoder_self_test', 'e2i_controls_encoded_by_the_independent_codec', 'e2i_independent_target_applied_ledger_and_handover_start', 'e2i_setup_requests_decoded_and_judged', 'e2i_globalIds', 'e2i_ranFunctions', 'e2i_x2apRequestPartDecodes', 'e2i_style5Action3Announced', 'e2i_kpimonSubscribedAll', 'e2i_injected_controls_on_the_wire_and_answered', 'e2i_e2mgr_records_x2_request_parts_hex_sidecars_equal_record_and_wire']

@@ -1,0 +1,8 @@
+[host 17:38:45] gate m4 (gate-m4-ns3-build.sh) harness cf3259546f -> unit gate-m4-20261106T173845Z
+[host 17:38:45] host disk: start	20261106T173845Z	51	/home/andang/VMs/ubuntu24.1793970545	25
+[host 18:02:15] gate m4 exit 1
+[host 18:02:15] host disk: end	20261106T180215Z	49	/home/andang/VMs/ubuntu24.1793970545	26
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 18:02:19] gate m4 ended (gate exit 1): finishing the host disk watchdog
+[host 18:02:20] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261103-0008-GH-1-post-m9-realism-m10/evidence/m4/20261106T173845Z
+verdict m4 FAIL ['m4_ns3_test_build_exit0', 'm4_ns3_neighbour_list_suite_passes']

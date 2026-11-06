@@ -1,0 +1,25 @@
+a2282eedc9e32f60298bf530456ad367bef0824b
+ control/rcControl.go                       |  66 +++++----
+ control/rcE2SmRc.go                        |  98 ++++---------
+ control/rcService.go                       | 104 ++++++++++----
+ control/rcTypes.go                         |  25 ++--
+ e2sm/e2sm-rc-2.0.asn                       |   2 +-
+ e2sm/headers/RANParameter-ID.h             |   3 +-
+ e2sm/lib/RANParameter-ID.c                 |  23 +++-
+ e2sm/wrapper.c                             | 214 +++++++----------------------
+ e2sm/wrapper.h                             |  31 ++---
+ protocol/grpc/ricmsgcommrpc/proto/rc.proto |   8 ++
+ protocol/grpc/ricmsgcommrpc/rc/rc.pb.go    | 149 +++++++++++++-------
+ 11 files changed, 340 insertions(+), 383 deletions(-)
+ricxapp-rc-6db9dcd964-t67zq true 1793992895 0
+rtmgr deployment-ricplt-rtmgr-74fb47b69d-pw287 -> deployment-ricplt-rtmgr-74fb47b69d-grjfz
+rmrClient: RMR is ready after 21 seconds waiting...
+warning: e2sm/wrapper.c has type 100644, expected 100755
+warning: e2sm/wrapper.c has type 100644, expected 100755
+warning: e2sm/wrapper.h has type 100644, expected 100755
+expected: rc a2282eedc9e32f60298bf530456ad367bef0824b + 3 patches (control/rcControl.go control/rcE2SmRc.go control/rcService.go control/rcService_test.go control/rcTypes.go e2sm/e2sm-rc-2.0.asn e2sm/headers/RANParameter-ID.h e2sm/lib/RANParameter-ID.c e2sm/wrapper.c e2sm/wrapper.h protocol/grpc/ricmsgcommrpc/proto/rc.proto protocol/grpc/ricmsgcommrpc/rc/rc.pb.go), patch set 5fff4efc506bc705c3ec1f240d3c916050b2ee24f95d0812968e9e903850b436 (from 163ef252ad9166cc23490d71df7a1ba81cf97763)
+pod ricxapp-rc-6db9dcd964-t67zq: image 127.0.0.1:80/rc:latest, imageID sha256:79e7d2297c2193769b24ffe1ae375b6d934f75120beb775c282059a19d97b151
+docker 127.0.0.1:80/rc:latest: ID sha256:79e7d2297c2193769b24ffe1ae375b6d934f75120beb775c282059a19d97b151, rc.source.sha a2282eedc9e32f60298bf530456ad367bef0824b, patchset.sha256 5fff4efc506bc705c3ec1f240d3c916050b2ee24f95d0812968e9e903850b436
+rc ricxapp-rc-6db9dcd964-t67zq ready, gRPC endpoint 10.110.71.60:7777
+gRPC describe ok, 12040 route to rc present
+rmrClient: RMR is ready after 21 seconds waiting...

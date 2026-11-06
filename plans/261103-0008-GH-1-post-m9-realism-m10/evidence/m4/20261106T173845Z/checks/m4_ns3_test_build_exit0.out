@@ -1,0 +1,6 @@
+Finished executing the following commands:
+mkdir cmake-cache
+cd cmake-cache; /usr/bin/cmake -DCMAKE_BUILD_TYPE=default -DNS3_ASSERT=ON -DNS3_LOG=ON -DNS3_WARNINGS_AS_ERRORS=OFF -DNS3_NATIVE_OPTIMIZATIONS=OFF -DNS3_EXAMPLES=OFF -DNS3_PYTHON_BINDINGS=OFF -DNS3_TESTS=ON -DNS3_ENABLED_MODULES=mmwave,oran-interface -G Unix Makefiles -DNS3_CCACHE=OFF -DNS3_FAST_LINKERS=OFF .. ; cd ..
+[build-ns3 18:02:09] build: test-runner with 8 jobs
+Target to build does not exist: test-runner
+build-ns3.sh --tests exit 1

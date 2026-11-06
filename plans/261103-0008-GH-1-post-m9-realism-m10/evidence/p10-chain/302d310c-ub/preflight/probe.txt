@@ -1,0 +1,13 @@
+7840aa765b5381529ecdc103f99ef9bdc68bab36fd97e8340bcd850aeb733e4c  h/scripts/build-ns3.sh
+9f5a13b24dc492efeff15b34842a4e48fed2732b767e941d6eee17109c927bb0  h/scripts/pins.conf
+df before:   47G
+test-tree rc 0 in 200 s
+[build-ns3 18:21:55] configure: ./ns3 configure --filter-module-examples-and-tests=mmwave --build-profile=default --disable-examples --enable-tests --disable-python --enable-modules=mmwave,oran-interface,test -G Unix Makefiles -- -DNS3_CCACHE=OFF -DNS3_FAST_LINKERS=OFF
+Finished executing the following commands:
+cd cmake-cache; /usr/bin/cmake --build . -j 7 --target test-runner ; cd ..
+[build-ns3 18:25:10] done
+src /home/uc/ub-preflight/tree/ns-3 head 74c165f14dcae233169a789541d91377e47671a7
+suite rc 0
+[1/1] PASS: TestSuite mmwave-neighbour-list
+PROBE PREDICATE: PASS
+df after:   45G

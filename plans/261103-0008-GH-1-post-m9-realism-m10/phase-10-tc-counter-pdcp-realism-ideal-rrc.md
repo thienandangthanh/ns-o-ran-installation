@@ -238,6 +238,38 @@ Counsel: `plans/reports/kongming-261106-2200-GH-1-p10-d-r3-1-chain-m7-red-counse
     - with the VM's `~/asn1-indep` removed, the copy path copies it and the check passes.
   - The a7943bf frozen checkout was removed after D-R3-1's evidence was committed and archived (/home 51 → 53 GiB).
 
+## Neighbour-loop UB fix: one red, one guided fix, chain green (2026-11-07)
+- **Commits.**
+  - ns-3 74c165f1 on the fork branch `dev/l-release-nist180`: `SelectNeighbourCells` is used by `mmwave-enb-net-device.cc`, and `mmwave-neighbour-list` has 17 QUICK cases.
+  - Codex found that a NaN SINR broke the sort's strict weak ordering. The fix makes only readings `>= 0` eligible, and the follow-up review approved it.
+  - Harness cf325954: the pin bump, M4's suite check (ANSI-safe `[n/m] PASS:` match), the r2/r3p tick check (row 159), and driver steps 9–11 with `P10_SKIP_STEPS`.
+- **Red at cf325954, step 2 M4** (`evidence/m4/20261106T173845Z`): "Target to build does not exist: test-runner". Every M4 check that existed before passed.
+  - Cause (kongming-261107-0305): ns-3.38 drops `src/test` when only `mmwave,oran-interface` are enabled, so the test tree had no test-runner. My first `cmake --build` idea was wrong and was never committed.
+- **Guided fix 302d310c** (the one fix the Failure Protocol allows). `build-ns3.sh --tests` adds the `test` module and `--filter-module-examples-and-tests=mmwave`. The plain build's flags are unchanged.
+- **VM probe before the re-run**, with its rule fixed in advance: a mechanics failure means re-probe, and any failure in the ns-3 tree means PAUSE T6.
+  - The probe was green: the test tree took 200 s at 74c165f1, with `[1/1] PASS: TestSuite mmwave-neighbour-list` (`evidence/p10-chain/302d310c-ub/preflight/`).
+- **Re-run:** `P10_SKIP_STEPS=8 p10-gate-chain.sh 302d310c… 2 11` from a frozen checkout, 18:26–20:21Z, on overlay `ubuntu24.1793970545` with no revert. Chain green; every step exited 0 with no failed check.
+
+  | Gate | Run dir | Duration | Notes |
+  |---|---|---|---|
+  | M4 | `m4/20261106T182625Z` | 1514 s | `m4_ns3_neighbour_list_suite_passes` (row 159) |
+  | M5 | `m5/20261106T185200Z` | 68 s | |
+  | M6 | `m6/20261106T185336Z` | 96 s | |
+  | M7 | `m7/20261106T185544Z` | 1411 s | route record (row 162): stash present, `e2term4561Est` 2, `rtmgrToE2termSvc` 2, `noEndpt12001` 10, matches false |
+  | I0 | `i0/20261106T192026Z` | | |
+  | I2 | `i2/20261106T192233Z` | | |
+  | r2 single | `r2/20261106T192742Z` | 633 s | `r2_every_ue_tick_reports_min8_eligible_neighbours`, no problems |
+  | r3p single | `r3p/20261106T193828Z` | 627 s | `r3p_every_ue_tick_reports_min8_eligible_neighbours`, no problems |
+  | s10 | `s10/20261106T194917Z` | 1860 s | `s10_kpm_neighbour_list_exactly_8_when_more_than_8_cells_measured` |
+
+- **M7's NOENDPT lines** (10 for 12001) are the early setups before the route table arrived. The stash and the two :4561 sessions show the table was received, and M7 is green.
+- **Records.**
+  - Each run dir has `evidence-sha256.txt`, including the red M4.
+  - Raw archive `…-m10-p10d-20261107.tar.zst` (2,634 files: the ten run dirs and both chain dirs; SHA256SUMS verified).
+  - Chain records are in `evidence/p10-chain/{cf325954-ub,302d310c-ub}/`.
+  - `plans/.gitignore` now keeps `evidence/p10-chain/**`, like `cp2-chain`, except the probe's raw build stderr.
+- **UB fix DONE.** Next in the commit order is P6.
+
 ## Pre-registration (2026-11-06; one docs commit before any P10 code after D-R3-1)
 Sources: the user rulings in `plans/reports/decisions-261106-0525-GH-1-p10-pre-registration-questions.md`; kongming `kongming-261106-0500-…` (§7, §9, C.4, C.5) and `kongming-261106-1952-…`; ledger rows 147–161 (`check-diff-ledger.md`); contract Amendment 4.
 - **Commit order (one fix per commit, for P11's bisection):** D-R3-1 (Testbed + harness pair), the neighbour-loop UB fix (Amendment 4, row 159), P6 (row 147), the SN-wrap fix (row 160), P7 (rows 148–150), P9 (rows 151, 152, 161), P15 (rows 153–155), D-06b-1 (row 81 amendment first), the kpimon node tag (row 137), the TS serving cell (rows 138–142, 158), UseIdealRrc (rows 156–157).

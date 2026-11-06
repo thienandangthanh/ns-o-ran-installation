@@ -1,0 +1,26 @@
+1793994673825 1/RMR [INFO] ric message routing library on SI95 p=4593 mv=3 flg=00 id=a (a1be12a 4.9.0 built: Feb 14 2023)
+1793994673948 9/RMR [INFO] ric message routing library on SI95 p=4592 mv=3 flg=00 id=a (a1be12a 4.9.0 built: Feb 14 2023)
+ok   prediction keeps the table's cell order
+ok   a used-up UE gets no answer
+ok   a request naming two UEs gets no answer
+ok   an empty UE list gets no answer
+ok   anomaly payload: one UE, ue-id a JSON string
+ok   anomaly payload refuses the decimal IMSI as ue-id
+ok   injector ready: READY rmr port 4592 ctl port 38599
+ok   an anomaly naming the decimal IMSI is refused: {'ok': False, 'error': "ue-id '3' is not an en-gNB-UEID key"}
+ok   injector reply {'ok': True, 'state': 0, 'tries': 1, 'sendS': 0.000102}
+ok   loopback received 30003 with the exact payload (and nothing for the refused one): (30003, b'[{"du-id": 1010, "ue-id": "enGnbUeId:1@00F110-00001", "measTimeStampRf": 0, "Degradation": "RSRP RSSINR"}]')
+ok   injector control reply {'ok': True, 'state': 0, 'tries': 1, 'sendS': 1.2e-05}
+ok   loopback received 12040 with the meid and the exact payload: (12040, b'\x00\x04\x00R\x00\x00\x04\x00\x1d\x00\x05\x00\x00\x01\x00\x05\x00\x05\x00\x02\x00\x03\x00\x16\x00\x17\x16\x00`\x00\x02\x00\x00\xf1\x10\x01\x00\x00\x00\x01\x00\x00\x00\x01\x01\x03\x00\x00\x00\x00\x17\x00! \x00\x00\x01\x00\x00D\x00\x00\x00\x01D\x00\x00\x00\x02D\x00\x00\x00\x03*\x00\t\x00\x00\xf1\x10\x00\x00\x00\x03\x10', 'en_gnb_001_001_00000003')
+ok   a control for a meid outside the map is refused by RMR: {'ok': False, 'state': 2, 'tries': 1, 'sendS': 2e-06}
+ok   a control without a meid is refused: {'ok': False, 'error': 'control needs a meid'}
+ok   injector still running after 2.5 s of idle receive timeouts
+ok   sent one 30004 to the injector
+ok   injector logged exactly 1 received message (1) and still runs
+ok   stub up and healthy after 2.5 s idle
+ok   stub accepted a table
+ok   sent one 30000 to the stub
+ok   stub answered 30002 with the table's prediction: (30002, b'{"enGnbUeId:1@00F110-00001":{"0000000210":[100,0],"0000000310":[200,0]}}')
+ok   stub still up after a second idle wait and logged exactly 1 request (1)
+{"pass": true, "problems": []}
+built and imported 127.0.0.1:80/stubqp:caa841a11941

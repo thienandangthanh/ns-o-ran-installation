@@ -39,6 +39,9 @@
 !/*/evidence/m9/*/*
 # A gate chain's procedure record: the driver copy, its step log and its per-step runner logs (small text).
 !/*/evidence/cp2-chain/**
+!/*/evidence/p10-chain/**
+# A chain pre-flight probe's ns-3 build stderr is raw output (the archive keeps it).
+/*/evidence/p10-chain/*/preflight/tree.stderr
 # Host live state, rewritten by every run (steps.tsv and m9/<ts>/ keep the values).
 /*/evidence/.last-*
 /*/evidence/watchdog/
