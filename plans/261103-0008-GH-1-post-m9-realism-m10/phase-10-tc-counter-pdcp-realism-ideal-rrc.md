@@ -291,6 +291,18 @@ Counsel: `plans/reports/kongming-261106-2200-GH-1-p10-d-r3-1-chain-m7-red-counse
 - **Records.** Each run dir has `evidence-sha256.txt`. The raw archive is `…-m10-p10e-20261107.tar.zst` (485 files; SHA256SUMS verified). The chain record is `evidence/p10-chain/66cb0896-p6/`.
 - **P6 DONE.** Next in the commit order is the SN-wrap fix (row 160).
 
+## Follow-up candidates outside M10: LteRlcAm lossless-handover defects (consensus 2026-11-07, `decisions-261107-0633` Q3)
+These are observations only, with no ledger rows and no fixes in M10. They sit next to the PRB and TB follow-ups. Each one is AM-only, is dead in scenario-zero (RLC UM), and would change behaviour without any wrap. Sources: kongming-261107-0555 "What to avoid"; Codex verified items 1, 2, 3 and 6 in source, and the rest are carried from that advice.
+1. `LteRlcAm::m_transmittingRlcSdus` is never cleared; the map is cleared only in `DoDispose`. Later forwardings re-send old SDUs.
+2. The forwarding lookback includes the head SN, so the head SDU is forwarded twice.
+3. `m_segmented_rlcsdu` is never reset.
+4. PDCP SNs 4096 apart collapse into one map key.
+5. `m_txedRlcSduBuffer` misses the first SDU of each PDU.
+6. The X2 SN Status Transfer reads the non-virtual `LtePdcp::GetStatus`, which `McEnbPdcp` hides (`lte-enb-rrc.cc:925-927`).
+
+- **Trigger:** any gate or scenario that enables AM DRBs. Scenarios one, two, three and five set `RlcAmEnabled` from a global; the harness runs only scenario-zero.
+- **P7 hazard:** if P7's step 2(b)/(c) unit tests trip on one of these, it becomes a P7 blocker with its own row and a ruling.
+
 ## Pre-registration (2026-11-06; one docs commit before any P10 code after D-R3-1)
 Sources: the user rulings in `plans/reports/decisions-261106-0525-GH-1-p10-pre-registration-questions.md`; kongming `kongming-261106-0500-…` (§7, §9, C.4, C.5) and `kongming-261106-1952-…`; ledger rows 147–161 (`check-diff-ledger.md`); contract Amendment 4.
 - **Commit order (one fix per commit, for P11's bisection):** D-R3-1 (Testbed + harness pair), the neighbour-loop UB fix (Amendment 4, row 159), P6 (row 147), the SN-wrap fix (row 160), P7 (rows 148–150), P9 (rows 151, 152, 161), P15 (rows 153–155), D-06b-1 (row 81 amendment first), the kpimon node tag (row 137), the TS serving cell (rows 138–142, 158), UseIdealRrc (rows 156–157).
@@ -310,6 +322,7 @@ Sources: the user rulings in `plans/reports/decisions-261106-0525-GH-1-p10-pre-r
   - UB fix: M4 (row 159's suite), M5–M7, one r2 and one r3p single (row 159's tick check), one s10 run.
   - P6: agent rebuild, kpimon reinstall (the map and the registry are kpimon stale-path inputs), lint with row 147's self-test, M5–M7. No M4 (ns-3 unchanged).
   - SN-wrap fix: row 160 red at `m10-cp2` (kept), green at the commit; M4, M5–M7; N4 determinism check for row 148 (b).
+    - 2026-11-07 consensus (`decisions-261107-0633`): one ns-3 commit using RLC transmission order, judged by row 160 as amended (c)–(g). scenario-zero runs RLC UM, so M5–M7 and N4 at this commit and at P7 are no-regression guards and P7's byte-identity baseline, not coverage of the AM paths. P7's step 2(b)/(c) proof for the AM consumers must be unit tests on an `LteRlcAm` (ledger "Row 148 notes").
   - P7: M4 (row 148), M5–M7 with row 149, N4 uloff/ulon byte identity with the SN-wrap commit.
   - P9: M4, agent rebuild, kpimon reinstall, M5–M7, the V3 run by row 161's `--part v3`, R3′ single (a run without a predictor-driven handover is red; a scenario change is PAUSE T3).
   - P15: agent rebuild, kpimon reinstall, M5–M7, p12 with the re-baselined judge, R3′ single.

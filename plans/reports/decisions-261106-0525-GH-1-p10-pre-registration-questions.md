@@ -54,3 +54,17 @@ Controller-decided (recorded and shown at the next Stop): P7 check (b) baseline 
 - **Effect:** until P9, no row in the map passes under a 3GPP name.
 - **Record:** the 21:37 text above is left unedited.
 
+
+## Correction, 2026-11-07 06:33 KST (controller, not a user ruling; unanimous consensus `brainstorm-261107-0632-GH-1-sn-wrap-rulings-ultra-debate.md`, record `decisions-261107-0633-GH-1-sn-wrap-consensus-rulings.md`)
+- **The reason "the wrap fix runs live" is wrong:** it appears in the Q3 row at `:15` and in the explainer's `explain-p10-pre-registration-questions.page.yaml` (`:330`, `:357`, reason 5 at `:368`).
+  - scenario-zero's DRBs run RLC UM: `MmWaveHelper::RlcAmEnabled` defaults to false and nothing overrides it.
+  - The code the SN-wrap fix changes is AM-only, so it runs live at neither 12 nor 18 bits.
+  - What does wrap live is the PDCP SN in the MC entities and the header codec (4095 -> 0), and row 148 (b) covers that.
+- **The advisor's reversal to 12 bits leaned on this reason** (kongming-261106-0500 C.2 item 4). It is disclosed for that reason.
+- **The other reasons stand:**
+  - The MC PDCP SN fields are live `uint16_t` (`mc-enb-pdcp.h:226-235`).
+  - The X2 SN Status Transfer widening is latent under UM (it runs for AM DRBs only), but fix-to-spec would still forbid leaving it truncating.
+  - The decision rule shown to the user, AC16 wire visibility (yaml `:342`), is untouched.
+- **The Q4 ruling at `:33` stands:** P7's code is the last cheap point to reverse it. The SN-wrap commit survives a width change with only its modulus changed.
+- **Scope note on Q4:** the SN-wrap commit also fixes the RLC 10-bit wrap by the same mechanism, because it orders by RLC transmission order. The row 160 amendment in the ledger gives the details.
+- **Record:** the text above is left unedited. The explainer stays as a historical page.

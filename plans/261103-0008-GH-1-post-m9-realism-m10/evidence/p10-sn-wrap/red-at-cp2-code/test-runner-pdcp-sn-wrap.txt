@@ -1,0 +1,4 @@
+FAIL pdcp-sn-wrap 0.000 s
+  FAIL COUNT order of SNs 4094, 4095, 0, 1 0.000 s
+      test="Join(OrderPdcpSnsByCount(m_input)) (actual) == Join(m_expected) (limit)" actual="0,1,4094,4095" limit="4094,4095,0,1" in="/tmp/claude-1000/ns3-pdcp-sn-wrap-910ba118/src/lte/test/lte-test-pdcp-sn-wrap.cc:121" PDCP SNs in COUNT order
+runner rc=1

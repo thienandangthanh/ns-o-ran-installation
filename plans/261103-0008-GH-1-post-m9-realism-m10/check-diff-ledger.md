@@ -274,3 +274,41 @@ Notes on rows 100 and 101 (2026-11-04, P06b exit review kongming-261104-1958 fin
 - **Map renames are data, not check predicates,** so they have no rows. Row 147 and the unchanged map-driven M6/M7/p12 Influx = IPC checks judge them.
 - **#9:** none of rows 147–161 rewrites a P1, P5 or N5 predicate. Row 152 edits a row-21 file under the user's T3 ruling.
 - **Controller rules recorded here and shown at the next Stop:** Q5 is superseded by the 12-bit ruling (check (b) is byte identity); Q6 is the user's Q4 ruling (own commit); Q7 is row 156; Q8 is row 158.
+
+**Row 160, amended before code (2026-11-07, unanimous brainstorm consensus `brainstorm-261107-0632-GH-1-sn-wrap-rulings-ultra-debate.md`; additive; the row text above is left unedited).**
+- **Why:** the first draft ordered the forwarding SDUs by COUNT, inferred from the widest gap on the 4096-SN circle. Codex showed that this reverses sparse SNs that never wrapped, such as {10, 3010}. That state is reachable because McEnbPdcp assigns the SN before it chooses the LTE or NR leg (`mc-enb-pdcp.cc:248-288`). Read as a set, the row's "SNs {4094, 4095, 0, 1} iterate in COUNT order" cannot be satisfied in general, because {10, 3010} has two valid COUNT orders. The set is therefore read in **RLC transmission order**.
+- **Design judged:**
+  - The forwarding path walks the AM transmitting window VT(A) <= SN < VT(S), with VT(A) as the modulus base. Sources: ETSI TS 136 322 V16.0.0 §5.1.3.1.1 and §7.1; AM_Window_Size 512 is in §7.2. 36.322 is not in Zotero; the ETSI copy is cited, as was done for 28.552.
+  - At each SN it takes the PDU from the transmitted buffer, else from the retransmission buffer.
+  - Both `MergeBuffers` are removed, and so are `OrderPdcpSnsByCount`, `GetTxedBuffer` and `GetRetxBuffer`.
+  - The getter returns each PDCP SN once, in the order its SDU was first reassembled.
+  - The lookback stays modular: (SN_1 - sn) mod 4096 <= 2.
+  - The commit also fixes the RLC 10-bit wrap by the same mechanism. Today an SDU segmented across RLC SN 1023 -> 0 is lost.
+- **Added conjuncts:** the check name `m4_ns3_pdcp_sn_wrap_suite_passes` is unchanged; it passes only if (a)–(g) all pass. Every RLC case is driven through the RLC's SAP and asserts the FI flags of the boundary PDUs, so a mis-sized fixture cannot pass.
+  - **(c)** SDUs transmitted in the order {10, 3010}, and in the order {3010, 10}, come back in that order.
+  - **(d)** An RLC at VT(A) = 1022 holds RLC SNs 1022, 1023, 0 and 1, carrying PDCP SNs 4094, 4095 (the SDU straddles the 1023 -> 0 boundary), 0 and 1. They come back 4094, 4095, 0, 1, with SDU 4095 whole.
+  - **(e)** The same holds after a STATUS PDU with ACK_SN 0 and NACK {1022, 1023}.
+  - **(f)** No-wrap identity at VT(A) = 5: the same SDUs come back in the same order as at m10-cp2.
+  - **(g)** An RLC wrap without a PDCP wrap: PDUs 1022 = [100], 1023 = [head of 101], 0 = [tail of 101 + 102] and 1 = [103] give 100, 101, 102, 103, with SDU 101 whole.
+  - **Repeated getter calls** return each SN once, as its latest copy. Cross-call position is not asserted, so the check never pins the never-cleared defect.
+- **Non-vacuity:**
+  - The suite runs first against m10-cp2's code, through a shim diff-matched to cp2's text with its sha256 recorded.
+  - Red there: the lookback at SN_1 in {0, 1}, the {4094, 4095, 0, 1} getter case, (c) in the order {3010, 10}, (d), (e) and (g).
+  - Green there by design: (c) in the order {10, 3010}, and (f).
+  - At the saved widest-gap draft (`evidence/p10-sn-wrap/widest-gap-draft/`, sha256 recorded), (c) in the order {10, 3010} and (g) are red.
+  - Every case is green at the commit.
+- **Live coverage, none:** scenario-zero's DRBs run RLC UM (`MmWaveHelper::RlcAmEnabled` defaults to false, `mmwave-helper.cc:93,164-168`, mapped to UM at `:2085-2093,2386-2392`; no override anywhere; static code reading). No M5–M7 or N4 run executes these AM-only paths. They are covered by this suite alone, which re-runs in every M4.
+- **Residuals:**
+  1. The X2 double-hop race at an SN-change target (`epc-x2.cc:642-674`): SDUs re-forwarded late come back one or two places late.
+  2. SNs 4096 apart share one map key.
+  3. The SDU vector is never cleared, so COUNT order is guaranteed only on an RLC entity's first forwarding.
+
+  These residuals and the other AM defects are follow-ups outside M10 (phase-10 list).
+
+**Row 148 notes (2026-11-07, same consensus; record only, the predicate is unchanged).**
+- What (b), byte identity of P7's N4 runs with the SN-wrap commit, proves:
+  - no wire byte changed;
+  - no consumer broke on the paths N4 executes: the MC PDCP entities, the header codec including 4095 -> 0, and the UM forwarding loops.
+- What it proves nothing about: the AM-only consumers. These are `CreateRlcSduBuffer`, the AM branches of `UeManager::ForwardRlcBuffers` and `LteUeRrc::CopyRlcBuffers`, and the lookback. No N4 or M5–M7 run executes them.
+- Their coverage is (a)'s source lint, row 160's suite (which drives the real `CreateRlcSduBuffer` and so re-checks P7's header wiring at P7's M4) and P7's step 2(c) unit tests.
+- So "broke no consumer" in (b) reads "no consumer on a path N4 runs".

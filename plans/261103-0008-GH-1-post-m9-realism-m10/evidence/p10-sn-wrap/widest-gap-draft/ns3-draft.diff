@@ -1,0 +1,634 @@
+diff --git a/src/lte/CMakeLists.txt b/src/lte/CMakeLists.txt
+index c6c2319a..e69ec6cf 100644
+--- a/src/lte/CMakeLists.txt
++++ b/src/lte/CMakeLists.txt
+@@ -45,6 +45,7 @@ set(source_files
+     model/lte-pdcp-sap.cc
+     model/lte-pdcp.cc
+     model/lte-pdcp-header.cc
++    model/lte-pdcp-sn-wrap.cc
+     model/lte-pdcp-tag.cc
+     model/eps-bearer.cc
+     model/lte-radio-bearer-info.cc
+@@ -213,6 +214,7 @@ set(test_sources
+     test/lte-test-aggregation-throughput-scale.cc
+     test/lte-test-ipv6-routing.cc
+     test/lte-test-carrier-aggregation-configuration.cc
++    test/lte-test-pdcp-sn-wrap.cc
+ )
+ 
+ set(header_files
+@@ -243,6 +245,7 @@ set(header_files
+     model/lte-pdcp-sap.h
+     model/lte-pdcp.h
+     model/lte-pdcp-header.h
++    model/lte-pdcp-sn-wrap.h
+     model/lte-pdcp-tag.h
+     model/eps-bearer.h
+     model/lte-radio-bearer-info.h
+diff --git a/src/lte/model/lte-enb-rrc.cc b/src/lte/model/lte-enb-rrc.cc
+index 136ef25b..4740650a 100644
+--- a/src/lte/model/lte-enb-rrc.cc
++++ b/src/lte/model/lte-enb-rrc.cc
+@@ -37,6 +37,7 @@
+ #include <ns3/fatal-error.h>
+ #include <ns3/log.h>
+ #include <ns3/lte-pdcp-header.h>
++#include <ns3/lte-pdcp-sn-wrap.h>
+ #include <ns3/lte-pdcp.h>
+ #include <ns3/lte-radio-bearer-info.h>
+ #include <ns3/lte-rlc-am-header.h>
+@@ -1054,11 +1055,13 @@ UeManager::ForwardRlcBuffers(Ptr<LteRlc> rlc,
+         { // something inside the RLC AM's transmitting buffer
+             NS_LOG_DEBUG("ADDING TRANSMITTING SDUS OF RLC AM TO X2FORWARDINGBUFFER... Size = "
+                          << rlcAm->GetTransmittingRlcSduBufferSize());
+-            // copy the RlcSdu buffer (map) to forwardingBuffer.
+-            std::map<uint32_t, Ptr<Packet>> rlcAmTransmittingBuffer =
++            // copy the RlcSdu buffer to forwardingBuffer, in COUNT order, so SDUs from before
++            // the PDCP SN wrap come first.
++            std::vector<std::pair<uint16_t, Ptr<Packet>>> rlcAmTransmittingBuffer =
+                 rlcAm->GetTransmittingRlcSduBuffer();
+             NS_LOG_DEBUG(" *** SIZE = " << rlcAmTransmittingBuffer.size());
+-            for (std::map<uint32_t, Ptr<Packet>>::iterator it = rlcAmTransmittingBuffer.begin();
++            for (std::vector<std::pair<uint16_t, Ptr<Packet>>>::iterator it =
++                     rlcAmTransmittingBuffer.begin();
+                  it != rlcAmTransmittingBuffer.end();
+                  ++it)
+             {
+@@ -1101,9 +1104,10 @@ UeManager::ForwardRlcBuffers(Ptr<LteRlc> rlc,
+                     NS_LOG_DEBUG("rlcAmTxedSduBuffer SEQ = " << pdcpHeader.GetSequenceNumber()
+                                                              << " Size = " << (*it)->GetSize());
+ 
+-                    // add the previous SDU of the forwarding buffer to the forwarding buffer.
+-                    if (pdcpHeader.GetSequenceNumber() >= (pdcpHeader_1.GetSequenceNumber() - 2) &&
+-                        pdcpHeader.GetSequenceNumber() <= (pdcpHeader_1.GetSequenceNumber()))
++                    // add the previous SDU of the forwarding buffer to the forwarding buffer:
++                    // the head SN and the two SNs before it, modulo the PDCP SN space.
++                    if (IsPdcpSnInForwardingLookback(pdcpHeader.GetSequenceNumber(),
++                                                     pdcpHeader_1.GetSequenceNumber()))
+                     {
+                         NS_LOG_DEBUG("Added previous SDU to forwarding buffer SEQ = "
+                                      << pdcpHeader.GetSequenceNumber()
+diff --git a/src/lte/model/lte-pdcp-sn-wrap.cc b/src/lte/model/lte-pdcp-sn-wrap.cc
+new file mode 100644
+index 00000000..632b82f0
+--- /dev/null
++++ b/src/lte/model/lte-pdcp-sn-wrap.cc
+@@ -0,0 +1,72 @@
++/* -*-  Mode: C++; c-file-style: "gnu"; indent-tabs-mode:nil; -*- */
++/*
++ *   This program is free software; you can redistribute it and/or modify
++ *   it under the terms of the GNU General Public License version 2 as
++ *   published by the Free Software Foundation;
++ *
++ *   This program is distributed in the hope that it will be useful,
++ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *   GNU General Public License for more details.
++ *
++ *   You should have received a copy of the GNU General Public License
++ *   along with this program; if not, write to the Free Software
++ *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ */
++
++#include "lte-pdcp-sn-wrap.h"
++
++#include "ns3/assert.h"
++
++#include <algorithm>
++
++namespace ns3
++{
++
++namespace
++{
++
++/** The number of SN steps from \p from forward to \p to, modulo the SN space. */
++uint32_t
++PdcpSnDistance(uint16_t from, uint16_t to)
++{
++    NS_ASSERT_MSG(from < PDCP_SN_SPACE && to < PDCP_SN_SPACE, "PDCP SN outside the 12-bit space");
++    return (static_cast<uint32_t>(to) + PDCP_SN_SPACE - from) % PDCP_SN_SPACE;
++}
++
++} // namespace
++
++std::vector<uint16_t>
++OrderPdcpSnsByCount(std::vector<uint16_t> sns)
++{
++    std::sort(sns.begin(), sns.end());
++    NS_ASSERT_MSG(std::adjacent_find(sns.begin(), sns.end()) == sns.end(), "duplicate PDCP SN");
++    if (sns.size() < 2)
++    {
++        return sns;
++    }
++    // The gap that closes the circle, from the largest SN round to the smallest, is the
++    // starting candidate; an interior gap replaces it only when strictly wider, so the
++    // ascending order is kept unless the SNs wrap.
++    std::size_t start = 0;
++    uint32_t widestGap = PdcpSnDistance(sns.back(), sns.front());
++    for (std::size_t i = 1; i < sns.size(); i++)
++    {
++        uint32_t gap = PdcpSnDistance(sns[i - 1], sns[i]);
++        if (gap > widestGap)
++        {
++            widestGap = gap;
++            start = i;
++        }
++    }
++    std::rotate(sns.begin(), sns.begin() + start, sns.end());
++    return sns;
++}
++
++bool
++IsPdcpSnInForwardingLookback(uint16_t sn, uint16_t firstForwardedSn)
++{
++    return PdcpSnDistance(sn, firstForwardedSn) <= 2;
++}
++
++} // namespace ns3
+diff --git a/src/lte/model/lte-pdcp-sn-wrap.h b/src/lte/model/lte-pdcp-sn-wrap.h
+new file mode 100644
+index 00000000..0a367792
+--- /dev/null
++++ b/src/lte/model/lte-pdcp-sn-wrap.h
+@@ -0,0 +1,69 @@
++/* -*-  Mode: C++; c-file-style: "gnu"; indent-tabs-mode:nil; -*- */
++/*
++ *   This program is free software; you can redistribute it and/or modify
++ *   it under the terms of the GNU General Public License version 2 as
++ *   published by the Free Software Foundation;
++ *
++ *   This program is distributed in the hope that it will be useful,
++ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *   GNU General Public License for more details.
++ *
++ *   You should have received a copy of the GNU General Public License
++ *   along with this program; if not, write to the Free Software
++ *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ */
++
++#ifndef LTE_PDCP_SN_WRAP_H
++#define LTE_PDCP_SN_WRAP_H
++
++#include <cstdint>
++#include <vector>
++
++namespace ns3
++{
++
++/**
++ * The size of the PDCP SN space of the data radio bearers in this module: every DRB PDCP
++ * entity (LtePdcp, McEnbPdcp, McUePdcp) uses a 12-bit SN that wraps from 4095 to 0
++ * (TS 36.323 clause 6.2.3, TS 38.323 clause 6.2.2.2), and LtePdcpHeader carries 12 SN bits.
++ */
++constexpr uint32_t PDCP_SN_SPACE = 4096;
++
++/**
++ * \brief Order PDCP SNs by the COUNT of the SDUs that carry them.
++ *
++ * COUNT is [HFN, SN] and grows without wrapping, while the SN wraps from 4095 to 0, so
++ * SNs {4094, 4095, 0, 1} were assigned in that order. A receiver recovers COUNT from an SN
++ * only within half the SN space of a reference (TS 36.323 clause 5.1.2.1.2 with
++ * Reordering_Window = 2048, clause 7.3; TS 38.323 clause 5.2.2.1 with
++ * Window_Size = 2^(SN size - 1), clause 7.2); SDUs still awaiting delivery confirmation
++ * therefore lie on an arc of the SN circle shorter than half the space. That arc starts
++ * right after the widest gap between neighbouring SNs on the circle, and the result walks
++ * it from there. When the SNs do not wrap and span less than half the space, the widest gap
++ * is the one from the largest SN back round to the smallest, so the result is the ascending
++ * SN order. A tie for the widest gap is broken towards that wrap-round gap, then towards the
++ * gap between the lowest SNs, so the order is total and independent of the input order.
++ *
++ * \param sns distinct PDCP SNs, each below PDCP_SN_SPACE, in any order
++ * \return the same SNs, oldest COUNT first
++ */
++std::vector<uint16_t> OrderPdcpSnsByCount(std::vector<uint16_t> sns);
++
++/**
++ * \brief Whether an already transmitted SDU joins a handover forwarding buffer.
++ *
++ * At a lossless handover the source forwards, ahead of its unacknowledged SDUs, the
++ * transmitted SDUs whose SN is the first forwarded SN or one of the two SNs before it.
++ * "Before" is modulo the SN space, so for a first forwarded SN of 0 the window is
++ * {4094, 4095, 0} and for 1 it is {4095, 0, 1}.
++ *
++ * \param sn the PDCP SN of a transmitted SDU, below PDCP_SN_SPACE
++ * \param firstForwardedSn the PDCP SN at the head of the forwarding buffer, below PDCP_SN_SPACE
++ * \return true iff (firstForwardedSn - sn) modulo PDCP_SN_SPACE is 0, 1 or 2
++ */
++bool IsPdcpSnInForwardingLookback(uint16_t sn, uint16_t firstForwardedSn);
++
++} // namespace ns3
++
++#endif /* LTE_PDCP_SN_WRAP_H */
+diff --git a/src/lte/model/lte-rlc-am.cc b/src/lte/model/lte-rlc-am.cc
+index 234d9dfa..0b261bb9 100644
+--- a/src/lte/model/lte-rlc-am.cc
++++ b/src/lte/model/lte-rlc-am.cc
+@@ -31,6 +31,7 @@
+ #include "ns3/ipv4-packet-filter.h"
+ #include "ns3/ipv4-queue-disc-item.h"
+ #include "ns3/log.h"
++#include "ns3/lte-pdcp-sn-wrap.h"
+ #include "ns3/lte-rlc-am-header.h"
+ #include "ns3/lte-rlc-sdu-status-tag.h"
+ #include "ns3/lte-rlc-tag.h"
+@@ -1212,10 +1213,22 @@ LteRlcAm::GetRetxBufferSize() const
+     return m_retxBufferSize;
+ }
+ 
+-std::map<uint32_t, Ptr<Packet>>
++std::vector<std::pair<uint16_t, Ptr<Packet>>>
+ LteRlcAm::GetTransmittingRlcSduBuffer()
+ {
+-    return m_transmittingRlcSduBuffer;
++    std::vector<uint16_t> sns;
++    sns.reserve(m_transmittingRlcSduBuffer.size());
++    for (const auto& entry : m_transmittingRlcSduBuffer)
++    {
++        sns.push_back(entry.first);
++    }
++    std::vector<std::pair<uint16_t, Ptr<Packet>>> inCountOrder;
++    inCountOrder.reserve(sns.size());
++    for (uint16_t sn : OrderPdcpSnsByCount(sns))
++    {
++        inCountOrder.emplace_back(sn, m_transmittingRlcSduBuffer.at(sn));
++    }
++    return inCountOrder;
+     // TODO check if it must be emptied
+ }
+ 
+diff --git a/src/lte/model/lte-rlc-am.h b/src/lte/model/lte-rlc-am.h
+index 2bd5856f..d0318b27 100644
+--- a/src/lte/model/lte-rlc-am.h
++++ b/src/lte/model/lte-rlc-am.h
+@@ -37,6 +37,7 @@
+ #include <fstream>
+ #include <map>
+ #include <string>
++#include <utility>
+ #include <vector>
+ 
+ namespace ns3
+@@ -85,7 +86,12 @@ class LteRlcAm : public LteRlc
+     std::vector<RetxPdu> GetRetxBuffer();
+     uint32_t GetRetxBufferSize() const;
+ 
+-    std::map<uint32_t, Ptr<Packet>> GetTransmittingRlcSduBuffer();
++    /**
++     * The SDUs reassembled from the transmitted and retransmission buffers for forwarding at
++     * a lossless handover, each with its PDCP SN, in COUNT order: across the SN wrap the
++     * SDUs with SNs 4094, 4095, 0, 1 come in that order (see OrderPdcpSnsByCount).
++     */
++    std::vector<std::pair<uint16_t, Ptr<Packet>>> GetTransmittingRlcSduBuffer();
+     uint32_t GetTransmittingRlcSduBufferSize() const;
+ 
+     Ptr<Packet> GetSegmentedRlcsdu();
+@@ -205,7 +211,10 @@ class LteRlcAm : public LteRlc
+     ///< and forwarded to target eNB during lossless handover.
+     std::vector<Ptr<Packet>> m_transmittingRlcSdus;
+     uint32_t m_transmittingRlcSduBufferSize;
+-    std::map<uint32_t, Ptr<Packet>> m_transmittingRlcSduBuffer;
++    // Keyed by PDCP SN, so an SDU reassembled again replaces its earlier copy. The key order is
++    // the raw SN order, not the COUNT order across the SN wrap: read it only through
++    // GetTransmittingRlcSduBuffer.
++    std::map<uint16_t, Ptr<Packet>> m_transmittingRlcSduBuffer;
+ 
+     uint32_t m_txonBufferSize; ///< transmit on buffer size
+     uint32_t m_retxBufferSize; ///< transmit on buffer size
+diff --git a/src/lte/model/lte-ue-rrc.cc b/src/lte/model/lte-ue-rrc.cc
+index e5c058fe..8a883c0b 100644
+--- a/src/lte/model/lte-ue-rrc.cc
++++ b/src/lte/model/lte-ue-rrc.cc
+@@ -33,6 +33,7 @@
+ #include <ns3/fatal-error.h>
+ #include <ns3/log.h>
+ #include <ns3/lte-pdcp-header.h>
++#include <ns3/lte-pdcp-sn-wrap.h>
+ #include <ns3/lte-pdcp.h>
+ #include <ns3/lte-radio-bearer-info.h>
+ #include <ns3/lte-rlc-am-header.h>
+@@ -1721,11 +1722,13 @@ LteUeRrc::CopyRlcBuffers(Ptr<LteRlc> rlc, Ptr<LtePdcp> pdcp, uint16_t lcid)
+             NS_LOG_DEBUG(
+                 "UE RRC: ADDING TRANSMITTING SDUS OF RLC AM TO X2FORWARDINGBUFFER... Size = "
+                 << rlcAm->GetTransmittingRlcSduBufferSize());
+-            // copy the RlcSdu buffer (map) to forwardingBuffer.
+-            std::map<uint32_t, Ptr<Packet>> rlcAmTransmittingBuffer =
++            // copy the RlcSdu buffer to forwardingBuffer, in COUNT order, so SDUs from before
++            // the PDCP SN wrap come first.
++            std::vector<std::pair<uint16_t, Ptr<Packet>>> rlcAmTransmittingBuffer =
+                 rlcAm->GetTransmittingRlcSduBuffer();
+             NS_LOG_DEBUG("UE RRC:  *** SIZE = " << rlcAmTransmittingBuffer.size());
+-            for (std::map<uint32_t, Ptr<Packet>>::iterator it = rlcAmTransmittingBuffer.begin();
++            for (std::vector<std::pair<uint16_t, Ptr<Packet>>>::iterator it =
++                     rlcAmTransmittingBuffer.begin();
+                  it != rlcAmTransmittingBuffer.end();
+                  ++it)
+             {
+@@ -1770,9 +1773,10 @@ LteUeRrc::CopyRlcBuffers(Ptr<LteRlc> rlc, Ptr<LtePdcp> pdcp, uint16_t lcid)
+                                  << pdcpHeader.GetSequenceNumber()
+                                  << " Size = " << (*it)->GetSize());
+ 
+-                    // add the previous SDU of the forwarding buffer to the forwarding buffer.
+-                    if (pdcpHeader.GetSequenceNumber() >= (pdcpHeader_1.GetSequenceNumber() - 2) &&
+-                        pdcpHeader.GetSequenceNumber() <= (pdcpHeader_1.GetSequenceNumber()))
++                    // add the previous SDU of the forwarding buffer to the forwarding buffer:
++                    // the head SN and the two SNs before it, modulo the PDCP SN space.
++                    if (IsPdcpSnInForwardingLookback(pdcpHeader.GetSequenceNumber(),
++                                                     pdcpHeader_1.GetSequenceNumber()))
+                     {
+                         NS_LOG_DEBUG("UE RRC: Added previous SDU to forwarding buffer SEQ = "
+                                      << pdcpHeader.GetSequenceNumber()
+diff --git a/src/lte/test/lte-test-pdcp-sn-wrap.cc b/src/lte/test/lte-test-pdcp-sn-wrap.cc
+new file mode 100644
+index 00000000..12248a7b
+--- /dev/null
++++ b/src/lte/test/lte-test-pdcp-sn-wrap.cc
+@@ -0,0 +1,286 @@
++/* -*-  Mode: C++; c-file-style: "gnu"; indent-tabs-mode:nil; -*- */
++/*
++ *   This program is free software; you can redistribute it and/or modify
++ *   it under the terms of the GNU General Public License version 2 as
++ *   published by the Free Software Foundation;
++ *
++ *   This program is distributed in the hope that it will be useful,
++ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *   GNU General Public License for more details.
++ *
++ *   You should have received a copy of the GNU General Public License
++ *   along with this program; if not, write to the Free Software
++ *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ */
++
++/**
++ * \file lte-test-pdcp-sn-wrap.cc
++ * \ingroup lte-test
++ *
++ * \brief Tests the lossless-handover forwarding buffer across the 12-bit PDCP SN wrap.
++ *
++ * The SN wraps from 4095 to 0 while COUNT keeps growing, so SDUs with SNs 4094, 4095, 0, 1
++ * were sent in that order. The suite checks that:
++ *  - OrderPdcpSnsByCount puts such SNs in COUNT order and keeps the ascending SN order when
++ *    the SNs do not wrap;
++ *  - the RLC AM transmitting SDU buffer, filled from RLC PDUs by RlcPdusToRlcSdus, is read
++ *    back in COUNT order across the wrap and in SN order without a wrap;
++ *  - IsPdcpSnInForwardingLookback, which both the eNB RRC and the UE RRC call to pick the
++ *    transmitted SDUs that precede the first forwarded SDU, accepts exactly that SN and the
++ *    two SNs before it modulo 4096, including when the first forwarded SN is 0 or 1.
++ */
++
++#include "ns3/lte-pdcp-header.h"
++#include "ns3/lte-pdcp-sn-wrap.h"
++#include "ns3/lte-rlc-am-header.h"
++#include "ns3/lte-rlc-am.h"
++#include "ns3/lte-rlc-sequence-number.h"
++#include "ns3/packet.h"
++#include "ns3/simulator.h"
++#include "ns3/test.h"
++
++#include <sstream>
++#include <string>
++#include <vector>
++
++using namespace ns3;
++
++namespace
++{
++
++std::string
++Join(const std::vector<uint16_t>& values)
++{
++    std::ostringstream out;
++    for (std::size_t i = 0; i < values.size(); i++)
++    {
++        out << (i ? "," : "") << values[i];
++    }
++    return out.str();
++}
++
++/** The payload size of the i-th SDU, distinct per SDU so a swapped packet is detected. */
++uint32_t
++PayloadSize(std::size_t i)
++{
++    return 100 + static_cast<uint32_t>(i);
++}
++
++/**
++ * One RLC AM data PDU that carries exactly one complete PDCP data PDU (framing info: first
++ * and last byte present, no length indicator), as LteRlcAm builds it for transmission.
++ */
++LteRlcAm::RetxPdu
++SingleSduRlcPdu(uint16_t rlcSn, uint16_t pdcpSn, uint32_t payloadSize)
++{
++    Ptr<Packet> pdu = Create<Packet>(payloadSize);
++    LtePdcpHeader pdcpHeader;
++    pdcpHeader.SetDcBit(LtePdcpHeader::DATA_PDU);
++    pdcpHeader.SetSequenceNumber(pdcpSn);
++    pdu->AddHeader(pdcpHeader);
++
++    LteRlcAmHeader rlcHeader;
++    rlcHeader.SetDataPdu();
++    rlcHeader.SetSequenceNumber(SequenceNumber10(rlcSn));
++    rlcHeader.SetResegmentationFlag(LteRlcAmHeader::PDU);
++    rlcHeader.SetLastSegmentFlag(LteRlcAmHeader::LAST_PDU_SEGMENT);
++    rlcHeader.SetSegmentOffset(0);
++    rlcHeader.SetFramingInfo(LteRlcAmHeader::FIRST_BYTE | LteRlcAmHeader::LAST_BYTE);
++    rlcHeader.SetPollingBit(LteRlcAmHeader::STATUS_REPORT_NOT_REQUESTED);
++    rlcHeader.PushExtensionBit(LteRlcAmHeader::DATA_FIELD_FOLLOWS);
++    pdu->AddHeader(rlcHeader);
++
++    LteRlcAm::RetxPdu retxPdu;
++    retxPdu.m_pdu = pdu;
++    retxPdu.m_retxCount = 0;
++    return retxPdu;
++}
++
++} // namespace
++
++/**
++ * \ingroup lte-test
++ * \brief OrderPdcpSnsByCount on one set of SNs, given in a scrambled order.
++ */
++class PdcpSnCountOrderTestCase : public TestCase
++{
++  public:
++    PdcpSnCountOrderTestCase(const std::string& name,
++                             std::vector<uint16_t> input,
++                             std::vector<uint16_t> expected)
++        : TestCase(name),
++          m_input(std::move(input)),
++          m_expected(std::move(expected))
++    {
++    }
++
++  private:
++    void DoRun() override
++    {
++        NS_TEST_ASSERT_MSG_EQ(Join(OrderPdcpSnsByCount(m_input)),
++                              Join(m_expected),
++                              "PDCP SNs in COUNT order");
++    }
++
++    std::vector<uint16_t> m_input;
++    std::vector<uint16_t> m_expected;
++};
++
++/**
++ * \ingroup lte-test
++ * \brief The RLC AM transmitting SDU buffer, filled from single-SDU RLC PDUs in
++ *        transmission order, read back through GetTransmittingRlcSduBuffer.
++ */
++class RlcAmSduBufferCountOrderTestCase : public TestCase
++{
++  public:
++    RlcAmSduBufferCountOrderTestCase(const std::string& name,
++                                     std::vector<uint16_t> pdcpSnsInTxOrder)
++        : TestCase(name),
++          m_pdcpSnsInTxOrder(std::move(pdcpSnsInTxOrder))
++    {
++    }
++
++  private:
++    void DoRun() override
++    {
++        m_rlcAm = CreateObject<LteRlcAm>();
++        std::vector<LteRlcAm::RetxPdu> pdus;
++        for (std::size_t i = 0; i < m_pdcpSnsInTxOrder.size(); i++)
++        {
++            pdus.push_back(
++                SingleSduRlcPdu(static_cast<uint16_t>(i), m_pdcpSnsInTxOrder[i], PayloadSize(i)));
++        }
++        m_rlcAm->RlcPdusToRlcSdus(pdus);
++
++        std::vector<uint16_t> keys;
++        std::vector<uint16_t> headerSns;
++        for (const auto& [sn, sdu] : m_rlcAm->GetTransmittingRlcSduBuffer())
++        {
++            keys.push_back(static_cast<uint16_t>(sn));
++            NS_TEST_ASSERT_MSG_EQ(static_cast<bool>(sdu), true, "every buffered SDU is a packet");
++            LtePdcpHeader pdcpHeader;
++            sdu->PeekHeader(pdcpHeader);
++            headerSns.push_back(pdcpHeader.GetSequenceNumber());
++            // The SDU is the PDCP header plus the payload of the PDU that carried this SN.
++            std::size_t txIndex = 0;
++            while (txIndex < m_pdcpSnsInTxOrder.size() && m_pdcpSnsInTxOrder[txIndex] != sn)
++            {
++                txIndex++;
++            }
++            NS_TEST_ASSERT_MSG_LT(txIndex, m_pdcpSnsInTxOrder.size(), "a transmitted SN");
++            NS_TEST_ASSERT_MSG_EQ(sdu->GetSize(),
++                                  pdcpHeader.GetSerializedSize() + PayloadSize(txIndex),
++                                  "the SDU stored under SN " << sn);
++        }
++        NS_TEST_ASSERT_MSG_EQ(Join(keys),
++                              Join(m_pdcpSnsInTxOrder),
++                              "transmitting SDU buffer in COUNT order");
++        NS_TEST_ASSERT_MSG_EQ(Join(headerSns), Join(keys), "each SDU carries its own SN");
++    }
++
++    void DoTeardown() override
++    {
++        // The RLC entity schedules its buffer-size trace at construction; the simulator never
++        // runs here, so drop that event together with the entity.
++        if (m_rlcAm)
++        {
++            m_rlcAm->Dispose();
++            m_rlcAm = nullptr;
++        }
++        Simulator::Destroy();
++    }
++
++    std::vector<uint16_t> m_pdcpSnsInTxOrder;
++    Ptr<LteRlcAm> m_rlcAm;
++};
++
++/**
++ * \ingroup lte-test
++ * \brief The SNs IsPdcpSnInForwardingLookback accepts for one first forwarded SN, over the
++ *        whole 12-bit SN space.
++ */
++class PdcpForwardingLookbackTestCase : public TestCase
++{
++  public:
++    PdcpForwardingLookbackTestCase(uint16_t firstForwardedSn, std::vector<uint16_t> expected)
++        : TestCase("eNB and UE forwarding lookback at first forwarded SN " +
++                   std::to_string(firstForwardedSn)),
++          m_firstForwardedSn(firstForwardedSn),
++          m_expected(std::move(expected))
++    {
++    }
++
++  private:
++    void DoRun() override
++    {
++        std::vector<uint16_t> accepted;
++        for (uint32_t sn = 0; sn < PDCP_SN_SPACE; sn++)
++        {
++            if (IsPdcpSnInForwardingLookback(static_cast<uint16_t>(sn), m_firstForwardedSn))
++            {
++                accepted.push_back(static_cast<uint16_t>(sn));
++            }
++        }
++        NS_TEST_ASSERT_MSG_EQ(Join(accepted),
++                              Join(m_expected),
++                              "the first forwarded SN and its two predecessors modulo 4096");
++    }
++
++    uint16_t m_firstForwardedSn;
++    std::vector<uint16_t> m_expected;
++};
++
++/**
++ * \ingroup lte-test
++ * \brief The pdcp-sn-wrap test suite.
++ */
++class PdcpSnWrapTestSuite : public TestSuite
++{
++  public:
++    PdcpSnWrapTestSuite()
++        : TestSuite("pdcp-sn-wrap", UNIT)
++    {
++        // COUNT order across the wrap.
++        AddTestCase(new PdcpSnCountOrderTestCase("COUNT order of SNs 4094, 4095, 0, 1",
++                                                 {0, 4095, 1, 4094},
++                                                 {4094, 4095, 0, 1}),
++                    TestCase::QUICK);
++        AddTestCase(
++            new PdcpSnCountOrderTestCase("COUNT order of SNs 4095, 0", {0, 4095}, {4095, 0}),
++            TestCase::QUICK);
++        // Without a wrap the order is the ascending SN order.
++        AddTestCase(new PdcpSnCountOrderTestCase("no wrap: SNs 10 to 13",
++                                                 {13, 10, 12, 11},
++                                                 {10, 11, 12, 13}),
++                    TestCase::QUICK);
++        AddTestCase(new PdcpSnCountOrderTestCase("no wrap: SNs 4093 to 4095",
++                                                 {4095, 4093, 4094},
++                                                 {4093, 4094, 4095}),
++                    TestCase::QUICK);
++        AddTestCase(new PdcpSnCountOrderTestCase("no wrap: SNs 0 and 2047", {2047, 0}, {0, 2047}),
++                    TestCase::QUICK);
++        AddTestCase(new PdcpSnCountOrderTestCase("no wrap: one SN", {7}, {7}), TestCase::QUICK);
++        AddTestCase(new PdcpSnCountOrderTestCase("no wrap: no SN", {}, {}), TestCase::QUICK);
++
++        // The RLC AM transmitting SDU buffer that the eNB and UE RRC forward at handover.
++        AddTestCase(
++            new RlcAmSduBufferCountOrderTestCase("RLC AM SDU buffer of SNs 4094, 4095, 0, 1",
++                                                 {4094, 4095, 0, 1}),
++            TestCase::QUICK);
++        AddTestCase(
++            new RlcAmSduBufferCountOrderTestCase("no wrap: RLC AM SDU buffer of SNs 10 to 13",
++                                                 {10, 11, 12, 13}),
++            TestCase::QUICK);
++
++        // The previous-SDU lookback of the eNB and UE forwarding buffers.
++        AddTestCase(new PdcpForwardingLookbackTestCase(0, {0, 4094, 4095}), TestCase::QUICK);
++        AddTestCase(new PdcpForwardingLookbackTestCase(1, {0, 1, 4095}), TestCase::QUICK);
++        AddTestCase(new PdcpForwardingLookbackTestCase(2, {0, 1, 2}), TestCase::QUICK);
++        AddTestCase(new PdcpForwardingLookbackTestCase(4095, {4093, 4094, 4095}), TestCase::QUICK);
++    }
++};
++
++/// The static instance that registers the suite.
++static PdcpSnWrapTestSuite g_pdcpSnWrapTestSuite;

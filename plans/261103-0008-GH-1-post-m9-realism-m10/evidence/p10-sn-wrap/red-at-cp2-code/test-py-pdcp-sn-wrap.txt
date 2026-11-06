@@ -1,0 +1,41 @@
+NS3_ENABLED_MODULES == ['ns3-config-store', 'ns3-csma', 'ns3-buildings', 'ns3-fd-net-device', 'ns3-lte', 'ns3-traffic-control', 'ns3-bridge', 'ns3-internet', 'ns3-applications', 'ns3-point-to-point', 'ns3-virtual-net-device', 'ns3-antenna', 'ns3-mobility', 'ns3-propagation', 'ns3-spectrum', 'ns3-stats', 'ns3-network', 'ns3-core', 'ns3-mmwave']
+NS3_ENABLED_CONTRIBUTED_MODULES == ['ns3-oran-interface']
+NS3_MODULE_PATH == ['/tmp/claude-1000/-home-andang-orca-workspaces-ns-o-ran-installation-migrate-l-release-NIST-1-8-0/910ba118-28cd-4264-b831-5fa1b4929edd/scratchpad/py312bin', '/home/andang/.cargo/bin', '/home/andang/.bun/bin', '/home/andang/.local/bin', '/home/andang/.bun/bin /home/andang/.local/bin /home/david/.cargo/bin /home/david/.bun/bin /home/david/go/bin /usr/local/sbin /usr/local/bin /usr/bin /opt/cuda/bin /var/lib/flatpak/exports/bin /usr/lib/jvm/default/bin /usr/bin/site_perl /usr/bin/vendor_perl /usr/bin/core_perl', '/home/andang/.config/orca/linux-orca-cli-shim', '/usr/local/sbin', '/usr/local/bin', '/usr/bin', '/opt/cuda/bin', '/var/lib/flatpak/exports/bin', '/usr/lib/jvm/default/bin', '/usr/bin/site_perl', '/usr/bin/vendor_perl', '/usr/bin/core_perl', '/home/andang/.volta/bin', '/home/andang/.asdf/shims', '/home/andang/.fnm/aliases/default/bin', '/home/andang/.local/share/mise/shims', '/home/andang/.local/share/pnpm', '/home/andang/.yarn/bin', '/opt/homebrew/bin', '/opt/homebrew/sbin', '/snap/bin', '/home/linuxbrew/.linuxbrew/bin', '/nix/var/nix/profiles/default/bin', '/home/andang/bin', '/home/andang/.nix-profile/bin', '/home/andang/.opencode/bin', '/home/andang/.vite-plus/bin', '/tmp/claude-1000/ns3-pdcp-sn-wrap-910ba118/build', '/tmp/claude-1000/ns3-pdcp-sn-wrap-910ba118/build/lib']
+ENABLE_REAL_TIME == False
+ENABLE_EXAMPLES == False
+ENABLE_TESTS == True
+EXAMPLE_DIRECTORIES == []
+ENABLE_PYTHON_BINDINGS == False
+NSCLICK == False
+ENABLE_BRITE == False
+ENABLE_OPENFLOW == False
+APPNAME == ns
+BUILD_PROFILE == default
+VERSION == 3.38.rc1
+PYTHON == ['/tmp/claude-1000/-home-andang-orca-workspaces-ns-o-ran-installation-migrate-l-release-NIST-1-8-0/910ba118-28cd-4264-b831-5fa1b4929edd/scratchpad/py312bin/python3']
+VALGRIND_FOUND == False
+os.environ["PYTHONPATH"] == /tmp/claude-1000/ns3-pdcp-sn-wrap-910ba118/build/bindings/python
+os.environ["LD_LIBRARY_PATH"] == :/tmp/claude-1000/-home-andang-orca-workspaces-ns-o-ran-installation-migrate-l-release-NIST-1-8-0/910ba118-28cd-4264-b831-5fa1b4929edd/scratchpad/py312bin:/home/andang/.cargo/bin:/home/andang/.bun/bin:/home/andang/.local/bin:/home/andang/.bun/bin /home/andang/.local/bin /home/david/.cargo/bin /home/david/.bun/bin /home/david/go/bin /usr/local/sbin /usr/local/bin /usr/bin /opt/cuda/bin /var/lib/flatpak/exports/bin /usr/lib/jvm/default/bin /usr/bin/site_perl /usr/bin/vendor_perl /usr/bin/core_perl:/home/andang/.config/orca/linux-orca-cli-shim:/usr/local/sbin:/usr/local/bin:/usr/bin:/opt/cuda/bin:/var/lib/flatpak/exports/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/andang/.volta/bin:/home/andang/.asdf/shims:/home/andang/.fnm/aliases/default/bin:/home/andang/.local/share/mise/shims:/home/andang/.local/share/pnpm:/home/andang/.yarn/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/snap/bin:/home/linuxbrew/.linuxbrew/bin:/nix/var/nix/profiles/default/bin:/home/andang/bin:/home/andang/.nix-profile/bin:/home/andang/.opencode/bin:/home/andang/.vite-plus/bin:/tmp/claude-1000/ns3-pdcp-sn-wrap-910ba118/build:/tmp/claude-1000/ns3-pdcp-sn-wrap-910ba118/build/lib
+Synchronously execute /tmp/claude-1000/ns3-pdcp-sn-wrap-910ba118/build/utils/ns3.38.rc1-test-runner-default --print-test-name-list
+Return code =  0
+stderr =  
+Queue pdcp-sn-wrap
+Launch utils/ns3.38.rc1-test-runner-default --test-name=pdcp-sn-wrap --stop-on-failure --fullness=QUICK
+Synchronously execute /tmp/claude-1000/ns3-pdcp-sn-wrap-910ba118/build/utils/ns3.38.rc1-test-runner-default --test-name=pdcp-sn-wrap --stop-on-failure --fullness=QUICK --xml --tempdir=testpy-output/2026-11-06-20-45-07-CUT --out=testpy-output/2026-11-06-20-45-07-CUT/pdcp-sn-wrap.xml 
+Return code =  1
+stderr =  
+returncode = 1
+---------- begin standard out ----------
+
+---------- begin standard err ----------
+
+---------- end standard err ----------
+[1/1] FAIL: TestSuite pdcp-sn-wrap
+0 of 1 tests passed (0 passed, 0 skipped, 1 failed, 0 crashed, 0 valgrind errors)
+List of FAILed tests:
+    pdcp-sn-wrap
+
+***  Note: ns-3 examples are currently disabled. Enable them by adding
+***  "--enable-examples" to ./ns3 configure or modifying your .ns3rc file.
+
+test.py rc=1

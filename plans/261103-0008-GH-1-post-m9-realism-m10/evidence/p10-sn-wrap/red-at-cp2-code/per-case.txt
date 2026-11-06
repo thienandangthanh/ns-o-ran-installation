@@ -1,0 +1,34 @@
+# Per-case red run: ns-3 stops a suite at its first failing case, so each case was also run alone.
+# Probe = the red tree with only the suite constructor changed to register the single case whose
+# index is PDCP_SN_WRAP_CASE (assertions unchanged); the probe was reverted afterwards.
+== case index 0
+  FAIL COUNT order of SNs 4094, 4095, 0, 1 0.000 s
+      test="Join(OrderPdcpSnsByCount(m_input)) (actual) == Join(m_expected) (limit)" actual="0,1,4094,4095" limit="4094,4095,0,1" in="/tmp/claude-1000/ns3-pdcp-sn-wrap-910ba118/src/lte/test/lte-test-pdcp-sn-wrap.cc:122" PDCP SNs in COUNT order
+== case index 1
+  FAIL COUNT order of SNs 4095, 0 0.000 s
+      test="Join(OrderPdcpSnsByCount(m_input)) (actual) == Join(m_expected) (limit)" actual="0,4095" limit="4095,0" in="/tmp/claude-1000/ns3-pdcp-sn-wrap-910ba118/src/lte/test/lte-test-pdcp-sn-wrap.cc:122" PDCP SNs in COUNT order
+== case index 2
+  PASS no wrap: SNs 10 to 13 0.000 s
+== case index 3
+  PASS no wrap: SNs 4093 to 4095 0.000 s
+== case index 4
+  PASS no wrap: SNs 0 and 2047 0.000 s
+== case index 5
+  PASS no wrap: one SN 0.000 s
+== case index 6
+  PASS no wrap: no SN 0.000 s
+== case index 7
+  FAIL RLC AM SDU buffer of SNs 4094, 4095, 0, 1 0.008 s
+      test="Join(keys) (actual) == Join(m_pdcpSnsInTxOrder) (limit)" actual="0,1,4094,4095" limit="4094,4095,0,1" in="/tmp/claude-1000/ns3-pdcp-sn-wrap-910ba118/src/lte/test/lte-test-pdcp-sn-wrap.cc:178" transmitting SDU buffer in COUNT order
+== case index 8
+  PASS no wrap: RLC AM SDU buffer of SNs 10 to 13 0.000 s
+== case index 9
+  FAIL eNB and UE forwarding lookback at first forwarded SN 0 0.000 s
+      test="Join(accepted) (actual) == Join(m_expected) (limit)" actual="0" limit="0,4094,4095" in="/tmp/claude-1000/ns3-pdcp-sn-wrap-910ba118/src/lte/test/lte-test-pdcp-sn-wrap.cc:227" the first forwarded SN and its two predecessors modulo 4096
+== case index 10
+  FAIL eNB and UE forwarding lookback at first forwarded SN 1 0.000 s
+      test="Join(accepted) (actual) == Join(m_expected) (limit)" actual="0,1" limit="0,1,4095" in="/tmp/claude-1000/ns3-pdcp-sn-wrap-910ba118/src/lte/test/lte-test-pdcp-sn-wrap.cc:227" the first forwarded SN and its two predecessors modulo 4096
+== case index 11
+  PASS eNB and UE forwarding lookback at first forwarded SN 2 0.000 s
+== case index 12
+  PASS eNB and UE forwarding lookback at first forwarded SN 4095 0.000 s

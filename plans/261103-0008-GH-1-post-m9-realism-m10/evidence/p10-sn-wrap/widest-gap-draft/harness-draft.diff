@@ -1,0 +1,38 @@
+diff --git a/scripts/build-ns3.sh b/scripts/build-ns3.sh
+index 753c16eb..28be76be 100755
+--- a/scripts/build-ns3.sh
++++ b/scripts/build-ns3.sh
+@@ -12,8 +12,9 @@
+ # Logs go to stderr. The last stdout line is the absolute path of the scenario-zero binary.
+ # With --tests the tree is configured with --enable-tests, the ns-3 `test` module added to the enabled
+ # modules (with only mmwave,oran-interface enabled, ns-3.38 drops src/test, so no test-runner target
+-# exists) and --filter-module-examples-and-tests=mmwave (only libmmwave-test, libtest and the runner are
+-# built, not every dependency's test library); only the test-runner is built, and the last stdout line
++# exists) and --filter-module-examples-and-tests='mmwave;lte' (a CMake list: only libmmwave-test,
++# liblte-test, libtest and the runner are built, not every dependency's test library; the lte test
++# library holds the PDCP SN wrap suite); only the test-runner is built, and the last stdout line
+ # is the source dir (run its suites with ./test.py -n -s <suite>).
+ # Use a separate <workdir> for --tests: the gates run the scenario-zero binary of the plain build.
+ set -euo pipefail
+@@ -46,7 +47,7 @@ TARGET=scenario-zero
+ if [ "$TESTS" = 1 ]; then
+     CONFIGURE_FLAGS=("${CONFIGURE_FLAGS[@]/--disable-tests/--enable-tests}")
+     CONFIGURE_FLAGS=("${CONFIGURE_FLAGS[@]/--enable-modules=mmwave,oran-interface/--enable-modules=mmwave,oran-interface,test}")
+-    CONFIGURE_FLAGS=(--filter-module-examples-and-tests=mmwave "${CONFIGURE_FLAGS[@]}")
++    CONFIGURE_FLAGS=("--filter-module-examples-and-tests=mmwave;lte" "${CONFIGURE_FLAGS[@]}")
+     TARGET=test-runner
+ fi
+ APT_DEPS=(build-essential g++ cmake make python3 git ca-certificates)
+diff --git a/scripts/gates/gate-m4-ns3-build.sh b/scripts/gates/gate-m4-ns3-build.sh
+index e7b68240..8bfe516a 100755
+--- a/scripts/gates/gate-m4-ns3-build.sh
++++ b/scripts/gates/gate-m4-ns3-build.sh
+@@ -376,6 +376,8 @@ ns3_suite_passes() {
+     return 0
+ }
+ check m4_ns3_neighbour_list_suite_passes ns3_suite_passes mmwave-neighbour-list
++# The lossless-handover forwarding buffer across the 12-bit PDCP SN wrap (src/lte/test).
++check m4_ns3_pdcp_sn_wrap_suite_passes ns3_suite_passes pdcp-sn-wrap
+ 
+ # The test tree is a scratch build; drop it so it never counts against the VM disk budget.
+ [ -n "$TESTS_SRC" ] && rm -rf "$M4_TESTS_WORKDIR"

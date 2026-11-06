@@ -1,0 +1,15 @@
+PASS pdcp-sn-wrap 0.000 s
+  PASS COUNT order of SNs 4094, 4095, 0, 1 0.000 s
+  PASS COUNT order of SNs 4095, 0 0.000 s
+  PASS no wrap: SNs 10 to 13 0.000 s
+  PASS no wrap: SNs 4093 to 4095 0.000 s
+  PASS no wrap: SNs 0 and 2047 0.000 s
+  PASS no wrap: one SN 0.000 s
+  PASS no wrap: no SN 0.000 s
+  PASS RLC AM SDU buffer of SNs 4094, 4095, 0, 1 0.000 s
+  PASS no wrap: RLC AM SDU buffer of SNs 10 to 13 0.000 s
+  PASS eNB and UE forwarding lookback at first forwarded SN 0 0.000 s
+  PASS eNB and UE forwarding lookback at first forwarded SN 1 0.000 s
+  PASS eNB and UE forwarding lookback at first forwarded SN 2 0.000 s
+  PASS eNB and UE forwarding lookback at first forwarded SN 4095 0.000 s
+runner rc=0

@@ -1,0 +1,22 @@
+# Tree: ns-3 74c165f14dcae233169a789541d91377e47671a7 (pinned NS3_SHA; src/lte identical to m10-cp2's ea6e46f6) + oran-interface 53253fe256ed305b207b607150a5e8a1dec25e42
+# The ns-3 working-tree fix (helper, lte-rlc-am.{h,cc}, lte-enb-rrc.cc, lte-ue-rrc.cc, the suite, CMakeLists) copied onto the pinned ns-3.
+# Host: g++ (GCC) 16.2.1 20260810; cmake version 4.4.4; Python 3.12.13 (uv) for ./ns3 and test.py; Linux x86_64
+# configure: ./ns3 configure '--filter-module-examples-and-tests=mmwave;lte' --build-profile=default --enable-tests --disable-examples --disable-python --enable-modules=mmwave,oran-interface,test -G 'Unix Makefiles' -- -DNS3_CCACHE=OFF -DNS3_FAST_LINKERS=OFF
+## git status
+ M src/lte/CMakeLists.txt
+ M src/lte/model/lte-enb-rrc.cc
+ M src/lte/model/lte-rlc-am.cc
+ M src/lte/model/lte-rlc-am.h
+ M src/lte/model/lte-ue-rrc.cc
+?? src/lte/model/lte-pdcp-sn-wrap.cc
+?? src/lte/model/lte-pdcp-sn-wrap.h
+?? src/lte/test/lte-test-pdcp-sn-wrap.cc
+## sha256
+5f91e82e9690f74fb33db76d23b1b0eb301313c7278fa38ee53368ae0d9be836  src/lte/CMakeLists.txt
+e45d9b347023ffe76bb4e165b4a4d5c81365edb8b432f0fd957e861addf1fb81  src/lte/model/lte-pdcp-sn-wrap.h
+29875d59fd7e42ec5639964206ec9140069dfaeb073355318ec33065de08a815  src/lte/model/lte-pdcp-sn-wrap.cc
+0b56efcd008c7e8d7ffbaaadd45cdc70d81ee84441286c42819368a1470cb8b0  src/lte/test/lte-test-pdcp-sn-wrap.cc
+4b6358ce63ffb9e6e17dcaabc74ef7329bed789aa9ab1412e6cc5022dd3e2efc  src/lte/model/lte-rlc-am.h
+c23c735a501fb47825a0d57c9b00b2207c70116d6c4fd1d50b9c3262f0d24d39  src/lte/model/lte-rlc-am.cc
+3beee1e9901f88ae380b6a4bc6d5fb752543d52af5be4318585b08ecf8f334ed  src/lte/model/lte-enb-rrc.cc
+fd5d7080c4c952ebbde3a919f75c255e2f706d81e8acd308fae043962aec69f2  src/lte/model/lte-ue-rrc.cc
