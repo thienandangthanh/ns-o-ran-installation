@@ -169,6 +169,26 @@ recover() {
 }
 check m7_recovery_every_node_restarted_reconnected_and_indicating recover
 check m7_ns3_still_running_after_recovery ns3_alive
+# Receiver-side route record of the replacement e2term (ledger row 162; user ruling (ii), 2026-11-07). It is taken
+# after recovery whether it passed or not, and it is informational: it never changes a check. Its `matches` field
+# names the no-route-table signature, for which an M7 red gets one re-run outside the guided-fix budget.
+route_record() {
+    local d="$e/m7-e2term-route" pod rtm svc
+    mkdir -p "$d"
+    read -r pod _ < <(pod_info ricplt e2term) || pod=""
+    read -r rtm _ < <(pod_info ricplt rtmgr) || rtm=""
+    svc=$(kc -n ricplt get svc service-ricplt-e2term-rmr-alpha -o jsonpath='{.spec.clusterIP}' 2>/dev/null)
+    echo "e2term $pod rtmgr $rtm service $svc" >"$d/pods.txt"
+    kc -n ricplt exec "$pod" -- ls -la --time-style=full-iso /opt/e2/ >"$d/e2term-opt-e2.txt" 2>&1
+    kc -n ricplt exec "$pod" -- cat /proc/net/tcp /proc/net/tcp6 >"$d/e2term-tcp.txt" 2>&1
+    kc -n ricplt exec "$rtm" -- cat /proc/net/tcp /proc/net/tcp6 >"$d/rtmgr-tcp.txt" 2>&1
+    kc -n ricplt logs "$pod" >"$d/e2term.log" 2>&1
+    python3 -I "$HARNESS_DIR/scripts/gates/m7-e2term-route-record.py" --ls "$d/e2term-opt-e2.txt" \
+        --e2term-tcp "$d/e2term-tcp.txt" --rtmgr-tcp "$d/rtmgr-tcp.txt" --svc-ip "${svc:-0.0.0.0}" --e2term-log "$d/e2term.log"
+}
+ROUTE_RECORD=$(route_record 2>/dev/null) || ROUTE_RECORD=""
+fact e2termRouteRecord "$ROUTE_RECORD"
+record m7_e2term_route_record_informational true "${ROUTE_RECORD:-no record (collection failed)}"
 agents_stats_all >"$e/post-recovery-agents.txt"
 agents_record_ips "$e/node-ips.json" >/dev/null
 restart_ge1() { cat "$e/post-recovery-agents.txt"; awk '$2 >= 1 { ok++ } END { exit !(ok == '"$NNODES"') }' "$e/post-recovery-agents.txt"; }
