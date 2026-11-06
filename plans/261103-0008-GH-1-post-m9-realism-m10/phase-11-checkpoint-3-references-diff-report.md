@@ -13,6 +13,7 @@ All of this happens **before** the cp3 tag, so that a fix forced by a rehearsal 
 
 ## Requirements (contract)
 - **AC16 (checkpoint 3):** new references for every C1 rung, and a diff report that lists each changed component with the fix that changed it. Components not explained by a T-C fix stay equal to checkpoint 2. The commit is tagged.
+- **Diff rule, the fixes that may explain a change (registered 2026-11-06, kongming-261106-0500 §8):** the T-C fixes P6, P7 (with its SN-wrap commit), P9, P15 and UseIdealRrc; the T-A residuals that Stop A′ ruled into P10, namely D-R3-1, D-06b-1 and R-4 (the kpimon node tag and the TS serving cell), which need no amendment; and the neighbour-loop UB fix under contract Amendment 4. Every changed component names one of these commits, found by bisection over P10's one-fix-per-commit order; any other change is a finding.
 - **AC9 (re-bank, I-7):** all four δ references are re-made at the cp3 pins; the P04 ones stay as history.
 - **AC17:** `UseIdealRrc` is final before these references are made.
 - **AC4 (dev rehearsals):** `disk-burst-h.py` over the free-series of every rehearsal below. If any 370 s burst exceeds 12 GiB, the run stops for a user ruling.

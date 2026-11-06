@@ -162,3 +162,29 @@ Re-pin the `m10-cp2` SHAs.
   - `~/.cache/ns-o-ran-frozen-harness/a7943bfb66b54bc58beb12f24d4f189de59c87a2` (the D-R3-1 chain, red at M7).
 - At resume, check whether each is still needed. A checkout is needed only while its chain's evidence is not yet committed and archived (tsv, step logs, as-run driver, `evidence-sha256.txt`, raw archive on /mnt/data), or while a diagnosis must re-run something at exactly that SHA. The M7 diagnosis may need a7943bf; the same SHA can be re-created with `git worktree add --detach --lock` from git, so the checkout itself is never the only copy.
 - If one is not needed, remove it with `git worktree unlock <path>` then `git worktree remove <path>` (the frozen tree is `chmod -R a-w`, so restore write permission on that one path first), never `rm -rf`. Log the freed space in this phase.
+
+## Pre-registration (2026-11-06; one docs commit before any P10 code after D-R3-1)
+Sources: the user rulings in `plans/reports/decisions-261106-0525-GH-1-p10-pre-registration-questions.md`; kongming `kongming-261106-0500-…` (§7, §9, C.4, C.5) and `kongming-261106-1952-…`; ledger rows 147–161 (`check-diff-ledger.md`); contract Amendment 4.
+- **Commit order (one fix per commit, for P11's bisection):** D-R3-1 (Testbed + harness pair), the neighbour-loop UB fix (Amendment 4, row 159), P6 (row 147), the SN-wrap fix (row 160), P7 (rows 148–150), P9 (rows 151, 152, 161), P15 (rows 153–155), D-06b-1 (row 81 amendment first), the kpimon node tag (row 137), the TS serving cell (rows 138–142, 158), UseIdealRrc (rows 156–157).
+- **Design changes ruled against the text above:**
+  - P6: no QosFlow.PdcpPduVolumeDL on any node. The MAC value and every name that fails row 147 are renamed in place to `ns3.*` (same order and measId). The PRB-family source fix is a follow-up outside M10; until then the PRB rows stay `ns3.*`. The eNB DRB.PdcpSduVolumeDl value fix (row `:128`) is a follow-up outside M10; P6 renames it.
+  - P7: 12-bit SN in both directions (38.323 §6.2.2.2), so `NrPdcpHeader` is 2 octets and no SN type is widened. The header class comes from the bearer context, never from a packet tag. The SN-wrap fix is its own commit right before P7.
+  - P9: Option A. DRB.PdcpSduVolumeDL/UL report 0 at every en-gNB; new map rows DRB.PdcpSduVolumeX2DL/UL carry the volume the MN submits over X2 to that cell (row 151's counting definition). The predictor reads X2DL with its formula, window, thresholds and decision unchanged (row 152, T3 ruled).
+  - UseIdealRrc: the probe runs on the candidate commit with `scenario-zero.cc:492` deleted (row 157); c is judged by row 156.
+- **Gates per commit (P09 review §7.2, kongming-261106-0500 §2 and §7):**
+  - UB fix: M4 (row 159's suite), M5–M7, one r2 and one r3p single (row 159's tick check), one s10 run.
+  - P6: agent rebuild, kpimon reinstall (the map and the registry are kpimon stale-path inputs), lint with row 147's self-test, M5–M7. No M4 (ns-3 unchanged).
+  - SN-wrap fix: row 160 red at `m10-cp2` (kept), green at the commit; M4, M5–M7; N4 determinism check for row 148 (b).
+  - P7: M4 (row 148), M5–M7 with row 149, N4 uloff/ulon byte identity with the SN-wrap commit.
+  - P9: M4, agent rebuild, kpimon reinstall, M5–M7, the V3 run by row 161's `--part v3`, R3′ single (a run without a predictor-driven handover is red; a scenario change is PAUSE T3).
+  - P15: agent rebuild, kpimon reinstall, M5–M7, p12 with the re-baselined judge, R3′ single.
+  - D-06b-1 and the kpimon node tag: as in steps 3c and 3d. The TS serving cell: step 3d (ii) plus row 158.
+  - UseIdealRrc: the probe, then row 157's adoption gates.
+- **Revert points to `f7-rerun-green` (kongming-261106-0500 §7 and C.5; the 34 GiB start guard stays binding):**
+  1. before D-R3-1 (done: the D-R3-1 chain started from `f7-rerun-green`);
+  2. conditional, before P9: revert if free /home after P7's gates is below 33 GiB;
+  3. between P9 and P15;
+  4. before the TS serving cell.
+
+  Never start a p12 run or an xApp or kpimon build below 34 GiB free; revert first. Each revert re-runs the prefix at the then-current pins. Projected wall time is about 15–18 h; cycle 1 about 45–55 GiB.
+- **The KPM T/T golden.** P9's appended cell rows break `kpm-report-period-test`'s byte identity against `fixtures/kpm-tt-golden-gnb2-seq26-35.txt`. The golden is regenerated in the P9 commit, with the reason in its commit message.
