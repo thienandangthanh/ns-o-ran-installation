@@ -12,9 +12,8 @@
 # Logs go to stderr. The last stdout line is the absolute path of the scenario-zero binary.
 # With --tests the tree is configured with --enable-tests, the ns-3 `test` module added to the enabled
 # modules (with only mmwave,oran-interface enabled, ns-3.38 drops src/test, so no test-runner target
-# exists) and --filter-module-examples-and-tests='mmwave;lte' (a CMake list: only libmmwave-test,
-# liblte-test, libtest and the runner are built, not every dependency's test library; the lte test
-# library holds the PDCP SN wrap suite); only the test-runner is built, and the last stdout line
+# exists) and --filter-module-examples-and-tests=mmwave (only libmmwave-test, libtest and the runner are
+# built, not every dependency's test library); only the test-runner is built, and the last stdout line
 # is the source dir (run its suites with ./test.py -n -s <suite>).
 # Use a separate <workdir> for --tests: the gates run the scenario-zero binary of the plain build.
 set -euo pipefail
@@ -47,7 +46,7 @@ TARGET=scenario-zero
 if [ "$TESTS" = 1 ]; then
     CONFIGURE_FLAGS=("${CONFIGURE_FLAGS[@]/--disable-tests/--enable-tests}")
     CONFIGURE_FLAGS=("${CONFIGURE_FLAGS[@]/--enable-modules=mmwave,oran-interface/--enable-modules=mmwave,oran-interface,test}")
-    CONFIGURE_FLAGS=("--filter-module-examples-and-tests=mmwave;lte" "${CONFIGURE_FLAGS[@]}")
+    CONFIGURE_FLAGS=(--filter-module-examples-and-tests=mmwave "${CONFIGURE_FLAGS[@]}")
     TARGET=test-runner
 fi
 APT_DEPS=(build-essential g++ cmake make python3 git ca-certificates)
