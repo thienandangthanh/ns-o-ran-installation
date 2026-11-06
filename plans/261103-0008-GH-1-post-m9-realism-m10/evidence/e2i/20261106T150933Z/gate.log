@@ -1,0 +1,106 @@
+[15:09:34] gate e2i start; evidence /home/uc/evidence/e2i/20261106T150933Z; harness a7943bfb66b54bc58beb12f24d4f189de59c87a2
+[15:09:34] PASS e2i_args
+[15:09:34] ric watchdog started (pid 364234, threshold 600s)
+[15:09:34] FAIL e2i_asn1_indep_image_checksum_verified_and_loaded: exit 1: /home/uc/harness/scripts/gates/gate-e2i-interop.sh: line 68: cd: /home/uc/asn1-indep: No such file or directory
+[15:09:34] FAIL e2i_independent_decoder_self_test: exit 125: Unable to find image 'localhost/asn1-indep:09aeabb8b0f99b0c' locally
+docker: Error response from daemon: Get "http://localhost/v2/": dial tcp 127.0.0.1:80: connect: connection refused
+
+Run 'docker run --help' for more information
+[15:09:34] PASS e2i_wire_judge_self_test
+[15:09:34] PASS e2i_nist_tree_at_testbed_sha_with_agent_dir
+[15:09:35] PASS e2i_build_tools_present
+[15:09:35] PASS e2i_sctp_module_loaded
+[15:09:35] PASS e2i_e2_ports_reserved
+[15:09:35] PASS e2i_ns3_binary_located_at_pins
+[15:09:35] PASS e2i_ts_tree_and_image_are_pin_plus_patch_set
+[15:09:36] PASS e2i_rc_installed_at_pin_and_ready
+[15:09:36] PASS e2i_kpimon_image_carries_its_patch_set_label
+[15:10:18] PASS e2i_ric_reset_fresh_rc_kpimon_hw_go_and_bucket
+[15:10:50] PASS e2i_ts_xapp_scaled_to_zero_and_deregistered
+[15:11:08] PASS e2i_rmr_peer_image_built_and_self_tested
+[15:11:21] PASS e2i_injector_installed
+[15:11:21] PASS e2i_injector_registered
+[15:11:45] PASS e2i_rtmgr_restarted_after_registration
+[15:11:45] PASS e2i_injector_has_a_route_table
+[15:11:46] PASS e2i_capture_started_before_agents
+[15:12:43] PASS e2i_bringup_agents_connected_set_equals_meids
+[15:12:43] PASS e2i_agent_container_ips_recorded
+[15:12:43] PASS e2i_every_agent_ready_and_subscribed_by_kpimon
+[15:12:44] PASS e2i_e2mgr_en_gnb_2_record
+[15:12:44] PASS e2i_e2mgr_en_gnb_3_record
+[15:12:44] PASS e2i_e2mgr_enb_1_record_x2_to_en_gnbs_2_3
+[15:12:44] PASS e2i_route_dump_agents_subscribed
+[15:12:44] PASS e2i_injector_routes_to_e2term_for_both_en_gnbs_and_the_enb
+[15:12:44] PASS e2i_agent_rc_control_unit_test_cause_paths
+[15:12:44] FAIL e2i_controls_encoded_by_the_independent_codec: exit 1: Unable to find image 'localhost/asn1-indep:09aeabb8b0f99b0c' locally
+docker: Error response from daemon: Get "http://localhost/v2/": dial tcp 127.0.0.1:80: connect: connection refused
+
+Run 'docker run --help' for more information
+[15:12:44] PASS e2i_schedule_written
+[15:12:45] PASS e2i_ts_xapp_absent_before_the_run
+[15:12:45] PASS e2i_pod_snapshot_before
+[15:14:04] PASS e2i_lockstep_run_with_five_injected_controls
+[15:14:04] PASS e2i_ts_xapp_absent_after_the_run
+[15:14:04] PASS e2i_pod_snapshot_after
+[15:14:04] PASS e2i_ts_xapp_down_during_injector
+[15:14:04] FAIL e2i_independent_target_applied_ledger_and_handover_start: exit 1: Traceback (most recent call last):
+  File "<stdin>", line 6, in <module>
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/e2i/20261106T150933Z/run/trace/e2-control-ledger.jsonl'
+[15:14:05] PASS e2i_ue_context_equals_identity_map_cp1
+[15:14:05] PASS e2i_injector_logs_saved
+[15:14:05] PASS e2i_injector_uninstalled
+[15:14:09] PASS e2i_ts_xapp_recreated_ready_and_registered
+[15:14:33] PASS e2i_rtmgr_restarted_after_ts_registration
+[15:14:33] PASS e2i_ts_xapp_nodeb_list_names_every_connected_node
+[15:14:33] PASS e2i_ts_cell_map_en_gnb_keys_no_enb_key_no_wrong_node
+[15:14:33] PASS e2i_restart_counts_zero
+[15:14:33] PASS e2i_agent_logs_with_stats_after_bye
+[15:14:33] PASS e2i_agent_ue_context_counters_zero_every_stats_line
+[15:14:37] PASS e2i_agents_stopped
+[15:14:38] PASS e2i_capture_stopped
+[15:14:41] PASS e2i_pcap_facts
+[15:14:42] FAIL e2i_setup_requests_decoded_and_judged: exit 1:            ^^^^^^^^
+  File "/home/uc/harness/scripts/gates/e2i-wire-checks.py", line 336, in setup
+    acked = [i for i in (json.loads(x) for x in open(a.injected) if x.strip()) if i["expect"] == "ack"] if a.injected else []
+                                                ^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/e2i/20261106T150933Z/injected.jsonl'
+[15:14:42] FAIL e2i_globalIds: exit 1:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/uc/harness/scripts/gates/e2i-wire-checks.py", line 475, in verdict
+    c = json.load(open(path))["checks"].get(name)
+                  ^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/e2i/20261106T150933Z/e2i-setup.json'
+[15:14:42] FAIL e2i_ranFunctions: exit 1:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/uc/harness/scripts/gates/e2i-wire-checks.py", line 475, in verdict
+    c = json.load(open(path))["checks"].get(name)
+                  ^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/e2i/20261106T150933Z/e2i-setup.json'
+[15:14:42] FAIL e2i_x2apRequestPartDecodes: exit 1:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/uc/harness/scripts/gates/e2i-wire-checks.py", line 475, in verdict
+    c = json.load(open(path))["checks"].get(name)
+                  ^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/e2i/20261106T150933Z/e2i-setup.json'
+[15:14:42] FAIL e2i_style5Action3Announced: exit 1:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/uc/harness/scripts/gates/e2i-wire-checks.py", line 475, in verdict
+    c = json.load(open(path))["checks"].get(name)
+                  ^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/e2i/20261106T150933Z/e2i-setup.json'
+[15:14:42] FAIL e2i_kpimonSubscribedAll: exit 1:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/uc/harness/scripts/gates/e2i-wire-checks.py", line 475, in verdict
+    c = json.load(open(path))["checks"].get(name)
+                  ^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/e2i/20261106T150933Z/e2i-setup.json'
+[15:14:43] FAIL e2i_injected_controls_on_the_wire_and_answered: exit 1:                                              ^^^^^^^^^^^
+  File "/home/uc/harness/scripts/gates/e2i-wire-checks.py", line 394, in controls
+    for inj in (json.loads(x) for x in open(a.injected) if x.strip()):
+                                       ^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/e2i/20261106T150933Z/injected.jsonl'
+[15:14:43] FAIL e2i_e2mgr_records_x2_request_parts_hex_sidecars_equal_record_and_wire: exit 1:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/uc/harness/scripts/gates/e2i-wire-checks.py", line 443, in x2_parts
+    for n, d in json.load(open(setup_out))["nodes"].items():
+                          ^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/uc/evidence/e2i/20261106T150933Z/e2i-setup.json'
+[15:14:43] PASS e2i_ppid_per_node_70
+[15:14:43] PASS e2i_kpimon_subscription_one_action_id1_format3
+verdict e2i: FAIL failed=['e2i_asn1_indep_image_checksum_verified_and_loaded', 'e2i_independent_decoder_self_test', 'e2i_controls_encoded_by_the_independent_codec', 'e2i_independent_target_applied_ledger_and_handover_start', 'e2i_setup_requests_decoded_and_judged', 'e2i_globalIds', 'e2i_ranFunctions', 'e2i_x2apRequestPartDecodes', 'e2i_style5Action3Announced', 'e2i_kpimonSubscribedAll', 'e2i_injected_controls_on_the_wire_and_answered', 'e2i_e2mgr_records_x2_request_parts_hex_sidecars_equal_record_and_wire']
+Terminated
+[15:14:46] ric watchdog stopped (pid 364234)

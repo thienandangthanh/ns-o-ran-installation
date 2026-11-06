@@ -180,6 +180,34 @@ Counsel: `plans/reports/kongming-261106-2200-GH-1-p10-d-r3-1-chain-m7-red-counse
 - **Not chased (record only).** Five sessions into rtmgr :4560 each hold 111,136 B unread by their peers. There is no green-run baseline.
 - **For the user (non-blocking).** How to treat future M7 reds with this signature: (i) status quo, each a normal Failure Protocol red (the default); (ii) an additive receiver-side record in M7 (e2term stash, e2term :4561 sessions, rtmgr sessions to the e2term Service, NOENDPT 12001 lines) and one re-run outside the budget for a matching red, two in a row = PAUSE (kongming's recommendation; its own ledger row, after this chain); (iii) a remedy inside M7 (weakens the check; advised against); (iv) fix rtmgr reconnect (scope change). The same question goes on the Stop B list for M10.
 
+## D-R3-1 chain attempt 2: red at e2i, PAUSE T6 (2026-11-07)
+- **Run.** Revert `f7-rerun-green` at 13:09Z (libvirt's revert unlinked attempt 1's overlay itself; /home 54 → 76 GiB), then `p10-gate-chain.sh a7943bf… 0 8` from the frozen checkout, 13:09–15:15Z. Driver record: `evidence/p10-chain/a7943bf/attempt-2/` (tsv, step logs, as-run driver). Raw archive `…-m10-p10b-20261107.tar.zst` on /mnt/data (1,462 files, SHA256SUMS verified).
+- **Green steps:** M2 `m2/20261106T130927Z`, M3 `m3/20261106T133007Z`, M4 `m4/20261106T140610Z`, M5 `m5/20261106T142843Z`, M6 `m6/20261106T143252Z`, **M7 `m7/20261106T143502Z` (green this time)**, I0 `i0/20261106T150015Z`, I2 `i2/20261106T150454Z`.
+- **Red step:** e2i `e2i/20261106T150933Z`, exit 1. The first failing check, `e2i_asn1_indep_image_checksum_verified_and_loaded`, fails with `cd: /home/uc/asn1-indep: No such file or directory`. Every later e2i check fails on inputs that this missing image would have produced. `gate-e2i-interop.sh:3` says the host copies the tarball in. The P08 procedure re-copied it after every revert (kongming-261105-1050 step 6; phase-08 records the copy). That step was missing from attempt 2's checklist and launch. The host tarball `tools/asn1-indep/dist/asn1-indep-09aeabb8b0f99b0c.tar` is present.
+- **Rule applied.** The outcome rule was set before the run: any red step gets a kongming note, then PAUSE T6. The red is not reclassified, even though its cause is a launch omission and not D-R3-1. Kongming note: `plans/reports/kongming-261107-0020-GH-1-p10-d-r3-1-chain-attempt-2-e2i-red.md`.
+- **D-R3-1 is unverified, not failed.** Row 143's predicate (`x2apRequestPartDecodes`) never ran. Two facts point the right way but are not the gate's judgement:
+  - At a7943bf, the e2mgr X2 request parts carry 632758 at bit 418 (the NRARFCN position) and 633312 at bit 509 (inside the MTC), and 633333 is absent. P08's dd27868 records, the control, carry 633333 at both positions.
+  - M5's agent build logs "X2 components … byte-equal to pycrate" (`install-agent-image.log:3704,3715`).
+
+  The phase-06 D-R3-1 row stays open.
+- **The M7 hazard did not recur.** The replacement e2term pod was Ready after 151.8 s, at the top of the range seen in 12 runs (127–152 s). Setup request to response took 84 s for the eNB and 21–22 s for the gNBs, inside the ranges of the green runs. The no-route-table signature now stands at 1 in 21 runs. e2i's own RIC checks also passed: RIC reset, injector route table, the CONNECTED set, e2mgr records, and setup requests and responses 3/3 on the wire.
+- **Where the omission came from.**
+  - P08 re-copied the tarball after every revert (`kongming-261105-1050:154`, `phase-08:116`).
+  - P09's chain had no e2i step (`p09-gate-chain.sh:56-70`).
+  - The copy was never written into the driver or the resume card. The 2200 counsel's checklist dropped it, and the attempt-1 record inherited that.
+  - It was latent in attempt 1 too, which stopped at M7 before e2i.
+- **Cost:** 2 h 06 min of wall time; /home 76 → 51 GiB, of which M3 took 18 GiB.
+- **Recorded, no change now.** `e2i_schedule_written` and `e2i_lockstep_run_with_five_injected_controls` passed with zero controls. The setup judge needs `injected.jsonl`, so a failed control encoding hides every setup check. This is no path to a false green: the encoding check itself is red.
+- **State at the PAUSE.** The VM is running and not reverted, on overlay `ubuntu24.1793970545`; e2i finished its own teardown. The frozen checkout a7943bf stays locked.
+- **User options (kongming's table):**
+  - (a), recommended: copy and verify the tarball, then run only step 8 (`p10-gate-chain.sh a7943bf… 8 8`, the unchanged driver, a fresh log dir) on the current VM. About 15 min and 0–0.5 GiB; no M7 exposure. The current state is a valid start for e2i, because e2i resets what it relies on (precedent: P06 e2i runs 3→4).
+  - (b): revert, copy, then the full chain 0–8. About 2 h 15 min, a 25 GiB peak, and M7's hazard.
+  - (c): defer e2i to P11's cp3 chain (advised against).
+- **Outcome rule if (a) is ruled.** Read-only pre-checks first: overlay, no gate unit, no agent or ns-3, no injector, TS 1/1 Ready, RIC pods Running. Then the copy, with `sha256sum -c` on the host and on the VM.
+  - **Green:** exit 0, the run-dir cross-check passes, and the image Id equals P08's. D-R3-1 is then fixed at both SHAs, citing `e2i-setup.json`.
+  - **Any red:** a kongming note and PAUSE again.
+- **Prevention, after (a) and before the next e2i or AC6a chain.** A driver pre-flight copies and checks `asn1-indep-$TAG.tar` (host and VM `sha256sum -c`) before the first step whenever the range holds an `--image-tag` step, and fails with exit 2 before M2. It adds no check and changes no verdict, so it needs no ledger row. Shellcheck it, test two offline failure cases and dry-run the pre-flight alone. P12's M10 runner needs the same step (`phase-13:24`).
+
 ## Pre-registration (2026-11-06; one docs commit before any P10 code after D-R3-1)
 Sources: the user rulings in `plans/reports/decisions-261106-0525-GH-1-p10-pre-registration-questions.md`; kongming `kongming-261106-0500-…` (§7, §9, C.4, C.5) and `kongming-261106-1952-…`; ledger rows 147–161 (`check-diff-ledger.md`); contract Amendment 4.
 - **Commit order (one fix per commit, for P11's bisection):** D-R3-1 (Testbed + harness pair), the neighbour-loop UB fix (Amendment 4, row 159), P6 (row 147), the SN-wrap fix (row 160), P7 (rows 148–150), P9 (rows 151, 152, 161), P15 (rows 153–155), D-06b-1 (row 81 amendment first), the kpimon node tag (row 137), the TS serving cell (rows 138–142, 158), UseIdealRrc (rows 156–157).
