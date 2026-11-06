@@ -1,0 +1,20 @@
+{"name":"n4_args","pass":true,"detail":"part determinism; dev 0; ref ; cal ; UL pattern steps; ns-3 4a0871d61f69e4d19b1772bbba8bf5910ec43a50; oran-interface 53253fe256ed305b207b607150a5e8a1dec25e42"}
+{"name":"n4_build_tools_present","pass":true,"detail":"gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\ntshark 4.4.19 (>= 4.4)"}
+{"name":"n4_ns3_binary_located_at_pins","pass":true,"detail":"/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"}
+{"name":"n4_determinism_uloff_a1_free_run","pass":true,"detail":"ns-3 exit code 0\nuloff-a1 (free): ns-3 exit 0 (want 0)\nuloff-a1: argv and byte manifest written, preconditions hold"}
+{"name":"n4_determinism_ulon_a1_free_run","pass":true,"detail":"ns-3 exit code 0\nulon-a1 (free): ns-3 exit 0 (want 0)\nulon-a1: argv and byte manifest written, preconditions hold"}
+{"name":"n4_determinism_uloff_a2_free_run","pass":true,"detail":"ns-3 exit code 0\nuloff-a2 (free): ns-3 exit 0 (want 0)\nuloff-a2: argv and byte manifest written, preconditions hold"}
+{"name":"n4_determinism_ulon_a2_free_run","pass":true,"detail":"ns-3 exit code 0\nulon-a2 (free): ns-3 exit 0 (want 0)\nulon-a2: argv and byte manifest written, preconditions hold"}
+{"name":"n4_determinism_twin_build_exit0","pass":true,"detail":"cd cmake-cache; /usr/bin/cmake --build . -j 7 --target scratch_scenario-zero ; cd ..\n[build-ns3 23:08:51] done\nbuild-ns3.sh /home/uc/n4-twin-build: exit 0 after 159s; binary /home/uc/n4-twin-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"}
+{"name":"n4_determinism_twin_tree_fresh_at_pins","pass":true,"detail":"twin path /home/uc/n4-twin-build is apart from build A's /home/uc/m4-build\ntwin tree at ns-3 4a0871d61f69e4d19b1772bbba8bf5910ec43a50, oran-interface 53253fe256ed305b207b607150a5e8a1dec25e42; its binary built in this part, A's before it"}
+{"name":"n4_determinism_twin_loads_only_its_own_libraries","pass":true,"detail":"libns3 libraries 20, resolved inside /home/uc/n4-twin-build/ 20"}
+{"name":"n4_determinism_uloff_b1_free_run","pass":true,"detail":"ns-3 exit code 0\nuloff-b1 (free): ns-3 exit 0 (want 0)\nuloff-b1: argv and byte manifest written, preconditions hold"}
+{"name":"n4_determinism_ulon_b1_free_run","pass":true,"detail":"ns-3 exit code 0\nulon-b1 (free): ns-3 exit 0 (want 0)\nulon-b1: argv and byte manifest written, preconditions hold"}
+{"name":"n4_determinism_emitters_at_pins","pass":true,"detail":"ulon-a2: emitter [('4a0871d61f69e4d19b1772bbba8bf5910ec43a50', '53253fe256ed305b207b607150a5e8a1dec25e42')]\nuloff-b1: emitter [('4a0871d61f69e4d19b1772bbba8bf5910ec43a50', '53253fe256ed305b207b607150a5e8a1dec25e42')]\nulon-b1: emitter [('4a0871d61f69e4d19b1772bbba8bf5910ec43a50', '53253fe256ed305b207b607150a5e8a1dec25e42')]"}
+{"name":"n4_determinism_uloff_same_binary_twice_byte_equal","pass":true,"detail":"equal True differing [] precondition failures {'a': [], 'b': []}\ncompare uloff-a1 uloff-a2: exit 0 (want 0)"}
+{"name":"n4_determinism_uloff_two_builds_byte_equal","pass":true,"detail":"equal True differing [] precondition failures {'a': [], 'b': []}\ncompare uloff-a1 uloff-b1: exit 0 (want 0)"}
+{"name":"n4_determinism_ulon_same_binary_twice_byte_equal","pass":true,"detail":"equal True differing [] precondition failures {'a': [], 'b': []}\ncompare ulon-a1 ulon-a2: exit 0 (want 0)"}
+{"name":"n4_determinism_ulon_two_builds_byte_equal","pass":true,"detail":"equal True differing [] precondition failures {'a': [], 'b': []}\ncompare ulon-a1 ulon-b1: exit 0 (want 0)"}
+{"name":"n4_determinism_compare_discriminates","pass":true,"detail":"equal False differing ['ns3-argv.txt', 'ns3run/DlE2PdcpStats.txt', 'ns3run/DlE2PdcpStatsLte.txt', 'ns3run/DlE2RlcStats.txt', 'ns3run/DlE2RlcStatsLte.txt', 'ns3run/DlPdcpStats.txt'] precondition failures {'a': [], 'b': []}\ncompare uloff-a1 ulon-a1: exit 1 (want 1)"}
+{"name":"n4_determinism_twin_tree_removed","pass":true,"detail":"removed /home/uc/n4-twin-build"}
+{"name":"n4_no_stray_process","pass":true,"detail":"no leftovers"}

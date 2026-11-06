@@ -323,6 +323,12 @@ Sources: the user rulings in `plans/reports/decisions-261106-0525-GH-1-p10-pre-r
   - P6: agent rebuild, kpimon reinstall (the map and the registry are kpimon stale-path inputs), lint with row 147's self-test, M5–M7. No M4 (ns-3 unchanged).
   - SN-wrap fix: row 160 red at `m10-cp2` (kept), green at the commit; M4, M5–M7; N4 determinism check for row 148 (b).
     - 2026-11-07 consensus (`decisions-261107-0633`): one ns-3 commit using RLC transmission order, judged by row 160 as amended (c)–(g). scenario-zero runs RLC UM, so M5–M7 and N4 at this commit and at P7 are no-regression guards and P7's byte-identity baseline, not coverage of the AM paths. P7's step 2(b)/(c) proof for the AM consumers must be unit tests on an `LteRlcAm` (ledger "Row 148 notes").
+    - **DONE 2026-11-07 08:12 KST.** ns-3 4a0871d6, harness 716b41b9.
+      - Row 160 suite (13 cases): red at the cp2 shim and at the widest-gap draft exactly as the amendment expects; green at the commit (`evidence/p10-sn-wrap/`).
+      - Codex follow-up review: approve, no findings.
+      - Chain M4–M7 green at 716b41b9 (`evidence/p10-chain/716b41b9-snwrap`); M4 log has `PASS: TestSuite pdcp-sn-wrap`. Raw archive p10f.
+      - Row 148 (b) determinism, mechanism per the row 148 amendment (harness 3ab4c030, after three Codex findings fixed and a final approve): step 12 at 5ae73d27 green (`evidence/n4/20261106T230003Z`, raw archive p10g). uloff and ulon: a1 = a2 (same binary) and a1 = b1 (fresh second tree, own libraries only) on 37 manifest items each; uloff vs ulon differ on 23 items (discrimination); twin tree removed.
+      - P7's reference: the a1 manifests are banked in `reference/n4-sn-wrap/` with `SHA256SUMS`.
   - P7: M4 (row 148), M5–M7 with row 149, N4 uloff/ulon byte identity with the SN-wrap commit.
   - P9: M4, agent rebuild, kpimon reinstall, M5–M7, the V3 run by row 161's `--part v3`, R3′ single (a run without a predictor-driven handover is red; a scenario change is PAUSE T3).
   - P15: agent rebuild, kpimon reinstall, M5–M7, p12 with the re-baselined judge, R3′ single.

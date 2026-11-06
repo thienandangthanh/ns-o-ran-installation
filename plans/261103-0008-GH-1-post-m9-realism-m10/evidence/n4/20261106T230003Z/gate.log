@@ -1,0 +1,23 @@
+[23:00:04] gate n4 start; evidence /home/uc/evidence/n4/20261106T230003Z; harness 5ae73d272c011d9344eb3250dde3230ed574b55f
+[23:00:05] PASS n4_args
+[23:00:05] PASS n4_build_tools_present
+[23:00:05] PASS n4_ns3_binary_located_at_pins
+[23:00:05] twin path /home/uc/n4-twin-build is apart from build A's /home/uc/m4-build
+[23:01:52] PASS n4_determinism_uloff_a1_free_run
+[23:03:22] PASS n4_determinism_ulon_a1_free_run
+[23:04:42] PASS n4_determinism_uloff_a2_free_run
+[23:06:12] PASS n4_determinism_ulon_a2_free_run
+[23:08:51] PASS n4_determinism_twin_build_exit0
+[23:08:51] PASS n4_determinism_twin_tree_fresh_at_pins
+[23:08:51] PASS n4_determinism_twin_loads_only_its_own_libraries
+[23:10:11] PASS n4_determinism_uloff_b1_free_run
+[23:11:41] PASS n4_determinism_ulon_b1_free_run
+[23:11:41] PASS n4_determinism_emitters_at_pins
+[23:11:41] PASS n4_determinism_uloff_same_binary_twice_byte_equal
+[23:11:41] PASS n4_determinism_uloff_two_builds_byte_equal
+[23:11:41] PASS n4_determinism_ulon_same_binary_twice_byte_equal
+[23:11:42] PASS n4_determinism_ulon_two_builds_byte_equal
+[23:11:42] PASS n4_determinism_compare_discriminates
+[23:11:42] PASS n4_determinism_twin_tree_removed
+[23:11:43] PASS n4_no_stray_process
+verdict n4: PASS failed=[]
