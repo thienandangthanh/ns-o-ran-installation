@@ -45,6 +45,25 @@ if os.path.exists(v) and json.load(open(v)).get("pass") is not True:
 PY
 }
 
+# preflight_asn1_indep <tag>: the host tarball checks, then the VM's copy checks (copied first when needed)
+preflight_asn1_indep() {
+    local tag="$1" src="${ASN1_INDEP_DIR:-$repo/tools/asn1-indep/dist}" vmcheck
+    # shellcheck source=/dev/null
+    source "$frozen/scripts/vm/vm-common.sh" || return 1
+    vmcheck="cd ~/asn1-indep && grep -q '  asn1-indep-$tag.tar\$' SHA256SUMS && sha256sum -c SHA256SUMS"
+    echo "host: $src"
+    grep -q "  asn1-indep-$tag.tar\$" "$src/SHA256SUMS" || { echo "host SHA256SUMS does not name asn1-indep-$tag.tar"; return 1; }
+    (cd "$src" && sha256sum -c SHA256SUMS) || return 1
+    if ssh -n "${SSH_OPTS[@]}" "$VM_SSH" "$vmcheck"; then
+        echo "VM copy already present and checked"
+        return 0
+    fi
+    echo "copying to $VM_SSH:asn1-indep/"
+    ssh -n "${SSH_OPTS[@]}" "$VM_SSH" "mkdir -p ~/asn1-indep && rm -f ~/asn1-indep/asn1-indep-*.tar ~/asn1-indep/SHA256SUMS" || return 1
+    scp -q "${SSH_OPTS[@]}" "$src/SHA256SUMS" "$src/asn1-indep-$tag.tar" "$VM_SSH:asn1-indep/" || return 1
+    ssh -n "${SSH_OPTS[@]}" "$VM_SSH" "$vmcheck"
+}
+
 if [ "${1:-}" = --check-dir ]; then
     check_dir "$2" && echo "run dir ok: $2"
     return
@@ -68,6 +87,22 @@ steps=(
   "e2i|gate-e2i-interop.sh|5400|--image-tag 09aeabb8b0f99b0c"
 )
 cd "$frozen" || return 2
+# asn1-indep pre-flight. A step with --image-tag (e2i) needs ~/asn1-indep/asn1-indep-<tag>.tar and SHA256SUMS in the
+# VM (gate-e2i-interop.sh:3: copied by the host), and a VM revert loses them. Before the first step: check the host
+# tarball, copy it when the VM's copy is missing or does not check, and check it in the VM; exit 2 before any step
+# (and before any tsv line) when that fails. Uses vm-exec's SSH route (vm-common.sh).
+tag=""
+for i in "${!steps[@]}"; do
+    [ "$i" -lt "$first" ] || [ "$i" -gt "$last" ] && continue
+    IFS='|' read -r _ _ _ a <<<"${steps[$i]}"
+    [[ $a =~ --image-tag[[:space:]]+([0-9a-f]+) ]] && tag=${BASH_REMATCH[1]}
+done
+if [ -n "$tag" ]; then
+    preflight_asn1_indep "$tag" >"$here/preflight-asn1-indep.txt" 2>&1 ||
+        { echo "asn1-indep pre-flight failed for tag $tag: see $here/preflight-asn1-indep.txt"; return 2; }
+    echo "asn1-indep pre-flight ok (tag $tag)"
+fi
+[ "${P10_PREFLIGHT_ONLY:-0}" = 1 ] && { echo "pre-flight only: no step run"; return 0; }
 for i in "${!steps[@]}"; do
     [ "$i" -lt "$first" ] && continue
     [ "$i" -gt "$last" ] && break

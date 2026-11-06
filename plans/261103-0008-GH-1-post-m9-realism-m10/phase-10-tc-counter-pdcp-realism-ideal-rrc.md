@@ -228,6 +228,15 @@ Counsel: `plans/reports/kongming-261106-2200-GH-1-p10-d-r3-1-chain-m7-red-counse
   2. the M7 signature record under ruling (ii), with its own additive ledger row, before the UB fix so the UB fix's M7 run carries it;
   3. the docs commit for the P6 rulings (row 147 amendment, the 0525 amendment line, row 151 revised for Q5);
   4. then the code commits in order, UB fix first.
+- **Done (1): the driver pre-flight** (`evidence/p10-chain/p10-gate-chain.sh`). Before the first step, when the range holds an `--image-tag` step, it checks the host tarball and its SHA256SUMS entry, copies the tarball into the VM when the VM copy is missing or fails its check, and checks it in the VM. On failure it exits 2 before any step and before any tsv line, and it writes `preflight-asn1-indep.txt`. `P10_PREFLIGHT_ONLY=1` runs the pre-flight alone, and `ASN1_INDEP_DIR` overrides the source dir for tests. It adds no check and changes no verdict, so it has no ledger row.
+  - Tests on 2026-11-07, all as expected:
+    - shellcheck is clean apart from SC2034 on unused variables;
+    - a wrong tag exits 2;
+    - a missing tarball exits 2;
+    - a range without e2i skips the pre-flight;
+    - a dry run against the VM finds the copy present and checked;
+    - with the VM's `~/asn1-indep` removed, the copy path copies it and the check passes.
+  - The a7943bf frozen checkout was removed after D-R3-1's evidence was committed and archived (/home 51 → 53 GiB).
 
 ## Pre-registration (2026-11-06; one docs commit before any P10 code after D-R3-1)
 Sources: the user rulings in `plans/reports/decisions-261106-0525-GH-1-p10-pre-registration-questions.md`; kongming `kongming-261106-0500-…` (§7, §9, C.4, C.5) and `kongming-261106-1952-…`; ledger rows 147–161 (`check-diff-ledger.md`); contract Amendment 4.
