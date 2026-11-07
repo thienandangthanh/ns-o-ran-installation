@@ -1,0 +1,392 @@
+{
+  "gate": "m7",
+  "ts": "20261107T193119Z",
+  "harness_sha": "e86f1d0858dd0735ec39e33e12bdf7c563945551",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "03180a5b1dd171906a76d6699944342c9105be07",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "e32a0e0537cb6d6842c8e70619ba84f9614459b4",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "0d6bdead516e149056a30d60670633da5354e06b",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "e27058163dc0bb05ce279ad3fa1bd15a22fc24ab"
+  },
+  "duration_s": 1487,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "m7_nist_tree_at_testbed_sha_with_agent_dir",
+      "pass": true,
+      "detail": "nist HEAD 03180a5b1dd171906a76d6699944342c9105be07, want 03180a5b1dd171906a76d6699944342c9105be07\nalready at 03180a5b1dd171906a76d6699944342c9105be07\nns3_e2_agent install_patch_files/xApps/rc install_patch_files/xApps/kpimon-go/control/enb-kpm-measurements.json match 03180a5b1dd171906a76d6699944342c9105be07; metric-map sha256 bd8e57b78d1a476a946d7413a3a94c3ffa722f61d25f86ff4467b5af79243f8c"
+    },
+    {
+      "name": "m7_build_tools_present",
+      "pass": true,
+      "detail": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\ntshark 4.4.19 (>= 4.4)"
+    },
+    {
+      "name": "m7_sctp_module_loaded_and_persisted",
+      "pass": true,
+      "detail": "sctp                  495616  44\nsctp"
+    },
+    {
+      "name": "m7_e2_ports_reserved",
+      "pass": true,
+      "detail": "net.ipv4.ip_local_reserved_ports = 38470-38499; /etc/sysctl.d/60-ns3-e2-agent-ports.conf: net.ipv4.ip_local_reserved_ports = 38470-38499\nno socket other than TIME_WAIT holds a port in 38470-38499"
+    },
+    {
+      "name": "m7_kpimon_so_extracted_from_image",
+      "pass": true,
+      "detail": "timestamp_size: 8\nextracted_at: 2026-11-07T19:31:20+00:00\nTimeStamp SIZE in this .so: 8"
+    },
+    {
+      "name": "m7_kpimon_so_is_the_size8_patched_build",
+      "pass": true,
+      "detail": "TimeStamp SIZE in the extracted .so: 8"
+    },
+    {
+      "name": "m7_ns3_binary_located",
+      "pass": true,
+      "detail": "/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"
+    },
+    {
+      "name": "m7_simtime_from_m4_timing_informational",
+      "pass": true,
+      "detail": "simTime 44 from /home/uc/evidence/m4/20261107T185957Z/ns3-timing.json (default-config mean 30.072975282266665 real s per sim s); endurance 900s, delete phase 300s"
+    },
+    {
+      "name": "m7_capture_started_before_agents",
+      "pass": true,
+      "detail": "[19:31:21] capture m7 started on docker0 (pid 261827, filter 'ip proto 132')"
+    },
+    {
+      "name": "m7_bringup_agents_kpm_sim_stopped_connected_set_exact",
+      "pass": true,
+      "detail": "[19:32:02] bringup agents: every expectedRanName equals meid_of its nodeId\n[19:32:14] bringup agents: e2mgr CONNECTED set equals the expected agents: enB_macro_001_001_000001 en_gnb_001_001_00000002 en_gnb_001_001_00000003 en_gnb_001_001_00000004 en_gnb_001_001_00000005 \n[19:32:18] bringup agents: every agent READY with an E2 setup: 1 0 true READY 1 0;2 0 true READY 1 0;3 0 true READY 1 0;4 0 true READY 1 0;5 0 true READY 1 0;"
+    },
+    {
+      "name": "m7_e2mgr_all_nodes_connected_with_distinct_names",
+      "pass": true,
+      "detail": "CONNECTED: enB_macro_001_001_000001 en_gnb_001_001_00000002 en_gnb_001_001_00000003 en_gnb_001_001_00000004 en_gnb_001_001_00000005 "
+    },
+    {
+      "name": "m7_agent_container_ips_recorded",
+      "pass": true,
+      "detail": "{\"1\": [\"172.17.0.3\"], \"2\": [\"172.17.0.4\"], \"3\": [\"172.17.0.5\"], \"4\": [\"172.17.0.6\"], \"5\": [\"172.17.0.7\"]}"
+    },
+    {
+      "name": "m7_each_agent_has_its_own_container_ip",
+      "pass": true,
+      "detail": "node -> container IPs: {\"1\": [\"172.17.0.3\"], \"2\": [\"172.17.0.4\"], \"3\": [\"172.17.0.5\"], \"4\": [\"172.17.0.6\"], \"5\": [\"172.17.0.7\"]}"
+    },
+    {
+      "name": "m7_every_agent_ready_and_subscribed_before_ns3",
+      "pass": true,
+      "detail": "3 0 true READY 1 0\n4 0 true READY 1 0\n5 0 true READY 1 0"
+    },
+    {
+      "name": "m7_ns3_started_default_config",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 266521 at 1794079939.566847722: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --simTime=44 --indicationPeriodicity=0.1 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/m7/20261107T193119Z/ns3run"
+    },
+    {
+      "name": "m7_endurance_window_sampled",
+      "pass": true,
+      "detail": "[19:45:23] endurance sample 13: load 1.18 1.22 1.57, ns3 alive 1, agents: 1:rc0 2:rc0 3:rc0 4:rc0 5:rc0 \n[19:46:23] endurance sample 14: load 1.06 1.18 1.53, ns3 alive 1, agents: 1:rc0 2:rc0 3:rc0 4:rc0 5:rc0 \n[19:47:23] endurance sample 15: load 1.33 1.25 1.53, ns3 alive 1, agents: 1:rc0 2:rc0 3:rc0 4:rc0 5:rc0 "
+    },
+    {
+      "name": "m7_endurance_ricplt_pods_no_new_restarts",
+      "pass": true,
+      "detail": "16 samples, 59s apart (first 1794079941, last 1794080840)\nbaseline: 14 ricplt pods, total restarts 82"
+    },
+    {
+      "name": "m7_endurance_agents_restartcount_stays_zero",
+      "pass": true,
+      "detail": "sample 13: n1:rc0:true:READY n2:rc0:true:READY n3:rc0:true:READY n4:rc0:true:READY n5:rc0:true:READY\nsample 14: n1:rc0:true:READY n2:rc0:true:READY n3:rc0:true:READY n4:rc0:true:READY n5:rc0:true:READY\nsample 15: n1:rc0:true:READY n2:rc0:true:READY n3:rc0:true:READY n4:rc0:true:READY n5:rc0:true:READY"
+    },
+    {
+      "name": "m7_endurance_e2mgr_all_connected_every_sample",
+      "pass": true,
+      "detail": "16 samples, 59s apart (first 1794079941, last 1794080840)\nexpected 5 names: ['enB_macro_001_001_000001', 'en_gnb_001_001_00000002', 'en_gnb_001_001_00000003', 'en_gnb_001_001_00000004', 'en_gnb_001_001_00000005']"
+    },
+    {
+      "name": "m7_endurance_ns3_alive_every_sample",
+      "pass": true,
+      "detail": "16 samples, 59s apart (first 1794079941, last 1794080840)\nns-3 alive in 16 of 16 samples"
+    },
+    {
+      "name": "m7_endurance_kpimon_pod_no_restart",
+      "pass": true,
+      "detail": "16 samples, 59s apart (first 1794079941, last 1794080840)\nkpimon at first sample: ricxapp-kpimon-go-85dc5fdf8b-h8286 true 1794077298 0"
+    },
+    {
+      "name": "m7_endurance_agent_rss_informational",
+      "pass": true,
+      "detail": "16 samples, 59s apart (first 1794079941, last 1794080840);ns3-e2-agent-1 RSS MiB first 2.5 last 2.6 max 2.6 (16 samples);ns3-e2-agent-2 RSS MiB first 2.5 last 2.6 max 2.6 (16 samples);ns3-e2-agent-3 RSS MiB first 2.6 last 2.6 max 2.6 (16 samples);ns3-e2-agent-4 RSS MiB first 2.5 last 2.5 max 2.5 (16 samples);ns3-e2-agent-5 RSS MiB first 2.5 last 2.6 max 2.6 (16 samples);"
+    },
+    {
+      "name": "m7_cpu_load_averages_informational",
+      "pass": true,
+      "detail": "nproc 8; max 1-min load 1.49; samples in /home/uc/evidence/m7/20261107T193119Z/endurance/sample-*/load.txt"
+    },
+    {
+      "name": "m7_pre_delete_counts_recorded",
+      "pass": true,
+      "detail": "3 0 true READY 1 599\n4 0 true READY 1 571\n5 0 true READY 1 571"
+    },
+    {
+      "name": "m7_e2term_pod_deleted_without_manual_ip_change",
+      "pass": true,
+      "detail": "T_del 1794080844.410009415: kubectl -n ricplt delete pod deployment-ricplt-e2term-alpha-88fd95787-jxdpd\npod \"deployment-ricplt-e2term-alpha-88fd95787-jxdpd\" deleted"
+    },
+    {
+      "name": "m7_replacement_e2term_pod_ready_bounded",
+      "pass": true,
+      "detail": "replacement pod deployment-ricplt-e2term-alpha-88fd95787-j7skl Ready 148.3 s after the delete"
+    },
+    {
+      "name": "m7_recovery_every_node_restarted_reconnected_and_indicating",
+      "pass": true,
+      "detail": "node 4 (en_gnb_001_001_00000004): {\"restarted_s\": 148.3, \"connected_s\": 176.6, \"first_ind_s\": 180.1, \"max_restart\": 2}\nnode 5 (en_gnb_001_001_00000005): {\"restarted_s\": 148.3, \"connected_s\": 176.6, \"first_ind_s\": 180.1, \"max_restart\": 2}\n10 polls after the delete"
+    },
+    {
+      "name": "m7_ns3_still_running_after_recovery",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m7_e2term_route_record_informational",
+      "pass": true,
+      "detail": "{\"stashPresent\": true, \"e2term4561Est\": 2, \"rtmgrToE2termSvc\": 2, \"noEndpt12001\": 5, \"matches\": false}"
+    },
+    {
+      "name": "m7_agents_restartcount_ge1_after_delete",
+      "pass": true,
+      "detail": "3 2 true READY 1 2\n4 2 true READY 1 2\n5 2 true READY 1 2"
+    },
+    {
+      "name": "m7_ns3_completes_exit0_through_the_delete",
+      "pass": true,
+      "detail": "ns-3 exit code 0"
+    },
+    {
+      "name": "m7_agent_ue_context_counters_zero_every_stats_line_across_restarts",
+      "pass": true,
+      "detail": "{\"pass\": true, \"perNode\": {\"1\": {\"samplesNoUeContext\": 0, \"statsLines\": 283, \"ueContext\": 2, \"ueContextRejected\": 0}, \"2\": {\"samplesNoUeContext\": 0, \"statsLines\": 283, \"ueContext\": 124, \"ueContextRejected\": 0}, \"3\": {\"samplesNoUeContext\": 0, \"statsLines\": 283, \"ueContext\": 66, \"ueContextRejected\": 0}, \"4\": {\"samplesNoUeContext\": 0, \"statsLines\": 283, \"ueContext\": 63, \"ueContextRejected\": 0}, \"5\": {\"samplesNoUeContext\": 0, \"statsLines\": 283, \"ueContext\": 74, \"ueContextRejected\": 0}}, \"problems\": []}"
+    },
+    {
+      "name": "m7_influx_node_series_exported",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m7_capture_stopped",
+      "pass": true,
+      "detail": "[19:55:46] capture m7 stopped: 11759 packets captured 11759 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "m7_pcap_facts_extracted",
+      "pass": true,
+      "detail": "ppid 172.17.0.7:45230 -> :36422 {\"70\": 967}\ne2ap frames by PPID 5003, forced on the port 5003\nframes=11759 inits=125 aborts=0 shutdowns=30 setup_req=15 setup_resp=10 sub_req=10 sub_resp=10 sub_fail=0 ind_srcs={'172.17.0.3': 1374, '172.17.0.4': 1164, '172.17.0.5': 822, '172.17.0.6': 789, '172.17.0.7': 809}"
+    },
+    {
+      "name": "m7_e2ap_ppid70_every_node",
+      "pass": true,
+      "detail": "node 4: 1334 PPID-70 chunk(s) over ['172.17.0.6:34886', '172.17.0.6:37134', '172.17.0.6:56717']\nnode 5: 1292 PPID-70 chunk(s) over ['172.17.0.3:53346', '172.17.0.3:57467', '172.17.0.7:45230']\nE2AP frames decoded by PPID 5003, forced on the port 5003"
+    },
+    {
+      "name": "m7_pcap_one_association_per_agent_distinct_ips_no_sport_collision",
+      "pass": true,
+      "detail": "association 172.17.0.5:42497 node=3 nodeId=3 init_ack=1794079929.30 cookie_ack=True setup_resp=True subReq=1 subResp=1 ind=617\nassociation 172.17.0.6:34886 node=4 nodeId=4 init_ack=1794079929.52 cookie_ack=True setup_resp=True subReq=1 subResp=1 ind=589\nassociation 172.17.0.7:45230 node=5 nodeId=5 init_ack=1794079929.74 cookie_ack=True setup_resp=True subReq=1 subResp=1 ind=589"
+    },
+    {
+      "name": "m7_no_sctp_abort_during_endurance_window",
+      "pass": true,
+      "detail": "ABORT chunks in [1794079939.567, 1794080844.410): 0 []\nall ABORTs: []\nall SHUTDOWN-family chunks: [(8637, 1794080874.469, '10.97.131.139', '172.17.0.7', [7]), (8638, 1794080874.469, '172.17.0.7', '10.97.131.139', [8]), (8639, 1794080874.469, '10.97.131.139', '172.17.0.7', [14]), (8640, 1794080874.469, '10.97.131.139', '172.17.0.6', [7]), (8641, 1794080874.469, '172.17.0.6', '10.97.131.139', [8]), (8642, 1794080874.469, '10.97.131.139', '172.17.0.6', [14]), (8643, 1794080874.469, '10.97.131.139', '172.17.0.5', [7]), (8644, 1794080874.469, '172.17.0.5', '10.97.131.139', [8]), (8645, 1794080874.469, '10.97.131.139', '172.17.0.5', [14]), (8646, 1794080874.469, '10.97.131.139', '172.17.0.4', [7]), (8647, 1794080874.469, '172.17.0.4', '10.97.131.139', [8]), (8648, 1794080874.469, '10.97.131.139', '172.17.0.4', [14]), (8649, 1794080874.469, '10.97.131.139', '172.17.0.3', [7]), (8650, 1794080874.469, '172.17.0.3', '10.97.131.139', [8]), (8651, 1794080874.469, '10.97.131.139', '172.17.0.3', [14]), (8823, 1794081002.982, '172.17.0.3', '10.97.131.139', [7]), (8824, 1794081002.982, '10.97.131.139', '172.17.0.3', [8]), (8825, 1794081002.982, '172.17.0.3', '10.97.131.139', [14]), (8826, 1794081003.061, '172.17.0.4', '10.97.131.139', [7]), (8827, 1794081003.061, '10.97.131.139', '172.17.0.4', [8]), (8828, 1794081003.061, '172.17.0.4', '10.97.131.139', [14]), (8829, 1794081003.092, '172.17.0.5', '10.97.131.139', [7]), (8830, 1794081003.092, '10.97.131.139', '172.17.0.5', [8]), (8831, 1794081003.092, '172.17.0.5', '10.97.131.139', [14]), (8832, 1794081003.114, '172.17.0.6', '10.97.131.139', [7]), (8833, 1794081003.115, '10.97.131.139', '172.17.0.6', [8]), (8834, 1794081003.115, '172.17.0.6', '10.97.131.139', [14]), (8835, 1794081003.144, '172.17.0.7', '10.97.131.139', [7]), (8836, 1794081003.144, '10.97.131.139', '172.17.0.7', [8]), (8837, 1794081003.144, '172.17.0.7', '10.97.131.139', [14])]"
+    },
+    {
+      "name": "m7_sctp_abort_shutdown_around_delete_informational",
+      "pass": true,
+      "detail": "ABORT chunks in [1794080839.410, 1794081444.410): 0 [];all ABORTs: [];all SHUTDOWN-family chunks: [(8637, 1794080874.469, '10.97.131.139', '172.17.0.7', [7]), (8638, 1794080874.469, '172.17.0.7', '10.97.131.139', [8]), (8639, 1794080874.469, '10.97.131.139', '172.17.0.7', [14]), (8640, 1794080874.469, '10.97.131.139', '172.17.0.6', [7]), (8641, 1794080874.469, '172.17.0.6', '10.97.131.139', [8]), (8642, 1794080874.469, '10.97.131.139', '172.17.0.6', [14]), (8643, 1794080874.469, '10.97.131.139', '172.17.0.5', [7]), (8644, 1794080874.469, '172.17.0.5', '10.97.131.139', [8]), (8645, 1794080874.469, '10.97.131.139', '172.17.0.5', [14]), (8646, 1794080874.469, '10.97.131.139', '172.17.0.4', [7]), (8647, 1794080874.469, '172.17.0.4', '10.97.131.139', [8]), (8648, 1794080874.469, '10.97.131.139', '172.17.0.4', [14]), (8649, 1794080874.469, '10.97.131.139', '172.17.0.3', [7]), (8650, 1794080874.469, '172.17.0.3', '10.97.131.139', [8]), (8651, 1794080874.469, '10.97.131.139', '172.17.0.3', [14]), (8823, 1794081002.982, '172.17.0.3', '10.97.131.139', [7]), (8824, 1794081002.982, '10.97.131.139', '172.17.0.3', [8]), (8825, 1794081002.982, '172.17.0.3', '10.97.131.139', [14]), (8826, 1794081003.061, '172.17.0.4', '10.97.131.139', [7]), (8827, 1794081003.061, '10.97.131.139', '172.17.0.4', [8]), (8828, 1794081003.061, '172.17.0.4', '10.97.131.139', [14]), (8829, 1794081003.092, '172.17.0.5', '10.97.131.139', [7]), (8830, 1794081003.092, '10.97.131.139', '172.17.0.5', [8]), (8831, 1794081"
+    },
+    {
+      "name": "m7_wire_every_agent_init_goes_to_the_same_service_ip",
+      "pass": true,
+      "detail": "agent INITs: 125 from 5 agent IPs, destinations: [('10.97.131.139', 36422)]"
+    },
+    {
+      "name": "m7_wire_new_association_per_node_new_source_port",
+      "pass": true,
+      "detail": "{'1': (['172.17.0.4:53762', '172.17.0.4:45905'], 'old sports', [60049]), '2': (['172.17.0.7:44019', '172.17.0.7:44375'], 'old sports', [35780]), '3': (['172.17.0.5:43753', '172.17.0.5:34077'], 'old sports', [42497]), '4': (['172.17.0.6:56717', '172.17.0.6:37134'], 'old sports', [34886]), '5': (['172.17.0.3:53346', '172.17.0.3:57467'], 'old sports', [45230])}"
+    },
+    {
+      "name": "m7_wire_new_e2setup_request_and_response_per_node",
+      "pass": true,
+      "detail": "setup_request_s,setup_response_s: {'1': [148.65, 170.17], '2': [148.73, 170.23], '3': [148.68, 170.17], '4': [148.7, 170.23], '5': [148.57, 170.1]}"
+    },
+    {
+      "name": "m7_wire_new_ricsubscription_request_and_response_per_node",
+      "pass": true,
+      "detail": "sub_request_s,sub_response_s: {'1': [174.06, 174.06], '2': [174.08, 174.08], '3': [174.07, 174.07], '4': [174.08, 174.08], '5': [174.07, 174.07]}"
+    },
+    {
+      "name": "m7_wire_first_indication_after_delete_per_node",
+      "pass": true,
+      "detail": "first_indication_s: {'1': [176.43], '2': [176.44], '3': [176.44], '4': [176.44], '5': [176.44]}"
+    },
+    {
+      "name": "m7_per_node_time_to_connected_and_first_indication_informational",
+      "pass": true,
+      "detail": "wire (s after T_del): {\"1\":{\"first_indication_s\":176.43,\"indications_post_delete\":400,\"init_s\":148.65,\"new_associations\":[\"172.17.0.4:53762\",\"172.17.0.4:45905\"],\"new_sport\":53762,\"new_sports\":[53762,45905],\"old_associations\":[\"172.17.0.3:60049\"],\"old_sports\":[60049],\"setup_request_s\":148.65,\"setup_response_s\":170.17,\"sub_request_s\":174.06,\"sub_response_s\":174.06},\"2\":{\"first_indication_s\":176.44,\"indications_post_delete\":220,\"init_s\":148.73,\"new_associations\":[\"172.17.0.7:44019\",\"172.17.0.7:44375\"],\"new_sport\":44019,\"new_sports\":[44019,44375],\"old_associations\":[\"172.17.0.4:35780\"],\"old_sports\":[35780],\"setup_request_s\":148.73,\"setup_response_s\":170.23,\"sub_request_s\":174.08,\"sub_response_s\":174.08},\"3\":{\"first_indication_s\":176.44,\"indications_post_delete\":205,\"init_s\":148.68,\"new_associations\":[\"172.17.0.5:43753\",\"172.17.0.5:34077\"],\"new_sport\":43753,\"new_sports\":[43753,34077],\"old_associations\":[\"172.17.0.5:42497\"],\"old_sports\":[42497],\"setup_request_s\":148.68,\"setup_response_s\":170.17,\"sub_request_s\":174.07,\"sub_response_s\":174.07},\"4\":{\"first_indication_s\":176.44,\"indications_post_delete\":200,\"init_s\":148.7,\"new_associations\":[\"172.17.0.6:56717\",\"172.17.0.6:37134\"],\"new_sport\":56717,\"new_sports\":[56717,37134],\"old_associations\":[\"172.17.0.6:34886\"],\"old_sports\":[34886],\"setup_request_s\":148.7,\"setup_response_s\":170.23,\"sub_request_s\":174.08,\"sub_response_s\":174.08},\"5\":{\"first_indication_s\":176.44,\"indications_post_delete\":197,\"init_s\":148.57,\"new_associations\":[\"172.17.0.3:53346\",\"172.17.0.3:57467\"],\"new_sport\":53346,\"new_sports\":[53346,57467],\"old_associations\":[\"172.17.0.7:45230\"],\"old_sports\":[45230],\"setup_request_s\":148.57,\"setup_response_s\":170.1,\"sub_request_s\":174.07,\"sub_response_s\":174.07}}; poll bound: {\"1\":{\"connected_s\":176.6,\"first_ind_s\":180.1,\"max_restart\":2,\"name\":\"enB_macro_001_001_000001\",\"restarted_s\":148.3},\"2\":{\"connected_s\":176.6,\"first_ind_s\":180.1,\"max_restart\":2,\"name\":\"en_gnb_001_001_00000002\",\"restarted_s\":148.3},\"3\":{\"connected_s\":176.6,\"first_ind_s\":180.1,\"max_restart\":2,\"name\":\"en_gnb_001_001_00000003\",\"restarted_s\":148.3},\"4\":{\"connected_s\":176.6,\"first_ind_s\":180.1,\"max_restart\":2,\"name\":\"en_gnb_001_001_00000004\",\"restarted_s\":148.3},\"5\":{\"connected_s\":176.6,\"first_ind_s\":180.1,\"max_restart\":2,\"name\":\"en_gnb_001_001_00000005\",\"restarted_s\":148.3}}"
+    },
+    {
+      "name": "m7_per_node_ricindications_on_the_wire",
+      "pass": true,
+      "detail": "node 3: 822 RICindication frames over 3 association(s): [('172.17.0.5:42497', 617), ('172.17.0.5:43753', 0), ('172.17.0.5:34077', 205)]\nnode 4: 789 RICindication frames over 3 association(s): [('172.17.0.6:34886', 589), ('172.17.0.6:56717', 0), ('172.17.0.6:37134', 200)]\nnode 5: 786 RICindication frames over 3 association(s): [('172.17.0.7:45230', 589), ('172.17.0.3:53346', 0), ('172.17.0.3:57467', 197)]"
+    },
+    {
+      "name": "m7_ns3_bye_ipc_dropped_recorded_per_node",
+      "pass": true,
+      "detail": "node 5 (gnb): samples=440 last_seq=439 gaps=0 ipcDropped_max=2 ues_max=4 hello=3 bye=1 {\"built\": 440, \"sent\": 438, \"droppedDisconnected\": 2, \"droppedBackpressure\": 0, \"lastSeq\": 439}\nnode 5: hello=3 (reconnects 2) droppedDisconnected=2 droppedBackpressure=0\nper-node hello and drops: {1: {'hello': 3, 'droppedDisconnected': 2, 'droppedBackpressure': 0}, 2: {'hello': 3, 'droppedDisconnected': 2, 'droppedBackpressure': 0}, 3: {'hello': 3, 'droppedDisconnected': 2, 'droppedBackpressure': 0}, 4: {'hello': 3, 'droppedDisconnected': 2, 'droppedBackpressure': 0}, 5: {'hello': 3, 'droppedDisconnected': 2, 'droppedBackpressure': 0}}; total droppedDisconnected 10 (expected > 0 around the delete)"
+    },
+    {
+      "name": "m7_kpimon_subscription_one_action_id1_format3",
+      "pass": true,
+      "detail": "frame 8908 to 172.17.0.3:57467 (node 5): action list 1, actions [(1, 'report', 'actionDefinition-Format3')]\nframe 8911 to 172.17.0.6:37134 (node 4): action list 1, actions [(1, 'report', 'actionDefinition-Format3')]\nframe 8912 to 172.17.0.7:44375 (node 2): action list 1, actions [(1, 'report', 'actionDefinition-Format3')]"
+    },
+    {
+      "name": "m7_ue_context_files_consistent_with_ns3_mn_pdcp_trace",
+      "pass": true,
+      "detail": "{\"identities\": 12, \"nodes\": {\"1\": {\"kind\": \"enb\", \"lines\": 4}, \"2\": {\"kind\": \"gnb\", \"lines\": 183}, \"3\": {\"kind\": \"gnb\", \"lines\": 107}, \"4\": {\"kind\": \"gnb\", \"lines\": 96}, \"5\": {\"kind\": \"gnb\", \"lines\": 113}}, \"pass\": true}"
+    },
+    {
+      "name": "m7_pdcp_dl_pdu_bytes_eq_sdu_plus_nr_header",
+      "pass": true,
+      "detail": "{\"equalityRows\": 3610, \"file\": \"/home/uc/evidence/m7/20261107T193119Z/ns3run/DlE2PdcpStats.txt\", \"lcid\": 3, \"pduBytes\": 1310, \"perImsi\": {\"1\": {\"equalityRows\": 412, \"switchRows\": 26}, \"10\": {\"equalityRows\": 263, \"switchRows\": 175}, \"11\": {\"equalityRows\": 315, \"switchRows\": 123}, \"12\": {\"equalityRows\": 270, \"switchRows\": 168}, \"2\": {\"equalityRows\": 220, \"switchRows\": 218}, \"3\": {\"equalityRows\": 260, \"switchRows\": 178}, \"4\": {\"equalityRows\": 318, \"switchRows\": 120}, \"5\": {\"equalityRows\": 437, \"switchRows\": 1}, \"6\": {\"equalityRows\": 335, \"switchRows\": 103}, \"7\": {\"equalityRows\": 222, \"switchRows\": 216}, \"8\": {\"equalityRows\": 260, \"switchRows\": 178}, \"9\": {\"equalityRows\": 298, \"switchRows\": 140}}, \"problems\": 0, \"switchEvents\": 9478, \"switchRows\": 1646}"
+    },
+    {
+      "name": "m7_kpm_ue_ids_en_gnb_and_enb_ueid_resolved_by_ue_context",
+      "pass": true,
+      "detail": "{\"format2Indications\": 2983, \"format2ByNode\": {\"1\": 1182, \"2\": 589, \"3\": 427, \"4\": 394, \"5\": 391}, \"gnbUeIdCount\": 0, \"kpmUeListMoved\": {}, \"pass\": true}"
+    },
+    {
+      "name": "m7_influx_ue_rows_ueid_resolves_to_ns3_imsi_every_node",
+      "pass": true,
+      "detail": "{\"nodes\": {\"1\": {\"kind\": \"enb\", \"ueRows\": 4632, \"ueidMismatch\": 0}, \"2\": {\"kind\": \"gnb\", \"ueRows\": 1776, \"ueidMismatch\": 0}, \"3\": {\"kind\": \"gnb\", \"ueRows\": 1292, \"ueidMismatch\": 0}, \"4\": {\"kind\": \"gnb\", \"ueRows\": 838, \"ueidMismatch\": 0}, \"5\": {\"kind\": \"gnb\", \"ueRows\": 725, \"ueidMismatch\": 0}}, \"pass\": true, \"rowsOfNoListedNode\": 0}"
+    },
+    {
+      "name": "m7_harness_ran_on_pcap",
+      "pass": true,
+      "detail": "{\"expect_ts_len\": 8, \"hdr_clean\": 4958, \"hdr_fail\": 0, \"hdr_ok_exact\": 4958, \"hdr_other\": 0, \"hdr_wmore\": 0, \"msg_clean\": 4958, \"msg_fail\": 0, \"msg_other\": 0, \"msg_wmore\": 0, \"total\": 4958}"
+    },
+    {
+      "name": "m7_harness_every_header_and_message_clean_rc_ok_whole_pcap",
+      "pass": true,
+      "detail": "wire (TSN-deduped, whole pcap) 4958; harness total 4958; headers clean 4958; messages clean 4958; WMORE/FAIL/other 0; extractor rows skipped 0"
+    },
+    {
+      "name": "m7_kpimon_log_counts_informational",
+      "pass": true,
+      "detail": "wire 4958; kpimon log: indications=4854 hdr_wmore=0 msg_wmore=0 influx_wrote_ue=9263 influx_wrote_cell=1935 ; window: files 2, rotations in window 1, coverage True, retries 0"
+    },
+    {
+      "name": "m7_influx_fresh_cellmetrics_rows_per_nodeid_after_delete",
+      "pass": true,
+      "detail": "nodeId 3: {\"total\": 387, \"before\": 286, \"after\": 101, \"first_after_s\": 0.19}\nnodeId 4: {\"total\": 387, \"before\": 286, \"after\": 101, \"first_after_s\": 0.19}\nnodeId 5: {\"total\": 387, \"before\": 286, \"after\": 101, \"first_after_s\": 0.2}"
+    },
+    {
+      "name": "m7_influx_ue_rows_per_nodeid_informational",
+      "pass": true,
+      "detail": "nodeId 1: {\"total\": 4632, \"before\": 3420, \"after\": 1212, \"first_after_s\": 0.18};nodeId 2: {\"total\": 1776, \"before\": 1369, \"after\": 407, \"first_after_s\": 0.19};nodeId 3: {\"total\": 1292, \"before\": 982, \"after\": 310, \"first_after_s\": 0.2};nodeId 4: {\"total\": 838, \"before\": 526, \"after\": 312, \"first_after_s\": 0.19};nodeId 5: {\"total\": 725, \"before\": 541, \"after\": 184, \"first_after_s\": 0.2};"
+    },
+    {
+      "name": "m7_agents_stopped_no_container_left",
+      "pass": true,
+      "detail": "ns3-e2-agent-2 (restarts 2) last stats: {\"event\":\"stats\",\"unixMs\":1794081358614,\"nodeId\":2,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":439,\"samplesIn\":104,\"samplesForwarded\":100,\"samplesUnreported\":0,\"samplesGapDiscarded\":0,\"samplesReportFailed\":0,\"samplesNoUeContext\":0,\"dropped\":{\"e2Down\":3,\"noSub\":1,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0,\"reportGaps\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0,\"duplicateImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":220,\"indTxCell\":100,\"indTxUe\":120,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":1,\"unknownType\":0,\"ueContext\":37,\"ueContextRejected\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":2,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"subsRefused\":0,\"actionsNotAdmitted\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":0,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":0,\"applied\":0,\"refused\":0,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":0}\nns3-e2-agent-1 (restarts 2) last stats: {\"event\":\"stats\",\"unixMs\":1794081358521,\"nodeId\":1,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":439,\"samplesIn\":104,\"samplesForwarded\":100,\"samplesUnreported\":0,\"samplesGapDiscarded\":0,\"samplesReportFailed\":0,\"samplesNoUeContext\":0,\"dropped\":{\"e2Down\":3,\"noSub\":1,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0,\"reportGaps\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0,\"duplicateImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":400,\"indTxCell\":100,\"indTxUe\":300,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":1,\"unknownType\":0,\"ueContext\":1,\"ueContextRejected\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":2,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"subsRefused\":0,\"actionsNotAdmitted\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":0,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":0,\"applied\":0,\"refused\":0,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":0}\nRemoved 5 ns3-e2-agent container(s)."
+    },
+    {
+      "name": "m7_no_stray_ns3_agent_process_or_3847x_listener",
+      "pass": true,
+      "detail": "no ns-3 process, no agent container, no listener on 3847x"
+    },
+    {
+      "name": "m7_no_capture_left_running",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "m7_pcap_in_evidence",
+      "pass": true,
+      "detail": "8764682 /home/uc/evidence/m7/20261107T193119Z/m7.pcap;"
+    }
+  ],
+  "e2termRouteRecord": {
+    "stashPresent": true,
+    "e2term4561Est": 2,
+    "rtmgrToE2termSvc": 2,
+    "noEndpt12001": 5,
+    "matches": false
+  },
+  "pdcpDlPduBytes": {
+    "equalityRows": 3610,
+    "file": "/home/uc/evidence/m7/20261107T193119Z/ns3run/DlE2PdcpStats.txt",
+    "lcid": 3,
+    "pduBytes": 1310,
+    "perImsi": {
+      "1": {
+        "equalityRows": 412,
+        "switchRows": 26
+      },
+      "10": {
+        "equalityRows": 263,
+        "switchRows": 175
+      },
+      "11": {
+        "equalityRows": 315,
+        "switchRows": 123
+      },
+      "12": {
+        "equalityRows": 270,
+        "switchRows": 168
+      },
+      "2": {
+        "equalityRows": 220,
+        "switchRows": 218
+      },
+      "3": {
+        "equalityRows": 260,
+        "switchRows": 178
+      },
+      "4": {
+        "equalityRows": 318,
+        "switchRows": 120
+      },
+      "5": {
+        "equalityRows": 437,
+        "switchRows": 1
+      },
+      "6": {
+        "equalityRows": 335,
+        "switchRows": 103
+      },
+      "7": {
+        "equalityRows": 222,
+        "switchRows": 216
+      },
+      "8": {
+        "equalityRows": 260,
+        "switchRows": 178
+      },
+      "9": {
+        "equalityRows": 298,
+        "switchRows": 140
+      }
+    },
+    "problems": 0,
+    "switchEvents": 9478,
+    "switchRows": 1646
+  }
+}

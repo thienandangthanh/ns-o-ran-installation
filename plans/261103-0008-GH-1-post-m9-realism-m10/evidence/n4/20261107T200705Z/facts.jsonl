@@ -1,0 +1,11 @@
+{"key":"dev","value":false}
+{"key":"part","value":"v3"}
+{"key":"reference","value":""}
+{"key":"calibration","value":""}
+{"key":"ulPattern","value":"steps"}
+{"key":"outageThresholdDb","value":-1000}
+{"key":"vmLoadStart","value":" 20:07:06 up  2:16,  1 user,  load average: 1.07, 1.41, 1.54"}
+{"key":"rngRun","value":1}
+{"key":"notEvaluated","value":["n4_reference_is_a_pre_n4_free_run", "n4_v2_uloff_equals_reference_after_the_strict_drop", "n4_v2_same_trace_file_names"]}
+{"key":"v3","value":{"auditVersion": "v2", "hdr": 2, "hdrClass": "ns3::NrPdcpHeader", "headerLines": 1, "end": {"connected": 6, "present": 6, "missing": 0}, "endLines": 1, "malformedAuditLines": 0, "mnEvents": 123794, "x2Events": 65046, "x2ulEvents": 6194, "gnbSamples": 200, "stopNs": 10000000000, "expectedGnbNodes": [2, 3], "expectedSeqsPerNode": 100, "gnbNodes": [2, 3], "incompleteNodes": {}, "offCadence": {}, "invalidHelloPeriods": [], "a0": true, "outOfRunEvents": 0, "a1": true, "rrcNodesPerImsi": {"1": [5], "2": [5], "3": [5], "4": [5], "5": [5], "6": [5]}, "a2": true, "twoRrcIdentities": 0, "noIdentityEvents": 0, "a3": true, "sameRrcDuplicates": 0, "a5": true, "badCellRefs": 0, "forwardedEvents": 0, "forwardedBits": 0, "perCellMaxErrBits": 496, "periodSumMaxErrKbit": 0.976, "ties": 0, "residualBits": 1133088, "residualBeforeFinalReadBits": 0, "nonIntCounters": 0, "a4": true, "legCounts": {"lte": 58748, "x2": 58852}, "a6": true, "ownPdcpNonZeroSamples": 0, "a7": true, "conservation": {"dlMnOnly": 0, "dlGnbOnly": 0, "ulGnbOnly": 0, "ulMnOnly": 0}, "lateSenderEvents": {"dl": 0, "ul": 0}, "a8": true, "pass": true}}
+{"key":"vmLoadEnd","value":" 20:10:00 up  2:19,  0 user,  load average: 1.01, 1.24, 1.45"}

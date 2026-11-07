@@ -1,0 +1,38 @@
+{"key":"mode","value":"single"}
+{"key":"deltaMs","value":0}
+{"key":"stage","value":""}
+{"key":"dev","value":false}
+{"key":"tCtlSeconds","value":30}
+{"key":"tCtlProvenance","value":"evidence/r0/20261023T065002Z calibration: L_max 12.919 ms over 10 complete trigger steps, T_ctl = max(30 s, ceil(20 x L_max)) = 30 s; host load 1.03 (20 CPUs), VM load 1.29; CPU hold released by the user 15:44 KST"}
+{"key":"wSeconds","value":1.0}
+{"key":"wProvenance","value":"evidence/r3p/20261028T042540Z calibration (gate-r3p --mode calibrate, harness f614311): R2's fixed-prediction block through the R3\u2032 prepare path, 25 complete one-control trigger steps, L_max 5.395 ms (= p99.9 by nearest rank at n = 25), W = max(1 s, 3 x L_max) = 1.0 s; 20 x L_max <= T_ctl"}
+{"key":"a1Threshold","value":10}
+{"key":"a1ThresholdProvenance","value":"scripts/gates/r2-scenario.json threshold 10 (n2 is a neighbour 5 % above serving, under it), set and reached in the R2 calibration evidence/r2/20261026T140350Z"}
+{"key":"substitution2Applied","value":true}
+{"key":"substitution3Applied","value":true}
+{"key":"outageThresholdDb","value":-1000}
+{"key":"outageThresholdProvenance","value":"substitution 1: the R0-config null-control run at the default -5 dB counted 5 LTE outage switches (evidence/r0/20261023T073520Z q2OutageSwitches 5; also 065002Z, 065551Z); gated runs use --outageThreshold=-1000"}
+{"key":"scenarioSha256","value":"8ac00477e38f41f9524c577aad9a79b09d27513b8d9a1d2293a83facc02755d9"}
+{"key":"handoverTriggers","value":1}
+{"key":"vmLoadStart","value":" 20:10:15 up  2:19,  0 user,  load average: 0.86, 1.19, 1.43"}
+{"key":"a1PolicyTypeCreated","value":false}
+{"key":"xappImageIds","value":{"trafficxapp": "sha256:9ca265ab661541837a65b6cbd86023ca0bab9774134a63db5e33b6561529280a", "stubqp": "sha256:3a2b543178004cba28e109f8cd0753e0433708440e16c3adee49e3cc38d82d34", "stubqpImage": "127.0.0.1:80/stubqp:caa841a11941"}}
+{"key":"a1ThresholdAttempt_live1","value":2}
+{"key":"a1DeliveredAttempt_live1","value":1}
+{"key":"a1mediatorRestart_live1","value":{"fresh": true, "problems": []}}
+{"key":"kpmUeListMoved","value":{"1": true}}
+{"key":"c2","value":{"live1": {"agentLocal": 0, "answers": 1, "holds": true, "ledgerLines": 1}}}
+{"key":"c5","value":{"answerViaNodeId": true, "pairsByReqId": true, "perRun": {"live1": {"answerViaNodeId": true, "pairsByReqId": true}}}}
+{"key":"resetEvidence","value":{"live1": {"bucketAfter": ["6fe0d4a71d4f470b"], "bucketBefore": ["be1c9596a0181942"], "fresh": true, "podsAfter": {"ricxapp-hw-go": {"containerStartedAt": ["2026-11-07T20:16:05Z"], "name": "ricxapp-hw-go-c84579888-mcnwq", "startTime": "2026-11-07T20:16:04Z", "uid": "0bc3be61-0b51-48c6-94b5-f3c59c1ce3ef"}, "ricxapp-kpimon-go": {"containerStartedAt": ["2026-11-07T20:16:05Z"], "name": "ricxapp-kpimon-go-85dc5fdf8b-trv2t", "startTime": "2026-11-07T20:16:04Z", "uid": "288d3df2-7dc5-4a94-b4ed-95f65ec1b5a9"}, "xapp-rc": {"containerStartedAt": ["2026-11-07T20:16:05Z"], "name": "ricxapp-rc-6db9dcd964-wzwtn", "startTime": "2026-11-07T20:16:04Z", "uid": "2ce3e69f-a411-4547-a5b5-34ac354d931a"}}, "resetStartUtc": "2026-11-07T20:16:04Z"}}}
+{"key":"predictorDrivenApplied","value":{"live1": 1}}
+{"key":"observationChange","value":{"live1": {"h1": "none", "n1": "handover"}}}
+{"key":"minSlack","value":{"T_start": 119.999744, "T_gate": 9.992896, "T_ctl": 29.978511, "W": null}}
+{"key":"lControlLatencyS","value":[0.021489]}
+{"key":"ipcDropped","value":0}
+{"key":"droppedNoSub","value":0}
+{"key":"restartCountsAllZero","value":true}
+{"key":"restartCounts","value":{"live1/hw-go": 0, "live1/kpimon": 0, "live1/rc": 0, "live1/qp-stub": 0, "live1/ts-xapp": 0, "live1/agent-3": 0, "live1/agent-2": 0, "live1/agent-1": 0}}
+{"key":"routeOwner12041","value":{"live1": {"start": {"rtmgr": "service-ricxapp-stubqp-rmr.ricxapp:4560", "e2term": "service-ricxapp-hw-go-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-hw-go-rmr.ricxapp:4560", "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"}}}}
+{"key":"routeOwner12042","value":{"live1": {"start": {"rtmgr": "service-ricxapp-stubqp-rmr.ricxapp:4560", "e2term": "service-ricxapp-hw-go-rmr.ricxapp:4560"}, "end": {"rtmgr": "service-ricxapp-hw-go-rmr.ricxapp:4560", "e2term": "service-ricxapp-stubqp-rmr.ricxapp:4560"}}}}
+{"key":"tsOrStubHeldAckRoute","value":{"live1": true}}
+{"key":"vmLoadEnd","value":" 20:20:54 up  2:29,  0 user,  load average: 0.93, 0.82, 1.14"}

@@ -364,7 +364,8 @@ Sources: the user rulings in `plans/reports/decisions-261106-0525-GH-1-p10-pre-r
       - Raw archive p10h (`plans-evidence-raw-m10-p10h-20261107.tar.zst`, 1588 files, red M4 included); per-run `evidence-sha256.txt` committed. /home 41 GiB free after the gates, so revert point 2 is not taken.
   - P9: M4, agent rebuild, kpimon reinstall, M5–M7, the V3 run by row 161's `--part v3`, R3′ single (a run without a predictor-driven handover is red; a scenario change is PAUSE T3).
     - 2026-11-07 design and consensus (`kongming-261107-1215`, `decisions-261107-1244`): counting at the en-gNB's X2-U boundary (row 151 amendment), audit v2, A8 inclusion, the M4 suite of row 163, the golden of row 164, row 152 (a)–(d). M4 also runs `m4_ns3_epc_x2_mc_pdcp_volume_suite_passes`. Chain: steps 2–7 (M4–M7, i0, i2), then step 14 (`n4 --part v3`), then step 10 (r3p single). N4 identity (step 13) is not a P9 gate (row 150 note).
-    - Open user decision before P9 code lands: the remedy for the forwarded RLC UM tail gap (consensus Q-2).
+    - Open user decision before P9 code lands: the remedy for the forwarded RLC UM tail gap (consensus Q-2). Ruled (a-narrow) on 2026-11-07 (`decisions-261107-2138`); row 165, ns-3 `1f1fa3d3`.
+    - **DONE 2026-11-08 05:21 KST.** ns-3 `1f1fa3d3` (tail fix) + `e32a0e05`, oran-interface `0d6bdea`, Testbed `03180a5`, harness `32232b8d` (pins), docs `e86f1d08`. Chain attempt 2 (the guided fix after red #1) green: see "P9 chain attempt 2: green" below.
   - P15: agent rebuild, kpimon reinstall, M5–M7, p12 with the re-baselined judge, R3′ single.
   - D-06b-1 and the kpimon node tag: as in steps 3c and 3d. The TS serving cell: step 3d (ii) plus row 158.
   - UseIdealRrc: the probe, then row 157's adoption gates.
@@ -385,3 +386,39 @@ Sources: the user rulings in `plans/reports/decisions-261106-0525-GH-1-p10-pre-r
 - **Guided fix (the one fix the Failure Protocol allows for P9):** revert `f7-rerun-green` again (the late rollout on the current VM ran without `ric_refresh_routes`) and re-run from step 0 under a host entry condition: `/proc/pressure/io` full avg60 ≤ 5 and avg300 ≤ 10, read twice 5 min apart; memory pressure full avg60 ≤ 1; MemAvailable ≥ 12 GiB; no dfm_firmware, cargo or rustc processes; /home ≥ 34 GiB. After the revert: the orphan-overlay check, then in the VM over 5 min at most 2 etcd "took too long" lines and none ≥ 500 ms, with control-plane restart counts stable. Caps: host conditions not met within 60 min, or VM conditions not met within 30 min of the revert, mean PAUSE (host contention). Host pressure is logged every 60 s during the chain, as evidence only.
 - **Outcome rule, set before the run:** steps 0–7, then 14, then 10, each with a fresh log directory. Any red step gets a kongming note, then PAUSE T6. The M7 route-record re-run (ruling ii) still applies.
 - **Follow-ups for Stop B (non-blocking, from the note):** the hold sampler counts a failed read as NOT-CONNECTED; the chain driver has no host-pressure guard; the deploy branch's early return skips the route refresh; bringup checks only ricplt pods; swap shares the NVMe with the VM overlay.
+
+## P9 chain attempt 2: green (2026-11-07 18:01Z to 20:21Z)
+
+- **Entry (the guided fix's conditions, unchanged):**
+  - The quiet window the user chose (02:01 KST): the dfm-devices-firmware session finished its Phase 4 and stopped building.
+  - Host condition held 17:44–17:49Z (`p10-chain/e86f1d08-p9/host-entry-watch-2.tsv`; io full avg300 3.5 % at the pass).
+  - Revert to `f7-rerun-green` 17:51:03Z; the orphan-overlay check was clean.
+  - VM check: the first window after the revert had 39 slow etcd lines (1 ≥ 500 ms). The second, ending 18:01:16Z, had 0 slow lines and stable restart counts: PASS (`vm-entry-check-2.txt`).
+- **Chain, from the frozen checkout `e86f1d08`; every step exited 0 with no failed check** (logs `p10-chain/e86f1d08-p9/{steps-0-7-a2,step-14-a2,step-10-a2}`):
+
+  | Step | Gate | Run | Checks |
+  |---|---|---|---|
+  | 0 | M2 | `m2/20261107T180134Z` | 35/35 |
+  | 1 | M3 | `m3/20261107T182137Z` | 54/54 |
+  | 2 | M4 | `m4/20261107T185957Z` | 23/23, incl. `m4_ns3_epc_x2_mc_pdcp_volume_suite_passes` and `m4_ns3_pdcp_mc_nr_header_suites_pass` (the row 165 UM-tail cases) |
+  | 3 | M5 | `m5/20261107T192502Z` | 24/24 |
+  | 4 | M6 | `m6/20261107T192911Z` | 43/43 |
+  | 5 | M7 | `m7/20261107T193119Z` | 61/61 |
+  | 6 | i0 | `i0/20261107T195704Z` | 8/8 |
+  | 7 | i2 | `i2/20261107T200226Z` | 25/25 |
+  | 14 | n4 `--part v3` | `n4/20261107T200705Z` | 12/12 |
+  | 10 | r3p single | `r3p/20261107T201014Z` | 83/83 |
+
+- **Row 149 (record, not forced):**
+  - M6: 201 equality rows, 93 switch rows, 78 switch events, 0 problems. These are identical to P7.
+  - M7: 3610 equality rows, 1646 switch rows, 9478 switch events, 0 problems. At P7 the counts were 3557, 1819 and 10928. M7's multi-gNB run changes its switch timing from run to run, and the forwarded UM tail is no longer re-sent as a new SDU, so these counts are expected to move. Row 149's pass condition (0 problems) holds.
+- **M7 route record (ruling ii, informational):** stash present, `e2term4561Est` 2, `rtmgrToE2termSvc` 2, `noEndpt12001` 5, matches false.
+- **V3 (row 161, `n4 --part v3`):** `n4_v3_counters_equal_the_pdcp_audit` passes.
+  - a0–a8 are all true.
+  - Per-cell maximum error 496 bit; per-period sum error ≤ 0.976 kbit; 0 ties, 0 bad cell references, 0 malformed audit lines.
+  - Legs: LTE 58748, X2 58852; 6194 X2 UL events; 0 forwarded events.
+  - Conservation: all four one-sided counts are 0; no late-sender events.
+  - The uloff run prints no audit, and the UL flag moves no random draw.
+- **R3′ single:** one predictor-driven handover (`handovers` 1, `late` 0), wire requests equal handovers, and the predictor's answer equals the formula on the certified window. The pre-registered decisions hold (`h1` none, `n1` handover).
+- **Host during the chain:** io full avg300 peaked at 23.4 % (`host-pressure-chain-a2.tsv`), with no control-plane fault.
+- **Raw archive:** p10i (`plans-evidence-raw-m10-p10i-20261108.tar.zst`, 1379 files, 55 MB, the red M2 `m2/20261107T131447Z` included; SHA256SUMS ok). Each run's `evidence-sha256.txt` is committed.

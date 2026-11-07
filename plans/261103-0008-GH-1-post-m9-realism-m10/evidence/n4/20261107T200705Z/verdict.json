@@ -1,0 +1,183 @@
+{
+  "gate": "n4",
+  "ts": "20261107T200705Z",
+  "harness_sha": "e86f1d0858dd0735ec39e33e12bdf7c563945551",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "03180a5b1dd171906a76d6699944342c9105be07",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "e32a0e0537cb6d6842c8e70619ba84f9614459b4",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "0d6bdead516e149056a30d60670633da5354e06b",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "e27058163dc0bb05ce279ad3fa1bd15a22fc24ab"
+  },
+  "duration_s": 174,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "n4_args",
+      "pass": true,
+      "detail": "part v3; dev 0; ref ; cal ; UL pattern steps; ns-3 e32a0e0537cb6d6842c8e70619ba84f9614459b4; oran-interface 0d6bdead516e149056a30d60670633da5354e06b"
+    },
+    {
+      "name": "n4_build_tools_present",
+      "pass": true,
+      "detail": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\ntshark 4.4.19 (>= 4.4)"
+    },
+    {
+      "name": "n4_ns3_binary_located_at_pins",
+      "pass": true,
+      "detail": "/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"
+    },
+    {
+      "name": "n4_uloff_free_run",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 377482 at 1794082027.631352175: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --simStartEpochMs=1767225600000 --RngRun=1 --e2TraceDir=/home/uc/evidence/n4/20261107T200705Z/runs/uloff/trace\nns-3 exit code 0\nuloff (free): ns-3 exit 0 (want 0)"
+    },
+    {
+      "name": "n4_uloff_emitter_at_pins",
+      "pass": true,
+      "detail": "emitter [('e32a0e0537cb6d6842c8e70619ba84f9614459b4', '0d6bdead516e149056a30d60670633da5354e06b')]"
+    },
+    {
+      "name": "n4_v3_reference_equality_not_evaluated",
+      "pass": true,
+      "detail": "no reference is compared; not evaluated: [\"n4_reference_is_a_pre_n4_free_run\",\"n4_v2_uloff_equals_reference_after_the_strict_drop\",\"n4_v2_same_trace_file_names\"]"
+    },
+    {
+      "name": "n4_v2_uloff_prints_no_audit",
+      "pass": true,
+      "detail": "N4AUDIT lines: 0"
+    },
+    {
+      "name": "n4_ulon_free_run",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 379130 at 1794082108.638218030: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=2 --handoverMode=NoAuto --simTime=10 --outageThreshold=-1000 --simStartEpochMs=1767225600000 --RngRun=1 --enableUlTraffic=true --ulTrafficPattern=steps --e2TraceDir=/home/uc/evidence/n4/20261107T200705Z/runs/ulon/trace\nns-3 exit code 0\nulon (free): ns-3 exit 0 (want 0)"
+    },
+    {
+      "name": "n4_ulon_emitter_at_pins",
+      "pass": true,
+      "detail": "emitter [('e32a0e0537cb6d6842c8e70619ba84f9614459b4', '0d6bdead516e149056a30d60670633da5354e06b')]"
+    },
+    {
+      "name": "n4_v3_counters_equal_the_pdcp_audit",
+      "pass": true,
+      "detail": "{'a0': True, 'a1': True, 'a2': True, 'a3': True, 'a4': True, 'a5': True, 'a6': True, 'a7': True, 'a8': True, 'perCellMaxErrBits': 496, 'periodSumMaxErrKbit': 0.976, 'ties': 0, 'residualBits': 1133088, 'badCellRefs': 0, 'malformedAuditLines': 0, 'legCounts': {'lte': 58748, 'x2': 58852}, 'x2ulEvents': 6194, 'forwardedEvents': 0, 'conservation': {'dlMnOnly': 0, 'dlGnbOnly': 0, 'ulGnbOnly': 0, 'ulMnOnly': 0}, 'lateSenderEvents': {'dl': 0, 'ul': 0}, 'mnEvents': 123794, 'x2Events': 65046, 'gnbSamples': 200}"
+    },
+    {
+      "name": "n4_ul_flag_moves_no_random_draw",
+      "pass": true,
+      "detail": "attach, positions, cell ids, switches and X2 before 0.1 s equal"
+    },
+    {
+      "name": "n4_no_stray_process",
+      "pass": true,
+      "detail": "no leftovers"
+    }
+  ],
+  "dev": false,
+  "part": "v3",
+  "reference": "",
+  "calibration": "",
+  "ulPattern": "steps",
+  "outageThresholdDb": -1000,
+  "vmLoadStart": " 20:07:06 up  2:16,  1 user,  load average: 1.07, 1.41, 1.54",
+  "rngRun": 1,
+  "notEvaluated": [
+    "n4_reference_is_a_pre_n4_free_run",
+    "n4_v2_uloff_equals_reference_after_the_strict_drop",
+    "n4_v2_same_trace_file_names"
+  ],
+  "v3": {
+    "auditVersion": "v2",
+    "hdr": 2,
+    "hdrClass": "ns3::NrPdcpHeader",
+    "headerLines": 1,
+    "end": {
+      "connected": 6,
+      "present": 6,
+      "missing": 0
+    },
+    "endLines": 1,
+    "malformedAuditLines": 0,
+    "mnEvents": 123794,
+    "x2Events": 65046,
+    "x2ulEvents": 6194,
+    "gnbSamples": 200,
+    "stopNs": 10000000000,
+    "expectedGnbNodes": [
+      2,
+      3
+    ],
+    "expectedSeqsPerNode": 100,
+    "gnbNodes": [
+      2,
+      3
+    ],
+    "incompleteNodes": {},
+    "offCadence": {},
+    "invalidHelloPeriods": [],
+    "a0": true,
+    "outOfRunEvents": 0,
+    "a1": true,
+    "rrcNodesPerImsi": {
+      "1": [
+        5
+      ],
+      "2": [
+        5
+      ],
+      "3": [
+        5
+      ],
+      "4": [
+        5
+      ],
+      "5": [
+        5
+      ],
+      "6": [
+        5
+      ]
+    },
+    "a2": true,
+    "twoRrcIdentities": 0,
+    "noIdentityEvents": 0,
+    "a3": true,
+    "sameRrcDuplicates": 0,
+    "a5": true,
+    "badCellRefs": 0,
+    "forwardedEvents": 0,
+    "forwardedBits": 0,
+    "perCellMaxErrBits": 496,
+    "periodSumMaxErrKbit": 0.976,
+    "ties": 0,
+    "residualBits": 1133088,
+    "residualBeforeFinalReadBits": 0,
+    "nonIntCounters": 0,
+    "a4": true,
+    "legCounts": {
+      "lte": 58748,
+      "x2": 58852
+    },
+    "a6": true,
+    "ownPdcpNonZeroSamples": 0,
+    "a7": true,
+    "conservation": {
+      "dlMnOnly": 0,
+      "dlGnbOnly": 0,
+      "ulGnbOnly": 0,
+      "ulMnOnly": 0
+    },
+    "lateSenderEvents": {
+      "dl": 0,
+      "ul": 0
+    },
+    "a8": true,
+    "pass": true
+  },
+  "vmLoadEnd": " 20:10:00 up  2:19,  0 user,  load average: 1.01, 1.24, 1.45"
+}
