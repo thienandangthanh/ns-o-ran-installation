@@ -363,6 +363,8 @@ Sources: the user rulings in `plans/reports/decisions-261106-0525-GH-1-p10-pre-r
       - Row 150: uloff and ulon byte-equal to `reference/n4-sn-wrap/` on 36 items each, only `ns3run/stdout.txt:audit-header` skipped; reference SHA256SUMS ok; audit judge `hdr=2 class=ns3::NrPdcpHeader`, a0–a5 true; emitters at ns-3 4318e43b, oran-interface 53253fe2.
       - Raw archive p10h (`plans-evidence-raw-m10-p10h-20261107.tar.zst`, 1588 files, red M4 included); per-run `evidence-sha256.txt` committed. /home 41 GiB free after the gates, so revert point 2 is not taken.
   - P9: M4, agent rebuild, kpimon reinstall, M5–M7, the V3 run by row 161's `--part v3`, R3′ single (a run without a predictor-driven handover is red; a scenario change is PAUSE T3).
+    - 2026-11-07 design and consensus (`kongming-261107-1215`, `decisions-261107-1244`): counting at the en-gNB's X2-U boundary (row 151 amendment), audit v2, A8 inclusion, the M4 suite of row 163, the golden of row 164, row 152 (a)–(d). M4 also runs `m4_ns3_epc_x2_mc_pdcp_volume_suite_passes`. Chain: steps 2–7 (M4–M7, i0, i2), then step 14 (`n4 --part v3`), then step 10 (r3p single). N4 identity (step 13) is not a P9 gate (row 150 note).
+    - Open user decision before P9 code lands: the remedy for the forwarded RLC UM tail gap (consensus Q-2).
   - P15: agent rebuild, kpimon reinstall, M5–M7, p12 with the re-baselined judge, R3′ single.
   - D-06b-1 and the kpimon node tag: as in steps 3c and 3d. The TS serving cell: step 3d (ii) plus row 158.
   - UseIdealRrc: the probe, then row 157's adoption gates.
