@@ -1,0 +1,8 @@
+[host 13:14:47] gate m2 (gate-m2-refnode.sh) harness e86f1d0858 -> unit gate-m2-20261107T131447Z
+[host 13:14:48] host disk: start	20261107T131448Z	45	/home/andang/VMs/ubuntu24.1794056822	1
+[host 13:58:59] gate m2 exit 1
+[host 13:58:59] host disk: end	20261107T135859Z	43	/home/andang/VMs/ubuntu24.1794056822	4
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 13:59:03] gate m2 ended (gate exit 1): finishing the host disk watchdog
+[host 13:59:04] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261103-0008-GH-1-post-m9-realism-m10/evidence/m2/20261107T131447Z
+verdict m2 FAIL ['m2_e2mgr_image_patched_from_pin', 'm2_e2mgr_stays_connected_during_hold']
