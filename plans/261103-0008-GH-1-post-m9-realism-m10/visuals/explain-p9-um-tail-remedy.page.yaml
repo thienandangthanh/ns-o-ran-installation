@@ -1,0 +1,100 @@
+version: 1
+meta:
+  title: P9 tail remedy
+  description: The one P9 question the agents could not settle for you. A forwarded RLC tail makes the new X2 counter lose 16 bits. What that means, why every agent now calls it a gap, and the four ways to handle it.
+theme:
+  preset: editorial
+blocks:
+  - type: hero
+    eyebrow: M10 · P10 · P9 (the en-gNB X2 counters) · one decision for you
+    title: What to do about the forwarded RLC tail
+    description: "P9 makes each en-gNB report the PDCP volume that crosses X2 into it, under the 3GPP names DRB.PdcpSduVolumeX2DL and X2UL. The agents settled everything else by unanimous consensus. One pre-existing simulator defect makes the new counter slightly wrong on one path, and every way to handle it changes M10's scope or one of your rulings. So the choice is yours."
+
+  - type: section
+    title: The gist
+    blocks:
+      - type: rich-text
+        text: |
+          When the en-gNB changes during a session (an "SN change"), the old en-gNB forwards what is still in its radio queue to the new one over X2. Sometimes the head of that queue is the unsent tail of a packet that was half transmitted. The forwarding code does not notice it is a tail. It treats the tail's first two bytes as a PDCP header, so the new counter, which subtracts the header, counts the tail 2 bytes (16 bits) short.
+
+          Your rule R1 (00:45 today, row 147) says a 3GPP-named counter may differ from the truth only in timing, never in value. 16 lost bits is a value difference, so the counter cannot claim to meet its 3GPP definition until this is handled. All five agents and the verifier agree it is a "gap", not a matter of interpretation.
+      - type: callout
+        tone: info
+        title: "The question"
+        text: "How should P9 handle the forwarded RLC UM tail? (a-narrow) fix the tail framing on the SN-change forward only, in its own ns-3 commit right before P9; (a-wide) fix it on every forwarding path, which also absorbs a recorded follow-up into M10; (b) accept it as a user-owned exception of at most 16 bits per forwarded tail; (c) rename the X2 rows to ns3.* vendor names."
+      - type: callout
+        tone: success
+        title: "What the agents recommend"
+        text: "(a-narrow) as the default. It is small (one tag test), keeps row 149's P7 results unchanged, and follows your SN-wrap precedent: a fix in its own commit right before the commit that needs it. (b) is the cheaper fallback. (c) is not recommended because it undoes your Option A."
+      - type: key-value
+        title: Where things stand
+        items:
+          - { key: P7, value: "Done at 12:10 KST (commit 7ac51b00). The chain at harness 83b01bc6 is green: M4–M7, plus N4 byte-identical to the reference." }
+          - { key: P9 design, value: "Settled by consensus (decisions-261107-1244) and registered in the ledger (commit 3cdbc72f): count at the en-gNB's X2 boundary, audit v2, a stricter judge, a new ns-3 suite." }
+          - { key: P9 code, value: "Being written on the host now, not committed. This decision affects only the tail framing and the registry wording, so it does not block that work, but P9 cannot be committed or pinned before you choose." }
+          - { key: Sources, value: "kongming-261107-1215 (design), brainstorm-261107-1244 (ultra + debate), decisions-261107-1244 (rulings), all in plans/reports/." }
+
+  - type: section
+    title: "The analogy: a parcel cut in two"
+    blocks:
+      - type: rich-text
+        text: |
+          Keep the parcel service from the earlier page. The main post office (the LTE eNB) stamps every parcel with a label (the PDCP header) and sends some of them over the courier road (X2) to an express depot (an en-gNB). The depot's van carries them to the house. A parcel too big for the van's next trip is cut: the first piece, with the label, goes now; the rest waits at the front of the depot's shelf.
+
+          Now the house moves to another depot's area. The old depot hands its whole shelf to the new depot. The clerk forwarding the shelf checks each item for a label by looking at its first corner. The leftover piece has no label, but if its first corner happens to look like one, the clerk passes it on as a labelled parcel. The new depot's logbook then subtracts a "label" that is really part of the contents, and logs the piece 2 bytes too small.
+      - type: table
+        title: How the analogy maps to the system
+        columns: [ In the analogy, In the system ]
+        rows:
+          - [ The label on a parcel, "The 2-octet NR PDCP data PDU header (38.323 §6.2.2.2)" ]
+          - [ Cutting a parcel for the van, "RLC UM segmentation in LteRlcUmLowLat; the unsent tail goes back to the head of the TX buffer (lte-rlc-um-lowlat.cc:274-282)" ]
+          - [ Handing the shelf to the new depot, "The S-SN's RLC-buffer forward at an SN change (lte-enb-rrc.cc:905, :939)" ]
+          - [ The clerk's corner check, "DeliverRlcForwardingBuffer's D/C-bit test on the first octet (lte-rlc-forwarding-buffer.cc:190-191)" ]
+          - [ The new depot's logbook, "DRB.PdcpSduVolumeX2DL of the target en-gNB cell" ]
+      - type: callout
+        tone: info
+        title: Where the analogy stops
+        text: "The piece is in fact marked: ns-3 attaches a 'last segment' status tag to it (lte-rlc-um-lowlat.cc:258-282), and the clerk throws that tag away without reading it (lte-rlc-forwarding-buffer.cc:194). That is why the fix is small. Also, if the first corner does not look like a label, the clerk drops the piece silently; that is a separate, recorded data-loss defect, not a counting error."
+
+  - type: section
+    title: Why the agents call it a gap and not an interpretation
+    blocks:
+      - type: rich-text
+        text: |
+          Four of the five candidates first said "interpretation": every PDCP entity in the model reads those two bytes as a header, so the counter counts what the model transfers. The verifier and the Codex candidate disagreed. 28.552 counts bits at the PDCP SDU level, and every byte of the tail is SDU payload. Calling the model's misreading the truth would make a defective model the reference, which R1 forbids. You already rejected that kind of relabelling once: in the P6 debate an excluded path was not allowed to be renamed an "interpretation", and you then ruled Q5 to count the path. In the debate round all four conceded, so the vote is now 5–0 for "gap".
+      - type: key-value
+        title: Size and reach
+        items:
+          - { key: Error, value: "16 bits per forwarded tail whose first octet has its top bit set; at most one tail per RLC entity per SN change. The counter's unit is 1 kbit." }
+          - { key: Reached by, value: "R3′ runs, where the TS xApp's handover controls cause SN changes. Not reached by the N4 V3 runs, which have no SN change." }
+          - { key: Likelihood, value: "Probably low but not zero. Payloads are zero-filled after the IP, UDP and SeqTs headers, so most tails start with a 0 bit and are dropped instead (the separate defect)." }
+          - { key: Pre-existing, value: "Yes. P7 and P9 do not create it; P9's new counter is the first check that can see it." }
+
+  - type: section
+    title: The four options
+    blocks:
+      - type: table
+        title: What each option does and costs
+        columns: [ Option, What changes, Cost and risk, Effect on your rulings ]
+        rows:
+          - [ "(a-narrow) Fix on the SN-change forward only — recommended", "One ns-3 commit right before P9: on the S-SN secondary-cell forward (forwardPdcpPdus), forward only whole PDCP PDUs, recognised by the FULL_SDU status tag, before the D/C test. A new ledger row and a unit case.", "Small code change, plus one more M4 to M7 pass in the P9 chain. Row 149's P7 counts (M6 201/93, M7 3557/1819) stay as they are. The truncated-tail behaviour at LTE↔mmWave switches stays a recorded follow-up.", "Adds one commit to the agreed commit order (like the SN-wrap commit before P7). The X2 counters then hold under R1 with their 3GPP names." ]
+          - [ "(a-wide) Fix on every forwarding path", "The same tag test applied to every DeliverRlcForwardingBuffer caller, including LTE↔mmWave switch forwards.", "Also removes the switch-epoch short PDUs. Row 149's M7 short rows change, so row 149 needs another amendment and new expected counts. More regression risk at M7.", "Absorbs the 'RLC UM tail re-submission' follow-up into M10: a scope expansion that only you can approve." ]
+          - [ "(b) A user-owned exception", "No code change. The registry records an exception: the X2 counters may be up to 16 bits low per forwarded D/C = 1 tail, at most one per RLC entity per SN change.", "Cheapest. The counter stays slightly wrong on a path R3′ reaches, disclosed in the registry.", "Row 151's Q5 amendment already names 'an explicit user-owned exception' as the fallback, so this stays within your rulings." ]
+          - [ "(c) ns3.* names for the X2 rows", "Rename the two new rows to vendor names, with no 3GPP claim.", "No code change, but R3′ then reads a vendor counter.", "Undoes your Option A (Q2). Not recommended by any agent." ]
+      - type: callout
+        tone: warning
+        title: What happens next under each choice
+        text: "(a-narrow) or (a-wide): I register its ledger row, run a brainstorm-checked design, write the ns-3 fix in its own commit, and then pin P9 behind it. (b): I record the exception in the registry and the ledger, then continue straight to P9's commits and chain. (c): I rename the rows and re-register rows 151 and 152 before code."
+
+  - type: section
+    title: Also settled by consensus (for your review at the next session)
+    blocks:
+      - type: table
+        title: Rulings applied without asking you, under your 02:21 standing rule
+        columns: [ Topic, Ruling ]
+        rows:
+          - [ "Counting point (Q-1)", "Count at the en-gNB's own X2-U boundary, on receipt for DL and on send for UL. This revises your Q2 sentence 'at the MN' in node and instant only. Counting at the MN is 1 ms (4 slots) early, which breaks your R1 rule and row 147 (3). The counted packets are the same." ]
+          - [ "Redirected packets", "A packet the old en-gNB redirects to the new one counts at both cells (two X2 transfers, per your Q5). Disclosed: during an SN change, the cells' sum exceeds what the MN sent." ]
+          - [ "New ns-3 test suite (Q-3)", "epc-x2-mc-pdcp-volume, gated at M4 (row 163). It proves the redirect and forward paths, which no gate run reaches." ]
+          - [ "Judge additions (Q-4)", "Require ≥ 1 UL X2 event. A new conservation check, A8, ties each en-gNB event to an independent MN event, in an inclusion form that cannot go falsely red on packets still in flight at the end of the run." ]
+          - [ "Other", "Remove the lint's 'pending P9' exception (stricter). Recompute the R3′ schedule's scenario hash. Extend the N4 drop rule to all four keys. Regenerate the KPM golden fixture (row 164). N4 identity is not a P9 gate." ]
