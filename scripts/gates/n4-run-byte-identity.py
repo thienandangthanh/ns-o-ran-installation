@@ -8,7 +8,7 @@ Compared set of one run directory (uloff or ulon); every item is the sha256 of i
   trace/e2-ue-context-<n>.jsonl         the whole file
   trace/e2-ipc-trace-<n>.jsonl:samples  the `sample` lines, raw, in file order; `hello` (pid run id, written per
                                         connection) and `bye` (delivery counters) are not compared
-  ns3run/stdout.txt:body                stdout without its first `N4AUDIT v1 hdr=` line
+  ns3run/stdout.txt:body                stdout without its first `N4AUDIT v2 hdr=` line
   ns3run/stdout.txt:audit-header        that line alone (null when absent): its own item, so a caller can judge it apart
   ns3-argv.txt                          the ns-3 arguments, one per line, the run directory written as <run>
                                         (the gate writes it; the binary path is not an argument)
@@ -51,7 +51,7 @@ import tempfile
 HERE = pathlib.Path(__file__).resolve().parent
 MANIFEST = "n4-run-bytes.manifest.json"
 SCHEMA = "n4-run-bytes/v1"
-HDR = b"N4AUDIT v1 hdr="
+HDR = b"N4AUDIT v2 hdr="
 ABSENT = "<absent>"
 AUDIT_HEADER_ITEM = "ns3run/stdout.txt:audit-header"
 # Every ns3run trace scenario-zero writes in the N4 config (NoAuto, so no handover files): the same 28 names in the
@@ -348,7 +348,7 @@ def self_test():
         (d / "ns3run" / "DlE2RlcStatsLte.txt").write_text("% start end CellId IMSI\n0.1 0.2 1 2 33 44 5 6\n")
         (d / "ns3run" / "stderr.txt").write_text("connected at 12:00:01\n")
         (d / "ns3run" / "stdout.txt").write_text(
-            "N4AUDIT v1 hdr=2\nN4AUDIT ulrx 150000000 0 1 3 3 1310 2000000\nN4AUDIT dltx 170000000 0 1 3 3 1310\n"
+            "N4AUDIT v2 hdr=2\nN4AUDIT ulrx 150000000 0 1 3 3 1310 2000000 2\nN4AUDIT dltx 170000000 0 1 3 3 1310 0\n"
             "N4AUDIT end connected=2 present=2 missing=0\n")
         for n in (1, 2, 3):
             (d / "trace" / ("e2-ue-context-%d.jsonl" % n)).write_text(
@@ -416,7 +416,7 @@ def self_test():
         ("no ns3-argv.txt", rm("ns3-argv.txt"), 2),
         # --except-audit-header leaves out that one item and nothing else
         ("audit header changed, skipped", edit(so, "hdr=2", "hdr=2 class=ns3::NrPdcpHeader"), 0, skip_hdr),
-        ("audit header removed, skipped", edit(so, "N4AUDIT v1 hdr=2\n", ""), 0, skip_hdr),
+        ("audit header removed, skipped", edit(so, "N4AUDIT v2 hdr=2\n", ""), 0, skip_hdr),
         ("audit event changed, header skipped", edit(so, "dltx 170000000 0 1 3 3 1310", "dltx 170000000 0 1 3 3 1311"), 1,
          skip_hdr),
         ("trace byte changed, header skipped", edit("ns3run/CellIdStats.txt", "0.2 1 3", "0.2 1 4"), 1, skip_hdr),

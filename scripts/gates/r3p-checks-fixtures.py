@@ -12,7 +12,7 @@ import json
 import pathlib
 import tempfile
 
-FIELD = "DRB.PdcpSduVolumeDL"
+FIELD = "DRB.PdcpSduVolumeX2DL"
 SCHED = {"triggers": [
     {"step": 20, "imsi": 3, "kind": "negative", "decision": "none"},
     {"step": 30, "imsi": 1, "kind": "positive", "decision": "handover", "via": 3, "key": "0000000210", "targetCell": 2, "expect": "applied"},

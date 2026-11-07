@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Gate R3′ (VM side): the TS xApp decides from the harness predictor's answer (persistence of the per-cell
-# DRB.PdcpSduVolumeDL read from Influx by sim time, r3p-scenario.json) and controls ns-3 through rc's gRPC; lock-step
+# DRB.PdcpSduVolumeX2DL read from Influx by sim time, r3p-scenario.json) and controls ns-3 through rc's gRPC; lock-step
 # pacing, agents enb:1, gnb:2, gnb:3, R2's radio config. Per trigger step T the pacer's prepare hook (before the
 # trigger's t0) runs r3p-prepare.py: N6 certifies the Influx window [T-15, T] and the UE's membership, the predictor
 # answers from that certified window only, the stub QP's log is saved and its one-entry table loaded; then the

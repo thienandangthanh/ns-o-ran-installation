@@ -7,7 +7,7 @@ ueId tag column) and a ledger with only its header. Each case mutates one thing.
 """
 import json
 
-FIELD = "DRB.PdcpSduVolumeDL"
+FIELD = "DRB.PdcpSduVolumeX2DL"
 MEMBERS = {2: [3, 4, 5, 6], 3: [1, 2]}
 DL = {2: 8371, 3: 4186}
 RNTI = {1: 3, 2: 4, 3: 1, 4: 2, 5: 5, 6: 6}

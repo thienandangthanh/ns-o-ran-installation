@@ -27,12 +27,13 @@ and ns3run/ (ns-3 trace text files). Components:
 
   digest-run.py --self-test                 -> the ueContext rule on two synthetic runs
 
-  --n4-ul-off-drop LABEL=absent|present[,...] (default off): the UL-off regression of the two
-  gNB CU-UP PDCP SDU volume keys. A `present` run must carry both keys as JSON ints in every
-  gNB sample's cell.cuUp, with UL == 0 everywhere and DL > 0 in at least one sample of every
-  gNB node that ever lists a UE, and no eNB sample, other cell section or UE section may carry
-  either key; then exactly those two keys are deleted before digesting. An `absent` run must
-  carry neither key anywhere. Any failed precondition exits non-zero whatever the digests say.
+  --n4-ul-off-drop LABEL=absent|present[,...] (default off): the UL-off regression of the four
+  gNB CU-UP PDCP SDU volume keys (DRB.PdcpSduVolumeUL, DL, X2UL, X2DL). A `present` run must
+  carry all four keys as JSON ints in every gNB sample's cell.cuUp, with UL, DL and X2UL == 0
+  everywhere and X2DL > 0 in at least one sample of every gNB node that ever lists a UE, and no
+  eNB sample, other cell section or UE section may carry any of them; then exactly those four
+  keys are deleted before digesting. An `absent` run must carry none of them anywhere. Any
+  failed precondition exits non-zero whatever the digests say.
 """
 import argparse
 import hashlib
@@ -61,17 +62,19 @@ def sha(text):
     return hashlib.sha256(text.encode()).hexdigest()
 
 
-N4_KEYS = ("DRB.PdcpSduVolumeUL", "DRB.PdcpSduVolumeDL")
+N4_ZERO_KEYS = ("DRB.PdcpSduVolumeUL", "DRB.PdcpSduVolumeDL", "DRB.PdcpSduVolumeX2UL")  # 0 with UL traffic off
+N4_X2DL = "DRB.PdcpSduVolumeX2DL"
+N4_KEYS = N4_ZERO_KEYS + (N4_X2DL,)
 
 
 class N4Drop:
-    """Checks and strips the two N4 keys of one run's samples (see --n4-ul-off-drop)."""
+    """Checks and strips the four N4 keys of one run's samples (see --n4-ul-off-drop)."""
 
     def __init__(self, mode):
         assert mode in ("absent", "present"), mode
         self.mode = mode
-        self.r = {"mode": mode, "samplesChecked": 0, "missing": 0, "ulNonZero": 0, "nonInt": 0,
-                  "dlPositiveByNode": {}, "unexpectedCarriers": 0}
+        self.r = {"mode": mode, "samplesChecked": 0, "missing": 0, "nonZero": {k: 0 for k in N4_ZERO_KEYS},
+                  "nonInt": 0, "x2dlPositiveByNode": {}, "unexpectedCarriers": 0}
 
     def __call__(self, msg, kind):
         self.r["samplesChecked"] += 1
@@ -90,25 +93,25 @@ class N4Drop:
             return
         node = str(msg["nodeId"])
         if msg.get("ues"):
-            self.r["dlPositiveByNode"].setdefault(node, False)
+            self.r["x2dlPositiveByNode"].setdefault(node, False)
         if not isinstance(cu, dict) or any(k not in cu for k in N4_KEYS):
             self.r["missing"] += 1
             return
-        ul, dl = (cu[k] for k in N4_KEYS)
-        if any(type(v) is not int for v in (ul, dl)):
+        if any(type(cu[k]) is not int for k in N4_KEYS):
             self.r["nonInt"] += 1
             return
-        self.r["ulNonZero"] += ul != 0
-        if dl > 0 and node in self.r["dlPositiveByNode"]:
-            self.r["dlPositiveByNode"][node] = True
+        for k in N4_ZERO_KEYS:
+            self.r["nonZero"][k] += cu[k] != 0
+        if cu[N4_X2DL] > 0 and node in self.r["x2dlPositiveByNode"]:
+            self.r["x2dlPositiveByNode"][node] = True
         for k in N4_KEYS:
             del cu[k]
 
     def ok(self):
         r = self.r
-        return (r["samplesChecked"] > 0 and r["missing"] == 0 and r["ulNonZero"] == 0 and r["nonInt"] == 0
+        return (r["samplesChecked"] > 0 and r["missing"] == 0 and not any(r["nonZero"].values()) and r["nonInt"] == 0
                 and r["unexpectedCarriers"] == 0
-                and (self.mode == "absent" or (r["dlPositiveByNode"] and all(r["dlPositiveByNode"].values()))))
+                and (self.mode == "absent" or (r["x2dlPositiveByNode"] and all(r["x2dlPositiveByNode"].values()))))
 
 
 UE_CONTEXT_IN_IPC_TRACE_EXIT = 3

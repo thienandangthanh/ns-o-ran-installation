@@ -381,6 +381,10 @@ check m4_ns3_pdcp_sn_wrap_suite_passes ns3_suite_passes pdcp-sn-wrap
 # The NR PDCP data PDU header (3GPP TS 38.323 §6.2.2.2, 12-bit SN) on the EN-DC bearers: DL and UL PDUs at SN 0, 1,
 # 2047, 2048 and 4095, the McUePdcp receive path, and the SRB LtePdcp left unchanged (src/lte/test).
 check m4_ns3_pdcp_mc_nr_header_suites_pass ns3_suite_passes mc-pdcp-nr-header
+# The en-gNB's X2-U PDCP PDU events that its X2 PDCP SDU volume counters count: a DL PDU received from the MN, one
+# that the source en-gNB redirects to the target (counted at both), an en-gNB to en-gNB RLC-buffer forward (counted at
+# the receiver only), a UL PDU sent to the MN, and an untyped X2-U arrival (not counted) (src/lte/test).
+check m4_ns3_epc_x2_mc_pdcp_volume_suite_passes ns3_suite_passes epc-x2-mc-pdcp-volume
 
 # The test tree is a scratch build; drop it so it never counts against the VM disk budget.
 [ -n "$TESTS_SRC" ] && rm -rf "$M4_TESTS_WORKDIR"

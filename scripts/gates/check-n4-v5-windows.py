@@ -4,7 +4,7 @@
 Rows: one per gNB cell report, keyed by (ns3.nodeId, ns3.seq), never by time; the gNB node ids
 come from the run's IPC hello lines (kind gnb). Windows: every run of 16 consecutive seq values all
 present for one cell, sliding by 1, start-up and tail included. A window passes iff
-  (a) DRB.PdcpSduVolumeUL and DRB.PdcpSduVolumeDL are present in all 16 rows as integers
+  (a) DRB.PdcpSduVolumeX2UL and DRB.PdcpSduVolumeX2DL are present in all 16 rows as integers
       (Influx datatype long; in IPC mode, JSON ints),
   (b) QP's PROCESS.constant() (ric-app-qp@47a35ca src/qptrain.py:81-92, reproduced below) is
       False on the window's [UL, DL] frame, i.e. at least 10 distinct (UL, DL) rows survive, and
@@ -26,8 +26,8 @@ import sys
 
 import pandas as pd
 
-UL, DL = "DRB.PdcpSduVolumeUL", "DRB.PdcpSduVolumeDL"
-THPTPARAM = [UL, DL]  # QP's db.thptparam under the G1 mapping (QP inputs = the two PDCP SDU rows)
+UL, DL = "DRB.PdcpSduVolumeX2UL", "DRB.PdcpSduVolumeX2DL"
+THPTPARAM = [UL, DL]  # QP's db.thptparam under the G1 mapping (QP inputs = the two X2 PDCP SDU volume rows)
 WIN = 16
 
 

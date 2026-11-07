@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """n4-drop-selftest.py: fixtures for digest-run.py --n4-ul-off-drop.
 
-A UL-off run that carries the two gNB CU-UP PDCP SDU volume keys must digest equal to the
-same run without them, and every broken precondition must make the comparison fail:
-a missing key, UL = 1, DL never positive, a float, an extra key, a reference that carries
-the keys, and an eNB sample that carries one. Exit 0 only if every case behaves.
+A UL-off run that carries the four gNB CU-UP PDCP SDU volume keys (UL, DL, X2UL, X2DL) must
+digest equal to the same run without them, and every broken precondition must make the
+comparison fail: a missing key (own or X2), UL, DL or X2UL not 0, X2DL never positive, a float,
+an extra key, a reference that carries the keys, and an eNB sample or UE section that carries
+one. Exit 0 only if every case behaves.
 """
 import copy
 import json
@@ -15,6 +16,7 @@ import tempfile
 
 HERE = pathlib.Path(__file__).resolve().parent
 UL, DL = "DRB.PdcpSduVolumeUL", "DRB.PdcpSduVolumeDL"
+X2UL, X2DL = "DRB.PdcpSduVolumeX2UL", "DRB.PdcpSduVolumeX2DL"
 
 
 def hello(node, kind):
@@ -34,10 +36,10 @@ def base():
             2: [hello(2, "gnb"), sample(2, 1, {}), sample(2, 2, {})]}
 
 
-def with_keys(dl=(0, 8371)):
+def with_keys(x2dl=(0, 8371)):
     run = base()
-    for msg, v in zip(run[2][1:], dl):
-        msg["cell"]["cuUp"] = {UL: 0, DL: v}
+    for msg, v in zip(run[2][1:], x2dl):
+        msg["cell"]["cuUp"] = {UL: 0, DL: 0, X2UL: 0, X2DL: v}
     return run
 
 
@@ -66,11 +68,15 @@ def mutate(fn):
 
 
 CASES = [
-    ("pass: both keys, UL 0, DL > 0", base(), with_keys(), 0),
+    ("pass: all four keys, UL, DL and X2UL 0, X2DL > 0", base(), with_keys(), 0),
     ("fail: a missing key", base(), mutate(lambda r: r[2][1]["cell"]["cuUp"].pop(UL)), 1),
+    ("fail: a missing X2 key", base(), mutate(lambda r: r[2][1]["cell"]["cuUp"].pop(X2UL)), 1),
     ("fail: UL = 1", base(), mutate(lambda r: r[2][2]["cell"]["cuUp"].update({UL: 1})), 1),
-    ("fail: DL never positive", base(), with_keys(dl=(0, 0)), 1),
-    ("fail: DL as a float", base(), mutate(lambda r: r[2][2]["cell"]["cuUp"].update({DL: 8371.0})), 1),
+    ("fail: DL != 0", base(), mutate(lambda r: r[2][2]["cell"]["cuUp"].update({DL: 8371})), 1),
+    ("fail: X2UL = 1", base(), mutate(lambda r: r[2][2]["cell"]["cuUp"].update({X2UL: 1})), 1),
+    ("fail: X2DL never positive", base(), with_keys(x2dl=(0, 0)), 1),
+    ("fail: X2DL as a float", base(), mutate(lambda r: r[2][2]["cell"]["cuUp"].update({X2DL: 8371.0})), 1),
+    ("fail: DL as the float 0.0", base(), mutate(lambda r: r[2][2]["cell"]["cuUp"].update({DL: 0.0})), 1),
     ("fail: an extra key", base(), mutate(lambda r: r[2][2]["cell"]["cuUp"].update({"DRB.Other": 1})), 1),
     ("fail: the reference carries the keys", with_keys(), with_keys(), 1),
     ("fail: an eNB sample carries a key", base(), mutate(lambda r: r[1][1]["cell"]["cuUp"].update({DL: 1})), 1),

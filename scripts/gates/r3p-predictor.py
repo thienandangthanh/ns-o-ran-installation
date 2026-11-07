@@ -3,7 +3,7 @@
 
 It reads only a window file that check-n6-influx-window.py certified (integers from Influx, never a second
 read): {"T", "imsi", "cells": {"<node>": {"<seq>": dl}}, "membership": {"<imsi>": node}, "pass": true}.
-Per gNB cell the answer is the sum of DRB.PdcpSduVolumeDL over [T-15, T]; UL is 0; the serving cell (the
+Per gNB cell the answer is the sum of DRB.PdcpSduVolumeX2DL over [T-15, T]; UL is 0; the serving cell (the
 gNB listing the IMSI at T) comes first, then the others by ascending nodeId; keys are the TS xApp cell keys
 "%08X10" (NR Cell Identity = gNB ID and cell part 1, then the APER pad digit 0), uppercase.
 The decision mirrors the TS xApp (hand over iff 100 x best other > (100 + threshold) x serving).

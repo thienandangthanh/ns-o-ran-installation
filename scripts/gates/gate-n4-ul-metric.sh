@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
-# Gate N4 (VM side): the gNB cells' DRB.PdcpSduVolumeUL/DL, no RIC. Two free runs in the rung radio config
+# Gate N4 (VM side): the en-gNB cells' PDCP SDU volumes in cell.cuUp, no RIC: DRB.PdcpSduVolumeX2UL/X2DL, counted at
+# the en-gNB's X2-U boundary, and DRB.PdcpSduVolumeUL/DL, which are 0. Two free runs in the rung radio config
 # (agents' IPC goes to the null sink) at the pins.conf ns-3 and oran-interface SHAs:
 #   uloff  UL traffic off: equal to the UL-off reference REF (the last free-run at the pre-N4 pins, K19) on the
-#          ns-3 traces and on the IPC samples after the strict drop of exactly the two new cuUp keys
+#          ns-3 traces and on the IPC samples after the strict drop of exactly the four gNB cuUp PDCP SDU volume keys
 #          (digest-run.py --n4-ul-off-drop); same trace file names; no N4AUDIT line; provenance at the pins.
-#   ulon   UL traffic on (--enableUlTraffic, pattern from --ul-pattern): the per-PDU audit judges both counters
+#   ulon   UL traffic on (--enableUlTraffic, pattern from --ul-pattern): the per-PDU audit judges the counters
 #          (check-pdcp-volume-totals.py, V3), and the UL flag creates no RandomVariable: ues.txt, enbs.txt,
 #          CellIdStats.txt and MmWaveSwitchStats.txt equal uloff's, and X2Stats.txt lines before 0.1 s too.
+#
+# --part v3: the same uloff and ulon free runs with the rung radio config's own UL pattern and RngRun, judged by
+# everything above except the comparison with a reference: no-audit on uloff, V3 and the no-RandomVariable check on
+# ulon. The reference-equality checks it does not evaluate are recorded as the fact notEvaluated.
 # The V5 window rule needs pandas and runs on the host on the archived ulon IPC trace.
 #
 # --part dump (K18, step 7): one null-control lock-step run in the same config with UL on, through the agents
@@ -31,6 +36,7 @@
 #   gate-n4-ul-metric.sh --part dump --cal <VM dir of the ulon calibration run> [--ul-pattern constant|steps] [--dev]
 #   gate-n4-ul-metric.sh --part determinism [--dev]
 #   gate-n4-ul-metric.sh --part identity [--dev]
+#   gate-n4-ul-metric.sh --part v3 [--dev]
 # shellcheck disable=SC2034  # EPOCH_MS, SINK, PACER, CLI, SINKX, PACERX, PACER_PORT, T_GATE_S and T_CTL_S are read by paced-lib.sh
 source "$(dirname "$0")/lib.sh"
 gate_init n4
@@ -52,16 +58,19 @@ while [ $# -gt 0 ]; do
     esac
 done
 case "$PATTERN" in constant|steps) ;; *) log "bad --ul-pattern $PATTERN"; exit 2 ;; esac
-case "$PART" in v23|determinism|identity) ;; dump) source "$(dirname "$0")/rc-lib.sh"; source "$(dirname "$0")/influx-dump.sh" ;;
+case "$PART" in v23|determinism|identity|v3) ;; dump) source "$(dirname "$0")/rc-lib.sh"; source "$(dirname "$0")/influx-dump.sh" ;;
     *) log "bad --part $PART"; exit 2 ;; esac
 e="$EVIDENCE_DIR"; RUNS="$e/runs"; mkdir -p "$RUNS"
 CFG="$HARNESS_DIR/scripts/gates/rung-config.py"
-# determinism runs the rung radio config's own UL pattern and RngRun, the values the byte-identity runs reuse
-if [ "$PART" = determinism ] || [ "$PART" = identity ]; then
+# determinism runs the rung radio config's own UL pattern and RngRun, the values the byte-identity and v3 runs reuse
+RUN_RNG=1
+if [ "$PART" = determinism ] || [ "$PART" = identity ] || [ "$PART" = v3 ]; then
     [ "$PATTERN_SET" = 0 ] || { log "--part $PART takes its UL pattern from rung-config.json, not --ul-pattern"; exit 2; }
+    [ "$PART" != v3 ] || [ -z "$REF" ] || { log "--part v3 compares no reference: --ref is refused"; exit 2; }
     PATTERN=$(python3 -I "$CFG" get ul_rate.value.pattern); RNG=$(python3 -I "$CFG" get scenario.RngRun)
     case "$PATTERN" in constant|steps) ;; *) log "bad rung-config ul_rate pattern '$PATTERN'"; exit 2 ;; esac
     [[ "$RNG" =~ ^[0-9]+$ ]] || { log "bad rung-config scenario.RngRun '$RNG'"; exit 2; }
+    RUN_RNG=$RNG
 fi
 EPOCH_MS=$(python3 -I "$CFG" get scenario.simStartEpochMs)
 THRESH=$(python3 -I "$CFG" get scenario.outageThreshold_dB)
@@ -126,7 +135,7 @@ no_stray() {
 if [ "$PART" = dump ]; then
     NODES="enb:1,gnb:2,gnb:3"; rd="$RUNS/dump"
     rm -rf "$rd"; mkdir -p "$rd/ns3run" "$rd/trace"
-    cal_ok() { [ -d "$CAL/trace" ] && grep -q '^N4AUDIT v1' "$CAL/ns3run/stdout.txt" && echo "calibration run $CAL is UL on"; }
+    cal_ok() { [ -d "$CAL/trace" ] && grep -q '^N4AUDIT v2' "$CAL/ns3run/stdout.txt" && echo "calibration run $CAL is UL on"; }
     check n4_dump_calibration_run_present cal_ok
     check n4_dump_nist_tree_at_testbed_sha agents_tree_at_testbed_sha
     check n4_dump_sctp_module_loaded agents_sctp_module
@@ -387,9 +396,10 @@ if [ "$PART" = determinism ]; then
 fi
 
 ################################################################################
-# uloff: V2
+# uloff: V2 (v3: no reference comparison)
 ################################################################################
-check n4_uloff_free_run paced_null_run uloff free 0 --RngRun=1
+[ "$PART" = v3 ] && fact rngRun "$RNG"
+check n4_uloff_free_run paced_null_run uloff free 0 "--RngRun=$RUN_RNG"
 check n4_uloff_emitter_at_pins emitter_at_pins uloff
 v2() {
     python3 -I "$G/digest-run.py" --compare --components ipc,traces --n4-ul-off-drop REF=absent,CAND=present \
@@ -398,26 +408,32 @@ v2() {
     python3 -I -c 'import json,sys; d=json.load(open(sys.argv[1])); print("all_equal", d["all_equal"], json.dumps(d.get("n4Drop")))' "$e/v2-digests.json"
     return $rc
 }
-check n4_v2_uloff_equals_reference_after_the_strict_drop v2
-fact v2Digests "$(cat "$e/v2-digests.json" 2>/dev/null || echo null)"
 same_trace_names() {
     names() { find "$1" -maxdepth 1 -type f ! -name stdout.txt ! -name stderr.txt -printf '%f\n' | sort; }
     diff <(names "$REF/ns3run") <(names "$RUNS/uloff/ns3run") &&
         diff <(cd "$REF/trace" && ls) <(cd "$RUNS/uloff/trace" && ls) && echo "same trace file names"
 }
-check n4_v2_same_trace_file_names same_trace_names
+if [ "$PART" = v23 ]; then
+    check n4_v2_uloff_equals_reference_after_the_strict_drop v2
+    fact v2Digests "$(cat "$e/v2-digests.json" 2>/dev/null || echo null)"
+    check n4_v2_same_trace_file_names same_trace_names
+else
+    NOT_EVALUATED='["n4_reference_is_a_pre_n4_free_run","n4_v2_uloff_equals_reference_after_the_strict_drop","n4_v2_same_trace_file_names"]'
+    record n4_v3_reference_equality_not_evaluated true "no reference is compared; not evaluated: $NOT_EVALUATED"
+    fact notEvaluated "$NOT_EVALUATED"
+fi
 no_audit() { local n; n=$(grep -c '^N4AUDIT' "$RUNS/uloff/ns3run/stdout.txt"); echo "N4AUDIT lines: $n"; [ "$n" = 0 ]; }
 check n4_v2_uloff_prints_no_audit no_audit
 
 ################################################################################
 # ulon: V3 and the no-RandomVariable check
 ################################################################################
-check n4_ulon_free_run paced_null_run ulon free 0 --RngRun=1 --enableUlTraffic=true "--ulTrafficPattern=$PATTERN"
+check n4_ulon_free_run paced_null_run ulon free 0 "--RngRun=$RUN_RNG" --enableUlTraffic=true "--ulTrafficPattern=$PATTERN"
 check n4_ulon_emitter_at_pins emitter_at_pins ulon
 v3() {
     python3 -I "$G/check-pdcp-volume-totals.py" "$RUNS/ulon" --sim-time-s "$SIM_TIME_S" >"$e/v3.json"
     local rc=$?
-    python3 -I -c 'import json,sys; d=json.load(open(sys.argv[1])); print({k: d[k] for k in ("a1","a2","a3","a4","a5","perCellMaxErrBits","periodSumMaxErrKbit","ties","overlaps","events","gnbSamples")})' "$e/v3.json"
+    python3 -I -c 'import json,sys; d=json.load(open(sys.argv[1])); print({k: d[k] for k in ("a0","a1","a2","a3","a4","a5","a6","a7","a8","perCellMaxErrBits","periodSumMaxErrKbit","ties","residualBits","badCellRefs","malformedAuditLines","legCounts","x2ulEvents","forwardedEvents","conservation","lateSenderEvents","mnEvents","x2Events","gnbSamples")})' "$e/v3.json"
     return $rc
 }
 check n4_v3_counters_equal_the_pdcp_audit v3
