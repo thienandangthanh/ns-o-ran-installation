@@ -1,0 +1,1 @@
+Mutation (host tree, not committed): lte-rlc-forwarding-buffer.cc:192 "if (!removePdcpHeader && ..." -> "if (false && !removePdcpHeader && ...". Built with cmake --build cmake-cache --target test-runner; ./test.py -n -s mc-pdcp-nr-header --text. Restored, rebuilt, re-run green (mc-pdcp-nr-header-green.txt). 2026-11-07 KST.

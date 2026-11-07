@@ -29,3 +29,11 @@ The non-blocking consensus rulings listed for review on the explainer page (coun
 2. Lint must report 0 findings. Commit forks: ns-3 (tail fix, then P9), oran-interface, replace the `@UNCOMMITTED` refs with SHAs, Testbed, then the harness pin.
 3. Check `df` (≥ 34 GiB on /home for the kpimon rebuild), then run the P10 chain from a frozen checkout: steps 2–7, then 14, then 10.
 4. Record, archive the raw evidence to /mnt/data, remove the host build tree `/home/andang/ns3-p9-910ba118`, then continue with P15.
+
+## Design check (2026-11-07 21:55 KST, brainstormer on Opus, read-only)
+
+- **Rule as implemented:** on the whole-PDU forward only (`removePdcpHeader == false`, which only the S-SN forward passes), a packet whose `LteRlcSduStatusTag` is present and not FULL_SDU is dropped before the D/C test; a packet with no status tag keeps the D/C test.
+- **Why this is the ruling, not a change to it:** on every path our scenarios reach (RLC UM low latency; `RlcAmEnabled` is false), every buffered packet carries a status tag, so this rule and the literal "forward only FULL_SDU" behave identically. They differ only for RLC AM SDUs reassembled from unacknowledged PDUs, which carry no status tag (`Packet::AddAtEnd` keeps no packet tags) and are whole PDUs; dropping them would contradict the ruling's goal and turn the AM whole-PDU suite cases red. Verdict: implementation detail, no new user ruling.
+- **Scope switch:** tied to the existing `removePdcpHeader` flag, with no new parameter, because a tail forwarded as a PDCP PDU is never valid; the SDU-path follow-up needs a different remedy (re-submission, not a drop).
+- **Tests tightened per the check:** tail ≥ 3 octets, the one MAC PDU carries A's head, byte count 0 after the whole-PDU delivery. Suite green, and removing the tag test turns case (i) red (2 packets delivered instead of 1): `plans/261103-0008-GH-1-post-m9-realism-m10/evidence/p10-um-tail/`.
+- **ns-3 commit:** `1f1fa3d3` on `dev/l-release-nist180`, directly on `4318e43b`, before the P9 commits.
