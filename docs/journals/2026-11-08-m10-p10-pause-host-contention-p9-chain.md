@@ -20,3 +20,7 @@ How to get a host on which the VM's etcd stays responsive:
 3. **Relax the VM entry condition** (for example, allow a settling period after the revert before the 5-min etcd window). This changes a rule set before the run, so it is yours to decide.
 
 The VM is up on the fresh `f7-rerun-green` overlay and idle. The frozen checkout `~/.cache/ns-o-ran-frozen-harness/e86f1d08…` stays locked. Nothing else is in flight.
+
+## User ruling (2026-11-08 02:01 KST)
+
+Option 2, a quiet window. Wait until the Rust session in `dfm-devices-firmware` (docs-update-docs-extract-architecture) has finished its Phase 4 (characterization tests). The signal is its `executor-*-phase-04-*.md` report. Then resume the guided re-run with the entry conditions and caps unchanged. At 02:01 the host showed io full avg300 61 % with that session's `cargo test` running, swap 9 GiB, and MemAvailable 19 GiB.
