@@ -37,6 +37,10 @@ blocks:
   - type: section
     title: "The analogy: a parcel cut in two"
     blocks:
+      - type: image
+        src: p9-um-tail-parcel-analogy.svg
+        alt: "Four panels: a depot cuts a parcel and shelves the unlabelled tail; the shelf is handed to Depot B and the clerk checks only the first corner; a tail that looks labelled is logged 2 B short (the gap); option a-narrow reads the sticker first."
+        caption: "Orange = the label (PDCP header). Yellow = the 'last piece' sticker (LteRlcSduStatusTag). Blue monospace = where it lives in the system."
       - type: rich-text
         text: |
           Keep the parcel service from the earlier page. The main post office (the LTE eNB) stamps every parcel with a label (the PDCP header) and sends some of them over the courier road (X2) to an express depot (an en-gNB). The depot's van carries them to the house. A parcel too big for the van's next trip is cut: the first piece, with the label, goes now; the rest waits at the front of the depot's shelf.

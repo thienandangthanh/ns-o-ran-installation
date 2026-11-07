@@ -1,0 +1,236 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1600" width="1200" height="1600" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title>The parcel analogy for the forwarded RLC UM tail, in four panels</title>
+  <style>
+    .panel { fill: #fffdf8; stroke: #d8d0c0; stroke-width: 1.5; }
+    .h { font-size: 22px; font-weight: 700; fill: #2a2622; }
+    .t { font-size: 16px; fill: #2a2622; }
+    .tb { font-size: 16px; font-weight: 700; fill: #2a2622; }
+    .s { font-size: 13px; fill: #22598c; font-family: ui-monospace, 'JetBrains Mono', Menlo, monospace; }
+    .note { font-size: 15px; fill: #4a443c; font-style: italic; }
+    .bad { fill: #b8322a; }
+    .good { fill: #2a7a4b; }
+    .grey { fill: #7a746c; }
+    .bld { fill: #efe6d6; stroke: #6b5a44; stroke-width: 2; }
+    .roof { fill: #b9876a; stroke: #6b5a44; stroke-width: 2; }
+    .box { fill: #d9b77e; stroke: #7d5e30; stroke-width: 2; }
+    .lbl { fill: #e8833a; stroke: #7d5e30; stroke-width: 2; }
+    .stk { fill: #ffe66b; stroke: #a08a1c; stroke-width: 1.5; }
+    .road { stroke: #8f8a82; stroke-width: 5; fill: none; }
+    .arr { stroke: #4a443c; stroke-width: 2.5; fill: none; marker-end: url(#ah); }
+    .arrR { stroke: #b8322a; stroke-width: 2.5; fill: none; marker-end: url(#ahR); }
+    .arrG { stroke: #2a7a4b; stroke-width: 2.5; fill: none; marker-end: url(#ahG); }
+    .arrX { stroke: #7a746c; stroke-width: 2.5; fill: none; stroke-dasharray: 6 5; marker-end: url(#ahX); }
+    .ink { stroke: #2a2622; stroke-width: 2.5; fill: none; stroke-linecap: round; }
+    .shelf { stroke: #6b5a44; stroke-width: 3; }
+    .cut { stroke: #b8322a; stroke-width: 2.5; stroke-dasharray: 6 4; }
+    .notebox { fill: #f4efe4; stroke: #d8d0c0; }
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4a443c"/></marker>
+    <marker id="ahR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b8322a"/></marker>
+    <marker id="ahG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a7a4b"/></marker>
+    <marker id="ahX" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a746c"/></marker>
+    <!-- a whole parcel: orange label (PDCP header) + contents -->
+    <g id="parcel"><rect class="box" x="0" y="0" width="56" height="30" rx="2"/><rect class="lbl" x="0" y="0" width="14" height="30" rx="2"/><text x="7" y="20" font-size="12" font-weight="700" text-anchor="middle" fill="#fff">H</text></g>
+    <!-- a tail piece: contents only, with the yellow "last piece" sticker (status tag) -->
+    <g id="tail"><rect class="box" x="0" y="0" width="40" height="30" rx="2"/><rect class="stk" x="18" y="-8" width="26" height="14" transform="rotate(12 31 -1)"/></g>
+    <!-- a building at the origin, 190 wide -->
+    <g id="bld"><rect class="bld" x="0" y="40" width="190" height="130"/><polygon class="roof" points="-10,40 95,0 200,40"/><rect fill="#8a6f52" x="78" y="110" width="34" height="60"/></g>
+    <g id="clerk"><circle cx="0" cy="0" r="15" class="ink" fill="#fffdf8"/><line class="ink" x1="0" y1="15" x2="0" y2="62"/><line class="ink" x1="0" y1="62" x2="-14" y2="95"/><line class="ink" x1="0" y1="62" x2="14" y2="95"/><line class="ink" x1="0" y1="30" x2="22" y2="44"/><line class="ink" x1="0" y1="30" x2="-34" y2="48"/></g>
+    <g id="glass"><circle cx="0" cy="0" r="15" fill="#dcecf7" fill-opacity="0.6" stroke="#2a2622" stroke-width="3"/><line x1="10" y1="11" x2="24" y2="25" stroke="#2a2622" stroke-width="5" stroke-linecap="round"/></g>
+    <g id="bin"><polygon points="0,0 40,0 34,46 6,46" fill="#cfc8bc" stroke="#4a443c" stroke-width="2"/><line x1="-4" y1="0" x2="44" y2="0" stroke="#4a443c" stroke-width="3"/></g>
+  </defs>
+
+  <rect width="1200" height="1600" fill="#f7f2e8"/>
+
+  <!-- ============ PANEL 1 ============ -->
+  <rect class="panel" x="20" y="20" width="1160" height="380" rx="14"/>
+  <text class="h" x="44" y="56">① Depot A cuts a parcel that is too big for the van's next trip</text>
+
+  <use href="#bld" x="40" y="110"/>
+  <text x="135" y="168" font-size="13" font-weight="700" text-anchor="middle" fill="#6b5a44">POST OFFICE</text>
+  <use href="#parcel" x="62" y="245"/>
+  <text class="tb" x="135" y="308" text-anchor="middle">Main post office</text>
+  <text class="s" x="135" y="327" text-anchor="middle">LTE eNB (master node)</text>
+  <text class="s" x="135" y="344" text-anchor="middle">label = PDCP header (2 B)</text>
+
+  <line class="road" x1="240" y1="250" x2="390" y2="250"/>
+  <path class="arr" d="M245,250 L392,250"/>
+  <text class="t" x="316" y="238" text-anchor="middle">courier road</text>
+  <text class="s" x="316" y="272" text-anchor="middle">X2-U</text>
+
+  <use href="#bld" x="410" y="110"/>
+  <text x="505" y="168" font-size="13" font-weight="700" text-anchor="middle" fill="#6b5a44">DEPOT A</text>
+  <line class="shelf" x1="420" y1="210" x2="590" y2="210"/>
+  <use href="#tail" x="424" y="180"/>
+  <g transform="translate(470 180) scale(0.9)"><use href="#parcel"/></g>
+  <g transform="translate(526 180) scale(0.9)"><use href="#parcel"/></g>
+  <text x="444" y="226" font-size="11" text-anchor="middle" fill="#6b5a44">front</text>
+  <text class="tb" x="505" y="308" text-anchor="middle">Express depot A</text>
+  <text class="s" x="505" y="327" text-anchor="middle">en-gNB A (secondary node)</text>
+  <text class="s" x="505" y="344" text-anchor="middle">shelf = RLC UM TX buffer</text>
+
+  <!-- the big parcel being cut -->
+  <rect class="box" x="640" y="170" width="230" height="56" rx="3"/>
+  <rect class="lbl" x="640" y="170" width="22" height="56" rx="3"/>
+  <text x="651" y="203" font-size="14" font-weight="700" text-anchor="middle" fill="#fff">H</text>
+  <line class="cut" x1="775" y1="158" x2="775" y2="238"/>
+  <text x="775" y="154" font-size="20" text-anchor="middle" fill="#b8322a">✂</text>
+  <text class="t" x="715" y="204" text-anchor="middle">piece 1</text>
+  <text class="t" x="822" y="204" text-anchor="middle">tail</text>
+  <text class="t" x="755" y="256" text-anchor="middle">too big for the van → cut in two</text>
+  <text class="s" x="755" y="275" text-anchor="middle">RLC UM segmentation</text>
+
+  <!-- the tail goes back to the front of the shelf -->
+  <path class="arrR" d="M822,166 C822,106 470,102 446,172"/>
+  <text class="t bad" x="640" y="80" text-anchor="middle">the unsent tail goes back to the FRONT of Depot A's shelf</text>
+  <text class="s" x="640" y="98" text-anchor="middle">head of TX buffer · lte-rlc-um-lowlat.cc:274-282</text>
+
+  <!-- van with piece 1 to the house -->
+  <path class="arr" d="M875,198 L900,198"/>
+  <rect x="905" y="172" width="90" height="48" rx="4" fill="#ffffff" stroke="#4a443c" stroke-width="2"/>
+  <path d="M995,184 L1022,184 L1034,204 L1034,220 L995,220 z" fill="#ffffff" stroke="#4a443c" stroke-width="2"/>
+  <circle cx="928" cy="224" r="9" fill="#4a443c"/><circle cx="1012" cy="224" r="9" fill="#4a443c"/>
+  <rect class="box" x="922" y="182" width="50" height="26" rx="2"/><rect class="lbl" x="922" y="182" width="12" height="26" rx="2"/>
+  <path class="arr" d="M1040,200 L1068,200"/>
+  <rect class="bld" x="1078" y="180" width="70" height="50"/><polygon class="roof" points="1070,180 1113,148 1156,180"/>
+  <text class="tb" x="960" y="256" text-anchor="middle">van trip</text>
+  <text class="s" x="960" y="275" text-anchor="middle">one radio transmission</text>
+  <text class="tb" x="1113" y="256" text-anchor="middle">House</text>
+  <text class="s" x="1113" y="275" text-anchor="middle">UE</text>
+
+  <rect class="notebox" x="620" y="300" width="540" height="82" rx="8"/>
+  <use href="#tail" x="636" y="322"/>
+  <text class="note" x="694" y="328">The tail has no label of its own. ns-3 does stick</text>
+  <text class="note" x="694" y="348">a yellow "last piece" sticker on it</text>
+  <text class="s" x="694" y="370">LteRlcSduStatusTag = LAST_SEGMENT  (matters in ④)</text>
+
+  <!-- ============ PANEL 2 ============ -->
+  <rect class="panel" x="20" y="420" width="1160" height="380" rx="14"/>
+  <text class="h" x="44" y="456">② The house moves to Depot B's area: Depot A hands its whole shelf to Depot B</text>
+
+  <use href="#bld" x="40" y="500"/>
+  <text x="135" y="558" font-size="13" font-weight="700" text-anchor="middle" fill="#6b5a44">DEPOT A</text>
+  <line class="shelf" x1="50" y1="600" x2="220" y2="600"/>
+  <g transform="translate(110 570) scale(0.9)"><use href="#parcel"/></g>
+  <g transform="translate(166 570) scale(0.9)"><use href="#parcel"/></g>
+  <text class="tb" x="135" y="700" text-anchor="middle">Depot A (old)</text>
+  <text class="s" x="135" y="719" text-anchor="middle">en-gNB A, old secondary node</text>
+
+  <path class="arr" d="M240,620 L400,620"/>
+  <text class="t" x="320" y="606" text-anchor="middle">whole shelf</text>
+  <text class="t" x="320" y="645" text-anchor="middle">handed over</text>
+
+  <!-- the clerk examining the tail's first corner -->
+  <use href="#tail" x="420" y="604"/>
+  <use href="#glass" x="424" y="606"/>
+  <use href="#clerk" x="500" y="560"/>
+  <path d="M520,520 C540,488 580,478 640,478 L840,478 C870,478 880,490 880,505 C880,522 870,532 840,532 L600,532 C575,532 548,540 528,550 z" fill="#ffffff" stroke="#4a443c" stroke-width="2"/>
+  <text class="t" x="730" y="502" text-anchor="middle">"Does its first corner</text>
+  <text class="t" x="730" y="522" text-anchor="middle">look like a label?"</text>
+  <text class="tb" x="500" y="700" text-anchor="middle">The clerk forwarding the shelf</text>
+  <text class="s" x="500" y="719" text-anchor="middle">DeliverRlcForwardingBuffer</text>
+  <text class="s" x="500" y="736" text-anchor="middle">first-octet D/C-bit test · lte-rlc-forwarding-buffer.cc:190-191</text>
+  <text class="s" x="500" y="753" text-anchor="middle">SN-change forward · lte-enb-rrc.cc:905, :939</text>
+
+  <!-- sticker thrown away -->
+  <use href="#bin" x="610" y="610"/>
+  <path class="arrX" d="M462,598 C520,560 600,566 624,604"/>
+  <rect class="stk" x="618" y="590" width="26" height="14" transform="rotate(-20 631 597)"/>
+  <text class="t grey" x="664" y="630">sticker thrown away</text>
+  <text class="t grey" x="664" y="650">without reading it</text>
+  <text class="s" x="664" y="668">tag stripped · …:194</text>
+
+  <path class="arr" d="M820,620 L955,620"/>
+  <text class="t" x="888" y="606" text-anchor="middle">passed on</text>
+
+  <use href="#bld" x="970" y="500"/>
+  <text x="1065" y="558" font-size="13" font-weight="700" text-anchor="middle" fill="#6b5a44">DEPOT B</text>
+  <rect x="1035" y="582" width="60" height="40" fill="#ffffff" stroke="#4a443c" stroke-width="2"/>
+  <line x1="1043" y1="594" x2="1087" y2="594" stroke="#9a9488"/><line x1="1043" y1="604" x2="1087" y2="604" stroke="#9a9488"/><line x1="1043" y1="614" x2="1077" y2="614" stroke="#9a9488"/>
+  <text class="tb" x="1065" y="700" text-anchor="middle">Depot B (new) + logbook</text>
+  <text class="s" x="1065" y="719" text-anchor="middle">en-gNB B, new secondary node</text>
+  <text class="s" x="1065" y="736" text-anchor="middle">logbook = DRB.PdcpSduVolumeX2DL</text>
+
+  <text class="note" x="44" y="784">A real label always passes the corner check. The tail has none, so what happens depends on what its first byte happens to contain → ③</text>
+
+  <!-- ============ PANEL 3 ============ -->
+  <rect class="panel" x="20" y="820" width="1160" height="400" rx="14"/>
+  <text class="h" x="44" y="856">③ What Depot B's logbook records (the logbook always subtracts 2 B for the label)</text>
+
+  <text class="tb" x="60" y="892">Item arriving</text>
+  <text class="tb" x="330" y="892">Corner check</text>
+  <text class="tb" x="640" y="892">Logbook entry</text>
+  <line x1="44" y1="902" x2="1156" y2="902" stroke="#d8d0c0" stroke-width="1.5"/>
+
+  <!-- row A: whole parcel -->
+  <rect class="box" x="60" y="920" width="160" height="40" rx="2"/><rect class="lbl" x="60" y="920" width="20" height="40" rx="2"/>
+  <text x="70" y="946" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">H</text>
+  <text class="t" x="150" y="946" text-anchor="middle">contents</text>
+  <text class="s" x="60" y="978">whole parcel: 2 B label + 100 B</text>
+  <path class="arrG" d="M240,940 L310,940"/>
+  <text class="t good" x="330" y="946">real label ✓ → passed</text>
+  <path class="arrG" d="M540,940 L620,940"/>
+  <text class="t" x="640" y="937">102 B − 2 B label = <tspan class="good" font-weight="700">100 B ✓ correct</tspan></text>
+  <text class="s" x="640" y="956">every byte of contents counted</text>
+
+  <!-- row B: tail whose first byte looks like a label -->
+  <rect x="44" y="990" width="1112" height="96" rx="8" fill="#fbe9e6" stroke="#e3b2ab"/>
+  <rect class="box" x="60" y="1010" width="110" height="40" rx="2"/>
+  <rect x="60" y="1010" width="20" height="40" fill="#e8833a" fill-opacity="0.35" stroke="#b8322a" stroke-width="2" stroke-dasharray="4 3"/>
+  <text x="70" y="1036" font-size="13" font-weight="700" text-anchor="middle" fill="#b8322a">?</text>
+  <text class="t" x="125" y="1036" text-anchor="middle">tail</text>
+  <text class="s" x="60" y="1068">tail: 50 B, all contents</text>
+  <path class="arrR" d="M240,1030 L310,1030"/>
+  <text class="t bad" x="330" y="1026">first byte's top bit = 1</text>
+  <text class="t bad" x="330" y="1046">"looks like a label" → passed</text>
+  <path class="arrR" d="M540,1030 L620,1030"/>
+  <text class="t" x="640" y="1026">50 B − 2 B "label" = <tspan class="bad" font-weight="700">48 B ✗  2 B (16 bits) short</tspan></text>
+  <text class="s" x="640" y="1046">the "label" was real contents; the counter loses it</text>
+  <rect x="640" y="1056" width="300" height="24" rx="12" fill="#b8322a"/>
+  <text x="790" y="1073" font-size="14" font-weight="700" text-anchor="middle" fill="#fff">THE GAP: this decision is about it</text>
+
+  <!-- row C: tail whose first byte does not look like a label -->
+  <rect class="box" x="60" y="1110" width="110" height="40" rx="2"/>
+  <text class="t" x="115" y="1136" text-anchor="middle">tail</text>
+  <text class="s" x="60" y="1168">first byte's top bit = 0</text>
+  <path class="arrX" d="M240,1130 L310,1130"/>
+  <text class="t grey" x="330" y="1126">"no label" → dropped</text>
+  <text class="t grey" x="330" y="1146">into the bin, silently</text>
+  <use href="#bin" x="555" y="1106"/>
+  <text class="t grey" x="640" y="1126">nothing logged, nothing delivered</text>
+  <text class="s" x="640" y="1146">separate, recorded data-loss defect; not this decision</text>
+
+  <text class="note" x="44" y="1200">Your rule R1: a 3GPP-named counter may be late, never wrong in value. Row B is a value error → a gap. At most one tail per RLC entity per SN change; only R3′ runs.</text>
+
+  <!-- ============ PANEL 4 ============ -->
+  <rect class="panel" x="20" y="1240" width="1160" height="340" rx="14"/>
+  <text class="h" x="44" y="1276">④ Option (a-narrow): the clerk reads the sticker BEFORE looking at the corner</text>
+
+  <use href="#tail" x="70" y="1340"/>
+  <rect class="stk" x="96" y="1326" width="44" height="22" transform="rotate(12 118 1337)"/>
+  <use href="#glass" x="122" y="1330"/>
+  <use href="#clerk" x="200" y="1310"/>
+
+  <rect x="270" y="1300" width="190" height="64" rx="10" fill="#ffffff" stroke="#4a443c" stroke-width="2"/>
+  <text class="tb" x="365" y="1327" text-anchor="middle">sticker says</text>
+  <text class="tb" x="365" y="1349" text-anchor="middle">"whole parcel"?</text>
+  <text class="s" x="365" y="1384" text-anchor="middle">FULL_SDU tag test</text>
+
+  <path class="arrG" d="M460,1316 L540,1300"/>
+  <text class="tb good" x="556" y="1298">yes</text>
+  <text class="t" x="600" y="1298">→ corner check, pass on, log: <tspan class="good" font-weight="700">correct ✓</tspan></text>
+
+  <path class="arrR" d="M460,1350 L540,1372"/>
+  <text class="tb bad" x="556" y="1378">no, a piece</text>
+  <text class="t" x="660" y="1378">→ not passed on as a parcel, so it is <tspan font-weight="700">never logged wrong</tspan></text>
+  <text class="s" x="660" y="1398">(delivering such tails properly stays a recorded follow-up)</text>
+
+  <text class="s" x="44" y="1430">where: S-SN secondary-cell forward only (forwardPdcpPdus · lte-enb-rrc.cc:939), in its own ns-3 commit right before P9</text>
+
+  <rect class="notebox" x="44" y="1448" width="1112" height="116" rx="8"/>
+  <text class="tb" x="60" y="1474">The other options in the same picture</text>
+  <text class="t" x="60" y="1500"><tspan font-weight="700">(a-wide)</tspan>  the same sticker check at every hand-over, also LTE↔mmWave switches (:1483, :1903); changes row 149's counts.</text>
+  <text class="t" x="60" y="1524"><tspan font-weight="700">(b)</tspan>  the clerk stays as is; the registry says "the logbook may read up to 2 B low per handed-over tail".</text>
+  <text class="t" x="60" y="1548"><tspan font-weight="700">(c)</tspan>  rename the logbook to an ns3.* vendor name, so it no longer claims the 3GPP definition.</text>
+</svg>
