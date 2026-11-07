@@ -303,6 +303,21 @@ These are observations only, with no ledger rows and no fixes in M10. They sit n
 - **Trigger:** any gate or scenario that enables AM DRBs. Scenarios one, two, three and five set `RlcAmEnabled` from a global; the harness runs only scenario-zero.
 - **P7 hazard:** if P7's step 2(b)/(c) unit tests trip on one of these, it becomes a P7 blocker with its own row and a ruling.
 
+## Follow-up candidate outside M10: RLC UM tail re-submission at LTE↔mmWave switches (consensus 2026-11-07, `decisions-261107-0901` Q2)
+This is an observation only, with no ledger row and no fix in M10. It is pre-existing at `m10-cp2` (6 archived M7 runs at ns-3 `ea6e46f6`), and scenario-zero's UM DRB hits it at every switch. The runtime cause has not been traced.
+1. `ForwardRlcBuffers` copies the `LteRlcUmLowLat` TX buffer (`lte-enb-rrc.cc:1055-1061` @4a0871d6), whose head can be an unsent SDU tail (`lte-rlc-um-lowlat.cc:274-282`). The D/C test (`:1101-1102`) reads the tail's first byte:
+   - **Top bit 0:** the tail is silently dropped as a "control PDU".
+   - **Top bit 1:** two payload bytes are stripped as a "header", and the rest is re-sent as a new SDU with a new SN. These are row 149's short rows.
+   - M6 has 78 switches and no short row, so silent dropping probably dominates [I].
+2. Every re-submitted SDU fires McEnbPdcp TxPDU again (`mc-enb-pdcp.cc:221,238`). The DL PDCP counters that feed KPM (`mmwave-enb-net-device.cc:696-706`, `lte-enb-net-device.cc:1109-1111`) therefore count forwarded SDUs again in the switch epoch.
+   - Example: IMSI 1 has 1663 PDUs against a steady 198 in [0.7, 0.8) s (`m7/20261106T223229Z`).
+   - This matters for P6's PDCP-sourced volume and P9's counters.
+3. The SwitchToLte return goes over two X2 legs (`:2190` → `:2218` → `:5627` → `:1217`), and the gNB→gNB path (`:905` → `ForwardRlcPdu`) forwards the same tails without passing through PDCP [I].
+4. The UE RX PduSize reaches 1904 B (> 1310) in 120 of 5016 rows of switch epochs. This may be a UE reassembly anomaly [unverified].
+
+- **Spec target [to verify in Zotero before citing]:** RLC UM and PDCP re-establishment for UM bearers (38.322 / 38.323).
+- **Trigger:** any realism claim on switch-epoch DL volume or SDU integrity.
+
 ## Pre-registration (2026-11-06; one docs commit before any P10 code after D-R3-1)
 Sources: the user rulings in `plans/reports/decisions-261106-0525-GH-1-p10-pre-registration-questions.md`; kongming `kongming-261106-0500-…` (§7, §9, C.4, C.5) and `kongming-261106-1952-…`; ledger rows 147–161 (`check-diff-ledger.md`); contract Amendment 4.
 - **Commit order (one fix per commit, for P11's bisection):** D-R3-1 (Testbed + harness pair), the neighbour-loop UB fix (Amendment 4, row 159), P6 (row 147), the SN-wrap fix (row 160), P7 (rows 148–150), P9 (rows 151, 152, 161), P15 (rows 153–155), D-06b-1 (row 81 amendment first), the kpimon node tag (row 137), the TS serving cell (rows 138–142, 158), UseIdealRrc (rows 156–157).

@@ -327,3 +327,63 @@ Notes on rows 100 and 101 (2026-11-04, P06b exit review kongming-261104-1958 fin
 - **Outcome (unchanged):** a red equality check stops P10 for a ruling before P7 code. A red a1 = a2 means run nondeterminism; a red a1 = b1 beside a green a1 = a2 means build or layout sensitivity.
 - **P7's (b):** P7 runs uloff and ulon once at its pins and compares each with the a1 manifests of this check, banked in `reference/n4-sn-wrap/` with `SHA256SUMS`, on the same compared set, except the pins and the audit header line (row 150). P7's gate part lands in P7's harness commit.
 - Not weaker: (b) had no mechanism; every condition is new. Contract change: No.
+
+**Row 149, amended before code (2026-11-07, unanimous brainstorm consensus `brainstorm-261107-0901-GH-1-row149-m7-ultra-debate.md`, record `decisions-261107-0901-GH-1-row149-m7-consensus-rulings.md`; additive; the row text above is left unedited).**
+- **File and columns:** verified as drafted at ns-3 4a0871d6.
+  - `DlE2PdcpStats.txt` (`mmwave-helper.cc:3198`); columns found by header name: `start`, `end`, `IMSI`, `LCID`, `nTxPDUs`, `TxBytes` (`mmwave-bearer-stats-calculator.cc:363-366, 438-480`).
+  - Both counters are updated in one `DlTxPdu` call (`:217-218`), at McEnbPdcp's TxPDU after the header is added (`mc-enb-pdcp.cc:221,238`). The one header-add function serves every TX path (`:243-259`).
+  - Both are cleared in one function (`:539-558`), called for E2 from the gNB report loop (`mmwave-enb-net-device.cc:816`), not at epoch end (`:586-590`). That is why steady rows show 198 PDUs, not 200.
+  - So a short row holds a real short PDU, not an epoch artefact.
+  - The PduSize columns are UE RX-side (`:313`) and are not judged.
+  - SDU 1308 = 1280 (`scenario-zero.cc:693`) + 28.
+- **Why:** the registered predicate never held at M7.
+  - All 15 archived M7 runs hold 13–14 LCID-3 rows with TxBytes < nTxPDUs × 1310: 205 rows in total, deficits 1, 7, 25 or 40 octets, identical in every run. That includes 6 runs at the `m10-cp2` ns-3 pin `ea6e46f6`.
+  - Each of the 205 rows has an LTE↔mmWave switch of its IMSI in its own epoch. No row in the 30 M6 and M7 archives is long. The 15 M6 runs hold no short row.
+  - The 15 M7 runs are one deterministic trajectory, i.e. one scenario sample.
+  - **Cause [I, static reading plus the archive pattern; not traced at run time]:** scenario-zero's DRBs run `RLC_UM_LOWLAT_ALWAYS` (`mmwave-helper.cc:2091-2092, 2392`). `LteRlcUmLowLat` puts the unsent tail of a segmented SDU back at the head of its buffer (`lte-rlc-um-lowlat.cc:274-282`). At a switch, `ForwardRlcBuffers` copies that buffer in its LowLat branch (`lte-enb-rrc.cc:1055-1061`). It passes an entry whose first octet has the top bit set (`:1101-1102`), strips two payload octets as a "header" and re-submits the rest to McEnbPdcp (`:1148-1156`), which adds a correct 2-octet header.
+  - Each deficit is a byte offset whose top bit can be 1: 1 = SN[7:0]; 7 = the IPv4 Identification low byte; 25 = the low byte of UDP port 1234 (0xD2, `scenario-zero.cc:690`); 40 = a SeqTs timestamp byte. A header error would shift every row by nTxPDUs octets, not by these constants.
+  - This is independent of the header, and P7 leaves it unchanged.
+- **Predicate** (M6 and M7; LCID-3 rows with nTxPDUs > 0; d = end − start):
+  - A row is a *switch row* when a SwitchToLte or SwitchToMmWave of its IMSI falls in [start − d, end + d). Events come from `LteSwitchStats.txt` and `MmWaveSwitchStats.txt` of the same run directory (time in field 2, IMSI in field 3; `mc-stats-calculator.cc:144,165`).
+  - A switch row has TxBytes ≤ nTxPDUs × (1308 + 2).
+  - Every other row has TxBytes = nTxPDUs × (1308 + 2).
+  - At least one row is not a switch row.
+  - **Missing switch file:** it means no event of that kind, because the file is created on its first event (`mc-stats-calculator.cc:139-142, 160-163`). That can only make the predicate stricter. A malformed line fails.
+  - The fact records the switch-row and equality-row counts, overall and per IMSI.
+- **Why ±1 epoch:**
+  - The switch files are UE-side traces (`lte-ue-rrc.cc:1563,1570`).
+  - The eNB re-submits at the same instant for a SwitchToMmWave under ideal RRC (`lte-rrc-protocol-ideal.cc:50`). For a SwitchToLte it re-submits two X2 hops later (`lte-enb-rrc.cc:2190` → `:2218` → `:5627` → `:1217`; 1 ms each, `mmwave-point-to-point-epc-helper.cc:224`, not overridden).
+  - The closest archived switch to an epoch boundary is 2.5 ms (m7/20261103T060451Z, row 43.6, IMSI 3).
+  - The UseIdealRrc commit (rows 156–157) adds RRC delay, so a same-epoch window would turn a boundary straddle into a false red. A window that is too narrow fails red, never a false green.
+- **Self-test fixtures:**
+  - **Must fail:**
+    - 1308 + 3 on a non-switch row;
+    - 1308 + 3 on a switch row with nTxPDUs > deficit (the smallest archived short-row count is 253);
+    - a short non-switch row;
+    - a short row whose only switch is two epochs away or belongs to another IMSI;
+    - no non-switch row;
+    - a malformed switch line.
+  - **Must pass:**
+    - a short row with its switch in the previous, same or next epoch;
+    - absent switch files with every row equal.
+- **Archive replay (offline):**
+  - M7: 15/15 pass, with 3308–3557 equality rows and 1708–1819 switch rows per run.
+  - M6: 15/15 pass, with 201 and 93.
+- **Recorded openly:**
+  - Switch rows are judged on an upper bound only.
+  - Header conformance is judged on the equality rows (about 66% of M7 rows, 68% of M6), because McEnbPdcp puts one header class on every PDU.
+  - **This is weaker than the registered text**, which never held at M7.
+  - The forwarding defect is a follow-up outside M10 (phase-10 list). A forwarding-only regression in P7 is still caught by row 148 (b), because N4 runs the UM forwarding loops.
+  - Contract change: No.
+
+**Row 150, amended before code (2026-11-07, controller; additive; stricter, not weaker).**
+- P7's N4 byte identity (`gate-n4-ul-metric.sh --part identity`) compares with `reference/n4-sn-wrap/` without the audit header item.
+- So that line is still judged at P7, the part also runs `check-pdcp-volume-totals.py` (A0–A5; A1 with the class conjunct) on its ulon run, as `n4_identity_ulon_pdcp_audit_judge_passes`.
+- **Offline check:** SN-wrap ulon-a2 (`evidence/n4/20261106T230003Z`), with its header line rewritten to the P7 form, passes. Unmodified, it fails A1.
+- Contract change: No.
+
+**Row 148 notes, continued (2026-11-07, P7 implementation; record only, the predicate is unchanged).**
+- In this fork every DRB's PDCP is an MC entity (`McEnbPdcp` / `McUePdcp`), so "LTE-only bearers keep the E-UTRA header" has no DRB to apply to.
+- A pure-LTE `LteHelper` DRB therefore also carries the NR header class, with no wire change at 12 bits. kongming-261107-0830 judged this consistent with 37.340 §4.2.2 for EN-DC.
+- The E-UTRA header stays on SRBs and plain `LtePdcp` entities. A tripwire aborts if the E-UTRA codec runs on anything but a plain `LtePdcp`.
+- The class `LteRlcAm` decodes with is not visible at run time. It is enforced by type (one explicit template instantiation, for `NrPdcpHeader`) and by the source lint.
