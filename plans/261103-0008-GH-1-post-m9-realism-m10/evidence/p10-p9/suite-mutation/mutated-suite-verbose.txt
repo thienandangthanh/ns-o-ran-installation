@@ -1,0 +1,6 @@
+# mutated tree: mutation.diff applied to the green working tree; runner ./build/utils/ns3.38.rc1-test-runner-default
+FAIL epc-x2-mc-pdcp-volume 0.006 s
+  PASS master eNB to en-gNB: one DL event at the en-gNB 0.006 s
+  FAIL master eNB to an en-gNB that forwards the TEID: one DL event at each en-gNB 0.000 s
+      test="Format(m_events) (actual) == Format(events) (limit)" actual="[node 2 dl local 3 remote 2 teid 7 bytes 1310]" limit="[node 1 dl local 2 remote 1 teid 7 bytes 1310][node 2 dl local 3 remote 2 teid 7 bytes 1310]" in="/home/andang/ns3-p9-910ba118/ns-3/src/lte/test/lte-test-epc-x2-mc-pdcp-volume.cc:382" every McDlPdcpPduRx and McUlPdcpPduTx fire, in order
+exit=1

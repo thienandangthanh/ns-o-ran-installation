@@ -1,0 +1,28 @@
+--- a/src/lte/model/epc-x2.cc	2026-11-07 13:35:19.807299478 +0900
++++ b/src/lte/model/epc-x2.cc	2026-11-07 13:35:19.815592978 +0900
+@@ -649,20 +649,15 @@
+                  << packet->GetSize() << " source " << params.sourceCellId << " target "
+                  << params.targetCellId << " type " << gtpu.GetMessageType());
+ 
+-    if (gtpu.GetMessageType() == EpcX2Header::McForwardDownlinkData)
+-    {
+-        // Every DL multi-connectivity PDCP PDU that reaches this cell over X2-U, including one
+-        // that this node then forwards to the target cell of a secondary cell handover
+-        m_mcDlPdcpPduRx(cellsInfo->m_localCellId,
+-                        cellsInfo->m_remoteCellId,
+-                        params.gtpTeid,
+-                        packet->GetSize());
+-    }
+-
+     if (m_teidToBeForwardedMap.find(params.gtpTeid) == m_teidToBeForwardedMap.end())
+     {
+         if (gtpu.GetMessageType() == EpcX2Header::McForwardDownlinkData)
+         {
++            // MUTATION: the DL hook after the forward-map test (only PDUs not forwarded)
++            m_mcDlPdcpPduRx(cellsInfo->m_localCellId,
++                            cellsInfo->m_remoteCellId,
++                            params.gtpTeid,
++                            packet->GetSize());
+             // add PdcpTag
+             PdcpTag pdcpTag(Simulator::Now());
+             params.ueData->AddByteTag(pdcpTag);

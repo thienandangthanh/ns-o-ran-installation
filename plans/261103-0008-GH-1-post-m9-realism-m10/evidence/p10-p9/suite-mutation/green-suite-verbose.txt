@@ -1,0 +1,8 @@
+# restored green tree (src/lte/model/epc-x2.cc sha256 19b4eb21eb18b7c2, equal to the working tree)
+PASS epc-x2-mc-pdcp-volume 0.008 s
+  PASS master eNB to en-gNB: one DL event at the en-gNB 0.006 s
+  PASS master eNB to an en-gNB that forwards the TEID: one DL event at each en-gNB 0.000 s
+  PASS en-gNB RLC buffer PDU to another en-gNB: one DL event at the target 0.000 s
+  PASS en-gNB RLC to the master eNB PDCP: one UL event at the en-gNB 0.000 s
+  PASS untyped UE data to an en-gNB: no event 0.000 s
+exit=0
