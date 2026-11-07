@@ -10,10 +10,17 @@
 #   5. ts_threshold_logged on a real TS xApp log fixture;
 #   6. the self-tests of the judges (patch-set checks of the TS xApp, rc and kpimon, the TS cell-map replay, the pacer,
 #      the UE ID prepare, the RC wire extractor, the R1 C4 arrival-order fixture, ...), the send-rmr.sh UE ID refusals
-#      and the UE context counter helper on a restarted agent's log.
+#      and the UE context counter helper on a restarted agent's log;
+#   7. the ns-3 source rule (ns3-source-lint.py) on the tree of the pinned ns-3 commit, and its self-test.
 set -uo pipefail
 cd "$(dirname "$0")/../.." || exit 1
 rc=0
+# The ns-3 source rule (allowlist, consumer list and positive facts at the top of ns3-source-lint.py): the tree committed
+# at pins.conf NS3_SHA, read from the ns-3-mmwave-oran submodule's objects, never its working tree (unpinned edits)
+ns3sha=$(source scripts/pins.conf && echo "$NS3_SHA")
+python3 -I scripts/gates/ns3-source-lint.py --git ns-3-mmwave-oran "$ns3sha" ||
+    { echo "the ns-3 source rule fails at the pinned ns-3 commit $ns3sha (see above)"; rc=1; }
+python3 -I scripts/gates/ns3-source-lint.py --self-test >/dev/null || { echo "ns-3 source rule self-test failed"; rc=1; }
 for f in scripts/gates/*.sh scripts/vm/*.sh scripts/*.sh tools/*/*.sh; do
     bash -n "$f" || { echo "syntax: $f"; rc=1; }
 done

@@ -28,6 +28,13 @@ that two runs missing the same output never compare equal:
   n4-run-byte-identity.py manifest RUN   write RUN/n4-run-bytes.manifest.json and print it; exit 2 on a precondition
   n4-run-byte-identity.py compare A B    A, B: run dirs or manifests; exit 0 equal, 1 differ (the differing items
                                          listed, with the first differing line when both are run dirs), 2 precondition
+  n4-run-byte-identity.py compare --except-audit-header A B
+                                         the same, without the ns3run/stdout.txt:audit-header item (a build that
+                                         changes that line on purpose, judged apart); every other item is compared
+  n4-run-byte-identity.py verify-reference DIR NAME...
+                                         DIR/SHA256SUMS strictly: every line is `<64 lowercase hex>  <name>`, each NAME
+                                         has exactly one entry and DIR/NAME has that digest; prints the verified digests
+                                         as JSON; exit 0 verified, 1 not
   n4-run-byte-identity.py --self-test    the must-fail and must-pass fixtures
 """
 import contextlib
@@ -36,6 +43,7 @@ import importlib.util
 import io
 import json
 import pathlib
+import re
 import shutil
 import sys
 import tempfile
@@ -45,6 +53,7 @@ MANIFEST = "n4-run-bytes.manifest.json"
 SCHEMA = "n4-run-bytes/v1"
 HDR = b"N4AUDIT v1 hdr="
 ABSENT = "<absent>"
+AUDIT_HEADER_ITEM = "ns3run/stdout.txt:audit-header"
 # Every ns3run trace scenario-zero writes in the N4 config (NoAuto, so no handover files): the same 28 names in the
 # archived N4 uloff and ulon runs and in an M7 run, each non-empty there.
 REQUIRED_TRACES = (
@@ -232,19 +241,22 @@ def load(arg):
     return m, None
 
 
-def compare(a, b):
+def compare(a, b, skip=()):
+    """Exit code of comparing A and B on every item except the ones named in skip (only AUDIT_HEADER_ITEM is allowed)."""
+    assert set(skip) <= {AUDIT_HEADER_ITEM}, skip
     try:
         (ma, da), (mb, db) = load(a), load(b)
     except (OSError, ValueError) as exc:
         print(json.dumps({"equal": None, "error": str(exc)}))
         return 2
-    report = {"a": str(a), "b": str(b), "configs": [ma["config"], mb["config"]],
+    report = {"a": str(a), "b": str(b), "configs": [ma["config"], mb["config"]], "skipped": sorted(skip),
               "preconditions": {"a": ma["preconditions"], "b": mb["preconditions"]}}
     if not (ma["preconditions"]["ok"] and mb["preconditions"]["ok"]):
         report["equal"] = None
         print(json.dumps(report, indent=2))
         return 2
-    ia, ib = ma["items"], mb["items"]
+    ia = {k: v for k, v in ma["items"].items() if k not in skip}
+    ib = {k: v for k, v in mb["items"].items() if k not in skip}
     differing = sorted(k for k in set(ia) | set(ib) if ia.get(k, ABSENT) != ib.get(k, ABSENT))
     report.update(equal=not differing, itemsCompared=len(set(ia) | set(ib)), differing=differing,
                   onlyInA=sorted(set(ia) - set(ib)), onlyInB=sorted(set(ib) - set(ia)))
@@ -252,6 +264,75 @@ def compare(a, b):
         report["firstDifferingLines"] = {k: first_diff(da, db, k) for k in differing[:12]}
     print(json.dumps(report, indent=2))
     return 0 if not differing else 1
+
+
+SUMS_LINE = re.compile(r"([0-9a-f]{64})  (\S(?:.*\S)?)")
+
+
+def verify_reference(ref_dir, names):
+    """(problems, {name: verified sha256}) of ref_dir/SHA256SUMS for the files NAMES (see the module doc)."""
+    ref_dir, bad, entries = pathlib.Path(ref_dir), [], {}
+    try:
+        lines = (ref_dir / "SHA256SUMS").read_text().split("\n")
+    except (OSError, UnicodeDecodeError) as exc:
+        return ["cannot read %s/SHA256SUMS: %s" % (ref_dir, exc)], {}
+    if lines and lines[-1] == "":
+        lines.pop()   # the final newline
+    for n, line in enumerate(lines, 1):
+        m = SUMS_LINE.fullmatch(line)
+        if not m:
+            bad.append("SHA256SUMS:%d: not `<64 hex>  <name>`: %r" % (n, line[:120]))
+            continue
+        entries.setdefault(m.group(2), []).append(m.group(1))
+    digests = {}
+    for name in names:
+        got = entries.get(name, [])
+        if len(got) != 1:
+            bad.append("SHA256SUMS has %d entries for %s, want exactly 1" % (len(got), name))
+            continue
+        try:
+            actual = sha((ref_dir / name).read_bytes())
+        except OSError as exc:
+            bad.append("cannot read %s: %s" % (name, exc))
+            continue
+        if actual != got[0]:
+            bad.append("%s: sha256 %s, SHA256SUMS says %s" % (name, actual, got[0]))
+        else:
+            digests[name] = actual
+    if not names:
+        bad.append("no file to verify")
+    return bad, digests
+
+
+def verify_self_test():
+    """Failures of the strict SHA256SUMS fixtures."""
+    names = ["m-uloff.json", "m-ulon.json"]
+    with tempfile.TemporaryDirectory() as t:
+        t = pathlib.Path(t)
+        for nm in names + ["m-uloffXjson", "other.txt"]:
+            (t / nm).write_text("content of %s\n" % nm)
+        good = ["%s  %s" % (sha((t / nm).read_bytes()), nm) for nm in names + ["other.txt"]]
+        cases = [  # (name, SHA256SUMS lines, wanted ok)
+            ("good", good, True),
+            ("a missing entry", good[1:], False),
+            ("a bare name line instead of an entry", ["m-uloff.json"] + good[1:], False),
+            ("a bare name line besides the entries", good + ["m-ulon.json"], False),
+            ("a malformed line", good + ["not a checksum line"], False),
+            ("a binary-mode line", ["%s *m-uloff.json" % good[0][:64]] + good[1:], False),
+            ("an uppercase digest", [good[0][:64].upper() + good[0][64:]] + good[1:], False),
+            ("a wrong digest", ["0" * 64 + "  m-uloff.json"] + good[1:], False),
+            ("a look-alike file name only", ["%s  m-uloffXjson" % sha((t / "m-uloffXjson").read_bytes())] + good[1:],
+             False),
+            ("a duplicate entry", good + [good[0]], False),
+            ("a blank line", good[:1] + [""] + good[1:], False),
+        ]
+        fails = []
+        for name, lines, want in cases:
+            (t / "SHA256SUMS").write_text("".join(x + "\n" for x in lines))
+            bad, digests = verify_reference(t, names)
+            if (not bad) != want or (want and sorted(digests) != names):
+                fails.append("verify-reference %s: problems %s" % (name, bad))
+        return fails
 
 
 def self_test():
@@ -300,7 +381,8 @@ def self_test():
         p.write_text("".join(ls[1:2] + ls[:1] + ls[2:]))
 
     ipc, so, rlc = "trace/e2-ipc-trace-2.jsonl", "ns3run/stdout.txt", "ns3run/DlE2RlcStatsLte.txt"
-    fixtures = [  # (name, mutation of B (and of A too when the name starts with "both"), wanted compare exit)
+    skip_hdr = (AUDIT_HEADER_ITEM,)
+    fixtures = [  # (name, mutation of B (and of A too when the name starts with "both"), wanted compare exit[, skip])
         ("identical runs", lambda d: None, 0),
         ("columns 5-6 of DlE2RlcStatsLte.txt changed", edit(rlc, "1 2 33 44", "1 2 77 88"), 0),
         ("hello changed (pid run id)", edit(ipc, '"1-111"', '"1-222"'), 0),
@@ -332,12 +414,21 @@ def self_test():
         ("ulon without a dltx line", edit(so, "N4AUDIT dltx", "N4AUDIT dlxx"), 2),
         ("an unknown IPC line type", edit(ipc, '{"type":"bye"', '{"type":"other"'), 2),
         ("no ns3-argv.txt", rm("ns3-argv.txt"), 2),
+        # --except-audit-header leaves out that one item and nothing else
+        ("audit header changed, skipped", edit(so, "hdr=2", "hdr=2 class=ns3::NrPdcpHeader"), 0, skip_hdr),
+        ("audit header removed, skipped", edit(so, "N4AUDIT v1 hdr=2\n", ""), 0, skip_hdr),
+        ("audit event changed, header skipped", edit(so, "dltx 170000000 0 1 3 3 1310", "dltx 170000000 0 1 3 3 1311"), 1,
+         skip_hdr),
+        ("trace byte changed, header skipped", edit("ns3run/CellIdStats.txt", "0.2 1 3", "0.2 1 4"), 1, skip_hdr),
+        ("IPC sample changed, header skipped", edit(ipc, '"v":11', '"v":12'), 1, skip_hdr),
+        ("argv changed, header skipped", edit("ns3-argv.txt", "--simTime=0.3\n", "--simTime=0.3\n--RngRun=2\n"), 1,
+         skip_hdr),
     ]
     bad = []
     with tempfile.TemporaryDirectory() as t:
         t = pathlib.Path(t)
         write_base(t / "a")
-        for i, (name, mutate, want) in enumerate(fixtures):
+        for i, (name, mutate, want, *skip) in enumerate(fixtures):
             a, b = t / "a", t / ("b%d" % i)
             shutil.copytree(t / "a", b)
             mutate(b)
@@ -346,7 +437,7 @@ def self_test():
                 shutil.copytree(t / "a", a)
                 mutate(a)
             with contextlib.redirect_stdout(io.StringIO()):
-                got = compare(a, b)
+                got = compare(a, b, *skip)
             if got != want:
                 bad.append("%s: compare exit %d, want %d" % (name, got, want))
         with contextlib.redirect_stdout(io.StringIO()):
@@ -354,6 +445,7 @@ def self_test():
             got = compare(t / "a" / MANIFEST, t / "a")
         if rc != 0 or got != 0:
             bad.append("a written manifest against its own run: manifest exit %d, compare exit %d (want 0, 0)" % (rc, got))
+    bad += verify_self_test()
     for b in bad:
         print("FAIL " + b)
     print("n4-run-byte-identity self-test: " + ("ok (%d fixtures)" % len(fixtures) if not bad else "%d failure(s)" % len(bad)))
@@ -377,6 +469,12 @@ def main(argv):
         return 0 if m["preconditions"]["ok"] else 2
     if len(argv) == 3 and argv[0] == "compare":
         return compare(argv[1], argv[2])
+    if len(argv) >= 2 and argv[0] == "verify-reference":
+        bad, digests = verify_reference(argv[1], argv[2:])
+        print(json.dumps({"dir": argv[1], "verified": digests, "problems": bad}, indent=2))
+        return 1 if bad else 0
+    if len(argv) == 4 and argv[:2] == ["compare", "--except-audit-header"]:
+        return compare(argv[2], argv[3], (AUDIT_HEADER_ITEM,))
     print(__doc__, file=sys.stderr)
     return 2
 

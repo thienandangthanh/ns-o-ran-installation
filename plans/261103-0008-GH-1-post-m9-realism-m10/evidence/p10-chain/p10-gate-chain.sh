@@ -92,6 +92,7 @@ steps=(
   "r3p|gate-r3p-ts-predictor.sh|7200|--mode single"
   "s10|gate-s10-scale.sh|5400|"
   "n4|gate-n4-ul-metric.sh|3600|--part determinism"
+  "n4|gate-n4-ul-metric.sh|3600|--part identity"
 )
 cd "$frozen" || return 2
 # asn1-indep pre-flight. A step with --image-tag (e2i) needs ~/asn1-indep/asn1-indep-<tag>.tar and SHA256SUMS in the

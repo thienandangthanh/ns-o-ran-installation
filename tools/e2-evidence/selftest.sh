@@ -188,6 +188,49 @@ expect 0 "trace: reconnects and drops accepted, counters balance" py "$here/trac
 expect 1 "trace: --require-clean still rejects reconnects" py "$here/trace-facts.py" "$t/trace-ok.jsonl" --require-clean --expect-nodes 2
 expect 1 "trace: seq gap rejected" py "$here/trace-facts.py" "$t/trace-gap.jsonl" --reconnects-ok --expect-nodes 2
 expect 1 "trace: built != sent + drops rejected" py "$here/trace-facts.py" "$t/trace-sum.jsonl" --reconnects-ok --expect-nodes 2
+# --pdcp-stats on an ns3run dir: LCID-3 rows with nTxPDUs > 0 need TxBytes = nTxPDUs * (1308 + 2), or <= that on a row
+# with a switch of its IMSI in [start - d, end + d); an SRB (LCID 1) row and a zero-PDU row are not judged
+pdcp_row() { printf '%s\t%s\t1\t%s\t3\t%s\t%s\t%s\t168\t220080\t0.004\t0.0008\t0.003\t0.005\t1310\t0\t1310\t1310\t\n' "$@"; }
+# pdcp_run <name> <extra rows...>: an ns3run dir whose stats hold three equal rows, the not-judged rows and the extra rows
+pdcp_run() {
+    local d="$t/pdcp-$1" r; shift; mkdir -p "$d"
+    { printf '%% start\tend\tCellId\tIMSI\tRNTI\tLCID\tnTxPDUs\tTxBytes\tnRxPDUs\tRxBytes\tdelay\tstdDev\tmin\tmax\tPduSize\tstdDev\tmin\tmax\n'
+      pdcp_row 0.1 0.2 1 3 178 233180; pdcp_row 0.2 0.3 2 3 2 2620; pdcp_row 0.9 1 3 3 198 259380
+      pdcp_row 0.1 0.2 2 1 3 99; pdcp_row 0.1 0.2 4 3 0 0
+      for r in "$@"; do read -r -a f <<<"$r"; pdcp_row "${f[@]}"; done; } >"$d/DlE2PdcpStats.txt"
+}
+short="1 1.1 3 3 253 331390"   # IMSI 3, epoch [1, 1.1): 253 PDUs, 40 octets short of 253 * 1310
+pdcp_case() { # <want> <name> <switch lines for MmWaveSwitchStats.txt, '' = no file> <rows...>
+    local want="$1" name="$2" sw="$3" dir; shift 3
+    dir="pdcp-$(printf %s "$name" | tr -c 'a-z0-9' '-')"
+    pdcp_run "${dir#pdcp-}" "$@"
+    [ -z "$sw" ] || printf '%b' "$sw" >"$t/$dir/MmWaveSwitchStats.txt"
+    expect "$want" "pdcp stats: $name" py "$here/trace-facts.py" --pdcp-stats "$t/$dir"
+}
+pdcp_case 0 "absent switch files, every row equal" ''
+pdcp_case 0 "a short row, its switch in the same epoch" 'SwitchToMmWave 1.05 3 2 87 \n' "$short"
+pdcp_case 0 "a short row, its switch in the previous epoch" 'SwitchToMmWave 0.95 3 2 87 \n' "$short"
+pdcp_case 0 "a short row, its switch in the next epoch" 'SwitchToMmWave 1.15 3 2 87 \n' "$short"
+pdcp_case 1 "1308 + 3 on a non-switch row" '' "0.3 0.4 1 3 10 13110"
+pdcp_case 1 "1308 + 3 on a switch row with nTxPDUs > deficit" 'SwitchToMmWave 1.05 3 2 87 \n' "1 1.1 3 3 253 331643"
+pdcp_case 1 "a short non-switch row" '' "$short"
+pdcp_case 1 "a short row, its only switch two epochs away" 'SwitchToMmWave 1.25 3 2 87 \n' "$short"
+pdcp_case 1 "a short row, the switch of another IMSI" 'SwitchToMmWave 1.05 5 2 87 \n' "$short"
+pdcp_case 1 "a malformed switch line" 'SwitchToMmWave 1.05 3 2 87 \nSwitchToMmWave 1.07 3 2\n' "$short"
+pdcp_case 1 "a switch line of the other kind" 'SwitchToLte 1.05 3 1 6 \n' "$short"
+# the LTE file is read too: a SwitchToLte in the previous epoch covers the short row
+pdcp_run lte "$short"; printf 'SwitchToLte 0.95 3 1 6 \n' >"$t/pdcp-lte/LteSwitchStats.txt"
+expect 0 "pdcp stats: a short row, a SwitchToLte in the previous epoch" py "$here/trace-facts.py" --pdcp-stats "$t/pdcp-lte"
+# no non-switch row: every judged row has a switch of its IMSI within one epoch
+mkdir -p "$t/pdcp-allswitch"; { head -n 1 "$t/pdcp-lte/DlE2PdcpStats.txt"; pdcp_row 1 1.1 3 3 253 331390; } >"$t/pdcp-allswitch/DlE2PdcpStats.txt"
+printf 'SwitchToMmWave 1.05 3 2 87 \n' >"$t/pdcp-allswitch/MmWaveSwitchStats.txt"
+expect 1 "pdcp stats: no non-switch row" py "$here/trace-facts.py" --pdcp-stats "$t/pdcp-allswitch"
+mkdir -p "$t/pdcp-nohdr"; tail -n +2 "$t/pdcp-lte/DlE2PdcpStats.txt" >"$t/pdcp-nohdr/DlE2PdcpStats.txt"
+expect 1 "pdcp stats: rows without the column header fail" py "$here/trace-facts.py" --pdcp-stats "$t/pdcp-nohdr"
+expect 1 "pdcp stats: a dir without DlE2PdcpStats.txt fails" py "$here/trace-facts.py" --pdcp-stats "$t/pdcp-missing"
+# the fact counts switch and equality rows, overall and per IMSI (the 0.95 switch covers both IMSI-3 rows)
+expect 0 "pdcp stats: the fact counts rows per IMSI" bash -c "python3 -I '$here/trace-facts.py' --pdcp-stats '$t/pdcp-lte' --out '$t/pdcp-fact.json' >/dev/null &&
+    python3 -I -c 'import json,sys; f=json.load(open(sys.argv[1])); sys.exit(0 if (f[\"switchRows\"], f[\"equalityRows\"], f[\"perImsi\"][\"3\"]) == (2, 2, {\"switchRows\": 2, \"equalityRows\": 0}) else 1)' '$t/pdcp-fact.json'"
 e="$here/endurance-eval.py"
 for c in pods agents e2mgr ns3 kpimon rss load; do
     expect 0 "endurance: $c good" py "$e" "$t/end" --check "$c" --expected-names "$t/names.txt"

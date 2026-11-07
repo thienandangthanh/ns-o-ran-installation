@@ -7,9 +7,9 @@ in the gNB IPC samples (cell.cuUp, kbit, rounded once per cell per period). Pass
   A0 sample completeness: the gNB traces are exactly the expected gNB nodes (2 .. 1 + nMmWaveEnbNodes of
      the rung-config scenario; node 1 is the eNB) and each holds every seq 0 .. N-1 once, N = simTime /
      the hello periodNs (a missing cell or a truncated tail fails instead of becoming residual bits);
-  A1 completeness: an `end` line with connected == present and missing == 0; the audit header's
-     PDCP header size equals the 12-bit-SN DRB data PDU header (2 octets, 3GPP TS 36.323 §6.2.3,
-     3GPP TS 38.323 §6.2.2.2);
+  A1 completeness: an `end` line with connected == present and missing == 0; the audit header line
+     `N4AUDIT v1 hdr=<size> class=<TypeId name>` gives the MC DRB's PDCP header size, equal to the NR
+     data PDU header with a 12-bit SN (2 octets, 3GPP TS 38.323 §6.2.2.2), and its class, ns3::NrPdcpHeader;
   A2 one RRC per IMSI: every ulrx/dltx event of an IMSI is on one node;
   A3 no UL PDU at two RRCs: no UL identity (imsi, tNs - delayNs) on two nodes (delayNs == 0 has
      no identity: reported, not judged);
@@ -34,19 +34,23 @@ import pathlib
 import sys
 import tempfile
 
-HDR = 2  # octets: 12-bit-SN DRB data PDU header (D/C, 3 R, SN), 3GPP TS 36.323 §6.2.3
+HDR = 2  # octets: the MC DRB's NR PDCP data PDU header, 12-bit SN (D/C, 3 R, SN), 3GPP TS 38.323 §6.2.2.2
+HDR_CLASS = "ns3::NrPdcpHeader"  # the header class the MC DRB's PDCP entity writes, named by the audit header line
 KEYS = {"ul": "DRB.PdcpSduVolumeUL", "dl": "DRB.PdcpSduVolumeDL"}
 LCID = 3
 
 
 def load_audit(path):
-    hdr, end, ev = None, None, []
+    """(header size, header class, end counters, events) of a run's N4AUDIT lines; the header line is
+    `N4AUDIT v1 hdr=<size> class=<TypeId name>`, and a class is read only from exactly that form."""
+    hdr, cls, end, ev = None, None, None, []
     for line in pathlib.Path(path).read_text(errors="replace").splitlines():
         if not line.startswith("N4AUDIT "):
             continue
         f = line.split()
         if f[1] == "v1":
             hdr = int(f[2].split("=")[1])
+            cls = f[3][len("class="):] if len(f) == 4 and f[3].startswith("class=") else None
         elif f[1] == "end":
             end = {k: int(v) for k, v in (x.split("=") for x in f[2:])}
         elif f[1] in ("ulrx", "dltx"):
@@ -55,7 +59,7 @@ def load_audit(path):
             if e["d"] == "ul":
                 e["delay"] = int(f[8])
             ev.append(e)
-    return hdr, end, ev
+    return hdr, cls, end, ev
 
 
 def load_gnb_samples(trace_dir, periods=None):
@@ -80,9 +84,9 @@ def load_gnb_samples(trace_dir, periods=None):
 
 def judge(run, gnb_nodes, n_seq):
     run = pathlib.Path(run)
-    hdr, end, ev = load_audit(run / "ns3run" / "stdout.txt")
+    hdr, cls, end, ev = load_audit(run / "ns3run" / "stdout.txt")
     samples = load_gnb_samples(run / "trace")
-    v = {"hdr": hdr, "end": end, "events": len(ev), "gnbSamples": len(samples)}
+    v = {"hdr": hdr, "hdrClass": cls, "end": end, "events": len(ev), "gnbSamples": len(samples)}
 
     # A0
     seqs = collections.defaultdict(list)
@@ -96,7 +100,7 @@ def judge(run, gnb_nodes, n_seq):
     v["a0"] = n_seq > 0 and set(seqs) == set(gnb_nodes) and not v["incompleteNodes"]
 
     # A1
-    v["a1"] = hdr == HDR and end is not None and end.get("missing") == 0 and end.get("connected") == end.get("present")
+    v["a1"] = hdr == HDR and cls == HDR_CLASS and end is not None and end.get("missing") == 0 and end.get("connected") == end.get("present")
 
     # A2, A3
     nodes = collections.defaultdict(set)
@@ -215,7 +219,7 @@ def _fixture(root, audit, samples):
 
 
 def self_test():
-    good = ["N4AUDIT v1 hdr=2",
+    good = ["N4AUDIT v1 hdr=2 class=ns3::NrPdcpHeader",
             "N4AUDIT ulrx 150000000 0 1 3 3 1310 2000000", "N4AUDIT ulrx 160000000 0 1 3 3 1310 2000000",
             "N4AUDIT dltx 170000000 0 1 3 3 1310", "N4AUDIT end connected=2 present=2 missing=0"]
     # 2 UL PDUs of 1308 B SDU = 20928 bits -> 21 kbit; 1 DL -> 10464 bits -> 10 kbit
@@ -228,6 +232,9 @@ def self_test():
         ("counter off by 1 kbit", good, [(0, 100800000, [3], 0, 0), (1, 200800000, [3], 22, 10)], False),
         ("PDU counted at two RRCs", good + ["N4AUDIT ulrx 150000000 7 9 3 3 1310 2000000"], ok_samples, False),
         ("header size 3", [good[0].replace("hdr=2", "hdr=3")] + good[1:], ok_samples, False),
+        ("header class LtePdcpHeader", [good[0].replace("NrPdcpHeader", "LtePdcpHeader")] + good[1:], ok_samples, False),
+        ("header line without a class", ["N4AUDIT v1 hdr=2"] + good[1:], ok_samples, False),
+        ("header class with a trailing field", [good[0] + " x"] + good[1:], ok_samples, False),
         ("an unconnected PDCP", good[:-1] + ["N4AUDIT end connected=2 present=3 missing=1"], ok_samples, False),
         ("no end line", good[:-1], ok_samples, False),
         ("tie at a read", good + ["N4AUDIT dltx 200800000 0 1 3 3 1310"], ok_samples, False),

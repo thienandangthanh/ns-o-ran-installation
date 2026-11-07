@@ -223,6 +223,11 @@ source "$E2EV/m7-wire-trace-checks.sh"
 m7_wire_trace_checks
 check m7_kpimon_subscription_one_action_id1_format3 kpm_sub_actions_check "$F" "$e/node-ips.json"
 check m7_ue_context_files_consistent_with_ns3_mn_pdcp_trace ue_context_check "$RUN" "$RUN" "$e/m7-ue-context.json"
+# the EN-DC bearer's DL PDCP PDUs are SDU + the 2-octet NR PDCP header (3GPP TS 38.323 §6.2.2.2) on the eNB's E2 PDCP
+# stats, at most that within one epoch of a switch; the stats and both switch files come from this run's ns3run dir
+check m7_pdcp_dl_pdu_bytes_eq_sdu_plus_nr_header python3 -I "$E2EV/trace-facts.py" --pdcp-stats "$RUN" \
+    --out "$e/m7-pdcp-dl-pdu-bytes.json"
+fact pdcpDlPduBytes "$(cat "$e/m7-pdcp-dl-pdu-bytes.json" 2>/dev/null || echo null)"
 check m7_kpm_ue_ids_en_gnb_and_enb_ueid_resolved_by_ue_context kpm_ue_ids_check "$e/m7.pcap" "$e/node-ips.json" "$RUN" \
     "$e/m7-kpm-ue-ids.json" "$F"
 # Influx = IPC through the UE context: a pivoted UeMetrics export of the run window (the token stays in the pod), every

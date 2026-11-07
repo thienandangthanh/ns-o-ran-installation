@@ -21,9 +21,16 @@
 # judges a1 = a2 and a1 = b1 per config on its fixed compared set; uloff-a1 against ulon-a1 must differ. B's tree is
 # removed at the end (also on an early exit); the a1 manifests are copied into the evidence dir.
 #
+# --part identity: a build that must change no wire byte gives the runs of the banked determinism reference. uloff and
+# ulon once on the M4 build, in the determinism part's config, each compared by n4-run-byte-identity.py with the
+# reference's a1 manifest (N4_IDENTITY_REF, SHA256SUMS checked first) on the same compared set except the audit header
+# line, which the build may change on purpose; that line is judged on the ulon run by check-pdcp-volume-totals.py. The
+# emitter pins are not a compared item: they must be the pins.conf pair.
+#
 #   gate-n4-ul-metric.sh --ref <VM dir of the reference run> [--ul-pattern constant|steps] [--dev]
 #   gate-n4-ul-metric.sh --part dump --cal <VM dir of the ulon calibration run> [--ul-pattern constant|steps] [--dev]
 #   gate-n4-ul-metric.sh --part determinism [--dev]
+#   gate-n4-ul-metric.sh --part identity [--dev]
 # shellcheck disable=SC2034  # EPOCH_MS, SINK, PACER, CLI, SINKX, PACERX, PACER_PORT, T_GATE_S and T_CTL_S are read by paced-lib.sh
 source "$(dirname "$0")/lib.sh"
 gate_init n4
@@ -45,13 +52,13 @@ while [ $# -gt 0 ]; do
     esac
 done
 case "$PATTERN" in constant|steps) ;; *) log "bad --ul-pattern $PATTERN"; exit 2 ;; esac
-case "$PART" in v23|determinism) ;; dump) source "$(dirname "$0")/rc-lib.sh"; source "$(dirname "$0")/influx-dump.sh" ;;
+case "$PART" in v23|determinism|identity) ;; dump) source "$(dirname "$0")/rc-lib.sh"; source "$(dirname "$0")/influx-dump.sh" ;;
     *) log "bad --part $PART"; exit 2 ;; esac
 e="$EVIDENCE_DIR"; RUNS="$e/runs"; mkdir -p "$RUNS"
 CFG="$HARNESS_DIR/scripts/gates/rung-config.py"
-# determinism runs the rung radio config's own UL pattern and RngRun, the values the later byte-identity runs reuse
-if [ "$PART" = determinism ]; then
-    [ "$PATTERN_SET" = 0 ] || { log "--part determinism takes its UL pattern from rung-config.json, not --ul-pattern"; exit 2; }
+# determinism runs the rung radio config's own UL pattern and RngRun, the values the byte-identity runs reuse
+if [ "$PART" = determinism ] || [ "$PART" = identity ]; then
+    [ "$PATTERN_SET" = 0 ] || { log "--part $PART takes its UL pattern from rung-config.json, not --ul-pattern"; exit 2; }
     PATTERN=$(python3 -I "$CFG" get ul_rate.value.pattern); RNG=$(python3 -I "$CFG" get scenario.RngRun)
     case "$PATTERN" in constant|steps) ;; *) log "bad rung-config ul_rate pattern '$PATTERN'"; exit 2 ;; esac
     [[ "$RNG" =~ ^[0-9]+$ ]] || { log "bad rung-config scenario.RngRun '$RNG'"; exit 2; }
@@ -173,11 +180,82 @@ if [ "$PART" = dump ]; then
     exit $?
 fi
 
+# det_run <label> [ns-3 args...]: one free null-sink run; then the arguments ns3_start echoed for it, one per line
+# with the run dir as <run> (the binary path is not an argument: two builds differ there by construction), and its
+# byte manifest, whose preconditions must hold
+BYTES="$G/n4-run-byte-identity.py"
+det_run() {
+    local label="$1" rd="$RUNS/$1" plog="$RUNS/$1.paced-run.log" rc line args; shift
+    paced_null_run "$label" free 0 "--RngRun=$RNG" "$@" >"$plog" 2>&1; rc=$?
+    cat "$plog"; mv "$plog" "$rd/paced-run.log" || return 1
+    [ "$rc" = 0 ] || return 1
+    line=$(grep -m 1 '^ns-3 started pid/pgid ' "$rd/paced-run.log"); args=${line#*": $NS3_BIN "}
+    [ -n "$line" ] && [ "$args" != "$line" ] || { echo "$label: no ns-3 start line naming $NS3_BIN"; return 1; }
+    tr ' ' '\n' <<<"${args//"$rd"/<run>}" >"$rd/ns3-argv.txt"
+    python3 -I "$BYTES" manifest "$rd" >/dev/null || return 1
+    echo "$label: argv and byte manifest written, preconditions hold"
+}
+
+################################################################################
+# identity: one uloff and one ulon run byte-equal to the banked determinism reference, except the audit header line
+################################################################################
+if [ "$PART" = identity ]; then
+    IDREF="${N4_IDENTITY_REF:-$HARNESS_DIR/plans/261103-0008-GH-1-post-m9-realism-m10/reference/n4-sn-wrap}"
+    UL=(--enableUlTraffic=true "--ulTrafficPattern=$PATTERN")
+    fact rngRun "$RNG"
+    fact identityReference "$(json_str "$IDREF")"
+    # the reference dir's SHA256SUMS, parsed strictly (every line `<64 hex>  <name>`), has exactly one entry for each
+    # a1 manifest compared below, and each manifest has that digest; the verified digests become a fact
+    ref_sums() {
+        python3 -I "$BYTES" verify-reference "$IDREF" n4-run-bytes-uloff-a1.manifest.json \
+            n4-run-bytes-ulon-a1.manifest.json >"$e/identity-reference-digests.json"
+        local rc=$?
+        cat "$e/identity-reference-digests.json"
+        return $rc
+    }
+    id_emitters() {
+        local l bad=0
+        for l in uloff ulon; do printf '%s: ' "$l"; emitter_at_pins "$l" || bad=1; done
+        return $bad
+    }
+    # id_eq <cfg>: the run against the reference's a1 manifest of that config, without the audit header item
+    id_eq() {
+        local out="$e/compare-$1-vs-reference-a1.json" rc
+        python3 -I "$BYTES" compare --except-audit-header "$RUNS/$1" "$IDREF/n4-run-bytes-$1-a1.manifest.json" >"$out"; rc=$?
+        python3 -I -c 'import json,sys; d=json.load(open(sys.argv[1])); print("equal", d.get("equal"), "items", d.get("itemsCompared"), "skipped", d.get("skipped"), "differing", (d.get("differing") or [])[:6], "precondition failures", {k: v["failures"] for k, v in (d.get("preconditions") or {}).items()}, "error", d.get("error"))' "$out"
+        echo "compare $1 with the reference: exit $rc (want 0)"
+        [ "$rc" = 0 ]
+    }
+    # the audit header line, left out of the comparison, is judged with the ulon run's whole audit
+    id_audit() {
+        python3 -I "$G/check-pdcp-volume-totals.py" "$RUNS/ulon" --sim-time-s "$SIM_TIME_S" >"$e/identity-ulon-v3.json"
+        local rc=$?
+        python3 -I -c 'import json,sys; d=json.load(open(sys.argv[1])); print({k: d.get(k) for k in ("hdr","hdrClass","a0","a1","a2","a3","a4","a5")})' "$e/identity-ulon-v3.json"
+        return $rc
+    }
+    check n4_identity_reference_sha256_ok ref_sums
+    fact identityReferenceDigests "$(cat "$e/identity-reference-digests.json" 2>/dev/null || echo null)"
+    check n4_identity_uloff_free_run det_run uloff
+    check n4_identity_ulon_free_run det_run ulon "${UL[@]}"
+    check n4_identity_emitters_at_pins id_emitters
+    check n4_identity_uloff_byte_equal_to_reference id_eq uloff
+    check n4_identity_ulon_byte_equal_to_reference id_eq ulon
+    check n4_identity_ulon_pdcp_audit_judge_passes id_audit
+    for c in uloff ulon; do
+        fact "compare-$c-vs-reference-a1" "$(cat "$e/compare-$c-vs-reference-a1.json" 2>/dev/null || echo null)"
+        cp "$RUNS/$c/n4-run-bytes.manifest.json" "$e/n4-run-bytes-$c.manifest.json" || log "no $c manifest to copy"
+    done
+    check n4_no_stray_process no_stray
+    fact vmLoadEnd "$(json_str "$(uptime)")"
+    gate_finish
+    exit $?
+fi
+
 ################################################################################
 # determinism: byte-equal runs on one build twice (a1, a2) and on a twin build of the same pins (b1)
 ################################################################################
 if [ "$PART" = determinism ]; then
-    BYTES="$G/n4-run-byte-identity.py"; TWIN="$HOME/n4-twin-build"; T0=$(date +%s)
+    TWIN="$HOME/n4-twin-build"; T0=$(date +%s)
     NS3_BIN_A="$NS3_BIN"; NS3_BIN_B=""; TWIN_BUILD_S=null; UL=(--enableUlTraffic=true "--ulTrafficPattern=$PATTERN")
     SHA_A=$(sha256sum "$NS3_BIN_A" 2>/dev/null | cut -d' ' -f1)
     fact rngRun "$RNG"
@@ -207,20 +285,6 @@ if [ "$PART" = determinism ]; then
         [ ! -L "$TWIN" ] && [ -d "$TWIN" ] && [ "$(realpath -m -- "$TWIN")" = "$TWIN" ] &&
             [ "$(stat -c %d:%i -- "$TWIN")" = "$TWIN_ID" ] || { echo "refused: $TWIN is no longer the created directory"; return 1; }
         rm -rf -- "$TWIN"
-    }
-    # det_run <label> [ns-3 args...]: one free null-sink run; then the arguments ns3_start echoed for it, one per line
-    # with the run dir as <run> (the binary path is not an argument: A and B differ there by construction), and its
-    # byte manifest, whose preconditions must hold
-    det_run() {
-        local label="$1" rd="$RUNS/$1" plog="$RUNS/$1.paced-run.log" rc line args; shift
-        paced_null_run "$label" free 0 "--RngRun=$RNG" "$@" >"$plog" 2>&1; rc=$?
-        cat "$plog"; mv "$plog" "$rd/paced-run.log" || return 1
-        [ "$rc" = 0 ] || return 1
-        line=$(grep -m 1 '^ns-3 started pid/pgid ' "$rd/paced-run.log"); args=${line#*": $NS3_BIN "}
-        [ -n "$line" ] && [ "$args" != "$line" ] || { echo "$label: no ns-3 start line naming $NS3_BIN"; return 1; }
-        tr ' ' '\n' <<<"${args//"$rd"/<run>}" >"$rd/ns3-argv.txt"
-        python3 -I "$BYTES" manifest "$rd" >/dev/null || return 1
-        echo "$label: argv and byte manifest written, preconditions hold"
     }
     twin_build() {
         local t rc

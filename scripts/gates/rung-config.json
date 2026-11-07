@@ -78,7 +78,7 @@
       },
       "constraint": "UL SDU > 40 B (PacketSize + 28 > 40)",
       "pdcpHeaderBytes": 2,
-      "pdcpHeaderSource": "ns-3-mmwave-oran@ba954440 src/lte/model/lte-pdcp-header.cc:96-99 LtePdcpHeader::GetSerializedSize; 3GPP TS 36.323 V19.0.0 6.2.3",
+      "pdcpHeaderSource": "ns-3-mmwave-oran@34b7f3cc src/lte/model/nr-pdcp-header.cc NrPdcpHeader::GetSerializedSize, the MC DRB header (audit line class=ns3::NrPdcpHeader); 3GPP TS 38.323 V19.1.0 6.2.2.2 (12-bit SN data PDU)",
       "v5Rule": {
         "id": "n4-v5-r1",
         "window": 16,

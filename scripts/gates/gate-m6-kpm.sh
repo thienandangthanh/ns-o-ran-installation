@@ -147,6 +147,11 @@ TRACE="$RUN/e2-ipc-trace-2.jsonl"
 check m6_emitter_bye_sent_equals_built_zero_drops python3 -I "$E2EV/trace-facts.py" "$TRACE" --require-clean --expect-nodes 2 --out "$e/m6-trace-facts.json"
 nsamples=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))[0]["samples"])' "$e/m6-trace-facts.json" 2>/dev/null || echo 0)
 check m6_agent_counters_clean_samples_in_equal_forwarded_equal_trace agent_counters_assert "$e/agent-stats-final.json" "$nsamples"
+# the EN-DC bearer's DL PDCP PDUs are SDU + the 2-octet NR PDCP header (3GPP TS 38.323 §6.2.2.2) on the eNB's E2 PDCP
+# stats, at most that within one epoch of a switch; the stats and both switch files come from this run's ns3run dir
+check m6_pdcp_dl_pdu_bytes_eq_sdu_plus_nr_header python3 -I "$E2EV/trace-facts.py" --pdcp-stats "$RUN" \
+    --out "$e/m6-pdcp-dl-pdu-bytes.json"
+fact pdcpDlPduBytes "$(cat "$e/m6-pdcp-dl-pdu-bytes.json" 2>/dev/null || echo null)"
 
 check m6_influx_three_samples_equal_trace_bit_exact python3 -I "$E2EV/influx-vs-trace.py" \
     --map "$AGENT_DIR/schema/metric-map.v1.json" --trace "$TRACE" --influx-cell "$e/m6-influx-cell.csv" \
