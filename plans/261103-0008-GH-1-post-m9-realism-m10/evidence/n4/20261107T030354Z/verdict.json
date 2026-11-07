@@ -1,0 +1,146 @@
+{
+  "gate": "n4",
+  "ts": "20261107T030354Z",
+  "harness_sha": "83b01bc670121b5396625bf1b418a5bf0158fd09",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "254027ca787556033e6342b8bd46aa7fdd975cd7",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "4318e43b6593a8d7021f9f75b00540dd8847c217",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "53253fe256ed305b207b607150a5e8a1dec25e42",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "e27058163dc0bb05ce279ad3fa1bd15a22fc24ab"
+  },
+  "duration_s": 173,
+  "pass": true,
+  "failed": [],
+  "checks": [
+    {
+      "name": "n4_args",
+      "pass": true,
+      "detail": "part identity; dev 0; ref ; cal ; UL pattern steps; ns-3 4318e43b6593a8d7021f9f75b00540dd8847c217; oran-interface 53253fe256ed305b207b607150a5e8a1dec25e42"
+    },
+    {
+      "name": "n4_build_tools_present",
+      "pass": true,
+      "detail": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\ntshark 4.4.19 (>= 4.4)"
+    },
+    {
+      "name": "n4_ns3_binary_located_at_pins",
+      "pass": true,
+      "detail": "/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"
+    },
+    {
+      "name": "n4_identity_reference_sha256_ok",
+      "pass": true,
+      "detail": "  },\n  \"problems\": []\n}"
+    },
+    {
+      "name": "n4_identity_uloff_free_run",
+      "pass": true,
+      "detail": "ns-3 exit code 0\nuloff (free): ns-3 exit 0 (want 0)\nuloff: argv and byte manifest written, preconditions hold"
+    },
+    {
+      "name": "n4_identity_ulon_free_run",
+      "pass": true,
+      "detail": "ns-3 exit code 0\nulon (free): ns-3 exit 0 (want 0)\nulon: argv and byte manifest written, preconditions hold"
+    },
+    {
+      "name": "n4_identity_emitters_at_pins",
+      "pass": true,
+      "detail": "uloff: emitter [('4318e43b6593a8d7021f9f75b00540dd8847c217', '53253fe256ed305b207b607150a5e8a1dec25e42')]\nulon: emitter [('4318e43b6593a8d7021f9f75b00540dd8847c217', '53253fe256ed305b207b607150a5e8a1dec25e42')]"
+    },
+    {
+      "name": "n4_identity_uloff_byte_equal_to_reference",
+      "pass": true,
+      "detail": "equal True items 36 skipped ['ns3run/stdout.txt:audit-header'] differing [] precondition failures {'a': [], 'b': []} error None\ncompare uloff with the reference: exit 0 (want 0)"
+    },
+    {
+      "name": "n4_identity_ulon_byte_equal_to_reference",
+      "pass": true,
+      "detail": "equal True items 36 skipped ['ns3run/stdout.txt:audit-header'] differing [] precondition failures {'a': [], 'b': []} error None\ncompare ulon with the reference: exit 0 (want 0)"
+    },
+    {
+      "name": "n4_identity_ulon_pdcp_audit_judge_passes",
+      "pass": true,
+      "detail": "{'hdr': 2, 'hdrClass': 'ns3::NrPdcpHeader', 'a0': True, 'a1': True, 'a2': True, 'a3': True, 'a4': True, 'a5': True}"
+    },
+    {
+      "name": "n4_no_stray_process",
+      "pass": true,
+      "detail": "no leftovers"
+    }
+  ],
+  "dev": false,
+  "part": "identity",
+  "reference": "",
+  "calibration": "",
+  "ulPattern": "steps",
+  "outageThresholdDb": -1000,
+  "vmLoadStart": " 03:03:55 up 13:54,  1 user,  load average: 0.84, 1.12, 1.38",
+  "rngRun": 1,
+  "identityReference": "/home/uc/harness/plans/261103-0008-GH-1-post-m9-realism-m10/reference/n4-sn-wrap",
+  "identityReferenceDigests": {
+    "dir": "/home/uc/harness/plans/261103-0008-GH-1-post-m9-realism-m10/reference/n4-sn-wrap",
+    "verified": {
+      "n4-run-bytes-uloff-a1.manifest.json": "e5e2a10f84484136faa0f1c625c0376646ba3ea457d47490b53a366ee6448b5c",
+      "n4-run-bytes-ulon-a1.manifest.json": "6e8f118b714d67c0834fad0a669bd17e9d66f8dd17609fc1eb0c4f409a91297a"
+    },
+    "problems": []
+  },
+  "compare-uloff-vs-reference-a1": {
+    "a": "/home/uc/evidence/n4/20261107T030354Z/runs/uloff",
+    "b": "/home/uc/harness/plans/261103-0008-GH-1-post-m9-realism-m10/reference/n4-sn-wrap/n4-run-bytes-uloff-a1.manifest.json",
+    "configs": [
+      "uloff",
+      "uloff"
+    ],
+    "skipped": [
+      "ns3run/stdout.txt:audit-header"
+    ],
+    "preconditions": {
+      "a": {
+        "ok": true,
+        "failures": []
+      },
+      "b": {
+        "ok": true,
+        "failures": []
+      }
+    },
+    "equal": true,
+    "itemsCompared": 36,
+    "differing": [],
+    "onlyInA": [],
+    "onlyInB": []
+  },
+  "compare-ulon-vs-reference-a1": {
+    "a": "/home/uc/evidence/n4/20261107T030354Z/runs/ulon",
+    "b": "/home/uc/harness/plans/261103-0008-GH-1-post-m9-realism-m10/reference/n4-sn-wrap/n4-run-bytes-ulon-a1.manifest.json",
+    "configs": [
+      "ulon",
+      "ulon"
+    ],
+    "skipped": [
+      "ns3run/stdout.txt:audit-header"
+    ],
+    "preconditions": {
+      "a": {
+        "ok": true,
+        "failures": []
+      },
+      "b": {
+        "ok": true,
+        "failures": []
+      }
+    },
+    "equal": true,
+    "itemsCompared": 36,
+    "differing": [],
+    "onlyInA": [],
+    "onlyInB": []
+  },
+  "vmLoadEnd": " 03:06:47 up 13:57,  0 user,  load average: 1.06, 1.09, 1.32"
+}

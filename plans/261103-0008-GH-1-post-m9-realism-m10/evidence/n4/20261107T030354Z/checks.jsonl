@@ -1,0 +1,11 @@
+{"name":"n4_args","pass":true,"detail":"part identity; dev 0; ref ; cal ; UL pattern steps; ns-3 4318e43b6593a8d7021f9f75b00540dd8847c217; oran-interface 53253fe256ed305b207b607150a5e8a1dec25e42"}
+{"name":"n4_build_tools_present","pass":true,"detail":"gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\ntshark 4.4.19 (>= 4.4)"}
+{"name":"n4_ns3_binary_located_at_pins","pass":true,"detail":"/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"}
+{"name":"n4_identity_reference_sha256_ok","pass":true,"detail":"  },\n  \"problems\": []\n}"}
+{"name":"n4_identity_uloff_free_run","pass":true,"detail":"ns-3 exit code 0\nuloff (free): ns-3 exit 0 (want 0)\nuloff: argv and byte manifest written, preconditions hold"}
+{"name":"n4_identity_ulon_free_run","pass":true,"detail":"ns-3 exit code 0\nulon (free): ns-3 exit 0 (want 0)\nulon: argv and byte manifest written, preconditions hold"}
+{"name":"n4_identity_emitters_at_pins","pass":true,"detail":"uloff: emitter [('4318e43b6593a8d7021f9f75b00540dd8847c217', '53253fe256ed305b207b607150a5e8a1dec25e42')]\nulon: emitter [('4318e43b6593a8d7021f9f75b00540dd8847c217', '53253fe256ed305b207b607150a5e8a1dec25e42')]"}
+{"name":"n4_identity_uloff_byte_equal_to_reference","pass":true,"detail":"equal True items 36 skipped ['ns3run/stdout.txt:audit-header'] differing [] precondition failures {'a': [], 'b': []} error None\ncompare uloff with the reference: exit 0 (want 0)"}
+{"name":"n4_identity_ulon_byte_equal_to_reference","pass":true,"detail":"equal True items 36 skipped ['ns3run/stdout.txt:audit-header'] differing [] precondition failures {'a': [], 'b': []} error None\ncompare ulon with the reference: exit 0 (want 0)"}
+{"name":"n4_identity_ulon_pdcp_audit_judge_passes","pass":true,"detail":"{'hdr': 2, 'hdrClass': 'ns3::NrPdcpHeader', 'a0': True, 'a1': True, 'a2': True, 'a3': True, 'a4': True, 'a5': True}"}
+{"name":"n4_no_stray_process","pass":true,"detail":"no leftovers"}

@@ -1,0 +1,13 @@
+{"key":"dev","value":false}
+{"key":"part","value":"identity"}
+{"key":"reference","value":""}
+{"key":"calibration","value":""}
+{"key":"ulPattern","value":"steps"}
+{"key":"outageThresholdDb","value":-1000}
+{"key":"vmLoadStart","value":" 03:03:55 up 13:54,  1 user,  load average: 0.84, 1.12, 1.38"}
+{"key":"rngRun","value":1}
+{"key":"identityReference","value":"/home/uc/harness/plans/261103-0008-GH-1-post-m9-realism-m10/reference/n4-sn-wrap"}
+{"key":"identityReferenceDigests","value":{"dir": "/home/uc/harness/plans/261103-0008-GH-1-post-m9-realism-m10/reference/n4-sn-wrap", "verified": {"n4-run-bytes-uloff-a1.manifest.json": "e5e2a10f84484136faa0f1c625c0376646ba3ea457d47490b53a366ee6448b5c", "n4-run-bytes-ulon-a1.manifest.json": "6e8f118b714d67c0834fad0a669bd17e9d66f8dd17609fc1eb0c4f409a91297a"}, "problems": []}}
+{"key":"compare-uloff-vs-reference-a1","value":{"a": "/home/uc/evidence/n4/20261107T030354Z/runs/uloff", "b": "/home/uc/harness/plans/261103-0008-GH-1-post-m9-realism-m10/reference/n4-sn-wrap/n4-run-bytes-uloff-a1.manifest.json", "configs": ["uloff", "uloff"], "skipped": ["ns3run/stdout.txt:audit-header"], "preconditions": {"a": {"ok": true, "failures": []}, "b": {"ok": true, "failures": []}}, "equal": true, "itemsCompared": 36, "differing": [], "onlyInA": [], "onlyInB": []}}
+{"key":"compare-ulon-vs-reference-a1","value":{"a": "/home/uc/evidence/n4/20261107T030354Z/runs/ulon", "b": "/home/uc/harness/plans/261103-0008-GH-1-post-m9-realism-m10/reference/n4-sn-wrap/n4-run-bytes-ulon-a1.manifest.json", "configs": ["ulon", "ulon"], "skipped": ["ns3run/stdout.txt:audit-header"], "preconditions": {"a": {"ok": true, "failures": []}, "b": {"ok": true, "failures": []}}, "equal": true, "itemsCompared": 36, "differing": [], "onlyInA": [], "onlyInB": []}}
+{"key":"vmLoadEnd","value":" 03:06:47 up 13:57,  0 user,  load average: 1.06, 1.09, 1.32"}
