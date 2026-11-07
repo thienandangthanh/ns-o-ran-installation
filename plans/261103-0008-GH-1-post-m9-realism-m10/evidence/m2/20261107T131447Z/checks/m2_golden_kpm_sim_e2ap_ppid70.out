@@ -1,0 +1,9 @@
+kpm_sim container IP 172.17.0.2
+ppid 10.97.131.139:36422 -> :36422 {"70": 2}
+ppid 172.17.0.2:36422 -> :36422 {"70": 510}
+e2ap frames by PPID 126, forced on the port 126
+frames=297 inits=1 aborts=0 shutdowns=0 setup_req=1 setup_resp=1 sub_req=1 sub_resp=1 sub_fail=0 ind_srcs={'172.17.0.2': 122}
+10.97.131.139:36422 -> :36422 PPID counts {"70": 2}
+172.17.0.2:36422 -> :36422 PPID counts {"70": 510}
+source 172.17.0.2: 510 PPID-70 chunk(s)
+E2AP frames decoded by PPID 126, forced on the port 126

@@ -1,0 +1,6 @@
+expected image 127.0.0.1:80/ric-plt-e2mgr:6.0.6-nist180-85dfecb925f9 (source 09036c6ff70f15aa3e8655612c6d9681346a1943, patch set 85dfecb925f9e0529cf8fa7ea408cae77196a0228d56f01d6174106e5c814e1c; from 03180a5b1dd171906a76d6699944342c9105be07)
+pod deployment-ricplt-e2mgr-9b6b8f99f-qms4v: image nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-e2mgr:6.0.6, imageID nexus3.o-ran-sc.org:10002/o-ran-sc/ric-plt-e2mgr@sha256:7c66665b24262b9b7294941148bfce08befc27e5e473bd629cdfa5d6859d9ced, ready true
+docker image: ID none, e2mgr.source.sha none, patchset.sha256 none
+[13:24:54] e2mgr does not run the patched image 127.0.0.1:80/ric-plt-e2mgr:6.0.6-nist180-85dfecb925f9: deploying it (bound 5400s)
+Waiting for deployment spec update to be observed...
+error: timed out waiting for the condition
