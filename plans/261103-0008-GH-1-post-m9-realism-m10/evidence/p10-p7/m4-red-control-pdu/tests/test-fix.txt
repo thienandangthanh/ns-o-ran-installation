@@ -1,0 +1,48 @@
+PASS mc-pdcp-nr-header 0.030 s
+  PASS NrPdcpHeader codec at SN 0 0.000 s
+  PASS NrPdcpHeader codec at SN 1 0.000 s
+  PASS NrPdcpHeader codec at SN 2047 0.000 s
+  PASS NrPdcpHeader codec at SN 2048 0.000 s
+  PASS NrPdcpHeader codec at SN 4095 0.000 s
+  PASS McEnbPdcp and McUePdcp carry NrPdcpHeader; LtePdcp carries LtePdcpHeader 0.005 s
+  PASS DL McEnbPdcp Data PDU transmitted at SN 0 0.000 s
+  PASS UL McUePdcp Data PDU transmitted at SN 0 0.000 s
+  PASS DL McUePdcp hand-built Data PDU received at SN 0 0.000 s
+  PASS UL McEnbPdcp hand-built Data PDU received at SN 0 0.000 s
+  PASS SRB1 LtePdcp unchanged at SN 0 0.000 s
+  PASS DL McEnbPdcp Data PDU transmitted at SN 1 0.000 s
+  PASS UL McUePdcp Data PDU transmitted at SN 1 0.000 s
+  PASS DL McUePdcp hand-built Data PDU received at SN 1 0.000 s
+  PASS UL McEnbPdcp hand-built Data PDU received at SN 1 0.000 s
+  PASS SRB1 LtePdcp unchanged at SN 1 0.000 s
+  PASS DL McEnbPdcp Data PDU transmitted at SN 2047 0.000 s
+  PASS UL McUePdcp Data PDU transmitted at SN 2047 0.000 s
+  PASS DL McUePdcp hand-built Data PDU received at SN 2047 0.000 s
+  PASS UL McEnbPdcp hand-built Data PDU received at SN 2047 0.000 s
+  PASS SRB1 LtePdcp unchanged at SN 2047 0.000 s
+  PASS DL McEnbPdcp Data PDU transmitted at SN 2048 0.000 s
+  PASS UL McUePdcp Data PDU transmitted at SN 2048 0.000 s
+  PASS DL McUePdcp hand-built Data PDU received at SN 2048 0.000 s
+  PASS UL McEnbPdcp hand-built Data PDU received at SN 2048 0.000 s
+  PASS SRB1 LtePdcp unchanged at SN 2048 0.000 s
+  PASS DL McEnbPdcp Data PDU transmitted at SN 4095 0.000 s
+  PASS UL McUePdcp Data PDU transmitted at SN 4095 0.000 s
+  PASS DL McUePdcp hand-built Data PDU received at SN 4095 0.000 s
+  PASS UL McEnbPdcp hand-built Data PDU received at SN 4095 0.000 s
+  PASS SRB1 LtePdcp unchanged at SN 4095 0.000 s
+  PASS DL McUePdcp PDCP Control PDU of PDU type 0 discarded 0.000 s
+  PASS UL McEnbPdcp PDCP Control PDU of PDU type 0 discarded 0.000 s
+  PASS DL McUePdcp PDCP Control PDU of PDU type 1 discarded 0.000 s
+  PASS UL McEnbPdcp PDCP Control PDU of PDU type 1 discarded 0.000 s
+  PASS DL McUePdcp PDCP Control PDU of PDU type 5 discarded 0.000 s
+  PASS UL McEnbPdcp PDCP Control PDU of PDU type 5 discarded 0.000 s
+  PASS eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 sent 0.003 s
+  PASS eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 sent, NACK 1022, 1023 0.003 s
+  PASS eNB X2 forwarding of SDUs, VT(A) 5, SNs 4094 to 1 sent 0.000 s
+  PASS eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 queued 0.003 s
+  PASS eNB RLC PDU forwarding, VT(A) 1022, SNs 4094 to 1 sent 0.003 s
+  PASS eNB RLC PDU forwarding, VT(A) 1022, SNs 4094 to 1 queued 0.003 s
+  PASS UE RLC switch, VT(A) 1022, SNs 4094 to 1 sent 0.003 s
+  PASS UE RLC switch, VT(A) 1022, SNs 4094 to 1 sent, NACK 1022, 1023 0.003 s
+  PASS UE RLC switch, VT(A) 5, SNs 4094 to 1 sent 0.000 s
+  PASS UE RLC switch, VT(A) 1022, SNs 4094 to 1 queued 0.003 s

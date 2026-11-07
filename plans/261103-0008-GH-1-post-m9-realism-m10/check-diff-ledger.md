@@ -387,3 +387,15 @@ Notes on rows 100 and 101 (2026-11-04, P06b exit review kongming-261104-1958 fin
 - A pure-LTE `LteHelper` DRB therefore also carries the NR header class, with no wire change at 12 bits. kongming-261107-0830 judged this consistent with 37.340 §4.2.2 for EN-DC.
 - The E-UTRA header stays on SRBs and plain `LtePdcp` entities. A tripwire aborts if the E-UTRA codec runs on anything but a plain `LtePdcp`.
 - The class `LteRlcAm` decodes with is not visible at run time. It is enforced by type (one explicit template instantiation, for `NrPdcpHeader`) and by the source lint.
+
+**Row 148 notes, continued (2026-11-07, P7 red #1 under the Failure Protocol; record only, predicates unchanged).**
+- **The red.** The chain at harness 3dac03b8 (ns-3 34b7f3cc) was red at M4 (`evidence/m4/20261107T010358Z`). Every 4-gNB scenario-zero run aborted at +0.239 s in the new `McUePdcp::DoReceivePdu` check "McUePdcp received a PDCP Control PDU".
+- **Cause** (kongming-261107-1015, proved on the host, evidence `evidence/p10-p7/m4-red-control-pdu/`): pre-existing, and P7 changes no byte on this path.
+  - D/C 0 PDUs reach the UE from switch-time forwarding defects. Class A is X2 GTP-U framing written in place into Packet objects still queued in the LTE RLC; class B is zero-filled UM tails. See the phase-10 follow-ups.
+  - 4a0871d6 delivers the same PDUs byte for byte, parses them as data, and `McUeNetDevice` drops them.
+  - N4 has no switches, so its byte identity could not see this.
+- **Fix** (the one kongming-guided fix): both new aborts (`McUePdcp`, `McEnbPdcp`) become the discard that TS 38.323 V19.1.0 §5.10 requires. The entity is configured with no Control PDU function (§6.2.3, §6.3.7). RxPDU still fires; nothing is delivered and RX state is unchanged.
+- **Tests:** six `mc-pdcp-nr-header` cases (DL McUePdcp and UL McEnbPdcp; PDU types 0, 1, 5) extend row 148 (a) without changing its predicate.
+- **Host result:** M4-config traces are identical to 4a0871d6. N4 equals `reference/n4-sn-wrap/` except the audit header.
+- This supersedes the implementer report's line "RX aborts on D/C = 0"; the report itself is left unedited.
+- A second red in this chain is PAUSE T6.

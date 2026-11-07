@@ -1,0 +1,24 @@
+# mutation m2-wrong-header-class-in-strip in src/lte/model/lte-rlc-forwarding-buffer.cc
+# -                     rlcSdu->RemoveHeader(pdcpHeader);
+
+# +                     LtePdcpHeader eUtraHeader;
+                    rlcSdu->RemoveHeader(eUtraHeader);
+
+24a25
+> #include "lte-pdcp-header.h"
+198c199,200
+<                     rlcSdu->RemoveHeader(pdcpHeader);
+---
+>                     LtePdcpHeader eUtraHeader;
+>                     rlcSdu->RemoveHeader(eUtraHeader);
+31 FAIL eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 sent | failing checks 5 | first: test="OuterHeaderClass(delivered[k]) (actual) == wantClass (limit)" actual="ns3::NrPdcpHeader" limit="<no header>" lte-test-mc-pdcp-nr-header.cc:832 delivered packet 0: the NR header removed
+32 FAIL eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 sent, NACK 1022, 1023 | failing checks 5 | first: test="OuterHeaderClass(delivered[k]) (actual) == wantClass (limit)" actual="ns3::NrPdcpHeader" limit="<no header>" lte-test-mc-pdcp-nr-header.cc:832 delivered packet 0: the NR header removed
+33 FAIL eNB X2 forwarding of SDUs, VT(A) 5, SNs 4094 to 1 sent | failing checks 5 | first: test="OuterHeaderClass(delivered[k]) (actual) == wantClass (limit)" actual="ns3::NrPdcpHeader" limit="<no header>" lte-test-mc-pdcp-nr-header.cc:832 delivered packet 0: the NR header removed
+34 FAIL eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 queued | failing checks 4 | first: test="OuterHeaderClass(delivered[k]) (actual) == wantClass (limit)" actual="ns3::NrPdcpHeader" limit="<no header>" lte-test-mc-pdcp-nr-header.cc:832 delivered packet 0: the NR header removed
+35 PASS eNB RLC PDU forwarding, VT(A) 1022, SNs 4094 to 1 sent | failing checks 0 | first: 
+36 PASS eNB RLC PDU forwarding, VT(A) 1022, SNs 4094 to 1 queued | failing checks 0 | first: 
+37 FAIL UE RLC switch, VT(A) 1022, SNs 4094 to 1 sent | failing checks 5 | first: test="OuterHeaderClass(delivered[k]) (actual) == wantClass (limit)" actual="ns3::NrPdcpHeader" limit="<no header>" lte-test-mc-pdcp-nr-header.cc:832 delivered packet 0: the NR header removed
+38 FAIL UE RLC switch, VT(A) 1022, SNs 4094 to 1 sent, NACK 1022, 1023 | failing checks 5 | first: test="OuterHeaderClass(delivered[k]) (actual) == wantClass (limit)" actual="ns3::NrPdcpHeader" limit="<no header>" lte-test-mc-pdcp-nr-header.cc:832 delivered packet 0: the NR header removed
+39 FAIL UE RLC switch, VT(A) 5, SNs 4094 to 1 sent | failing checks 5 | first: test="OuterHeaderClass(delivered[k]) (actual) == wantClass (limit)" actual="ns3::NrPdcpHeader" limit="<no header>" lte-test-mc-pdcp-nr-header.cc:832 delivered packet 0: the NR header removed
+40 FAIL UE RLC switch, VT(A) 1022, SNs 4094 to 1 queued | failing checks 4 | first: test="OuterHeaderClass(delivered[k]) (actual) == wantClass (limit)" actual="ns3::NrPdcpHeader" limit="<no header>" lte-test-mc-pdcp-nr-header.cc:832 delivered packet 0: the NR header removed
+restored src/lte/model/lte-rlc-forwarding-buffer.cc

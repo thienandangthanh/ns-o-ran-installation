@@ -1,0 +1,13 @@
+# mutation m9-rlc-am-recovery-eutra-class in src/lte/model/lte-rlc-forwarding-buffer.cc
+# - rlcAm->RlcPdusToRlcSdus<PdcpDataPduHeader>(
+# + rlcAm->RlcPdusToRlcSdus<LtePdcpHeader>(
+24a25
+> #include "lte-pdcp-header.h"
+57c58
+<             rlcAm->RlcPdusToRlcSdus<PdcpDataPduHeader>(rlcAm->GetUnackedPdusInTransmissionOrder());
+---
+>             rlcAm->RlcPdusToRlcSdus<LtePdcpHeader>(rlcAm->GetUnackedPdusInTransmissionOrder());
+BUILD FAILED (compile error):
+src/lte/model/lte-rlc-forwarding-buffer.cc:58:51: error: no matching function for call to ‘ns3::LteRlcAm::RlcPdusToRlcSdus<ns3::LtePdcpHeader>(std::vector<ns3::LteRlcAm::RetxPdu>)’ [-Wtemplate-body]
+        • error: no type named ‘type’ in ‘struct std::enable_if<false, void>’
+restored

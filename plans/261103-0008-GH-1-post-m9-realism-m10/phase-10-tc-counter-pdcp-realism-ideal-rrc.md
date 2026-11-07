@@ -318,6 +318,17 @@ This is an observation only, with no ledger row and no fix in M10. It is pre-exi
 - **Spec target [to verify in Zotero before citing]:** RLC UM and PDCP re-establishment for UM bearers (38.322 / 38.323).
 - **Trigger:** any realism claim on switch-epoch DL volume or SDU integrity.
 
+## Follow-up candidate outside M10: forwarded Packets aliased with the LTE RLC queue at MC setup (P7 red #1, kongming-261107-1015)
+This is an observation only, with no ledger row and no fix in M10. It is pre-existing: the same PDUs appear at 4a0871d6. It is traced for 83 of the 341 GTP-U-framed PDUs in a 2 s 4-gNB run; the other 258 carry the same signature [I].
+1. At an IMSI's MC setup (`lte-enb-rrc.cc:1464-1495` @4a0871d6), `ForwardRlcBuffers` takes the LTE RLC's buffer without resetting that RLC. `LteRlcUmLowLat::GetTxBuffer` (`:479-482`) never clears it, so the same Packet objects stay queued.
+2. Forwarded objects re-enter `McEnbPdcp`. Its split sends some to X2, and `EpcX2::DoSendMcPdcpPdu` adds the GTP-U header in place on the shared object (`epc-x2.cc:1254-1255`).
+3. The LTE RLC then transmits the modified object. The UE receives a 1322 B PDU starting `3b 03 05 22` (a 12-octet GTP-U header, then the PDCP header and the SDU).
+   - Before P7 it was parsed as data and dropped by `McUeNetDevice` as "Unknown IP type".
+   - Since P7's fix it is discarded at PDCP per 38.323 §5.10.
+4. **Effect:** duplicated or lost DL SDUs around MC setup, and the PDCP RX counters count these PDUs.
+
+- **Trigger:** any realism claim on DL SDU integrity or delivery around MC setup or switches.
+
 ## Pre-registration (2026-11-06; one docs commit before any P10 code after D-R3-1)
 Sources: the user rulings in `plans/reports/decisions-261106-0525-GH-1-p10-pre-registration-questions.md`; kongming `kongming-261106-0500-…` (§7, §9, C.4, C.5) and `kongming-261106-1952-…`; ledger rows 147–161 (`check-diff-ledger.md`); contract Amendment 4.
 - **Commit order (one fix per commit, for P11's bisection):** D-R3-1 (Testbed + harness pair), the neighbour-loop UB fix (Amendment 4, row 159), P6 (row 147), the SN-wrap fix (row 160), P7 (rows 148–150), P9 (rows 151, 152, 161), P15 (rows 153–155), D-06b-1 (row 81 amendment first), the kpimon node tag (row 137), the TS serving cell (rows 138–142, 158), UseIdealRrc (rows 156–157).

@@ -1,0 +1,20 @@
+# mutation m4-ignore-keep-header-flag in src/lte/model/lte-rlc-forwarding-buffer.cc
+# -                 if (removePdcpHeader)
+# +                 if (true)
+196c196
+<                 if (removePdcpHeader)
+---
+>                 if (true)
+31 PASS eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 sent | failing checks 0 | first: 
+32 PASS eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 sent, NACK 1022, 1023 | failing checks 0 | first: 
+33 PASS eNB X2 forwarding of SDUs, VT(A) 5, SNs 4094 to 1 sent | failing checks 0 | first: 
+34 PASS eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 queued | failing checks 0 | first: 
+35  | failing checks 0 | first: 
+36  | failing checks 0 | first: 
+37 PASS UE RLC switch, VT(A) 1022, SNs 4094 to 1 sent | failing checks 0 | first: 
+38 PASS UE RLC switch, VT(A) 1022, SNs 4094 to 1 sent, NACK 1022, 1023 | failing checks 0 | first: 
+39 PASS UE RLC switch, VT(A) 5, SNs 4094 to 1 sent | failing checks 0 | first: 
+40 PASS UE RLC switch, VT(A) 1022, SNs 4094 to 1 queued | failing checks 0 | first: 
+restored src/lte/model/lte-rlc-forwarding-buffer.cc
+# cases 35, 36 (no result line): the runner aborted; the peer McUePdcp read the payload as a header and hit its abort:
+aborted. cond="pdcpHeader.GetDcBit() != DataPduHeader::DATA_PDU", msg="McUePdcp received a PDCP Control PDU; this model sends Data PDUs only", +0.000000000s -1 file=src/lte/model/mc-ue-pdcp.cc, line=267

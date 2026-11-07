@@ -1,0 +1,13 @@
+# mutation m7-ue-call-site-eutra-class in src/lte/model/lte-ue-rrc.cc
+# -     CollectRlcForwardingBuffer<PdcpHeader>(rlc,
+# +     CollectRlcForwardingBuffer<LtePdcpHeader>(rlc,
+39a40
+> #include <ns3/lte-pdcp-header.h>
+1590c1591
+<     CollectRlcForwardingBuffer<PdcpHeader>(rlc,
+---
+>     CollectRlcForwardingBuffer<LtePdcpHeader>(rlc,
+BUILD FAILED (compile error):
+src/lte/model/lte-ue-rrc.cc:1591:46: error: no matching function for call to ‘CollectRlcForwardingBuffer<ns3::LtePdcpHeader>(ns3::Ptr<ns3::LteRlc>&, std::vector<ns3::Ptr<ns3::Packet> >&, uint32_t&)’
+        • error: no type named ‘type’ in ‘struct std::enable_if<false, void>’
+restored

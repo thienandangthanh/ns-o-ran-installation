@@ -1,0 +1,18 @@
+# mutation m3-keep-packet-tags in src/lte/model/lte-rlc-forwarding-buffer.cc
+# -                 rlcSdu->RemoveAllPacketTags(); // this does not remove byte tags
+# +                 // tags kept
+194c194
+<                 rlcSdu->RemoveAllPacketTags(); // this does not remove byte tags
+---
+>                 // tags kept
+31 FAIL eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 sent | failing checks 1 | first: test="HasPacketTags(delivered[k]) (actual) == false (limit)" actual="1" limit="0" lte-test-mc-pdcp-nr-header.cc:843 delivered packet 4: no packet tag
+32 FAIL eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 sent, NACK 1022, 1023 | failing checks 1 | first: test="HasPacketTags(delivered[k]) (actual) == false (limit)" actual="1" limit="0" lte-test-mc-pdcp-nr-header.cc:843 delivered packet 4: no packet tag
+33 FAIL eNB X2 forwarding of SDUs, VT(A) 5, SNs 4094 to 1 sent | failing checks 1 | first: test="HasPacketTags(delivered[k]) (actual) == false (limit)" actual="1" limit="0" lte-test-mc-pdcp-nr-header.cc:843 delivered packet 4: no packet tag
+34 FAIL eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 queued | failing checks 4 | first: test="HasPacketTags(delivered[k]) (actual) == false (limit)" actual="1" limit="0" lte-test-mc-pdcp-nr-header.cc:843 delivered packet 0: no packet tag
+35 FAIL eNB RLC PDU forwarding, VT(A) 1022, SNs 4094 to 1 sent | failing checks 1 | first: test="HasPacketTags(delivered[k]) (actual) == false (limit)" actual="1" limit="0" lte-test-mc-pdcp-nr-header.cc:843 delivered packet 4: no packet tag
+36 FAIL eNB RLC PDU forwarding, VT(A) 1022, SNs 4094 to 1 queued | failing checks 4 | first: test="HasPacketTags(delivered[k]) (actual) == false (limit)" actual="1" limit="0" lte-test-mc-pdcp-nr-header.cc:843 delivered packet 0: no packet tag
+37 FAIL UE RLC switch, VT(A) 1022, SNs 4094 to 1 sent | failing checks 1 | first: test="HasPacketTags(delivered[k]) (actual) == false (limit)" actual="1" limit="0" lte-test-mc-pdcp-nr-header.cc:843 delivered packet 4: no packet tag
+38 FAIL UE RLC switch, VT(A) 1022, SNs 4094 to 1 sent, NACK 1022, 1023 | failing checks 1 | first: test="HasPacketTags(delivered[k]) (actual) == false (limit)" actual="1" limit="0" lte-test-mc-pdcp-nr-header.cc:843 delivered packet 4: no packet tag
+39 FAIL UE RLC switch, VT(A) 5, SNs 4094 to 1 sent | failing checks 1 | first: test="HasPacketTags(delivered[k]) (actual) == false (limit)" actual="1" limit="0" lte-test-mc-pdcp-nr-header.cc:843 delivered packet 4: no packet tag
+40 FAIL UE RLC switch, VT(A) 1022, SNs 4094 to 1 queued | failing checks 4 | first: test="HasPacketTags(delivered[k]) (actual) == false (limit)" actual="1" limit="0" lte-test-mc-pdcp-nr-header.cc:843 delivered packet 0: no packet tag
+restored src/lte/model/lte-rlc-forwarding-buffer.cc

@@ -1,0 +1,26 @@
+{
+  "a": "/tmp/claude-1000/kongming-p7-red/n4/fix-ulon",
+  "b": "plans/261103-0008-GH-1-post-m9-realism-m10/reference/n4-sn-wrap/n4-run-bytes-ulon-a1.manifest.json",
+  "configs": [
+    "ulon",
+    "ulon"
+  ],
+  "skipped": [
+    "ns3run/stdout.txt:audit-header"
+  ],
+  "preconditions": {
+    "a": {
+      "ok": true,
+      "failures": []
+    },
+    "b": {
+      "ok": true,
+      "failures": []
+    }
+  },
+  "equal": true,
+  "itemsCompared": 36,
+  "differing": [],
+  "onlyInA": [],
+  "onlyInB": []
+}

@@ -1,0 +1,18 @@
+# mutation m8-enb-dispatch-flag-inverted in src/lte/model/lte-enb-rrc.cc
+# -         !forwardPdcpPdus,
+# +         forwardPdcpPdus,
+943c943
+<         !forwardPdcpPdus,
+---
+>         forwardPdcpPdus,
+31 PASS eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 sent | failing checks 0 | first: 
+32 PASS eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 sent, NACK 1022, 1023 | failing checks 0 | first: 
+33 PASS eNB X2 forwarding of SDUs, VT(A) 5, SNs 4094 to 1 sent | failing checks 0 | first: 
+34 PASS eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 queued | failing checks 0 | first: 
+35 PASS eNB RLC PDU forwarding, VT(A) 1022, SNs 4094 to 1 sent | failing checks 0 | first: 
+36 PASS eNB RLC PDU forwarding, VT(A) 1022, SNs 4094 to 1 queued | failing checks 0 | first: 
+37 PASS UE RLC switch, VT(A) 1022, SNs 4094 to 1 sent | failing checks 0 | first: 
+38 PASS UE RLC switch, VT(A) 1022, SNs 4094 to 1 sent, NACK 1022, 1023 | failing checks 0 | first: 
+39 PASS UE RLC switch, VT(A) 5, SNs 4094 to 1 sent | failing checks 0 | first: 
+40 PASS UE RLC switch, VT(A) 1022, SNs 4094 to 1 queued | failing checks 0 | first: 
+restored src/lte/model/lte-enb-rrc.cc

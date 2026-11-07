@@ -1,0 +1,33 @@
+{
+  "a": "/tmp/claude-1000/ns3-p7-910ba118/runs-base/ulon",
+  "b": "/tmp/claude-1000/ns3-p7-910ba118/runs-p7/ulon",
+  "configs": [
+    "ulon",
+    "ulon"
+  ],
+  "skipped": [],
+  "preconditions": {
+    "a": {
+      "ok": true,
+      "failures": []
+    },
+    "b": {
+      "ok": true,
+      "failures": []
+    }
+  },
+  "equal": false,
+  "itemsCompared": 37,
+  "differing": [
+    "ns3run/stdout.txt:audit-header"
+  ],
+  "onlyInA": [],
+  "onlyInB": [],
+  "firstDifferingLines": {
+    "ns3run/stdout.txt:audit-header": {
+      "line": 1,
+      "a": "N4AUDIT v1 hdr=2\n",
+      "b": "N4AUDIT v1 hdr=2 class=ns3::NrPdcpHeader\n"
+    }
+  }
+}

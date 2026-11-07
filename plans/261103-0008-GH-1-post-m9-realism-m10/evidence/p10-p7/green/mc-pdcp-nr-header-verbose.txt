@@ -1,0 +1,42 @@
+PASS mc-pdcp-nr-header
+  PASS NrPdcpHeader codec at SN 0
+  PASS NrPdcpHeader codec at SN 1
+  PASS NrPdcpHeader codec at SN 2047
+  PASS NrPdcpHeader codec at SN 2048
+  PASS NrPdcpHeader codec at SN 4095
+  PASS McEnbPdcp and McUePdcp carry NrPdcpHeader; LtePdcp carries LtePdcpHeader
+  PASS DL McEnbPdcp Data PDU transmitted at SN 0
+  PASS UL McUePdcp Data PDU transmitted at SN 0
+  PASS DL McUePdcp hand-built Data PDU received at SN 0
+  PASS UL McEnbPdcp hand-built Data PDU received at SN 0
+  PASS SRB1 LtePdcp unchanged at SN 0
+  PASS DL McEnbPdcp Data PDU transmitted at SN 1
+  PASS UL McUePdcp Data PDU transmitted at SN 1
+  PASS DL McUePdcp hand-built Data PDU received at SN 1
+  PASS UL McEnbPdcp hand-built Data PDU received at SN 1
+  PASS SRB1 LtePdcp unchanged at SN 1
+  PASS DL McEnbPdcp Data PDU transmitted at SN 2047
+  PASS UL McUePdcp Data PDU transmitted at SN 2047
+  PASS DL McUePdcp hand-built Data PDU received at SN 2047
+  PASS UL McEnbPdcp hand-built Data PDU received at SN 2047
+  PASS SRB1 LtePdcp unchanged at SN 2047
+  PASS DL McEnbPdcp Data PDU transmitted at SN 2048
+  PASS UL McUePdcp Data PDU transmitted at SN 2048
+  PASS DL McUePdcp hand-built Data PDU received at SN 2048
+  PASS UL McEnbPdcp hand-built Data PDU received at SN 2048
+  PASS SRB1 LtePdcp unchanged at SN 2048
+  PASS DL McEnbPdcp Data PDU transmitted at SN 4095
+  PASS UL McUePdcp Data PDU transmitted at SN 4095
+  PASS DL McUePdcp hand-built Data PDU received at SN 4095
+  PASS UL McEnbPdcp hand-built Data PDU received at SN 4095
+  PASS SRB1 LtePdcp unchanged at SN 4095
+  PASS eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 sent
+  PASS eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 sent, NACK 1022, 1023
+  PASS eNB X2 forwarding of SDUs, VT(A) 5, SNs 4094 to 1 sent
+  PASS eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 queued
+  PASS eNB RLC PDU forwarding, VT(A) 1022, SNs 4094 to 1 sent
+  PASS eNB RLC PDU forwarding, VT(A) 1022, SNs 4094 to 1 queued
+  PASS UE RLC switch, VT(A) 1022, SNs 4094 to 1 sent
+  PASS UE RLC switch, VT(A) 1022, SNs 4094 to 1 sent, NACK 1022, 1023
+  PASS UE RLC switch, VT(A) 5, SNs 4094 to 1 sent
+  PASS UE RLC switch, VT(A) 1022, SNs 4094 to 1 queued

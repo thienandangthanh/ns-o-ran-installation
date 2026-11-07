@@ -1,0 +1,4 @@
+897f2928557ab8fdb76816b963a315ab83bf8fb2b3ea249984b4b1435b9b6fa7  red-tree-shim.diff
+suite file under test: 2a6db3d4f8f284631d09764549d348367e2e0cf3db74cd854225fe7d20c41c8c  src/lte/test/lte-test-mc-pdcp-nr-header.cc (identical to the change's)
+nr-pdcp-header.h under test: ea7bdfed26a3a4277f58343b44375c8ccfad9e5a46b980e68c61bd91645fc3d6 (the change's)
+red tree: git archive ns-3 4a0871d6 + oran-interface 53253fe2 + nr-pdcp-header.{h,cc} and the suite from the change + this shim; per-case MC_CASE probe (per-case-mc.sh, MC_NCASES=41)

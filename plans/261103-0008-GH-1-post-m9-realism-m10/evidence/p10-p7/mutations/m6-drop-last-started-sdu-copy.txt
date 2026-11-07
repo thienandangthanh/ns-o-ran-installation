@@ -1,0 +1,18 @@
+# mutation m6-drop-last-started-sdu-copy in src/lte/model/lte-rlc-forwarding-buffer.cc
+# -                 txonBuffer.insert(txonBuffer.begin(), segmentedRlcsdu);
+# +                 // not inserted
+111c111
+<                 txonBuffer.insert(txonBuffer.begin(), segmentedRlcsdu);
+---
+>                 // not inserted
+31 FAIL eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 sent | failing checks 1 | first: test="buffer.size() (actual) == order.size() (limit)" actual="4" limit="5" lte-test-mc-pdcp-nr-header.cc:768 the forwarded packet count
+32 FAIL eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 sent, NACK 1022, 1023 | failing checks 1 | first: test="buffer.size() (actual) == order.size() (limit)" actual="4" limit="5" lte-test-mc-pdcp-nr-header.cc:768 the forwarded packet count
+33 FAIL eNB X2 forwarding of SDUs, VT(A) 5, SNs 4094 to 1 sent | failing checks 1 | first: test="buffer.size() (actual) == order.size() (limit)" actual="4" limit="5" lte-test-mc-pdcp-nr-header.cc:768 the forwarded packet count
+34 PASS eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 queued | failing checks 0 | first: 
+35 FAIL eNB RLC PDU forwarding, VT(A) 1022, SNs 4094 to 1 sent | failing checks 1 | first: test="buffer.size() (actual) == order.size() (limit)" actual="4" limit="5" lte-test-mc-pdcp-nr-header.cc:768 the forwarded packet count
+36 PASS eNB RLC PDU forwarding, VT(A) 1022, SNs 4094 to 1 queued | failing checks 0 | first: 
+37 FAIL UE RLC switch, VT(A) 1022, SNs 4094 to 1 sent | failing checks 1 | first: test="buffer.size() (actual) == order.size() (limit)" actual="4" limit="5" lte-test-mc-pdcp-nr-header.cc:768 the forwarded packet count
+38 FAIL UE RLC switch, VT(A) 1022, SNs 4094 to 1 sent, NACK 1022, 1023 | failing checks 1 | first: test="buffer.size() (actual) == order.size() (limit)" actual="4" limit="5" lte-test-mc-pdcp-nr-header.cc:768 the forwarded packet count
+39 FAIL UE RLC switch, VT(A) 5, SNs 4094 to 1 sent | failing checks 1 | first: test="buffer.size() (actual) == order.size() (limit)" actual="4" limit="5" lte-test-mc-pdcp-nr-header.cc:768 the forwarded packet count
+40 PASS UE RLC switch, VT(A) 1022, SNs 4094 to 1 queued | failing checks 0 | first: 
+restored src/lte/model/lte-rlc-forwarding-buffer.cc

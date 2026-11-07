@@ -1,0 +1,132 @@
+# Every failing check of the forwarding cases 31-40 at the 4a0871d6 shim (all are header-class checks)
+== case index 31
+  FAIL eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 sent 0.008 s
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 0: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 1: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 2: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 3: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 4: the header the source wrote
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 0 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 1 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 2 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 3 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 4 sent again with the NR header
+runner rc=1
+== case index 32
+  FAIL eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 sent, NACK 1022, 1023 0.008 s
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 0: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 1: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 2: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 3: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 4: the header the source wrote
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 0 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 1 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 2 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 3 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 4 sent again with the NR header
+runner rc=1
+== case index 33
+  FAIL eNB X2 forwarding of SDUs, VT(A) 5, SNs 4094 to 1 sent 0.005 s
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 0: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 1: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 2: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 3: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 4: the header the source wrote
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 0 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 1 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 2 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 3 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 4 sent again with the NR header
+runner rc=1
+== case index 34
+  FAIL eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 queued 0.008 s
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 0: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 1: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 2: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 3: the header the source wrote
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 0 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 1 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 2 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 3 sent again with the NR header
+runner rc=1
+== case index 35
+  FAIL eNB RLC PDU forwarding, VT(A) 1022, SNs 4094 to 1 sent 0.008 s
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 0: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 1: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 2: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 3: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 4: the header the source wrote
+      test="OuterHeaderClass(delivered[k]) (actual) == wantClass (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:832" delivered packet 0: the NR header kept
+      test="OuterHeaderClass(delivered[k]) (actual) == wantClass (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:832" delivered packet 1: the NR header kept
+      test="OuterHeaderClass(delivered[k]) (actual) == wantClass (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:832" delivered packet 2: the NR header kept
+      test="OuterHeaderClass(delivered[k]) (actual) == wantClass (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:832" delivered packet 3: the NR header kept
+      test="OuterHeaderClass(delivered[k]) (actual) == wantClass (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:832" delivered packet 4: the NR header kept
+runner rc=1
+== case index 36
+  FAIL eNB RLC PDU forwarding, VT(A) 1022, SNs 4094 to 1 queued 0.008 s
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 0: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 1: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 2: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 3: the header the source wrote
+      test="OuterHeaderClass(delivered[k]) (actual) == wantClass (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:832" delivered packet 0: the NR header kept
+      test="OuterHeaderClass(delivered[k]) (actual) == wantClass (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:832" delivered packet 1: the NR header kept
+      test="OuterHeaderClass(delivered[k]) (actual) == wantClass (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:832" delivered packet 2: the NR header kept
+      test="OuterHeaderClass(delivered[k]) (actual) == wantClass (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:832" delivered packet 3: the NR header kept
+runner rc=1
+== case index 37
+  FAIL UE RLC switch, VT(A) 1022, SNs 4094 to 1 sent 0.008 s
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 0: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 1: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 2: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 3: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 4: the header the source wrote
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 0 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 1 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 2 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 3 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 4 sent again with the NR header
+runner rc=1
+== case index 38
+  FAIL UE RLC switch, VT(A) 1022, SNs 4094 to 1 sent, NACK 1022, 1023 0.008 s
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 0: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 1: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 2: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 3: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 4: the header the source wrote
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 0 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 1 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 2 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 3 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 4 sent again with the NR header
+runner rc=1
+== case index 39
+  FAIL UE RLC switch, VT(A) 5, SNs 4094 to 1 sent 0.005 s
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 0: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 1: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 2: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 3: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 4: the header the source wrote
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 0 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 1 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 2 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 3 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 4 sent again with the NR header
+runner rc=1
+== case index 40
+  FAIL UE RLC switch, VT(A) 1022, SNs 4094 to 1 queued 0.008 s
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 0: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 1: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 2: the header the source wrote
+      test="OuterHeaderClass(buffer[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:778" forwarded packet 3: the header the source wrote
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 0 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 1 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 2 sent again with the NR header
+      test="OuterHeaderClass(peerSideRlc.m_pdus[k]) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:865" packet 3 sent again with the NR header
+runner rc=1
+
+# One failing class case of the non-forwarding set (case 6)
+== case index 6
+  FAIL DL McEnbPdcp Data PDU transmitted at SN 0 0.005 s
+      test="OuterHeaderClass(m_rlc.m_pdus.front()) (actual) == "ns3::NrPdcpHeader" (limit)" actual="ns3::LtePdcpHeader" limit="ns3::NrPdcpHeader" in="lte-test-mc-pdcp-nr-header.cc:400" the class that wrote the header octets
+      test="EntityHeader(m_pdcp) (actual) == "ns3::NrPdcpHeader/2" (limit)" actual="ns3::LtePdcpHeader/2" limit="ns3::NrPdcpHeader/2" in="lte-test-mc-pdcp-nr-header.cc:403" the entity's header
+runner rc=1

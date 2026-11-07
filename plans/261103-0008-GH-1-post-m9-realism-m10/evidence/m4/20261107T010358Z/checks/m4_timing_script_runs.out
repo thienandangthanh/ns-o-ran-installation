@@ -1,0 +1,23 @@
+[10:07:23] single r1: {"wall_s": 5.224204669997562, "rc": -6, "timed_out": false, "pgid": 1471788, "leftover_killed": false}
+[10:07:29] single r2: {"wall_s": 5.223271679999016, "rc": -6, "timed_out": false, "pgid": 1471871, "leftover_killed": false}
+[10:07:35] single r3: {"wall_s": 5.225134918000549, "rc": -6, "timed_out": false, "pgid": 1471975, "leftover_killed": false}
+[10:07:40] default r1: {"wall_s": 4.670331388995692, "rc": -6, "timed_out": false, "pgid": 1472148, "leftover_killed": false}
+[10:07:45] default r2: {"wall_s": 4.624073145001603, "rc": -6, "timed_out": false, "pgid": 1472287, "leftover_killed": false}
+[10:07:51] default r3: {"wall_s": 4.672415473003639, "rc": -6, "timed_out": false, "pgid": 1472507, "leftover_killed": false}
+ns-3 scenario-zero timing (real seconds per simulated second)
+date 2026-11-07T10:07:17+09:00 .. 2026-11-07T10:07:51+09:00 (Asia/Seoul)
+simTime 10s, indicationPeriodicity 0.1s, expected samples/node 100
+commits: ns3-mmwave 34b7f3cc7a46e616b64148c8dfe23cb35a615304, oran-interface 53253fe256ed305b207b607150a5e8a1dec25e42, harness 3dac03b8ec28e7ad50dced492c38066410265497
+nproc 8, load avg before [5.44 3.65 1.75] after [3.48 3.36 1.72]
+binary /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default
+
+single   repeats=3 mean=0.522 min=0.522 max=0.523 stdev=0.000 cv=0.0%
+  r1 wall=5.22s rc=-6 samples/node={'2': 29} invalid=0
+  r2 wall=5.22s rc=-6 samples/node={'2': 29} invalid=0
+  r3 wall=5.23s rc=-6 samples/node={'2': 29} invalid=0
+default  repeats=3 mean=0.466 min=0.462 max=0.467 stdev=0.003 cv=0.6%
+  r1 wall=4.67s rc=-6 samples/node={'1': 3, '2': 3, '3': 3, '4': 3, '5': 3} invalid=0
+  r2 wall=4.62s rc=-6 samples/node={'1': 3, '2': 3, '3': 3, '4': 3, '5': 3} invalid=0
+  r3 wall=4.67s rc=-6 samples/node={'1': 3, '2': 3, '3': 3, '4': 3, '5': 3} invalid=0
+
+result: PROBLEM (nonzero rc, missing sink data, or hygiene failure)

@@ -1,0 +1,314 @@
+diff -ruN a/src/lte/CMakeLists.txt b/src/lte/CMakeLists.txt
+--- a/src/lte/CMakeLists.txt
++++ b/src/lte/CMakeLists.txt
+@@ -46,6 +46,7 @@
+     model/lte-pdcp.cc
+     model/lte-pdcp-header.cc
+     model/lte-pdcp-sn-wrap.cc
++    model/nr-pdcp-header.cc
+     model/lte-pdcp-tag.cc
+     model/eps-bearer.cc
+     model/lte-radio-bearer-info.cc
+@@ -215,6 +216,7 @@
+     test/lte-test-ipv6-routing.cc
+     test/lte-test-carrier-aggregation-configuration.cc
+     test/lte-test-pdcp-sn-wrap.cc
++    test/lte-test-mc-pdcp-nr-header.cc
+ )
+ 
+ set(header_files
+@@ -246,6 +248,8 @@
+     model/lte-pdcp.h
+     model/lte-pdcp-header.h
+     model/lte-pdcp-sn-wrap.h
++    model/nr-pdcp-header.h
++    model/lte-rlc-forwarding-buffer.h
+     model/lte-pdcp-tag.h
+     model/eps-bearer.h
+     model/lte-radio-bearer-info.h
+diff -ruN a/src/lte/model/lte-pdcp.h b/src/lte/model/lte-pdcp.h
+--- a/src/lte/model/lte-pdcp.h
++++ b/src/lte/model/lte-pdcp.h
+@@ -21,12 +21,16 @@
+ #ifndef LTE_PDCP_H
+ #define LTE_PDCP_H
+ 
++#include "ns3/header.h"
++#include "ns3/lte-pdcp-header.h"
+ #include "ns3/lte-pdcp-sap.h"
+ #include "ns3/lte-rlc-sap.h"
+ #include "ns3/object.h"
+ #include "ns3/trace-source-accessor.h"
+ #include "ns3/traced-value.h"
+ 
++#include <memory>
++
+ namespace ns3
+ {
+ 
+@@ -117,6 +121,12 @@
+      */
+     void SetStatus(Status s);
+ 
++    // RED-ONLY SHIM: the header class the code at this commit writes on every PDCP entity.
++    virtual std::unique_ptr<Header> CreateDataPduHeader() const
++    {
++        return std::make_unique<LtePdcpHeader>();
++    }
++
+     /**
+      * TracedCallback for PDU transmission event.
+      *
+diff -ruN a/src/lte/model/lte-rlc-am.h b/src/lte/model/lte-rlc-am.h
+--- a/src/lte/model/lte-rlc-am.h
++++ b/src/lte/model/lte-rlc-am.h
+@@ -111,6 +111,12 @@
+     ///< translate a vector of Rlc PDUs to Rlc SDUs
+     ///< and put the Rlc SDUs into m_transmittingRlcSdus.
+     void RlcPdusToRlcSdus(std::vector<RetxPdu> Pdus);
++    // RED-ONLY SHIM: the header class is ignored; this commit always reads LtePdcpHeader.
++    template <class PdcpDataPduHeader>
++    void RlcPdusToRlcSdus(std::vector<RetxPdu> Pdus)
++    {
++        RlcPdusToRlcSdus(Pdus);
++    }
+ 
+     std::vector<Ptr<Packet>> GetTxedRlcSduBuffer()
+     {
+diff -ruN a/src/lte/model/lte-rlc-forwarding-buffer.h b/src/lte/model/lte-rlc-forwarding-buffer.h
+--- a/src/lte/model/lte-rlc-forwarding-buffer.h
++++ b/src/lte/model/lte-rlc-forwarding-buffer.h
+@@ -0,0 +1,209 @@
++// RED-ONLY SHIM: the per-bearer forwarding of UeManager::ForwardRlcBuffers and
++// LteUeRrc::CopyRlcBuffers at this commit, moved verbatim into the functions the suite calls.
++// The header class is ignored: this commit always reads and strips LtePdcpHeader.
++#ifndef LTE_RLC_FORWARDING_BUFFER_H
++#define LTE_RLC_FORWARDING_BUFFER_H
++
++#include "ns3/log.h"
++#include "ns3/lte-pdcp-header.h"
++#include "ns3/lte-pdcp-sn-wrap.h"
++#include "ns3/lte-rlc-am.h"
++#include "ns3/lte-rlc-um-lowlat.h"
++#include "ns3/lte-rlc-um.h"
++#include "ns3/packet.h"
++
++#include <functional>
++#include <vector>
++
++namespace ns3
++{
++
++#define NS_LOG_UNCOND_IGNORED(x)
++
++// This code from the LL HO implementation was shared by the eNB and the UE RRC; it lives here
++// so that both run the same steps.
++template <class PdcpDataPduHeader>
++inline void
++CollectRlcForwardingBuffer(Ptr<LteRlc> rlc,
++                           std::vector<Ptr<Packet>>& buffer,
++                           uint32_t& bufferSize)
++{
++    // RlcBuffers forwarding only for RlcAm bearers.
++    if (rlc->GetObject<LteRlcAm>())
++    {
++        // Copy lte-rlc-am.m_txOnBuffer to the forwarding buffer.
++        Ptr<LteRlcAm> rlcAm = rlc->GetObject<LteRlcAm>();
++        uint32_t txonBufferSize = rlcAm->GetTxBufferSize();
++        std::vector<Ptr<Packet>> txonBuffer = rlcAm->GetTxBuffer();
++        uint32_t txedBufferSize = rlcAm->GetTxedBufferSize();
++        uint32_t retxBufferSize = rlcAm->GetRetxBufferSize();
++
++        // Translate Pdus in Rlc txed/retx buffer into RLC Sdus
++        // and put these Sdus into rlcAm->m_transmittingRlcSdus.
++        NS_LOG_UNCOND_IGNORED("retxBuffer size = " << retxBufferSize);
++        NS_LOG_UNCOND_IGNORED("txedBuffer size = " << txedBufferSize);
++        // The unacknowledged PDUs in transmission order (from VT(A), across the RLC SN wrap),
++        // so an SDU segmented over RLC SNs 1023 and 0 is reassembled whole.
++        if (retxBufferSize + txedBufferSize > 0)
++        {
++            rlcAm->RlcPdusToRlcSdus(rlcAm->GetUnackedPdusInTransmissionOrder());
++        }
++
++        // Construct the forwarding buffer
++        // Forwarding buffer = retxBuffer + txedBuffer + txonBuffer.
++        LtePdcpHeader pdcpHeader;
++        uint32_t pos = 0;
++        for (std::vector<Ptr<Packet>>::iterator it = txonBuffer.begin(); it != txonBuffer.end();
++             ++it)
++        {
++            pos++;
++            if ((*it)->GetSize() > 3)
++            {
++                (*it)->PeekHeader(pdcpHeader);
++                NS_LOG_UNCOND_IGNORED("txonBuffer SEQ = " << pdcpHeader.GetSequenceNumber()
++                                                 << " Size = " << (*it)->GetSize());
++            }
++            else
++            {
++                NS_LOG_UNCOND("Fragment too small in txonBuffer, pos " << pos);
++            }
++        }
++
++        // this cycle adds the SDUs given by the merge of txed and retxed buffers
++        if (rlcAm->GetTransmittingRlcSduBufferSize() > 0)
++        { // something inside the RLC AM's transmitting buffer
++            NS_LOG_UNCOND_IGNORED("ADDING TRANSMITTING SDUS OF RLC AM TO FORWARDING BUFFER... Size = "
++                         << rlcAm->GetTransmittingRlcSduBufferSize());
++            // copy the RlcSdu buffer to forwardingBuffer, in transmission order (COUNT order),
++            // so SDUs from before the PDCP SN wrap come first.
++            std::vector<std::pair<uint16_t, Ptr<Packet>>> rlcAmTransmittingBuffer =
++                rlcAm->GetTransmittingRlcSduBuffer();
++            NS_LOG_UNCOND_IGNORED(" *** SIZE = " << rlcAmTransmittingBuffer.size());
++            for (std::vector<std::pair<uint16_t, Ptr<Packet>>>::iterator it =
++                     rlcAmTransmittingBuffer.begin();
++                 it != rlcAmTransmittingBuffer.end();
++                 ++it)
++            {
++                if (it->second)
++                {
++                    NS_LOG_UNCOND_IGNORED("add to forwarding buffer SEQ = " << it->first
++                                                                   << " Ptr<Packet> = "
++                                                                   << it->second);
++                    buffer.push_back(it->second);
++                }
++            }
++            NS_LOG_UNCOND_IGNORED("ADDING TXONBUFFER OF RLC AM, Size = " << txonBufferSize);
++
++            Ptr<Packet> segmentedRlcsdu = rlcAm->GetSegmentedRlcsdu();
++            if (segmentedRlcsdu != nullptr)
++            {
++                segmentedRlcsdu->PeekHeader(pdcpHeader);
++                NS_LOG_UNCOND_IGNORED("SegmentedRlcSdu = " << segmentedRlcsdu->GetSize()
++                                                  << " SEQ = " << pdcpHeader.GetSequenceNumber());
++                // insert the complete version of the fragmented SDU to the front of txonBuffer.
++                txonBuffer.insert(txonBuffer.begin(), segmentedRlcsdu);
++            }
++            buffer.insert(buffer.end(), txonBuffer.begin(), txonBuffer.end());
++            bufferSize += rlcAm->GetTransmittingRlcSduBufferSize() + txonBufferSize;
++
++            // Get the rlcAm
++            std::vector<Ptr<Packet>> rlcAmTxedSduBuffer = rlcAm->GetTxedRlcSduBuffer();
++            LtePdcpHeader pdcpHeader_1;
++            buffer.at(0)->PeekHeader(pdcpHeader_1);
++            uint16_t i = 0;
++            for (std::vector<Ptr<Packet>>::iterator it = rlcAmTxedSduBuffer.begin();
++                 it != rlcAmTxedSduBuffer.end();
++                 ++it)
++            {
++                if ((*it) != nullptr)
++                {
++                    (*it)->PeekHeader(pdcpHeader);
++                    NS_LOG_UNCOND_IGNORED("rlcAmTxedSduBuffer SEQ = " << pdcpHeader.GetSequenceNumber()
++                                                             << " Size = " << (*it)->GetSize());
++
++                    // add the previous SDU of the forwarding buffer to the forwarding buffer:
++                    // the head SN and the two SNs before it, modulo the PDCP SN space.
++                    if (IsPdcpSnInForwardingLookback(pdcpHeader.GetSequenceNumber(),
++                                                     pdcpHeader_1.GetSequenceNumber()))
++                    {
++                        NS_LOG_UNCOND_IGNORED("Added previous SDU to forwarding buffer SEQ = "
++                                     << pdcpHeader.GetSequenceNumber()
++                                     << " Size = " << (*it)->GetSize());
++                        buffer.insert(buffer.begin() + i, (*it)->Copy());
++                        ++i;
++                    }
++                }
++            }
++        }
++        else
++        { // TransmittingBuffer is empty. Only copy TxonBuffer.
++            NS_LOG_UNCOND_IGNORED("ADDING TXONBUFFER OF RLC AM, Size = " << txonBufferSize);
++            buffer = txonBuffer;
++            bufferSize += txonBufferSize;
++        }
++    }
++    // For RlcUM, no forwarding available as the simulator itself (seamless HO).
++    // However, as the LTE-UMTS book, PDCP txbuffer should be forwarded for seamless
++    // HO. Enable this code for txbuffer forwarding in seamless HO (which is believe to
++    // be correct).
++    else if (rlc->GetObject<LteRlcUm>())
++    {
++        // Copy lte-rlc-um.m_txOnBuffer to the forwarding buffer.
++        NS_LOG_UNCOND_IGNORED("Copying txonBuffer from RLC UM");
++        buffer = rlc->GetObject<LteRlcUm>()->GetTxBuffer();
++        bufferSize = rlc->GetObject<LteRlcUm>()->GetTxBufferSize();
++    }
++    else if (rlc->GetObject<LteRlcUmLowLat>())
++    {
++        // Copy lte-rlc-um-low-lat.m_txOnBuffer to the forwarding buffer.
++        NS_LOG_UNCOND_IGNORED("Copying txonBuffer from RLC UM low latency");
++        buffer = rlc->GetObject<LteRlcUmLowLat>()->GetTxBuffer();
++        bufferSize = rlc->GetObject<LteRlcUmLowLat>()->GetTxBufferSize();
++    }
++    // LteRlcAm m_txBuffer stores PDCP "PDU".
++    NS_LOG_UNCOND_IGNORED("forwarding buffer size = " << bufferSize);
++}
++
++template <class PdcpDataPduHeader>
++inline void
++DeliverRlcForwardingBuffer(std::vector<Ptr<Packet>>& buffer,
++                           uint32_t& bufferSize,
++                           bool removePdcpHeader,
++                           const std::function<void(Ptr<Packet>)>& deliver)
++{
++    while (!buffer.empty())
++    {
++        Ptr<Packet> rlcSdu = buffer.at(0);
++        LtePdcpHeader pdcpHeader;
++        NS_LOG_UNCOND_IGNORED("RlcSdu size = " << rlcSdu->GetSize());
++
++        // only forward data PDCP PDUs (1-DATA_PDU,0-CTR_PDU)
++        if (rlcSdu->GetSize() >= 3)
++        {
++            rlcSdu->PeekHeader(pdcpHeader);
++            if (pdcpHeader.GetDcBit() == 1)
++            { // ignore control SDU.
++                NS_LOG_UNCOND_IGNORED("SEQ = " << pdcpHeader.GetSequenceNumber());
++                rlcSdu->RemoveAllPacketTags(); // this does not remove byte tags
++                NS_LOG_UNCOND_IGNORED("removed tags, size = " << rlcSdu->GetSize());
++                if (removePdcpHeader)
++                {
++                    rlcSdu->RemoveHeader(pdcpHeader);
++                    NS_LOG_UNCOND_IGNORED("removed pdcp header, size = " << rlcSdu->GetSize());
++                }
++                deliver(rlcSdu);
++            }
++        }
++        else
++        {
++            NS_LOG_UNCOND("Too small, not forwarded");
++        }
++        bufferSize -= buffer.front()->GetSize();
++        buffer.erase(buffer.begin());
++        NS_LOG_UNCOND_IGNORED("After forwarding: buffer size = " << bufferSize);
++    }
++}
++
++} // namespace ns3
++
++#endif
+diff -ruN a/src/lte/model/mc-enb-pdcp.h b/src/lte/model/mc-enb-pdcp.h
+--- a/src/lte/model/mc-enb-pdcp.h
++++ b/src/lte/model/mc-enb-pdcp.h
+@@ -55,6 +55,8 @@
+     McEnbPdcp();
+     virtual ~McEnbPdcp();
+     static TypeId GetTypeId(void);
++    // RED-ONLY SHIM: the header class McEnbPdcp/McUePdcp write at this commit.
++    using DataPduHeader = LtePdcpHeader;
+     virtual void DoDispose();
+ 
+     /**
+diff -ruN a/src/lte/model/mc-ue-pdcp.h b/src/lte/model/mc-ue-pdcp.h
+--- a/src/lte/model/mc-ue-pdcp.h
++++ b/src/lte/model/mc-ue-pdcp.h
+@@ -47,6 +47,8 @@
+     McUePdcp();
+     virtual ~McUePdcp();
+     static TypeId GetTypeId(void);
++    // RED-ONLY SHIM: the header class McEnbPdcp/McUePdcp write at this commit.
++    using DataPduHeader = LtePdcpHeader;
+     virtual void DoDispose();
+ 
+     /**

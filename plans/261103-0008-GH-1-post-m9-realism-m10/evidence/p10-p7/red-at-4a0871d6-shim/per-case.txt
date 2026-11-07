@@ -1,0 +1,41 @@
+0 PASS NrPdcpHeader codec at SN 0
+1 PASS NrPdcpHeader codec at SN 1
+2 PASS NrPdcpHeader codec at SN 2047
+3 PASS NrPdcpHeader codec at SN 2048
+4 PASS NrPdcpHeader codec at SN 4095
+5 FAIL McEnbPdcp and McUePdcp carry NrPdcpHeader; LtePdcp carries LtePdcpHeader
+6 FAIL DL McEnbPdcp Data PDU transmitted at SN 0
+7 FAIL UL McUePdcp Data PDU transmitted at SN 0
+8 PASS DL McUePdcp hand-built Data PDU received at SN 0
+9 PASS UL McEnbPdcp hand-built Data PDU received at SN 0
+10 PASS SRB1 LtePdcp unchanged at SN 0
+11 FAIL DL McEnbPdcp Data PDU transmitted at SN 1
+12 FAIL UL McUePdcp Data PDU transmitted at SN 1
+13 PASS DL McUePdcp hand-built Data PDU received at SN 1
+14 PASS UL McEnbPdcp hand-built Data PDU received at SN 1
+15 PASS SRB1 LtePdcp unchanged at SN 1
+16 FAIL DL McEnbPdcp Data PDU transmitted at SN 2047
+17 FAIL UL McUePdcp Data PDU transmitted at SN 2047
+18 PASS DL McUePdcp hand-built Data PDU received at SN 2047
+19 PASS UL McEnbPdcp hand-built Data PDU received at SN 2047
+20 PASS SRB1 LtePdcp unchanged at SN 2047
+21 FAIL DL McEnbPdcp Data PDU transmitted at SN 2048
+22 FAIL UL McUePdcp Data PDU transmitted at SN 2048
+23 PASS DL McUePdcp hand-built Data PDU received at SN 2048
+24 PASS UL McEnbPdcp hand-built Data PDU received at SN 2048
+25 PASS SRB1 LtePdcp unchanged at SN 2048
+26 FAIL DL McEnbPdcp Data PDU transmitted at SN 4095
+27 FAIL UL McUePdcp Data PDU transmitted at SN 4095
+28 PASS DL McUePdcp hand-built Data PDU received at SN 4095
+29 PASS UL McEnbPdcp hand-built Data PDU received at SN 4095
+30 PASS SRB1 LtePdcp unchanged at SN 4095
+31 FAIL eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 sent
+32 FAIL eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 sent, NACK 1022, 1023
+33 FAIL eNB X2 forwarding of SDUs, VT(A) 5, SNs 4094 to 1 sent
+34 FAIL eNB X2 forwarding of SDUs, VT(A) 1022, SNs 4094 to 1 queued
+35 FAIL eNB RLC PDU forwarding, VT(A) 1022, SNs 4094 to 1 sent
+36 FAIL eNB RLC PDU forwarding, VT(A) 1022, SNs 4094 to 1 queued
+37 FAIL UE RLC switch, VT(A) 1022, SNs 4094 to 1 sent
+38 FAIL UE RLC switch, VT(A) 1022, SNs 4094 to 1 sent, NACK 1022, 1023
+39 FAIL UE RLC switch, VT(A) 5, SNs 4094 to 1 sent
+40 FAIL UE RLC switch, VT(A) 1022, SNs 4094 to 1 queued
