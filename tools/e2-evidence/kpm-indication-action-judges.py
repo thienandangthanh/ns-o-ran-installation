@@ -130,7 +130,7 @@ def judge_ind_actions(f, decoded, nodes, assocs, after, rows, records, nlines, s
             note(why, row["id"])
             continue
         aid, fmt = row["actionId"], act["definition"]["format"]
-        seen.setdefault((id(x), sub["key"], aid), []).append(row["id"])
+        seen.setdefault((id(x), sub["key"], sub["respFrame"], aid), []).append(row["id"])
         rec = rec_by.get(row["id"])
         tag = "node %s subscription %s action %s (Format %s)" % (x["node"], sub["key"], aid, fmt)
         if rec is None or rec.get("hdr_code") != "RC_OK" or rec.get("msg_code") != "RC_OK":
@@ -154,7 +154,8 @@ def judge_ind_actions(f, decoded, nodes, assocs, after, rows, records, nlines, s
                 note("%s: indication message Format %s, want Format 2" % (tag, mf), row["id"])
         else:
             note("%s: no indication format is defined for an admitted Format %s action" % (tag, fmt), row["id"])
-    # every admitted action of every subscription answered in the window on an expected node's association
+    # every admitted action of every successful response (each one a subscription generation: the indications after
+    # it, up to the next one, are its own) in the window on an expected node's association
     expected = {}
     for x in assocs:
         if x["node"] not in nodes:
@@ -164,13 +165,14 @@ def judge_ind_actions(f, decoded, nodes, assocs, after, rows, records, nlines, s
                 continue
             for d in KAS.pdus(decoded, r["frame"], "RICsubscriptionResponse"):
                 for aid in d.get("admitted") or []:
-                    expected.setdefault((id(x), KAS.key_of(d), aid), (x, r["frame"]))
-    for (xid, key, aid), (x, fr) in sorted(expected.items(), key=lambda kv: (kv[1][1], kv[0][2])):
-        n = len(seen.get((xid, key, aid), []))
+                    expected.setdefault((id(x), KAS.key_of(d), r["frame"], aid), x)
+    for (xid, key, fr, aid), x in sorted(expected.items(), key=lambda kv: (kv[0][2], kv[0][3])):
+        n = len(seen.get((xid, key, fr, aid), []))
         print("node %s %s subscription %s (response frame %d) action %s: %d indication(s)" % (
             x["node"], KAS.where(x), key, fr, aid, n))
         if n == 0:
-            bad.append("node %s subscription %s: admitted action %s received no indication" % (x["node"], key, aid))
+            bad.append("node %s subscription %s (response frame %d): admitted action %s received no indication" % (
+                x["node"], key, fr, aid))
     print("indications judged %d (after %s), grouped problems %d" % (judged, after, len(grouped)))
     for reason, idents in sorted(grouped.items(), key=lambda kv: -len(kv[1])):
         bad.append("%d indication(s): %s (first: %s)" % (len(idents), reason, ", ".join(idents[:3])))
@@ -206,6 +208,15 @@ class IndSheet(KAS.Sheet):
         self.records.append(rec)
         return self
 
+    def resubscribed(self, n, t, frame):
+        """A further successful RIC SUBSCRIPTION RESPONSE of node n's subscription (same key, same admitted IDs) at t."""
+        ip, port = "172.17.0.%d" % (n + 1), 40000 + n
+        self.f["sub_responses"].append(self.ev(frame, t, ip, KAS.SVC, port, 36422, requestor=123, instance=n))
+        self.dec["f%d" % frame] = [{"message": "RICsubscriptionResponse", "requestor": 123, "instance": n,
+                                    "ranFunctionId": 2, "admitted": [a["id"] for a in KAS.good_actions(n)],
+                                    "notAdmitted": []}]
+        return self
+
     def both(self, n, f1=1, f3=2):
         return self.ind(n, f1, 1).ind(n, f3, 2)
 
@@ -226,6 +237,10 @@ def ind_actions_cases():
         ("Format 2 under a Format 1 action", good().ind(2, 1, 2), False, "want Format 1"),
         ("an unknown action ID", good().ind(2, 3, 2), False, "is not admitted"),
         ("a silent action", IndSheet().add(1).add(2).both(1).ind(2, 1, 1), False, "received no indication"),
+        ("a same-key successful re-subscription after every indication, silent since",
+         good().resubscribed(2, 900.0, 2000), False, "received no indication"),
+        ("a same-key successful re-subscription answered by indications after it",
+         good().resubscribed(2, 900.0, 2000).ind(2, 1, 1, t=901.0).ind(2, 2, 2, t=902.0), True, None),
         ("another node's ns3.nodeId in item k > 0", good().ind(2, 1, 1, node_ids=[2, 3]), False, "want node 2"),
         ("another node's ns3.nodeId in item 0", good().ind(2, 1, 1, node_ids=[3, 2]), False, "want node 2"),
         ("an unknown request ID", good().ind(2, 2, 2, inst=77), False, "unknown subscription"),
