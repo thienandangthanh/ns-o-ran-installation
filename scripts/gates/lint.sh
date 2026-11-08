@@ -73,6 +73,7 @@ timeout 120 bash scripts/gates/ts-patches-selftest.sh >/dev/null 2>&1 || { echo 
 timeout 120 bash scripts/gates/rc-at-pin-selftest.sh >/dev/null 2>&1 || { echo "rc pin + patch-set check self-test failed"; rc=1; }
 timeout 120 bash scripts/gates/kpimon-guard-selftest.sh >/dev/null 2>&1 || { echo "kpimon install guard self-test failed"; rc=1; }
 timeout 120 bash scripts/gates/lib-selftest.sh >/dev/null 2>&1 || { echo "lib.sh fact/nist_run self-test failed"; rc=1; }
+timeout 120 bash scripts/gates/asn1-indep-lib-selftest.sh >/dev/null 2>&1 || { echo "asn1-indep sidecar provenance self-test failed"; rc=1; }
 timeout 180 bash scripts/vm/host-disk-watchdog-selftest.sh >/dev/null 2>&1 || { echo "host disk watchdog self-test failed"; rc=1; }
 python3 -I scripts/gates/write-verdict.py --self-test >/dev/null || { echo "write-verdict self-test (an outer-timeout stop must yield a failing verdict) failed"; rc=1; }
 python3 -I scripts/gates/replay-ts-cell-map.py --self-test >/dev/null || { echo "TS cell-map replay self-test failed"; rc=1; }
