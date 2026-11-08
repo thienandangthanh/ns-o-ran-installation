@@ -495,7 +495,8 @@ def assoc_self_test(row, en_gnb, cm, epoch, period):
     def facts(setups):
         ev = lambda ip, sport, t: {"src": svc, "sport": 36422, "dst": ip, "dport": sport, "t": t, "frame": 0}
         return {"inits": [], "init_acks": [ev(X, 1000, 0.5), ev(X, 2000, 4.5)], "cookie_acks": [ev(X, 1000, 0.6), ev(X, 2000, 4.6)],
-                "setup_requests": [{"src": X, "sport": sp, "t": t, "node_id": n} for sp, t, n in setups],
+                "setup_requests": [{"src": X, "sport": sp, "dst": svc, "dport": 36422, "t": t, "node_id": n}
+                                   for sp, t, n in setups],
                 "setup_responses": [], "sub_requests": [], "sub_responses": []}
 
     def frame(num, node, sport, t, imsis):

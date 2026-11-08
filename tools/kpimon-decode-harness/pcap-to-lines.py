@@ -24,13 +24,14 @@ several DATA chunks; tshark then emits comma-separated multi-values per frame,
 and those rows are split pairwise when counts agree, else skipped and counted.
 
 --actions OUT.jsonl: the same lines on stdout (same filter, dedup and ids),
-plus one JSON record per printed line in OUT: {id, frame, t, src, sport,
-actionId, requestor, instance, ranFunctionId}. The per-PDU columns
+plus one JSON record per printed line in OUT: {id, frame, t, src, sport, dst,
+dport, actionId, requestor, instance, ranFunctionId}. The per-PDU columns
 e2ap.RICactionID (the indication's RICactionID IE; e2ap.ricActionID is the
 member of the subscription's action items and is empty in an indication),
 e2ap.ricRequestorID, e2ap.ricInstanceID and e2ap.RANfunctionID must carry one
-integer per header, and the frame-level ip.src, sctp.srcport and
-frame.time_epoch exactly one value, which every PDU of the frame shares;
+integer per header, and the frame-level ip.src, sctp.srcport, ip.dst,
+sctp.dstport and frame.time_epoch (the SCTP association's 4-tuple and the
+time) exactly one value, which every PDU of the frame shares;
 otherwise the row is skipped and counted. The summary line is printed on
 stderr (with --summary also on stdout, in place of the lines). Field names
 checked with `tshark -G fields` on TShark 4.4.19 (VM) and 4.7.4 (host).
@@ -43,7 +44,7 @@ FIELDS = ["frame.number", "sctp.data_tsn_raw", "sctp.assoc_index",
           "e2ap.RICindicationHeader", "e2ap.RICindicationMessage"]
 PDU_FIELDS = ["e2ap.RICactionID", "e2ap.ricRequestorID", "e2ap.ricInstanceID", "e2ap.RANfunctionID"]
 PDU_KEYS = ["actionId", "requestor", "instance", "ranFunctionId"]
-FRAME_FIELDS = ["ip.src", "sctp.srcport", "frame.time_epoch"]
+FRAME_FIELDS = ["ip.src", "sctp.srcport", "ip.dst", "sctp.dstport", "frame.time_epoch"]
 
 
 def run_tshark(pcap, fields):
@@ -68,10 +69,11 @@ def action_columns(cols, n):
     if len(frame) != len(FRAME_FIELDS) or any(not v or "," in v for v in frame):
         return None
     try:
-        src, sport, t = frame[0], int(frame[1]), float(frame[2])
+        src, sport, dst, dport, t = frame[0], int(frame[1]), frame[2], int(frame[3]), float(frame[4])
     except ValueError:
         return None
-    return [dict({k: int(v[i]) for k, v in zip(PDU_KEYS, per)}, src=src, sport=sport, t=t) for i in range(n)]
+    return [dict({k: int(v[i]) for k, v in zip(PDU_KEYS, per)}, src=src, sport=sport, dst=dst, dport=dport, t=t)
+            for i in range(n)]
 
 
 def main(argv):

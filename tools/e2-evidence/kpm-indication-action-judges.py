@@ -5,12 +5,13 @@ e2-facts-query.py (query ind-actions) and p12-records-check.py through importlib
 Inputs, all from one capture:
   - the tshark fact sheet (e2ap-pcap-facts.py) and its associations (e2-facts-query.py build_assocs);
   - the asn1-indep decode of its setups and subscriptions (e2-sub-setup-decode.py, keyed "f<frame>");
-  - the indication rows of pcap-to-lines.py --actions: {id, frame, t, src, sport, actionId (e2ap.RICactionID),
-    requestor, instance, ranFunctionId};
+  - the indication rows of pcap-to-lines.py --actions: {id, frame, t, src, sport, dst, dport, actionId
+    (e2ap.RICactionID), requestor, instance, ranFunctionId};
   - kpimon-decode-harness --records over the same lines: per id the decode codes, msg_format (1 = Format 1,
     2 = Format 2), measDataItems and, for Format 1, every item's records in order.
 
-Subscription join: an indication's association is the latest one born on its (agent ip, agent port) at or before it;
+Subscription join: an indication's association is the latest one born on its normalized 4-tuple (agent ip, agent
+port, RIC ip, RIC port) at or before it;
 its subscription is the latest successful RIC SUBSCRIPTION RESPONSE on that association with the same (requestor,
 instance, RAN function ID) at or before it (a failure-only or absent response is an unknown subscription), and the
 action formats come from the latest RIC SUBSCRIPTION REQUEST with that key at or before the response. Only that
@@ -64,9 +65,9 @@ def subscription_before(x, key, t, decoded):
 
 def indication_action(assocs, nodes, row, decoded):
     """(association, subscription, decoded action, problem) of one indication row; problem is None when it joins."""
-    x = KAS.assoc_at(assocs, row["src"], row["sport"], row["t"])
+    x = KAS.assoc_at(assocs, KAS.from_agent(row), row["t"])
     if x is None:
-        return None, None, None, "on no association (%s:%s)" % (row["src"], row["sport"])
+        return None, None, None, "on no association (%s:%s->%s:%s)" % (row["src"], row["sport"], row["dst"], row["dport"])
     if x["node"] is None:
         return x, None, None, "on association %s without an E2 Setup Request inside the capture" % KAS.where(x)
     if x["node"] not in nodes:
@@ -182,6 +183,7 @@ def judge_ind_actions(f, decoded, nodes, assocs, after, rows, records, nlines, s
 ################################################################################
 # self-test fixtures: the subscription fixtures (kpm-action-subscription-judges.py) plus indications
 ################################################################################
+SVC2 = "10.96.0.6"  # a second RIC endpoint
 LAYOUT = {"gnb": ["ns3.nodeId", "ns3.simTimeMs", "ns3.seq", "m1"], "enb": ["ns3.nodeId", "ns3.simTimeMs", "ns3.seq"]}
 
 
@@ -192,12 +194,14 @@ class IndSheet(KAS.Sheet):
         super().__init__()
         self.rows, self.records, self.summary, self.seq = [], [], {"rows_skipped": 0}, 0
 
-    def ind(self, n, action, msg_format, node_ids=None, items=2, inst=None, ip=None, port=None, t=None, decodes=True):
+    def ind(self, n, action, msg_format, node_ids=None, items=2, inst=None, ip=None, port=None, t=None, decodes=True,
+            svc=KAS.SVC):
         """One indication from node n under action, message msg_format; Format 1 items carry node_ids (default all n)."""
         self.seq += 1
         ident = "f%d" % (1000 + self.seq)
         self.rows.append({"id": ident, "frame": 1000 + self.seq, "t": 200.0 + self.seq if t is None else t,
-                          "src": ip or "172.17.0.%d" % (n + 1), "sport": port or 40000 + n, "actionId": action,
+                          "src": ip or "172.17.0.%d" % (n + 1), "sport": port or 40000 + n, "dst": svc,
+                          "dport": 36422, "actionId": action,
                           "requestor": 123, "instance": n if inst is None else inst, "ranFunctionId": 2})
         rec = {"id": ident, "hdr_code": "RC_OK", "msg_code": "RC_OK" if decodes else "RC_FAIL", "msg_format": msg_format,
                "measDataItems": items}
@@ -249,6 +253,13 @@ def ind_actions_cases():
         ("an indication before its subscription's response", good().ind(2, 2, 2, t=100.45 + 2), False,
          "unknown subscription"),
         ("an indication on no association", good().ind(2, 2, 2, ip="172.17.0.9"), False, "on no association"),
+        ("node 2's indications sent to another RIC endpoint, where only a failed subscription exists",
+         IndSheet().add(1).add(2).endpoint(2, SVC2, 101.0, 90).both(1).ind(2, 1, 1, svc=SVC2).ind(2, 2, 2, svc=SVC2),
+         False, "unknown subscription"),
+        ("overlapping agent sockets to two RIC endpoints: the indications to the subscribed one join it",
+         IndSheet().add(1).add(2).endpoint(2, SVC2, 150.0, 90).both(1).both(2), True, None),
+        ("an indication to a RIC endpoint the agent socket has no association with",
+         good().ind(2, 2, 2, svc=SVC2), False, "on no association"),
         ("an indication that does not decode", good().ind(2, 2, 2, decodes=False), False, "does not decode"),
         ("a Format 1 record whose record count is not items x metrics",
          fn(good(), lambda s: s.records[-2]["records"].pop()), False, "measData items"),

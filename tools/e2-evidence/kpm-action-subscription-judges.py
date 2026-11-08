@@ -3,7 +3,8 @@
 e2-facts-query.py (query sub-actions) through importlib; never run on its own.
 
 Inputs: the tshark fact sheet (e2ap-pcap-facts.py) for frames, times and SCTP associations, its associations
-(e2-facts-query.py build_assocs: an association's node is the Global E2 Node ID of the E2 Setup Request sent on it),
+(e2-facts-query.py build_assocs, by normalized 4-tuple and time: an association's node is the Global E2 Node ID of the
+E2 Setup Request sent on it),
 and the decoded sidecar of the same capture (e2-sub-setup-decode.py, the asn1-indep image), keyed "f<frame>". Every
 value judged here (served cells, action formats and CGIs, request IDs, admitted actions) comes from the sidecar,
 never from tshark's E2SM labels; tshark's action labels are printed as information only.
@@ -28,18 +29,28 @@ def key_of(d):
     return d.get("requestor"), d.get("instance"), d.get("ranFunctionId")
 
 
-def assoc_at(assocs, ip, port, t):
-    """The association of an (agent ip, agent port) frame at time t: the latest one born (INIT_ACK) at or before t on
-    that 4-tuple, as build_assocs attributes every event."""
+def from_agent(e):
+    """The normalized 4-tuple (agent ip, agent port, RIC ip, RIC port) of an event sent by the agent."""
+    return e["src"], e["sport"], e["dst"], e["dport"]
+
+
+def to_agent(e):
+    """The normalized 4-tuple of an event sent to the agent."""
+    return e["dst"], e["dport"], e["src"], e["sport"]
+
+
+def assoc_at(assocs, tup, t):
+    """The association of a frame with normalized 4-tuple tup at time t: the latest one born (INIT_ACK) at or before t
+    on that 4-tuple, as build_assocs attributes every event."""
     best = None
     for x in assocs:
-        if x["ip"] == ip and x["sport"] == port and x["t_init_ack"] <= t:
+        if (x["ip"], x["sport"], x["service"], x["service_port"]) == tuple(tup) and x["t_init_ack"] <= t:
             best = x
     return best
 
 
 def where(x):
-    return "%s:%d" % (x["ip"], x["sport"])
+    return "%s:%d->%s:%d" % (x["ip"], x["sport"], x["service"], x["service_port"])
 
 
 def served_cells(x, decoded):
@@ -89,7 +100,7 @@ def answer_after(f, assocs, x, d, t, decoded):
     def keyed(r, msg):
         return [a for a in pdus(decoded, r["frame"], msg) if key_of(a) == key]
     nxt = min((q["t"] for q in x["sub_requests"] if q["t"] > t and keyed(q, "RICsubscriptionRequest")), default=float("inf"))
-    failures = [r for r in f.get("sub_failures", []) if assoc_at(assocs, r["src"], r["sport"], r["t"]) is x]
+    failures = [r for r in f.get("sub_failures", []) if assoc_at(assocs, from_agent(r), r["t"]) is x]
     answers = sorted([(r["t"], r["frame"], "response", r) for r in x["sub_responses"]] +
                      [(r["t"], r["frame"], "failure", r) for r in failures], key=lambda a: (a[0], a[1]))
     for rt, frame, kind, r in answers:
@@ -266,6 +277,36 @@ class Sheet:
             self.dec["f%d" % (b + 5)] = [dict(rid, message="RICsubscriptionFailure", cause="ricRequest:action-not-supported")]
         return self
 
+    def endpoint(self, n, svc, t0, base, answer="failure", request=True):
+        """A further association of node n's agent socket (same ip and port) to another RIC endpoint svc, born at t0:
+        its E2 Setup Request, and (request) a subscription request with node n's key answered by answer."""
+        ip, port, inst = "172.17.0.%d" % (n + 1), 40000 + n, n
+        rid = {"requestor": 123, "instance": inst, "ranFunctionId": 2}
+        self.f["inits"].append(self.ev(base, t0, ip, svc, port, 36422))
+        self.f["init_acks"].append(self.ev(base + 1, t0 + 0.1, svc, ip, 36422, port))
+        self.f["cookie_acks"].append(self.ev(base + 2, t0 + 0.2, svc, ip, 36422, port))
+        self.f["setup_requests"].append(self.ev(base + 3, t0 + 0.3, ip, svc, port, 36422, node_id=n, e2node_type=gid(n)[0]))
+        self.dec["f%d" % (base + 3)] = [{"message": "E2setupRequest", "globalId": gid(n), "components": 1, "x2": [part(n)]}]
+        if request:
+            self.f["sub_requests"].append(self.ev(base + 4, t0 + 0.4, svc, ip, 36422, port, requestor=123, instance=inst))
+            self.dec["f%d" % (base + 4)] = [dict(rid, message="RICsubscriptionRequest", actions=good_actions(n))]
+        self.answer(n, svc, t0 + 0.5, base + 5, answer)
+        return self
+
+    def answer(self, n, svc, t, frame, kind):
+        """An answer from node n's agent socket to endpoint svc with node n's key: "response" (all admitted) or
+        "failure"; None adds nothing."""
+        ip, port = "172.17.0.%d" % (n + 1), 40000 + n
+        rid = {"requestor": 123, "instance": n, "ranFunctionId": 2}
+        if kind == "response":
+            self.f["sub_responses"].append(self.ev(frame, t, ip, svc, port, 36422, requestor=123, instance=n))
+            self.dec["f%d" % frame] = [dict(rid, message="RICsubscriptionResponse",
+                                            admitted=[a["id"] for a in good_actions(n)], notAdmitted=[])]
+        elif kind == "failure":
+            self.f["sub_failures"].append(self.ev(frame, t, ip, svc, port, 36422, requestor=123, instance=n))
+            self.dec["f%d" % frame] = [dict(rid, message="RICsubscriptionFailure", cause="ricRequest:action-not-supported")]
+        return self
+
     def retry(self, n, answer="response", dt=10.0):
         """A second attempt of node n's request (same key, same actions) dt seconds later, with its own answer."""
         ip, port, b, inst = "172.17.0.%d" % (n + 1), 40000 + n, 10 * n, n
@@ -328,6 +369,12 @@ def sub_actions_cases():
         ("a request answered by a response, then a same-key retry answered by a failure",
          _extra(two(), lambda s: s.retry(2, answer="failure")), False, None, "answered by RIC SUBSCRIPTION FAILURE"),
         ("a successful request and a successful same-key retry", _extra(two(), lambda s: s.retry(2)), True, None, None),
+        ("a response sent from the node's agent socket to another RIC endpoint does not answer the request",
+         two(answer=None).endpoint(2, "10.96.0.6", 101.0, 90, request=False, answer=None)
+         .answer(2, "10.96.0.6", 102.6, 96, "response"), False, None, "no RIC SUBSCRIPTION RESPONSE on its association"),
+        ("a failure sent from the node's agent socket to another RIC endpoint does not answer the request",
+         two(answer=None).endpoint(2, "10.96.0.6", 101.0, 90, request=False, answer=None)
+         .answer(2, "10.96.0.6", 102.6, 96, "failure"), False, None, "no RIC SUBSCRIPTION RESPONSE on its association"),
         ("a request before the window on no association is not judged",
          _extra(two(), lambda s: s.f["sub_requests"].append(s.ev(5, 50.0, SVC, "172.17.0.6", 36422, 40006,
                                                                   requestor=123, instance=5))), True, 60.0, None),

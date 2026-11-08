@@ -395,7 +395,8 @@ def self_test():
         association, with act {id: action ID}, on {id: node whose association carries it} and drop (no row)."""
         sh = sub or sheet
         rows = [{"id": x["id"], "frame": 1000 + i, "t": 200.0 + i, "src": "172.17.0.%d" % ((on or {}).get(x["id"], 2) + 1),
-                 "sport": 40000 + (on or {}).get(x["id"], 2), "requestor": 123, "instance": (on or {}).get(x["id"], 2),
+                 "sport": 40000 + (on or {}).get(x["id"], 2), "dst": KIJ.KAS.SVC, "dport": 36422, "requestor": 123,
+                 "instance": (on or {}).get(x["id"], 2),
                  "ranFunctionId": 2, "actionId": (act or {}).get(x["id"], x.get("msg_format"))}
                 for i, x in enumerate(lines) if x["id"] not in drop]
         open(d + "/r.jsonl", "w").write("".join(json.dumps(x) + "\n" for x in lines))

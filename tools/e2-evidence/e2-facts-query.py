@@ -199,22 +199,24 @@ def expected_nodes(a):
 
 
 def build_assocs(f):
-    """Associations from the fact sheet: list of dicts, sorted by INIT_ACK time. Every later event carries its
-    association via assoc_of(); `others` collects nothing, unattributed events are simply not in any association."""
+    """Associations from the fact sheet: list of dicts, sorted by INIT_ACK time. An association is keyed by its
+    normalized 4-tuple (agent ip, agent port, RIC ip, RIC port) and birth (INIT_ACK); every later event joins the
+    latest association born at or before it on its own 4-tuple (assoc_of), so two sockets of one agent port to
+    different RIC endpoints never share events. Unattributed events are simply not in any association."""
     if "init_acks" not in f or "cookie_acks" not in f:
         sys.exit("fact sheet predates association attribution (no init_acks/cookie_acks): re-run e2ap-pcap-facts.py")
-    key = lambda ip, port: (ip, port)
+    up, down = KAJ.from_agent, KAJ.to_agent
     by_key = {}
     cookie = {}
     for c in sorted(f["cookie_acks"], key=lambda x: x["t"]):
-        cookie.setdefault(key(c["dst"], c["dport"]), []).append(c["t"])
+        cookie.setdefault(down(c), []).append(c["t"])
     for ack in sorted(f["init_acks"], key=lambda x: x["t"]):
-        k = key(ack["dst"], ack["dport"])
+        k = down(ack)
         lst = by_key.setdefault(k, [])
         # a repeated INIT_ACK on a 4-tuple that has no COOKIE_ACK yet is the same handshake
         if lst and lst[-1]["t_cookie_ack"] is None:
             continue
-        lst.append({"ip": k[0], "sport": k[1], "service": ack["src"], "service_port": ack["sport"],
+        lst.append({"ip": k[0], "sport": k[1], "service": k[2], "service_port": k[3],
                     "t_init_ack": ack["t"], "t_init": None, "t_cookie_ack": None, "node": None, "node_id": None,
                     "setup_request": None, "setup_response": None, "sub_requests": [], "sub_responses": [],
                     "indications": [], "frame": ack["frame"]})
@@ -222,9 +224,9 @@ def build_assocs(f):
         lst[-1]["t_cookie_ack"] = next((t for t in cookie.get(k, []) if t >= ack["t"]), None)
     assocs = sorted((x for lst in by_key.values() for x in lst), key=lambda x: x["t_init_ack"])
 
-    def assoc_of(ip, port, t):
+    def assoc_of(k, t):
         best = None
-        for x in by_key.get(key(ip, port), []):
+        for x in by_key.get(k, []):
             if x["t_init_ack"] <= t:
                 best = x
         return best
@@ -234,29 +236,29 @@ def build_assocs(f):
     inits = sorted(f["inits"], key=lambda x: x["t"])
     unanswered = []
     for i in inits:
-        nxt = next((x for x in by_key.get(key(i["src"], i["sport"]), []) if x["t_init_ack"] >= i["t"]), None)
+        nxt = next((x for x in by_key.get(up(i), []) if x["t_init_ack"] >= i["t"]), None)
         if nxt is None:
             unanswered.append(i)
         elif nxt["t_init"] is None:
             nxt["t_init"] = i["t"]
     for r in sorted(f["setup_requests"], key=lambda x: x["t"]):
-        x = assoc_of(r["src"], r["sport"], r["t"])
+        x = assoc_of(up(r), r["t"])
         if x and x["setup_request"] is None:
             x["setup_request"], x["node_id"], x["node"] = r, r["node_id"], r["node_id"]
     for r in f["setup_responses"]:
-        x = assoc_of(r["dst"], r["dport"], r["t"])
+        x = assoc_of(down(r), r["t"])
         if x and x["setup_response"] is None and r["t"] >= x["t_init_ack"]:
             x["setup_response"] = r
     for r in f["sub_requests"]:
-        x = assoc_of(r["dst"], r["dport"], r["t"])
+        x = assoc_of(down(r), r["t"])
         if x:
             x["sub_requests"].append(r)
     for r in f["sub_responses"]:
-        x = assoc_of(r["src"], r["sport"], r["t"])
+        x = assoc_of(up(r), r["t"])
         if x:
             x["sub_responses"].append(r)
     for r in f.get("ind_events", []):
-        x = assoc_of(r["src"], r["sport"], r["t"])
+        x = assoc_of(up(r), r["t"])
         if x:
             x["indications"].append(r["t"])
     return assocs, unanswered
