@@ -11,8 +11,10 @@
 #                                 <facts without -facts.json>-asn1-indep-decoded.json. Always first: the image ready
 #                                 and its decode self-test (once per gate run). The sidecar carries its provenance
 #                                 (key "provenance": the capture's sha256, e2-sub-setup-decode.py's sha256, the image
-#                                 tag and ID) and is reused only when all four equal the current ones; otherwise (also
-#                                 when the provenance is missing) it is removed and made again: e2-sub-setup-decode.py
+#                                 tag and ID; a digest that fails or is not 64 hex digits fails the call before any
+#                                 cache lookup or decode) and is reused only when all four equal the current ones;
+#                                 otherwise (also when the provenance is missing) it is removed and made again:
+#                                 e2-sub-setup-decode.py
 #                                 collect (tshark on facts["pcap"]) piped into its decode mode inside the image
 #                                 (offline, the script mounted read-only). The file appears only complete (written
 #                                 aside, then renamed); a failed decode leaves no sidecar.
@@ -41,7 +43,7 @@ asn1_indep_ready() {
 }
 
 kpm_sub_decoded() {
-    local facts="$1" out pcap tmp want e2ev="$HARNESS_DIR/tools/e2-evidence"
+    local facts="$1" out pcap tmp want cap dec e2ev="$HARNESS_DIR/tools/e2-evidence"
     out="${facts%-facts.json}-asn1-indep-decoded.json"
     pcap=$(python3 -I -c 'import json, sys; print(json.load(open(sys.argv[1]))["pcap"])' "$facts") ||
         { echo "no pcap path in $facts" >&2; return 1; }
@@ -52,10 +54,14 @@ kpm_sub_decoded() {
             --decode-self-test >&2 || { echo "asn1-indep decode self-test failed" >&2; return 1; }
         _ASN1_INDEP_SELFTEST_RUN="${GATE_TS:-}-$ASN1_INDEP_IMAGE-$ASN1_INDEP_IMAGE_ID"
     fi
+    cap=$(sha256sum <"$pcap") || { echo "sha256sum of $pcap failed" >&2; return 1; }
+    dec=$(sha256sum <"$e2ev/e2-sub-setup-decode.py") || { echo "sha256sum of e2-sub-setup-decode.py failed" >&2; return 1; }
+    cap="${cap%% *}"; dec="${dec%% *}"
+    [[ "$cap" =~ ^[0-9a-f]{64}$ && "$dec" =~ ^[0-9a-f]{64}$ ]] ||
+        { echo "asn1-indep provenance: digests '$cap' / '$dec' are not sha256" >&2; return 1; }
     want=$(python3 -I -c 'import json, sys; print(json.dumps(dict(zip(
         ("captureSha256", "decoderSha256", "imageTag", "imageId"), sys.argv[1:]))))' \
-        "$(sha256sum <"$pcap" | cut -d' ' -f1)" "$(sha256sum <"$e2ev/e2-sub-setup-decode.py" | cut -d' ' -f1)" \
-        "$ASN1_INDEP_IMAGE" "$ASN1_INDEP_IMAGE_ID") || { echo "asn1-indep provenance of $pcap failed" >&2; return 1; }
+        "$cap" "$dec" "$ASN1_INDEP_IMAGE" "$ASN1_INDEP_IMAGE_ID") || { echo "asn1-indep provenance of $pcap failed" >&2; return 1; }
     if [ -s "$out" ]; then
         if python3 -I -c 'import json, sys; sys.exit(json.load(open(sys.argv[1])).get("provenance") != json.loads(sys.argv[2]))' \
             "$out" "$want" 2>/dev/null; then

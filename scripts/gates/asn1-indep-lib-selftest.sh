@@ -5,7 +5,7 @@
 # when its provenance (capture sha256, decoder sha256, image tag and ID) matches the current ones:
 #   a replaced capture, a changed decoder, another image ID, or a sidecar with missing or altered provenance is
 #   decoded again; a cached sidecar never bypasses a missing image or a failing decode self-test; a failed decode
-#   leaves no sidecar behind.
+#   leaves no sidecar behind; a digest that cannot be computed fails before any cache lookup or decode.
 set -uo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 lib="${1:-$here/asn1-indep-lib.sh}"
@@ -93,6 +93,23 @@ echo C >"$pcap"; export STUB_DECODE_FAIL=1
 run && bad "a failed decode returned a sidecar"
 [ -e "$side" ] && bad "a failed decode left a sidecar behind (decodes '$(from)')"
 unset STUB_DECODE_FAIL
+
+# a digest that cannot be computed (sha256sum fails, or prints no 64-hex digest) fails before any cache lookup or
+# decode: nothing returned, nothing written
+sha256sum() { return 1; }
+n=$(calls); run && bad "a failing sha256sum returned a sidecar"
+[ -s "$tmp/out" ] && bad "a failing sha256sum printed a sidecar path"
+[ -e "$side" ] && bad "a failing sha256sum left a sidecar behind"
+[ "$(calls)" = "$n" ] || bad "a failing sha256sum still decoded"
+sha256sum() { echo "nothex  -"; }
+run && bad "a malformed digest returned a sidecar"
+[ -e "$side" ] && bad "a malformed digest left a sidecar behind"
+unset -f sha256sum
+run || bad "decode after the digest came back failed: $(cat "$tmp/err")"
+sha256sum() { return 1; }
+run && bad "a failing sha256sum reused the cached sidecar"
+[ -s "$tmp/out" ] && bad "a failing sha256sum printed the cached sidecar's path"
+unset -f sha256sum
 
 [ "$fail" = 0 ] && echo "asn1-indep-lib self-test: ok"
 exit "$fail"
