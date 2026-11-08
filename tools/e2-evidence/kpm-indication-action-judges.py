@@ -12,10 +12,12 @@ Inputs, all from one capture:
 
 Subscription join: an indication's association is the latest one born on its normalized 4-tuple (agent ip, agent
 port, RIC ip, RIC port) at or before it;
-its subscription is the latest successful RIC SUBSCRIPTION RESPONSE on that association with the same (requestor,
-instance, RAN function ID) at or before it (a failure-only or absent response is an unknown subscription), and the
-action formats come from the latest RIC SUBSCRIPTION REQUEST with that key at or before the response. Only that
-response's admitted action IDs count. The node is the association's E2 Setup node, never an IP.
+its subscription (generation) is the latest request attempt on that association with the same (requestor, instance,
+RAN function ID) whose answer is a successful RIC SUBSCRIPTION RESPONSE at or before it, ordered by (time, frame); the
+attempt pairing is kpm-action-subscription-judges.py attempts_on, so a duplicated response (an SCTP retransmission,
+no new request) answers no attempt and starts no generation, and a failure-only or absent answer leaves an unknown
+subscription. The action formats come from that attempt's request; only its response's admitted action IDs count.
+The node is the association's E2 Setup node, never an IP.
 """
 import importlib.util
 import json
@@ -41,30 +43,30 @@ def cell_layout(map_path):
                                             key=lambda r: r["order"])] for kind in ("gnb", "enb")}
 
 
-def subscription_before(x, key, t, decoded):
-    """The subscription of a frame at t with request key on association x (module docstring), or None:
-    {key, respFrame, tResp, admitted, request (the decoded request or None), reqFrame}."""
+def subscription_before(attempts, key, t, frame):
+    """The subscription of a frame (t, frame) with request key, from its association's attempts (attempts_on), or None:
+    {key, gen (the attempt's identity), reqFrame, respFrame, tResp, admitted, request (the decoded request)}."""
     best = None
-    for r in x["sub_responses"]:
-        if r["t"] <= t and (best is None or r["t"] >= best[0]["t"]):
-            hit = [d for d in KAS.pdus(decoded, r["frame"], "RICsubscriptionResponse") if KAS.key_of(d) == key]
-            if hit:
-                best = (r, hit[0])
+    for a in attempts:
+        if a["kind"] == "response" and a["key"] == key and (a["ansEvent"]["t"], a["ansEvent"]["frame"]) <= (t, frame):
+            if best is None or (a["ansEvent"]["t"], a["ansEvent"]["frame"]) >= (best["ansEvent"]["t"], best["ansEvent"]["frame"]):
+                best = a
     if best is None:
         return None
-    r, d = best
-    req = None
-    for q in x["sub_requests"]:
-        if q["t"] <= r["t"] and (req is None or q["t"] >= req[0]["t"]):
-            hit = [dq for dq in KAS.pdus(decoded, q["frame"], "RICsubscriptionRequest") if KAS.key_of(dq) == key]
-            if hit:
-                req = (q, hit[0])
-    return {"key": key, "respFrame": r["frame"], "tResp": r["t"], "admitted": d.get("admitted") or [],
-            "request": req[1] if req else None, "reqFrame": req[0]["frame"] if req else None}
+    return {"key": key, "gen": id(best), "reqFrame": best["req"]["frame"], "respFrame": best["ans"]["frame"],
+            "tResp": best["ansEvent"]["t"], "admitted": best["ans"].get("admitted") or [], "request": best["d"]}
 
 
-def indication_action(assocs, nodes, row, decoded):
-    """(association, subscription, decoded action, problem) of one indication row; problem is None when it joins."""
+def attempts_cached(f, assocs, x, decoded, cache):
+    """attempts_on(x), computed once per association in cache (a dict the caller keeps for one fact sheet)."""
+    if id(x) not in cache:
+        cache[id(x)] = KAS.attempts_on(f, assocs, x, decoded)
+    return cache[id(x)]
+
+
+def indication_action(f, assocs, nodes, row, decoded, cache):
+    """(association, subscription, decoded action, problem) of one indication row; problem is None when it joins.
+    cache: attempts_cached's dict for this fact sheet."""
     x = KAS.assoc_at(assocs, KAS.from_agent(row), row["t"])
     if x is None:
         return None, None, None, "on no association (%s:%s->%s:%s)" % (row["src"], row["sport"], row["dst"], row["dport"])
@@ -73,16 +75,13 @@ def indication_action(assocs, nodes, row, decoded):
     if x["node"] not in nodes:
         return x, None, None, "on association %s of node %s, not an expected node" % (KAS.where(x), x["node"])
     key = (row["requestor"], row["instance"], row["ranFunctionId"])
-    sub = subscription_before(x, key, row["t"], decoded)
+    sub = subscription_before(attempts_cached(f, assocs, x, decoded, cache), key, row["t"], row["frame"])
     if sub is None:
-        return x, None, None, "node %s: unknown subscription %s (no successful RIC SUBSCRIPTION RESPONSE before it)" % (
-            x["node"], key)
+        return x, None, None, "node %s: unknown subscription %s (no request attempt answered by a successful RIC " \
+                              "SUBSCRIPTION RESPONSE before it)" % (x["node"], key)
     if row["actionId"] not in sub["admitted"]:
         return x, sub, None, "node %s subscription %s: action ID %s is not admitted (admitted %s, response frame %d)" % (
             x["node"], key, row["actionId"], sub["admitted"], sub["respFrame"])
-    if sub["request"] is None:
-        return x, sub, None, "node %s subscription %s: its RIC SUBSCRIPTION REQUEST is not inside the capture" % (
-            x["node"], key)
     acts = [a for a in sub["request"].get("actions") or [] if a.get("id") == row["actionId"]]
     df = acts[0].get("definition") if len(acts) == 1 else None
     if df is None or "error" in df:
@@ -106,7 +105,7 @@ def format1_node_problem(rec, names, node):
 def judge_ind_actions(f, decoded, nodes, assocs, after, rows, records, nlines, summary, layout):
     """Problems of the indication format rule (e2-facts-query.py ind-actions); prints the evidence. Problems of many
     indications are grouped by reason with a count and the first ids."""
-    bad, grouped, seen = [], {}, {}
+    bad, grouped, seen, cache = [], {}, {}, {}
     if (summary or {}).get("rows_skipped") != 0:
         bad.append("the extractor skipped %s indication rows (want 0): %s" % ((summary or {}).get("rows_skipped"), summary))
     ids = [r.get("id") for r in rows]
@@ -122,16 +121,16 @@ def judge_ind_actions(f, decoded, nodes, assocs, after, rows, records, nlines, s
         g.append(ident)
 
     judged = 0
-    for row in sorted(rows, key=lambda r: r["t"]):
+    for row in sorted(rows, key=lambda r: (r["t"], r["frame"])):
         if row["t"] < after:
             continue
         judged += 1
-        x, sub, act, why = indication_action(assocs, nodes, row, decoded)
+        x, sub, act, why = indication_action(f, assocs, nodes, row, decoded, cache)
         if why:
             note(why, row["id"])
             continue
         aid, fmt = row["actionId"], act["definition"]["format"]
-        seen.setdefault((id(x), sub["key"], sub["respFrame"], aid), []).append(row["id"])
+        seen.setdefault((sub["gen"], aid), []).append(row["id"])
         rec = rec_by.get(row["id"])
         tag = "node %s subscription %s action %s (Format %s)" % (x["node"], sub["key"], aid, fmt)
         if rec is None or rec.get("hdr_code") != "RC_OK" or rec.get("msg_code") != "RC_OK":
@@ -155,25 +154,22 @@ def judge_ind_actions(f, decoded, nodes, assocs, after, rows, records, nlines, s
                 note("%s: indication message Format %s, want Format 2" % (tag, mf), row["id"])
         else:
             note("%s: no indication format is defined for an admitted Format %s action" % (tag, fmt), row["id"])
-    # every admitted action of every successful response (each one a subscription generation: the indications after
-    # it, up to the next one, are its own) in the window on an expected node's association
-    expected = {}
+    # every admitted action of every generation (a request attempt answered by a successful response, answered in the
+    # window) on an expected node's association received an indication
+    expected = []
     for x in assocs:
         if x["node"] not in nodes:
             continue
-        for r in x["sub_responses"]:
-            if r["t"] < after:
-                continue
-            for d in KAS.pdus(decoded, r["frame"], "RICsubscriptionResponse"):
-                for aid in d.get("admitted") or []:
-                    expected.setdefault((id(x), KAS.key_of(d), r["frame"], aid), x)
-    for (xid, key, fr, aid), x in sorted(expected.items(), key=lambda kv: (kv[0][2], kv[0][3])):
-        n = len(seen.get((xid, key, fr, aid), []))
-        print("node %s %s subscription %s (response frame %d) action %s: %d indication(s)" % (
-            x["node"], KAS.where(x), key, fr, aid, n))
+        for a in attempts_cached(f, assocs, x, decoded, cache):
+            if a["kind"] == "response" and a["ansEvent"]["t"] >= after:
+                expected += [(a["ans"]["frame"], aid, x, a) for aid in a["ans"].get("admitted") or []]
+    for fr, aid, x, a in sorted(expected, key=lambda e: (e[0], e[1])):
+        n = len(seen.get((id(a), aid), []))
+        print("node %s %s subscription %s (request frame %d, response frame %d) action %s: %d indication(s)" % (
+            x["node"], KAS.where(x), a["key"], a["req"]["frame"], fr, aid, n))
         if n == 0:
             bad.append("node %s subscription %s (response frame %d): admitted action %s received no indication" % (
-                x["node"], key, fr, aid))
+                x["node"], a["key"], fr, aid))
     print("indications judged %d (after %s), grouped problems %d" % (judged, after, len(grouped)))
     for reason, idents in sorted(grouped.items(), key=lambda kv: -len(kv[1])):
         bad.append("%d indication(s): %s (first: %s)" % (len(idents), reason, ", ".join(idents[:3])))
@@ -213,13 +209,14 @@ class IndSheet(KAS.Sheet):
         return self
 
     def resubscribed(self, n, t, frame):
-        """A further successful RIC SUBSCRIPTION RESPONSE of node n's subscription (same key, same admitted IDs) at t."""
-        ip, port = "172.17.0.%d" % (n + 1), 40000 + n
-        self.f["sub_responses"].append(self.ev(frame, t, ip, KAS.SVC, port, 36422, requestor=123, instance=n))
-        self.dec["f%d" % frame] = [{"message": "RICsubscriptionResponse", "requestor": 123, "instance": n,
-                                    "ranFunctionId": 2, "admitted": [a["id"] for a in KAS.good_actions(n)],
-                                    "notAdmitted": []}]
-        return self
+        """A new attempt of node n's subscription: a same-key request (frame, at t - 0.1) and its successful response
+        (frame + 1, at t) admitting the same IDs."""
+        self.request(n, frame, t - 0.1)
+        return self.answer(n, KAS.SVC, t, frame + 1, "response")
+
+    def duplicated(self, n, t, frame):
+        """A second copy of node n's successful response at t (an SCTP retransmission: no new request)."""
+        return self.answer(n, KAS.SVC, t, frame, "response")
 
     def both(self, n, f1=1, f3=2):
         return self.ind(n, f1, 1).ind(n, f3, 2)
@@ -245,6 +242,10 @@ def ind_actions_cases():
          good().resubscribed(2, 900.0, 2000), False, "received no indication"),
         ("a same-key successful re-subscription answered by indications after it",
          good().resubscribed(2, 900.0, 2000).ind(2, 1, 1, t=901.0).ind(2, 2, 2, t=902.0), True, None),
+        ("a duplicated successful response (no new request) before the indications",
+         good().duplicated(2, 100.55 + 2, 2000), True, None),
+        ("a duplicated successful response (no new request) between the indications",
+         IndSheet().add(1).add(2).both(1).ind(2, 1, 1).duplicated(2, 203.5, 2000).ind(2, 2, 2), True, None),
         ("another node's ns3.nodeId in item k > 0", good().ind(2, 1, 1, node_ids=[2, 3]), False, "want node 2"),
         ("another node's ns3.nodeId in item 0", good().ind(2, 1, 1, node_ids=[3, 2]), False, "want node 2"),
         ("an unknown request ID", good().ind(2, 2, 2, inst=77), False, "unknown subscription"),

@@ -79,7 +79,7 @@ class RecordActions:
         self.facts, self.decoded, self.nodes = facts, decoded, nodes
         self.assocs, _ = EFQ.build_assocs(facts)
         self.rows = {r["id"]: r for r in rows}
-        self.cells = {}
+        self.cells, self.attempts = {}, {}
 
     def node_cells(self, node):
         """(set of the node's served CGIs over its associations' E2 Setups in the capture, problems)."""
@@ -97,7 +97,7 @@ class RecordActions:
         row = self.rows.get(tag)
         if row is None:
             return "%s: no action row for the record (pcap-to-lines.py --actions)" % tag
-        _, sub, _, why = KIJ.indication_action(self.assocs, self.nodes, row, self.decoded)
+        _, sub, _, why = KIJ.indication_action(self.facts, self.assocs, self.nodes, row, self.decoded, self.attempts)
         if why:
             return "%s: %s" % (tag, why)
         acts = sub["request"].get("actions") or []
