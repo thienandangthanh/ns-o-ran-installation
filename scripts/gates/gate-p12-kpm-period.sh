@@ -98,14 +98,15 @@ kpimon_at() {
 
 # kpimon_registered <s>: the new kpimon pod (KPIMON_POD, set by kpimon_wait_ready) logs xapp-frame's own
 # "Registration done" line within <s> seconds. appmgr's xApp list is no evidence: a dms_cli uninstall leaves the
-# old entry there, and kpimon never deregisters.
+# old entry there, and kpimon never deregisters. Each log request is bounded by the time left, and a line read
+# after the deadline does not count.
 kpimon_registered() {
-    local deadline=$(($(date +%s) + $1)) logs line
+    local deadline=$(($(date +%s) + $1)) logs line left
     [ -n "$KPIMON_POD" ] || { echo "no kpimon pod name"; return 1; }
-    while [ "$(date +%s)" -lt "$deadline" ]; do
-        logs=$(kc -n "$KPIMON_NS" logs "$KPIMON_POD" 2>/dev/null) || logs=""
+    while left=$((deadline - $(date +%s))) && [ "$left" -gt 0 ]; do
+        logs=$(kc --request-timeout="${left}s" -n "$KPIMON_NS" logs "$KPIMON_POD" 2>/dev/null) || logs=""
         line=$(grep -m1 -F 'Registration done, proceeding with startup' <<<"$logs")
-        [ -n "$line" ] && { echo "$KPIMON_POD: ${line:0:200}"; return 0; }
+        [ -n "$line" ] && [ "$(date +%s)" -le "$deadline" ] && { echo "$KPIMON_POD: ${line:0:200}"; return 0; }
         sleep 3
     done
     echo "$KPIMON_POD logged no 'Registration done' within $1 s"; return 1
@@ -118,7 +119,8 @@ route_readers_ok() {
 
 # ric_route_record <dir> <t0>: informational, never judged. The mse|12050| lines of e2term's route stash, then
 # (with <t0>) the rtmgr, e2term and submgr logs since <t0> and the counts of rtmgr's acknowledged and
-# unacknowledged push verdicts and of e2term's unroutable 12050 indications.
+# unacknowledged push verdicts and of e2term's unroutable 12050 indications. Run it through
+# ric_route_record_bounded, which kills it after ROUTE_RECORD_S seconds so it can never hold up the gate.
 ric_route_record() {
     local dir="$1" t0="${2:-}" pod c since
     mkdir -p "$dir"
@@ -136,6 +138,15 @@ ric_route_record() {
     echo "rtmgr push verdicts acknowledged $(grep -c 'Route Update Status: OK(' "$dir/rtmgr.log")," \
         "unacknowledged $(grep -E 'Updating Routes|Update Routes' "$dir/rtmgr.log" | grep -vc 'Route Update Status: OK(');" \
         "e2term RMR_ERR_NOENDPT 12050 $(grep 'RMR_ERR_NOENDPT' "$dir/e2term.log" | grep -c 12050)"
+}
+
+# ric_route_record_bounded <dir> [t0]: ric_route_record under a hard time limit (default 90 s, then SIGKILL 5 s
+# later); on a timeout it prints that the record is unavailable and still returns 0.
+ric_route_record_bounded() {
+    export -f kc ns_pod ric_route_record
+    timeout -k 5 "${ROUTE_RECORD_S:-90}" bash -c 'ric_route_record "$@"' _ "$@" ||
+        echo "route record unavailable (exit $?, limit ${ROUTE_RECORD_S:-90} s)"
+    return 0
 }
 
 # wait_wire <pcap> <successful|unsuccessful>: a RIC subscription request and an answer of that kind on the wire.
@@ -171,13 +182,13 @@ agents_up a p12-a
 check p12_a_wire_subscription_request_and_response wait_wire "$e/p12-a.pcap" successful
 RUN="$e/ns3run-a"; mkdir -p "$RUN"
 INFLUX_FROM=$(date +%s)
-ROUTE_STASH=$(ric_route_record "$e/p12-a-ric-route" 2>/dev/null) || ROUTE_STASH=""
+ROUTE_STASH=$(ric_route_record_bounded "$e/p12-a-ric-route" 2>/dev/null)
 check p12_a_ns3_started_single_gnb ns3_start "$RUN" --nMmWaveEnbNodes=1 --e2lteEnabled=false "--simTime=$SIMTIME" \
     "--indicationPeriodicity=$PERIOD" "--simStartEpochMs=$EPOCH_MS" --e2AgentHost=127.0.0.1 "--e2TraceDir=$RUN"
 check p12_a_ns3_completes_exit0 ns3_wait
 log "draining ${DRAIN_S}s"; sleep "$DRAIN_S"
 agents_stats_last ns3-e2-agent-2 >"$e/p12-a-agent-stats-final.json"
-ROUTE_LOGS=$(ric_route_record "$e/p12-a-ric-route" "$CAP_T0" 2>/dev/null) || ROUTE_LOGS=""
+ROUTE_LOGS=$(ric_route_record_bounded "$e/p12-a-ric-route" "$CAP_T0" 2>/dev/null)
 record p12_a_ric_route_record_informational true "${ROUTE_STASH:-no stash record}; ${ROUTE_LOGS:-no log record}"
 kpimon_window() { kpimon_logs_since "$CAP_T0" "$e/p12-a-kpimon.log" && kpimon_log_window_summary "$e/p12-a-kpimon.log"; }
 check p12_a_kpimon_log_window_complete kpimon_window
