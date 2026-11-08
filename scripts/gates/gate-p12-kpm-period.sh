@@ -139,12 +139,14 @@ check p12_a_kpimon_subscription_format1_per_cell_and_format3 kpm_sub_actions_che
 check p12_a_kpm_indication_format_equals_its_action_format kpm_ind_actions_check "$e/p12-a-sub-facts.json" "$e/p12-a-node-ips.json"
 check p12_a_ue_context_files_consistent_with_ns3_mn_pdcp_trace ue_context_check "$RUN" "$RUN" "$e/p12-a-ue-context.json"
 records_a() {
-    local pl="$HARNESS_TOOLS/pcap-to-lines.py" h="$SODIR/kpimon-decode-harness"
-    python3 -I "$pl" "$e/p12-a.pcap" >"$e/p12-a-lines.txt" || return 1
+    local pl="$HARNESS_TOOLS/pcap-to-lines.py" h="$SODIR/kpimon-decode-harness" dec
+    dec=$(kpm_sub_decoded "$e/p12-a-sub-facts.json") || return 1
+    python3 -I "$pl" "$e/p12-a.pcap" --actions "$e/p12-a-ind-actions.jsonl" >"$e/p12-a-lines.txt" || return 1
     LD_LIBRARY_PATH="$SODIR" "$h" --records <"$e/p12-a-lines.txt" >"$e/p12-a-records.jsonl" 2>"$e/p12-a-records.stderr" || return 1
     python3 -I "$HARNESS_DIR/scripts/gates/p12-records-check.py" "$e/p12-a-records.jsonl" --map "$AGENT_DIR/schema/metric-map.v1.json" \
         --trace "$RUN/e2-ipc-trace-2.jsonl" --per-indication $((P_MULTI_MS / T_MS)) --granularity-ms "$G_MS" \
-        --ue-context-dir "$RUN" --out "$e/p12-a-records-check.json"
+        --ue-context-dir "$RUN" --out "$e/p12-a-records-check.json" --facts "$e/p12-a-sub-facts.json" --decoded "$dec" \
+        --ind-actions "$e/p12-a-ind-actions.jsonl" --node-ips "$e/p12-a-node-ips.json"
 }
 check p12_a_one_indication_per_10_seqs_with_10_records records_a
 kpimon_decoded_all() {

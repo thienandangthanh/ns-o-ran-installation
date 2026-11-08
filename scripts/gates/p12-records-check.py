@@ -3,6 +3,7 @@
 
   p12-records-check.py RECORDS_JSONL --map metric-map.v1.json --trace e2-ipc-trace-N.jsonl [--trace ...]
                        --ue-context-dir TRACE_DIR --per-indication K --granularity-ms G --out FILE
+                       --facts FACTS --decoded DECODED --ind-actions ACTIONS_JSONL (--node-ips F | --nodes L)
   p12-records-check.py --self-test
 
 RECORDS_JSONL is `kpimon-decode-harness --records` over the capture's indication lines: per indication the decode
@@ -19,14 +20,24 @@ node kind's form (enGnbUeId:<x2>@00F110-<%05X> on a gNB node, enbUeId:<mmeUeS1ap
 same identity as ueIds[j]; kpimon's formatter reason string (no tag) fails. The trace gives each node's samples: seq, simTimeNs (simTimeMs is
 simTimeNs // 10^6, the agent's own truncation, ns3_e2_agent src/sample-forwarder.cpp) and the IMSIs of its UE list.
 
+Each record is bound to its action: ACTIONS_JSONL (pcap-to-lines.py --actions over the same capture, joined by id)
+gives its RICactionID and request ID, FACTS (e2ap-pcap-facts.py) its SCTP association, and DECODED (the capture's
+asn1-indep decode, e2-sub-setup-decode.py) the subscription's actions and the served cells of every node's E2 Setup,
+with the subscription join of tools/e2-evidence/kpm-indication-action-judges.py (the latest successful RIC
+SUBSCRIPTION RESPONSE on the association with that request ID; only its admitted actions count). Action IDs are never
+assumed: they come from the decoded subscription. A record without an action row, or whose action does not join, is
+a problem.
+
 Checks (exit 0 when all hold):
   1. every indication decodes RC_OK (header and message), carries exactly K measData items and granulPeriod G;
   2. Format 1, per node (the ns3.nodeId record): each indication's K items carry K consecutive seqs; the indications
      are disjoint, and together cover the node's trace seqs from the first one, in whole periods: the n mod K samples
-     of the period still open at bye are not reported (no partial indication). So one indication per K seqs;
+     of the period still open at bye are not reported (no partial indication). So one indication per K seqs. Each
+     Format 1 record's actionId is the subscription's Format 1 action whose CGI is a served cell of that node;
   3. every Format 1 and Format 2 header's collection start time is the first record's sample window start:
      epoch + max(0, simTimeMs - T) of that seq, with the epoch (simStartEpochMs) and T from the node's trace hello;
-  4. every Format 2 indication's first seq starts a period that a Format 1 indication of the same node reports.
+  4. every Format 2 indication's first seq starts a period that a Format 1 indication of the same node reports, and
+     its actionId is the subscription's Format 3 action.
      Per item and listed UE: all noValue exactly when that IMSI is absent from the trace sample of the item's seq
      (E2SM-KPM v03.00 7.4.4.4: NULL for the granularity periods where a listed UE does not appear), otherwise its
      nodeId, seq and imsi records are the node's, the item's (first seq + item index) and the IMSI its UE ID resolves
@@ -45,16 +56,66 @@ import tempfile
 HERE = pathlib.Path(__file__).resolve().parent
 
 
-def _ue_context_map():
-    path = HERE.parent.parent / "tools" / "e2-evidence" / "ue-context-map.py"
-    spec = importlib.util.spec_from_file_location("ue_context_map", path)
+def _e2_evidence_tool(name, filename):
+    path = HERE.parent.parent / "tools" / "e2-evidence" / filename
+    spec = importlib.util.spec_from_file_location(name, path)
     assert spec is not None and spec.loader is not None, path
     m = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(m)
     return m
 
 
-UCM = _ue_context_map()
+UCM = _e2_evidence_tool("ue_context_map", "ue-context-map.py")
+EFQ = _e2_evidence_tool("e2_facts_query", "e2-facts-query.py")  # associations, and the subscription join (EFQ.KIJ)
+KIJ = EFQ.KIJ
+
+
+class RecordActions:
+    """The action of each record (module docstring): problem(record id, node, msg_format) is None when the
+    record's actionId is the subscription's Format 1 action of the node's served cell (msg_format 1) or its Format 3
+    action (msg_format 2), else the reason."""
+
+    def __init__(self, facts, decoded, rows, nodes):
+        self.facts, self.decoded, self.nodes = facts, decoded, nodes
+        self.assocs, _ = EFQ.build_assocs(facts)
+        self.rows = {r["id"]: r for r in rows}
+        self.cells = {}
+
+    def node_cells(self, node):
+        """(set of the node's served CGIs over its associations' E2 Setups in the capture, problems)."""
+        if node not in self.cells:
+            got, bad = set(), []
+            for x in self.assocs:
+                if x["node"] == node:
+                    cells, _, p = KIJ.KAS.served_cells(x, self.decoded)
+                    bad += p
+                    got |= {tuple(c) for c in cells or []}
+            self.cells[node] = (got, bad or ([] if got else ["node %s: no served cell in the capture" % node]))
+        return self.cells[node]
+
+    def problem(self, tag, node, msg_format):
+        row = self.rows.get(tag)
+        if row is None:
+            return "%s: no action row for the record (pcap-to-lines.py --actions)" % tag
+        _, sub, _, why = KIJ.indication_action(self.assocs, self.nodes, row, self.decoded)
+        if why:
+            return "%s: %s" % (tag, why)
+        acts = sub["request"].get("actions") or []
+        fmt = lambda a: (a.get("definition") or {}).get("format")
+        if msg_format == 1:
+            cells, bad = self.node_cells(node)
+            if bad:
+                return "%s: %s" % (tag, "; ".join(bad))
+            want = [a["id"] for a in acts if fmt(a) == 1 and tuple((a.get("definition") or {}).get("cgi") or ()) in cells]
+            if row["actionId"] not in want:
+                return "%s: Format 1 under action %s, want the subscription's Format 1 action of a served cell of node %s " \
+                       "(such action IDs: %s)" % (tag, row["actionId"], node, want)
+        else:
+            want = [a["id"] for a in acts if fmt(a) == 3]
+            if len(want) != 1 or row["actionId"] != want[0]:
+                return "%s: Format 2 under action %s, want the subscription's Format 3 action (such action IDs: %s)" % (
+                    tag, row["actionId"], want)
+        return None
 
 NTP_UNIX_OFFSET_S = 2208988800
 
@@ -171,7 +232,7 @@ def format2_judge(tag, x, n, k, lay, nodes, cm, problems):
     return node, seq0, imsis
 
 
-def check(records_path, lay, nodes, k, g, cm):
+def check(records_path, lay, nodes, k, g, cm, actions):
     problems, f1_by_node, f2 = ["UE context: " + p for p in cm.problems], {}, []
     items_hist = {}
     lines = [json.loads(l) for l in open(records_path) if l.strip()]
@@ -192,6 +253,9 @@ def check(records_path, lay, nodes, k, g, cm):
             if node not in nodes:
                 problems.append("%s: Format 1 nodeId %r not in the traces" % (tag, node))
                 continue
+            p = actions.problem(tag, node, 1)
+            if p:
+                problems.append(p)
             names = lay[(nodes[node]["kind"], "cell")]
             w = len(names)
             if len(recs) != w * (n or 0):
@@ -200,6 +264,9 @@ def check(records_path, lay, nodes, k, g, cm):
             seqs = [value(recs[i * w + names.index("ns3.seq")]) for i in range(n)]
             f1_by_node.setdefault(node, []).append((tag, seqs, x.get("header", {}).get("ts_hex")))
         elif x.get("msg_format") == 2:
+            p = actions.problem(tag, None, 2)
+            if p:
+                problems.append(p)
             r = format2_judge(tag, x, n, k, lay, nodes, cm, problems)
             if r is not None:
                 f2.append((tag, r[0], r[1], r[2], x.get("header", {}).get("ts_hex")))
@@ -319,10 +386,21 @@ def self_test():
             del x["ueIdTags"]
         return x
 
-    def run(lines):
+    # the subscription fixtures of kpm-action-subscription-judges.py: node 2 (en-gNB, one cell) subscribed with its
+    # Format 1 action at ID 1 and the Format 3 action at ID 2; node 3 the same on its own cell and association
+    sheet = KIJ.KAS.Sheet().add(2).add(3)
+
+    def run(lines, act=None, on=None, drop=(), sub=None):
+        """check() over lines; each record's action row is ID 1 for Format 1 and 2 for Format 2 on node 2's
+        association, with act {id: action ID}, on {id: node whose association carries it} and drop (no row)."""
+        sh = sub or sheet
+        rows = [{"id": x["id"], "frame": 1000 + i, "t": 200.0 + i, "src": "172.17.0.%d" % ((on or {}).get(x["id"], 2) + 1),
+                 "sport": 40000 + (on or {}).get(x["id"], 2), "requestor": 123, "instance": (on or {}).get(x["id"], 2),
+                 "ranFunctionId": 2, "actionId": (act or {}).get(x["id"], x.get("msg_format"))}
+                for i, x in enumerate(lines) if x["id"] not in drop]
         open(d + "/r.jsonl", "w").write("".join(json.dumps(x) + "\n" for x in lines))
         return check(d + "/r.jsonl", layout(d + "/map.json"), load_traces([d + "/e2-ipc-trace-2.jsonl"]), k, T,
-                     UCM.UeContextMap(d))
+                     UCM.UeContextMap(d), RecordActions(sh.f, sh.dec, rows, [2, 3]))
 
     f1s = [f1("a", list(range(1, 11))), f1("b", list(range(11, 21)))]
     good = f1s + [f2("c", 1), f2("d", 11)]
@@ -353,8 +431,8 @@ def self_test():
     assert not run(f1s + [f2("c", 1, ids=[en_gnb(11), en_gnb(11)]), f2("d", 11)])["pass"], "two IDs of one UE must fail"
     assert not run(f1s + [f2("c", 1, ids=[en_gnb(12), en_gnb(11)]), f2("d", 11)])["pass"], \
         "a UE ID whose IMSI differs from its block's ns3.imsi record must fail"
-    def fails_on(lines, needle, why):
-        r = run(lines)
+    def fails_on(lines, needle, why, **kw):
+        r = run(lines, **kw)
         assert not r["pass"] and any(needle in q for q in r["problems"]), (why, r["problems"][:3])
 
     fails_on(f1s + [f2("c", 1, uniform=False), f2("d", 11)], "uniform False",
@@ -371,6 +449,20 @@ def self_test():
              "ueIdTags[1]", "a formatter reason string in place of a tag must fail")
     assert t12 == "enGnbUeId:12@00F110-00001" and run(f1s + [f2("c", 1, tags=[t11, t12]), f2("d", 11)])["pass"], \
         "explicit well-formed tags naming the UE IDs must pass"
+    fails_on(good, "want the subscription's Format 1 action", "a Format 1 record under the Format 3 action must fail "
+             "check 2", act={"b": 2})
+    fails_on(good, "want the subscription's Format 3 action", "a Format 2 record under a Format 1 action must fail "
+             "check 4", act={"d": 1})
+    fails_on(good, "Format 1 action of a served cell of node 2", "a Format 1 record under another node's "
+             "Format 1 action (its association and cell) must fail check 2", on={"a": 3})
+    fails_on(good, "no action row", "a record without its action row must fail", drop={"c"})
+    fails_on(good, "is not admitted", "a record under an action ID the subscription did not admit must fail",
+             act={"a": 7})
+    two_cell = KIJ.KAS.Sheet().add(2, k=2).add(3)  # node 2: Format 1 at IDs 1 and 2, Format 3 at ID 3
+    assert run(good, act={"a": 2, "b": 1, "c": 3, "d": 3}, sub=two_cell)["pass"], \
+        "action IDs come from the decoded subscription (a two-cell node's Format 3 action at ID 3) and must pass"
+    fails_on(good, "Format 3 action (such action IDs: [3])", "the two-cell node's Format 2 record under ID 2 "
+             "must fail", act={"a": 1, "b": 1, "c": 2, "d": 3}, sub=two_cell)
     one_rec = [f1("x%d" % s, [s]) for s in range(1, 26)]
     assert not run(one_rec)["pass"], "one record per indication at K = 10 must fail"
     print("p12-records-check self-test: ok")
@@ -388,9 +480,17 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--granularity-ms", type=int, required=True)
     ap.add_argument("--ue-context-dir", required=True, help="the run's trace dir (e2-ue-context-*.jsonl)")
+    ap.add_argument("--facts", required=True, help="e2ap-pcap-facts.py fact sheet of the same capture")
+    ap.add_argument("--decoded", required=True, help="its asn1-indep decode (e2-sub-setup-decode.py)")
+    ap.add_argument("--ind-actions", required=True, help="pcap-to-lines.py --actions rows of the same lines")
+    g = ap.add_mutually_exclusive_group(required=True)
+    g.add_argument("--node-ips", help="the expected nodes (node-ips.json keys)")
+    g.add_argument("--nodes", help="the expected nodes, comma-separated")
     a = ap.parse_args()
+    rows = [json.loads(x) for x in open(a.ind_actions) if x.strip()]
+    actions = RecordActions(EFQ.load(a.facts), EFQ.load(a.decoded), rows, EFQ.expected_nodes(a))
     r = check(a.records, layout(a.map), load_traces(a.trace), a.per_indication, a.granularity_ms,
-              UCM.UeContextMap(a.ue_context_dir))
+              UCM.UeContextMap(a.ue_context_dir), actions)
     json.dump(r, open(a.out, "w"), indent=1, sort_keys=True)
     print(json.dumps({k: v for k, v in r.items() if k != "problems"}, sort_keys=True))
     for p in r["problems"]:
