@@ -83,6 +83,7 @@ rung_live() {
     check "${RUNG}_${label}_capture_stopped" capture_stop "$label"
     check "${RUNG}_${label}_kpimon_subscription_reporting_period_decoded" kpm_sub_period_check "$e/$label.pcap" "$label-sub" "$cap_t0"
     check "${RUNG}_${label}_kpimon_subscription_format1_per_cell_and_format3" kpm_sub_actions_check "$e/$label-sub-facts.json" "$rd/node-ips.json"
+    check "${RUNG}_${label}_kpm_indication_format_equals_its_action_format" kpm_ind_actions_check "$e/$label-sub-facts.json" "$rd/node-ips.json"
     check "${RUNG}_${label}_e2ap_ppid70_every_node" python3 -I "$E2EV/e2-facts-query.py" "$e/$label-sub-facts.json" ppid --node-ips "$rd/node-ips.json"
     check "${RUNG}_${label}_ns3_emitters_at_pins" ns3_emitters_at_pins "$rd/trace"
     check "${RUNG}_${label}_ue_context_files_consistent_with_ns3_mn_pdcp_trace" ue_context_check "$rd/trace" "$rd/ns3run" \

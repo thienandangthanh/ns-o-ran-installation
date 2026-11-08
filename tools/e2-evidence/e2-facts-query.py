@@ -28,6 +28,18 @@ its evidence and exits 0 (pass) or 1 (fail).
                                                     C+1; every expected node received >= 1 request. D is the capture's
                                                     asn1-indep decode (e2-sub-setup-decode.py), which decides every
                                                     value (kpm-action-subscription-judges.py)
+  ind-actions     (--nodes L | --node-ips F) --decoded D --ind-actions A --records R --lines L --extract-summary S
+                  --map M [--after EPOCH]   every RIC INDICATION in the window (A: pcap-to-lines.py --actions rows, L
+                                                    its lines, S its stderr summary, R kpimon-decode-harness --records
+                                                    over L) lies on an expected node's association and joins its
+                                                    subscription (the latest successful RIC SUBSCRIPTION RESPONSE there
+                                                    with its requestor, instance and RAN function ID); its RICactionID
+                                                    is admitted; under a Format 1 action the message is Format 1 and
+                                                    every measData item's ns3.nodeId (position from M's cell list) is
+                                                    the node, under the Format 3 action it is Format 2; every admitted
+                                                    action received >= 1 indication; no extractor row skipped, every
+                                                    line has one row and one record, every record decodes RC_OK
+                                                    (kpm-indication-action-judges.py)
   sub-failure     --cause GROUP:INDEX [--after EPOCH]   a request answered by a RIC SUBSCRIPTION FAILURE with that
                                                     cause, and no request in the window answered by a response
   assoc-start     --service-ip IP --before EPOCH [--sctp-port 36422]   one ESTABLISHED association per node before EPOCH
@@ -36,7 +48,8 @@ its evidence and exits 0 (pass) or 1 (fail).
   indications                                       every node's associations carried RICindications
   service-ip      --service-ip IP                   every agent INIT in the capture went to the Service IP
   associations    [--after EPOCH]                   list associations (informational)
-  --self-test                                       the sub-actions query on synthetic fact sheets and decodes
+  --self-test                                       the sub-actions and ind-actions queries on synthetic fact sheets
+                                                    and decodes
   ppid            [--nodes L | --node-ips F] [--source-ip IP]   (facts from e2ap-pcap-facts.py --ppid) every DATA chunk
                                                     sent to the SCTP port carries PPID 70 (E2AP, O-RAN E2GAP v08.00
                                                     section 6.1); every expected node's associations, or the
@@ -74,6 +87,7 @@ def _sibling(name, filename):
 
 
 KAJ = _sibling("kpm_action_subscription_judges", "kpm-action-subscription-judges.py")
+KIJ = _sibling("kpm_indication_action_judges", "kpm-indication-action-judges.py")
 
 
 def node_of(ips):
@@ -415,6 +429,21 @@ def q_sub_actions(f, a):
     return KAJ.judge_sub_actions(f, load(a.decoded), expected_nodes(a), assocs, a.after or 0)
 
 
+def q_ind_actions(f, a):
+    need = [k for k in ("decoded", "ind_actions", "records", "lines", "extract_summary", "map") if not getattr(a, k)]
+    if need:
+        sys.exit("ind-actions needs --%s" % ", --".join(k.replace("_", "-") for k in need))
+    assocs, _ = build_assocs(f)
+    jsonl = lambda p: [json.loads(x) for x in open(p) if x.strip()]
+    nlines = sum(1 for x in open(a.lines) if x.strip())
+    try:
+        summary = json.loads(open(a.extract_summary).read().strip().splitlines()[-1])
+    except (IndexError, ValueError):
+        summary = None
+    return KIJ.judge_ind_actions(f, load(a.decoded), expected_nodes(a), assocs, a.after or 0, jsonl(a.ind_actions),
+                                 jsonl(a.records), nlines, summary, KIJ.cell_layout(a.map))
+
+
 def self_test():
     """The judges of kpm-action-subscription-judges.py on synthetic fact sheets and decodes: each case's verdict and,
     for a failing case, its reason."""
@@ -423,7 +452,12 @@ def self_test():
         assocs, _ = build_assocs(f)
         with contextlib.redirect_stdout(io.StringIO()):
             return KAJ.judge_sub_actions(f, decoded, expected_nodes(A), assocs, after or 0)
-    fails = KAJ.self_test(run_query)
+    def run_ind(sheet):
+        assocs, _ = build_assocs(sheet.f)
+        with contextlib.redirect_stdout(io.StringIO()):
+            return KIJ.judge_ind_actions(sheet.f, sheet.dec, [1, 2], assocs, 0, sheet.rows, sheet.records,
+                                         len(sheet.records), sheet.summary, KIJ.LAYOUT)
+    fails = KAJ.self_test(run_query) + KIJ.self_test(run_ind)
     print("e2-facts-query self-test: " + ("ok" if not fails else "FAIL " + "; ".join(fails)))
     return 1 if fails else 0
 
@@ -466,6 +500,7 @@ def q_ppid(f, a):
 
 QUERIES = {"setup-request": q_setup_request, "setup-response": q_setup_response, "subscription": q_subscription,
            "sub-period": q_sub_period, "sub-failure": q_sub_failure, "sub-actions": q_sub_actions,
+           "ind-actions": q_ind_actions,
            "assoc-start": q_assoc_start, "no-abort": q_no_abort, "post-delete": q_post_delete,
            "indications": q_indications, "service-ip": q_service_ip, "associations": q_associations,
            "ppid": q_ppid}
@@ -498,7 +533,12 @@ def main():
     ap.add_argument("--source-ip")
     ap.add_argument("--sctp-port", type=int, default=36422)
     ap.add_argument("--timeline-out")
-    ap.add_argument("--decoded", help="sub-actions: the capture's asn1-indep decode (e2-sub-setup-decode.py)")
+    ap.add_argument("--decoded", help="sub-actions, ind-actions: the capture's asn1-indep decode (e2-sub-setup-decode.py)")
+    ap.add_argument("--ind-actions", help="ind-actions: pcap-to-lines.py --actions rows (JSON lines)")
+    ap.add_argument("--records", help="ind-actions: kpimon-decode-harness --records over --lines")
+    ap.add_argument("--lines", help="ind-actions: the pcap-to-lines.py lines")
+    ap.add_argument("--extract-summary", help="ind-actions: pcap-to-lines.py --actions stderr (its summary line)")
+    ap.add_argument("--map", help="ind-actions: metric-map.v1.json (cell-list position of ns3.nodeId)")
     a = ap.parse_args()
     bad = QUERIES[a.query](load(a.facts), a)
     for b in bad:

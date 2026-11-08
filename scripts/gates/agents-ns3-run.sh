@@ -14,6 +14,7 @@
 #   kpm_sub_period_check <pcap> <tag> <after>   decoded subscription reportingPeriod = rung-config kpm.reportingPeriodMs
 #   kpm_sub_actions_check <facts> <node-ips.json>   every subscription: KPM Format 1 per served cell (IDs 1..C) and
 #                                     Format 3 (ID C+1), all admitted; decoded by asn1-indep (asn1-indep-lib.sh)
+#   kpm_ind_actions_check <facts> <node-ips.json>   every indication in the format its action asked for
 #   ue_context_check <trace-dir> <ns3run-dir> <out> [--expect-map F]   UE context files vs ns-3's MN PDCP trace
 #   kpm_ue_ids_check <pcap> <node-ips.json> <trace-dir> <out> <facts>   decoded KPM UE IDs resolved by the UE context
 #   ranfunc_decode <node.json> <sodir> <out.jsonl>   e2mgr's ranFunctionDefinition hex through kpimon's library
@@ -228,6 +229,52 @@ kpm_sub_actions_check() {
     local dec
     dec=$(kpm_sub_decoded "$1") || return 1
     python3 -I "$E2EV/e2-facts-query.py" "$1" sub-actions --node-ips "$2" --decoded "$dec"
+}
+
+# kpm_ind_so: the directory of a kpimon-decode-harness built against the current kpimon image's library: $SODIR when
+# the gate set it (it must hold the harness), else extracted once per gate run into ${WORK:-~/<gate>-work}/kpimon-so
+# (never the evidence dir). Prints the directory.
+_KPM_IND_SO_RUN=""
+kpm_ind_so() {
+    local d
+    if [ -n "${SODIR:-}" ]; then
+        [ -x "$SODIR/kpimon-decode-harness" ] || { echo "SODIR $SODIR holds no kpimon-decode-harness" >&2; return 1; }
+        echo "$SODIR"; return 0
+    fi
+    d="${WORK:-$HOME/$GATE-work}/kpimon-so"
+    if [ "$_KPM_IND_SO_RUN" != "$GATE_TS" ] || [ ! -x "$d/kpimon-decode-harness" ]; then
+        rm -rf "${d:?}" && mkdir -p "$d" && kpimon_extract_so "$d" >&2 || { echo "kpimon .so extraction into $d failed" >&2; return 1; }
+        _KPM_IND_SO_RUN="$GATE_TS"
+    fi
+    echo "$d"
+}
+
+# kpm_ind_actions_check <facts.json> <node-ips.json>: every RIC INDICATION of the fact sheet's capture lies on an
+# expected node's association and carries a RICactionID its subscription (the latest successful RIC SUBSCRIPTION
+# RESPONSE there with its request ID and RAN function ID) admitted; under a Format 1 action it is indication Format 1
+# with every measData item's ns3.nodeId equal to the node, under the Format 3 action Format 2; every admitted action
+# received one. The action formats come from the asn1-indep decode (kpm_sub_decoded), the indication formats and
+# records from kpimon-decode-harness --records (kpm_ind_so) over pcap-to-lines.py --actions, whose fields are
+# printed from this tshark (`tshark -G fields`) with its version on every run. Files: <facts prefix>-ind-*.
+kpm_ind_actions_check() {
+    local facts="$1" ips="$2" p dec so pcap fields map="$AGENT_DIR/schema/metric-map.v1.json"
+    p="${facts%-facts.json}-ind"
+    tshark --version | sed -n 1p
+    fields=$(tshark -G fields | awk -F'\t' '$1 == "F" && $3 ~ /^e2ap\.(RICactionID|ricActionID|ricRequestorID|ricInstanceID|RANfunctionID|indicationMessage_formats)$/ {print $3, $4}')
+    echo "$fields"
+    [ "$(grep -cE '^e2ap\.(RICactionID|ricRequestorID|ricInstanceID|RANfunctionID) ' <<<"$fields")" = 4 ] ||
+        { echo "this tshark lacks an indication field pcap-to-lines.py --actions reads"; return 1; }
+    [ -f "$map" ] || { echo "no metric map $map"; return 1; }
+    dec=$(kpm_sub_decoded "$facts") || return 1
+    so=$(kpm_ind_so) || return 1
+    pcap=$(python3 -I -c 'import json, sys; print(json.load(open(sys.argv[1]))["pcap"])' "$facts") || return 1
+    python3 -I "$HARNESS_TOOLS/pcap-to-lines.py" "$pcap" --actions "$p-actions.jsonl" >"$p-lines.txt" \
+        2>"$p-extract-summary.json" || { echo "pcap-to-lines.py failed: $(tail -c 300 "$p-extract-summary.json")"; return 1; }
+    LD_LIBRARY_PATH="$so" "$so/kpimon-decode-harness" --records <"$p-lines.txt" >"$p-records.jsonl" 2>"$p-records.stderr" ||
+        { echo "kpimon-decode-harness --records failed: $(tail -c 300 "$p-records.stderr")"; return 1; }
+    python3 -I "$E2EV/e2-facts-query.py" "$facts" ind-actions --node-ips "$ips" --decoded "$dec" \
+        --ind-actions "$p-actions.jsonl" --records "$p-records.jsonl" --lines "$p-lines.txt" \
+        --extract-summary "$p-extract-summary.json" --map "$map"
 }
 
 # ue_context_check <trace dir> <ns3run dir> <out.json> [--expect-map <identity-map.json>]: the run's

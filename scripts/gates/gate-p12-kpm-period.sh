@@ -136,6 +136,7 @@ sub_a() { pcap_facts "$e/p12-a.pcap" p12-a-sub && python3 -I "$E2EV/e2-facts-que
 check p12_a_decoded_subscription_period_1000_answered sub_a
 check p12_a_e2ap_ppid70_every_node python3 -I "$E2EV/e2-facts-query.py" "$e/p12-a-sub-facts.json" ppid --nodes 2
 check p12_a_kpimon_subscription_format1_per_cell_and_format3 kpm_sub_actions_check "$e/p12-a-sub-facts.json" "$e/p12-a-node-ips.json"
+check p12_a_kpm_indication_format_equals_its_action_format kpm_ind_actions_check "$e/p12-a-sub-facts.json" "$e/p12-a-node-ips.json"
 check p12_a_ue_context_files_consistent_with_ns3_mn_pdcp_trace ue_context_check "$RUN" "$RUN" "$e/p12-a-ue-context.json"
 records_a() {
     local pl="$HARNESS_TOOLS/pcap-to-lines.py" h="$SODIR/kpimon-decode-harness"
