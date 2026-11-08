@@ -423,3 +423,42 @@ Sources: the user rulings in `plans/reports/decisions-261106-0525-GH-1-p10-pre-r
 - **R3′ single:** one predictor-driven handover (`handovers` 1, `late` 0), wire requests equal handovers, and the predictor's answer equals the formula on the certified window. The pre-registered decisions hold (`h1` none, `n1` handover).
 - **Host during the chain:** io full avg300 peaked at 23.4 % (`host-pressure-chain-a2.tsv`), with no control-plane fault.
 - **Raw archive:** p10i (`plans-evidence-raw-m10-p10i-20261108.tar.zst`, 1379 files, 55 MB, the red M2 `m2/20261107T131447Z` included; SHA256SUMS ok). Each run's `evidence-sha256.txt` is committed.
+
+## P15 chain red #1: p12, and the guided fix (2026-11-08)
+- **Commits under test:** Testbed `cb69741` (codec `07f295f`, agent `27fe123`, kpimon `cb69741`), harness `1084f0f2`, run from the frozen checkout of `1084f0f2`. Codex pre-ship: four rounds, final approve (`plans/reports/codex-preship-261108-1030-GH-1-p15-per-action-kpm-format.md`).
+- **Run:**
+  - Revert to `f7-rerun-green` at 01:25:06Z (/home 46 → 71 GiB).
+  - Host entry held. The VM entry check passed at 01:38:09Z: 0 slow etcd lines, restarts stable.
+  - Then `P10_SKIP_STEPS=9,11,12,13,14 p10-gate-chain.sh 1084f0f2… 0 15`, 01:38–04:29Z. Driver record: `evidence/p10-chain/1084f0f2684365ce4a256b81f2c66519df152439-p15/`.
+- **Green steps:** M2 (`m2/20261108T013812Z`), M3, M4, M5, M6 (`m6/20261108T030727Z`), M7 (`m7/20261108T030936Z`), I0, I2, e2i (`e2i/20261108T034605Z`), r3p single (`r3p/20261108T035150Z`).
+- **Red step:** p12 (`p12/20261108T040312Z`).
+  - Every per-action check passed: p12 a and c `…_kpimon_subscription_format1_per_cell_and_format3` (action 1 Format 1 with NR CGI 00F110/0x21, action 2 Format 3, both admitted), and p12 a `…_kpm_indication_format_equals_its_action_format` (10 + 10 indications, 0 problems).
+  - `p12_a_kpimon_logged_every_wire_indication_zero_wmore` failed: 18 of 20 logged.
+  - `p12_a_influx_equals_ipc_trace_every_seq` failed: seq 0–9 missing, 0 field differences in the rows present.
+- **Cause** (kongming-261108-1340, read against the rtmgr 0.9.6, xapp-frame v0.9.16 and RMR 4.9.4 sources): an rtmgr route-distribution race, not P15.
+  - kpimon registered late (appmgr refused three times with 400), 1 s before its subscription.
+  - rtmgr's full table from that registration did not yet hold subscription 23. Its stale retry to e2term at about 152.06 replaced the subscription's partial update (which had arrived at about 150.06), and e2term had no 12050 route until about 152.86.
+  - The first indication pair at 152.162 hit `RMR_ERR_NOENDPT` twice (`ric-route-logs-after/e2term-041130Z.log`, collected by hand after the gate).
+  - rtmgr's verdicts in that window were unacknowledged writes (an empty `Route Update Status:`).
+- **Guided fix (the one fix the Failure Protocol allows for P15):** ledger row 166, registered first.
+  - After each kpimon reinstall, p12 waits for the new pod's own registration line, restarts rtmgr, and requires the route readers of kpimon, e2mgr and submgr to be OK.
+  - p12 a adds an informational record of e2term's route and rtmgr's acknowledged pushes.
+  - No existing check changes.
+- **Re-run:** /home is at 31 GiB, below p12's 34 GiB guard, so the re-run starts again from a revert:
+  1. the entry conditions of the P9 guided fix (host pressure, the revert, the overlay check, the etcd window);
+  2. the chain M2–M7, I0, I2, e2i, r3p single, then p12, from a new frozen checkout at the fix SHA.
+- **Outcome rule (written before the run):**
+  - **Green:** every step exits 0 with no failed check, including p12 a's unchanged checks (20/20 indications; Influx equals the trace at every seq) and row 166's checks.
+  - **Red:** any red step, including a red on a row 166 check, means a kongming note, then PAUSE T6.
+  - M7 policy (ii) still applies to M7 only. T5 applies only if this remedy fails.
+- **For Stop B** (kongming-261108-1340 Q3):
+  - The L-release rtmgr findings:
+    - pushes are serialized behind 200 ms waits;
+    - verdicts are read from freed memory;
+    - a stale retry can undo a newer partial update;
+    - one send to a removed xApp froze distribution for 483 s in p12 c;
+    - a subscription completes before e2term holds its route.
+  - Whether M3's kpimon reinstall, which M6 and M7 inherit, needs the same precondition (own row).
+  - Tightening `rtmgr_push_acked` to `Status: OK` (own row).
+  - p12 c judges no indications.
+  - appmgr's 400 responses after a dms_cli reinstall.
