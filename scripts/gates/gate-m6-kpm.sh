@@ -97,7 +97,7 @@ check m6_capture_stopped capture_stop m6
 # analysis
 ################################################################################
 check m6_pcap_facts_extracted pcap_facts "$e/m6.pcap" m6
-check m6_kpimon_subscription_one_action_id1_format3 kpm_sub_actions_check "$e/m6-facts.json" "$e/node-ips.json"
+check m6_kpimon_subscription_format1_per_cell_and_format3 kpm_sub_actions_check "$e/m6-facts.json" "$e/node-ips.json"
 check m6_ue_context_files_consistent_with_ns3_mn_pdcp_trace ue_context_check "$RUN" "$RUN" "$e/m6-ue-context.json"
 check m6_kpm_ue_ids_en_gnb_ueid_resolved_by_ue_context kpm_ue_ids_check "$e/m6.pcap" "$e/node-ips.json" "$RUN" \
     "$e/m6-kpm-ue-ids.json" "$e/m6-facts.json"

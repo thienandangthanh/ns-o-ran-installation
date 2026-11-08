@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # E2 agent helpers for gates M5-M7 (sourced after lib.sh, bringup.sh, capture.sh, kpimon.sh; never executed).
-# The ns-3 / Influx / analysis helpers live in agents-ns3-run.sh, sourced at the end of this file.
+# The ns-3 / Influx / analysis helpers live in agents-ns3-run.sh, the asn1-indep image helpers in asn1-indep-lib.sh,
+# both sourced at the end of this file.
 #
 #   agents_tree_at_testbed_sha        ~/nist at $TESTBED_SHA including ns3_e2_agent/ (also on the dirty-tree path)
 #   agents_sctp_module                sctp kernel module loaded now and at every boot
@@ -397,3 +398,5 @@ print(best[1], best[2], best[0], best[3])' "$2"
 
 # shellcheck source=agents-ns3-run.sh
 source "$(dirname "${BASH_SOURCE[0]}")/agents-ns3-run.sh"
+# shellcheck source=asn1-indep-lib.sh
+source "$(dirname "${BASH_SOURCE[0]}")/asn1-indep-lib.sh"

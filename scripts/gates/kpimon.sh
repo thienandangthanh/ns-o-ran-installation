@@ -33,10 +33,11 @@ KPIMON_POD=""  # set by kpimon_wait_ready
 KPIMON_PATCH_REL=install_patch_files/xApps/kpimon-go
 # the Testbed paths (relative to $RIC_DIR) the kpimon install reads: the installer, its patch set, and the agent's
 # metric map and lint with the lint's clause registry and registry module (the installer lints the map and checks
-# the eNB measurement config against the map's eNB rows)
+# the eNB measurement config against the map's eNB rows), and the X2AP codec kpimon builds to read each node's served
+# cells (the patch set's x2ap-codec.sha256 lockfile pins its contents into the image label)
 KPIMON_TESTBED_PATHS=(additional_scripts/install_xapp_kpi_monitor.sh "$KPIMON_PATCH_REL"
     ns3_e2_agent/schema/metric-map.v1.json ns3_e2_agent/schema/kpm-measurement-clauses.v1.json
-    ns3_e2_agent/tests/lint-metric-map.py ns3_e2_agent/tests/kpm-clause-registry.py)
+    ns3_e2_agent/tests/lint-metric-map.py ns3_e2_agent/tests/kpm-clause-registry.py ns3_e2_agent/x2ap_codec)
 
 
 

@@ -12,7 +12,8 @@
 #   pcap_facts <pcap> <tag>           facts JSON + decoded setup/subscription text
 #   wire_sub_counts <pcap>            "<requests> <responses>" of RICsubscription seen so far (live pcap is fine)
 #   kpm_sub_period_check <pcap> <tag> <after>   decoded subscription reportingPeriod = rung-config kpm.reportingPeriodMs
-#   kpm_sub_actions_check <facts> <node-ips.json>   every subscription: one action, ID 1, report, KPM Format 3
+#   kpm_sub_actions_check <facts> <node-ips.json>   every subscription: KPM Format 1 per served cell (IDs 1..C) and
+#                                     Format 3 (ID C+1), all admitted; decoded by asn1-indep (asn1-indep-lib.sh)
 #   ue_context_check <trace-dir> <ns3run-dir> <out> [--expect-map F]   UE context files vs ns-3's MN PDCP trace
 #   kpm_ue_ids_check <pcap> <node-ips.json> <trace-dir> <out> <facts>   decoded KPM UE IDs resolved by the UE context
 #   ranfunc_decode <node.json> <sodir> <out.jsonl>   e2mgr's ranFunctionDefinition hex through kpimon's library
@@ -218,10 +219,15 @@ kpm_sub_period_check() {
 }
 
 # kpm_sub_actions_check <facts.json> <node-ips.json>: every RIC SUBSCRIPTION REQUEST in the fact sheet on an
-# association of an expected node carries exactly one RICaction-ToBeSetup item: ricActionID 1, ricActionType report,
-# an action definition tshark's E2SM-KPM dissector labels actionDefinition-Format3; every expected node got one.
+# association of an expected node carries, with C = the served cells of that association's E2 Setup X2 request parts
+# in the capture, one Format 1 report action per served cell (IDs 1..C, each naming its cell's CGI) and one Format 3
+# report action (ID C+1), and its RIC SUBSCRIPTION RESPONSE admits all C+1; every expected node got one. Cells, action
+# definitions and the admitted list come from the asn1-indep decode of the fact sheet's capture (kpm_sub_decoded,
+# asn1-indep-lib.sh: the image is loaded here when absent, and a missing image fails this check).
 kpm_sub_actions_check() {
-    python3 -I "$E2EV/e2-facts-query.py" "$1" sub-actions --node-ips "$2"
+    local dec
+    dec=$(kpm_sub_decoded "$1") || return 1
+    python3 -I "$E2EV/e2-facts-query.py" "$1" sub-actions --node-ips "$2" --decoded "$dec"
 }
 
 # ue_context_check <trace dir> <ns3run dir> <out.json> [--expect-map <identity-map.json>]: the run's

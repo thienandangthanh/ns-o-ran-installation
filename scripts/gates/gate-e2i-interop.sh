@@ -275,6 +275,6 @@ check e2i_e2mgr_records_x2_request_parts_hex_sidecars_equal_record_and_wire pyth
     "$e/e2mgr-node-$(meid_of 1).json" "$e/e2mgr-node-$(meid_of 2).json" "$e/e2mgr-node-$(meid_of 3).json" \
     "$e"/e2mgr-node-{1,2,3}.json
 check e2i_ppid_per_node_70 python3 -I "$E2EV/e2-facts-query.py" "$e/e2i-facts.json" ppid --node-ips "$e/node-ips.json"
-check e2i_kpimon_subscription_one_action_id1_format3 kpm_sub_actions_check "$e/e2i-facts.json" "$e/node-ips.json"
+check e2i_kpimon_subscription_format1_per_cell_and_format3 kpm_sub_actions_check "$e/e2i-facts.json" "$e/node-ips.json"
 fact vmLoadEnd "$(json_str "$(uptime)")"
 gate_finish

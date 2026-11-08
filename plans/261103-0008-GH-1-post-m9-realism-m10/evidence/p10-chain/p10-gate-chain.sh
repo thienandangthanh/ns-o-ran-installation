@@ -7,6 +7,7 @@
 #                                                       fix's chain: 0-11 without e2i)
 #   step 12 (n4, --part determinism) is the N4 two-build determinism check, run alone after a green chain
 #   step 14 (n4, --part v3) judges the en-gNB PDCP SDU volume counters on a uloff and a ulon free run, no reference
+#   step 15 (p12) the KPM reporting period gate, run last; the driver stops before it unless /home has >= 34 GiB free
 #   p10-gate-chain.sh --check-dir RUN_DIR              the per-step run-dir cross-check alone (offline validation)
 #
 # Every step's host side (vm-exec.sh, the watchdog) runs from a frozen checkout of the SHA: a detached, locked
@@ -95,19 +96,27 @@ steps=(
   "n4|gate-n4-ul-metric.sh|3600|--part determinism"
   "n4|gate-n4-ul-metric.sh|3600|--part identity"
   "n4|gate-n4-ul-metric.sh|3600|--part v3"
+  "p12|gate-p12-kpm-period.sh|3600|"
 )
 cd "$frozen" || return 2
-# asn1-indep pre-flight. A step with --image-tag (e2i) needs ~/asn1-indep/asn1-indep-<tag>.tar and SHA256SUMS in the
-# VM (gate-e2i-interop.sh:3: copied by the host), and a VM revert loses them. Before the first step: check the host
-# tarball, copy it when the VM's copy is missing or does not check, and check it in the VM; exit 2 before any step
-# (and before any tsv line) when that fails. Uses vm-exec's SSH route (vm-common.sh).
+# asn1-indep pre-flight. The gates whose KPM subscription and indication checks decode the wire with the asn1-indep
+# image (m6, m7, p12, e2i, r0, r1, r2, r3p, s10) need ~/asn1-indep/asn1-indep-<tag>.tar and SHA256SUMS in the VM
+# (copied by the host), and a VM revert loses them. The tag is the frozen checkout's tools/asn1-indep/image-tag.sh;
+# a step's --image-tag (e2i) must equal it, else exit 2. Before the first step: check the host tarball, copy it when
+# the VM's copy is missing or does not check, and check it in the VM; exit 2 before any step (and before any tsv
+# line) when that fails. Uses vm-exec's SSH route (vm-common.sh).
 skip=",${P10_SKIP_STEPS:-},"
 tag=""
+src_tag=$(bash "$frozen/tools/asn1-indep/image-tag.sh") || { echo "image-tag.sh failed in $frozen"; return 2; }
 for i in "${!steps[@]}"; do
     [ "$i" -lt "$first" ] || [ "$i" -gt "$last" ] && continue
     [[ $skip == *",$i,"* ]] && continue
-    IFS='|' read -r _ _ _ a <<<"${steps[$i]}"
-    [[ $a =~ --image-tag[[:space:]]+([0-9a-f]+) ]] && tag=${BASH_REMATCH[1]}
+    IFS='|' read -r id _ _ a <<<"${steps[$i]}"
+    case "$id" in m6|m7|p12|e2i|r0|r1|r2|r3p|s10) tag=$src_tag ;; esac
+    if [[ $a =~ --image-tag[[:space:]]+([0-9a-f]+) ]] && [ "${BASH_REMATCH[1]}" != "$src_tag" ]; then
+        echo "step $i passes --image-tag ${BASH_REMATCH[1]}, the frozen checkout's asn1-indep tag is $src_tag"
+        return 2
+    fi
 done
 if [ -n "$tag" ]; then
     preflight_asn1_indep "$tag" >"$here/preflight-asn1-indep.txt" 2>&1 ||
@@ -120,6 +129,12 @@ for i in "${!steps[@]}"; do
     [ "$i" -gt "$last" ] && break
     [[ $skip == *",$i,"* ]] && { echo "step $i skipped (P10_SKIP_STEPS)"; continue; }
     IFS='|' read -r id g t a <<<"${steps[$i]}"
+    if [ "$id" = p12 ]; then
+        # the p12 gate reinstalls kpimon three times: it starts only with >= 34 GiB free on the host's /home
+        free=$(df -BG --output=avail /home | tail -1 | tr -dc '0-9')
+        [ "${free:-0}" -ge 34 ] || { echo "step $i (p12): /home has ${free:-?} GiB free, want >= 34"; return 2; }
+        echo "step $i (p12): /home has $free GiB free (>= 34)"
+    fi
     head=$(git -C "$frozen" rev-parse HEAD)
     if [ "$head" != "$sha" ] || [ -n "$(git -C "$frozen" status --porcelain --untracked-files=no)" ]; then
         echo "step $i: the frozen checkout is not clean at $sha (HEAD $head)"

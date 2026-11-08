@@ -221,7 +221,7 @@ export F Q W SERVICE_IP   # read by the sourced m7-wire-trace-checks.sh
 # Wire and ns-3 trace checks live in a shared file so tools/e2-evidence/replay-m7-analysis.sh runs the very same ones offline.
 source "$E2EV/m7-wire-trace-checks.sh"
 m7_wire_trace_checks
-check m7_kpimon_subscription_one_action_id1_format3 kpm_sub_actions_check "$F" "$e/node-ips.json"
+check m7_kpimon_subscription_format1_per_cell_and_format3 kpm_sub_actions_check "$F" "$e/node-ips.json"
 check m7_ue_context_files_consistent_with_ns3_mn_pdcp_trace ue_context_check "$RUN" "$RUN" "$e/m7-ue-context.json"
 # the EN-DC bearer's DL PDCP PDUs are SDU + the 2-octet NR PDCP header (3GPP TS 38.323 §6.2.2.2) on the eNB's E2 PDCP
 # stats, at most that within one epoch of a switch; the stats and both switch files come from this run's ns3run dir

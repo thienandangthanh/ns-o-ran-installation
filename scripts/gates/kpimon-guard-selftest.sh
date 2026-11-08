@@ -2,7 +2,7 @@
 # kpimon-guard-selftest.sh: host-side check of the kpimon install guard (kpimon.sh: testbed_paths_at_pin on
 # KPIMON_TESTBED_PATHS, then kpimon_image_labelled) on a temporary Testbed repo, no VM or k8s. The scratch Testbed holds
 # an installer stand-in, a kpimon patch set (manifest, two patches, the eNB measurement config, an unlisted backup
-# file) and the agent's metric map, clause registry, lint and registry module; `dk image inspect` is stubbed to print
+# file) and the agent's metric map, clause registry, lint, registry module and X2AP codec; `dk image inspect` is stubbed to print
 # LABELS.
 # The pinned tree with an image labelled (digest, size8) must pass; each fixture must fail:
 #   stale-patchset-label   the image carries the digest of another patch set (a warm install that skipped the build)
@@ -14,6 +14,8 @@
 #   metric-map-edit        the agent's metric map differs from TESTBED_SHA's
 #   clause-registry-edit   the lint's clause registry differs from TESTBED_SHA's
 #   registry-module-edit   the lint's registry module differs from TESTBED_SHA's
+#   x2ap-codec-edit        a source of the X2AP codec kpimon builds differs from TESTBED_SHA's
+#   x2ap-codec-untracked   an untracked file in the X2AP codec directory
 # Exit 0 when the pinned tree passes and every fixture fails.
 set -uo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
@@ -23,7 +25,8 @@ export HARNESS_DIR="$here/../.." RIC_DIR="$tmp/ric" NIST_DIR="$tmp/nist"
 g() { git -c user.email=selftest@localhost -c user.name=selftest -c init.defaultBranch=main "$@"; }
 
 pd="$RIC_DIR/install_patch_files/xApps/kpimon-go"
-mkdir -p "$RIC_DIR/additional_scripts" "$pd/control" "$pd/e2sm" "$RIC_DIR/ns3_e2_agent/schema" "$RIC_DIR/ns3_e2_agent/tests"
+mkdir -p "$RIC_DIR/additional_scripts" "$pd/control" "$pd/e2sm" "$RIC_DIR/ns3_e2_agent/schema" "$RIC_DIR/ns3_e2_agent/tests" \
+    "$RIC_DIR/ns3_e2_agent/x2ap_codec"
 printf '#!/bin/bash\n' >"$RIC_DIR/additional_scripts/install_xapp_kpi_monitor.sh"
 printf 'diff --git a/e2sm/wrapper.c b/e2sm/wrapper.c\n' >"$pd/e2sm/wrapper.c.patch"
 printf 'diff --git a/control/control.go b/control/control.go\n' >"$pd/control/control.go.patch"
@@ -35,6 +38,7 @@ printf '{"rows": []}\n' >"$RIC_DIR/ns3_e2_agent/schema/metric-map.v1.json"
 printf '{"entries": []}\n' >"$RIC_DIR/ns3_e2_agent/schema/kpm-measurement-clauses.v1.json"
 printf '#!/usr/bin/env python3\n' >"$RIC_DIR/ns3_e2_agent/tests/lint-metric-map.py"
 printf '"""registry module stand-in"""\n' >"$RIC_DIR/ns3_e2_agent/tests/kpm-clause-registry.py"
+printf '/* codec stand-in */\n' >"$RIC_DIR/ns3_e2_agent/x2ap_codec/x2ap-codec-cells.c"
 printf '/xApps/\n' >"$RIC_DIR/.gitignore"
 g -C "$RIC_DIR" init -q && g -C "$RIC_DIR" add -A && g -C "$RIC_DIR" commit -qm testbed || exit 1
 
@@ -81,6 +85,8 @@ pinned && echo x >"$pd/control/extra.patch" && expect fail untracked-patch-file
 pinned && echo ' ' >>"$RIC_DIR/ns3_e2_agent/schema/metric-map.v1.json" && expect fail metric-map-edit
 pinned && echo ' ' >>"$RIC_DIR/ns3_e2_agent/schema/kpm-measurement-clauses.v1.json" && expect fail clause-registry-edit
 pinned && echo '# edit' >>"$RIC_DIR/ns3_e2_agent/tests/kpm-clause-registry.py" && expect fail registry-module-edit
+pinned && echo '/* edit */' >>"$RIC_DIR/ns3_e2_agent/x2ap_codec/x2ap-codec-cells.c" && expect fail x2ap-codec-edit
+pinned && echo x >"$RIC_DIR/ns3_e2_agent/x2ap_codec/extra.c" && expect fail x2ap-codec-untracked
 pinned && expect pass pinned-tree-again
 echo "kpimon-guard self-test: $([ "$rc" = 0 ] && echo ok || echo failed)"
 exit "$rc"

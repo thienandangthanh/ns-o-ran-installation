@@ -203,7 +203,7 @@ r0_live() {
     check "r0_${label}_agents_stopped" agents_stop
     check "r0_${label}_capture_stopped" capture_stop "$label"
     check "r0_${label}_kpimon_subscription_reporting_period_decoded" kpm_sub_period_check "$e/$label.pcap" "$label-sub" "$cap_t0"
-    check "r0_${label}_kpimon_subscription_one_action_id1_format3" kpm_sub_actions_check "$e/$label-sub-facts.json" "$rd/node-ips.json"
+    check "r0_${label}_kpimon_subscription_format1_per_cell_and_format3" kpm_sub_actions_check "$e/$label-sub-facts.json" "$rd/node-ips.json"
     check "r0_${label}_e2ap_ppid70_every_node" python3 -I "$E2EV/e2-facts-query.py" "$e/$label-sub-facts.json" ppid --node-ips "$rd/node-ips.json"
     check "r0_${label}_ns3_emitters_at_pins" ns3_emitters_at_pins "$rd/trace"
     check "r0_${label}_ue_context_files_consistent_with_ns3_mn_pdcp_trace" ue_context_check "$rd/trace" "$rd/ns3run" \

@@ -15,14 +15,19 @@ its evidence and exits 0 (pass) or 1 (fail).
                                                     (granulPeriod only decodes where tshark's KPM v3 dissector gets
                                                     through the action definition; it stops on some Format 3 lists,
                                                     so gates evidence the granularity by records per indication)
-  sub-actions     (--nodes L | --node-ips F) [--after EPOCH]   every RIC SUBSCRIPTION REQUEST of the fact sheet in the
-                                                    window is on an association whose E2 Setup node is an expected
-                                                    node (one on no association, on an association without an
-                                                    E2SetupRequest or of another node is a problem) and has exactly
-                                                    one RICaction-ToBeSetup item: ricActionID 1, ricActionType
-                                                    report, an action definition that tshark's E2SM-KPM dissector
-                                                    labels actionDefinition-Format3 (the label precedes the Format 3
-                                                    lists it may stop in); every expected node received >= 1 request
+  sub-actions     (--nodes L | --node-ips F) --decoded D [--after EPOCH]   every RIC SUBSCRIPTION REQUEST of the fact
+                                                    sheet in the window is on an association whose E2 Setup node is an
+                                                    expected node (one on no association, on an association without an
+                                                    E2SetupRequest inside the capture or of another node is a problem)
+                                                    and, with C = the served cells of that association's E2 Setup X2
+                                                    request parts (identity and agreement rule; never 0), has exactly
+                                                    C+1 RICaction-ToBeSetup items: IDs 1..C report actions in E2SM-KPM
+                                                    Format 1 whose cellGlobalID names a served cell of the node's kind
+                                                    (NR on an en-gNB, E-UTRA on the eNB), each cell once, ID C+1 a
+                                                    report action in Format 3; the RIC SUBSCRIPTION RESPONSE admits all
+                                                    C+1; every expected node received >= 1 request. D is the capture's
+                                                    asn1-indep decode (e2-sub-setup-decode.py), which decides every
+                                                    value (kpm-action-subscription-judges.py)
   sub-failure     --cause GROUP:INDEX [--after EPOCH]   a request answered by a RIC SUBSCRIPTION FAILURE with that
                                                     cause, and no request in the window answered by a response
   assoc-start     --service-ip IP --before EPOCH [--sctp-port 36422]   one ESTABLISHED association per node before EPOCH
@@ -31,7 +36,7 @@ its evidence and exits 0 (pass) or 1 (fail).
   indications                                       every node's associations carried RICindications
   service-ip      --service-ip IP                   every agent INIT in the capture went to the Service IP
   associations    [--after EPOCH]                   list associations (informational)
-  --self-test                                       the sub-actions query on synthetic fact sheets
+  --self-test                                       the sub-actions query on synthetic fact sheets and decodes
   ppid            [--nodes L | --node-ips F] [--source-ip IP]   (facts from e2ap-pcap-facts.py --ppid) every DATA chunk
                                                     sent to the SCTP port carries PPID 70 (E2AP, O-RAN E2GAP v08.00
                                                     section 6.1); every expected node's associations, or the
@@ -49,13 +54,26 @@ informational lines and never decide a verdict.
 """
 import argparse
 import contextlib
+import importlib.util
 import io
 import json
+import os
 import sys
 
 
 def load(path):
     return json.load(open(path))
+
+
+def _sibling(name, filename):
+    spec = importlib.util.spec_from_file_location(name, os.path.join(os.path.dirname(os.path.abspath(__file__)), filename))
+    assert spec is not None and spec.loader is not None, filename
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+
+
+KAJ = _sibling("kpm_action_subscription_judges", "kpm-action-subscription-judges.py")
 
 
 def node_of(ips):
@@ -391,111 +409,22 @@ def q_indications(f, a):
 
 
 def q_sub_actions(f, a):
-    nodes = expected_nodes(a)
+    if not a.decoded:
+        sys.exit("sub-actions needs --decoded (the capture's asn1-indep decode, e2-sub-setup-decode.py)")
     assocs, _ = build_assocs(f)
-    after = a.after or 0
-    owner = {id(r): x for x in assocs for r in x["sub_requests"]}
-    bad, per = [], {n: 0 for n in nodes}
-    for r in sorted(f["sub_requests"], key=lambda r: r["t"]):
-        if r["t"] < after:
-            continue
-        x = owner.get(id(r))
-        acts = r.get("actions")
-        print("frame %d to %s:%s (node %s): action list %s, actions %s" % (
-            r["frame"], r.get("dst"), r.get("dport"), x["node"] if x else "no association", r.get("action_list_count"),
-            [(c["action_id"], c["action_type"], c["definition_format"]) for c in acts or []]))
-        # Every request in the window is judged: one that no association with an E2 Setup node of the expected set
-        # carries is a problem, not a skip.
-        if x is None:
-            bad.append("frame %d to %s:%s: on no association (no INIT_ACK on its 4-tuple at or before it)" % (
-                r["frame"], r.get("dst"), r.get("dport")))
-            continue
-        if x["node"] is None:
-            bad.append("frame %d to %s:%d: on an association without an E2 Setup Request" % (r["frame"], x["ip"], x["sport"]))
-            continue
-        if x["node"] not in nodes:
-            bad.append("frame %d to %s:%d: on an association of node %s, not an expected node %s" % (
-                r["frame"], x["ip"], x["sport"], x["node"], nodes))
-            continue
-        per[x["node"]] += 1
-        if acts is None:
-            bad.append("frame %d: fact sheet has no action items (re-run e2ap-pcap-facts.py)" % r["frame"])
-            continue
-        if r.get("action_list_count") != 1 or len(acts) != 1:
-            bad.append("frame %d node %s: %s RICaction-ToBeSetup items announced, %d decoded (want exactly 1)" % (
-                r["frame"], x["node"], r.get("action_list_count"), len(acts)))
-            continue
-        c = acts[0]
-        if c["action_id"] != 1:
-            bad.append("frame %d node %s: ricActionID %s, want 1" % (r["frame"], x["node"], c["action_id"]))
-        if c["action_type"] != "report" or c["action_type_index"] != 0:
-            bad.append("frame %d node %s: ricActionType %s (%s), want report (0)" % (
-                r["frame"], x["node"], c["action_type"], c["action_type_index"]))
-        if c["definition_format"] != "actionDefinition-Format3":
-            bad.append("frame %d node %s: action definition %s, want E2SM-KPM actionDefinition-Format3" % (
-                r["frame"], x["node"], c["definition_format"] or "not decoded by tshark's E2SM-KPM dissector"))
-    for n in nodes:
-        if not per[n]:
-            bad.append("node %s received no RIC SUBSCRIPTION REQUEST" % n)
-    return bad
+    return KAJ.judge_sub_actions(f, load(a.decoded), expected_nodes(a), assocs, a.after or 0)
 
 
 def self_test():
-    """sub-actions on synthetic fact sheets: one good sheet and one failing variant per conjunct."""
-    svc, ips = "10.96.0.5", {1: "172.17.0.2", 2: "172.17.0.3"}
-    ev = lambda f, t, s, d, sp, dp, **k: dict(frame=f, t=t, src=s, dst=d, sport=sp, dport=dp, **k)
-    def act(aid=1, aty="report", ati=0, fmt: "str | None" = "actionDefinition-Format3"):
-        return {"action_id": aid, "action_type": aty, "action_type_index": ati, "definition_format": fmt,
-                "definition_format_index": None if fmt is None else int(fmt[-1]) - 1}
-
-    def assoc(f, n, ip, port, setup=True):
-        f["inits"].append(ev(10 * n, 100 + n, ip, svc, port, 36422))
-        f["init_acks"].append(ev(10 * n + 1, 100.1 + n, svc, ip, 36422, port))
-        f["cookie_acks"].append(ev(10 * n + 2, 100.2 + n, svc, ip, 36422, port))
-        if setup:
-            f["setup_requests"].append(ev(10 * n + 3, 100.3 + n, ip, svc, port, 36422, node_id=n))
-
-    def sub(f, n, ip, port, acts):
-        f["sub_requests"].append(ev(10 * n + 4, 100.4 + n, svc, ip, 36422, port, actions=acts, action_list_count=len(acts)))
-
-    def sheet(acts_by_node, count=None, skip=(), extra=None):
-        f = {"inits": [], "init_acks": [], "cookie_acks": [], "setup_requests": [], "setup_responses": [],
-             "sub_requests": [], "sub_responses": []}
-        for n, ip in ips.items():
-            port = 40000 + n
-            assoc(f, n, ip, port)
-            if n not in skip:
-                acts = acts_by_node.get(n, [act()])
-                f["sub_requests"].append(ev(10 * n + 4, 100.4 + n, svc, ip, 36422, port, actions=acts,
-                                            action_list_count=len(acts) if count is None else count))
-        if extra:
-            extra(f)
-        return f
-    cases = [("good", sheet({}), True), ("two actions", sheet({2: [act(), act(2)]}), False),
-             ("action ID 2", sheet({2: [act(2)]}), False), ("Format 1", sheet({1: [act(fmt="actionDefinition-Format1")]}), False),
-             ("an undecodable definition", sheet({1: [act(fmt=None)]}), False),
-             ("a list announcing two items with one decoded", sheet({}, count=2), False),
-             ("an insert action", sheet({2: [act(aty="insert", ati=1)]}), False),
-             ("a node without a request", sheet({}, skip=(2,)), False),
-             ("an extra unattributed Format 1 request",
-              sheet({}, extra=lambda f: sub(f, 7, "172.17.0.7", 40007, [act(fmt="actionDefinition-Format1")])), False),
-             ("a request on an association without E2 Setup",
-              sheet({}, extra=lambda f: (assoc(f, 8, "172.17.0.8", 40008, setup=False),
-                                         sub(f, 8, "172.17.0.8", 40008, [act()]))), False),
-             ("a request on an association of an unexpected node",
-              sheet({}, extra=lambda f: (assoc(f, 9, "172.17.0.9", 40009), sub(f, 9, "172.17.0.9", 40009, [act()]))), False),
-             ("a request before the window on no association is not judged",
-              sheet({}, extra=lambda f: f["sub_requests"].append(
-                  ev(5, 50.0, svc, "172.17.0.6", 36422, 40006, actions=[act(fmt="actionDefinition-Format1")],
-                     action_list_count=1))), True, 60.0)]
-    fails = []
-    for name, f, want, *after in cases:
-        A = argparse.Namespace(nodes="1,2", node_ips=None, after=after[0] if after else None)
+    """The judges of kpm-action-subscription-judges.py on synthetic fact sheets and decodes: each case's verdict and,
+    for a failing case, its reason."""
+    def run_query(query, f, decoded, after, **extra):
+        A = argparse.Namespace(nodes="1,2", node_ips=None, after=after, decoded=None, **extra)
+        assocs, _ = build_assocs(f)
         with contextlib.redirect_stdout(io.StringIO()):
-            got = not q_sub_actions(f, A)
-        if got != want:
-            fails.append(name)
-    print("e2-facts-query self-test: " + ("ok" if not fails else "FAIL " + ", ".join(fails)))
+            return KAJ.judge_sub_actions(f, decoded, expected_nodes(A), assocs, after or 0)
+    fails = KAJ.self_test(run_query)
+    print("e2-facts-query self-test: " + ("ok" if not fails else "FAIL " + "; ".join(fails)))
     return 1 if fails else 0
 
 
@@ -569,6 +498,7 @@ def main():
     ap.add_argument("--source-ip")
     ap.add_argument("--sctp-port", type=int, default=36422)
     ap.add_argument("--timeline-out")
+    ap.add_argument("--decoded", help="sub-actions: the capture's asn1-indep decode (e2-sub-setup-decode.py)")
     a = ap.parse_args()
     bad = QUERIES[a.query](load(a.facts), a)
     for b in bad:
