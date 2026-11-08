@@ -80,18 +80,23 @@ def served_cells(x, decoded):
 
 
 def answer_after(f, assocs, x, d, t, decoded):
-    """The answer to a decoded request d sent at t on association x: ("response", decoded response) for the first
-    RIC SUBSCRIPTION RESPONSE on x at or after t with the same (requestor, instance, RAN function ID), else
-    ("failure", decoded failure) for the first such RIC SUBSCRIPTION FAILURE, else (None, None)."""
-    for kind, facts, msg in (("response", x["sub_responses"], "RICsubscriptionResponse"),
-                             ("failure", [r for r in f.get("sub_failures", []) if assoc_at(assocs, r["src"], r["sport"], r["t"]) is x],
-                              "RICsubscriptionFailure")):
-        for r in sorted(facts, key=lambda r: r["t"]):
-            if r["t"] < t:
-                continue
-            hit = [a for a in pdus(decoded, r["frame"], msg) if key_of(a) == key_of(d)]
+    """The answer to the request attempt d sent at t on association x: the first RIC SUBSCRIPTION RESPONSE or RIC
+    SUBSCRIPTION FAILURE on x with the same (requestor, instance, RAN function ID) at or after t and before the next
+    request with that key on x (a later attempt's answer never answers this one). ("response" | "failure", the
+    decoded answer with its frame), or (None, None)."""
+    key = key_of(d)
+
+    def keyed(r, msg):
+        return [a for a in pdus(decoded, r["frame"], msg) if key_of(a) == key]
+    nxt = min((q["t"] for q in x["sub_requests"] if q["t"] > t and keyed(q, "RICsubscriptionRequest")), default=float("inf"))
+    failures = [r for r in f.get("sub_failures", []) if assoc_at(assocs, r["src"], r["sport"], r["t"]) is x]
+    answers = sorted([(r["t"], r["frame"], "response", r) for r in x["sub_responses"]] +
+                     [(r["t"], r["frame"], "failure", r) for r in failures], key=lambda a: (a[0], a[1]))
+    for rt, frame, kind, r in answers:
+        if t <= rt < nxt:
+            hit = keyed(r, "RICsubscriptionResponse" if kind == "response" else "RICsubscriptionFailure")
             if hit:
-                return kind, dict(hit[0], frame=r["frame"])
+                return kind, dict(hit[0], frame=frame)
     return None, None
 
 
@@ -261,6 +266,21 @@ class Sheet:
             self.dec["f%d" % (b + 5)] = [dict(rid, message="RICsubscriptionFailure", cause="ricRequest:action-not-supported")]
         return self
 
+    def retry(self, n, answer="response", dt=10.0):
+        """A second attempt of node n's request (same key, same actions) dt seconds later, with its own answer."""
+        ip, port, b, inst = "172.17.0.%d" % (n + 1), 40000 + n, 10 * n, n
+        rid = {"requestor": 123, "instance": inst, "ranFunctionId": 2}
+        self.f["sub_requests"].append(self.ev(b + 6, 100.4 + n + dt, SVC, ip, 36422, port, requestor=123, instance=inst))
+        self.dec["f%d" % (b + 6)] = [dict(rid, message="RICsubscriptionRequest", actions=good_actions(n))]
+        if answer == "response":
+            self.f["sub_responses"].append(self.ev(b + 7, 100.5 + n + dt, ip, SVC, port, 36422, requestor=123, instance=inst))
+            self.dec["f%d" % (b + 7)] = [dict(rid, message="RICsubscriptionResponse",
+                                              admitted=[a["id"] for a in good_actions(n)], notAdmitted=[])]
+        else:
+            self.f["sub_failures"].append(self.ev(b + 7, 100.5 + n + dt, ip, SVC, port, 36422, requestor=123, instance=inst))
+            self.dec["f%d" % (b + 7)] = [dict(rid, message="RICsubscriptionFailure", cause="ricRequest:action-not-supported")]
+        return self
+
 
 def sub_actions_cases():
     """(name, sheet, want pass, after, required reason substring) of the sub-actions self-test."""
@@ -302,6 +322,12 @@ def sub_actions_cases():
          _extra(two(), lambda s: s.f["sub_requests"].append(s.ev(74, 107.4, SVC, "172.17.0.8", 36422, 40007,
                                                                   requestor=123, instance=7))), False, None, "on no association"),
         ("a request on an association of an unexpected node", two().add(9), False, None, "not an expected node"),
+        ("a failed request whose same-key retry succeeds (the later response answers only the retry)",
+         _extra(two(answer="failure"), lambda s: s.retry(2, answer="response")), False, None,
+         "answered by RIC SUBSCRIPTION FAILURE"),
+        ("a request answered by a response, then a same-key retry answered by a failure",
+         _extra(two(), lambda s: s.retry(2, answer="failure")), False, None, "answered by RIC SUBSCRIPTION FAILURE"),
+        ("a successful request and a successful same-key retry", _extra(two(), lambda s: s.retry(2)), True, None, None),
         ("a request before the window on no association is not judged",
          _extra(two(), lambda s: s.f["sub_requests"].append(s.ev(5, 50.0, SVC, "172.17.0.6", 36422, 40006,
                                                                   requestor=123, instance=5))), True, 60.0, None),
