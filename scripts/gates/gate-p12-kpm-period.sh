@@ -86,6 +86,56 @@ kpimon_at() {
     unset KPIMON_REPORTING_PERIOD_MS KPIMON_GRANULARITY_PERIOD_MS
     check "p12_${tag}_kpimon_pod_ready_after_install" kpimon_wait_ready 300 "$install_start"
     check "p12_${tag}_kpimon_config_carries_p${wp}_g${wg}" kpimon_config_periods "$wp" "$wg"
+    # rtmgr pushes a full route table when an xApp registers and retries it to an endpoint that does not
+    # acknowledge, resending the table it built at registration. If the subscription's partial route update
+    # reaches e2term first, that stale retry replaces it and e2term drops indications (RMR_ERR_NOENDPT 12050)
+    # until the next update. So kpimon must have registered itself before rtmgr is restarted: the fresh rtmgr's
+    # first table then holds every endpoint, and the subscription that follows only adds routes.
+    check "p12_${tag}_kpimon_pod_logged_its_registration" kpimon_registered 300
+    check "p12_${tag}_rtmgr_restarted_after_kpimon_registration" ric_restart_rtmgr
+    check "p12_${tag}_route_readers_ok_after_rtmgr_restart" route_readers_ok "p12-$tag"
+}
+
+# kpimon_registered <s>: the new kpimon pod (KPIMON_POD, set by kpimon_wait_ready) logs xapp-frame's own
+# "Registration done" line within <s> seconds. appmgr's xApp list is no evidence: a dms_cli uninstall leaves the
+# old entry there, and kpimon never deregisters.
+kpimon_registered() {
+    local deadline=$(($(date +%s) + $1)) logs line
+    [ -n "$KPIMON_POD" ] || { echo "no kpimon pod name"; return 1; }
+    while [ "$(date +%s)" -lt "$deadline" ]; do
+        logs=$(kc -n "$KPIMON_NS" logs "$KPIMON_POD" 2>/dev/null) || logs=""
+        line=$(grep -m1 -F 'Registration done, proceeding with startup' <<<"$logs")
+        [ -n "$line" ] && { echo "$KPIMON_POD: ${line:0:200}"; return 0; }
+        sleep 3
+    done
+    echo "$KPIMON_POD logged no 'Registration done' within $1 s"; return 1
+}
+
+# route_readers_ok <tag>: the route-table readers of kpimon, e2mgr and submgr drain what the new rtmgr sends.
+route_readers_ok() {
+    rt_reader_ok kpimon "$1" ricxapp && rt_reader_ok e2mgr "$1" && rt_reader_ok submgr "$1"
+}
+
+# ric_route_record <dir> <t0>: informational, never judged. The mse|12050| lines of e2term's route stash, then
+# (with <t0>) the rtmgr, e2term and submgr logs since <t0> and the counts of rtmgr's acknowledged and
+# unacknowledged push verdicts and of e2term's unroutable 12050 indications.
+ric_route_record() {
+    local dir="$1" t0="${2:-}" pod c since
+    mkdir -p "$dir"
+    pod=$(ns_pod ricplt e2term)
+    if [ -z "$t0" ]; then
+        kc -n ricplt exec "$pod" -- sh -c 'grep "^mse|12050|" /opt/e2/router.txt.stash' >"$dir/e2term-stash-12050-before-ns3.txt" 2>&1 || true
+        echo "e2term $pod stash 12050 rows before ns-3: $(grep -c '^mse|12050|' "$dir/e2term-stash-12050-before-ns3.txt")"
+        return 0
+    fi
+    since=$(date -u -d "@$t0" +%FT%TZ)
+    for c in rtmgr e2term submgr; do
+        pod=$(ns_pod ricplt "$c")
+        kc -n ricplt logs "$pod" --since-time="$since" >"$dir/$c.log" 2>&1 || true
+    done
+    echo "rtmgr push verdicts acknowledged $(grep -c 'Route Update Status: OK(' "$dir/rtmgr.log")," \
+        "unacknowledged $(grep -E 'Updating Routes|Update Routes' "$dir/rtmgr.log" | grep -vc 'Route Update Status: OK(');" \
+        "e2term RMR_ERR_NOENDPT 12050 $(grep 'RMR_ERR_NOENDPT' "$dir/e2term.log" | grep -c 12050)"
 }
 
 # wait_wire <pcap> <successful|unsuccessful>: a RIC subscription request and an answer of that kind on the wire.
@@ -121,11 +171,14 @@ agents_up a p12-a
 check p12_a_wire_subscription_request_and_response wait_wire "$e/p12-a.pcap" successful
 RUN="$e/ns3run-a"; mkdir -p "$RUN"
 INFLUX_FROM=$(date +%s)
+ROUTE_STASH=$(ric_route_record "$e/p12-a-ric-route" 2>/dev/null) || ROUTE_STASH=""
 check p12_a_ns3_started_single_gnb ns3_start "$RUN" --nMmWaveEnbNodes=1 --e2lteEnabled=false "--simTime=$SIMTIME" \
     "--indicationPeriodicity=$PERIOD" "--simStartEpochMs=$EPOCH_MS" --e2AgentHost=127.0.0.1 "--e2TraceDir=$RUN"
 check p12_a_ns3_completes_exit0 ns3_wait
 log "draining ${DRAIN_S}s"; sleep "$DRAIN_S"
 agents_stats_last ns3-e2-agent-2 >"$e/p12-a-agent-stats-final.json"
+ROUTE_LOGS=$(ric_route_record "$e/p12-a-ric-route" "$CAP_T0" 2>/dev/null) || ROUTE_LOGS=""
+record p12_a_ric_route_record_informational true "${ROUTE_STASH:-no stash record}; ${ROUTE_LOGS:-no log record}"
 kpimon_window() { kpimon_logs_since "$CAP_T0" "$e/p12-a-kpimon.log" && kpimon_log_window_summary "$e/p12-a-kpimon.log"; }
 check p12_a_kpimon_log_window_complete kpimon_window
 check p12_a_influx_exported influx_export p12-a "$INFLUX_FROM"
