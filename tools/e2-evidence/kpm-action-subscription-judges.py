@@ -90,25 +90,28 @@ def served_cells(x, decoded):
     return sorted(sets[0]), NODE_RAT.get(g[0]), []
 
 
-def answer_after(f, assocs, x, d, t, decoded):
-    """The answer to the request attempt d sent at t on association x: the first RIC SUBSCRIPTION RESPONSE or RIC
-    SUBSCRIPTION FAILURE on x with the same (requestor, instance, RAN function ID) at or after t and before the next
-    request with that key on x (a later attempt's answer never answers this one). ("response" | "failure", the
-    decoded answer with its frame), or (None, None)."""
-    key = key_of(d)
-
-    def keyed(r, msg):
-        return [a for a in pdus(decoded, r["frame"], msg) if key_of(a) == key]
-    nxt = min((q["t"] for q in x["sub_requests"] if q["t"] > t and keyed(q, "RICsubscriptionRequest")), default=float("inf"))
+def attempts_on(f, assocs, x, decoded):
+    """Every request attempt on association x with its answer, in (time, frame) order: each decoded RIC SUBSCRIPTION
+    REQUEST is answered by the first RIC SUBSCRIPTION RESPONSE or RIC SUBSCRIPTION FAILURE on x with the same
+    (requestor, instance, RAN function ID) strictly after it and strictly before the next request with that key on x,
+    both bounds ordered by (time, frame), so an answer never serves two attempts and a later duplicate answers none.
+    [{"req": request event, "d": decoded request, "key", "kind": "response" | "failure" | None, "ans": decoded answer
+    with its frame or None, "ansEvent": answer event or None}]."""
+    reqs = sorted(((q["t"], q["frame"], i, q, d) for q in x["sub_requests"]
+                   for i, d in enumerate(pdus(decoded, q["frame"], "RICsubscriptionRequest"))), key=lambda a: a[:3])
     failures = [r for r in f.get("sub_failures", []) if assoc_at(assocs, from_agent(r), r["t"]) is x]
-    answers = sorted([(r["t"], r["frame"], "response", r) for r in x["sub_responses"]] +
-                     [(r["t"], r["frame"], "failure", r) for r in failures], key=lambda a: (a[0], a[1]))
-    for rt, frame, kind, r in answers:
-        if t <= rt < nxt:
-            hit = keyed(r, "RICsubscriptionResponse" if kind == "response" else "RICsubscriptionFailure")
-            if hit:
-                return kind, dict(hit[0], frame=frame)
-    return None, None
+    answers = sorted(((r["t"], r["frame"], i, kind, r, a)
+                      for kind, evs, msg in (("response", x["sub_responses"], "RICsubscriptionResponse"),
+                                             ("failure", failures, "RICsubscriptionFailure"))
+                      for r in evs for i, a in enumerate(pdus(decoded, r["frame"], msg))), key=lambda a: a[:3])
+    out, inf = [], (float("inf"),)
+    for n, (t, fr, i, q, d) in enumerate(reqs):
+        k = key_of(d)
+        nxt = next((a[:3] for a in reqs[n + 1:] if key_of(a[4]) == k), inf)
+        hit = next((a for a in answers if key_of(a[5]) == k and (t, fr, i) < a[:3] < nxt), None)
+        out.append({"req": q, "d": d, "key": k, "kind": hit[3] if hit else None,
+                    "ans": dict(hit[5], frame=hit[1]) if hit else None, "ansEvent": hit[4] if hit else None})
+    return out
 
 
 def request_problems(tag, d, cells, rat):
@@ -152,7 +155,7 @@ def request_problems(tag, d, cells, rat):
 def judge_sub_actions(f, decoded, nodes, assocs, after):
     """Problems of the per-action subscription rule (e2-facts-query.py sub-actions); prints the evidence."""
     owner = {id(r): x for x in assocs for r in x["sub_requests"]}
-    bad, per, cache = [], {n: 0 for n in nodes}, {}
+    bad, per, cache, paired = [], {n: 0 for n in nodes}, {}, {}
     for r in sorted(f["sub_requests"], key=lambda r: r["t"]):
         if r["t"] < after:
             continue
@@ -185,10 +188,13 @@ def judge_sub_actions(f, decoded, nodes, assocs, after):
         if not reqs:
             bad.append("frame %d node %s: no RIC SUBSCRIPTION REQUEST decoded by asn1-indep (%s)" % (
                 r["frame"], x["node"], json.dumps(decoded.get("f%d" % r["frame"]))[:200]))
+        if id(x) not in paired:
+            paired[id(x)] = {(id(a["req"]), id(a["d"])): a for a in attempts_on(f, assocs, x, decoded)}
         for d in reqs:
             tag = "frame %d node %s request %s" % (r["frame"], x["node"], key_of(d))
             bad += request_problems(tag, d, cells, rat)
-            kind, ans = answer_after(f, assocs, x, d, r["t"], decoded)
+            att = paired[id(x)].get((id(r), id(d)))
+            kind, ans = (att["kind"], att["ans"]) if att else (None, None)
             if kind is None:
                 bad.append("%s: no RIC SUBSCRIPTION RESPONSE on its association" % tag)
             elif kind == "failure":
@@ -293,6 +299,14 @@ class Sheet:
         self.answer(n, svc, t0 + 0.5, base + 5, answer)
         return self
 
+    def request(self, n, frame, t, svc=SVC):
+        """A further subscription request to node n with node n's key and good actions, frame at t."""
+        ip, port = "172.17.0.%d" % (n + 1), 40000 + n
+        self.f["sub_requests"].append(self.ev(frame, t, svc, ip, 36422, port, requestor=123, instance=n))
+        self.dec["f%d" % frame] = [{"message": "RICsubscriptionRequest", "requestor": 123, "instance": n,
+                                    "ranFunctionId": 2, "actions": good_actions(n)}]
+        return self
+
     def answer(self, n, svc, t, frame, kind):
         """An answer from node n's agent socket to endpoint svc with node n's key: "response" (all admitted) or
         "failure"; None adds nothing."""
@@ -375,6 +389,14 @@ def sub_actions_cases():
         ("a failure sent from the node's agent socket to another RIC endpoint does not answer the request",
          two(answer=None).endpoint(2, "10.96.0.6", 101.0, 90, request=False, answer=None)
          .answer(2, "10.96.0.6", 102.6, 96, "failure"), False, None, "no RIC SUBSCRIPTION RESPONSE on its association"),
+        ("two same-key requests at one timestamp and one response: the earlier-frame attempt is unanswered",
+         two(answer=None).request(2, 26, 100.4 + 2).answer(2, SVC, 100.5 + 2, 27, "response"), False, None,
+         "no RIC SUBSCRIPTION RESPONSE on its association"),
+        ("a response at the request's timestamp but an earlier frame does not answer it",
+         two(request=False, answer=None).request(2, 30, 102.45).answer(2, SVC, 102.45, 29, "response"), False, None,
+         "no RIC SUBSCRIPTION RESPONSE on its association"),
+        ("a response at the request's timestamp and a later frame answers it",
+         two(request=False, answer=None).request(2, 30, 102.45).answer(2, SVC, 102.45, 31, "response"), True, None, None),
         ("a request before the window on no association is not judged",
          _extra(two(), lambda s: s.f["sub_requests"].append(s.ev(5, 50.0, SVC, "172.17.0.6", 36422, 40006,
                                                                   requestor=123, instance=5))), True, 60.0, None),
