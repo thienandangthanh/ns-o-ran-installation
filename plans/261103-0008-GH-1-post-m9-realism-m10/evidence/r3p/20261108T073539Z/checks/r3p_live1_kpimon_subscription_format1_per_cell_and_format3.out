@@ -1,0 +1,8 @@
+asn1-indep image localhost/asn1-indep:09aeabb8b0f99b0c sha256:d6bd058786ec1d0d1eea7aa5df846c88ba2b08f858d3b93af624ca678d1908b4
+e2-sub-setup-decode self-test: ok
+frame 21 to 172.17.0.3:46948->10.97.131.139:36422 (node 1): served cells [('eutra', '00f110', 257, 28)]; 1 request(s) decoded: [((123, 20, 2), [(1, 'report', 1, ['eutra', '00f110', 257, 28]), (2, 'report', 3, None)])]; tshark (information only): [(1, 'actionDefinition-Format1'), (2, 'actionDefinition-Format3')]
+  answered by frame 22: admitted [1, 2], not admitted []
+frame 38 to 172.17.0.4:42929->10.97.131.139:36422 (node 2): served cells [('nr', '00f110', 33, 36)]; 1 request(s) decoded: [((123, 21, 2), [(1, 'report', 1, ['nr', '00f110', 33, 36]), (2, 'report', 3, None)])]; tshark (information only): [(1, 'actionDefinition-Format1'), (2, 'actionDefinition-Format3')]
+  answered by frame 39: admitted [1, 2], not admitted []
+frame 40 to 172.17.0.5:42343->10.97.131.139:36422 (node 3): served cells [('nr', '00f110', 49, 36)]; 1 request(s) decoded: [((123, 22, 2), [(1, 'report', 1, ['nr', '00f110', 49, 36]), (2, 'report', 3, None)])]; tshark (information only): [(1, 'actionDefinition-Format1'), (2, 'actionDefinition-Format3')]
+  answered by frame 41: admitted [1, 2], not admitted []

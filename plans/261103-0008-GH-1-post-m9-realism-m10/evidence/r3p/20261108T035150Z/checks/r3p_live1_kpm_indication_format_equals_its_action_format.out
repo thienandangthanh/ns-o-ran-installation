@@ -1,0 +1,23 @@
+TShark (Wireshark) 4.4.19.
+e2ap.RANfunctionID FT_UINT32
+e2ap.RICactionID FT_UINT32
+e2ap.ricRequestorID FT_UINT32
+e2ap.ricInstanceID FT_UINT32
+e2ap.ricActionID FT_UINT32
+e2ap.indicationMessage_formats FT_UINT32
+asn1-indep image localhost/asn1-indep:09aeabb8b0f99b0c sha256:d6bd058786ec1d0d1eea7aa5df846c88ba2b08f858d3b93af624ca678d1908b4
+e2-sub-setup-decode self-test: ok
+asn1-indep sidecar /home/uc/evidence/r3p/20261108T035150Z/live1-sub-asn1-indep-decoded.json reused: provenance {"captureSha256": "fda12f1b2b96458e1e3fc27cccb9865b695441a76781d39ef62fe02b70a518b8", "decoderSha256": "021256ca398fad9e95fca1fd8a3c217f4baee3e1d79c7a44ddbb24c957e1ee63", "imageTag": "localhost/asn1-indep:09aeabb8b0f99b0c", "imageId": "sha256:d6bd058786ec1d0d1eea7aa5df846c88ba2b08f858d3b93af624ca678d1908b4"}
+image: 127.0.0.1:80/kpimon-go:latest
+image_id: sha256:51d49b20236ab7cbe1c5c394cb5dac1260a859b45f1baebb308b85b27f0846c7
+libe2smwrapper.so_sha256: 195aaf1e2d8ba7ad748d79ab767e6da0bcebfd83f990a7739c91de275172a3aa
+timestamp_size: 8
+extracted_at: 2026-11-08T04:02:28+00:00
+TimeStamp SIZE in this .so: 8
+node 1 172.17.0.3:33101->10.97.131.139:36422 subscription (123, 20, 2) (request frame 21, response frame 22) action 1: 100 indication(s)
+node 1 172.17.0.3:33101->10.97.131.139:36422 subscription (123, 20, 2) (request frame 21, response frame 22) action 2: 198 indication(s)
+node 2 172.17.0.4:51060->10.97.131.139:36422 subscription (123, 21, 2) (request frame 38, response frame 39) action 1: 100 indication(s)
+node 2 172.17.0.4:51060->10.97.131.139:36422 subscription (123, 21, 2) (request frame 38, response frame 39) action 2: 168 indication(s)
+node 3 172.17.0.5:59995->10.97.131.139:36422 subscription (123, 22, 2) (request frame 40, response frame 41) action 1: 100 indication(s)
+node 3 172.17.0.5:59995->10.97.131.139:36422 subscription (123, 22, 2) (request frame 40, response frame 41) action 2: 99 indication(s)
+indications judged 765 (after 0), grouped problems 0

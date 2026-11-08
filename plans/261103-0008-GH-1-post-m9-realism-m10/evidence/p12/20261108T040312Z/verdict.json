@@ -1,0 +1,325 @@
+{
+  "gate": "p12",
+  "ts": "20261108T040312Z",
+  "harness_sha": "1084f0f2684365ce4a256b81f2c66519df152439",
+  "pins": {
+    "FORK_BRANCH": "dev/l-release-nist180",
+    "TESTBED_URL": "https://github.com/thienandangthanh/O-RAN-Testbed-Automation.git",
+    "TESTBED_SHA": "cb697415f8ea2559c74b4eee2582851359c1afc0",
+    "NS3_URL": "https://github.com/thienandangthanh/ns-o-ran-ns3-mmwave.git",
+    "NS3_SHA": "e32a0e0537cb6d6842c8e70619ba84f9614459b4",
+    "ORAN_INTERFACE_URL": "https://github.com/thienandangthanh/sim-ns3-o-ran-e2.git",
+    "ORAN_INTERFACE_SHA": "0d6bdead516e149056a30d60670633da5354e06b",
+    "E2SIM_URL": "https://github.com/thienandangthanh/o-ran-e2sim.git",
+    "E2SIM_SHA": "e27058163dc0bb05ce279ad3fa1bd15a22fc24ab"
+  },
+  "duration_s": 1529,
+  "pass": false,
+  "failed": [
+    "p12_a_kpimon_logged_every_wire_indication_zero_wmore",
+    "p12_a_influx_equals_ipc_trace_every_seq"
+  ],
+  "checks": [
+    {
+      "name": "p12_nist_tree_at_testbed_sha_with_agent_dir",
+      "pass": true,
+      "detail": "nist HEAD cb697415f8ea2559c74b4eee2582851359c1afc0, want cb697415f8ea2559c74b4eee2582851359c1afc0\nalready at cb697415f8ea2559c74b4eee2582851359c1afc0\nns3_e2_agent install_patch_files/xApps/rc install_patch_files/xApps/kpimon-go/control/enb-kpm-measurements.json match cb697415f8ea2559c74b4eee2582851359c1afc0; metric-map sha256 bd8e57b78d1a476a946d7413a3a94c3ffa722f61d25f86ff4467b5af79243f8c"
+    },
+    {
+      "name": "p12_build_tools_present",
+      "pass": true,
+      "detail": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\ntshark 4.4.19 (>= 4.4)"
+    },
+    {
+      "name": "p12_sctp_module_loaded_and_persisted",
+      "pass": true,
+      "detail": "sctp                  495616  51 sctp_diag\nsctp"
+    },
+    {
+      "name": "p12_e2_ports_reserved",
+      "pass": true,
+      "detail": "net.ipv4.ip_local_reserved_ports = 38470-38499; /etc/sysctl.d/60-ns3-e2-agent-ports.conf: net.ipv4.ip_local_reserved_ports = 38470-38499\nno socket other than TIME_WAIT holds a port in 38470-38499"
+    },
+    {
+      "name": "p12_ns3_binary_located",
+      "pass": true,
+      "detail": "/home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default"
+    },
+    {
+      "name": "p12_kubectl_exec_it_works_without_tty",
+      "pass": true,
+      "detail": "exit 0 on pod/deployment-ricplt-e2mgr-cd56d8d5c-7cxpn: Unable to use a TTY - input is not a terminal or the right kind of file|EXEC_IT_OK|"
+    },
+    {
+      "name": "p12_a_kpimon_uninstalled",
+      "pass": true,
+      "detail": "  import pkg_resources\nstatus: OK\nno kpimon-go pod left"
+    },
+    {
+      "name": "p12_a_kpimon_installed_p1000_g100",
+      "pass": true,
+      "detail": "No process found to stop.\nSudo refresh process stopped or was not running.\n127.0.0.1:80/kpimon-go:latest labels: 74bba49772d628ed6c1740bd112b352a6b28f627d7dae2db4304e8d1294cf6fb true; want 74bba49772d628ed6c1740bd112b352a6b28f627d7dae2db4304e8d1294cf6fb true (24 files at cb697415f8ea2559c74b4eee2582851359c1afc0)"
+    },
+    {
+      "name": "p12_a_kpimon_pod_ready_after_install",
+      "pass": true,
+      "detail": "pod ricxapp-kpimon-go-85dc5fdf8b-pjjqf Ready, created epoch 1794111051, restarts 0"
+    },
+    {
+      "name": "p12_a_kpimon_config_carries_p1000_g100",
+      "pass": true,
+      "detail": "kpimon config periods (configmap, key, P, G): [('configmap-ricxapp-kpimon-go-appconfig', 'config-file.json', 1000, 100)], want P 1000 G 100"
+    },
+    {
+      "name": "p12_a_kpimon_so_extracted_from_image",
+      "pass": true,
+      "detail": "timestamp_size: 8\nextracted_at: 2026-11-08T04:11:22+00:00\nTimeStamp SIZE in this .so: 8"
+    },
+    {
+      "name": "p12_a_capture_started_before_agents",
+      "pass": true,
+      "detail": "[04:11:23] capture p12-a started on docker0 (pid 524752, filter 'ip proto 132')"
+    },
+    {
+      "name": "p12_a_bringup_agents_connected_set_exact",
+      "pass": true,
+      "detail": "[04:12:04] bringup agents: every expectedRanName equals meid_of its nodeId\n[04:12:16] bringup agents: e2mgr CONNECTED set equals the expected agents: en_gnb_001_001_00000002 \n[04:12:20] bringup agents: every agent READY with an E2 setup: 2 0 true READY 0 0;"
+    },
+    {
+      "name": "p12_a_agent_container_ip_recorded",
+      "pass": true,
+      "detail": "{\"2\": [\"172.17.0.3\"]}"
+    },
+    {
+      "name": "p12_a_wire_subscription_request_and_response",
+      "pass": true,
+      "detail": "wire RICsubscription (requests successfulOutcomes): 0 0\nwire RICsubscription (requests successfulOutcomes): 0 0\nwire RICsubscription (requests successfulOutcomes): 1 1"
+    },
+    {
+      "name": "p12_a_ns3_started_single_gnb",
+      "pass": true,
+      "detail": "ns-3 started pid/pgid 528493 at 1794111150.750927247: /home/uc/m4-build/ns-3/build/scratch/ns3.38.rc1-scenario-zero-default --nMmWaveEnbNodes=1 --e2lteEnabled=false --simTime=10 --indicationPeriodicity=0.1 --simStartEpochMs=1767225600000 --e2AgentHost=127.0.0.1 --e2TraceDir=/home/uc/evidence/p12/20261108T040312Z/ns3run-a"
+    },
+    {
+      "name": "p12_a_ns3_completes_exit0",
+      "pass": true,
+      "detail": "ns-3 exit code 0"
+    },
+    {
+      "name": "p12_a_kpimon_log_window_complete",
+      "pass": true,
+      "detail": "files 1, rotations in window 0, coverage True, retries 0"
+    },
+    {
+      "name": "p12_a_influx_exported",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "p12_a_agents_stopped",
+      "pass": true,
+      "detail": "# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/ns3_e2_agent/install_scripts/stop_ns3_e2_agents.sh \nns3-e2-agent-2 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1794111172915,\"nodeId\":2,\"state\":\"READY\",\"subs\":1,\"setupFuncAccepted\":true,\"lastSeq\":99,\"samplesIn\":100,\"samplesForwarded\":100,\"samplesUnreported\":0,\"samplesGapDiscarded\":0,\"samplesReportFailed\":0,\"samplesNoUeContext\":0,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0,\"reportGaps\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0,\"duplicateImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":20,\"indTxCell\":10,\"indTxUe\":10,\"ipc\":{\"accepted\":1,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":1,\"helloRejected\":0,\"bye\":1,\"unknownType\":0,\"ueContext\":3,\"ueContextRejected\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":2,\"rxPduUndecodable\":0,\"subsAdded\":1,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"subsRefused\":0,\"actionsNotAdmitted\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":0,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":0,\"applied\":0,\"refused\":0,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":0}\nRemoved 1 ns3-e2-agent container(s)."
+    },
+    {
+      "name": "p12_a_capture_stopped",
+      "pass": true,
+      "detail": "[04:13:00] capture p12-a stopped: 82 packets captured 82 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "p12_a_decoded_subscription_period_1000_answered",
+      "pass": true,
+      "detail": "e2ap frames by PPID 24, forced on the port 24\nframes=82 inits=1 aborts=0 shutdowns=3 setup_req=1 setup_resp=1 sub_req=1 sub_resp=1 sub_fail=0 ind_srcs={'172.17.0.3': 20}\nRICsubscriptionRequests (frame, reportingPeriod, granulPeriods): [(18, 1000, [100, 100])]"
+    },
+    {
+      "name": "p12_a_e2ap_ppid70_every_node",
+      "pass": true,
+      "detail": "172.17.0.3:39421 -> :36422 PPID counts {\"70\": 54}\nnode 2: 54 PPID-70 chunk(s) over ['172.17.0.3:39421']\nE2AP frames decoded by PPID 24, forced on the port 24"
+    },
+    {
+      "name": "p12_a_kpimon_subscription_format1_per_cell_and_format3",
+      "pass": true,
+      "detail": "e2-sub-setup-decode self-test: ok\nframe 18 to 172.17.0.3:39421->10.97.131.139:36422 (node 2): served cells [('nr', '00f110', 33, 36)]; 1 request(s) decoded: [((123, 23, 2), [(1, 'report', 1, ['nr', '00f110', 33, 36]), (2, 'report', 3, None)])]; tshark (information only): [(1, 'actionDefinition-Format1'), (2, 'actionDefinition-Format3')]\n  answered by frame 19: admitted [1, 2], not admitted []"
+    },
+    {
+      "name": "p12_a_kpm_indication_format_equals_its_action_format",
+      "pass": true,
+      "detail": "node 2 172.17.0.3:39421->10.97.131.139:36422 subscription (123, 23, 2) (request frame 18, response frame 19) action 1: 10 indication(s)\nnode 2 172.17.0.3:39421->10.97.131.139:36422 subscription (123, 23, 2) (request frame 18, response frame 19) action 2: 10 indication(s)\nindications judged 20 (after 0), grouped problems 0"
+    },
+    {
+      "name": "p12_a_ue_context_files_consistent_with_ns3_mn_pdcp_trace",
+      "pass": true,
+      "detail": "{\"identities\": 2, \"nodes\": {\"2\": {\"kind\": \"gnb\", \"lines\": 3}}, \"pass\": true}"
+    },
+    {
+      "name": "p12_a_one_indication_per_10_seqs_with_10_records",
+      "pass": true,
+      "detail": "asn1-indep sidecar /home/uc/evidence/p12/20261108T040312Z/p12-a-sub-asn1-indep-decoded.json reused: provenance {\"captureSha256\": \"f2ffb06b4d97c14a9f92b9f9ebac6237a949f33340fa233baa9490104bd7066d\", \"decoderSha256\": \"021256ca398fad9e95fca1fd8a3c217f4baee3e1d79c7a44ddbb24c957e1ee63\", \"imageTag\": \"localhost/asn1-indep:09aeabb8b0f99b0c\", \"imageId\": \"sha256:d6bd058786ec1d0d1eea7aa5df846c88ba2b08f858d3b93af624ca678d1908b4\"}\n{\"indications_seen\": 20, \"retransmissions_dropped\": 0, \"unique\": 20, \"rows_skipped\": 0}\n{\"format2Indications\": 10, \"indications\": 20, \"indicationsPerTenSeqs\": 1.0, \"measDataItemsHistogram\": {\"10\": 20}, \"nodes\": {\"2\": {\"format1Indications\": 10, \"indicationsPerKSeqs\": 1.0, \"seqsCovered\": 100, \"traceSamples\": 100, \"unreportedAtBye\": 0}}, \"pass\": true, \"perIndication\": 10, \"problemCount\": 0, \"recordsPerIndication\": 10}"
+    },
+    {
+      "name": "p12_a_kpimon_logged_every_wire_indication_zero_wmore",
+      "pass": false,
+      "detail": "exit 1: kpimon indications 18, wire indications 20, header/message RC_WMORE 0/0"
+    },
+    {
+      "name": "p12_a_influx_equals_ipc_trace_every_seq",
+      "pass": false,
+      "detail": "exit 1: pick first_with_ues  seq=10 fallback_from=1 ues=2 cell_row=True ue_rows=2 fields=153 differ=0 \npick middle          seq=50 fallback_from=None ues=2 cell_row=True ue_rows=2 fields=153 differ=0 \npick last            seq=99 fallback_from=None ues=2 cell_row=True ue_rows=2 fields=153 differ=0 \nall samples: {\"all_fields_compared\": 13770, \"all_fields_differ\": 0, \"all_first_diffs\": [], \"all_samples_complete\": 90, \"duplicate_keys\": 0, \"every_seq_equal\": false, \"influx_cell_rows\": 90, \"influx_ue_rows\": 180, \"kind\": \"gnb\", \"node\": 2, \"trace_samples\": 100, \"trace_ue_rows\": 193, \"ue_context_problems\": [], \"ue_csv_has_ueid_column\": true, \"ue_rows_ueid_checked\": 180, \"ue_rows_ueid_mismatch\": 0, \"ue_rows_ueid_mismatch_examples\": []}"
+    },
+    {
+      "name": "p12_a_emitter_bye_sent_equals_built_zero_drops",
+      "pass": true,
+      "detail": "node 2 (gnb): samples=100 last_seq=99 gaps=0 ipcDropped_max=0 ues_max=2 hello=1 bye=1 {\"built\": 100, \"sent\": 100, \"droppedDisconnected\": 0, \"droppedBackpressure\": 0, \"lastSeq\": 99}"
+    },
+    {
+      "name": "p12_a_agent_counters_forwarded_plus_unreported_equal_trace",
+      "pass": true,
+      "detail": "state=READY subs=1 samplesIn=100 forwarded=100 unreported=0 (trace 100, want unreported 0) indTx=20 (cell 10 ue 10) chunkSplits=0 ueContext=3 nonzero={}"
+    },
+    {
+      "name": "p12_b_kpimon_uninstalled",
+      "pass": true,
+      "detail": "  import pkg_resources\nstatus: OK\nno kpimon-go pod left"
+    },
+    {
+      "name": "p12_b_kpimon_installed_p150_g100",
+      "pass": true,
+      "detail": "No process found to stop.\nSudo refresh process stopped or was not running.\n127.0.0.1:80/kpimon-go:latest labels: 74bba49772d628ed6c1740bd112b352a6b28f627d7dae2db4304e8d1294cf6fb true; want 74bba49772d628ed6c1740bd112b352a6b28f627d7dae2db4304e8d1294cf6fb true (24 files at cb697415f8ea2559c74b4eee2582851359c1afc0)"
+    },
+    {
+      "name": "p12_b_kpimon_pod_ready_after_install",
+      "pass": true,
+      "detail": "pod ricxapp-kpimon-go-85dc5fdf8b-967th Ready, created epoch 1794111571, restarts 0"
+    },
+    {
+      "name": "p12_b_kpimon_config_carries_p150_g100",
+      "pass": true,
+      "detail": "kpimon config periods (configmap, key, P, G): [('configmap-ricxapp-kpimon-go-appconfig', 'config-file.json', 150, 100)], want P 150 G 100"
+    },
+    {
+      "name": "p12_b_capture_started_before_agents",
+      "pass": true,
+      "detail": "[04:19:49] capture p12-b started on docker0 (pid 543463, filter 'ip proto 132')"
+    },
+    {
+      "name": "p12_b_bringup_agents_connected_set_exact",
+      "pass": true,
+      "detail": "[04:20:30] bringup agents: every expectedRanName equals meid_of its nodeId\n[04:20:42] bringup agents: e2mgr CONNECTED set equals the expected agents: en_gnb_001_001_00000002 \n[04:20:46] bringup agents: every agent READY with an E2 setup: 2 0 true READY 0 0;"
+    },
+    {
+      "name": "p12_b_agent_container_ip_recorded",
+      "pass": true,
+      "detail": "{\"2\": [\"172.17.0.3\"]}"
+    },
+    {
+      "name": "p12_b_wire_subscription_request_and_failure",
+      "pass": true,
+      "detail": "wire RICsubscription (requests unsuccessfulOutcomes): 2 2"
+    },
+    {
+      "name": "p12_b_agent_counts_the_refused_subscription_and_holds_none",
+      "pass": true,
+      "detail": "subs 0, subsRefused 2"
+    },
+    {
+      "name": "p12_b_agents_stopped",
+      "pass": true,
+      "detail": "# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/ns3_e2_agent/install_scripts/stop_ns3_e2_agents.sh \nns3-e2-agent-2 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1794111648971,\"nodeId\":2,\"state\":\"READY\",\"subs\":0,\"setupFuncAccepted\":true,\"lastSeq\":-1,\"samplesIn\":0,\"samplesForwarded\":0,\"samplesUnreported\":0,\"samplesGapDiscarded\":0,\"samplesReportFailed\":0,\"samplesNoUeContext\":0,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0,\"reportGaps\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0,\"duplicateImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":0,\"indTxCell\":0,\"indTxUe\":0,\"ipc\":{\"accepted\":0,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":0,\"helloRejected\":0,\"bye\":0,\"unknownType\":0,\"ueContext\":0,\"ueContextRejected\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":4,\"rxPduUndecodable\":0,\"subsAdded\":0,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"subsRefused\":2,\"actionsNotAdmitted\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":0,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":0,\"applied\":0,\"refused\":0,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":0}\nRemoved 1 ns3-e2-agent container(s)."
+    },
+    {
+      "name": "p12_b_capture_stopped",
+      "pass": true,
+      "detail": "[04:20:57] capture p12-b stopped: 29 packets captured 29 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "p12_b_decoded_subscription_failure_cause_event_trigger_not_supported",
+      "pass": true,
+      "detail": "RICsubscriptionRequests: [(14, 123, 24, 150), (17, 123, 24, 150)]\nRICsubscriptionFailures: [(15, 123, 24, 'ricRequest:17', 'ricRequest:eventTriggerNotSupported'), (18, 123, 24, 'ricRequest:17', 'ricRequest:eventTriggerNotSupported')]\nRICsubscriptionResponses: []"
+    },
+    {
+      "name": "p12_c_kpimon_uninstalled",
+      "pass": true,
+      "detail": "  import pkg_resources\nstatus: OK\nno kpimon-go pod left"
+    },
+    {
+      "name": "p12_c_kpimon_installed_p100_g100",
+      "pass": true,
+      "detail": "No process found to stop.\nSudo refresh process stopped or was not running.\n127.0.0.1:80/kpimon-go:latest labels: 74bba49772d628ed6c1740bd112b352a6b28f627d7dae2db4304e8d1294cf6fb true; want 74bba49772d628ed6c1740bd112b352a6b28f627d7dae2db4304e8d1294cf6fb true (24 files at cb697415f8ea2559c74b4eee2582851359c1afc0)"
+    },
+    {
+      "name": "p12_c_kpimon_pod_ready_after_install",
+      "pass": true,
+      "detail": "pod ricxapp-kpimon-go-85dc5fdf8b-h8gcn Ready, created epoch 1794112034, restarts 0"
+    },
+    {
+      "name": "p12_c_kpimon_config_carries_p100_g100",
+      "pass": true,
+      "detail": "kpimon config periods (configmap, key, P, G): [('configmap-ricxapp-kpimon-go-appconfig', 'config-file.json', 100, 100)], want P 100 G 100"
+    },
+    {
+      "name": "p12_c_capture_started_before_agents",
+      "pass": true,
+      "detail": "[04:27:34] capture p12-c started on docker0 (pid 558753, filter 'ip proto 132')"
+    },
+    {
+      "name": "p12_c_bringup_agents_connected_set_exact",
+      "pass": true,
+      "detail": "[04:28:16] bringup agents: every expectedRanName equals meid_of its nodeId\n[04:28:28] bringup agents: e2mgr CONNECTED set equals the expected agents: en_gnb_001_001_00000002 \n[04:28:31] bringup agents: every agent READY with an E2 setup: 2 0 true READY 0 0;"
+    },
+    {
+      "name": "p12_c_agent_container_ip_recorded",
+      "pass": true,
+      "detail": "{\"2\": [\"172.17.0.3\"]}"
+    },
+    {
+      "name": "p12_c_wire_subscription_request_and_response",
+      "pass": true,
+      "detail": "wire RICsubscription (requests successfulOutcomes): 1 1"
+    },
+    {
+      "name": "p12_c_agents_stopped",
+      "pass": true,
+      "detail": "# Script: /home/uc/nist/RAN_Intelligent_Controllers/Near-Real-Time-RIC/ns3_e2_agent/install_scripts/stop_ns3_e2_agents.sh \nns3-e2-agent-2 (restarts 0) last stats: {\"event\":\"stats\",\"unixMs\":1794112109342,\"nodeId\":2,\"state\":\"READY\",\"subs\":0,\"setupFuncAccepted\":true,\"lastSeq\":-1,\"samplesIn\":0,\"samplesForwarded\":0,\"samplesUnreported\":0,\"samplesGapDiscarded\":0,\"samplesReportFailed\":0,\"samplesNoUeContext\":0,\"dropped\":{\"e2Down\":0,\"noSub\":0,\"sendBusy\":0,\"encode\":0,\"beforeHello\":0,\"badNode\":0,\"reportGaps\":0},\"uesDropped\":{\"oversize\":0,\"badImsi\":0,\"duplicateImsi\":0},\"chunkSplits\":0,\"int32Overflow\":0,\"typeMismatch\":0,\"realInexact\":0,\"indTx\":0,\"indTxCell\":0,\"indTxUe\":0,\"ipc\":{\"accepted\":0,\"rejectedSecond\":0,\"lineTooLong\":0,\"badJson\":0,\"helloAccepted\":0,\"helloRejected\":0,\"bye\":0,\"unknownType\":0,\"ueContext\":0,\"ueContextRejected\":0},\"e2\":{\"connectAttempts\":1,\"connectFailures\":0,\"setups\":1,\"rxPdu\":1,\"rxPduUndecodable\":0,\"subsAdded\":0,\"subsReplaced\":0,\"subsDeleted\":0,\"subsOtherFunc\":0,\"subsRefused\":0,\"actionsNotAdmitted\":0,\"serviceQueries\":0,\"errorIndications\":0,\"otherPdus\":0,\"ctrlSendFailed\":0},\"rc\":{\"rx\":0,\"rejFunc\":0,\"rejDecode\":0,\"rejAction\":0,\"rejIpcDown\":0,\"forwarded\":0,\"applied\":0,\"refused\":0,\"failedOnBye\":0,\"ackTx\":0,\"failTx\":0,\"ackSuppressed\":0,\"ackUnknown\":0,\"ackBad\":0,\"pending\":0},\"stepsTx\":0}\nRemoved 1 ns3-e2-agent container(s)."
+    },
+    {
+      "name": "p12_c_capture_stopped",
+      "pass": true,
+      "detail": "[04:28:36] capture p12-c stopped: 21 packets captured 21 packets received by filter 0 packets dropped by kernel "
+    },
+    {
+      "name": "p12_c_restored_subscription_period_decoded",
+      "pass": true,
+      "detail": "e2ap frames by PPID 4, forced on the port 4\nframes=21 inits=1 aborts=0 shutdowns=3 setup_req=1 setup_resp=1 sub_req=1 sub_resp=1 sub_fail=0 ind_srcs={}\nRICsubscriptionRequests (frame, reportingPeriod, granulPeriods): [(16, 100, [100, 100])]"
+    },
+    {
+      "name": "p12_c_kpimon_subscription_format1_per_cell_and_format3",
+      "pass": true,
+      "detail": "e2-sub-setup-decode self-test: ok\nframe 16 to 172.17.0.3:39986->10.97.131.139:36422 (node 2): served cells [('nr', '00f110', 33, 36)]; 1 request(s) decoded: [((123, 25, 2), [(1, 'report', 1, ['nr', '00f110', 33, 36]), (2, 'report', 3, None)])]; tshark (information only): [(1, 'actionDefinition-Format1'), (2, 'actionDefinition-Format3')]\n  answered by frame 17: admitted [1, 2], not admitted []"
+    },
+    {
+      "name": "p12_no_stray_ns3_agent_process_or_3847x_listener",
+      "pass": true,
+      "detail": "no ns-3 process, no agent container, no listener on 3847x"
+    },
+    {
+      "name": "p12_no_capture_left_running",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "p12_pcaps_in_evidence",
+      "pass": true,
+      "detail": "69368 /home/uc/evidence/p12/20261108T040312Z/p12-a.pcap;10662 /home/uc/evidence/p12/20261108T040312Z/p12-b.pcap;9046 /home/uc/evidence/p12/20261108T040312Z/p12-c.pcap;"
+    }
+  ],
+  "granularityPeriodMs": 100,
+  "substitutionP12Applied": false,
+  "recordsPerIndication": 10,
+  "indicationsPerTenSeqs": 1.0,
+  "unreportedAtBye": 0,
+  "influxEqualsIpcEverySeq": false,
+  "nonMultipleSubscriptionFailure": true,
+  "subscriptionFailureCause": [
+    "ricRequest:eventTriggerNotSupported"
+  ],
+  "restoredPeriodMs": 100
+}

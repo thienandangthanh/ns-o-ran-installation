@@ -1,0 +1,15 @@
+[06:46:13] bringup ric: waiting up to 1200s for ricplt pods
+[06:46:13] bringup ric: all ricplt pods Ready
+[06:46:13] bringup ric: e2term registered with e2mgr: [{"e2tAddress":"10.101.123.229:38000","ranNames":["gnb_734_373_16b8cef1"]}]
+rt reader e2mgr deployment-ricplt-e2mgr-cd56d8d5c-jnvst: OK (5 samples, 1 sockets now, stuck [])
+rt reader submgr deployment-ricplt-submgr-858956fbdc-bwgz9: OK (5 samples, 1 sockets now, stuck [])
+[06:46:50] bringup agents: stopping NIST kpm_sim so its node cannot mix into the CONNECTED set
+[06:47:02] bringup agents: stop_e2sim.sh exit 0
+[06:47:02] bringup agents: building the agent image (install_ns3_e2_agent.sh, bound 3600s)
+NS3_E2_AGENT_IMAGE=ns3-e2-agent:cb697415f8ea
+NS3_E2_AGENT_IMAGE_ID=sha256:f08313c3df9ae44015c9ea5858679f8e201f7bf55537c6451cccc7d46ed0fb2c
+NS3_E2_AGENT_E2_INTERFACE=da6f82f286cdbb38af1178f82f85877b12c2f85b
+NS3_E2_AGENT_METRIC_MAP_SHA256=bd8e57b78d1a476a946d7413a3a94c3ffa722f61d25f86ff4467b5af79243f8c
+[06:49:40] bringup agents: every expectedRanName equals meid_of its nodeId
+[06:49:52] bringup agents: e2mgr CONNECTED set equals the expected agents: en_gnb_001_001_00000002 
+[06:49:56] bringup agents: every agent READY with an E2 setup: 2 0 true READY 1 0;

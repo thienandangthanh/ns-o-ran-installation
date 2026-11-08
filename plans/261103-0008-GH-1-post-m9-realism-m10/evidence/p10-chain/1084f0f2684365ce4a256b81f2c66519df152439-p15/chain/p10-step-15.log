@@ -1,0 +1,8 @@
+[host 04:03:12] gate p12 (gate-p12-kpm-period.sh) harness 1084f0f268 -> unit gate-p12-20261108T040312Z
+[host 04:03:12] host disk: start	20261108T040312Z	40	/home/andang/VMs/ubuntu24.1794101097	29
+[host 04:29:02] gate p12 exit 1
+[host 04:29:02] host disk: end	20261108T042902Z	31	/home/andang/VMs/ubuntu24.1794101097	38
+scrub: 0 file(s) redacted, 45 known secret(s)
+[host 04:29:04] gate p12 ended (gate exit 1): finishing the host disk watchdog
+[host 04:29:05] evidence -> /home/andang/orca/workspaces/ns-o-ran-installation/migrate-l-release-NIST-1-8-0/plans/261103-0008-GH-1-post-m9-realism-m10/evidence/p12/20261108T040312Z
+verdict p12 FAIL ['p12_a_kpimon_logged_every_wire_indication_zero_wmore', 'p12_a_influx_equals_ipc_trace_every_seq']

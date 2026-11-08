@@ -1,0 +1,5 @@
+asn1-indep image localhost/asn1-indep:09aeabb8b0f99b0c sha256:d6bd058786ec1d0d1eea7aa5df846c88ba2b08f858d3b93af624ca678d1908b4
+e2-sub-setup-decode self-test: ok
+asn1-indep sidecar /home/uc/evidence/p12/20261108T074700Z/p12-a-sub-asn1-indep-decoded.json reused: provenance {"captureSha256": "b10aa21cae8bb215a882cf00a62789375998c226bcf924786cd9de6b4519fcdc", "decoderSha256": "021256ca398fad9e95fca1fd8a3c217f4baee3e1d79c7a44ddbb24c957e1ee63", "imageTag": "localhost/asn1-indep:09aeabb8b0f99b0c", "imageId": "sha256:d6bd058786ec1d0d1eea7aa5df846c88ba2b08f858d3b93af624ca678d1908b4"}
+{"indications_seen": 20, "retransmissions_dropped": 0, "unique": 20, "rows_skipped": 0}
+{"format2Indications": 10, "indications": 20, "indicationsPerTenSeqs": 1.0, "measDataItemsHistogram": {"10": 20}, "nodes": {"2": {"format1Indications": 10, "indicationsPerKSeqs": 1.0, "seqsCovered": 100, "traceSamples": 100, "unreportedAtBye": 0}}, "pass": true, "perIndication": 10, "problemCount": 0, "recordsPerIndication": 10}

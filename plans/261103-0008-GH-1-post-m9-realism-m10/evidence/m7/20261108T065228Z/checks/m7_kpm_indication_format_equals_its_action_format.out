@@ -1,0 +1,31 @@
+TShark (Wireshark) 4.4.19.
+e2ap.RANfunctionID FT_UINT32
+e2ap.RICactionID FT_UINT32
+e2ap.ricRequestorID FT_UINT32
+e2ap.ricInstanceID FT_UINT32
+e2ap.ricActionID FT_UINT32
+e2ap.indicationMessage_formats FT_UINT32
+asn1-indep image localhost/asn1-indep:09aeabb8b0f99b0c sha256:d6bd058786ec1d0d1eea7aa5df846c88ba2b08f858d3b93af624ca678d1908b4
+e2-sub-setup-decode self-test: ok
+asn1-indep sidecar /home/uc/evidence/m7/20261108T065228Z/m7-asn1-indep-decoded.json reused: provenance {"captureSha256": "b173937909026130ff8c30c4e2a48e470766307b660e30309bedff4af7238667", "decoderSha256": "021256ca398fad9e95fca1fd8a3c217f4baee3e1d79c7a44ddbb24c957e1ee63", "imageTag": "localhost/asn1-indep:09aeabb8b0f99b0c", "imageId": "sha256:d6bd058786ec1d0d1eea7aa5df846c88ba2b08f858d3b93af624ca678d1908b4"}
+node 1 172.17.0.3:48284->10.97.131.139:36422 subscription (123, 7, 2) (request frame 70, response frame 71) action 1: 297 indication(s)
+node 1 172.17.0.3:48284->10.97.131.139:36422 subscription (123, 7, 2) (request frame 70, response frame 71) action 2: 888 indication(s)
+node 5 172.17.0.7:42246->10.97.131.139:36422 subscription (123, 8, 2) (request frame 72, response frame 73) action 1: 297 indication(s)
+node 5 172.17.0.7:42246->10.97.131.139:36422 subscription (123, 8, 2) (request frame 72, response frame 73) action 2: 296 indication(s)
+node 2 172.17.0.4:53289->10.97.131.139:36422 subscription (123, 9, 2) (request frame 74, response frame 75) action 1: 297 indication(s)
+node 2 172.17.0.4:53289->10.97.131.139:36422 subscription (123, 9, 2) (request frame 74, response frame 75) action 2: 473 indication(s)
+node 3 172.17.0.5:48574->10.97.131.139:36422 subscription (123, 10, 2) (request frame 76, response frame 77) action 1: 297 indication(s)
+node 3 172.17.0.5:48574->10.97.131.139:36422 subscription (123, 10, 2) (request frame 76, response frame 77) action 2: 324 indication(s)
+node 4 172.17.0.6:55892->10.97.131.139:36422 subscription (123, 11, 2) (request frame 78, response frame 79) action 1: 297 indication(s)
+node 4 172.17.0.6:55892->10.97.131.139:36422 subscription (123, 11, 2) (request frame 78, response frame 79) action 2: 296 indication(s)
+node 1 172.17.0.5:43162->10.97.131.139:36422 subscription (123, 12, 2) (request frame 8889, response frame 8890) action 1: 114 indication(s)
+node 1 172.17.0.5:43162->10.97.131.139:36422 subscription (123, 12, 2) (request frame 8889, response frame 8890) action 2: 342 indication(s)
+node 2 172.17.0.7:36590->10.97.131.139:36422 subscription (123, 14, 2) (request frame 8892, response frame 8893) action 1: 114 indication(s)
+node 2 172.17.0.7:36590->10.97.131.139:36422 subscription (123, 14, 2) (request frame 8892, response frame 8893) action 2: 135 indication(s)
+node 5 172.17.0.4:42735->10.97.131.139:36422 subscription (123, 13, 2) (request frame 8891, response frame 8894) action 1: 114 indication(s)
+node 5 172.17.0.4:42735->10.97.131.139:36422 subscription (123, 13, 2) (request frame 8891, response frame 8894) action 2: 111 indication(s)
+node 4 172.17.0.3:41122->10.97.131.139:36422 subscription (123, 16, 2) (request frame 8896, response frame 8897) action 1: 114 indication(s)
+node 4 172.17.0.3:41122->10.97.131.139:36422 subscription (123, 16, 2) (request frame 8896, response frame 8897) action 2: 116 indication(s)
+node 3 172.17.0.6:34404->10.97.131.139:36422 subscription (123, 15, 2) (request frame 8895, response frame 8898) action 1: 114 indication(s)
+node 3 172.17.0.6:34404->10.97.131.139:36422 subscription (123, 15, 2) (request frame 8895, response frame 8898) action 2: 121 indication(s)
+indications judged 5157 (after 0), grouped problems 0

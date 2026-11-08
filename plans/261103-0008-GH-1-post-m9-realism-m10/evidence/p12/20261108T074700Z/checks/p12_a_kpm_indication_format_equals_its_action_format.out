@@ -1,0 +1,13 @@
+TShark (Wireshark) 4.4.19.
+e2ap.RANfunctionID FT_UINT32
+e2ap.RICactionID FT_UINT32
+e2ap.ricRequestorID FT_UINT32
+e2ap.ricInstanceID FT_UINT32
+e2ap.ricActionID FT_UINT32
+e2ap.indicationMessage_formats FT_UINT32
+asn1-indep image localhost/asn1-indep:09aeabb8b0f99b0c sha256:d6bd058786ec1d0d1eea7aa5df846c88ba2b08f858d3b93af624ca678d1908b4
+e2-sub-setup-decode self-test: ok
+asn1-indep sidecar /home/uc/evidence/p12/20261108T074700Z/p12-a-sub-asn1-indep-decoded.json reused: provenance {"captureSha256": "b10aa21cae8bb215a882cf00a62789375998c226bcf924786cd9de6b4519fcdc", "decoderSha256": "021256ca398fad9e95fca1fd8a3c217f4baee3e1d79c7a44ddbb24c957e1ee63", "imageTag": "localhost/asn1-indep:09aeabb8b0f99b0c", "imageId": "sha256:d6bd058786ec1d0d1eea7aa5df846c88ba2b08f858d3b93af624ca678d1908b4"}
+node 2 172.17.0.3:37180->10.97.131.139:36422 subscription (123, 23, 2) (request frame 14, response frame 15) action 1: 10 indication(s)
+node 2 172.17.0.3:37180->10.97.131.139:36422 subscription (123, 23, 2) (request frame 14, response frame 15) action 2: 10 indication(s)
+indications judged 20 (after 0), grouped problems 0

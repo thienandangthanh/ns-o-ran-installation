@@ -367,6 +367,7 @@ Sources: the user rulings in `plans/reports/decisions-261106-0525-GH-1-p10-pre-r
     - Open user decision before P9 code lands: the remedy for the forwarded RLC UM tail gap (consensus Q-2). Ruled (a-narrow) on 2026-11-07 (`decisions-261107-2138`); row 165, ns-3 `1f1fa3d3`.
     - **DONE 2026-11-08 05:21 KST.** ns-3 `1f1fa3d3` (tail fix) + `e32a0e05`, oran-interface `0d6bdea`, Testbed `03180a5`, harness `32232b8d` (pins), docs `e86f1d08`. Chain attempt 2 (the guided fix after red #1) green: see "P9 chain attempt 2: green" below.
   - P15: agent rebuild, kpimon reinstall, M5–M7, p12 with the re-baselined judge, R3′ single.
+    - **DONE 2026-11-08 17:16 KST:** guided re-run green from frozen `d36888b8` (sections "P15 chain red #1" and "P15 guided re-run: green").
     - 2026-11-08 design and consensus (`kongming-261108-0750`, `brainstorm-261108-0905`, `decisions-261108-0905`): all 19 open questions ruled 5–0. Rows 153 (per association, identity and agreement; stricter) and 74 (codec pinned; stronger) amended, rows 154, 155 and 100 noted, before code. kpimon gives a node with zero X2 components C = 0 (Format 3 only), so M3's kpm_sim stays subscribed. Commits: Testbed T1 codec, T2 agent, T3 kpimon; harness H1 = row 153 + pin + driver (asn1-indep pre-flight at every row-153 site, p12 as step 15), H2 = row 154, H3 = row 155. Chain after a revert: M2–M7, I0, I2, e2i, r3p single, then p12 last (34 GiB check before it). This supersedes the P08 hand-off's "kpm-headers and collet-start-time will probably change": P15's prediction for both is null at C = 1.
   - D-06b-1 and the kpimon node tag: as in steps 3c and 3d. The TS serving cell: step 3d (ii) plus row 158.
   - UseIdealRrc: the probe, then row 157's adoption gates.
@@ -462,3 +463,62 @@ Sources: the user rulings in `plans/reports/decisions-261106-0525-GH-1-p10-pre-r
   - Tightening `rtmgr_push_acked` to `Status: OK` (own row).
   - p12 c judges no indications.
   - appmgr's 400 responses after a dms_cli reinstall.
+
+## P15 guided re-run: green (2026-11-08 05:22Z to 08:16Z)
+- **Commits under test:**
+  - Testbed `cb69741`.
+  - Harness `d36888b8`: row 166's fix `c2299c5c` plus its bounded-call fix `d36888b8`. Codex reviewed it, its finding was fixed, and the follow-up review approved.
+  - Run from the frozen checkout of `d36888b8`.
+- **Entry:**
+  - Revert to `f7-rerun-green` at 05:09:13Z (/home 33 → 70 GiB).
+  - The host entry condition held.
+  - The VM entry check passed at 05:22:17Z: 0 slow etcd lines, restarts stable.
+  - Records: `evidence/p10-chain/d36888b89a1a931c2edbfca3e800965bf5b8377a-p15-a2/`.
+- **Chain:** `P10_SKIP_STEPS=9,11,12,13,14 p10-gate-chain.sh d36888b8… 0 15`. Every step exited 0 with no failed check.
+
+| Gate | Run dir | Checks passed |
+|---|---|---|
+| M2 | `m2/20261108T052221Z` | 35/35 |
+| M3 | `m3/20261108T054224Z` | 54/54 |
+| M4 | `m4/20261108T062107Z` | 23/23 |
+| M5 | `m5/20261108T064610Z` | 24/24 |
+| M6 | `m6/20261108T065019Z` | 44/44 |
+| M7 | `m7/20261108T065228Z` | 62/62 |
+| I0 | `i0/20261108T072000Z` | 8/8 |
+| I2 | `i2/20261108T072444Z` | 25/25 |
+| e2i | `e2i/20261108T072923Z` | 62/62 |
+| r3p single | `r3p/20261108T073539Z` | 84/84 |
+| p12 | `p12/20261108T074700Z` | 68/68 |
+
+- **Rows 153 and 154 at every site:**
+  - Each request carries action 1 (Format 1, naming the node's own NR CGI) and action 2 (Format 3), and both are admitted.
+  - Every indication carries its action's format, with 0 problems: M6 100 + 99; M7 5157 judged; e2i 696; r3p 765; p12 a 10 + 10.
+- **Row 155:** p12 a's records check passes with the action conjuncts.
+- **Unchanged p12 a checks:**
+  - kpimon logged 20/20 wire indications.
+  - Influx equals the IPC trace at every seq: 100 cell rows and 193 UE rows.
+- **Row 166:** each of a, b and c logged its registration, restarted rtmgr, and had kpimon, e2mgr and submgr readers OK.
+  - The informational record shows 1 e2term `mse|12050|` row before ns-3, rtmgr pushes acknowledged 60 and unacknowledged 0, and 0 e2term NOENDPT 12050.
+- **R3′ single:** 1 predictor-driven handover; wire requests equal handovers.
+- **Measurements:**
+  - M3 took 2312 s against its 3600 s limit (P9: about 2300 s).
+  - M3's /home delta was 64 → 48 GiB.
+  - p12 started at 40 GiB and ended at 33 GiB.
+  - kpimon's cold build is 193 s, of which the codec stage is 90 s (host, T3).
+  - Host io full avg300 peaked at 26.4 %.
+- **Raw archive:** p10j (`plans-evidence-raw-m10-p10j-20261108.tar.zst`, 2955 files, attempt 1 and the re-run, including the red p12 `p12/20261108T040312Z` and its hand-collected `ric-route-logs-after/`). SHA256SUMS ok. Each run's `evidence-sha256.txt` is committed. Both frozen checkouts were removed.
+- **P15 DONE.** The contract acceptance in `brainstorm-261108-0905` holds:
+  - the per-action checks pass at every chain site with C = 1;
+  - p12 a holds every old conjunct plus the action conjuncts;
+  - the agent image builds only with `kpm-action-routing-test` passing;
+  - the T/T golden is byte-identical;
+  - R3′ single gives at least 1 predictor-driven handover.
+- **Hand-offs to P11:**
+  - P15's null prediction for kpm-headers and collet-start-time at C = 1.
+  - The runner stages the asn1-indep tarball before the first m6. The driver now does this for every row-153 site.
+  - r0, r1, r2 and s10 meet rows 153 and 154 first at P11.
+- **Recorded, outside P15:**
+  - NIST's asn1c CHOICE-extension decoder reads the extension index as 1 bit, so Formats 4 and 5 are refused as undecodable. The answer is the same (action-not-supported).
+  - kpimon's per-cell logic has no committed unit test, because the patch set has no test step. The live chain judges it.
+  - The installer's warm-restart shortcut (Codex round 1).
+  - The Stop B items of the red #1 section.
